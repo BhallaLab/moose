@@ -9,14 +9,20 @@ else()
     option(CMAKE_INSTALL_PREFIX "Install prefix" /usr)
 endif()
 
+## intialize paths
+set(MOOSE_CORE_DIR "${CMAKE_SOURCE_DIR}/moose-core")
+set(MOOSE_CORE_BUILD_DIR ${CMAKE_BINARY_DIR}/_build_moose_core)
+set(MOOSE_CORE_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}")
 set(PACKAGING_SCRIPTS ${CMAKE_SOURCE_DIR}/packaging_scripts)
 
 include(ExternalProject)
 message("[INFO] Installtion directory is ${CMAKE_INSTALL_PREFIX}")
 ExternalProject_Add( moose-core
-    PREFIX ${CMAKE_CURRENT_BINARY_DIR}/_moose-core
-    SOURCE_DIR ${CMAKE_SOURCE_DIR}/moose-core
-    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
+    PREFIX ${CMAKE_CURRENT_BINARY_DIR}/__moose-core
+    SOURCE_DIR ${MOOSE_CORE_DIR}
+    # Extremely useful in packaging
+    BINARY_DIR ${MOOSE_CORE_BUILD_DIR}
+    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${MOOSE_CORE_INSTALL_DIR}
     TEST_BEFORE_INSTALL 1
     BUILD_IN_SOURCE 0
 ) 
@@ -32,3 +38,4 @@ add_custom_command(TARGET moose-gui
     COMMAND ${CMAKE_COMMAND} -E copy ${PACKAGING_SCRIPTS}/moosegui 
     ${CMAKE_INSTALL_PREFIX}/bin
     )
+
