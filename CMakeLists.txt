@@ -1,0 +1,11 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
+PROJECT(moose)
+
+include(ExternalProject)
+ExternalProject_Add( moose-core
+    PREFIX ${CMAKE_CURRENT_BINARY_DIR}/_moose-core
+    SOURCE_DIR ${CMAKE_SOURCE_DIR}/moose-core
+    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/_install
+    TEST_BEFORE_INSTALL 1
+    BUILD_IN_SOURCE 0
+) 

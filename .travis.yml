@@ -1,0 +1,43 @@
+language: cpp
+compiler: 
+    - gcc
+os:
+    - linux
+    - osx
+matrix:
+    allow_failures:
+        - os: osx
+branches:
+    only:
+        - master
+notifications:
+    email:
+        recipients:
+            - dilawar.s.rajput@gmail.com
+        on_success: change
+        on_failure: always
+
+env:
+    - CTEST_MODEL=Nightly 
+cache: apt
+before_script: 
+    - sudo apt-get update -qq
+    - sudo apt-get install libxml2-dev libbz2-dev 
+    - sudo apt-get install libhdf5-serial-dev
+    - sudo apt-get install python-numpy python-setuptools python-networkx
+    - sudo apt-get install make texinfo cmake 
+    - sudo apt-get install python-suds python-matplotlib
+    - sudo apt-get install python-qt4-dev python-qt4-gl python-sip-dev libqt4-dev libopenscenegraph-dev
+
+install:
+    - wget ftp://ftp.gnu.org/gnu/gsl/gsl-1.16.tar.gz
+    - tar -xzvf gsl-1.16.tar.gz
+    - cd gsl-1.16 && ./configure --prefix=/usr && make && sudo make install && cd ..
+    - wget http://sourceforge.net/projects/sbml/files/libsbml/5.11.4/stable/libSBML-5.11.4-core-src.tar.gz
+    - tar -xzvf libSBML-5.11.4-core-src.tar.gz 
+    - cd libsbml-5.11.4 && ./configure --prefix=/usr --with-zlib --with-bzip2 --with-libxml && make && sudo make install && cd ..
+script: 
+    - mkdir -p _build && cd _build && cmake -DDEBUG=ON .. && make
+
+after_success:
+    - ctest --output-on-failure 
