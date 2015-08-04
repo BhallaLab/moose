@@ -1,0 +1,66 @@
+Source: moose
+Section: science
+Priority: optional
+Maintainer: Dilawar Singh <dilawars@ncbs.res.in>
+Build-Depends: debhelper, cdbs, devscripts, cmake, python-setuptools, build-essential, doxygen, python-qt4, python-qt4-dev, libopenscenegraph-dev, python-sip-dev, libqt4-dev, libqt4-opengl-dev, libxml2-dev, libbz2-dev, python-dev, python-numpy, libhdf5-serial-dev, libgsl0-dev, python-qt4-gl
+Standards-Version: 3.9.5
+Homepage: http://moose.ncbs.res.in
+
+Package: moose-all
+Architecture: any
+Depends: moose-python, moose-gui, moose-moogli
+Description: MOOSE is the Multiscale Object-Oriented Simulation Environment
+ It is the base and numerical core for large, detailed simulations including Computational Neuroscience and Systems Biology.
+ .
+ MOOSE spans the range from single molecules to subcellular networks, from
+ single cells to neuronal networks, and to still larger systems.  MOOSE uses
+ Python for scripting compatibility with a large range of software and
+ analysis tools. It recognizes model definition standards including SBML,
+ NeuroML, and GENESIS model file formatsGallery
+ .
+ MOOSE is open source software, licensed under the LGPL (Lesser GNU Public
+ License). It has absolutely no warranty.
+ .
+ The MOOSE team is also participating in development of MOOGLI: a library and
+ standalone application for displaying time-course of activity of detailed 3-D
+ network models using OpenGL and also using OpenSceneGraph	
+
+
+Package: moose-core
+Architecture: any
+Depends: ${shlibs:Depends}
+Description: Core C++ part of MOOSE
+ .
+ Core MOOSE engine without any scripting support. For general use see moose-python, moose-gui packages. This is only useful on clusters.
+
+
+Package: moose-python
+Architecture: any
+Depends: ${shlibs:Depends}, python-numpy, python-matplotlib, python-nose, python-networkx, python-setuptools, python-suds
+Description: Python interface of MOOSE Simulator
+ .
+ This package installs python scripting interface.
+
+Package: moose-gui
+Architecture: any
+Depends: python-qt4, moose-python
+Description: GUI of moose
+ .
+ This package installs the GUI frontend of MOOSE neural simulator.
+
+Package: moose-moogli
+Architecture: any
+Depends: ${shlibs:Depends}, python-qt4-gl, python-sip, libqt4-gui, openscenegraph, moose-gui
+Suggests: moose-python
+Description: Visualizer for neural simulator
+ .
+ Moogli (a sister project of MOOSE) is a simulator independent openGL based
+ visualization tool for neural simulations. Moogli can visualize morphology of
+ single/multiple neurons or network of neurons, and can also visualize activity
+ in these cells. 
+
+Package: moose-doc
+Architecture: any
+Description: User and developer documents of MOOSE neural simulator
+ .
+ This package installs user-manuals, tutorials, and developer document of MOOSE simulator.
