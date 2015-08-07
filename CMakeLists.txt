@@ -23,6 +23,7 @@ ExternalProject_Add( moose-core
     # Extremely useful in packaging
     #BINARY_DIR ${MOOSE_CORE_INSTALL_DIR}
     CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
+    TEST_COMMAND ctest --output-on-failure
     TEST_BEFORE_INSTALL 1
     BUILD_IN_SOURCE 0
 ) 
