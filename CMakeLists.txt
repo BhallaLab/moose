@@ -36,8 +36,8 @@ install(CODE
 set(MOOSE_GUI_DIR ${CMAKE_SOURCE_DIR}/moose-gui)
 
 install(DIRECTORY ${MOOSE_GUI_DIR}
-    PATTERN ".git" EXCLUDE
     DESTINATION lib/moose/gui
+    PATTERN ".git" EXCLUDE
     )
 
 install(PROGRAMS ${DATA_DIR}/moosegui
