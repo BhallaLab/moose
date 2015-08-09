@@ -1,5 +1,6 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 PROJECT(moose-all)
+set(MOOSE_VERSION "3.0.2")
 
 ## intialize paths
 set(MOOSE_CORE_DIR "${CMAKE_SOURCE_DIR}/moose-core")
@@ -7,7 +8,9 @@ set(MOOSE_CORE_BUILD_DIR ${CMAKE_BINARY_DIR}/_build_moose_core)
 FILE(MAKE_DIRECTORY ${MOOSE_CORE_BUILD_DIR})
 set(DATA_DIR ${CMAKE_SOURCE_DIR}/data)
 
-add_custom_command(OUTPUT __moose_core_built__
+set(OUTPUT_MOOSEBIN ${MOOSE_CORE_BUILD_DIR}/moose.bin)
+set(OUTPUT_MOOSESDIST ${MOOSE_CORE_BUILD_DIR}/moose-${MOOSE_VERSION}.tar.gz)
+add_custom_command(OUTPUT ${OUTPUT_MOOSEBIN} ${OUTPUT_MOOSESDIST}
     COMMAND ${CMAKE_COMMAND} 
         -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
         -DDEBUG=OFF
@@ -16,9 +19,8 @@ add_custom_command(OUTPUT __moose_core_built__
     WORKING_DIRECTORY ${MOOSE_CORE_BUILD_DIR}
     VERBATIM
     )
-
 add_custom_target(moose-all ALL
-    DEPENDS __moose_core_built__
+    DEPENDS ${OUTPUT_MOOSESDIST} ${OUTPUT_MOOSEBIN}
     )
 
 install(CODE
