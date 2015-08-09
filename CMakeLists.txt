@@ -19,6 +19,7 @@ add_custom_command(OUTPUT ${OUTPUT_MOOSEBIN} ${OUTPUT_MOOSESDIST}
     WORKING_DIRECTORY ${MOOSE_CORE_BUILD_DIR}
     VERBATIM
     )
+
 add_custom_target(moose-all ALL
     DEPENDS ${OUTPUT_MOOSESDIST} ${OUTPUT_MOOSEBIN}
     )
@@ -28,7 +29,7 @@ install(CODE
     execute_process(COMMAND ctest --output-on-failure
         WORKING_DIRECTORY ${MOOSE_CORE_BUILD_DIR})
 
-    execute_process(COMMAND make install
+    execute_process(COMMAND ${CMAKE_COMMAND} -P cmake_install.cmake
         WORKING_DIRECTORY ${MOOSE_CORE_BUILD_DIR})
     "
     )
@@ -53,6 +54,8 @@ add_custom_target(uninstall
 
 add_custom_command(OUTPUT __uninstall_moose-core__
     COMMAND xargs rm -rf < install_manifest.txt
+    COMMAND pip uninstall -y moose 
+    COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_INSTALL_PREFIX}/bin/moose.bin
     )
 
 add_custom_command(OUTPUT  __uninstall_moose-gui__
