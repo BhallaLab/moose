@@ -26,7 +26,7 @@ install(CODE
     execute_process(COMMAND ctest --output-on-failure
         WORKING_DIRECTORY ${MOOSE_CORE_BUILD_DIR})
 
-    execute_process(COMMAND ${CMAKE_COMMAND} install
+    execute_process(COMMAND make install
         WORKING_DIRECTORY ${MOOSE_CORE_BUILD_DIR})
     "
     )
