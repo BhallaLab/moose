@@ -28,7 +28,7 @@ install(CODE
     execute_process(COMMAND ctest --output-on-failure
         WORKING_DIRECTORY ${MOOSE_CORE_BUILD_DIR})
 
-    execute_process(COMMAND ${CMAKE_COMMAND} install
+    execute_process(COMMAND make install
         WORKING_DIRECTORY ${MOOSE_CORE_BUILD_DIR})
     "
     )
@@ -52,13 +52,11 @@ add_custom_target(uninstall
     )
 
 add_custom_command(OUTPUT __uninstall_moose-core__
-    COMMAND make uninstall
-    WORKING_DIRECTORY ${MOOSE_CORE_BUILD_DIR}
+    COMMAND xargs rm -rf < install_manifest.txt
     )
 
 add_custom_command(OUTPUT  __uninstall_moose-gui__
     COMMAND ${CMAKE_COMMAND} -E remove_directory
-    ${CMAKE_INSTALL_PREFIX}/lib/moose
-    COMMAND ${CMAKE_COMMAND} -R remove ${CMAKE_INSTALL_PREFIX}/bin/moosegui
-    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+    ${CMAKE_INSTALL_PREFIX}/lib/moose/gui
+    COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_INSTALL_PREFIX}/bin/moosegui
     )
