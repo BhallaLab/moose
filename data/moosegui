@@ -1,2 +1,2 @@
 #!/bin/bash
-( cd /usr/share/moose/gui && python mgui.py )
+( cd /usr/lib/moose/gui && python mgui.py )

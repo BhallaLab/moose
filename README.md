@@ -5,11 +5,17 @@ python scripting interface and its GUI.
 
 For more details about these projects, read respective README files.
 
-# Install 
+# Installation using cmake
 
-~~~~
-./boostrap
-cmake .
-make 
-sudo make install
-~~~~
+First, run the `bootstrap` script. It will fetch the submodules and/or update
+them. You should have `cmake` installed on your system to build and install
+moose from this repository.
+
+    cmake .
+    make 
+    sudo make install
+
+To uninstall moose, do the following in the same directory where you ran
+previous `make install` command.
+
+    sudo make uninstall
