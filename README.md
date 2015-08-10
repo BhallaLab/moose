@@ -15,7 +15,26 @@ moose from this repository.
     make 
     sudo make install
 
-To uninstall moose, do the following in the same directory where you ran
+To uninstall moose, run the following command in the same directory where you ran
 previous `make install` command.
 
     sudo make uninstall
+
+
+# Installing using packages
+
+## Ubuntu User
+
+There is a [PPA here](https://launchpad.net/~bhallalab/+archive/ubuntu/moose).
+
+You can use it on Ubuntu 12.04, 14.04, 14.10, and 15.04.
+    
+    sudo -E add-apt-repository ppa:bhallalab/moose
+    sudo apt-get update
+    sudo apt-get install moose-python moose-gui
+
+
+## Others
+
+We are currently in process of building packages for other distribution. We are
+using [Open Build Service](https://build.opensuse.org/package/show/home:moose/moose).
