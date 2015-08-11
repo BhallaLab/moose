@@ -37,4 +37,14 @@ You can use it on Ubuntu 12.04, 14.04, 14.10, and 15.04.
 ## Others
 
 We are currently in process of building packages for other distribution. We are
-using [Open Build Service](https://build.opensuse.org/package/show/home:moose/moose).
+using [Open Build Service](https://build.opensuse.org/package/show/home:moose/moose). Packages can be [found here](http://software.opensuse.org/download.html?project=home%3Amoose&package=moose)
+
+# Reporting issues
+
+Please report all build and packaging related issues here. For development
+issue, bugs and feature request, please use the respective repositories
+
+- [MOOSE C++ and python bindings](https://github.com/BhallaLab/moose-core)
+- [PyQt GUI of MOOSE](https://github.com/BhallaLab/moose-gui)
+- [Example snippets and tutorial
+  scripts](https://github.com/BhallaLab/moose-examples)
