@@ -27,6 +27,7 @@ before_script:
     - sudo apt-get install make texinfo cmake 
     - sudo apt-get install python-suds python-matplotlib
     - sudo apt-get install python-qt4-dev python-qt4-gl python-sip-dev libqt4-dev libopenscenegraph-dev
+    - sudo apt-get install doxygen python-sphinx
 
 install:
     - wget ftp://ftp.gnu.org/gnu/gsl/gsl-1.16.tar.gz
@@ -36,7 +37,7 @@ install:
     - tar -xzvf libSBML-5.11.4-core-src.tar.gz 
     - cd libsbml-5.11.4 && ./configure --prefix=/usr --with-zlib --with-bzip2 --with-libxml && make && sudo make install && cd ..
 script: 
-    - mkdir -p _build && cd _build && cmake -DCMAKE_INSTALL_PREFIX=`pwd`/_install -DDEBUG=ON .. && make
+    - mkdir -p _build && cd _build && cmake -DCMAKE_INSTALL_PREFIX=`pwd`/_install -DDEBUG=ON -DWITH_DOC .. && make
 
 after_success:
     - ctest --output-on-failure 
