@@ -10,10 +10,15 @@ set(DATA_DIR ${CMAKE_SOURCE_DIR}/data)
 
 set(OUTPUT_MOOSEBIN ${MOOSE_CORE_BUILD_DIR}/moose.bin)
 set(OUTPUT_MOOSESDIST ${MOOSE_CORE_BUILD_DIR}/moose-${MOOSE_VERSION}.tar.gz)
+
+# Options to pass down to moose-core
+option(WITH_DOC "Build documentation" OFF)
+option(DEBUG "Build with DEBUG support" OFF)
 add_custom_command(OUTPUT ${OUTPUT_MOOSEBIN} ${OUTPUT_MOOSESDIST}
     COMMAND ${CMAKE_COMMAND} 
         -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
-        -DDEBUG=OFF
+        -DDEBUG=${DEBUG}
+        -DWITH_DOC=${WITH_DOC}
         ${MOOSE_CORE_DIR}
     COMMAND $(MAKE)
     WORKING_DIRECTORY ${MOOSE_CORE_BUILD_DIR}
