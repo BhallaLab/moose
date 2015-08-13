@@ -13,6 +13,11 @@ notifications:
     email:
         recipients:
             - dilawar.s.rajput@gmail.com
+            - bhalla@ncbs.res.in
+	    - aviralg@ncbs.res.in
+            - hrani@ncbs.res.in
+            - ray.subhasis@gmail.com
+
         on_success: change
         on_failure: always
 
@@ -32,9 +37,10 @@ install:
     - wget ftp://ftp.gnu.org/gnu/gsl/gsl-1.16.tar.gz
     - tar -xzvf gsl-1.16.tar.gz
     - cd gsl-1.16 && ./configure --prefix=/usr && make && sudo make install && cd ..
-    - wget http://sourceforge.net/projects/sbml/files/libsbml/5.11.4/stable/libSBML-5.11.4-core-src.tar.gz
-    - tar -xzvf libSBML-5.11.4-core-src.tar.gz 
-    - cd libsbml-5.11.4 && ./configure --prefix=/usr --with-zlib --with-bzip2 --with-libxml && make && sudo make install && cd ..
+    #Harsha: Currently we are supporting libsbml-5.9.0 as its tested
+    - wget http://sourceforge.net/projects/sbml/files/libsbml/5.9.0/stable/libSBML-5.9.0-core-src.tar.gz
+    - tar -xzvf libSBML-5.9.0-core-src.tar.gz 
+    - cd libsbml-5.9.0 && ./configure --prefix=/usr --with-zlib --with-bzip2 --with-libxml && make && sudo make install && cd ..
 script: 
     - mkdir -p _build && cd _build && cmake -DCMAKE_INSTALL_PREFIX=`pwd`/_install -DDEBUG=ON .. && make
 
