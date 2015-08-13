@@ -15,6 +15,21 @@ moose from this repository.
     make 
     sudo make install
 
+## Fine tuning build process
+
+You can pass options to cmake from command line to fine-tune the build process.
+For example, by default, we don't build documentation. If you want to build
+documentation,
+
+    $ cmake -DWITH_DOC=ON ..
+    $ make
+
+Doing so, cmake will also build documentation (and later install it when `make
+install` is used). Building documentation requires `python-sphinx` and
+`doxygen`.  __TODO: Document cmake options__.
+
+# Uninstalling
+
 To uninstall moose, run the following command in the same directory where you ran
 previous `make install` command.
 
