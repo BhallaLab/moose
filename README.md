@@ -1,9 +1,9 @@
-Build Status - master (This is stable branch): [![Build Status - master](https://travis-ci.org/BhallaLab/moose.svg?branch=master)](https://travis-ci.org/BhallaLab/moose)
+[![Build Status - master](https://travis-ci.org/BhallaLab/moose.svg?branch=master)](https://travis-ci.org/BhallaLab/moose)
 
-This is the meta repository of MOOSE simulator. It contains C++ core of MOOSE,
-python scripting interface and its GUI. 
+This is meta repository of MOOSE simulator. It contains C++ core of MOOSE,
+python scripting interface, its GUI repositories as submodule.
 
-For more details about these projects, read respective README files.
+For more details about these sub-projects, read respective README files.
 
 # Installation using cmake
 
