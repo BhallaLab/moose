@@ -1,9 +1,13 @@
 [![Build Status - master](https://travis-ci.org/BhallaLab/moose.svg?branch=master)](https://travis-ci.org/BhallaLab/moose)
 
 This is meta repository of MOOSE simulator. It contains C++ core of MOOSE,
-python scripting interface, its GUI repositories as submodule.
+python scripting interface, its GUI repositories as submodule. 
 
-For more details about these sub-projects, read respective README files.
+For more details about these sub-projects, read respective README:
+
+- [MOOSE and PyMOOSE](https://github.com/BhallaLab/moose-core)
+- [Gui](https://github.com/BhallaLab/moose-gui)
+- [Examples and Demos](https://github.com/BhallaLab/moose-examples)
 
 # Installation using cmake
 
@@ -17,16 +21,14 @@ moose from this repository.
 
 ## Fine tuning build process
 
-You can pass options to cmake from command line to fine-tune the build process.
-For example, by default, we don't build documentation. If you want to build
-documentation,
+The cmake can be passed command line arguments to fine-tune the build process.
+For example, we don't build documentation by default. If you want to build
+documentation, use `-DWITH_DOC=ON` option as following:
 
     $ cmake -DWITH_DOC=ON ..
     $ make
 
-Doing so, cmake will also build documentation (and later install it when `make
-install` is used). Building documentation requires `python-sphinx` and
-`doxygen`.  __TODO: Document cmake options__.
+Building documentation requires `python-sphinx` and `doxygen`.  __TODO: Document cmake options__.
 
 # Uninstalling
 
@@ -35,12 +37,13 @@ previous `make install` command.
 
     sudo make uninstall
 
+# Packages
 
-# Installing using packages
+The easiest way of installing MOOSE on your system is to use packages. 
 
-## Ubuntu User
+## Ubuntu
 
-There is a [PPA here](https://launchpad.net/~bhallalab/+archive/ubuntu/moose).
+There is a [PPA](https://launchpad.net/~bhallalab/+archive/ubuntu/moose).
 
 You can use it on Ubuntu 12.04, 14.04, 14.10, and 15.04.
     
@@ -51,8 +54,7 @@ You can use it on Ubuntu 12.04, 14.04, 14.10, and 15.04.
 
 ## Others
 
-We are currently in process of building packages for other distribution. We are
-using [Open Build Service](https://build.opensuse.org/package/show/home:moose/moose). Packages can be [found here](http://software.opensuse.org/download.html?project=home%3Amoose&package=moose)
+We are building packages for other distribution as well. We use [Open Build Service](https://build.opensuse.org/package/show/home:moose/moose). Packages and installation instructions can be [found here](http://software.opensuse.org/download.html?project=home%3Amoose&package=moose).
 
 # Reporting issues
 
