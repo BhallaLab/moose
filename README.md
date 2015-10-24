@@ -12,12 +12,11 @@ You can find detailed description of each MOOSE component in respective `README.
 
 The easiest way of installing MOOSE on your system is to use pre-compiled packages.
 
-## Ubuntu
+## Debian/Ubuntu
 
-MOOSE has [a PPA ](https://launchpad.net/~bhallalab/+archive/ubuntu/moose). 
+MOOSE has [a PPA](https://launchpad.net/~bhallalab/+archive/ubuntu/moose). 
 
 You can use it on Ubuntu 12.04, 14.04, 14.10, and 15.04. 
-
 
 ### Terminal
     
@@ -25,19 +24,17 @@ You can use it on Ubuntu 12.04, 14.04, 14.10, and 15.04.
     sudo apt-get update
     sudo apt-get install moose-python moose-gui
 
-*[What are PPAs and how to use them]http://askubuntu.com/questions/4983/what-are-ppas-and-how-do-i-use-them)*
+For more information on how to use PPA with package manager, see [What are PPAs and how to use them](http://askubuntu.com/questions/4983/what-are-ppas-and-how-do-i-use-them)
 
 
-## Others
+## RPM/Fedora and others
 
-We are building packages for other distribution as well. We use [Open Build Service](https://build.opensuse.org/package/show/home:moose/moose). Packages and installation instructions can be [found here](http://software.opensuse.org/download.html?project=home%3Amoose&package=moose).
+There are packages for other distributions as well, especially Feodra, CentOS and OpenSuse. We are using [Open Build Service](https://build.opensuse.org/package/show/home:moose/moose) to build these packages. Download and installation instructions can be [found here](http://software.opensuse.org/download.html?project=home%3Amoose&package=moose).
 
 
-# Installation using cmake
+# Build and install using cmake
 
-First, run the `bootstrap` script. It will fetch the submodules and/or update
-them. You should have `cmake` installed on your system to build and install
-moose from this repository.
+[See the instructions here](https://github.com/BhallaLab/moose-core/blob/master/INSTALL.cmake.md). Once all the listed dependencies are installed, you can use the following script to build and install MOOSE on your system.
 
     cmake .
     make 
