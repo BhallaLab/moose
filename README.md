@@ -1,15 +1,40 @@
 [![Build Status - master](https://travis-ci.org/BhallaLab/moose.svg?branch=master)](https://travis-ci.org/BhallaLab/moose)
 
-This is meta repository of MOOSE simulator. It contains C++ core of MOOSE,
-python scripting interface, its GUI repositories as submodule.
+This is the parent repository of [MOOSE simulator](https://moose.ncbs.res.in). It contains core (written in C++) of MOOSE, it's python scripting interface, and its graphical user interface (GUI) as [git-submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules). 
 
-For more details about these sub-projects, read respective README files.
+You can find detailed description of each MOOSE component in respective `README.md` in  their repositories below:
 
-# Installation using cmake
+- [MOOSE with python support](https://github.com/BhallaLab/moose-core)
+- [GUI](https://github.com/BhallaLab/moose-gui)
+- [Examples and Demos](https://github.com/BhallaLab/moose-examples)
 
-First, run the `bootstrap` script. It will fetch the submodules and/or update
-them. You should have `cmake` installed on your system to build and install
-moose from this repository.
+# MOOSE Packages
+
+The easiest way of installing MOOSE on your system is to use pre-compiled packages.
+
+## Debian/Ubuntu
+
+MOOSE has [a PPA](https://launchpad.net/~bhallalab/+archive/ubuntu/moose). 
+
+You can use it on Ubuntu 12.04, 14.04, 14.10, and 15.04. 
+
+### Terminal
+    
+    sudo -E add-apt-repository ppa:bhallalab/moose
+    sudo apt-get update
+    sudo apt-get install moose-python moose-gui
+
+For more information on how to use PPA with package manager, see [What are PPAs and how to use them](http://askubuntu.com/questions/4983/what-are-ppas-and-how-do-i-use-them)
+
+
+## RPM/Fedora and others
+
+There are packages for other distributions as well, especially Feodra, CentOS and OpenSuse. We are using [Open Build Service](https://build.opensuse.org/package/show/home:moose/moose) to build these packages. Download and installation instructions can be [found here](http://software.opensuse.org/download.html?project=home%3Amoose&package=moose).
+
+
+# Build and install using cmake
+
+[See the instructions here](https://github.com/BhallaLab/moose-core/blob/master/INSTALL.cmake.md). Once all the listed dependencies are installed, you can use the following script to build and install MOOSE on your system.
 
     cmake .
     make 
@@ -17,16 +42,14 @@ moose from this repository.
 
 ## Fine tuning build process
 
-You can pass options to cmake from command line to fine-tune the build process.
-For example, by default, we don't build documentation. If you want to build
-documentation,
+The cmake can be passed command line arguments to fine-tune the build process.
+For example, we don't build documentation by default. If you want to build
+documentation, use `-DWITH_DOC=ON` option as following:
 
     $ cmake -DWITH_DOC=ON ..
     $ make
 
-Doing so, cmake will also build documentation (and later install it when `make
-install` is used). Building documentation requires `python-sphinx` and
-`doxygen`.  __TODO: Document cmake options__.
+Building documentation requires `python-sphinx` and `doxygen`.  __TODO: Document cmake options__.
 
 # Uninstalling
 
@@ -34,25 +57,6 @@ To uninstall moose, run the following command in the same directory where you ra
 previous `make install` command.
 
     sudo make uninstall
-
-
-# Installing using packages
-
-## Ubuntu User
-
-There is a [PPA here](https://launchpad.net/~bhallalab/+archive/ubuntu/moose).
-
-You can use it on Ubuntu 12.04, 14.04, 14.10, and 15.04.
-    
-    sudo -E add-apt-repository ppa:bhallalab/moose
-    sudo apt-get update
-    sudo apt-get install moose-python moose-gui
-
-
-## Others
-
-We are currently in process of building packages for other distribution. We are
-using [Open Build Service](https://build.opensuse.org/package/show/home:moose/moose). Packages can be [found here](http://software.opensuse.org/download.html?project=home%3Amoose&package=moose)
 
 # Reporting issues
 
