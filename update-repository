@@ -3,4 +3,4 @@
 # This script updates the repository and its subrepositories, recursively.
 
 git submodule update --init
-git submodule foreach '[ "$path" = "moogli" ] && branch=geometry || branch=master; git pull origin $branch' 
+git submodule foreach '[ "$path" = "moogli" ] && branch=geometry || branch=master; git pull origin $branch; git checkout $branch' 
