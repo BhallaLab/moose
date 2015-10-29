@@ -1,0 +1,22 @@
+#!/bin/sh
+
+# AUTHOR    : AVIRAL GOEL
+# EMAIL-ID  : aviralg@ncbs.res.in
+
+echo "Installing moose-core dependencies"
+sudo -E apt-get install g++ libgsl0-dev libgsl0ldbl libhdf5-dev libpython-dev python-numpy libxml2-dev
+
+echo "Installing libsbml"
+if [ $(uname -m) = "x86_64" ]; then
+     wget "http://sourceforge.net/projects/sbml/files/libsbml/5.9.0/stable/Linux/64-bit/libSBML-5.9.0-Linux-x64.deb"
+     sudo -E dpkg -i libSBML-5.9.0-Linux-x64.deb
+     rm -rf libSBML-5.9.0-Linux-x64.deb
+else
+     wget "http://sourceforge.net/projects/sbml/files/libsbml/5.9.0/stable/Linux/32-bit/libSBML-5.9.0-Linux-x86.deb"
+     sudo -E dpkg -i libSBML-5.9.0-Linux-x86.deb
+     rm -rf libSBML-5.9.0-Linux-x86.deb
+fi
+
+echo "Installing moose-gui and moogli dependencies"
+sudo -E apt-get install python-setuptools libqt4-dev python-qt4-dev libopenscenegraph-dev python-qt4-gl python-sip-dev python-matplotlib python-scipy python-suds python-networkx
+
