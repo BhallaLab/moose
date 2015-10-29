@@ -1,7 +1,0 @@
-#!/bin/bash
-
-# Bootstrap script. Run it to update the repo.
-
-echo "- Updating submodules"
-git submodule update --init
-git submodule foreach git pull origin master
