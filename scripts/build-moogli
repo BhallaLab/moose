@@ -1,6 +1,6 @@
 #!/bin/sh
 
-(cd moogli; make build)
+(cd ../moogli; make build)
 local_site_package_directory=`python -c "import site; print site.getusersitepackages()"`
 mkdir -p "$local_site_package_directory"
 echo $(echo `pwd` | sed "s/\/[^\/]*$//")'/moogli' > "$local_site_package_directory/moogli.pth"
