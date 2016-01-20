@@ -3,4 +3,5 @@
 (cd moogli; make build)
 local_site_package_directory=`python -c "import site; print site.getusersitepackages()"`
 mkdir -p "$local_site_package_directory"
-echo "`pwd`/moogli" > "$local_site_package_directory/moogli.pth"
+echo $(echo `pwd` | sed "s/\/[^\/]*$//")'/moogli' > "$local_site_package_directory/moogli.pth"
+#echo "`pwd`/moogli" > "$local_site_package_directory/moogli.pth"
