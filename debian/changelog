@@ -1,0 +1,9 @@
+moose (3.0.2) unstable; urgency=low
+
+  * Initial release 
+  * Feature-freeze release.
+  * trunk series. Experimental branch.
+  * 3.0.2 relase.
+  * Just packed with SBML and GSL-1.6 support.
+
+ -- Dilawar <dilawars@ncbs.res.in>  Sun, 05 July 2015 13:41:58 +0530
