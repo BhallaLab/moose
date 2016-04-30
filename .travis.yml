@@ -35,15 +35,16 @@ before_script:
     - sudo apt-get install git-buildpackage
 
 install:
-    - wget ftp://ftp.gnu.org/gnu/gsl/gsl-1.16.tar.gz
-    - tar -xzvf gsl-1.16.tar.gz
-    - cd gsl-1.16 && ./configure --prefix=/usr && make && sudo make install && cd ..
-    - wget http://sourceforge.net/projects/sbml/files/libsbml/5.9.0/stable/libSBML-5.9.0-core-src.tar.gz
-    - tar -xzvf libSBML-5.9.0-core-src.tar.gz
-    - cd libsbml-5.9.0 && ./configure --prefix=/usr --with-zlib --with-bzip2 --with-libxml && make && sudo make install && cd ..
+   - sbmlurl="http://sourceforge.net/projects/sbml/files/libsbml/5.9.0/stable/Linux/64-bit/libSBML-5.9.0-Linux-x64.deb"
+    - wget "$sbmlurl" -O libsbml.deb && sudo dpkg -i libsbml.deb 
+    - wget http://ftp.debian.org/debian/pool/main/g/gsl/libgsl0ldbl_1.16+dfsg-4_amd64.deb -O gsl_1.16.deb
+    - sudo dpkg -i gsl_1.16.deb
+    - wget "http://ftp.debian.org/debian/pool/main/g/gsl/libgsl0-dev_1.16+dfsg-4_amd64.deb" -O gsl_1.16-dev.deb
+    - sudo dpkg -i gsl_1.16-dev.deb
+    - sudo apt-get install -f
 
 script:
-    - git buildpackage 
+    - git buildpackage  --git-ignore-new 
     - sudo dpkg -i ../moose*.deb
 
 after_success:
