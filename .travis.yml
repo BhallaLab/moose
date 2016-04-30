@@ -41,8 +41,10 @@ install:
     - wget http://sourceforge.net/projects/sbml/files/libsbml/5.9.0/stable/libSBML-5.9.0-core-src.tar.gz
     - tar -xzvf libSBML-5.9.0-core-src.tar.gz
     - cd libsbml-5.9.0 && ./configure --prefix=/usr --with-zlib --with-bzip2 --with-libxml && make && sudo make install && cd ..
+
 script:
-    - mkdir -p _build && cd _build && cmake -DCMAKE_INSTALL_PREFIX=`pwd`/_install -DDEBUG=ON .. && make
+    - mkdir -p _build && cd _build && cmake -DCMAKE_INSTALL_PREFIX=`pwd`/_install -DDEBUG=ON .. 
+    - make install
 
 after_success:
     - ctest --output-on-failure
