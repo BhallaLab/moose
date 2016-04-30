@@ -44,6 +44,8 @@ install:
 
 script:
     - git buildpackage 
+    - sudo dpkg -i ../moose*.deb
 
 after_success:
-    - echo "TODO: Install package and test"
+    - python -c 'import moose'
+    - python -c 'import moogli'
