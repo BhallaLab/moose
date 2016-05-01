@@ -44,7 +44,7 @@ install:
     - sudo apt-get install -f
 
 script:
-    - git buildpackage  --git-ignore-new 
+    - git buildpackage  --git-ignore-new -uc -us
     - sudo dpkg -i ../moose*.deb
 
 after_success:
