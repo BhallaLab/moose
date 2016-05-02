@@ -50,3 +50,4 @@ script:
 after_success:
     - python -c 'import moose'
     - python -c 'import moogli'
+    - cd _build_moose_core && ctest --output-on-failure
