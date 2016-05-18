@@ -9,7 +9,7 @@ include( ExternalProject )
 option(WITH_DOC "Build documentation" OFF)
 option(DEBUG "Build with DEBUG support" OFF)
 option(WITH_BOOST "Use Boost libraries instead of GSL" OFF)
-option(WITH_CUSA "Use CUDA/GPU" OFF)
+option(WITH_CUDA "Use CUDA/GPU" OFF)
 option(WITH_MPI "Use MPI" OFF)
 
 ## intialize paths
