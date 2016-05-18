@@ -42,6 +42,7 @@ install:
     - wget "http://ftp.debian.org/debian/pool/main/g/gsl/libgsl0-dev_1.16+dfsg-4_amd64.deb" -O gsl_1.16-dev.deb
     - sudo dpkg -i gsl_1.16-dev.deb
     - sudo apt-get install -f
+    - sudo ldconfig /usr/lib64
 
 script:
     - git buildpackage  --git-ignore-new -uc -us
