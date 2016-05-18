@@ -38,6 +38,7 @@ ExternalProject_Add(
        -DWITH_MPI=${WITH_MPI}
        -DWITH_CUDA=${WITH_CUDA}
    TEST_BEFORE_INSTALL 0
+   TEST_AFTER_INSTALL 0
 ) 
 
 INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}}/moose-core/include)
