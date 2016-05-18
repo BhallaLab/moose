@@ -1,0 +1,33 @@
+Here we have Python scripts that replicate most of the figures in the MOOSE
+paper. Most of these can be accessed through the MooseGUI startup screen.
+Some of these take a very long time. Approximate runtimes for a 2.2 GHz 
+core I7 processor are listed here.
+Some of these figures/demos depend on the 3-D graphics visualization, which 
+may not be compiled into your distribution. 
+
+The figure scripts are in the directories Fig<N>_<description>
+and are named Fig2A, Fig3D etc.
+
+Figure panel	Runtime(s)	Uses 3-D?	Notes
+2A		1500		No		Generates 2 xplot files for 
+						analysis by Fig2A_analysis.py
+2C		6		Yes
+2D		35		Yes
+2E		5		Yes
+
+3ABC		2		No		This is a GENESIS/KKIT model
+						definition file loaded by MOOSE.
+3D		1		No		There is a corresponding 
+						Fig3_NEURON.py for the same 
+						model in NEURON.
+
+4B		10		Yes		
+4CDEF		370		No
+4GHIJ		300		No		
+
+5A		20		Yes		Pops up four windows.
+5BCDE		240		No		Text only output.		
+
+6A		60		Yes		Spines exaggerated for display
+6BCDE		3900		No		Dumps to SVG.
+

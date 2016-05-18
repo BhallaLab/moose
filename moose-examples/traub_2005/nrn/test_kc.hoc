@@ -1,0 +1,50 @@
+load_file("nrngui.hoc")
+// PI=3.141592
+FARADAY=96485
+
+celsius=30
+v_init = -65.0
+Dt = 1e-2
+dt = Dt
+tstop = 350 // ms 
+
+load_file("testutils.hoc")
+
+objref testcomp, vvec, gvec, tvec, vfile, gfile, ca_vec, ca_recvec, cafile
+
+
+testcomp = new singlecomp()
+
+testcomp.setup_channel("kc", 1e-9)
+
+// We create a Ca vector to play 0 to 500 mM [Ca2+] from 0-175 ms and
+// loop afterwards
+ca_vec_size =  tstop / Dt + 1
+ca_vec = new Vector(ca_vec_size)
+tvec = new Vector(ca_vec_size)
+for ii=0, ca_vec_size - 1 {
+    ca_vec.x[ii] = ( 500.0 * (ii % (ca_vec_size/2))) / (0.5 * ca_vec_size)
+    tvec.x[ii] = ii * Dt
+}
+
+// Vector.play(target_variable, vector_t, continuous)
+ca_vec.play(&testcomp.soma.cai(0.5), tvec, 1)
+
+// (50 ms start positive current, 150 ms stop positive current, 200
+// ms start negative current, 300 ms stop negative current 350 ms stop
+// simulation)
+
+testcomp.setup_recording("kc", Dt)
+ca_recvec = new Vector()
+ca_recvec.record(&testcomp.soma.cai(0.5), Dt)
+run()
+testcomp.save_data("KC", Dt)
+cafile = new File()
+cafile.wopen("data/KC_Ca.dat")
+for ii = 0, ca_recvec.size() - 1 {
+    cafile.printf("%g %g\n", ii * dt, ca_recvec.x[ii])
+}
+cafile.close()
+quit()
+
+

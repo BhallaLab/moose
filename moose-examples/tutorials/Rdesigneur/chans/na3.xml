@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<channelml xmlns="http://morphml.org/channelml/schema" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:meta="http://morphml.org/metadata/schema"
+    xsi:schemaLocation="http://morphml.org/channelml/schema  http://www.neuroml.org/NeuroMLValidator/NeuroMLFiles/Schemata/v1.8.0/Level2/ChannelML_v1.8.0.xsd"
+    units="Physiological Units">
+
+    <meta:notes>ChannelML file containing a single Channel description</meta:notes>
+
+    <channel_type name="na3" density="yes">
+        
+        <status value="stable">
+            <meta:comment>Agreement of generated NEURON and GENESIS to original NEURON mod. Compared voltage and n traces on single comp with current pulse</meta:comment>
+            <meta:comment>Note: the inactivation gate s is not included here as it was disabled in original mod file for Migliore et al. Changing the parameter below ar from 1 will not enable s!</meta:comment>
+            <meta:contributor>
+                <meta:name>Padraig Gleeson</meta:name>
+            </meta:contributor>
+        </status>
+
+        <meta:notes>Na channel. Comment from original mod: Na current, modified from Jeff Magee. M.Migliore may97,
+        added sh to account for higher threshold M.Migliore, Apr.2002</meta:notes>
+        
+        <meta:authorList>         
+            <meta:modelAuthor>
+                <meta:name>Michele Migliore</meta:name>
+                <meta:comment>Cited implementer according to ModelDB</meta:comment>
+            </meta:modelAuthor>
+            <meta:modelTranslator>
+                <meta:name>Padraig Gleeson</meta:name>
+                <meta:institution>UCL</meta:institution>
+                <meta:email>p.gleeson - at - ucl.ac.uk</meta:email>
+            </meta:modelTranslator>
+        </meta:authorList>
+
+        <meta:publication>
+            <meta:fullTitle>Migliore M, Ferrante M, Ascoli GA (2005) Signal propagation in oblique dendrites of CA1 pyramidal cells. J Neurophysiol 94:4145-4155</meta:fullTitle>
+            <meta:pubmedRef>http://www.ncbi.nlm.nih.gov/pubmed/16293591</meta:pubmedRef>
+        </meta:publication>
+
+        <meta:neuronDBref>
+            <meta:modelName>Na channels</meta:modelName>
+            <meta:uri>http://senselab.med.yale.edu/senselab/NeuronDB/channelGene2.htm#table2</meta:uri>
+        </meta:neuronDBref>
+        
+        <meta:modelDBref>
+            <meta:modelName>CA1 pyramidal neuron: signal propagation in oblique dendrites (Migliore et al 2005)</meta:modelName>
+            <meta:uri>http://senselab.med.yale.edu/ModelDB/ShowModel.asp?model=55035</meta:uri>
+        </meta:modelDBref>
+        
+        
+        <parameters>
+          <parameter name="ar" value ="1"/>  <!--Note: Changing this parameter from 1 will not enable the inactivation gate s!-->
+        </parameters>
+
+        <current_voltage_relation cond_law="ohmic" ion="na" default_gmax="25" default_erev="50">
+
+            <q10_settings gate="m" q10_factor="2" experimental_temp="24"/>
+            <q10_settings gate="h" q10_factor="2" experimental_temp="24"/>
+            <!--<q10_settings gate="s" fixed_q10="1" experimental_temp="35"/> Note: no inactivation in orig mod as ar=a2=1-->
+
+            <gate name="m" instances="3">
+                <closed_state id="m0"/>
+                <open_state id="m" fraction="1"/>
+
+                <transition name="alpha" from="m0" to="m" expr_form="exp_linear" rate="2.88" scale="7.2" midpoint="-30" />
+                <transition name="beta" from="m" to="m0" expr_form="exp_linear" rate="0.8928" scale="-7.2" midpoint="-30" />
+
+                <time_course name="tau" from="m0" to="m" expr_form="generic" expr="1/( (alpha + beta) * temp_adj_m ) &lt; 0.02 ? (0.02 * temp_adj_m) : 1/(alpha + beta) " />
+
+            </gate>
+
+            <gate name="h" instances="1">
+                <closed_state id="h0"/>
+                <open_state id="h" fraction="1"/>
+
+                <transition name="alpha" from="h0" to="h" expr_form="exp_linear" rate="0.045" scale="1.5" midpoint="-45" />
+                <transition name="beta" from="h" to="h0" expr_form="exp_linear" rate="0.015" scale="-1.5" midpoint="-45" />
+
+                <time_course name="tau" from="h0" to="h" expr_form="generic" expr="1/( (alpha + beta) * temp_adj_h ) &lt; 0.5 ? (0.5 * temp_adj_h) : 1/(alpha + beta) " />
+                <steady_state name="inf" from="h0" to="h" expr_form="generic" expr="1/(1 + (exp ((v-(-50))/4 )) )" />
+
+            </gate>
+
+<!--            Note: no inactivation in orig mod as ar=a2=1, so sinf=0 for all v
+            <gate name="s" instances="1">
+                <closed_state id="s0"/>
+                <open_state id="s" fraction="1"/>
+
+                <transition name="alpha" from="s0" to="s" expr_form="generic" expr="(exp ( (1e-3 * (12) * (v - (-60)) * 9.648e4) / (8.315*(273.16 + (celsius) )) ))" />
+                <transition name="beta" from="s" to="s0" expr_form="generic"  expr="(exp ( (1e-3 * (12) * 0.2 * (v - (-60)) * 9.648e4) / (8.315*(273.16 + (celsius) )) ))" />
+
+
+                <time_course name="tau" from="s0" to="s" expr_form="generic" expr="beta/(0.0003 * (1 + alpha)) &lt; 10 ? 10 : beta/(0.0003 * (1 + alpha))" />
+                <steady_state name="inf" from="s0" to="s" expr_form="generic" expr="gamma (1)*(1-gamma)" />
+
+            </gate>-->
+
+        </current_voltage_relation>
+
+        <impl_prefs>
+            <comment>Suggesting using a large table of precomputed rate equation values since original mod didn't use any table, i.e. used continuous values</comment>
+            <table_settings max_v="100" min_v="-100" table_divisions="2000"/>
+        </impl_prefs>
+        
+        
+    </channel_type>
+</channelml>

@@ -1,0 +1,92 @@
+objectvar stim1, outfile, vec_v, vec_t, vec_naf2, vec_napf_ss, vec_kdr_fs, vec_ar, vec_cad
+FARADAY=96485
+PI=3.141592
+secondorder=2
+// dt=1e-3
+celsius=30
+v_init = -65.0
+
+create soma
+soma{
+    nseg = 1
+    diam = 2 * 7.5
+    L = 20
+    v = -65.0
+    insert naf2
+    gbar_naf2 = 0.15
+    insert napf_spinstell
+    gbar_napf_spinstell = 0.00015
+    insert kdr_fs 
+    gbar_kdr_fs = 0.1
+    insert kc_fast
+    gbar_kc_fast = 0.01
+    insert ka
+    gbar_ka = 0.03
+    insert km
+    gbar_km = 0.00375
+    insert k2
+    gbar_k2 = 0.0001
+    insert kahp_slower
+    gbar_kahp_slower =   0.0001
+    insert cal
+    gbar_cal =   0.0005
+    insert cat_a
+    gbar_cat_a =   0.0001
+    insert ar
+    gbar_ar =   0.00025
+    insert cad
+    // *** ca diffusion: beta=1/tau
+    beta_cad  =   0.02
+    // cafor(I) (FORTRAN) converted to phi (NEURON)
+    phi_cad =   260000.
+    insert pas
+    e_pas = -65.0 
+    g_pas = 2e-5
+    Ra = 100.0
+    cm = 0.9
+    ek = -100.0
+    ena = 50.0
+    vca = 125.0
+    erev_ar = -40.0
+    
+    m0_ar = 0
+    fastNa_shift_naf2=-2.5
+    fastNa_shift_napf_spinstell=-2.5
+}
+
+stim1 = new IClamp(0.5)
+stim1.del = 100.0
+stim1.amp = 0.3
+stim1.dur = 50.0
+ceiling_cad = 1e6
+
+outfile = new File()
+vec_naf2 = new Vector()
+vec_napf_ss = new Vector()
+vec_kdr_fs = new Vector()
+vec_v = new Vector()
+vec_t = new Vector()
+vec_cad = new Vector()
+
+vec_naf2.record(&soma.ina_naf2(0.5))
+// vec_napf_ss.record(&soma.ina_napf_spinstell(0.5))
+// vec_kdr_fs.record(&soma.ik_kdr_fs(0.5))
+vec_cad.record(&soma.cai(0.5))
+vec_v.record(&soma.v(0.5))
+vec_t.record(&t)
+
+tstop = 350
+run()
+outfile.wopen("data/singlecomp_Vm.dat")
+for ii = 0, vec_v.size() - 1 {    
+    outfile.printf("%g %g", vec_t.x(ii), vec_v.x(ii))
+    // delv_na = vec_v.x(ii) - soma.ena    
+    // outfile.printf(" %g", vec_naf2.x(ii)/delv_na )
+    // outfile.printf(" %g", vec_napf_ss.x(ii)/delv_na )    
+    // delv_k = vec_v.x(ii) - soma.ek
+    // outfile.printf(" %g", vec_kdr_fs.x(ii)/delv_k )    
+    outfile.printf(" %g", vec_cad.x(ii))
+    outfile.printf("\n")
+}
+outfile.close()
+quit()

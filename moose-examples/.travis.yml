@@ -1,0 +1,22 @@
+notifications:
+    email:
+        recipients:
+            - dilawar.s.rajput@gmail.com
+            - upi.bhalla@gmail.com
+            - ray.shubhasis@gmail.com
+            - hrani@ncbs.res.in
+
+
+install:
+    - wget http://download.opensuse.org/repositories/home:moose/xUbuntu_12.04/Release.key
+    - sudo apt-key add - < Release.key  
+    - sudo sh -c "echo 'deb http://download.opensuse.org/repositories/home:/moose/xUbuntu_12.04/ /' >> /etc/apt/sources.list.d/moose.list"
+    - sudo apt-get -y update
+    - sudo apt-get install python-h5py
+    - sudo apt-get -y install moose
+    - sudo apt-get -y install moogli
+
+script:
+    - python -c 'import moose'
+    - python -c 'import moogli'
+    - cd _travis && ./find_scripts_to_run.sh && ./run_scripts.sh 

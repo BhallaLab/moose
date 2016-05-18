@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<channelml xmlns="http://morphml.org/channelml/schema"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:meta="http://morphml.org/metadata/schema"
+    xsi:schemaLocation="http://morphml.org/channelml/schema  http://www.neuroml.org/NeuroMLValidator/NeuroMLFiles/Schemata/v1.8.1/Level2/ChannelML_v1.8.1.xsd"
+    units="Physiological Units">
+
+    <meta:notes>ChannelML file containing a single Channel description from Solinas et al 2007</meta:notes>
+
+    <channel_type name="NaR_CML">
+
+       <status value="stable">
+            <meta:comment>Does not include check in beta_s for x1=(v+V0beta_s)/Kbeta_s (when v > ~-22mV), but this shouldn't matter as beta_s ~ 0 for these values.
+                30mV for table may be too low an upper limit (peak of AP can go above this)</meta:comment>
+            <meta:contributor>
+                <meta:name>Matteo Farinella</meta:name>
+            </meta:contributor>
+            <meta:contributor>
+                <meta:name>Padraig Gleeson</meta:name>
+            </meta:contributor>
+        </status>
+
+        <meta:notes>Resurgent Na+ channel</meta:notes>
+
+        <meta:authorList>
+
+            <meta:modelAuthor>
+                <meta:name>T.Nieus</meta:name>
+                <meta:comment>Cited implementer according to the original .mod file. Notes from original mod file:
+  Last revised: 30.6.2003
+  Critical value gNa
+  Inserted a control in bet_s to avoid huge values of x1</meta:comment>
+            </meta:modelAuthor>
+
+            <meta:modelTranslator>
+                <meta:name>Matteo Farinella</meta:name>
+                <meta:institution>UCL</meta:institution>
+                <meta:email>m.farinella - at - ucl.ac.uk</meta:email>
+            </meta:modelTranslator>
+
+            <meta:modelTranslator>
+                <meta:name>Padraig Gleeson</meta:name>
+                <meta:institution>UCL</meta:institution>
+                <meta:email>p.gleeson - at - ucl.ac.uk</meta:email>
+            </meta:modelTranslator>
+
+	</meta:authorList>
+	        
+	
+	
+	        
+	        <current_voltage_relation cond_law="ohmic" ion="na" default_gmax="0.17" default_erev="-85">
+	            
+	            <q10_settings q10_factor="3" experimental_temp="20"/>	            	            
+	          
+	                <!--
+	                : s-ALFA
+			Aalpha_s = -0.00493 (/ms)
+			V0alpha_s = -4.48754 (mV)
+			Kalpha_s = -6.81881 (mV)
+			Shiftalpha_s = 0.00008 (/ms)
+			
+			alp_s = tcorr*(Shiftalpha_s+Aalpha_s*((v+V0alpha_s)/1 )/(exp((v+V0alpha_s)/Kalpha_s)-1))
+			
+			alp_s = -Aalpha_s*(-Kalpha_s) *((v+(-V0alpha_s))/ -Kalpha_s)/(1 - exp((v+(-V0alpha_s))/-Kalpha_s))
+
+			: s-BETA
+			Abeta_s = 0.01558 (/ms)
+			V0beta_s = 43.97494 (mV)
+			Kbeta_s =  0.10818 (mV)
+			Shiftbeta_s = 0.04752 (/ms)
+			
+			bet_s =tcorr*(Shiftbeta_s+Abeta_s*((v+V0beta_s)/1  )/(exp((v+V0beta_s)/Kbeta_s)-1))
+
+			: f-ALFA
+			Aalpha_f = 0.31836 (/ms)
+			V0alpha_f = -80 (mV)
+			Kalpha_f = -62.52621 (mV)
+			
+			alp_f =	tcorr * Aalpha_f * exp( ( v - V0alpha_f ) / Kalpha_f)
+			
+			alp_f = Aalpha_f * exp( ( v - V0alpha_f ) / Kalpha_f)
+
+			: f-BETA
+			Abeta_f = 0.01014 (/ms)
+			V0beta_f = -83.3332 (mV)
+			Kbeta_f = 16.05379 (mV)
+			
+			bet_f =	tcorr * Abeta_f * exp( ( v - V0beta_f ) / Kbeta_f )
+			
+			
+			CML expressions:
+			
+			beta = A * exp((v-V1/2)/B)   (exponential)
+			
+			alpha =  A * ((v-V1/2)/B)  / (1 - exp(-(v-V1/2)/B))  (exp_linear)
+			
+	                -->
+            
+            <gate name="s" instances="1">
+                <closed_state id="s0"/>
+                <open_state id="s"/>
+                
+		<!--
+                <transition name="alpha" from="s0" to="s" expr_form="exp_linear" rate="0.0336167333" scale="6.81881" midpoint="4.48754"/>  
+                <transition name="beta" from="s" to="s0" expr_form="exp_linear" rate="0.0016854444" scale="-0.10818" midpoint="-43.97494"/>  
+                -->
+                
+                <transition name="alpha" from="s0" to="s" expr_form="generic" expr=" 0.00008 + 0.0336167333 * ((v-4.48754)/6.81881)  / (1 - (exp (-(v-4.48754)/6.81881)))"/>
+                <transition name="beta" from="s" to="s0" expr_form="generic" expr=" 0.04752 + 0.0016854444 * ((v+43.97494)/-0.10818)  / (1 - (exp (-(v+43.97494)/-0.10818)))"/>
+                
+            </gate>
+            
+	    <gate name="f" instances="1">
+		<closed_state id="f0"/>
+		<open_state   id="f"/>
+
+		<transition name="alpha" from="f0" to="f" expr_form="exponential" rate="0.31836" scale="-62.52621" midpoint="-80"/>  
+		<transition name="beta"  from="f" to="f0" expr_form="exponential" rate="0.01014" scale="16.05379" midpoint="-83.3332"/>    
+            </gate>
+            
+        </current_voltage_relation>
+        
+        <impl_prefs>
+             <table_settings max_v="30" min_v="-100" table_divisions="13000"/>
+	</impl_prefs>
+	
+    </channel_type>
+</channelml>
