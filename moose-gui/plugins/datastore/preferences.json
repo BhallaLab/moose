@@ -1,0 +1,44 @@
+{
+    "chemical": {
+        "simulation": {
+            "default-runtime": 100.0,
+            "diffusion-dt": 0.01,
+            "gui-update-interval": 10.0,
+            "plot-update-interval": 10.0,
+            "simulation-dt": 10.0,
+            "solver": "Runge Kutta"
+        },
+        "visualization": {}
+    },
+    "electrical": {
+        "simulation": {
+            "default-runtime": 1.0,
+            "gui-update-interval": 0.01,
+            "plot-update-interval": 0.0005,
+            "simulation-dt": 5e-05,
+            "solver": "Gillespie"
+        },
+        "visualization": {
+            "background-color": [
+                255,
+                255,
+                255,
+                0
+            ],
+            "base-color": [
+                255,
+                5,
+                0,
+                251
+            ],
+            "base-membrane-voltage": -0.07,
+            "peak-color": [
+                170,
+                255,
+                253,
+                255
+            ],
+            "peak-membrane-voltage": -0.06
+        }
+    }
+}
