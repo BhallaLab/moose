@@ -1,0 +1,7 @@
+This is a modified version of contents of directory
+../../../Demos/neuroml/CA1PyramidalCell/ . This is here for purpose of testing
+only.
+
+File ./ca1_test.py adds two tests: injected current vs frequency and no of spike
+when a certain amount of current is inject. If these test fails, neuroml parser
+is not working properly.

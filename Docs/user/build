@@ -1,0 +1,49 @@
+#!/bin/sh
+
+echo "[ Compiling inline docs ]"
+echo "digestbuiltindocs.py -> moosebuiltindocs.markdown"
+PYTHONPATH=../../python:$PYTHONPATH
+python py/digestbuiltindocs.py markdown/moosebuiltindocs.markdown > /dev/null
+
+echo "[ Generating HTML ]"
+echo "moosebuiltindocs.markdown -> moosebuiltindocs.html"
+pandoc                              \
+	-c css/moosedocs.css            \
+	-c css/moosebuiltindocs.css     \
+	markdown/moosebuiltindocs.markdown -o html/moosebuiltindocs.html
+
+echo "index.markdown -> index.html"
+pandoc                              \
+	-c html/css/moosedocs.css            \
+	markdown/index.markdown -o index.html
+
+echo "MooseGuiDocs.markdown -> MooseGuiDocs.html"
+pandoc                              \
+	--toc                           \
+	-c css/moosedocs.css            \
+	markdown/MooseGuiDocs.markdown -o html/MooseGuiDocs.html
+
+echo "Kkit12Documentation.markdown -> Kkit12Documentation.html"
+pandoc                              \
+	--toc                           \
+	-c css/moosedocs.css            \
+	markdown/Kkit12Documentation.markdown -o html/Kkit12Documentation.html
+
+echo "pymoose2walkthrough.markdown -> pymoose2walkthrough.html"
+pandoc                              \
+	--toc                           \
+	-c css/moosedocs.css            \
+	markdown/pymoose2walkthrough.markdown -o html/pymoose2walkthrough.html
+
+echo "Nkit2Documentation.markdown -> Nkit2Documentation.html"
+pandoc                              \
+	--toc                           \
+	-c css/moosedocs.css            \
+	markdown/Nkit2Documentation.markdown -o html/Nkit2Documentation.html
+
+# PDF: not tried yet.
+# echo "[ Generating PDF ]"
+# pandoc                             \
+	# markdown/Nkit2Documentation.markdown -o pdf/Nkit2Documentation.pdf
+
+echo "[ Done! ]"

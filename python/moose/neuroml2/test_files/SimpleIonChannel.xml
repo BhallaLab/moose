@@ -1,0 +1,15 @@
+<neuroml xmlns="http://www.neuroml.org/schema/neuroml2"  xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.w3.org/2001/XMLSchema" id="ChannelMLDemo">
+    <ionChannel id="NaConductance" conductance="10pS" type="ionChannelHH" species="na">
+        <notes>This is an example voltage-gated Na channel</notes>
+        <gate id="m" instances="3">
+            <forwardRate midpoint="-65mV" rate="0.07per_ms" scale="-20mV" type="HHExpRate"/>
+            <reverseRate midpoint="-35mV" rate="1per_ms" scale="10mV" type="HHSigmoidRate"/>
+        </gate>
+        <gate id="h" instances="1">
+            <forwardRate midpoint="-55mV" rate="0.1per_ms" scale="10mV" type="HHExpLinearRate"/>
+            <reverseRate midpoint="-65mV" rate="0.125per_ms" scale="-80mV" type="HHExpRate"/>
+        </gate>
+    </ionChannel>
+    <ionChannel id="pas" type="ionChannelPassive">
+    </ionChannel>
+</neuroml>

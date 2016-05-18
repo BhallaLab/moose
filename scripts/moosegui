@@ -1,0 +1,3 @@
+#/bin/bash
+# This script launches MOOSE gui.
+cd /usr/lib/moose/gui && python mgui.py

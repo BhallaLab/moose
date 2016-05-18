@@ -1,0 +1,60 @@
+sudo: required
+dist: trusty
+language: cpp
+compiler:
+    - gcc
+    - clang
+os:
+    - linux
+notifications:
+    email:
+        recipients:
+            - dilawar.s.rajput@gmail.com
+            - bhalla@ncbs.res.in
+            - hrani@ncbs.res.in
+            - ray.subhasis@gmail.com
+        on_success: change
+        on_failure: always
+
+env:
+    - CTEST_MODEL=Nightly
+cache: apt
+
+matrix:
+    allow_failures:
+
+before_script:
+    - sudo apt-get install -qq libxml2-dev libbz2-dev
+    - sudo apt-get install -qq libhdf5-serial-dev
+    - sudo apt-get install -qq make cmake
+    - sudo apt-get install -qq  python-numpy python-matplotlib
+    - sudo apt-get install -qq  python3-numpy python3-matplotlib python3-dev
+    - sudo apt-get install -qq libboost-all-dev
+    - sudo apt-get install -qq libgsl0-dev
+
+before_install:
+    - sbmlurl="http://sourceforge.net/projects/sbml/files/libsbml/5.9.0/stable/Linux/64-bit/libSBML-5.9.0-Linux-x64.deb"
+    - wget "$sbmlurl" -O libsbml.deb && sudo dpkg -i libsbml.deb 
+    - sudo apt-get install -f
+
+install:
+    - echo "nothing to do here"
+
+script:
+    - sudo ldconfig /usr/lib64
+    - # First test is normal make scripts. (outdated).
+    - make 
+    - # Now test the cmake with gsl
+    - mkdir -p _GSL_BUILD && cd _GSL_BUILD && cmake -DDEBUG=ON -DPYTHON_EXECUTABLE=/usr/bin/python ..
+    - make && ctest --output-on-failure
+    - cd .. # Build with python3.
+    - mkdir -p _GSL_BUILD2 && cd _GSL_BUILD2 && cmake -DDEBUG=ON -DPYTHON_EXECUTABLE=/usr/bin/python3 ..
+    - make && ctest --output-on-failure
+    - cd .. # Now with boost.
+    - mkdir -p _BOOST_BUILD && cd _BOOST_BUILD && cmake -DWITH_BOOST=ON -DDEBUG=ON -DPYTHON_EXECUTABLE=/usr/bin/python ..
+    - make && ctest --output-on-failure
+    - cd .. # Now with boost and python3.
+    - mkdir -p _BOOST_BUILD2 && cd _BOOST_BUILD2 && cmake -DWITH_BOOST=ON -DDEBUG=ON -DPYTHON_EXECUTABLE=/usr/bin/python3 ..
+    - make && ctest --output-on-failure
+    - cd ..
+    - echo "All done. Phew"

@@ -1,0 +1,76 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE model SYSTEM "xmml.dtd">
+<model id="Canals" name="Canal system" xmml_version="0.4" xmlns="http://www.mapper-project.eu/xmml" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <description>
+      A canal system in France, with possible floods or sedimentation.
+    </description>
+
+    <definitions>
+      <xi:include href="isr_meta.xml#xpointer(/metadata/*)"/>
+
+      <submodel id="C1D" name="Canal1D" init="yes">
+        <timescale delta="10 min" total="1 yr"/>
+        <spacescale id="x" delta="1 m" total="3 km"/>
+
+        <ports>
+          <in id="flow_left_in" operator="S" datatype="double"/>
+          <in id="flow_right_in" operator="S" datatype="double"/>
+          <out id="flow_left_out" operator="Oi" datatype="double"/>
+          <out id="flow_right_out" operator="Oi" datatype="double"/>
+        </ports>
+      </submodel>
+
+      <submodel id="J" name="Junction">
+        <timescale delta="10 min" total="1 yr"/>
+        <spacescale delta="1 dm" total="3 m"/>
+
+        <ports>
+          <in id="flow_left_in" operator="S" datatype="double"/>
+          <in id="flow_right_in" operator="S" datatype="double"/>
+          <in id="flow_top_in" operator="S" datatype="double"/>
+          <out id="flow_left_out" operator="Oi" datatype="double"/>
+          <out id="flow_right_out" operator="Oi" datatype="double"/>
+          <out id="flow_top_out" operator="Oi" datatype="double"/>
+        </ports>
+      </submodel>
+
+      <submodel id="END" name="End point">
+        <timescale delta="10 min" total="1 yr"/>
+        <spacescale delta="1 dm" total="3 m"/>
+
+        <ports>
+          <in id="flow_in" operator="S" datatype="double"/>
+          <out id="flow_out" operator="Oi" datatype="double"/>
+        </ports>
+      </submodel>
+    </definitions>
+  
+  <topology>
+    <instance id="c1" submodel="C1D">
+      <spacescale id="x" total="2 km"/>
+    </instance>
+    <instance id="c2" submodel="C1D"/>
+    <instance id="c3" submodel="C1D">
+      <spacescale id="x" total="1 km"/>
+    </instance>
+    <instance id="src" submodel="END"/>
+    <instance id="sink1" submodel="END"/>
+    <instance id="sink2" submodel="END"/>
+    <instance id="j" submodel="J"/>
+
+    <coupling from="c1.flow_left_out" to="src.flow_in"/>
+    <coupling from="c1.flow_left_in" to="src.flow_out"/>
+    <coupling from="c1.flow_right_out" to="j.flow_left_in"/>
+    <coupling from="c1.flow_right_in" to="j.flow_left_out"/>
+
+    <coupling from="c2.flow_left_out" to="sink1.flow_in"/>
+    <coupling from="c2.flow_left_in" to="sink1.flow_out"/>
+    <coupling from="c2.flow_right_out" to="j.flow_right_in"/>
+    <coupling from="c2.flow_right_in" to="j.flow_right_out"/>
+
+    <coupling from="c3.flow_left_out" to="sink2.flow_in"/>
+    <coupling from="c3.flow_left_in" to="sink2.flow_out"/>
+    <coupling from="c3.flow_right_out" to="j.flow_top_in"/>
+    <coupling from="c3.flow_right_in" to="j.flow_top_out"/>
+  </topology>
+</model>

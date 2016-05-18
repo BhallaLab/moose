@@ -1,0 +1,73 @@
+% About config.xml
+% Dilawar Singh
+
+This document describe `config.xml` file. This configure moose simulator and
+tell it what and how to plot.
+
+    
+In <element>, `cell_name` are useless, we use population and their instance id
+to search for a cell. Once the cell is found, appropriate messages are setup
+inside moose to record the simulation data.
+
+
+## Example
+```xml
+<!-- Write your simulation specific settings here. -->
+<moose elec_path='/neuroml/electrical' simulate='true' runtime="0.6" save_path='./figs'>
+    <global sim_dt="1e-3" plot_dt="1e-3" sim_method="hsolve" />
+
+    <!-- This setup recording settings for soma. Each type of element should
+        be contained in <element> </element> tag. In nutshell, we write the group
+        of variable first then we write its individual details.
+    -->
+
+    <!-- If single_plot is true then plot all plots in one figure -->
+    <element type="soma" population="granuleGroup"  instance_id="0">
+        <record type="table" file_name="figs/granule.eps">
+            <!--
+                 We should be able to form the following from this XML.
+                 somaVm = moose.setupTable(
+                        'somaVm'
+                        , moose.Compartment(parentPath+'/'+path)
+                        , 'Vm'
+                     )
+                prefixed_by_element, if not specified, will be treated as true.
+            -->
+            <variable name="Vm">
+                <target_in_simulator type="Compartment" path="Soma(0)"
+                     prefixed_by_element="true" />
+                 <plot plot="true" output="" plot_args="">
+                    <label x="Time" y="Soma Vm (V)" />
+                </plot>
+            </variable>
+            <variable name="Cm">
+                <target_in_simulator type="Compartment" path="Soma(0)/data/Cm" />
+                <plot output="">
+                    <label x="Time" y="Soma(0)/data/Cm" title="" />
+                </plot>
+            </variable>
+        </record>
+    </element>
+    <element type="soma" population="cellB"  instance_id="0">
+        <record type="table" single_plot="true" file_name="figs/purkinje.eps">
+            <!--
+                 This should translate to following in moose. 
+
+                 somaVm = moose.setupTable(
+                        'somaVm'
+                        , moose.Compartment(parentPath+'/'+path)
+                        , 'Vm'
+                     )
+                prefixed_by_element, if not specified, will be treated as true.
+            -->
+            <variable name="Vm">
+                <target_in_simulator type="Compartment" path="Soma(0)"
+                     prefixed_by_element="true" />
+                 <plot plot="true" output="" plot_args="">
+                    <label x="Time" y="Soma Vm (V)" />
+                </plot>
+            </variable>
+        </record>
+    </element>
+</moose>
+```

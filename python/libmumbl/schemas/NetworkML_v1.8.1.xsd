@@ -1,0 +1,976 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xs:schema targetNamespace="http://morphml.org/networkml/schema"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns="http://morphml.org/networkml/schema"
+    xmlns:meta="http://morphml.org/metadata/schema"
+    xmlns:mml="http://morphml.org/morphml/schema"
+    xmlns:bio="http://morphml.org/biophysics/schema"
+    elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+<!--
+    This file specifies a number of elements needed by NeuroML Level 3 compliant files
+
+    Funding for this work has been received from the Medical Research Council and the 
+    Wellcome Trust. This file was initially developed as part of the neuroConstruct project
+    
+    Author: Padraig Gleeson
+    Copyright 2009 University College London
+    
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+    
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+-->
+
+    <xs:import namespace="http://morphml.org/metadata/schema"
+    schemaLocation="../Level1/Metadata_v1.8.1.xsd"/>
+    
+
+    <xs:import namespace="http://morphml.org/biophysics/schema"
+    schemaLocation="../Level2/Biophysics_v1.8.1.xsd"/>
+
+
+      <xs:annotation>
+        <xs:documentation>The specification of populations and projections which allows network connections to be encoded in NeuroML</xs:documentation>
+         </xs:annotation>
+
+        <xs:element name="networkml" type="NetworkML">
+            <xs:annotation>
+                    <xs:documentation>The root element. 
+                    Note: this element will only be present in a standalone NetworkML file (i.e. no cells or channels defined in the file).
+                    For files covering many levels, neuroml will be the root element</xs:documentation>
+            </xs:annotation>
+        </xs:element>
+
+        <xs:complexType name="NetworkML">
+            <xs:annotation>
+                    <xs:documentation>The main elements which make up a NetworkML compliant document. </xs:documentation>
+            </xs:annotation>
+
+            <xs:sequence>
+                <xs:group ref="meta:metadata"/>
+                <xs:group ref="CoreNetworkElements"/>
+            </xs:sequence>
+
+            <xs:attribute name="name" type="xs:string" use="optional"/> 
+
+        
+        <xs:attribute name="lengthUnits" type="meta:LengthUnits" use="optional">
+            <xs:annotation>
+                <xs:documentation>Unit of all length measurements. Usually has the value &lt;b&gt;micrometer&lt;/b&gt;. Note: length_units will be the preferred form in v2.0</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+        
+        <xs:attribute name="length_units" type="meta:LengthUnits" use="optional">
+            <xs:annotation>
+                <xs:documentation>Unit of all length measurements. Usually has the value &lt;b&gt;micrometer&lt;/b&gt;. Note: length_units will be the preferred form in v2.0</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+
+            <xs:attribute name="volumeUnits" type="meta:VolumeUnits" use="optional" default="cubic_millimeter">  <!-- Note: changed to the American English spelling in v1.8.1...-->
+                    <xs:annotation>
+                            <xs:documentation>Unit of all volume measurements.</xs:documentation>
+                    </xs:annotation>
+            </xs:attribute>
+
+        </xs:complexType>
+
+
+
+
+        <xs:group name="CoreNetworkElements">
+            <xs:annotation>
+                <xs:documentation>The elements needed to specify a network connection</xs:documentation>
+            </xs:annotation>
+
+            <xs:sequence>
+
+                 <xs:element name="populations" type="Populations">
+                    <xs:annotation>
+                        <xs:documentation>The least that's needed in a network is a population of cells...</xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+
+                <xs:element name="projections" type="Projections" minOccurs="0">
+                    <xs:annotation>
+                        <xs:documentation>In theory there can be no projections, if the file is intended only to specify positions</xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+
+                <xs:element name="inputs" type="Inputs" minOccurs="0">
+                    <xs:annotation>
+                        <xs:documentation>No inputs need be specified</xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+
+            </xs:sequence>
+            
+        </xs:group>
+
+
+         <xs:complexType name="Populations">
+            <xs:annotation>
+                <xs:documentation>The list of cell populations</xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:group ref="meta:metadata"/>
+                <xs:element name="population" type="Population" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+
+
+         <xs:complexType name="Projections">
+            <xs:annotation>
+                <xs:documentation>The list of projections from one cell population to another</xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:group ref="meta:metadata"/>
+                <xs:element name="projection" type="Projection" minOccurs="1" maxOccurs="unbounded"/>
+            </xs:sequence>
+
+            <xs:attribute name="units" type="meta:Units" use="required">
+                <xs:annotation>
+                    <xs:documentation>Unit system of all quantities in the projection descriptions, e.g. synaptic time constants</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+
+        </xs:complexType>
+        
+        
+
+         <xs:complexType name="Inputs">
+            <xs:annotation>
+                <xs:documentation>The list of electrical inputs into the cells. This should be extended to allow voltage clamp inputs...</xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:group ref="meta:metadata"/>
+                <xs:element name="input" type="Input" minOccurs="1" maxOccurs="unbounded"/>
+            </xs:sequence>
+
+            <xs:attribute name="units" type="meta:Units" use="required">
+                <xs:annotation>
+                    <xs:documentation>Unit system of all quantities in the input description, e.g. input current amplitudes</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+
+        </xs:complexType>
+        
+
+        <xs:complexType name="Input">
+            <xs:annotation>
+                <xs:documentation>Description of a single electrical input to a number of cells</xs:documentation>
+            </xs:annotation>
+
+            <xs:sequence>
+                <xs:group ref="meta:metadata"/>
+
+                <xs:choice>
+                    <xs:annotation>
+                        <xs:documentation>Currently either a pulse input or a random spiking input are allowed</xs:documentation>
+                    </xs:annotation>
+                    <xs:element name="pulse_input" type="PulseInput"/>
+                    <xs:element name="random_stim" type="RandomStim"/>
+                </xs:choice>
+                
+                  <xs:element name="target" type="InputTarget"/>
+                
+            </xs:sequence>
+
+
+            <xs:attribute name="name" type="xs:string" use="required"/>
+
+        </xs:complexType>
+
+        <xs:complexType name="PulseInput">
+            <xs:annotation>
+                <xs:documentation>A single input pulse. Note: this should be changed to allow easier specifications of
+                                  pulse trains, input protocols, etc.</xs:documentation>
+                </xs:annotation>    
+                
+                <xs:attribute name="delay" type="bio:TimeValue" use="required"/>
+                <xs:attribute name="duration" type="bio:TimeValue" use="required"/>
+                <xs:attribute name="amplitude" type="bio:CurrentValue" use="required"/>
+                
+        </xs:complexType>
+
+        <xs:complexType name="RandomStim">
+            <xs:annotation>
+                <xs:documentation>A random stimulation at a specific frequency. Note: can be interpreted differently by different simulators!!</xs:documentation>
+                </xs:annotation>
+
+                <xs:attribute name="frequency" type="bio:FrequencyValue" use="required"/>
+                <xs:attribute name="synaptic_mechanism" type="xs:string" use="required">
+                    <xs:annotation>
+                        <xs:documentation>The name of a synaptic mechanism which will provides the conductance change.
+                        This will be fired once every 'spike' at the given frequency</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+
+        </xs:complexType>
+
+        <xs:complexType name="RandomStimInstance">
+            <xs:annotation>
+                <xs:documentation>Instance/site specific random stimulation at a specific frequency. Note: can be interpreted differently by different simulators!!</xs:documentation>
+                </xs:annotation>
+
+                <xs:attribute name="frequency" type="bio:FrequencyValue" use="required"/>
+               
+        </xs:complexType>
+
+        <xs:complexType name="InputTarget">
+            <xs:annotation>
+                <xs:documentation>Specifies the cell group and which cells/segments to apply the stimulation</xs:documentation>
+            </xs:annotation>    
+                
+ 
+            <xs:sequence>
+                <xs:group ref="meta:metadata"/>
+                <xs:choice>
+                    <xs:annotation>
+                        <xs:documentation>As with populations/projections, there are two ways to specify the locations of the 
+                                          stimulations: a list of cell location instances and a template for choosing the cells.</xs:documentation>
+                    </xs:annotation>
+
+                    <xs:element name="sites" type="InputSites"/>
+                    <xs:element name="site_pattern" type="InputSitePattern"/>
+
+                </xs:choice>
+            </xs:sequence>
+            
+           <xs:attribute name="cell_group" type="xs:string" use="optional">
+                <xs:annotation>
+                    <xs:documentation>The cell group to which to apply the stimulation. Note for v2.0 population is the preferred name of this attribute (not cell_group).</xs:documentation>
+                
+                </xs:annotation>
+            </xs:attribute>
+            
+            
+           <xs:attribute name="population" type="xs:string" use="optional">
+                <xs:annotation>
+                    <xs:documentation>The cell group to which to apply the stimulation. Note for v2.0 population is the preferred name of this attribute (not cell_group).</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+                
+        </xs:complexType>
+        
+        
+
+        <xs:complexType name="InputSitePattern">
+            <xs:annotation>
+                <xs:documentation>Information on the number of cells on which to apply inputs. 
+                Currently only two, but could be expanded to include other scenarios, e.g. all cells in 3d region.</xs:documentation>
+            </xs:annotation>
+
+            <xs:choice>
+                <!-- Lots more scenarios could be described here... -->
+                <xs:element name="all_cells">
+                    <xs:annotation>
+                        <xs:documentation>Apply input on all cells in group</xs:documentation>
+                    </xs:annotation>
+                    <xs:complexType/>
+                </xs:element>
+                <xs:element name="percentage_cells">
+                    <xs:annotation>
+                        <xs:documentation>Apply input to a certain percentage of cells in a group</xs:documentation>
+                    </xs:annotation>
+                    <xs:complexType>
+                        <xs:attribute name="percentage" type="meta:Percentage"/>
+                    </xs:complexType>
+                </xs:element>
+
+            </xs:choice>
+
+        </xs:complexType>
+        
+        
+        
+
+        <xs:complexType name="InputSites">
+            <xs:annotation>
+                <xs:documentation>The list of input sites</xs:documentation>
+            </xs:annotation>
+
+            <xs:sequence>
+                <xs:group ref="meta:metadata"/>
+                <xs:element name="site" type="InputSite" maxOccurs="unbounded"/>
+            </xs:sequence>
+            
+            <xs:attribute name="size" type="xs:nonNegativeInteger" use="optional">
+                <xs:annotation>
+                    <xs:documentation>The number of instances of inputs. 
+                    This is redundant information, but can be useful when the file is being parsed to allocate memory for an array of cells. 
+                    NOTE: likely to be required from v2.0</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+
+        </xs:complexType>
+        
+        <xs:complexType name="InputSite">
+            <xs:annotation>
+                <xs:documentation>Specifies a location on a cell where input is received</xs:documentation>
+            </xs:annotation>
+
+
+                <xs:choice>
+                    <xs:annotation>
+                        <xs:documentation>Overrides global settings if there is a different value of pulse amplitude/rate, etc. for this site</xs:documentation>
+                    </xs:annotation>
+                    <xs:element name="pulse_input_instance" type="PulseInput" minOccurs="0"/>
+                    <xs:element name="random_stim_instance" type="RandomStimInstance" minOccurs="0"/>
+                </xs:choice>
+            
+            <xs:attribute name="cell_id" type="CellIdInNetwork" use="required"/>
+            <xs:attribute name="segment_id" type="meta:SegmentIdInCell" use="optional" default="0"/>
+            <xs:attribute name="fraction_along" type="meta:ZeroToOne" use="optional" default="0.5"/>
+                
+        </xs:complexType>
+
+
+        <xs:complexType name="Population">
+            <xs:annotation>
+                <xs:documentation>Description of a cell population of the same type</xs:documentation>
+            </xs:annotation>
+
+            <xs:sequence>
+                <xs:group ref="meta:metadata"/>
+               
+                <xs:element name="cell_type" type="xs:string" minOccurs="0">
+                    <xs:annotation>
+                        <xs:documentation>The cell type for this population. NOTE: an attribute value for cell_type WILL BE PREFERRED FORMAT IN v2.0. The option for this element will be removed!</xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+
+                <xs:choice>
+                    <xs:annotation>
+                        <xs:documentation>Either instances or a specification of the location</xs:documentation>
+                    </xs:annotation>
+                    <xs:element name="instances" type="Instances"/>
+                    <xs:element name="pop_location" type="PopulationLocation"/>
+                </xs:choice>
+            </xs:sequence>
+
+
+            <xs:attribute name="name" type="xs:string" use="required">
+                <xs:annotation>
+                    <xs:documentation>The name of the population</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="cell_type" type="xs:string" use="optional">
+                <xs:annotation>
+                    <xs:documentation>The cell type for this population. Optional now, but WILL BE PREFERRED FORMAT IN v2.0</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+
+        </xs:complexType>
+
+
+
+
+        <xs:complexType name="Instances">
+            <xs:annotation>
+                <xs:documentation>Cell Instance position information</xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:group ref="meta:metadata"/>
+                <xs:element name="instance" type="CellInstance" maxOccurs="unbounded"/>
+            </xs:sequence>
+            
+            
+            <xs:attribute name="size" type="xs:nonNegativeInteger" use="required">
+                <xs:annotation>
+                    <xs:documentation>The number of instances of cells for this population. 
+                    This is redundant information, but can be useful when the file is being parsed to allocate memory for an array of cells. 
+                    NOTE: required from v1.7.3</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            
+        </xs:complexType>
+
+
+        <xs:complexType name="Projection">
+            <xs:annotation>
+                <xs:documentation>Description of how one cell population makes synaptic connections with another</xs:documentation>
+            </xs:annotation>
+
+            <xs:sequence>
+                <xs:group ref="meta:metadata"/>
+                
+                <xs:element name="source" type="xs:string" minOccurs="0">
+                    <xs:annotation>
+                        <xs:documentation>Cell population where synaptic connection begins. NOTE: attribute values for source and target WILL BE THE PREFERRED FORMAT IN v2.0. The option for this element will be removed!</xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element name="target" type="xs:string" minOccurs="0">
+                    <xs:annotation>
+                        <xs:documentation>Cell population where synaptic connection terminates. NOTE: attribute values for source and target WILL BE THE PREFERRED FORMAT IN v2.0. The option for this element will be removed!</xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+
+                <xs:element name="synapse_props" type="GlobalSynapticProperties" maxOccurs="unbounded">
+                    <xs:annotation>
+                        <xs:documentation>Properties of a synapse associated with this connection.</xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+
+                <xs:choice>
+                    <xs:annotation>
+                        <xs:documentation>Either an explicit list of the connections or a description of how to create the connections</xs:documentation>
+                    </xs:annotation>
+
+                    <xs:element name="connections" type="Connections"/>
+                    <xs:element name="connectivity_pattern" type="ConnectivityPattern"/>
+
+                </xs:choice>
+
+            </xs:sequence>
+
+            <xs:attribute name="name" type="xs:string" use="required">
+                <xs:annotation>
+                    <xs:documentation>String reference for the projection</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="source" type="xs:string" use="optional">
+                <xs:annotation>
+                    <xs:documentation>Cell population where synaptic connection begins. Optional now, but WILL BE PREFERRED FORMAT IN v2.0</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="target" type="xs:string" use="optional">
+                <xs:annotation>
+                    <xs:documentation>Cell population where synaptic connection terminates. Optional now, but WILL BE PREFERRED FORMAT IN v2.0</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+        </xs:complexType>
+
+
+
+        <xs:complexType name="SynapseProperties">
+            <xs:annotation>
+                <xs:documentation>Pre v1.7.1 format for global synapse properties. Preferred format is GlobalSynapticProperties. This option will be disabled in v2.0</xs:documentation>
+            </xs:annotation>
+
+            <xs:sequence>
+
+                <xs:group ref="meta:metadata"/>
+
+                <xs:element name="synapse_type" type="xs:string"/>
+                <xs:element name="default_values" type="SynapseInternalProperties"/>
+            </xs:sequence>
+
+        </xs:complexType>
+
+
+
+        <xs:complexType name="GlobalSynapticProperties">
+            <xs:annotation>
+                <xs:documentation>Information on synapse type and default values for weight, delay, threshold, etc.</xs:documentation>
+            </xs:annotation>
+
+            <xs:complexContent>
+                <xs:extension base="SynapseInternalProperties">  
+                    
+                <xs:sequence>
+                    <xs:element name="synapse_type" type="xs:string" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation>For compatability to pre v1.7.1. Will be removed in v2.0.</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="default_values" type="SynapseInternalProperties" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation>For compatability to pre v1.7.1. Will be removed in v2.0.</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:sequence>
+            
+                    <xs:attribute name="synapse_type" type="xs:string"  use="optional">
+                        <xs:annotation>
+                            <xs:documentation>Including synapse_type as attribute in synapse_props will be required in v2.0</xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+
+                </xs:extension>
+            </xs:complexContent>  
+
+        </xs:complexType>
+        
+        
+        
+
+        <xs:complexType name="LocalSynapticProperties">
+            <xs:annotation>
+                <xs:documentation>Variables specifying a single synapse</xs:documentation>
+            </xs:annotation>
+
+            <xs:complexContent>
+                <xs:extension base="SynapseInternalProperties">
+
+                    <xs:attribute name="synapse_type" type="xs:string"  use="optional">
+                        <xs:annotation>
+                            <xs:documentation>Optional for a single synaptic connection. Only needed in the case where multiple synapses are 
+                            present at one connection and there are non default values for each synapse's weights, etc. This field gives the 
+                            name of the synapse type referred to.</xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+
+                </xs:extension>
+            </xs:complexContent>  
+
+        </xs:complexType>
+
+
+
+        <xs:complexType name="SynapseInternalProperties">
+            <xs:annotation>
+                <xs:documentation>Variables specifying a single synapse or default values for a set of connections</xs:documentation>
+            </xs:annotation>
+            
+            <xs:sequence>
+                <xs:group ref="meta:metadata"/>
+            </xs:sequence>
+
+            <xs:attribute name="internal_delay" type="bio:SynapticDelayValue"  use="optional" default ="0">
+                <xs:annotation>
+                    <xs:documentation>Delay due to diffusion across the synaptic cleft. If only one delay value is known, this can be used</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="pre_delay" type="bio:SynapticDelayValue"  use="optional" default ="0">
+                <xs:annotation>
+                    <xs:documentation>Delay due to presynaptic mechanism</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="post_delay" type="bio:SynapticDelayValue"  use="optional" default ="0">
+                <xs:annotation>
+                    <xs:documentation>Delay due to postsynaptic mechanism</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="prop_delay" type="bio:SynapticDelayValue"  use="optional" default ="0">
+                <xs:annotation>
+                    <xs:documentation>Delay due to simulated AP propagation along an axon</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="weight" type="meta:NonNegativeDouble" use="optional"  default ="1">
+                <xs:annotation>
+                    <xs:documentation>Multiplicative weighting factor for the synapse</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="threshold" use="optional"  type="bio:VoltageValue"  default ="0">
+                <xs:annotation>
+                    <xs:documentation>Presynaptic membrane potential level above which the synapse fires</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+        </xs:complexType>
+
+
+
+        <xs:complexType name="ConnectivityPattern">
+            <xs:annotation>
+                <xs:documentation>Information on the number of target cells connected to source cells, etc.</xs:documentation>
+            </xs:annotation>
+
+            <xs:choice>
+                <!-- Lots more scenarios could be described here... -->
+                <xs:element name="all_to_all">
+                    <xs:annotation>
+                        <xs:documentation>Connect every pre cell to every post cell</xs:documentation>
+                    </xs:annotation>
+                    <xs:complexType/>
+                </xs:element>
+                <xs:element name="fixed_probability">
+                    <xs:annotation>
+                        <xs:documentation>For each pre - post pair, there is a fixed probability of connection</xs:documentation>
+                    </xs:annotation>
+                    <xs:complexType>
+                        <xs:attribute name="probability" type="meta:ZeroToOne"/>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="per_cell_connection" type="PerCellConnection">
+                    <xs:annotation>
+                        <xs:documentation>Connection built iteratively from each pre (or post) cell based on a number of parameters</xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+
+            </xs:choice>
+
+        </xs:complexType>
+        
+
+        <xs:complexType name="PerCellConnection">
+            <xs:annotation>
+                <xs:documentation>Connection built iteratively from each pre (or post) cell based on a number of parameters</xs:documentation>
+            </xs:annotation>
+
+                <xs:attribute name="direction" default="PreToPost">
+                    <xs:annotation>
+                        <xs:documentation>Whether the settings below (e.g. number per source cell) refer to PreToPost or PostToPre connections.
+                        Note more info could be known about numbers of connections on post synaptic cells, so this possibility should be allowed.</xs:documentation>
+                    </xs:annotation>
+
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:enumeration value="PreToPost"/>
+                            <xs:enumeration value="PostToPre"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+                <xs:attribute name="num_per_source" type="meta:PositiveDouble" use="required" />
+                <xs:attribute name="max_per_target" type="xs:positiveInteger"  use="optional"/>
+                <!-- More settings can be put here, e.g. distance dependence of connections-->
+
+        </xs:complexType>
+
+
+
+        <xs:complexType name="Connections">
+            <xs:annotation>
+                <xs:documentation>The list of cell connections</xs:documentation>
+            </xs:annotation>
+
+            <xs:sequence>
+                <xs:group ref="meta:metadata"/>
+                <xs:element name="connection" type="Connection" maxOccurs="unbounded"/>
+            </xs:sequence>
+            
+            
+            <xs:attribute name="size" type="xs:nonNegativeInteger" use="optional">
+                <xs:annotation>
+                    <xs:documentation>The number of instances of connections. 
+                    This is redundant information, but can be useful when the file is being parsed to allocate memory for an array of cells. 
+                    NOTE: likely to be required from v2.0</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+
+        </xs:complexType>
+
+        <xs:complexType name="CellInstance">
+            <xs:annotation>
+                <xs:documentation>An instance of a cell at a the specified location</xs:documentation>
+            </xs:annotation>
+
+            <xs:sequence>
+                <xs:group ref="meta:metadata"/>
+                <xs:element name="location" type="meta:Point3D"/>
+            </xs:sequence>
+
+            <xs:attribute name="id" type="xs:nonNegativeInteger" use="required">
+                <xs:annotation>
+                    <xs:documentation>A unique non negative integer id for the cell instance</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            
+            <xs:attribute name="node_id" type="xs:nonNegativeInteger" use="optional">
+                <xs:annotation>
+                    <xs:documentation>An optional specification of the node id on which this cell should run. This can be used
+                    to allow exchange of neuronal networks partitioned for execution in
+                    distributed computing environments. A parsing appliction can ignore this inforation and create its own partition.</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+
+        </xs:complexType>
+
+
+        <xs:complexType name="Connection">
+            <xs:annotation>
+                <xs:documentation>A single synaptic connection</xs:documentation>
+            </xs:annotation>
+
+            <xs:sequence>
+                <xs:group ref="meta:metadata"/>
+                
+                <xs:element name="pre" type="SynapticLocation" minOccurs="0">
+                    <xs:annotation>
+                        <xs:documentation>NOTE: Attributes pre_cell_id etc. for WILL BE PREFERRED FORMAT IN v2.0</xs:documentation>
+                    </xs:annotation>
+                 </xs:element>
+                <xs:element name="post" type="SynapticLocation" minOccurs="0">
+                    <xs:annotation>
+                        <xs:documentation>NOTE: Attributes post_cell_id etc. for WILL BE PREFERRED FORMAT IN v2.0</xs:documentation>
+                    </xs:annotation>
+                 </xs:element>
+                <xs:element name="properties" type="LocalSynapticProperties" minOccurs="0" maxOccurs="unbounded"/>
+
+            </xs:sequence>
+
+
+                <xs:attribute name="id" type="xs:integer" use="required">
+                    <xs:annotation>
+                        <xs:documentation>The unique ID of the single synaptic connection.</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                
+                <xs:attribute name="pre_cell_id" type="xs:integer" use="optional">
+                    <xs:annotation>
+                        <xs:documentation>The ID of the presynaptic cell. Must be listed in populations, so that too must list instances.
+                        Optional now, but attributes pre_cell_id, etc. WILL BE PREFERRED FORMAT IN v2.0</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="pre_segment_id" type="xs:integer" use="optional"  default="0">
+                    <xs:annotation>
+                        <xs:documentation>The segment on the presynaptic cell where the synapse is located.
+                        Attributes pre_cell_id, etc. WILL BE PREFERRED FORMAT IN v2.0</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="pre_fraction_along" type="meta:ZeroToOne" use="optional" default="0.5">
+                    <xs:annotation>
+                        <xs:documentation>The fraction along the length of the specified segment on the presynaptic cell where the synapse is located.
+                        Attributes pre_cell_id, etc. WILL BE PREFERRED FORMAT IN v2.0</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                
+                <xs:attribute name="post_cell_id" type="xs:integer" use="optional">
+                    <xs:annotation>
+                        <xs:documentation>The ID of the postsynaptic cell. Must be listed in populations, so that too must list instances.
+                        Optional now, but attributes pre_cell_id, etc. WILL BE PREFERRED FORMAT IN v2.0</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="post_segment_id" type="xs:integer" use="optional"  default="0">
+                    <xs:annotation>
+                        <xs:documentation>The segment on the postsynaptic cell where the synapse is located.
+                        Attributes pre_cell_id, etc. WILL BE PREFERRED FORMAT IN v2.0</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+                <xs:attribute name="post_fraction_along" type="meta:ZeroToOne" use="optional" default="0.5">
+                    <xs:annotation>
+                        <xs:documentation>The fraction along the length of the specified segment on the postsynaptic cell where the synapse is located.
+                        Attributes pre_cell_id, etc. WILL BE PREFERRED FORMAT IN v2.0</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+
+        </xs:complexType>
+
+
+        <xs:complexType name="SynapticLocation">
+
+            <xs:attribute name="cell_id" type="xs:integer" use="required">
+                <xs:annotation>
+                    <xs:documentation>The ID of the cell. Must be listed in populations, so that too must list instances</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="segment_id" type="xs:integer" use="optional"  default="0">
+                <xs:annotation>
+                    <xs:documentation>The segment where the synapse is located.</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="fraction_along" type="meta:ZeroToOne" use="optional" default="0.5">
+                <xs:annotation>
+                    <xs:documentation>The fraction along the length of the specified segment where the synapse is located.</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+        </xs:complexType>
+        
+        
+        
+
+
+
+
+        <xs:complexType name="PopulationLocation">
+            <xs:annotation>
+                <xs:documentation>Description of the 3D positioning of cells in the population, in place of giving explicit locations for each cell</xs:documentation>
+            </xs:annotation>
+
+            <xs:sequence>
+                <xs:group ref="meta:metadata"/>
+                <xs:choice>
+                    <xs:element name="random_arrangement" type="RandomArrangement"/>
+                    <xs:element name="grid_arrangement" type="GridArrangement"/>
+                    <!-- More should be included... -->
+                </xs:choice>
+            </xs:sequence>
+
+
+            <xs:attribute name="reference" type="xs:string"/>
+
+        </xs:complexType>
+
+
+        <xs:complexType name="RandomArrangement">
+            <xs:annotation>
+                <xs:documentation>A random arrangement of cells in a 3D location. Note other 3D regions besides spheres and rectangles can be added if required.</xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:group ref="meta:metadata"/>
+                <xs:element name="population_size" type="xs:nonNegativeInteger">
+                    <xs:annotation>
+                        <xs:documentation>Number of cells to place randomly in the specified 3D location</xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+                <xs:choice>
+                    <xs:element name="spherical_location" type="meta:Sphere"/>
+                    <xs:element name="rectangular_location" type="meta:RectangularBox"/>
+                </xs:choice>
+            </xs:sequence>
+        </xs:complexType>
+
+
+        <xs:complexType name="GridArrangement">
+            <xs:annotation>
+                <xs:documentation>A regular placement of the cells in a number of dimensions</xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:group ref="meta:metadata"/>
+                
+                <xs:choice>
+                
+                    <xs:group ref="SpatialLayout"/>
+
+                    <xs:element name="non_spatial_grid" type="meta:NonSpatialGrid">
+                        <xs:annotation>
+                            <xs:documentation>Specifying this means the precise spatial location of the cells is irrelvant</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+
+                </xs:choice>
+                
+            </xs:sequence>
+            
+        </xs:complexType>
+
+
+        
+        <xs:group name="SpatialLayout">
+            <xs:annotation>
+                <xs:documentation>Layout of the cells according to x,y,z spatial coordinates</xs:documentation>
+            </xs:annotation>
+            
+            <xs:sequence>
+                <xs:element name="rectangular_location" type="meta:RectangularBox">
+                    <xs:annotation>
+                        <xs:documentation>3D box in which the cells are regularly packed. Note if one or two of dimensions of the box is zero it can be a 2D or 1D grid (respectively).</xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+
+
+                <xs:element name="spacing" >
+                    <xs:annotation>
+                        <xs:documentation>Separation of the cells in each dimension</xs:documentation>
+                    </xs:annotation>
+                    <xs:complexType>
+                        <xs:attribute name="x" type="xs:double"/>
+                        <xs:attribute name="y" type="xs:double"/>
+                        <xs:attribute name="z" type="xs:double"/>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:group>
+
+        
+        <xs:complexType name="Level3Connectivity">
+            <xs:annotation>
+                    <xs:documentation>Biophysics of Level3 cell, including specification for allowable synaptic locations.
+                Note: from v1.7.1 the preferred way to specify a potential synaptic location is with a potential_syn_loc element under connectivity under cell, as
+                opposed to the potentialSynapticLocation under biophysics under cell. The former will be the only option from v2.0</xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element name="potential_syn_loc" type="PotentialSynLoc" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+        </xs:complexType>
+
+        
+
+        <xs:complexType name="PotentialSynLoc">
+            <xs:annotation>
+                <xs:documentation>Subset of sections on cell where synaptic connection of a particular type is allowed.
+                Note: from v1.7.1 the preferred way to specify a potential synaptic location is with a potential_syn_loc element under connectivity under cell, as
+            opposed to the potentialSynapticLocation under biophysics under cell. The former will be the only option from v2.0</xs:documentation>
+            </xs:annotation>
+
+            <xs:sequence>
+                <xs:group ref="meta:metadata"/>
+                <xs:sequence>
+                    <xs:element name="group" type="xs:string" minOccurs="1" maxOccurs="unbounded">
+                        <xs:annotation>
+                            <xs:documentation>List of groups of sections allowing the synapse</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:sequence>
+            </xs:sequence>
+            
+            <xs:attribute name="synapse_type" type="xs:string" use="required">
+                <xs:annotation>
+                    <xs:documentation>Which of the synaptic mechanisms can be present</xs:documentation>
+                </xs:annotation>
+            </xs:attribute> 
+            <xs:attribute name="synapse_direction" type="SynapseDirection" use="optional" default="preAndOrPost">
+                <xs:annotation>
+                    <xs:documentation>Whether this synapse location allows a presynaptic connection, a postsynaptic
+                        connection or either</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+        </xs:complexType>
+        
+
+        <xs:complexType name="PotentialSynapticLocation">
+            <xs:annotation>
+                <xs:documentation>Subset of sections on cell where synaptic connection of a particular type is allowed. 
+                Note: from v1.7.1 the preferred way to specify a potential synaptic location is with a potential_syn_loc element under connectivity under cell, as
+            opposed to the potentialSynapticLocation under biophysics under cell. The former will be the only option from v2.0</xs:documentation>
+            </xs:annotation>
+
+            <xs:sequence>
+                <xs:group ref="meta:metadata"/>
+                <xs:sequence>
+                    <xs:element name="synapse_type" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation>Which of the synaptic mechanisms can be present</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="synapse_direction" type="SynapseDirection" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation>Whether this synapse location allows a presynaptic connection, a postsynaptic
+                                connection or either</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="group" type="xs:string" maxOccurs="unbounded">
+                        <xs:annotation>
+                            <xs:documentation>List of groups of sections allowing the synapse</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:sequence>
+            </xs:sequence>
+        </xs:complexType>
+
+
+
+        <xs:simpleType name="SynapseDirection">
+            <xs:annotation>
+                <xs:documentation>Indicated whether a potential synapse location allows a presynaptic connection
+                of the specified type, a postsynaptic connection or either. </xs:documentation>
+            </xs:annotation>
+            <xs:restriction base="xs:string">
+                <xs:enumeration value="pre"/>
+                <xs:enumeration value="post"/>
+                <xs:enumeration value="preAndOrPost"/>
+            </xs:restriction>
+        </xs:simpleType>
+        
+        
+
+        <xs:simpleType name="CellIdInNetwork">
+            <xs:annotation>
+                <xs:documentation>Id of individual cell in a network</xs:documentation>
+            </xs:annotation>
+            <xs:restriction base="xs:nonNegativeInteger">
+            </xs:restriction>
+        </xs:simpleType>
+
+
+        <xs:group name="BiophysicsNetworkElements">
+            <xs:annotation>
+                <xs:documentation>The elements in biophysics needed to specify a network connection. 
+                Note: from v1.7.1 the preferred way to specify a potential synaptic location is with a potential_syn_loc element under connectivity under cell, as
+            opposed to the potentialSynapticLocation under biophysics under cell. The former will be the only option from v2.0</xs:documentation>
+            </xs:annotation>
+
+            <xs:sequence>
+                <xs:element name="potentialSynapticLocation" type="PotentialSynapticLocation" minOccurs="0" maxOccurs="unbounded" />
+            </xs:sequence>
+        </xs:group>
+
+
+</xs:schema>

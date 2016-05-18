@@ -1,0 +1,18 @@
+This directory contains a test case comparing NEURON simulation of a
+neuron with results from MOOSE hsolve and ee solver.
+
+h10.CNG.swc: Cell morphology from NeuroMorpho.org. Taken from
+moose-examples/snippets.
+
+h10.CNG.moose.py: Loads the swc file in MOOSE and sets the passive
+properties. It records the Vm from the soma and the apical
+compartments and dumps them to the outout file. Simulates with hsolve
+if run with arguments, exponential Euler (EE) otherwise.
+
+h10.CNG.hoc : Passive model of this cell for NEURON.
+
+run_h10.CNG.hoc : Sets up current injection at the last apical section
+of the above cell, simulates it and dumps the time, soma Vm and
+stimulated compartment Vm.
+
+compare_moose_nrn.py : Plots the dumped Vm from the three cases.

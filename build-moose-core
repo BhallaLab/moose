@@ -1,0 +1,11 @@
+#!/bin/sh
+
+#if one needs SBML support pass USE_SBML=1 else pass USE_SBML=0,
+#if USE_SBML=1 is used make sure libSBML is installed and "libSBML-5.9.0" is currently supported
+
+(make clean; make USE_SBML=1)
+local_site_package_directory=`python -c "import site; print site.getusersitepackages()"`
+mkdir -p "$local_site_package_directory"
+echo $(echo `pwd` | sed "s/\/[^\/]*$//")'/moose-core/python' > "$local_site_package_directory/moose.pth"
+#echo "`pwd`/moose-core/python" > "$local_site_package_directory/moose.pth"
+

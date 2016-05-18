@@ -1,0 +1,32 @@
+Building new MOOSE classes.
+
+- Take your existing class.
+- Set it up to use access functions of this form:
+
+	For things that should look like Read/Write variables to the user:
+	 void setField( FieldType value ); 
+	 FieldType getField() const;
+
+	For things that should look like ReadOnly variables to the user:
+	 FieldType getField() const;
+	
+	For things that should look like functions to the user:
+	( MOOSE can handle up to 6 arguments )
+	 void func( Type1 arg1, Type2 arg2 );
+		
+- Put in the following function in the header:
+	static const Cinfo* initCinfo();
+	
+
+- Figure out your MOOSE interface. There are three main kinds of fields, 
+	which are going to be set up using Finfo objects (short for Field 
+	Information).
+	The three are:
+		- DestFinfos: These handle function requests.
+		- SrcFinfos: These call functions on other objects. In other
+			words, they send messages.
+		- ValueFinfos: These support field assignment and readout.
+
+
+- Define initCinfo() in your .cpp, as follows:
+

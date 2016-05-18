@@ -1,0 +1,96 @@
+digraph G {
+	concentrate=true
+	neuroml -> cells
+	neuroml -> cells -> cellB
+	neuroml -> cells -> cellB -> Soma0
+	neuroml -> cells -> cellB -> mainAxon1
+	neuroml -> cells -> cellB -> Axon_12
+	neuroml -> cells -> cellB -> Axon_23
+	neuroml -> cells -> cellB -> Axon_34
+	neuroml -> cells -> cellB -> Axon_45
+	neuroml -> cells -> cellB -> Axon_56
+	neuroml -> cells -> cellB -> Axon_67
+	neuroml -> cells -> cellA
+	neuroml -> cells -> cellA -> Soma0
+	neuroml -> cells -> cellA -> mainAxon1
+	neuroml -> cells -> cellA -> axon12
+	neuroml -> cells -> cellA -> axon23
+	neuroml -> cells -> cellA -> root4
+	neuroml -> cells -> cellA -> mainDend15
+	neuroml -> cells -> cellA -> mainDend26
+	neuroml -> cells -> cellA -> mainDend37
+	neuroml -> cells -> cellA -> Dend_48
+	neuroml -> cells -> cellA -> Dend_59
+	neuroml -> cells -> cellA -> Dend_610
+	neuroml -> cells -> cellA -> Dend_711
+	neuroml -> cells -> cellA -> Dend_812
+	neuroml -> cells -> cellA -> Dend_913
+	neuroml -> cells -> cellA -> Dend_1014
+	neuroml -> cells -> cellA -> Dend_1115
+	neuroml -> cells -> cellA -> Dend_1216
+	neuroml -> cells -> cellA -> Dend_1317
+	neuroml -> cells -> cellA -> Dend_1418
+	neuroml -> cells -> cellA -> Dend_1519
+	neuroml -> cells -> cellA -> Dend_1620
+	neuroml -> cells -> cellA -> Dend_1721
+	neuroml -> cells -> cellA -> Dend_1822
+	neuroml -> cells -> cellA -> Dend_1923
+	neuroml -> cells -> cellA -> Dend_2024
+	neuroml -> cells -> cellA -> Dend_2125
+	neuroml -> cells -> cellA -> Dend_2226
+	neuroml -> cells -> cellA -> Dend_2327
+	neuroml -> cells -> cellA -> Dend_2428
+	neuroml -> cells -> cellA -> Dend_2529
+	neuroml -> cells -> cellA -> Dend_2630
+	neuroml -> cells -> cellA -> Dend_2731
+	neuroml -> cells -> cellA -> Dend_2832
+	neuroml -> cells -> cellA -> Dend_2933
+	neuroml -> cells -> cellA -> Dend_3034
+	neuroml -> cells -> cellA -> Dend_3135
+	neuroml -> cells -> cellA -> Dend_3236
+	neuroml -> cells -> cellA -> Dend_3337
+	neuroml -> cells -> cellA -> Dend_3438
+	neuroml -> cells -> cellA -> Dend_3539
+	neuroml -> cells -> cellA -> Dend_3640
+	neuroml -> cells -> cellA -> Dend_3741
+	neuroml -> cells -> cellA -> Dend_3842
+	neuroml -> cells -> cellA -> Dend_3943
+	neuroml -> cells -> DoubExpSyn
+	neuroml -> cells -> DoubExpSyn -> synapse0
+	neuroml -> cells -> DoubExpSyn -> graded
+	neuroml -> cells -> DoubExpSyn -> mgblock
+	neuroml -> cells -> cellB -> Soma0 -> DoubExpSyn
+	neuroml -> cells -> cellB -> Soma0 -> DoubExpSyn -> synapse0
+	neuroml -> cells -> cellB -> Soma0 -> DoubExpSyn -> graded
+	neuroml -> cells -> cellB -> Soma0 -> DoubExpSyn -> mgblock
+	neuroml -> cells -> cellA -> mainAxon1 -> DoubExpSyn_spikegen
+	neuroml -> electrical
+	neuroml -> electrical -> PulseGen
+	neuroml -> electrical -> PulseGen -> SampleIClamp
+	neuroml -> electrical -> iClamp
+	neuroml -> electrical -> iClamp -> SampleIClamp
+	mumbl -> Chemical
+	mumbl -> Electrical
+	mumbl -> Adaptor
+	mumbl -> Chemical -> Compartment
+	mumbl -> Chemical -> Compartment -> 1
+	mumbl -> Chemical -> Compartment -> 1 -> Ca
+	mumbl -> Chemical -> Compartment -> 1 -> Na
+	mumbl -> Chemical -> Compartment -> 2
+	mumbl -> Chemical -> Compartment -> 2 -> K
+	mumbl -> Chemical -> Compartment -> 3
+	mumbl -> Chemical -> Compartment -> calcium
+	mumbl -> Chemical -> Compartment -> calcium -> mesh0
+	mumbl -> Chemical -> Compartment -> calcium -> boundary0
+	mumbl -> Chemical -> Compartment -> calcium -> ca
+	mumbl -> Chemical -> Compartment -> calcium -> stoich
+	mumbl -> Chemical -> Compartment -> calcium -> stoich -> junction0
+	neuroml -> cells -> cellB -> Soma0 -> Vm
+	Tables -> somaVm
+	Tables -> somaVm -> table0
+	neuroml -> cells -> cellB -> Soma0 -> Cm
+	Tables -> somaCm
+	Tables -> somaCm -> table0
+	neuroml -> cells -> cellB -> solve
+	neuroml -> cells -> cellA -> solve
+}

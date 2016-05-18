@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<metadata>
+  <datatype xmlns="http://www.mapper-project.eu/xmml" id="latticeInt" size_estimate="x*y*sizeof(int)"/>
+  <datatype xmlns="http://www.mapper-project.eu/xmml" id="latticeDouble" size_estimate="x*y*sizeof(double)"/>
+  <datatype xmlns="http://www.mapper-project.eu/xmml" id="agentLocations" size_estimate="4*n*sizeof(double)"/>
+  <datatype xmlns="http://www.mapper-project.eu/xmml" id="agentDouble" size_estimate="n*sizeof(double)"/>
+  <datatype xmlns="http://www.mapper-project.eu/xmml" id="agentFull" size_estimate="4*n*sizeof(double)+n*sizeof(double)"/>
+  <datatype xmlns="http://www.mapper-project.eu/xmml" id="latticeMetadata" size_estimate="2*sizeof(int)+4*sizeof(double)"/>
+  <datatype xmlns="http://www.mapper-project.eu/xmml" id="double" size_estimate="sizeof(double)"/>
+  
+  <filter xmlns="http://www.mapper-project.eu/xmml" type="converter" id="latticeDouble2agents" datatype_in="latticeDouble" datatype_out="agentDouble"/>
+  <filter xmlns="http://www.mapper-project.eu/xmml" type="converter" id="agents2latticeInt" datatype_in="agentLocations" datatype_out="latticeInt"/>
+</metadata>

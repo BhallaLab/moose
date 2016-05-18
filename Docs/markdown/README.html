@@ -1,0 +1,613 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>Quick Introduction to Markdown</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="author" content="Niraj Dudani" />
+  <meta name="date" content="January 2, 2013" />
+  <style type="text/css">
+    table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode, table.sourceCode pre { margin: 0; padding: 0; border: 0; vertical-align: baseline; border: none; }
+    td.lineNumbers { border-right: 1px solid #AAAAAA; text-align: right; color: #AAAAAA; padding-right: 5px; padding-left: 5px; }
+    td.sourceCode { padding-left: 5px; }
+    pre.sourceCode { }
+    pre.sourceCode span.Normal { }
+    pre.sourceCode span.Keyword { color: #007020; font-weight: bold; } 
+    pre.sourceCode span.DataType { color: #902000; }
+    pre.sourceCode span.DecVal { color: #40a070; }
+    pre.sourceCode span.BaseN { color: #40a070; }
+    pre.sourceCode span.Float { color: #40a070; }
+    pre.sourceCode span.Char { color: #4070a0; }
+    pre.sourceCode span.String { color: #4070a0; }
+    pre.sourceCode span.Comment { color: #60a0b0; font-style: italic; }
+    pre.sourceCode span.Others { color: #007020; }
+    pre.sourceCode span.Alert { color: red; font-weight: bold; }
+    pre.sourceCode span.Function { color: #06287e; }
+    pre.sourceCode span.RegionMarker { }
+    pre.sourceCode span.Error { color: red; font-weight: bold; }
+  </style>
+  <link rel="stylesheet" href="css/stylesheet.css" type="text/css" />
+</head>
+<body>
+
+<h1 class="title">Quick Introduction to Markdown</h1>
+
+<h2>
+    Niraj Dudani
+</h2>
+
+<h2>January 2, 2013</h2>
+
+<div id="TOC"
+><ul
+  ><li
+    ><a href="#introduction"
+      >Introduction</a
+      ></li
+    ><li
+    ><a href="#converting-to-html"
+      >Converting to HTML</a
+      ></li
+    ><li
+    ><a href="#examples"
+      >Examples</a
+      ><ul
+      ><li
+	><a href="#lists-emphasis-etc."
+	  >Lists, emphasis, etc.</a
+	  ></li
+	><li
+	><a href="#quoting-text-code-etc."
+	  >Quoting text, code, etc.</a
+	  ></li
+	><li
+	><a href="#linking-images-and-tables"
+	  >Linking, images and tables</a
+	  ></li
+	></ul
+      ></li
+    ><li
+    ><a href="#conclusion"
+      >Conclusion</a
+      ></li
+    ><li
+    ><a href="#footnotes"
+      >Footnotes</a
+      ></li
+    ></ul
+  ></div
+>
+<div id="introduction"
+><h1
+  ><a href="#TOC"
+    >Introduction</a
+    ></h1
+  ><p
+  >This document is written in Markdown<sup
+    ><a href="#fn1" class="footnoteRef" id="fnref1"
+      >1</a
+      ></sup
+    >. Here is the philosophy behind this format:</p
+  ><blockquote
+  ><p
+    >A Markdown-formatted document should be publishable as-is, as plain text, without looking like it’s been marked up with tags or formatting instructions.</p
+    ></blockquote
+  ><p
+  >For MOOSE documentation, we use Pandoc<sup
+    ><a href="#fn2" class="footnoteRef" id="fnref2"
+      >2</a
+      ></sup
+    > to convert from Markdown to HTML. Pandoc adds some nice things to Markdown, like tables and footnotes.</p
+  ></div
+><div id="converting-to-html"
+><h1
+  ><a href="#TOC"
+    >Converting to HTML</a
+    ></h1
+  ><p
+  >To convert this document to HTML, run the command in the <code
+    >build</code
+    > script included in this directory. This command also requests <code
+    >pandoc</code
+    > to generate a table-of-contents for this document.</p
+  ><p
+  >To install <code
+    >pandoc</code
+    > on Ubuntu, simply issue:</p
+  ><pre
+  ><code
+    >sudo apt-get install pandoc
+</code
+    ></pre
+  ></div
+><div id="examples"
+><h1
+  ><a href="#TOC"
+    >Examples</a
+    ></h1
+  ><p
+  >In the following subsections, we look at a few examples.</p
+  ><div id="lists-emphasis-etc."
+  ><h2
+    ><a href="#TOC"
+      >Lists, emphasis, etc.</a
+      ></h2
+    ><p
+    >This is a bullet-list of some things that Markdown can do:</p
+    ><ul
+    ><li
+      ><p
+	>This is <em
+	  >emphasis</em
+	  >.</p
+	></li
+      ><li
+      ><p
+	>This is <strong
+	  >stronger emphasis</strong
+	  >.</p
+	></li
+      ><li
+      ><p
+	>You can add <sup
+	  >superscript</sup
+	  > / <sub
+	  >subscript</sub
+	  > / <span style="text-decoration: line-through;"
+	  >strikeout</span
+	  >.</p
+	></li
+      ><li
+      ><p
+	>You can add <code
+	  >verbatim text</code
+	  > inline. This is useful for <code
+	  >variables</code
+	  >, <code
+	  >functions()</code
+	  >, etc.</p
+	></li
+      ></ul
+    ></div
+  ><div id="quoting-text-code-etc."
+  ><h2
+    ><a href="#TOC"
+      >Quoting text, code, etc.</a
+      ></h2
+    ><p
+    >To quote text, use <code
+      >&gt;</code
+      >, as in email:</p
+    ><blockquote
+    ><p
+      ><strong
+	>Rock Story</strong
+	><br
+	 /> -- <em
+	>Dik Browne</em
+	></p
+      ><p
+      >LE: What crazy mixed-up rocks!<br
+	 />HH: Quiet, stupid!</p
+      ><p
+      >HH: You're in a very special place... Full of age and mystery...<br
+	 />LE: No kidding!</p
+      ><p
+      >LE: <strong
+	>Wow! Crazy!</strong
+	> What is it?<br
+	 />HH: It's a monument!</p
+      ><p
+      >HH: Thousands of people slaved for years to drag those stones here and put them in place!<br
+	 />LE: Why?</p
+      ><p
+      >HH: For their leader! When you're a big shot, you do that so people will always remember you!<br
+	 />    That's called <strong
+	>immortality!</strong
+	><br
+	 />LE: <strong
+	>Wow!</strong
+	></p
+      ><p
+      >LE: Who was he?<br
+	 />HH: Nobody knows...</p
+      ></blockquote
+    ><p
+    >If you're lazy, a single <code
+      >&gt;</code
+      > is enough:</p
+    ><blockquote
+    ><p
+      ><strong
+	>The Purist</strong
+	><br
+	 />  -- <em
+	>Ogden Nash</em
+	><br
+	 /><br
+	 />I give you now Professor Twist,<br
+	 />A conscientious scientist,<br
+	 />Trustees exclaimed, &quot;He never bungles!&quot;<br
+	 />And sent him off to distant jungles.<br
+	 />Camped on a tropic riverside,<br
+	 />One day he missed his loving bride.<br
+	 />She had, the guide informed him later,<br
+	 />Been eaten by an alligator.<br
+	 />Professor Twist could not but smile.<br
+	 />&quot;You mean,&quot; he said, &quot;a crocodile.&quot;</p
+      ></blockquote
+    ><p
+    >At any time,<br
+       />end lines with<br
+       />2 spaces<br
+       />to retain<br
+       />line-endings (as done in the examples above).</p
+    ><p
+    >Insert code using 4 spaces:</p
+    ><pre
+    ><code
+      >echo &quot;Sanitizing...&quot;
+rm -rf /
+</code
+      ></pre
+    ><p
+    >or a few tildes:</p
+    ><table class="sourceCode"
+    ><tr
+      ><td class="lineNumbers" title="Click to toggle line numbers" onclick="with (this.firstChild.style) { display = (display == '') ? 'none' : '' }"
+	><pre
+	  >10<br
+	     />11<br
+	     />12<br
+	     />13<br
+	     />14</pre
+	  ></td
+	><td class="sourceCode"
+	><pre class="sourceCode python"
+	  ><code
+	    ><span class="Keyword DefinitionKeyword"
+	      >def</span
+	      ><span class="Normal NormalText"
+	      > </span
+	      ><span class="Normal"
+	      >factorial</span
+	      ><span class="Normal Operator"
+	      >(</span
+	      ><span class="Normal NormalText"
+	      > n </span
+	      ><span class="Normal Operator"
+	      >)</span
+	      ><span class="Normal NormalText"
+	      >:</span
+	      ><br
+	       /><span class="Normal NormalText"
+	      >    </span
+	      ><span class="Keyword FlowControlKeyword"
+	      >if</span
+	      ><span class="Normal NormalText"
+	      > </span
+	      ><span class="Normal Operator"
+	      >(</span
+	      ><span class="Normal NormalText"
+	      > n </span
+	      ><span class="Normal Operator"
+	      >&lt;=</span
+	      ><span class="Normal NormalText"
+	      > </span
+	      ><span class="DecVal Int"
+	      >1</span
+	      ><span class="Normal NormalText"
+	      > </span
+	      ><span class="Normal Operator"
+	      >)</span
+	      ><span class="Normal NormalText"
+	      >:</span
+	      ><br
+	       /><span class="Normal NormalText"
+	      >        </span
+	      ><span class="Keyword FlowControlKeyword"
+	      >return</span
+	      ><span class="Normal NormalText"
+	      > </span
+	      ><span class="DecVal Int"
+	      >1</span
+	      ><br
+	       /><span class="Normal NormalText"
+	      >    </span
+	      ><span class="Keyword FlowControlKeyword"
+	      >else</span
+	      ><span class="Normal NormalText"
+	      >:</span
+	      ><br
+	       /><span class="Normal NormalText"
+	      >        </span
+	      ><span class="Keyword FlowControlKeyword"
+	      >return</span
+	      ><span class="Normal NormalText"
+	      > n </span
+	      ><span class="Normal Operator"
+	      >*</span
+	      ><span class="Normal NormalText"
+	      > </span
+	      ><span class="Normal"
+	      >factorial</span
+	      ><span class="Normal Operator"
+	      >(</span
+	      ><span class="Normal NormalText"
+	      > n </span
+	      ><span class="Normal Operator"
+	      >-</span
+	      ><span class="Normal NormalText"
+	      > </span
+	      ><span class="DecVal Int"
+	      >1</span
+	      ><span class="Normal NormalText"
+	      > </span
+	      ><span class="Normal Operator"
+	      >)</span
+	      ><br
+	       /></code
+	    ></pre
+	  ></td
+	></tr
+      ></table
+    ></div
+  ><div id="linking-images-and-tables"
+  ><h2
+    ><a href="#TOC"
+      >Linking, images and tables</a
+      ></h2
+    ><p
+    >You can link to <a href="http://www.zombo.com/"
+      >an external website</a
+      >, or to <a href="#introduction"
+      >a section</a
+      > on the same page.</p
+    ><p
+    >You can insert images and have captions for them. Here an image has been sandwiched between 2 horizontal rules:</p
+    ><hr
+     /><div class="figure"
+    ><img src="images/purkinje.png" title="You can add alt-text too!" alt="&lt;em
+&gt;Purkinje cell in MOOSE&lt;/em
+&gt;"
+       /><p class="caption"
+      ><em
+	>Purkinje cell in MOOSE</em
+	></p
+      ></div
+    ><hr
+     /><p
+    >Tables can have headers:</p
+    ><table
+    ><thead
+      ><tr class="header"
+	><th align="right"
+	  >Right</th
+	  ><th align="left"
+	  >Left</th
+	  ><th align="center"
+	  >Center</th
+	  ><th align="left"
+	  >Default</th
+	  ></tr
+	></thead
+      ><tbody
+      ><tr class="odd"
+	><td align="right"
+	  >12</td
+	  ><td align="left"
+	  >12</td
+	  ><td align="center"
+	  >12</td
+	  ><td align="left"
+	  >12</td
+	  ></tr
+	><tr class="even"
+	><td align="right"
+	  >123</td
+	  ><td align="left"
+	  >123</td
+	  ><td align="center"
+	  >123</td
+	  ><td align="left"
+	  >123</td
+	  ></tr
+	><tr class="odd"
+	><td align="right"
+	  >1</td
+	  ><td align="left"
+	  >1</td
+	  ><td align="center"
+	  >1</td
+	  ><td align="left"
+	  >1</td
+	  ></tr
+	></tbody
+      ></table
+    ><p
+    >or not:</p
+    ><table
+    ><tbody
+      ><tr class="odd"
+	><td align="center"
+	  >♜</td
+	  ><td align="center"
+	  >♞</td
+	  ><td align="center"
+	  >♝</td
+	  ><td align="center"
+	  >♛</td
+	  ><td align="center"
+	  >♚</td
+	  ><td align="center"
+	  >♝</td
+	  ><td align="center"
+	  >♞</td
+	  ><td align="center"
+	  >♜</td
+	  ></tr
+	><tr class="even"
+	><td align="center"
+	  >♟</td
+	  ><td align="center"
+	  >♟</td
+	  ><td align="center"
+	  >♟</td
+	  ><td align="center"
+	  >♟</td
+	  ><td align="center"
+	  >♟</td
+	  ><td align="center"
+	  >♟</td
+	  ><td align="center"
+	  >♟</td
+	  ><td align="center"
+	  >♟</td
+	  ></tr
+	><tr class="odd"
+	><td align="center"
+	  >◻</td
+	  ><td align="center"
+	  >◼</td
+	  ><td align="center"
+	  >◻</td
+	  ><td align="center"
+	  >◼</td
+	  ><td align="center"
+	  >◻</td
+	  ><td align="center"
+	  >◼</td
+	  ><td align="center"
+	  >◻</td
+	  ><td align="center"
+	  >◼</td
+	  ></tr
+	><tr class="even"
+	><td align="center"
+	  >◼</td
+	  ><td align="center"
+	  >◻</td
+	  ><td align="center"
+	  >◼</td
+	  ><td align="center"
+	  >◻</td
+	  ><td align="center"
+	  >◼</td
+	  ><td align="center"
+	  >◻</td
+	  ><td align="center"
+	  >◼</td
+	  ><td align="center"
+	  >◻</td
+	  ></tr
+	><tr class="odd"
+	><td align="center"
+	  >◻</td
+	  ><td align="center"
+	  >◼</td
+	  ><td align="center"
+	  >◻</td
+	  ><td align="center"
+	  >◼</td
+	  ><td align="center"
+	  >◻</td
+	  ><td align="center"
+	  >◼</td
+	  ><td align="center"
+	  >◻</td
+	  ><td align="center"
+	  >◼</td
+	  ></tr
+	><tr class="even"
+	><td align="center"
+	  >◼</td
+	  ><td align="center"
+	  >◻</td
+	  ><td align="center"
+	  >◼</td
+	  ><td align="center"
+	  >◻</td
+	  ><td align="center"
+	  >◼</td
+	  ><td align="center"
+	  >◻</td
+	  ><td align="center"
+	  >◼</td
+	  ><td align="center"
+	  >◻</td
+	  ></tr
+	><tr class="odd"
+	><td align="center"
+	  >♙</td
+	  ><td align="center"
+	  >♙</td
+	  ><td align="center"
+	  >♙</td
+	  ><td align="center"
+	  >♙</td
+	  ><td align="center"
+	  >♙</td
+	  ><td align="center"
+	  >♙</td
+	  ><td align="center"
+	  >♙</td
+	  ><td align="center"
+	  >♙</td
+	  ></tr
+	><tr class="even"
+	><td align="center"
+	  >♖﻿</td
+	  ><td align="center"
+	  >♘</td
+	  ><td align="center"
+	  >♗</td
+	  ><td align="center"
+	  >♕</td
+	  ><td align="center"
+	  >♔</td
+	  ><td align="center"
+	  >♗</td
+	  ><td align="center"
+	  >♘</td
+	  ><td align="center"
+	  >♖</td
+	  ></tr
+	></tbody
+      ></table
+    ></div
+  ></div
+><div id="conclusion"
+><h1
+  ><a href="#TOC"
+    >Conclusion</a
+    ></h1
+  ><p
+  >Markdown and Pandoc have many more features. For these, go to the links in the footnotes.</p
+  ></div
+><div id="footnotes"
+><h1
+  ><a href="#TOC"
+    >Footnotes</a
+    ></h1
+  ></div
+><div class="footnotes"
+><hr
+   /><ol
+  ><li id="fn1"
+    ><p
+      ><a href="http://daringfireball.net/projects/markdown/basics"
+	>Link to Markdown website</a
+	> <a href="#fnref1" class="footnoteBackLink" title="Jump back to footnote 1">↩</a></p
+      ></li
+    ><li id="fn2"
+    ><p
+      ><a href="http://johnmacfarlane.net/pandoc/README.html"
+	>Link to Pandoc website</a
+	> <a href="#fnref2" class="footnoteBackLink" title="Jump back to footnote 2">↩</a></p
+      ></li
+    ></ol
+  ></div
+>
+</body>
+</html>
+

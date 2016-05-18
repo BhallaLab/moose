@@ -1,0 +1,21 @@
+#!/bin/bash
+# call: validate XML_IN [ XMML_OUT ]
+
+if [[ $# -eq 0 ]]; then
+  echo "Usage: validate xmml_file [ validated_file ]"
+else
+  # Validate using xmllint, doing any xincludes necessary
+  COMMAND="xmllint --xinclude --schema xmml.xsd --schema xmml_param.xsd"
+  if [[ $# -eq 1 ]]; then
+    EXTRA=""
+    $COMMAND --noout $1
+  else
+    EXTRA="; file '$2' can be used as a xMML file directly"
+    $COMMAND --output $2 $1
+  fi
+
+  if [[ $? -eq 0 ]]; then
+    echo "File '$1' contains valid xMML after performing XInclude$EXTRA."
+  fi
+fi
+
