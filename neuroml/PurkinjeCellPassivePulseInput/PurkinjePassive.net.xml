@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<networkml xmlns="http://morphml.org/networkml/schema" xmlns:meta="http://morphml.org/metadata/schema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://morphml.org/networkml/schema  http://www.neuroml.org/NeuroMLValidator/NeuroMLFiles/Schemata/v1.8.1/Level3/NetworkML_v1.8.1.xsd" lengthUnits="micrometer">
+
+<meta:notes>
+
+Network structure (NeuroML 1.x) for project: PurkinjeCell saved with neuroConstruct v1.5.3 on: 14:20:09, 07-Sep-12
+
+Cell Group: BigCellCML contains 1 cells
+
+
+</meta:notes>
+
+<meta:properties>
+    <meta:property tag="neuroConstruct_random_seed" value="-1793464296"/>
+
+    <meta:property tag="neuroConstruct_sim_config" value="BigCell"/>
+
+    <meta:property tag="neuroConstruct_sim_duration" value="140.0"/>
+
+    <meta:property tag="neuroConstruct_sim_time_step" value="0.005"/>
+
+    <meta:property tag="neuroConstruct_temperature" value="37.0"/>
+</meta:properties>
+
+        <populations>
+    <population name="BigCellCML" cell_type="purk2">
+        <meta:properties>
+            <meta:property tag="color" value="0.4296875 0.4765625 0.88671875"/>
+
+        </meta:properties>
+        <instances size="1">
+            <instance id="0">
+                <location x="0.0" y="0.0" z="0.0"/>
+            </instance>
+        </instances>
+    </population>
+</populations>
+
+
+
+            <!--There are no synaptic connections present in the network-->
+
+
+        <inputs units="Physiological Units">
+    <input name="Input_3">
+        <pulse_input delay="20.0" duration="100.0" amplitude="0.001"/>
+        <target population="BigCellCML">
+            <sites size="1">
+                <site cell_id="0" segment_id="0" fraction_along="0.5"/>
+            </sites>
+        </target>
+    </input>
+</inputs>
+
+</networkml>

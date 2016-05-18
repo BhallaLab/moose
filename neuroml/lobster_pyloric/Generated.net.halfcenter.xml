@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<networkml xmlns="http://morphml.org/networkml/schema" xmlns:meta="http://morphml.org/metadata/schema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://morphml.org/networkml/schema  http://www.neuroml.org/NeuroMLValidator/NeuroMLFiles/Schemata/v1.8.1/Level3/NetworkML_v1.8.1.xsd" lengthUnits="micrometer">
+
+<meta:notes>
+
+Network structure (NeuroML 1.x) for project: lobster_stomatogastric_neuron saved with neuroConstruct v1.6.1 on: 07:08:37, 06-Jul-13
+
+Cell Group: AB_PD contains 1 cells
+Cell Group: PY contains 1 cells
+Cell Group: LP contains 1 cells
+
+Network connection: PD_LP contains 1 individual synaptic connections
+Network connection: PY_LP contains 1 individual synaptic connections
+Network connection: AB_PY contains 1 individual synaptic connections
+Network connection: AB_LP contains 1 individual synaptic connections
+Network connection: LP_PY contains 1 individual synaptic connections
+Network connection: LP_ABPD contains 1 individual synaptic connections
+Network connection: PD_PY contains 1 individual synaptic connections
+
+</meta:notes>
+
+<meta:properties>
+    <meta:property tag="neuroConstruct_random_seed" value="352010249"/>
+
+    <meta:property tag="neuroConstruct_sim_config" value="Default Simulation Configuration"/>
+
+    <meta:property tag="neuroConstruct_sim_duration" value="100.0"/>
+
+    <meta:property tag="neuroConstruct_sim_time_step" value="0.025"/>
+
+    <meta:property tag="neuroConstruct_temperature" value="25.0"/>
+</meta:properties>
+
+        <populations>
+    <population name="AB_PD" cell_type="AB_PD">
+        <meta:properties>
+            <meta:property tag="color" value="0.9453125 0.0703125 0.04296875"/>
+
+        </meta:properties>
+        <instances size="1">
+            <instance id="0">
+                <location x="300.0" y="300.0" z="0.0"/>
+            </instance>
+        </instances>
+    </population>
+    <population name="PY" cell_type="LP_highH"> <!-- LP cell with high H -->
+        <meta:properties>
+            <meta:property tag="color" value="0.0 0.0 0.796875"/>
+
+        </meta:properties>
+        <instances size="1">
+            <instance id="0">
+                <location x="600.0" y="0.0" z="0.0"/>
+            </instance>
+        </instances>
+    </population>
+    <population name="LP" cell_type="LP_highH"> <!-- LP cell with high H and different initVm -->
+        <meta:properties>
+            <meta:property tag="color" value="0.796875 0.0 0.796875"/>
+
+        </meta:properties>
+        <instances size="1">
+            <instance id="0">
+                <location x="0.0" y="0.0" z="0.0"/>
+            </instance>
+        </instances>
+    </population>
+</populations>
+
+
+    <!-- Only synapses between LP and PY are present. -->
+    <!-- When both weights are 0.6, we get half-centers; when both are 0.2, we get spike synchronization! -->
+    <projections units="Physiological Units">
+    <projection name="PD_LP" source="AB_PD" target="LP">
+        <synapse_props synapse_type="DoubExpSyn_Ach" internal_delay="0.0" weight="0.0" threshold="-35.0">
+        </synapse_props>
+        <connections size="1">
+            <connection id="0" pre_cell_id="0" pre_fraction_along="0.3273732" post_cell_id="0" post_fraction_along="0.52766025">
+            </connection>
+        </connections>
+    </projection>
+    <projection name="PY_LP" source="PY" target="LP">
+        <synapse_props synapse_type="DoubExpSyn_Glu" internal_delay="0.0" weight="1.0" threshold="-35.0">
+        </synapse_props>
+        <connections size="1">
+            <connection id="0" pre_cell_id="0" pre_fraction_along="0.52467185" post_cell_id="0" post_fraction_along="0.7308613">
+            </connection>
+        </connections>
+    </projection>
+    <projection name="AB_PY" source="AB_PD" target="PY">
+        <synapse_props synapse_type="DoubExpSyn_Glu" internal_delay="0.0" weight="0.0" threshold="-35.0">
+        </synapse_props>
+        <connections size="1">
+            <connection id="0" pre_cell_id="0" pre_fraction_along="0.52363473" post_cell_id="0" post_fraction_along="0.48390448">
+            </connection>
+        </connections>
+    </projection>
+    <projection name="AB_LP" source="AB_PD" target="LP">
+        <synapse_props synapse_type="DoubExpSyn_Glu" internal_delay="0.0" weight="0.0" threshold="-35.0">
+        </synapse_props>
+        <connections size="1">
+            <connection id="0" pre_cell_id="0" pre_fraction_along="0.27374882" post_cell_id="0" post_fraction_along="0.49563748">
+            </connection>
+        </connections>
+    </projection>
+    <projection name="LP_PY" source="LP" target="PY">
+        <synapse_props synapse_type="DoubExpSyn_Glu" internal_delay="0.0" weight="1.0" threshold="-35.0">
+        </synapse_props>
+        <connections size="1">
+            <connection id="0" pre_cell_id="0" pre_fraction_along="0.2146715" post_cell_id="0" post_fraction_along="0.44370753">
+            </connection>
+        </connections>
+    </projection>
+    <projection name="LP_ABPD" source="LP" target="AB_PD">
+        <synapse_props synapse_type="DoubExpSyn_Glu" internal_delay="0.0" weight="0.0" threshold="-35.0">
+        </synapse_props>
+        <connections size="1">
+            <connection id="0" pre_cell_id="0" pre_fraction_along="0.6073083" post_cell_id="0" post_fraction_along="0.64504874">
+            </connection>
+        </connections>
+    </projection>
+    <projection name="PD_PY" source="AB_PD" target="PY">
+        <synapse_props synapse_type="DoubExpSyn_Ach" internal_delay="0.0" weight="0.0" threshold="-35.0">
+        </synapse_props>
+        <connections size="1">
+            <connection id="0" pre_cell_id="0" pre_fraction_along="0.49393272" post_cell_id="0" post_fraction_along="0.92773134">
+            </connection>
+        </connections>
+    </projection>
+</projections>
+
+            <!--There are no electrical inputs present in the network-->
+
+
+</networkml>

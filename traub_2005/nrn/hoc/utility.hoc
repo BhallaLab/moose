@@ -1,0 +1,167 @@
+strdef tstr, parent_str, compname, comp_index, cellname, dump_file_name
+
+proc print_cell(){ localobj cell, dump_file, strfn, secref
+    print "###### Printcell"
+    if (numarg() < 2){
+	print "Must pass a cell object and a file name"
+	return
+    }
+    strfn = new StringFunctions()
+    print "Refering to cell"
+    cell = $o1
+    dump_file_name = $s2
+    dump_file = new File()
+    print "Dump file created"
+    print "arg ", numarg()
+    strfn.head(secname(), "\\[", tstr)
+    dump_file.wopen(dump_file_name)
+    print "Opened dump file :", dump_file_name
+    dump_file.printf("comp,len,dia,sarea,xarea,Em,Cm,Rm,Ra")
+    dump_file.printf(",e_ar,gbar_ar")
+    dump_file.printf(",tau_cad,beta_cad")
+    dump_file.printf(",e_cal,gbar_cal")
+    dump_file.printf(",e_cat,gbar_cat")
+    dump_file.printf(",e_k2,gbar_k2")
+    dump_file.printf(",e_ka,gbar_ka")
+    dump_file.printf(",e_kahp,gbar_kahp")
+    dump_file.printf(",e_kc,gbar_kc")
+    dump_file.printf(",e_kdr,gbar_kdr")
+    dump_file.printf(",e_km,gbar_km")
+    dump_file.printf(",e_naf,gbar_naf")
+    dump_file.printf(",e_naf2,gbar_naf2")
+    dump_file.printf(",e_nap,gbar_nap")
+    dump_file.printf(",e_napf,gbar_napf")
+    dump_file.printf("\n")
+    print "###### about to start traversing"
+    
+    forsec cell.all  {
+	    sarea = PI * L * diam * 1e-8 // um^2 to cm^2
+	    xarea = PI * diam * diam * 1e-8 / 4.0
+	    secref = new SectionRef()
+	    dump_file.printf("%s,%g,%g,%g,%g,%g,%g,%g,%g", secname(), L * 1e-6, diam * 1e-6, sarea * 1e-4, xarea*1e-4, e_pas*1e-3, cm  * 1e-6 * sarea, 1.0 /(g_pas * sarea), Ra * L * 1e-4 / xarea ) // all multipliers for unit conversion
+	    if (ismembrane("ar")) dump_file.printf(",%g,%g", 1e-3 * erev_ar, gbar_ar * sarea) else dump_file.printf(",0.0,0.0")
+	    if (ismembrane("cad")) dump_file.printf(",%g,%g", 1e-3 / beta_cad, 1e6 * phi_cad/sarea) else dump_file.printf(",0.0,0.0")
+	    if (ismembrane("cal")) dump_file.printf(",%g,%g", 1e-3 * 125, gbar_cal * sarea) else dump_file.printf(",0.0,0.0")
+	    if (ismembrane("cat")) dump_file.printf(",%g,%g", 1e-3 * 125, gbar_cat * sarea) else if (ismembrane("cat_a")) dump_file.printf(",%g,%g", 1e-3 * 125, gbar_cat_a * sarea) else dump_file.printf(",0.0,0.0")
+	    if (ismembrane("k2")) dump_file.printf(",%g,%g",  1e-3 * ek, gbar_k2 * sarea) else dump_file.printf(",0.0,0.0")
+	    if (ismembrane("ka")) dump_file.printf(",%g,%g",  1e-3 * ek, gbar_ka * sarea) else if (ismembrane("ka_ib")) dump_file.printf(",%g,%g", 1e-3 * ek, gbar_ka_ib * sarea) else dump_file.printf(",0.0,0.0")
+	    if (ismembrane("kahp")) dump_file.printf(",%g,%g", 1e-3 * ek, gbar_kahp * sarea) else if (ismembrane("kahp_deeppyr")) dump_file.printf(",%g,%g", 1e-3 * ek, gbar_kahp_deeppyr * sarea) else if (ismembrane("kahp_slower")) dump_file.printf(",%g,%g", 1e-3 * ek, gbar_kahp_slower * sarea) else dump_file.printf(",0.0,0.0")
+	    if (ismembrane("kc")) dump_file.printf(",%g,%g", 1e-3 * ek, gbar_kc * sarea) else if (ismembrane("kc_fast")) dump_file.printf(",%g,%g", 1e-3 * ek, gbar_kc_fast * sarea) else dump_file.printf(",0.0,0.0")
+	    if (ismembrane("kdr")) dump_file.printf(",%g,%g", 1e-3 * ek, gbar_kdr * sarea) else if (ismembrane("kdr_fs")) dump_file.printf(",%g,%g", 1e-3 * ek, gbar_kdr_fs * sarea) else dump_file.printf(",0.0,0.0")
+	    if (ismembrane("km")) dump_file.printf(",%g,%g", 1e-3 * ek, gbar_km * sarea) else dump_file.printf(",0.0,0.0")
+	    if (ismembrane("naf")) dump_file.printf(",%g,%g", 1e-3 * ena, gbar_naf * sarea) else if (ismembrane("naf_tcr")) dump_file.printf(",%g,%g", 1e-3 * ena, gbar_naf_tcr * sarea) else dump_file.printf(",0.0,0.0")
+	    if (ismembrane("naf2")) dump_file.printf(",%g,%g", 1e-3 * ena, gbar_naf2 * sarea) else dump_file.printf(",0.0,0.0")
+	    if (ismembrane("nap")) dump_file.printf(",%g,%g", 1e-3 * ena, gbar_nap * sarea) else dump_file.printf(",0.0,0.0")
+	    if (ismembrane("napf")) dump_file.printf(",%g,%g", 1e-3 * ena, gbar_napf * sarea) else if (ismembrane("napf_spinstell")) dump_file.printf(",%g,%g", 1e-3 * ena, gbar_napf_spinstell * sarea) else if (ismembrane("napf_tcr")) dump_file.printf(",%g,%g", 1e-3 * ena, gbar_napf_tcr * sarea) else dump_file.printf(",0.0,0.0")
+	    dump_file.printf("\n")		
+	}
+	dump_file.close()
+    }
+    
+    
+proc print_readcell(){ localobj cell,dump_file, strfn, secref, seclist
+    print "###### Print Readcell - print the data in a .p file for MOOSE readcell"
+    if (numarg() < 2){
+	print "Must pass a cell object and a file name"
+	return
+    }
+    strfn = new StringFunctions()
+    print "Refering to cell"
+    cell = $o1
+    dump_file = new File()
+    print "Dump file created"
+    print "arg ", numarg()
+    // strfn.head(secname(), "\\[", tstr)
+    // sprint(cellname, "%s", tstr)
+    // sprint(tstr, "%s.p", tstr)
+    dump_file.wopen($s2)
+    print "Opened dump file :", $s2
+    seclist = new SectionList()
+    seclist.allroots()
+    forsec seclist {
+	seclist.wholetree()
+    }
+    seclist.unique()
+    // forsec seclist {
+    // 	print secname()
+    // }
+    
+    
+    print "###### about to start traversing"
+    dump_file.printf("/***********************************************************************\n")
+    dump_file.printf(" * This code was generated from a NEURON model using stub hoc code\n")
+    dump_file.printf(" * by Subhasis Ray, NCBS, Bangalore.\n")
+    dump_file.printf(" * It corresponds to %s cell in the model by Traub, et al. 2005\n", cellname)
+    dump_file.printf(" * Reference: http://senselab.med.yale.edu/ModelDb/ShowModel.asp?model=45539\n\n")
+    dump_file.printf(" * Reference: Roger D. Traub, Eberhard H. Buhl, Tengis Gloveli, and \n")
+    dump_file.printf(" * Miles A. Whittington. Fast Rhythmic Bursting Can Be Induced in \n")
+    dump_file.printf(" * Layer 2/3 Cortical Neurons by Enhancing Persistent Na+ Conductance\n") 
+    dump_file.printf(" * or by Blocking BK Channels J Neurophysiol 89: 909-921, 2003\n")
+    dump_file.printf(" * Pubmed: http://www.ncbi.nlm.nih.gov/pubmed/12574468?dopt=Abstract\n\n")    
+    dump_file.printf(" * Reference: Roger D. Traub, Diego Contreras, Mark O. Cunningham,\n") 
+    dump_file.printf(" * Hilary Murray, Fiona E. N. LeBeau, Anita Roopun, Andrea Bibbig, \n")
+    dump_file.printf(" * W. Bryan Wilent, Michael J. Higley, and Miles A. Whittington\n")
+    dump_file.printf(" * Single-column thalamocortical network model exhibiting \n")
+    dump_file.printf(" * gamma oscillations, sleep spindles, and epileptogenic bursts.\n")
+    dump_file.printf(" * J. Neurophysiol. 93, 2194-2232, 2005\n")
+    dump_file.printf(" * Pubmed: http://www.ncbi.nlm.nih.gov/pubmed/15525801?dopt=Abstract\n")
+    dump_file.printf(" ***********************************************************************/\n")
+    
+    dump_file.printf("*cartesian\n*relative\n*asymmetric\n")
+    dump_file.printf("*set_global EREST_ACT %g\n", cell.comp[1].e_pas*1e-3)
+    forsec seclist  {
+	    sarea = PI * L * diam * 1e-8 // um^2 to cm^2
+	    xarea = PI * diam * diam * 1e-8 / 4.0
+	    secref = new SectionRef()
+	    if (!secref.has_parent){
+		sprint(parent_str, "none")
+	    } else {
+		secref.parent {		    
+		    strfn.tail(secname(), "\\.", parent_str)
+		    strfn.head(parent_str, "\\]", comp_index)
+		    strfn.tail(comp_index, "\\[", comp_index)
+		    strfn.head(parent_str, "\\[", parent_str)
+		    sprint(parent_str, "%s_%s", parent_str, comp_index)
+		}
+	    }
+	    sprint(compname, "%s", secname())
+	    strfn.tail(secname(), "\\.", compname)
+	    strfn.head(compname, "\\]", comp_index)
+	    strfn.tail(comp_index, "\\[", comp_index)
+	    strfn.head(compname, "\\[", compname)
+	    sprint(compname, "%s_%s", compname, comp_index)
+	    //	    print "secname: ", compname, " index: ", comp_index, " parent: ", parent_str
+	    dump_file.printf("*set_compt_param ELEAK %g\n", e_pas * 1e-3)
+	    dump_file.printf("*set_compt_param RM %g\n", 1e-4/g_pas)
+	    dump_file.printf("*set_compt_param CM %g\n", cm * 1e-2)
+	    dump_file.printf("*set_compt_param RA %g\n", Ra * 1e-2)
+	    dump_file.printf("%s	%s	%g	%g	%g	%g", compname, parent_str, L, 0.0, 0.0, diam)
+	    if (ismembrane("ar")) if (gbar_ar != 0.0) dump_file.printf("	AR	%g", gbar_ar * 1e4)
+	    if (ismembrane("cad")) dump_file.printf("	CaPool	%g", -phi_cad * 1e6 / sarea)
+	    if (ismembrane("cal")) if (gbar_cal != 0.0) dump_file.printf("	CaL	%g", gbar_cal * 1e4)
+	    if (ismembrane("cat")) if (gbar_cat != 0.0) dump_file.printf("	CaT	%g", gbar_cat * 1e4)
+	    if (ismembrane("cat_a")) if (gbar_cat_a != 0.0) dump_file.printf("	CaT_A	%g", gbar_cat_a * 1e4)
+	    if (ismembrane("k2")) if (gbar_k2 != 0.0) dump_file.printf("	K2	%g", gbar_k2 * 1e4)
+	    if (ismembrane("ka")) if (gbar_ka != 0.0) dump_file.printf("	KA	%g", gbar_ka * 1e4)
+	    if (ismembrane("ka_ib")) if (gbar_ka_ib != 0.0) dump_file.printf("	KA_IB	%g", gbar_ka_ib * 1e4)
+	    if (ismembrane("kahp")) if (gbar_kahp != 0.0) dump_file.printf("	KAHP	%g", gbar_kahp * 1e4) 
+	    if (ismembrane("kahp_deeppyr")) if (gbar_kahp_deeppyr != 0.0) dump_file.printf("	KAHP_DP	%g", gbar_kahp_deeppyr * 1e4) 
+	    if (ismembrane("kahp_slower")) if (gbar_kahp_slower != 0.0) dump_file.printf("	KAHP_SLOWER	%g", gbar_kahp_slower * 1e4 ) 
+	    if (ismembrane("kc")) if (gbar_kc != 0.0) dump_file.printf("	KC	%g", gbar_kc * 1e4) 
+	    if (ismembrane("kc_fast")) if (gbar_kc_fast != 0.0) dump_file.printf("	KC_FAST	%g", gbar_kc_fast * 1e4) 
+	    if (ismembrane("kdr")) if (gbar_kdr != 0.0) dump_file.printf("	KDR	%g", gbar_kdr * 1e4) 
+	    if (ismembrane("kdr_fs")) if (gbar_kdr_fs != 0.0) dump_file.printf("	KDR_FS	%g", gbar_kdr_fs * 1e4) 
+	    if (ismembrane("km")) if (gbar_km != 0.0) dump_file.printf("	KM	%g", gbar_km * 1e4) 
+	    if (ismembrane("naf")) if (gbar_naf != 0.0) dump_file.printf("	NaF	%g", gbar_naf * 1e4) 
+	    if (ismembrane("naf2")) if (gbar_naf2 != 0.0) dump_file.printf("	NaF2	%g", gbar_naf2 * 1e4) 
+	    if (ismembrane("naf_tcr")) if (gbar_naf_tcr != 0.0) dump_file.printf("	NaF_TCR	%g", gbar_naf_tcr * 1e4) 
+	    if (ismembrane("nap")) if (gbar_nap != 0.0) dump_file.printf("	NaP	%g", gbar_nap * 1e4) 
+	    if (ismembrane("napf")) if (gbar_napf != 0.0) dump_file.printf("	NaPF	%g", gbar_napf * 1e4) 
+	    if (ismembrane("napf_spinstell")) if (gbar_napf_spinstell != 0.0) dump_file.printf("	NaPF_SS	%g", gbar_napf_spinstell * 1e4) 
+	    if (ismembrane("napf_tcr")) if (gbar_napf_tcr != 0.0) dump_file.printf("	NaPF_TCR	%g", gbar_napf_tcr * 1e4) 
+	    dump_file.printf("\n")		
+	}
+	dump_file.close()
+    }
+    
+    

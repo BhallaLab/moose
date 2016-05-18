@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<channelml xmlns="http://morphml.org/channelml/schema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:meta="http://morphml.org/metadata/schema" xsi:schemaLocation="http://morphml.org/channelml/schema  http://www.neuroml.org/NeuroMLValidator/NeuroMLFiles/Schemata/v1.8.1/Level2/ChannelML_v1.8.1.xsd" units="Physiological Units">
+
+    <meta:notes>ChannelML file containing a single Channel description</meta:notes>
+
+    <channel_type name="CaT_STG" density="yes">
+        
+        <status value="stable">
+            <meta:comment>Equations from Alternative to Hand-Tuning Conductance-Based Models: Construction and Analysis of Databases of Model Neurons, Astrid A. Prinz, Cyrus P. Billimoria, and Eve Marder, J Neurophysiol 90: 3998–4015, 2003.</meta:comment>
+            <meta:contributor>
+                <meta:name>Aditya Gilra</meta:name>
+            </meta:contributor>
+        </status>
+
+        <meta:notes> Ca T-type (low threshold) conductance </meta:notes>
+        
+        <meta:authorList>
+            <meta:modelTranslator>
+                <meta:name>Aditya Gilra</meta:name>
+                <meta:institution>National Centre for Biological Sciences, Bangalore, India.</meta:institution>    
+                <meta:email>adityag - at - ncbs.res.in</meta:email>
+            </meta:modelTranslator>
+        </meta:authorList>
+
+        <meta:publication>
+            <meta:fullTitle>Alternative to Hand-Tuning Conductance-Based Models: Construction and Analysis of Databases of Model Neurons, Astrid A. Prinz, Cyrus P. Billimoria, and Eve Marder, J Neurophysiol 90: 3998–4015, 2003.</meta:fullTitle>
+            <meta:pubmedRef/>
+        </meta:publication>
+
+        <meta:neuronDBref>
+            <meta:modelName>Na channel</meta:modelName>
+            <meta:uri/>
+        </meta:neuronDBref>
+        
+        <current_voltage_relation cond_law="ohmic" ion="ca" default_erev="120" default_gmax="12.5">
+            <meta:notes>Nernst,Cout=3e-6,z=2</meta:notes>
+            
+            <gate name="m" instances="3">
+                <closed_state id="m0"/>
+                <open_state id="m"/>
+                <steady_state name="minf" from="m0" to="m" expr_form="sigmoid" rate="1.0" scale="-7.2" midpoint="-27.1"/>
+                <time_course name="mtau" from="m0" to="m" expr_form="generic" expr="43.4-42.6/(1.0+exp((v+68.1)/-20.5))"/>
+            </gate>
+            
+            <gate name="h" instances="1">
+                <closed_state id="h0"/>
+                <open_state id="h"/>
+                <steady_state name="hinf" from="h0" to="h" expr_form="sigmoid" rate="1.0" scale="5.5" midpoint="-32.1"/>
+                <time_course name="htau" from="h0" to="h" expr_form="generic" expr="210-179.6/(1.0+exp((v+55)/-16.9))"/>
+            </gate>
+            
+        </current_voltage_relation>
+        
+        
+    </channel_type>
+</channelml>
