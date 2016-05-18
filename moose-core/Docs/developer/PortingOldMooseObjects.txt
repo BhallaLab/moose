@@ -1,0 +1,36 @@
+1. In the initCinfo function, at the end where the static Cinfo is created,
+we need to make the Dinfo allocation a static one. 
+
+1a. above the static Cinfo function, add a line
+	static Dinfo< T > dinfo;
+1b. Replace the line 
+		new Dinfo< T >()
+	with 
+		&dinfo
+
+2. Eliminate all instances of Qinfo. Some functions may pass it in as an
+argument, just eliminate the argument.
+
+3. In 'send' calls, eliminate the threadInfo argument.
+
+4. Check that you are consistent with the naming scheme for all SrcFinfos:
+	they must have a suffix 'Out'.
+
+5. Use Element-level operations with care. Many commands 
+are strictly per-node, and will do odd things if invoked in parallel.
+id(), getName(), numData(), getNode(), hasFields(), isGlobal() and
+getNumOnNode() are safe on any node. But don't try to do any data access 
+operations. Use SetGet calls for data access.
+
+6. In the unlikely event that you are dealing with Zombies, the Zombie
+handling has changed. Now the ZombieSwap function just takes the new
+Cinfo and does three things: 
+	- allocates new data with this new Cinfo, using the same size.
+	- deletes the old data
+	- Replaces the Cinfo.
+This means that if you want to transfer any values over from the old to the 
+new class, you need to extract the values first, zombify, and then put them
+into the new class.
+
+7. In the even less likely event that you are dealing with DataHandlers,
+	talk to Upi. The DataHandlers have been eliminated.

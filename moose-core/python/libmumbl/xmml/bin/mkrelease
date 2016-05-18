@@ -1,0 +1,69 @@
+#!/bin/bash
+# Make a release of the xMML format. Part of the xMML distribution.
+# Author: J.Borgdorff, created 2011-02-21
+# Start in xMML directory
+
+VERSION=$1
+TAG=v$VERSION
+NAME=xmml-$VERSION
+DIR=release/$NAME
+TARDIR=$DIR-tar
+SUCCEED=0
+BRANCH=`git branch | grep \* | sed -e 's/\*//' | sed -e 's/[[:space:]]*//g'`
+
+git checkout -q $TAG 1>/dev/null 2>&1
+
+if [[ $? -ne 0 ]]; then
+  echo "ERROR: can not check out tag of the version specified"
+  exit
+fi
+
+mkdir -p $DIR/doc
+mkdir -p $TARDIR/doc
+if [[ `grep \"$VERSION\" xmml.dtd | wc -l` -gt 0 ]]; then
+	cp xmml.dtd $DIR/xmml-$VERSION.dtd
+	cp xmml.dtd $TARDIR/xmml.dtd
+else
+	echo "WARNING: xMML Document Type Definition does not match version of Git repository"
+	SUCCEED=1
+fi
+
+if [[ `grep \'$VERSION\' xmml.xsd | wc -l` -gt 0 ]]; then
+	cp xmml.xsd $DIR/xmml-$VERSION.xsd
+	cp xmml.xsd $TARDIR/xmml.xsd
+else
+	echo "WARNING: xMML Schema Definition does not match version of Git repository"
+	SUCCEED=1
+fi
+
+
+if [[ `grep \'$VERSION\' xmml_param.xsd | wc -l` -gt 0 ]]; then
+	cp xmml_param.xsd $DIR/xmml_param-$VERSION.xsd
+	cp xmml_param.xsd $TARDIR/xmml_param.xsd
+else
+	echo "WARNING: xMML Param Schema Definition does not match version of Git repository"
+	SUCCEED=1
+fi
+
+
+cp CHANGELOG.txt $DIR/CHANGELOG.txt
+cp CHANGELOG.txt $TARDIR/CHANGELOG.txt
+
+ant
+cp doc/* $DIR/doc
+cp doc/* $TARDIR/doc
+
+mv $DIR $DIR.tmp
+mv $TARDIR $DIR
+cd release
+tar czf ../$DIR.tar.gz $NAME
+rm -r $NAME
+cd ..
+mv $DIR.tmp $DIR
+
+git checkout -q $BRANCH
+
+if [[ $SUCCEED -eq 0 ]]; then
+	echo "Release $VERSION created in directory $DIR"
+fi
+

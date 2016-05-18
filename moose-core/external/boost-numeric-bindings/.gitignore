@@ -1,0 +1,7 @@
+*~
+Makefile
+*.swp
+*.patch
+.svn
+*.orig
+*.rej

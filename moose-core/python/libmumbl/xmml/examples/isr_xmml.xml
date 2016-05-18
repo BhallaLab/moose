@@ -1,0 +1,149 @@
+<?xml version="1.0" standalone="no"?>
+<model id="ISR2D" name="In-stent restenosis 2D" xmml_version="0.4" xmlns="http://www.mapper-project.eu/xmml" xmlns:xi="http://www.w3.org/2001/XInclude" xmlns:mad="http://www.mapper-project.eu/mad">
+  <description>
+    A model of the process that occurs in the artery after stenting.
+  </description>
+  
+  <definitions>
+    <xi:include href="isr_meta.xml#xpointer(/metadata/*)"/>
+
+    <terminal id="agentreader" type="source">
+        <ports>
+            <out id="data" datatype="agentFull"/>
+        </ports>
+    </terminal>
+    <terminal id="latticewriter" type="sink">
+        <ports>
+            <out id="data" datatype="latticeInt"/>
+        </ports>
+    </terminal>
+
+    <mapper id="agents2lattice" type="fan-out">
+	<description>
+           Maps a number of agents or particles to a lattice.
+	</description>
+        <ports>
+          <in id="cell_info" datatype="agentFull"/>
+          <out id="latticeBF" datatype="latticeInt"/>
+          <out id="latticeDD" datatype="latticeInt"/>
+          <out id="cell_positions" datatype="agentLocations"/>
+        </ports>
+    </mapper>
+    <mapper id="latticeBF2agents" type="fan-in">
+        <ports>
+          <in id="cell_positions" datatype="agentLocations"/>
+          <in id="latticeBF" datatype="latticeDouble"/>
+          <out id="cell_bf" datatype="agentDouble"/>
+        </ports>
+    </mapper>
+    <mapper id="latticeDD2agents" type="fan-in">
+        <ports>
+          <in id="cell_positions" datatype="agentLocations"/>
+          <in id="latticeDD" datatype="latticeDouble"/>
+          <out id="cell_dd" datatype="agentDouble"/>
+        </ports>
+    </mapper>
+    
+    <filter id="coarsenGrid" type="reduction" dimension="spatial"/>
+  
+    <submodel id="INIT" name="Initial cell conditions">
+      <timescale delta="1E-3" total="1E-1"/>
+      <spacescale delta="1E-5" total="1E-3"/>
+      <spacescale delta="1E-5" total="1E-3"/>
+
+      <ports>
+        <out id="cells" operator="Of" datatype="agentLocations"/>
+      </ports>
+      <implementation>
+        <interpreter name="muscle2"/>
+        <code language="Java" part="header">
+            import isr3d.data.AgentLocations;
+        </code>
+        <code language="Java" part="Of">
+            int dataSize = getIntProperty("datasize");
+            AgentLocations data = AgentLocations.createRandom(dataSize);
+            out("cells").send(data);
+        </code>
+      </implementation>
+    </submodel>
+  
+    <submodel id="BF" name="Blood flow" stateful="optional" class="nl.computationalscience.uva.isr3d.kernel.bf.BFController">
+	<description>
+           Calculates the blood flow within a lattice.
+
+           At the moment BF keeps a state to ease subsequent flow calculations.
+	</description>
+      <timescale delta="1E-7" total="1"/>
+      <spacescale delta="1E-5" total="1E-3"/>
+      <spacescale delta="1E-5" total="1E-3"/>
+
+      <ports>
+        <in id="state_start" operator="finit" type="state"/>
+        <in id="boundary" operator="finit" datatype="latticeInt"/>
+        <out id="shear_stress" operator="Of" datatype="latticeDouble"/>
+        <out id="state_end" operator="Of" type="state"/>
+      </ports>
+      
+      <implementation size="2 MB" runtime="30 min" memory="30 MB" cores="1024">
+        <platform arch="x84-64" os="linux"/>
+        <library name="intel-fortran-11.1"/>
+        <library name="mpich2-1.4"/>
+      </implementation>
+    </submodel>
+  
+    <submodel id="SMC" name="Smooth muscle cells">
+      <timescale delta="1E3" total="1E7"/>
+      <spacescale delta="1E-5" total="1E-3"/>
+      <spacescale delta="1E-5" total="1E-3"/>
+      <param id="n" value="1000"/>
+    
+      <ports>
+        <in id="initial_positions" operator="finit" datatype="agentLocations"/>
+        <in id="shear_stress" operator="S" datatype="agentDouble"/>
+        <in id="drug_concentration" operator="S" datatype="agentDouble"/>
+        <out id="cell_positions" operator="Oi" datatype="agentFull"/>
+      </ports>
+    </submodel>
+  
+    <submodel id="DD" name="Drug diffusion">
+      <timescale delta="1E3" total="1E7"/>
+      <spacescale delta="1.2E-5" total="1E-3"/>
+      <spacescale delta="1.2E-5" total="1E-3"/>
+    
+      <ports>
+        <in id="boundary" operator="finit" datatype="latticeInt"/>
+        <out id="drug_concentration" operator="Of" datatype="latticeDouble"/>
+      </ports>
+    </submodel>
+  </definitions>
+  
+  <topology>
+    <instance id="ic" submodel="INIT" domain="artery"><extra>
+      <mad:portMapping><mad:portMapping id="005" name="inDistance"/>
+        <mad:portMapping id="006" name="outDistance"/></mad:portMapping>
+    <mad:position x="431" y="587"/>
+    </extra></instance>
+    <instance id="bf" submodel="BF" domain="artery.blood"/>
+    <instance id="dd" submodel="DD" domain="artery.tissue"/>
+    <instance id="smc" submodel="SMC" domain="artery.tissue"/>
+
+    <instance mapper="latticeDD2agents" domain="artery.tissue"/>
+    <instance mapper="latticeBF2agents" domain="artery"/>
+    <instance mapper="agents2lattice" domain="artery"/>
+    
+    <instance terminal="agentreader"/>
+    
+    <coupling mad:fromPortId="005" from="ic.cells" to="smc.initial_positions" size="10 MB"/>
+    <coupling from="smc.cell_positions" to="agents2lattice.cell_info"/>
+    <coupling from="agents2lattice.latticeBF" to="bf.boundary"/>
+    <coupling from="agents2lattice.latticeDD" to="dd.boundary">
+      <apply filter="coarsenGrid" factor="1.2"/>
+    </coupling>
+    <coupling from="agents2lattice.cell_positions" to="latticeDD2agents.cell_positions"/>
+    <coupling from="agents2lattice.cell_positions" to="latticeBF2agents.cell_positions"/>
+    <coupling from="dd.drug_concentration" to="latticeDD2agents.latticeDD"/>
+    <coupling from="latticeDD2agents.cell_dd" to="smc.drug_concentration"/>
+    <coupling from="bf.shear_stress" to="latticeBF2agents.latticeBF"/>
+    <coupling from="latticeBF2agents.cell_bf" to="smc.drug_concentration"/>
+  </topology>
+</model>

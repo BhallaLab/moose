@@ -1,0 +1,68 @@
+/* This is a template file which is used by a python script to generate
+ * rallpack3 for various cable size.
+*/
+
+dia = ||diameter||
+len = ||comp_length||
+incompts = ||ncomp||
+entire_len = incompts * len
+runtime = ||run_time||
+
+create cable
+access cable
+nseg = incompts
+
+/*
+** Initialization routines
+*/
+
+cable {nseg=incompts L=entire_len diam=dia insert hh}
+	
+
+proc geometry() {
+	L = entire_len
+	diam = 1
+	Ra = ||RA||
+}
+
+proc membrane() {
+	insert hh
+
+	ena = 50
+	ek = -77
+	el = -65
+	gnabar = .12
+	gkbar = .036
+	gl_hh = 1 / 40000
+
+	cm = 1
+}
+
+/*
+** Simulation and output of data
+*/
+
+proc run() { local io
+	geometry()
+	membrane()
+	v = ||Em||
+        t=0
+	
+	m = m_hh
+	h = h_hh
+	n = n_hh
+
+	dt = ||dt||
+	io = 0
+	wopen("||data||")
+	fstim(1) fstim(0, 0, 0, 251, .100)
+		fprint("%g %g %g\n", t, v(||0||), v(||x||))
+	while (t < runtime) {
+	    fadvance()
+		fprint("%g %g %g\n", t, v(||0||), v(||x||))
+	}
+	wopen()
+}
+
+finitialize()
+run()

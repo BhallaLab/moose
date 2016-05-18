@@ -1,0 +1,140 @@
+% Multiscale Modeling in Biology, Language
+% Dilawar dilawars@ncbs.res.in
+
+## Scope
+
+This document describes the format of MuMBL and its uses with moose simulator.
+
+## Format
+
+The general structure of MuMBL is following.
+
+```xml
+<?xml version="1.0"?>
+<mumbl>
+    <global elec_dt="50e-5" chem_dt="50e-5"/>
+    list of <model>
+    list of <domain>
+```
+
+#### <model> element
+
+Its looks like following 
+
+```xml
+<model id="3" 
+    domain_type="chemical" 
+    model_type="miscellenous"
+    lad_using_external_script="false"
+    loader_script="proto8.py" 
+    diff_length="20e-6" >
+    <compartments geometry='cylinder'>
+        <compartment id="1">
+            <pool species="Ca" conc="1e-3" />
+            <pool species="Na" conc="1e-16" />
+        </compartment>
+        <compartment id="2">
+            <pool species="K" conc="1e-10" />
+        </compartment>
+        <compartment path="" id="3" />
+    </compartments>
+</model>
+```
+
+### Domain element 
+
+```xml
+    <domain population="cellB" 
+        segment="Soma" 
+        instance_id="0"
+        >
+        <mapping direction="in" type="one_to_one" >
+            <source type="chemical" species="Ca" compartment_id = "1" >
+                <relation input="conc" output="Vm">
+                    <scale>1.5e24</scale>
+                    <offset>1e-16</offset>
+                </relation>
+            </source>
+        </mapping>
+    </domain>
+<
+```
+
+## Example 
+
+```
+<?xml version="1.0"?>
+<!--
+    All comments by : Dilawar, dilawars@ncbs.res.in
+This is the main top-level XML file to do multiscale modelling.
+    We parse it after mapping neuroML to moose.
+ -->
+<mumbl>
+
+    <!-- 
+        Locals can override them.
+    -->
+    <global elec_dt="50e-5" chem_dt="50e-5"/>
+
+    <!-- This model is not loaded by moose. We have to run an external script to
+        load it.
+
+        TODO: For moose, we should not use an external script.
+        if load_using_external_script is false then do not use 'loader_script'
+        attribute.
+
+        Sub-element comapatments contains the compartment in which this model 
+        should be injected.
+    -->
+
+    <model id="3" 
+        domain_type="chemical" 
+        model_type="miscellenous"
+        lad_using_external_script="false"
+        loader_script="proto8.py" 
+        diff_length="20e-6" >
+        <compartments geometry='cylinder'>
+            <compartment id="1">
+                <pool species="Ca" conc="1e-3" />
+                <pool species="Na" conc="1e-16" />
+            </compartment>
+            <compartment id="2">
+                <pool species="K" conc="1e-10" />
+            </compartment>
+            <compartment path="" id="3" />
+        </compartments>
+    </model>
+
+    <!-- Here is how a sbml model is integrated -->
+    <model id="1"
+        domain_type="chemical"
+        model_type="sbml"
+        file_path="chem_model_sbml.xml" />
+
+    <!-- Here are mappings from compartment to compartment. -->
+    <!-- if mapping_type is source and this compartment influence others, if it
+        is target than this compartment gets influenced by other compartments.
+    -->
+
+    <!-- id is moose like path, it can influence either a single compartment of
+        a group of compartments depending on the nature of paths.
+        TODO: It should be more generic than this.
+
+        If electrical model was speficied in NeuroML then we can make use of 
+        paths
+    -->
+    <domain population="cellB" 
+        segment="Soma" 
+        instance_id="0"
+        >
+        <mapping direction="in" type="one_to_one" >
+            <source type="chemical" species="Ca" compartment_id = "1" >
+                <relation input="conc" output="Vm">
+                    <scale>1.5e24</scale>
+                    <offset>1e-16</offset>
+                </relation>
+            </source>
+        </mapping>
+    </domain>
+</mumbl>
+```

@@ -1,0 +1,55 @@
+xMML version 0.4
+==================
+Date: 2012-04-20.
+
+Changes since version 0.3.3
+* Added a terminal (source and sink)
+* Added an extends attribute to datatype
+* Added a fan-in-out mapper type
+* Added a format to specify parameters in, by name of xmml_param.xsd
+* Added a path property to implementation and library
+* Removed DTD version, we've fully switched to XSD.
+
+Changes since version 0.3.2
+* Changed the main description to W3C XML Schema Description.
+* Added a schema for the MAD tool
+
+Changes since version 0.3.1
+* Changed the 'max' attribute in scale to 'total'
+
+Changes since version 0.3
+* Fixed accidental merge in xmml.dtd
+* Changed examples to the right version
+
+Changes since version 0.2
+* Replaced the junction element with the mapper element
+* Replaced the mapper element with the instance element
+* Replaced the converter element with the filter element, and added
+  dimension, factor and implementation information to it
+* Replaced the filter element with the apply element
+* Added the extra element to each computational element for any information
+  not captured by other tags.
+* Added a optional version to each computational element
+
+Changes since version 0.1.2
+* Added a junction element in definitions, describing a generic
+  fan-in or fan-out junction
+* Added a mapper element in topology, instantiating a junction
+* Added a multiplicity attribute to the instance element, allowing
+  a static number of instances to be created, which can be accessed
+  through mappers.
+* A converter may not have requirements anymore; a fan-in junction
+  mapper can be used instead.
+* Filter type has become mandatory
+* Added a possible characteristic scale
+* Added a release, validation and dtd2xsd conversion script
+  to the bin directory
+
+Changes since version 0.1.1
+* Fixed version numbers in examples
+
+Changes since version 0.1
+* Added an interactive attribute to submodel, instance and coupling
+* Added a stateful attribute to instance
+* Removed version from description
+* Added converter to filter type

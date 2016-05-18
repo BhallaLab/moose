@@ -1,0 +1,920 @@
+/* This file was generated from h10.CNG.swc from NeuroMorpho.org, also
+available in moose-examples/snippets.  The swc file was processed with
+NEURON Import3D and then exported from Cell builder.
+
+Subhasis Ray, Sat Apr 30 01:49:05 EDT 2016
+
+*/
+
+
+
+
+proc celldef() {
+  topol()
+  subsets()
+  geom()
+  biophys()
+  geom_nseg()
+}
+
+create soma[2], dend[84], apic[91]
+
+proc topol() { local i
+  connect soma[1](0), soma(0.5)
+  connect dend(0), soma[1](1)
+  for i = 1, 3 connect dend[i](0), dend[i-1](1)
+  connect dend[4](0), dend[2](1)
+  connect dend[5](0), dend[1](1)
+  for i = 6, 7 connect dend[i](0), dend[i-1](1)
+  connect dend[8](0), dend[6](1)
+  connect dend[9](0), dend[5](1)
+  for i = 10, 11 connect dend[i](0), dend[9](1)
+  connect dend[12](0), dend(1)
+  for i = 13, 14 connect dend[i](0), dend[i-1](1)
+  connect dend[15](0), dend[13](1)
+  connect dend[16](0), dend[12](1)
+  for i = 17, 18 connect dend[i](0), dend[16](1)
+  connect dend[19](0), soma[1](1)
+  for i = 20, 24 connect dend[i](0), dend[i-1](1)
+  connect dend[25](0), dend[23](1)
+  connect dend[26](0), dend[22](1)
+  for i = 27, 28 connect dend[i](0), dend[26](1)
+  connect dend[29](0), dend[21](1)
+  connect dend[30](0), dend[20](1)
+  for i = 31, 32 connect dend[i](0), dend[30](1)
+  connect dend[33](0), dend[19](1)
+  for i = 34, 36 connect dend[i](0), dend[i-1](1)
+  connect dend[37](0), dend[35](1)
+  connect dend[38](0), dend[34](1)
+  connect dend[39](0), dend[33](1)
+  connect dend[40](0), soma[1](1)
+  for i = 41, 42 connect dend[i](0), dend[i-1](1)
+  connect dend[43](0), dend[41](1)
+  connect dend[44](0), dend[40](1)
+  for i = 45, 46 connect dend[i](0), dend[i-1](1)
+  connect dend[47](0), dend[45](1)
+  connect dend[48](0), dend[44](1)
+  for i = 49, 50 connect dend[i](0), dend[i-1](1)
+  connect dend[51](0), dend[49](1)
+  connect dend[52](0), dend[48](1)
+  connect dend[53](0), soma[1](1)
+  for i = 54, 55 connect dend[i](0), dend[53](1)
+  for i = 56, 57 connect dend[i](0), dend[i-1](1)
+  connect dend[58](0), dend[56](1)
+  connect dend[59](0), dend[55](1)
+  for i = 60, 61 connect dend[i](0), dend[59](1)
+  connect dend[62](0), soma[1](1)
+  for i = 63, 65 connect dend[i](0), dend[i-1](1)
+  connect dend[66](0), dend[64](1)
+  connect dend[67](0), dend[63](1)
+  connect dend[68](0), dend[62](1)
+  for i = 69, 70 connect dend[i](0), dend[68](1)
+  connect dend[71](0), soma[1](1)
+  for i = 72, 74 connect dend[i](0), dend[i-1](1)
+  connect dend[75](0), dend[73](1)
+  connect dend[76](0), dend[72](1)
+  connect dend[77](0), dend[71](1)
+  for i = 78, 79 connect dend[i](0), dend[i-1](1)
+  connect dend[80](0), dend[78](1)
+  connect dend[81](0), dend[77](1)
+  for i = 82, 83 connect dend[i](0), dend[81](1)
+  for i = 0, 1 connect apic[i](0), soma(0.5)
+  for i = 2, 3 connect apic[i](0), apic[i-1](1)
+  connect apic[4](0), apic[2](1)
+  for i = 5, 6 connect apic[i](0), apic[4](1)
+  connect apic[7](0), apic[1](1)
+  for i = 8, 9 connect apic[i](0), apic[i-1](1)
+  connect apic[10](0), apic[8](1)
+  for i = 11, 12 connect apic[i](0), apic[10](1)
+  for i = 13, 14 connect apic[i](0), apic[i-1](1)
+  connect apic[15](0), apic[13](1)
+  for i = 16, 17 connect apic[i](0), apic[15](1)
+  connect apic[18](0), apic[12](1)
+  for i = 19, 24 connect apic[i](0), apic[i-1](1)
+  connect apic[25](0), apic[23](1)
+  connect apic[26](0), apic[22](1)
+  for i = 27, 28 connect apic[i](0), apic[i-1](1)
+  connect apic[29](0), apic[27](1)
+  for i = 30, 32 connect apic[i](0), apic[i-1](1)
+  connect apic[33](0), apic[31](1)
+  connect apic[34](0), apic[30](1)
+  connect apic[35](0), apic[29](1)
+  for i = 36, 37 connect apic[i](0), apic[i-1](1)
+  connect apic[38](0), apic[36](1)
+  for i = 39, 41 connect apic[i](0), apic[i-1](1)
+  connect apic[42](0), apic[40](1)
+  connect apic[43](0), apic[39](1)
+  for i = 44, 45 connect apic[i](0), apic[i-1](1)
+  connect apic[46](0), apic[44](1)
+  connect apic[47](0), apic[43](1)
+  for i = 48, 49 connect apic[i](0), apic[i-1](1)
+  connect apic[50](0), apic[48](1)
+  connect apic[51](0), apic[47](1)
+  for i = 52, 53 connect apic[i](0), apic[51](1)
+  connect apic[54](0), apic[38](1)
+  for i = 55, 56 connect apic[i](0), apic[54](1)
+  connect apic[57](0), apic[35](1)
+  for i = 58, 59 connect apic[i](0), apic[i-1](1)
+  connect apic[60](0), apic[58](1)
+  for i = 61, 62 connect apic[i](0), apic[60](1)
+  connect apic[63](0), apic[57](1)
+  connect apic[64](0), apic[26](1)
+  connect apic[65](0), apic[21](1)
+  for i = 66, 67 connect apic[i](0), apic[65](1)
+  connect apic[68](0), apic[20](1)
+  for i = 69, 70 connect apic[i](0), apic[68](1)
+  connect apic[71](0), apic[19](1)
+  for i = 72, 73 connect apic[i](0), apic[71](1)
+  connect apic[74](0), apic[18](1)
+  for i = 75, 76 connect apic[i](0), apic[74](1)
+  connect apic[77](0), apic[7](1)
+  for i = 78, 79 connect apic[i](0), apic[i-1](1)
+  connect apic[80](0), apic[78](1)
+  connect apic[81](0), apic[77](1)
+  for i = 82, 83 connect apic[i](0), apic[81](1)
+  connect apic[84](0), soma(0.5)
+  for i = 85, 86 connect apic[i](0), apic[84](1)
+  for i = 87, 88 connect apic[i](0), apic[i-1](1)
+  connect apic[89](0), apic[87](1)
+  connect apic[90](0), apic[86](1)
+  basic_shape()
+}
+proc shape3d_1() {
+  soma {pt3dclear()
+	pt3dadd(-3.35, 23, 0, 6.7)
+	pt3dadd(0, 23, 0, 6.7)
+	pt3dadd(3.35, 23, 0, 6.7)
+  }
+  soma[1] {pt3dclear()
+	pt3dstyle(1, 0, 23, 0)
+	pt3dadd(0, 18, 0, 5)
+	pt3dadd(0, 0, 0, 2.116)
+  }
+  dend {pt3dclear()
+	pt3dadd(0, 0, 0, 1.2)
+	pt3dadd(-4.157, -2.778, 0, 1.2)
+  }
+  dend[1] {pt3dclear()
+	pt3dadd(-4.157, -2.778, 0, 1.2)
+	pt3dadd(-5.925, -3.51, -4.62, 1.1)
+  }
+  dend[2] {pt3dclear()
+	pt3dadd(-5.925, -3.51, -4.62, 1.1)
+	pt3dadd(-15.47, -7.464, -29.56, 0.8)
+  }
+  dend[3] {pt3dclear()
+	pt3dadd(-15.47, -7.464, -29.56, 0.8)
+	pt3dadd(-23.89, -9.139, -72.72, 0.8)
+  }
+  dend[4] {pt3dclear()
+	pt3dadd(-15.47, -7.464, -29.56, 0.8)
+	pt3dadd(-24.39, -13.43, -83.51, 0.7)
+  }
+  dend[5] {pt3dclear()
+	pt3dadd(-5.925, -3.51, -4.62, 1.1)
+	pt3dadd(-9.814, -5.121, -14.78, 1)
+  }
+  dend[6] {pt3dclear()
+	pt3dadd(-9.814, -5.121, -14.78, 1)
+	pt3dadd(-15.81, -6.313, -23.93, 1)
+  }
+  dend[7] {pt3dclear()
+	pt3dadd(-15.81, -6.313, -23.93, 1)
+	pt3dadd(-65.94, -16.29, -100.4, 0.8)
+  }
+  dend[8] {pt3dclear()
+	pt3dadd(-15.81, -6.313, -23.93, 1)
+	pt3dadd(-54.5, -14.01, -82.96, 0.8)
+  }
+  dend[9] {pt3dclear()
+	pt3dadd(-9.814, -5.121, -14.78, 1)
+	pt3dadd(-17.2, -10.06, -28.09, 0.8)
+  }
+  dend[10] {pt3dclear()
+	pt3dadd(-17.2, -10.06, -28.09, 0.8)
+	pt3dadd(-78.64, -51.11, -138.7, 0.8)
+  }
+  dend[11] {pt3dclear()
+	pt3dadd(-17.2, -10.06, -28.09, 0.8)
+	pt3dadd(-41.69, -26.42, -72.15, 0.7)
+  }
+  dend[12] {pt3dclear()
+	pt3dadd(-4.157, -2.778, 0, 1.2)
+	pt3dadd(-10.11, -8.731, -20.33, 0.9)
+  }
+  dend[13] {pt3dclear()
+	pt3dadd(-10.11, -8.731, -20.33, 0.9)
+	pt3dadd(-14.44, -13.06, -35.11, 0.7)
+  }
+  dend[14] {pt3dclear()
+	pt3dadd(-14.44, -13.06, -35.11, 0.7)
+	pt3dadd(-26.61, -21.19, -108.7, 0.6)
+  }
+  dend[15] {pt3dclear()
+	pt3dadd(-14.44, -13.06, -35.11, 0.7)
+	pt3dadd(-24.2, -27.66, -123.4, 0.6)
+  }
+  dend[16] {pt3dclear()
+	pt3dadd(-10.11, -8.731, -20.33, 0.9)
+	pt3dadd(-32.3, -30.92, -96.08, 0.7)
+  }
+  dend[17] {pt3dclear()
+	pt3dadd(-32.3, -30.92, -96.08, 0.7)
+	pt3dadd(-45.7, -39.87, -120.2, 0.6)
+  }
+  dend[18] {pt3dclear()
+	pt3dadd(-32.3, -30.92, -96.08, 0.7)
+	pt3dadd(-56.99, -67.88, -162.6, 0.7)
+  }
+  dend[19] {pt3dclear()
+	pt3dadd(0, 0, 0, 1.3)
+	pt3dadd(-8.889, -13.3, 0, 1.3)
+  }
+  dend[20] {pt3dclear()
+	pt3dadd(-8.889, -13.3, 0, 1.3)
+	pt3dadd(-11.39, -15.8, -3.54, 1.1)
+  }
+  dend[21] {pt3dclear()
+	pt3dadd(-11.39, -15.8, -3.54, 1.1)
+	pt3dadd(-19.39, -23.8, -14.85, 1)
+  }
+  dend[22] {pt3dclear()
+	pt3dadd(-19.39, -23.8, -14.85, 1)
+	pt3dadd(-21.7, -25.35, -19.01, 0.9)
+  }
+  dend[23] {pt3dclear()
+	pt3dadd(-21.7, -25.35, -19.01, 0.9)
+	pt3dadd(-33.25, -33.06, -39.79, 0.8)
+  }
+  dend[24] {pt3dclear()
+	pt3dadd(-33.25, -33.06, -39.79, 0.8)
+	pt3dadd(-64.36, -45.95, -121.1, 0.7)
+  }
+  dend[25] {pt3dclear()
+	pt3dadd(-33.25, -33.06, -39.79, 0.8)
+	pt3dadd(-53.54, -53.36, -109.1, 0.7)
+  }
+  dend[26] {pt3dclear()
+	pt3dadd(-21.7, -25.35, -19.01, 0.9)
+	pt3dadd(-26.32, -28.43, -27.32, 0.8)
+  }
+  dend[27] {pt3dclear()
+	pt3dadd(-26.32, -28.43, -27.32, 0.8)
+	pt3dadd(-68.78, -46.02, -73.28, 0.6)
+  }
+  dend[28] {pt3dclear()
+	pt3dadd(-26.32, -28.43, -27.32, 0.8)
+	pt3dadd(-71.82, -73.93, -91.67, 0.7)
+  }
+  dend[29] {pt3dclear()
+	pt3dadd(-19.39, -23.8, -14.85, 1)
+	pt3dadd(-59.82, -84.32, -123.8, 0.7)
+	pt3dadd(-84.52, -121.3, -190.3, 0.5)
+  }
+  dend[30] {pt3dclear()
+	pt3dadd(-11.39, -15.8, -3.54, 1.1)
+	pt3dadd(-34.39, -38.8, -36.06, 0.7)
+  }
+  dend[31] {pt3dclear()
+	pt3dadd(-34.39, -38.8, -36.06, 0.7)
+	pt3dadd(-96.61, -80.38, -86.06, 0.6)
+  }
+  dend[32] {pt3dclear()
+	pt3dadd(-34.39, -38.8, -36.06, 0.7)
+	pt3dadd(-93.98, -128, -107.7, 0.6)
+  }
+  dend[33] {pt3dclear()
+	pt3dadd(-8.889, -13.3, 0, 1.3)
+	pt3dadd(-15.65, -29.64, -17.68, 1)
+  }
+  dend[34] {pt3dclear()
+	pt3dadd(-15.65, -29.64, -17.68, 1)
+	pt3dadd(-17.01, -32.9, -21.21, 1)
+  }
+  dend[35] {pt3dclear()
+	pt3dadd(-17.01, -32.9, -21.21, 1)
+	pt3dadd(-21.95, -40.29, -34.52, 0.8)
+  }
+  dend[36] {pt3dclear()
+	pt3dadd(-21.95, -40.29, -34.52, 0.8)
+	pt3dadd(-50.03, -82.33, -110.2, 0.6)
+  }
+  dend[37] {pt3dclear()
+	pt3dadd(-21.95, -40.29, -34.52, 0.8)
+	pt3dadd(-49.73, -81.87, -109.3, 0.7)
+  }
+  dend[38] {pt3dclear()
+	pt3dadd(-17.01, -32.9, -21.21, 1)
+	pt3dadd(-22.75, -61.78, -65.28, 0.6)
+  }
+  dend[39] {pt3dclear()
+	pt3dadd(-15.65, -29.64, -17.68, 1)
+	pt3dadd(-37.3, -81.9, -74.25, 0.6)
+  }
+  dend[40] {pt3dclear()
+	pt3dadd(0, 0, 0, 1.5)
+	pt3dadd(-2.146, -10.79, 0, 1.5)
+  }
+  dend[41] {pt3dclear()
+	pt3dadd(-2.146, -10.79, 0, 1.5)
+	pt3dadd(-24.77, -65.42, -24.49, 0.7)
+  }
+  dend[42] {pt3dclear()
+	pt3dadd(-24.77, -65.42, -24.49, 0.7)
+	pt3dadd(-54.47, -137.1, -56.64, 0.7)
+  }
+  dend[43] {pt3dclear()
+	pt3dadd(-24.77, -65.42, -24.49, 0.7)
+	pt3dadd(-55.18, -138.8, -57.4, 0.7)
+  }
+  dend[44] {pt3dclear()
+	pt3dadd(-2.146, -10.79, 0, 1.5)
+	pt3dadd(-2.146, -20.95, -4.21, 1.2)
+  }
+  dend[45] {pt3dclear()
+	pt3dadd(-2.146, -20.95, -4.21, 1.2)
+	pt3dadd(-2.146, -35.73, -10.33, 0.9)
+  }
+  dend[46] {pt3dclear()
+	pt3dadd(-2.146, -35.73, -10.33, 0.9)
+	pt3dadd(-22.75, -139.3, -80.89, 0.6)
+  }
+  dend[47] {pt3dclear()
+	pt3dadd(-2.146, -35.73, -10.33, 0.9)
+	pt3dadd(29, -192.3, -117, 0.7)
+  }
+  dend[48] {pt3dclear()
+	pt3dadd(-2.146, -20.95, -4.21, 1.2)
+	pt3dadd(-2.146, -25.57, -6.12, 1.1)
+  }
+  dend[49] {pt3dclear()
+	pt3dadd(-2.146, -25.57, -6.12, 1.1)
+	pt3dadd(-3.103, -30.38, -7.1, 1)
+  }
+  dend[50] {pt3dclear()
+	pt3dadd(-3.103, -30.38, -7.1, 1)
+	pt3dadd(-49.41, -263.2, -54.31, 0.7)
+  }
+  dend[51] {pt3dclear()
+	pt3dadd(-3.103, -30.38, -7.1, 1)
+	pt3dadd(-22.05, -125.6, -26.41, 0.6)
+  }
+  dend[52] {pt3dclear()
+	pt3dadd(-2.146, -25.57, -6.12, 1.1)
+	pt3dadd(16.99, -121.8, -25.63, 0.6)
+  }
+  dend[53] {pt3dclear()
+	pt3dadd(0, 0, 0, 1.3)
+	pt3dadd(2.146, -10.79, 0, 1.3)
+  }
+  dend[54] {pt3dclear()
+	pt3dadd(2.146, -10.79, 0, 1.3)
+	pt3dadd(2.146, -20.79, 0, 0.8)
+	pt3dadd(2.146, -235.8, 0, 0.7)
+	pt3dadd(2.146, -250.8, 0, 0.5)
+  }
+  dend[55] {pt3dclear()
+	pt3dadd(2.146, -10.79, 0, 1.3)
+	pt3dadd(4.059, -15.41, 0, 0.8)
+  }
+  dend[56] {pt3dclear()
+	pt3dadd(4.059, -15.41, 0, 0.8)
+	pt3dadd(8.269, -25.57, 0, 0.7)
+  }
+  dend[57] {pt3dclear()
+	pt3dadd(8.269, -25.57, 0, 0.7)
+	pt3dadd(35.63, -163.1, -27.9, 0.8)
+  }
+  dend[58] {pt3dclear()
+	pt3dadd(8.269, -25.57, 0, 0.7)
+	pt3dadd(45.32, -81.02, -13.27, 0.6)
+  }
+  dend[59] {pt3dclear()
+	pt3dadd(4.059, -15.41, 0, 0.8)
+	pt3dadd(20.13, -54.21, 0, 0.7)
+  }
+  dend[60] {pt3dclear()
+	pt3dadd(20.13, -54.21, 0, 0.7)
+	pt3dadd(35.25, -130.2, 15.41, 0.6)
+  }
+  dend[61] {pt3dclear()
+	pt3dadd(20.13, -54.21, 0, 0.7)
+	pt3dadd(78.98, -142.3, 21.07, 0.7)
+  }
+  dend[62] {pt3dclear()
+	pt3dadd(0, 0, 0, 1.2)
+	pt3dadd(8.889, -13.3, 0, 1.2)
+  }
+  dend[63] {pt3dclear()
+	pt3dadd(8.889, -13.3, 0, 1.2)
+	pt3dadd(16.67, -32.08, 8.42, 1)
+  }
+  dend[64] {pt3dclear()
+	pt3dadd(16.67, -32.08, 8.42, 1)
+	pt3dadd(24.45, -50.86, 16.84, 0.9)
+  }
+  dend[65] {pt3dclear()
+	pt3dadd(24.45, -50.86, 16.84, 0.9)
+	pt3dadd(49.32, -175.9, 42.2, 0.7)
+  }
+  dend[66] {pt3dclear()
+	pt3dadd(24.45, -50.86, 16.84, 0.9)
+	pt3dadd(84.38, -140.6, 38.3, 0.7)
+  }
+  dend[67] {pt3dclear()
+	pt3dadd(16.67, -32.08, 8.42, 1)
+	pt3dadd(42.45, -141.4, 78.51, 0.8)
+	pt3dadd(48.94, -174, 100.7, 0.6)
+  }
+  dend[68] {pt3dclear()
+	pt3dadd(8.889, -13.3, 0, 1.2)
+	pt3dadd(16.08, -20.49, 4.21, 0.8)
+  }
+  dend[69] {pt3dclear()
+	pt3dadd(16.08, -20.49, 4.21, 0.8)
+	pt3dadd(99.04, -103.5, 52.81, 0.6)
+  }
+  dend[70] {pt3dclear()
+	pt3dadd(16.08, -20.49, 4.21, 0.8)
+	pt3dadd(41.55, -45.97, 19.13, 0.6)
+	pt3dadd(63.71, -109.6, 64.06, 0.6)
+	pt3dadd(75.26, -126.9, 77.95, 0.4)
+  }
+  dend[71] {pt3dclear()
+	pt3dadd(0, 0, 0, 1.2)
+	pt3dadd(18.29, -12.22, 0, 1.2)
+  }
+  dend[72] {pt3dclear()
+	pt3dadd(18.29, -12.22, 0, 1.2)
+	pt3dadd(20.79, -14.72, 3.54, 1.1)
+  }
+  dend[73] {pt3dclear()
+	pt3dadd(20.79, -14.72, 3.54, 1.1)
+	pt3dadd(26.29, -20.22, 11.31, 1)
+  }
+  dend[74] {pt3dclear()
+	pt3dadd(26.29, -20.22, 11.31, 1)
+	pt3dadd(101.1, -132.2, 101.3, 0.7)
+  }
+  dend[75] {pt3dclear()
+	pt3dadd(26.29, -20.22, 11.31, 1)
+	pt3dadd(97.5, -67.8, 68.54, 0.6)
+  }
+  dend[76] {pt3dclear()
+	pt3dadd(20.79, -14.72, 3.54, 1.1)
+	pt3dadd(47.29, -41.22, 41.01, 0.5)
+  }
+  dend[77] {pt3dclear()
+	pt3dadd(18.29, -12.22, 0, 1.2)
+	pt3dadd(21.56, -13.58, 3.54, 1)
+  }
+  dend[78] {pt3dclear()
+	pt3dadd(21.56, -13.58, 3.54, 1)
+	pt3dadd(28.09, -16.28, 10.61, 0.9)
+  }
+  dend[79] {pt3dclear()
+	pt3dadd(28.09, -16.28, 10.61, 0.9)
+	pt3dadd(122.1, -79.11, 86.16, 0.6)
+  }
+  dend[80] {pt3dclear()
+	pt3dadd(28.09, -16.28, 10.61, 0.9)
+	pt3dadd(85.99, -27.8, 50.05, 0.6)
+  }
+  dend[81] {pt3dclear()
+	pt3dadd(21.56, -13.58, 3.54, 1)
+	pt3dadd(43.12, -22.51, 26.87, 0.8)
+  }
+  dend[82] {pt3dclear()
+	pt3dadd(43.12, -22.51, 26.87, 0.8)
+	pt3dadd(75.45, -44.11, 85.07, 0.7)
+  }
+  dend[83] {pt3dclear()
+	pt3dadd(43.12, -22.51, 26.87, 0.8)
+	pt3dadd(97.61, -33.34, 110, 0.7)
+  }
+  apic {pt3dclear()
+	pt3dadd(0, 41, 0, 5.1)
+	pt3dadd(0, 127, 0, 0.6)
+  }
+  apic[1] {pt3dclear()
+	pt3dadd(0, 41, 0, 5.1)
+	pt3dadd(5.932, 70.82, -6.05, 4.5)
+	pt3dadd(18.37, 133.3, -18.73, 2.5)
+  }
+  apic[2] {pt3dclear()
+	pt3dadd(18.37, 133.3, -18.73, 2.5)
+	pt3dadd(26.63, 153.3, -23.02, 1.2)
+  }
+  apic[3] {pt3dclear()
+	pt3dadd(26.63, 153.3, -23.02, 1.2)
+	pt3dadd(56.65, 225.8, -38.63, 0.6)
+  }
+  apic[4] {pt3dclear()
+	pt3dadd(26.63, 153.3, -23.02, 1.2)
+	pt3dadd(29.63, 160.5, -24.58, 1.2)
+  }
+  apic[5] {pt3dclear()
+	pt3dadd(29.63, 160.5, -24.58, 1.2)
+	pt3dadd(91.85, 253.7, -24.58, 0.7)
+  }
+  apic[6] {pt3dclear()
+	pt3dadd(29.63, 160.5, -24.58, 1.2)
+	pt3dadd(63.97, 333.1, -24.58, 0.7)
+  }
+  apic[7] {pt3dclear()
+	pt3dadd(18.37, 133.3, -18.73, 2.5)
+	pt3dadd(18.37, 142.2, -20.48, 2.5)
+  }
+  apic[8] {pt3dclear()
+	pt3dadd(18.37, 142.2, -20.48, 2.5)
+	pt3dadd(18.37, 145.1, -21.07, 2.5)
+  }
+  apic[9] {pt3dclear()
+	pt3dadd(18.37, 145.1, -21.07, 2.5)
+	pt3dadd(28.28, 195, -42.12, 0.9)
+  }
+}
+proc shape3d_2() {
+  apic[9] {	pt3dadd(33.69, 222.1, -53.6, 0.7)
+	pt3dadd(39.1, 249.3, -65.08, 0.5)
+  }
+  apic[10] {pt3dclear()
+	pt3dadd(18.37, 145.1, -21.07, 2.5)
+	pt3dadd(17.47, 149.6, -22.98, 2.5)
+  }
+  apic[11] {pt3dclear()
+	pt3dadd(17.47, 149.6, -22.98, 2.5)
+	pt3dadd(4.851, 213.1, -49.77, 1)
+	pt3dadd(-10.07, 288.1, -100.9, 0.7)
+  }
+  apic[12] {pt3dclear()
+	pt3dadd(17.47, 149.6, -22.98, 2.5)
+	pt3dadd(15.85, 157.8, -26.43, 2.5)
+  }
+  apic[13] {pt3dclear()
+	pt3dadd(15.85, 157.8, -26.43, 2.5)
+	pt3dadd(15.85, 182.3, -31.3, 1)
+  }
+  apic[14] {pt3dclear()
+	pt3dadd(15.85, 182.3, -31.3, 1)
+	pt3dadd(15.85, 235.3, -41.84, 0.7)
+	pt3dadd(15.85, 272.2, -57.15, 0.6)
+  }
+  apic[15] {pt3dclear()
+	pt3dadd(15.85, 182.3, -31.3, 1)
+	pt3dadd(15.85, 195.1, -33.84, 0.7)
+  }
+  apic[16] {pt3dclear()
+	pt3dadd(15.85, 195.1, -33.84, 0.7)
+	pt3dadd(30.09, 266.7, -33.84, 0.6)
+  }
+  apic[17] {pt3dclear()
+	pt3dadd(15.85, 195.1, -33.84, 0.7)
+	pt3dadd(0.238, 273.5, -33.84, 0.6)
+  }
+  apic[18] {pt3dclear()
+	pt3dadd(15.85, 157.8, -26.43, 2.5)
+	pt3dadd(11.72, 167.8, -28.57, 2.5)
+  }
+  apic[19] {pt3dclear()
+	pt3dadd(11.72, 167.8, -28.57, 2.5)
+	pt3dadd(3.46, 187.7, -32.87, 2.5)
+  }
+  apic[20] {pt3dclear()
+	pt3dadd(3.46, 187.7, -32.87, 2.5)
+	pt3dadd(-0.506, 207.6, -41.28, 2.5)
+  }
+  apic[21] {pt3dclear()
+	pt3dadd(-0.506, 207.6, -41.28, 2.5)
+	pt3dadd(-3.39, 222.1, -47.41, 2.5)
+  }
+  apic[22] {pt3dclear()
+	pt3dadd(-3.39, 222.1, -47.41, 2.5)
+	pt3dadd(-3.39, 223.8, -48.52, 2.5)
+  }
+  apic[23] {pt3dclear()
+	pt3dadd(-3.39, 223.8, -48.52, 2.5)
+	pt3dadd(-3.39, 247.1, -64.07, 0.9)
+  }
+  apic[24] {pt3dclear()
+	pt3dadd(-3.39, 247.1, -64.07, 0.9)
+	pt3dadd(1.439, 271.4, -88.82, 0.6)
+  }
+  apic[25] {pt3dclear()
+	pt3dadd(-3.39, 247.1, -64.07, 0.9)
+	pt3dadd(-16.08, 310.9, -129.1, 0.7)
+  }
+  apic[26] {pt3dclear()
+	pt3dadd(-3.39, 223.8, -48.52, 2.5)
+	pt3dadd(-3.39, 248.7, -65.19, 2.5)
+  }
+  apic[27] {pt3dclear()
+	pt3dadd(-3.39, 248.7, -65.19, 2.5)
+	pt3dadd(-3.209, 249.7, -65.57, 2.5)
+  }
+  apic[28] {pt3dclear()
+	pt3dadd(-3.209, 249.7, -65.57, 2.5)
+	pt3dadd(1.297, 272.3, -75.14, 1)
+	pt3dadd(12, 326.1, -111.8, 0.7)
+  }
+  apic[29] {pt3dclear()
+	pt3dadd(-3.209, 249.7, -65.57, 2.5)
+	pt3dadd(-0.506, 263.2, -71.31, 2.5)
+  }
+  apic[30] {pt3dclear()
+	pt3dadd(-0.506, 263.2, -71.31, 2.5)
+	pt3dadd(0.245, 265.1, -71.7, 1.2)
+  }
+  apic[31] {pt3dclear()
+	pt3dadd(0.245, 265.1, -71.7, 1.2)
+	pt3dadd(3.623, 273.2, -73.45, 1.1)
+  }
+  apic[32] {pt3dclear()
+	pt3dadd(3.623, 273.2, -73.45, 1.1)
+	pt3dadd(46.23, 337, -105.2, 0.6)
+  }
+  apic[33] {pt3dclear()
+	pt3dadd(3.623, 273.2, -73.45, 1.1)
+	pt3dadd(22.55, 368.4, -113.6, 0.7)
+  }
+  apic[34] {pt3dclear()
+	pt3dadd(0.245, 265.1, -71.7, 1.2)
+	pt3dadd(19.01, 310.4, -81.45, 0.9)
+	pt3dadd(42.74, 367.6, -81.45, 0.7)
+  }
+  apic[35] {pt3dclear()
+	pt3dadd(-0.506, 263.2, -71.31, 2.5)
+	pt3dadd(-0.506, 280.9, -74.82, 2.5)
+  }
+  apic[36] {pt3dclear()
+	pt3dadd(-0.506, 280.9, -74.82, 2.5)
+	pt3dadd(-0.506, 284.8, -75.6, 1.7)
+  }
+  apic[37] {pt3dclear()
+	pt3dadd(-0.506, 284.8, -75.6, 1.7)
+	pt3dadd(14.45, 360, -107.4, 0.8)
+	pt3dadd(18.06, 378.1, -115, 0.6)
+  }
+  apic[38] {pt3dclear()
+	pt3dadd(-0.506, 284.8, -75.6, 1.7)
+	pt3dadd(-14.02, 352.8, -104.3, 1.7)
+	pt3dadd(-20.33, 384.5, -117.7, 1.4)
+  }
+  apic[39] {pt3dclear()
+	pt3dadd(-20.33, 384.5, -117.7, 1.4)
+	pt3dadd(-20.33, 441.8, -141.4, 1.4)
+  }
+  apic[40] {pt3dclear()
+	pt3dadd(-20.33, 441.8, -141.4, 1.4)
+	pt3dadd(-20.33, 494.4, -163.2, 0.9)
+	pt3dadd(-20.33, 544.3, -196.6, 0.7)
+  }
+  apic[41] {pt3dclear()
+	pt3dadd(-20.33, 544.3, -196.6, 0.7)
+	pt3dadd(-20.33, 582.6, -222.1, 0.6)
+  }
+  apic[42] {pt3dclear()
+	pt3dadd(-20.33, 544.3, -196.6, 0.7)
+	pt3dadd(-20.33, 622.5, -248.8, 0.6)
+  }
+  apic[43] {pt3dclear()
+	pt3dadd(-20.33, 441.8, -141.4, 1.4)
+	pt3dadd(-20.33, 462.1, -149.8, 1.2)
+  }
+  apic[44] {pt3dclear()
+	pt3dadd(-20.33, 462.1, -149.8, 1.2)
+	pt3dadd(-7.321, 527.5, -163.1, 0.9)
+	pt3dadd(-1.389, 557.3, -169.2, 0.7)
+  }
+  apic[45] {pt3dclear()
+	pt3dadd(-1.389, 557.3, -169.2, 0.7)
+	pt3dadd(21.51, 612.6, -181.1, 0.6)
+  }
+  apic[46] {pt3dclear()
+	pt3dadd(-1.389, 557.3, -169.2, 0.7)
+	pt3dadd(-1.389, 630.9, -183.8, 0.5)
+  }
+  apic[47] {pt3dclear()
+	pt3dadd(-20.33, 462.1, -149.8, 1.2)
+	pt3dadd(-36.6, 543.9, -166.4, 1.2)
+  }
+  apic[48] {pt3dclear()
+	pt3dadd(-36.6, 543.9, -166.4, 1.2)
+	pt3dadd(-46.36, 592.9, -176.4, 0.7)
+  }
+  apic[49] {pt3dclear()
+	pt3dadd(-46.36, 592.9, -176.4, 0.7)
+	pt3dadd(-46.36, 669.6, -208.1, 0.5)
+  }
+  apic[50] {pt3dclear()
+	pt3dadd(-46.36, 592.9, -176.4, 0.7)
+	pt3dadd(-74.99, 662.1, -207.4, 0.5)
+  }
+  apic[51] {pt3dclear()
+	pt3dadd(-36.6, 543.9, -166.4, 1.2)
+	pt3dadd(-44.44, 583.3, -174.4, 1)
+  }
+  apic[52] {pt3dclear()
+	pt3dadd(-44.44, 583.3, -174.4, 1)
+	pt3dadd(-44.44, 665.3, -174.4, 0.7)
+	pt3dadd(-44.44, 705.3, -174.4, 0.5)
+  }
+  apic[53] {pt3dclear()
+	pt3dadd(-44.44, 583.3, -174.4, 1)
+	pt3dadd(-87.3, 686.8, -174.4, 0.7)
+	pt3dadd(-121.7, 769.9, -174.4, 0.5)
+  }
+  apic[54] {pt3dclear()
+	pt3dadd(-20.33, 384.5, -117.7, 1.4)
+	pt3dadd(-32.71, 414.4, -131.1, 0.9)
+	pt3dadd(-85.74, 542.4, -188.5, 0.7)
+	pt3dadd(-120, 625.2, -225.6, 0.6)
+  }
+  apic[55] {pt3dclear()
+	pt3dadd(-120, 625.2, -225.6, 0.6)
+	pt3dadd(-137.4, 667, -244.4, 0.5)
+  }
+  apic[56] {pt3dclear()
+	pt3dadd(-120, 625.2, -225.6, 0.6)
+	pt3dadd(-132.4, 655.1, -239, 0.4)
+  }
+  apic[57] {pt3dclear()
+	pt3dadd(-0.506, 280.9, -74.82, 2.5)
+	pt3dadd(-0.506, 290.7, -76.77, 1.8)
+  }
+  apic[58] {pt3dclear()
+	pt3dadd(-0.506, 290.7, -76.77, 1.8)
+	pt3dadd(6.713, 327, -76.77, 1.6)
+  }
+  apic[59] {pt3dclear()
+	pt3dadd(6.713, 327, -76.77, 1.6)
+	pt3dadd(8.664, 336.8, -76.77, 1.2)
+	pt3dadd(12.49, 356, -80.67, 1)
+	pt3dadd(21.48, 401.3, -89.84, 0.7)
+  }
+  apic[60] {pt3dclear()
+	pt3dadd(6.713, 327, -76.77, 1.6)
+	pt3dadd(13.74, 362.3, -76.77, 1)
+  }
+  apic[61] {pt3dclear()
+	pt3dadd(13.74, 362.3, -76.77, 1)
+	pt3dadd(23.12, 385, -71.89, 0.5)
+  }
+  apic[62] {pt3dclear()
+	pt3dadd(13.74, 362.3, -76.77, 1)
+	pt3dadd(13.74, 396.6, -69.94, 0.7)
+  }
+  apic[63] {pt3dclear()
+	pt3dadd(-0.506, 290.7, -76.77, 1.8)
+	pt3dadd(-20.6, 391.7, -76.77, 0.7)
+  }
+  apic[64] {pt3dclear()
+	pt3dadd(-3.39, 248.7, -65.19, 2.5)
+	pt3dadd(-15.83, 311.3, -91.59, 0.8)
+	pt3dadd(-28.44, 374.7, -118.4, 0.6)
+  }
+  apic[65] {pt3dclear()
+	pt3dadd(-3.39, 222.1, -47.41, 2.5)
+	pt3dadd(-14.84, 249.8, -67.41, 0.9)
+  }
+  apic[66] {pt3dclear()
+	pt3dadd(-14.84, 249.8, -67.41, 0.9)
+	pt3dadd(-37.12, 303.6, -106.3, 0.7)
+  }
+  apic[67] {pt3dclear()
+	pt3dadd(-14.84, 249.8, -67.41, 0.9)
+	pt3dadd(-55.25, 347.3, -138, 0.6)
+  }
+  apic[68] {pt3dclear()
+	pt3dadd(-0.506, 207.6, -41.28, 2.5)
+	pt3dadd(-3.209, 221.2, -47.02, 0.9)
+  }
+  apic[69] {pt3dclear()
+	pt3dadd(-3.209, 221.2, -47.02, 0.9)
+	pt3dadd(-3.209, 356.6, -73.95, 0.7)
+  }
+  apic[70] {pt3dclear()
+	pt3dadd(-3.209, 221.2, -47.02, 0.9)
+	pt3dadd(-31.36, 289.2, -61.66, 0.7)
+  }
+  apic[71] {pt3dclear()
+	pt3dadd(3.46, 187.7, -32.87, 2.5)
+	pt3dadd(-11.94, 210.7, -44.35, 1.2)
+	pt3dadd(-36.06, 246.9, -62.33, 1)
+  }
+  apic[72] {pt3dclear()
+	pt3dadd(-36.06, 246.9, -62.33, 1)
+	pt3dadd(-67.18, 322, -96.01, 0.6)
+  }
+  apic[73] {pt3dclear()
+	pt3dadd(-36.06, 246.9, -62.33, 1)
+	pt3dadd(-81.14, 291.9, -88.74, 0.6)
+  }
+  apic[74] {pt3dclear()
+	pt3dadd(11.72, 167.8, -28.57, 2.5)
+	pt3dadd(1.208, 193.1, -34.04, 0.8)
+  }
+  apic[75] {pt3dclear()
+	pt3dadd(1.208, 193.1, -34.04, 0.8)
+	pt3dadd(-21.42, 306.9, -34.04, 0.6)
+  }
+  apic[76] {pt3dclear()
+	pt3dadd(1.208, 193.1, -34.04, 0.8)
+	pt3dadd(-77.13, 310.4, -34.04, 0.7)
+  }
+  apic[77] {pt3dclear()
+	pt3dadd(18.37, 142.2, -20.48, 2.5)
+	pt3dadd(18.37, 165.7, -25.17, 1)
+  }
+  apic[78] {pt3dclear()
+	pt3dadd(18.37, 165.7, -25.17, 1)
+	pt3dadd(25.78, 203, -25.17, 0.7)
+  }
+  apic[79] {pt3dclear()
+	pt3dadd(25.78, 203, -25.17, 0.7)
+	pt3dadd(56.22, 356, -25.17, 0.6)
+  }
+  apic[80] {pt3dclear()
+	pt3dadd(25.78, 203, -25.17, 0.7)
+	pt3dadd(50.36, 326.6, -25.17, 0.6)
+  }
+  apic[81] {pt3dclear()
+	pt3dadd(18.37, 165.7, -25.17, 1)
+	pt3dadd(16.22, 176.5, -25.17, 0.7)
+  }
+  apic[82] {pt3dclear()
+	pt3dadd(16.22, 176.5, -25.17, 0.7)
+	pt3dadd(-10.31, 309.9, -25.17, 0.7)
+  }
+  apic[83] {pt3dclear()
+	pt3dadd(16.22, 176.5, -25.17, 0.7)
+	pt3dadd(2.957, 243.2, -25.17, 0.6)
+  }
+  apic[84] {pt3dclear()
+	pt3dadd(0, 41, 0, 5.1)
+	pt3dadd(-2.105, 51.58, -2.15, 0.7)
+  }
+  apic[85] {pt3dclear()
+	pt3dadd(-2.105, 51.58, -2.15, 0.7)
+	pt3dadd(-20.09, 142, -20.48, 0.7)
+  }
+  apic[86] {pt3dclear()
+	pt3dadd(-2.105, 51.58, -2.15, 0.7)
+	pt3dadd(-3.061, 56.39, -3.12, 0.6)
+  }
+  apic[87] {pt3dclear()
+	pt3dadd(-3.061, 56.39, -3.12, 0.6)
+	pt3dadd(-3.061, 76.39, -3.12, 0.6)
+  }
+  apic[88] {pt3dclear()
+	pt3dadd(-3.061, 76.39, -3.12, 0.6)
+	pt3dadd(-3.061, 142.4, -3.12, 0.6)
+  }
+  apic[89] {pt3dclear()
+	pt3dadd(-3.061, 76.39, -3.12, 0.6)
+	pt3dadd(-3.061, 167.4, -3.12, 0.6)
+  }
+  apic[90] {pt3dclear()
+	pt3dadd(-3.061, 56.39, -3.12, 0.6)
+	pt3dadd(-32.91, 128.5, -3.12, 0.6)
+  }
+}
+proc basic_shape() {
+  shape3d_1()
+  shape3d_2()
+}
+
+objref all, somatic, basal, apical
+proc subsets() { local i
+  objref all, somatic, basal, apical
+  all = new SectionList()
+    for i=0, 1 soma[i] all.append()
+    for i=0, 83 dend[i] all.append()
+    for i=0, 90 apic[i] all.append()
+
+  somatic = new SectionList()
+    for i=0, 1 soma[i] somatic.append()
+
+  basal = new SectionList()
+    for i=0, 83 dend[i] basal.append()
+
+  apical = new SectionList()
+    for i=0, 90 apic[i] apical.append()
+
+}
+proc geom() {
+}
+proc geom_nseg() {
+}
+proc biophys() {
+  forsec all {
+    Ra = 100
+    cm = 1
+    insert pas
+      g_pas = 0.001
+      e_pas = -70
+  }
+}
+access soma
+
+celldef()

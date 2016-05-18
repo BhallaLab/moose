@@ -1,0 +1,249 @@
+on node 0, numNodes = 1, numCores = 8
+Info: Time to define moose classes:0
+Info: Time to initialize module:0.07
+Created 371 path=/library numData=1 isGlobal=0 baseType=Neutral
+Created 372 path=/model numData=1 isGlobal=0 baseType=Neutral
+Created 373 path=/data numData=1 isGlobal=0 baseType=Neutral
+running simulation using: model with solver hsolve. Model is passive? True
+Created 374 path=/model/expt_0_0 numData=1 isGlobal=0 baseType=Neutral
+Loading model rc19.p to /library[0]/rc19
+ReadCell: 483 compartments, 0 channels, 0 others
+Created 1343 path=/model[0]/expt_0_0[0]/rc19/solve numData=1 isGlobal=0 baseType=HSolve
+1111 Creating synapse in /model[0]/expt_0_0[0]/rc19/dend_13_0
+Created 1344 path=/model[0]/expt_0_0[0]/rc19[0]/dend_13_0[0]/nmda numData=1 isGlobal=0 baseType=SynChan
+Created 1346 path=/model[0]/expt_0_0[0]/rc19[0]/dend_13_0[0]/nmda[0]/mgblock numData=1 isGlobal=0 baseType=MgBlock
+Created 1347 path=/model[0]/expt_0_0[0]/rc19[0]/dend_13_0[0]/ampa numData=1 isGlobal=0 baseType=SynChan
+Created 1349 path=/model[0]/expt_0_0[0]/rc19[0]/dend_13_0[0]/spike numData=1 isGlobal=0 baseType=SpikeGen
+2222 Creating stimuls in /model[0]/expt_0_0[0]/rc19/dend_13_0/stim
+Created 1350 path=/model[0]/expt_0_0[0]/rc19/dend_13_0/stim numData=1 isGlobal=0 baseType=PulseGen
+1111 Creating synapse in /model[0]/expt_0_0[0]/rc19/dend_13_1
+Created 1351 path=/model[0]/expt_0_0[0]/rc19[0]/dend_13_1[0]/nmda numData=1 isGlobal=0 baseType=SynChan
+Created 1353 path=/model[0]/expt_0_0[0]/rc19[0]/dend_13_1[0]/nmda[0]/mgblock numData=1 isGlobal=0 baseType=MgBlock
+Created 1354 path=/model[0]/expt_0_0[0]/rc19[0]/dend_13_1[0]/ampa numData=1 isGlobal=0 baseType=SynChan
+Created 1356 path=/model[0]/expt_0_0[0]/rc19[0]/dend_13_1[0]/spike numData=1 isGlobal=0 baseType=SpikeGen
+2222 Creating stimuls in /model[0]/expt_0_0[0]/rc19/dend_13_1/stim
+Created 1357 path=/model[0]/expt_0_0[0]/rc19/dend_13_1/stim numData=1 isGlobal=0 baseType=PulseGen
+1111 Creating synapse in /model[0]/expt_0_0[0]/rc19/dend_13_2
+Created 1358 path=/model[0]/expt_0_0[0]/rc19[0]/dend_13_2[0]/nmda numData=1 isGlobal=0 baseType=SynChan
+Created 1360 path=/model[0]/expt_0_0[0]/rc19[0]/dend_13_2[0]/nmda[0]/mgblock numData=1 isGlobal=0 baseType=MgBlock
+Created 1361 path=/model[0]/expt_0_0[0]/rc19[0]/dend_13_2[0]/ampa numData=1 isGlobal=0 baseType=SynChan
+Created 1363 path=/model[0]/expt_0_0[0]/rc19[0]/dend_13_2[0]/spike numData=1 isGlobal=0 baseType=SpikeGen
+2222 Creating stimuls in /model[0]/expt_0_0[0]/rc19/dend_13_2/stim
+Created 1364 path=/model[0]/expt_0_0[0]/rc19/dend_13_2/stim numData=1 isGlobal=0 baseType=PulseGen
+1111 Creating synapse in /model[0]/expt_0_0[0]/rc19/dend_13_3
+Created 1365 path=/model[0]/expt_0_0[0]/rc19[0]/dend_13_3[0]/nmda numData=1 isGlobal=0 baseType=SynChan
+Created 1367 path=/model[0]/expt_0_0[0]/rc19[0]/dend_13_3[0]/nmda[0]/mgblock numData=1 isGlobal=0 baseType=MgBlock
+Created 1368 path=/model[0]/expt_0_0[0]/rc19[0]/dend_13_3[0]/ampa numData=1 isGlobal=0 baseType=SynChan
+Created 1370 path=/model[0]/expt_0_0[0]/rc19[0]/dend_13_3[0]/spike numData=1 isGlobal=0 baseType=SpikeGen
+2222 Creating stimuls in /model[0]/expt_0_0[0]/rc19/dend_13_3/stim
+Created 1371 path=/model[0]/expt_0_0[0]/rc19/dend_13_3/stim numData=1 isGlobal=0 baseType=PulseGen
+1111 Creating synapse in /model[0]/expt_0_0[0]/rc19/dend_13_4
+Created 1372 path=/model[0]/expt_0_0[0]/rc19[0]/dend_13_4[0]/nmda numData=1 isGlobal=0 baseType=SynChan
+Created 1374 path=/model[0]/expt_0_0[0]/rc19[0]/dend_13_4[0]/nmda[0]/mgblock numData=1 isGlobal=0 baseType=MgBlock
+Created 1375 path=/model[0]/expt_0_0[0]/rc19[0]/dend_13_4[0]/ampa numData=1 isGlobal=0 baseType=SynChan
+Created 1377 path=/model[0]/expt_0_0[0]/rc19[0]/dend_13_4[0]/spike numData=1 isGlobal=0 baseType=SpikeGen
+2222 Creating stimuls in /model[0]/expt_0_0[0]/rc19/dend_13_4/stim
+Created 1378 path=/model[0]/expt_0_0[0]/rc19/dend_13_4/stim numData=1 isGlobal=0 baseType=PulseGen
+1111 Creating synapse in /model[0]/expt_0_0[0]/rc19/dend_13_5
+Created 1379 path=/model[0]/expt_0_0[0]/rc19[0]/dend_13_5[0]/nmda numData=1 isGlobal=0 baseType=SynChan
+Created 1381 path=/model[0]/expt_0_0[0]/rc19[0]/dend_13_5[0]/nmda[0]/mgblock numData=1 isGlobal=0 baseType=MgBlock
+Created 1382 path=/model[0]/expt_0_0[0]/rc19[0]/dend_13_5[0]/ampa numData=1 isGlobal=0 baseType=SynChan
+Created 1384 path=/model[0]/expt_0_0[0]/rc19[0]/dend_13_5[0]/spike numData=1 isGlobal=0 baseType=SpikeGen
+2222 Creating stimuls in /model[0]/expt_0_0[0]/rc19/dend_13_5/stim
+Created 1385 path=/model[0]/expt_0_0[0]/rc19/dend_13_5/stim numData=1 isGlobal=0 baseType=PulseGen
+1111 Creating synapse in /model[0]/expt_0_0[0]/rc19/dend_13_6
+Created 1386 path=/model[0]/expt_0_0[0]/rc19[0]/dend_13_6[0]/nmda numData=1 isGlobal=0 baseType=SynChan
+Created 1388 path=/model[0]/expt_0_0[0]/rc19[0]/dend_13_6[0]/nmda[0]/mgblock numData=1 isGlobal=0 baseType=MgBlock
+Created 1389 path=/model[0]/expt_0_0[0]/rc19[0]/dend_13_6[0]/ampa numData=1 isGlobal=0 baseType=SynChan
+Created 1391 path=/model[0]/expt_0_0[0]/rc19[0]/dend_13_6[0]/spike numData=1 isGlobal=0 baseType=SpikeGen
+2222 Creating stimuls in /model[0]/expt_0_0[0]/rc19/dend_13_6/stim
+Created 1392 path=/model[0]/expt_0_0[0]/rc19/dend_13_6/stim numData=1 isGlobal=0 baseType=PulseGen
+1111 Creating synapse in /model[0]/expt_0_0[0]/rc19/dend_13_7
+Created 1393 path=/model[0]/expt_0_0[0]/rc19[0]/dend_13_7[0]/nmda numData=1 isGlobal=0 baseType=SynChan
+Created 1395 path=/model[0]/expt_0_0[0]/rc19[0]/dend_13_7[0]/nmda[0]/mgblock numData=1 isGlobal=0 baseType=MgBlock
+Created 1396 path=/model[0]/expt_0_0[0]/rc19[0]/dend_13_7[0]/ampa numData=1 isGlobal=0 baseType=SynChan
+Created 1398 path=/model[0]/expt_0_0[0]/rc19[0]/dend_13_7[0]/spike numData=1 isGlobal=0 baseType=SpikeGen
+2222 Creating stimuls in /model[0]/expt_0_0[0]/rc19/dend_13_7/stim
+Created 1399 path=/model[0]/expt_0_0[0]/rc19/dend_13_7/stim numData=1 isGlobal=0 baseType=PulseGen
+1111 Creating synapse in /model[0]/expt_0_0[0]/rc19/dend_13_8
+Created 1400 path=/model[0]/expt_0_0[0]/rc19[0]/dend_13_8[0]/nmda numData=1 isGlobal=0 baseType=SynChan
+Created 1402 path=/model[0]/expt_0_0[0]/rc19[0]/dend_13_8[0]/nmda[0]/mgblock numData=1 isGlobal=0 baseType=MgBlock
+Created 1403 path=/model[0]/expt_0_0[0]/rc19[0]/dend_13_8[0]/ampa numData=1 isGlobal=0 baseType=SynChan
+Created 1405 path=/model[0]/expt_0_0[0]/rc19[0]/dend_13_8[0]/spike numData=1 isGlobal=0 baseType=SpikeGen
+2222 Creating stimuls in /model[0]/expt_0_0[0]/rc19/dend_13_8/stim
+Created 1406 path=/model[0]/expt_0_0[0]/rc19/dend_13_8/stim numData=1 isGlobal=0 baseType=PulseGen
+Created 1407 path=/data/expt_0_0 numData=1 isGlobal=0 baseType=Neutral
+Created 1408 path=/data[0]/expt_0_0[0]/Vm_soma numData=1 isGlobal=0 baseType=Table
+5555 Soma path /model[0]/expt_0_0[0]/rc19/soma_1
+Created 1409 path=/data[0]/expt_0_0[0]/G_AMPA numData=1 isGlobal=0 baseType=Neutral
+Created 1410 path=/data[0]/expt_0_0[0]/G_NMDA numData=1 isGlobal=0 baseType=Neutral
+Created 1411 path=/data[0]/expt_0_0[0]/G_NMDA[0]/Gk_nmda_dend_13_0 numData=1 isGlobal=0 baseType=Table
+Created 1412 path=/data[0]/expt_0_0[0]/G_AMPA[0]/Gk_ampa_dend_13_0 numData=1 isGlobal=0 baseType=Table
+Created 1413 path=/data[0]/expt_0_0[0]/G_NMDA[0]/Gk_nmda_dend_13_1 numData=1 isGlobal=0 baseType=Table
+Created 1414 path=/data[0]/expt_0_0[0]/G_AMPA[0]/Gk_ampa_dend_13_1 numData=1 isGlobal=0 baseType=Table
+Created 1415 path=/data[0]/expt_0_0[0]/G_NMDA[0]/Gk_nmda_dend_13_2 numData=1 isGlobal=0 baseType=Table
+Created 1416 path=/data[0]/expt_0_0[0]/G_AMPA[0]/Gk_ampa_dend_13_2 numData=1 isGlobal=0 baseType=Table
+Created 1417 path=/data[0]/expt_0_0[0]/G_NMDA[0]/Gk_nmda_dend_13_3 numData=1 isGlobal=0 baseType=Table
+Created 1418 path=/data[0]/expt_0_0[0]/G_AMPA[0]/Gk_ampa_dend_13_3 numData=1 isGlobal=0 baseType=Table
+Created 1419 path=/data[0]/expt_0_0[0]/G_NMDA[0]/Gk_nmda_dend_13_4 numData=1 isGlobal=0 baseType=Table
+Created 1420 path=/data[0]/expt_0_0[0]/G_AMPA[0]/Gk_ampa_dend_13_4 numData=1 isGlobal=0 baseType=Table
+Created 1421 path=/data[0]/expt_0_0[0]/G_NMDA[0]/Gk_nmda_dend_13_5 numData=1 isGlobal=0 baseType=Table
+Created 1422 path=/data[0]/expt_0_0[0]/G_AMPA[0]/Gk_ampa_dend_13_5 numData=1 isGlobal=0 baseType=Table
+Created 1423 path=/data[0]/expt_0_0[0]/G_NMDA[0]/Gk_nmda_dend_13_6 numData=1 isGlobal=0 baseType=Table
+Created 1424 path=/data[0]/expt_0_0[0]/G_AMPA[0]/Gk_ampa_dend_13_6 numData=1 isGlobal=0 baseType=Table
+Created 1425 path=/data[0]/expt_0_0[0]/G_NMDA[0]/Gk_nmda_dend_13_7 numData=1 isGlobal=0 baseType=Table
+Created 1426 path=/data[0]/expt_0_0[0]/G_AMPA[0]/Gk_ampa_dend_13_7 numData=1 isGlobal=0 baseType=Table
+Created 1427 path=/data[0]/expt_0_0[0]/G_NMDA[0]/Gk_nmda_dend_13_8 numData=1 isGlobal=0 baseType=Table
+Created 1428 path=/data[0]/expt_0_0[0]/G_AMPA[0]/Gk_ampa_dend_13_8 numData=1 isGlobal=0 baseType=Table
+Experiment expt_0_0 has been setup.
+Stimulus order: ['dend_13_8']
+Stimulus onset: 0.05
+Inter stimulus interval: 0.001
+assignDefaultTicks
+Warning: no Elements found on path /model/##[ISA=IzhikevichNrn]
+Warning: no Elements found on path /model/##[ISA=GapJunction]
+Warning: no Elements found on path /model/##[ISA=LeakyIaF]
+Warning: no Elements found on path /model/##[ISA=IntFire]
+Warning: no Elements found on path /model/##[ISA=StimulusTable]
+Warning: no Elements found on path /model/##[ISA=TimeTable]
+Warning: no Elements found on path /model/##[ISA=HHChannel2D]
+Warning: no Elements found on path /model/##[ISA=CaConc]
+Warning: no Elements found on path /model/##[ISA=Func]
+Warning: no Elements found on path /model/##[ISA=DiffAmp]
+Warning: no Elements found on path /model/##[ISA=VClamp]
+Warning: no Elements found on path /model/##[ISA=PIDController]
+Warning: no Elements found on path /model/##[ISA=RC]
+$$$$$$$$$$$ 0.2
+Interval= 0.001 Stim order= [8]
+dinfo: {'nmda_gk': [<moose.Table: id=1411, dataIndex=0, path=/data[0]/expt_0_0[0]/G_NMDA[0]/Gk_nmda_dend_13_0[0]>, <moose.Table: id=1413, dataIndex=0, path=/data[0]/expt_0_0[0]/G_NMDA[0]/Gk_nmda_dend_13_1[0]>, <moose.Table: id=1415, dataIndex=0, path=/data[0]/expt_0_0[0]/G_NMDA[0]/Gk_nmda_dend_13_2[0]>, <moose.Table: id=1417, dataIndex=0, path=/data[0]/expt_0_0[0]/G_NMDA[0]/Gk_nmda_dend_13_3[0]>, <moose.Table: id=1419, dataIndex=0, path=/data[0]/expt_0_0[0]/G_NMDA[0]/Gk_nmda_dend_13_4[0]>, <moose.Table: id=1421, dataIndex=0, path=/data[0]/expt_0_0[0]/G_NMDA[0]/Gk_nmda_dend_13_5[0]>, <moose.Table: id=1423, dataIndex=0, path=/data[0]/expt_0_0[0]/G_NMDA[0]/Gk_nmda_dend_13_6[0]>, <moose.Table: id=1425, dataIndex=0, path=/data[0]/expt_0_0[0]/G_NMDA[0]/Gk_nmda_dend_13_7[0]>, <moose.Table: id=1427, dataIndex=0, path=/data[0]/expt_0_0[0]/G_NMDA[0]/Gk_nmda_dend_13_8[0]>], 'soma_vm': <moose.Table: id=1408, dataIndex=0, path=/data[0]/expt_0_0[0]/Vm_soma[0]>, 'data': <moose.Neutral: id=1407, dataIndex=0, path=/data[0]/expt_0_0[0]>, 'ampa_gk': [<moose.Table: id=1412, dataIndex=0, path=/data[0]/expt_0_0[0]/G_AMPA[0]/Gk_ampa_dend_13_0[0]>, <moose.Table: id=1414, dataIndex=0, path=/data[0]/expt_0_0[0]/G_AMPA[0]/Gk_ampa_dend_13_1[0]>, <moose.Table: id=1416, dataIndex=0, path=/data[0]/expt_0_0[0]/G_AMPA[0]/Gk_ampa_dend_13_2[0]>, <moose.Table: id=1418, dataIndex=0, path=/data[0]/expt_0_0[0]/G_AMPA[0]/Gk_ampa_dend_13_3[0]>, <moose.Table: id=1420, dataIndex=0, path=/data[0]/expt_0_0[0]/G_AMPA[0]/Gk_ampa_dend_13_4[0]>, <moose.Table: id=1422, dataIndex=0, path=/data[0]/expt_0_0[0]/G_AMPA[0]/Gk_ampa_dend_13_5[0]>, <moose.Table: id=1424, dataIndex=0, path=/data[0]/expt_0_0[0]/G_AMPA[0]/Gk_ampa_dend_13_6[0]>, <moose.Table: id=1426, dataIndex=0, path=/data[0]/expt_0_0[0]/G_AMPA[0]/Gk_ampa_dend_13_7[0]>, <moose.Table: id=1428, dataIndex=0, path=/data[0]/expt_0_0[0]/G_AMPA[0]/Gk_ampa_dend_13_8[0]>]}
+<moose.Table: id=1408, dataIndex=0, path=/data[0]/expt_0_0[0]/Vm_soma[0]>
+[-0.075      -0.075      -0.075      -0.075      -0.075      -0.075      -0.075
+ -0.075      -0.075      -0.075      -0.075      -0.075      -0.075      -0.075
+ -0.075      -0.075      -0.075      -0.075      -0.075      -0.075      -0.075
+ -0.075      -0.075      -0.075      -0.075      -0.075      -0.075      -0.075
+ -0.075      -0.075      -0.075      -0.075      -0.075      -0.075      -0.075
+ -0.075      -0.075      -0.075      -0.075      -0.075      -0.075      -0.075
+ -0.075      -0.075      -0.075      -0.075      -0.075      -0.075      -0.075
+ -0.075      -0.075      -0.075      -0.075      -0.075      -0.075      -0.075
+ -0.075      -0.075      -0.075      -0.075      -0.075      -0.075      -0.075
+ -0.075      -0.075      -0.075      -0.075      -0.075      -0.075      -0.075
+ -0.075      -0.075      -0.075      -0.075      -0.075      -0.075      -0.075
+ -0.075      -0.075      -0.075      -0.075      -0.075      -0.075      -0.075
+ -0.075      -0.075      -0.075      -0.075      -0.075      -0.075      -0.075
+ -0.075      -0.075      -0.075      -0.075      -0.075      -0.075      -0.075
+ -0.075      -0.075      -0.075      -0.075      -0.075      -0.075      -0.075
+ -0.075      -0.075      -0.075      -0.075      -0.075      -0.075      -0.075
+ -0.075      -0.075      -0.075      -0.075      -0.075      -0.075      -0.075
+ -0.075      -0.075      -0.075      -0.075      -0.075      -0.075      -0.075
+ -0.075      -0.075      -0.075      -0.075      -0.075      -0.075      -0.075
+ -0.075      -0.075      -0.075      -0.075      -0.075      -0.075      -0.075
+ -0.075      -0.075      -0.075      -0.075      -0.075      -0.075      -0.075
+ -0.075      -0.075      -0.075      -0.075      -0.075      -0.075      -0.075
+ -0.075      -0.075      -0.075      -0.075      -0.075      -0.075      -0.075
+ -0.075      -0.075      -0.075      -0.075      -0.075      -0.075      -0.075
+ -0.075      -0.075      -0.075      -0.075      -0.075      -0.075      -0.075
+ -0.075      -0.075      -0.075      -0.075      -0.075      -0.075      -0.075
+ -0.075      -0.075      -0.075      -0.075      -0.075      -0.075      -0.075
+ -0.075      -0.075      -0.075      -0.075      -0.075      -0.075      -0.075
+ -0.075      -0.075      -0.075      -0.075      -0.075      -0.07499829
+ -0.07497706 -0.07492513 -0.07484769 -0.07475377 -0.07465117 -0.07454544
+ -0.07444007 -0.07433715 -0.07423779 -0.07414247 -0.07405131 -0.0739642
+ -0.07388091 -0.07380113 -0.07372452 -0.07365075 -0.07357949 -0.07351043
+ -0.0734433  -0.07337787 -0.0733139  -0.07325122 -0.07318968 -0.07312914
+ -0.0730695  -0.07301066 -0.07295256 -0.07289515 -0.07283838 -0.07278223
+ -0.07272668 -0.07267171 -0.07261732 -0.07256351 -0.07251029 -0.07245764
+ -0.0724056  -0.07235416 -0.07230333 -0.07225312 -0.07220356 -0.07215464
+ -0.07210638 -0.07205879 -0.07201188 -0.07196566 -0.07192014 -0.07187532
+ -0.07183121 -0.07178782 -0.07174516 -0.07170322 -0.07166201 -0.07162154
+ -0.07158181 -0.07154281 -0.07150456 -0.07146704 -0.07143026 -0.07139423
+ -0.07135892 -0.07132436 -0.07129052 -0.07125742 -0.07122504 -0.07119338
+ -0.07116244 -0.07113222 -0.0711027  -0.07107388 -0.07104577 -0.07101835
+ -0.07099161 -0.07096555 -0.07094017 -0.07091546 -0.07089141 -0.07086801
+ -0.07084527 -0.07082316 -0.07080169 -0.07078085 -0.07076063 -0.07074102
+ -0.07072202 -0.07070362 -0.07068581 -0.07066858 -0.07065193 -0.07063586
+ -0.07062034 -0.07060539 -0.07059098 -0.07057711 -0.07056378 -0.07055097
+ -0.07053869 -0.07052692 -0.07051565 -0.07050489 -0.07049461 -0.07048483
+ -0.07047552 -0.07046668 -0.07045831 -0.0704504  -0.07044294 -0.07043593
+ -0.07042935 -0.07042321 -0.0704175  -0.0704122  -0.07040732 -0.07040285
+ -0.07039878 -0.0703951  -0.07039182 -0.07038892 -0.0703864  -0.07038425
+ -0.07038247 -0.07038105 -0.07037999 -0.07037928 -0.07037891 -0.07037889
+ -0.0703792  -0.07037983 -0.0703808  -0.07038208 -0.07038368 -0.07038558
+ -0.0703878  -0.07039031 -0.07039312 -0.07039621 -0.0703996  -0.07040326
+ -0.07040721 -0.07041142 -0.07041591 -0.07042065 -0.07042566 -0.07043093
+ -0.07043644 -0.0704422  -0.07044821 -0.07045445 -0.07046093 -0.07046765
+ -0.07047459 -0.07048175 -0.07048913 -0.07049674 -0.07050455 -0.07051257
+ -0.0705208  -0.07052923 -0.07053786 -0.07054669 -0.07055571 -0.07056491
+ -0.0705743  -0.07058388 -0.07059363 -0.07060356 -0.07061366 -0.07062393
+ -0.07063437 -0.07064497 -0.07065574 -0.07066666 -0.07067773 -0.07068896
+ -0.07070033 -0.07071186 -0.07072352 -0.07073533 -0.07074727 -0.07075936
+ -0.07077157 -0.07078391 -0.07079638 -0.07080898 -0.0708217  -0.07083454
+ -0.0708475  -0.07086057 -0.07087375 -0.07088705 -0.07090045 -0.07091396
+ -0.07092757 -0.07094129 -0.0709551  -0.07096901 -0.07098301 -0.07099711
+ -0.07101129 -0.07102557 -0.07103993 -0.07105437 -0.0710689  -0.0710835
+ -0.07109819 -0.07111294 -0.07112778 -0.07114268 -0.07115765 -0.07117269
+ -0.0711878  -0.07120297 -0.07121821 -0.0712335  -0.07124885 -0.07126426
+ -0.07127973 -0.07129524 -0.07131081 -0.07132643 -0.0713421  -0.07135781
+ -0.07137357 -0.07138937 -0.07140521 -0.07142109 -0.07143701 -0.07145296
+ -0.07146895 -0.07148498 -0.07150103 -0.07151712 -0.07153323 -0.07154937
+ -0.07156554 -0.07158173 -0.07159794 -0.07161418 -0.07163043 -0.07164671
+ -0.071663   -0.0716793  -0.07169563 -0.07171196 -0.0717283  -0.07174466
+ -0.07176102 -0.0717774  -0.07179378 -0.07181016 -0.07182655 -0.07184294
+ -0.07185933 -0.07187572 -0.07189211 -0.0719085  -0.07192489 -0.07194127
+ -0.07195765 -0.07197402 -0.07199038 -0.07200673 -0.07202307 -0.0720394
+ -0.07205572 -0.07207203 -0.07208832 -0.07210459 -0.07212085 -0.0721371
+ -0.07215332 -0.07216952 -0.07218571 -0.07220187 -0.07221801 -0.07223413
+ -0.07225022 -0.07226629 -0.07228234 -0.07229835 -0.07231434 -0.0723303
+ -0.07234623 -0.07236214 -0.07237801 -0.07239384 -0.07240965 -0.07242542
+ -0.07244116 -0.07245687 -0.07247253 -0.07248817 -0.07250376 -0.07251932
+ -0.07253484 -0.07255032 -0.07256576 -0.07258116 -0.07259651 -0.07261183
+ -0.0726271  -0.07264233 -0.07265752 -0.07267266 -0.07268776 -0.07270282
+ -0.07271782 -0.07273278 -0.0727477  -0.07276256 -0.07277738 -0.07279215
+ -0.07280686 -0.07282153 -0.07283615 -0.07285072 -0.07286524 -0.07287971
+ -0.07289412 -0.07290848 -0.07292279 -0.07293704 -0.07295124 -0.07296539
+ -0.07297948 -0.07299352 -0.0730075  -0.07302143 -0.0730353  -0.07304912
+ -0.07306287 -0.07307658 -0.07309022 -0.07310381 -0.07311733 -0.0731308
+ -0.07314422 -0.07315757 -0.07317086 -0.0731841  -0.07319727 -0.07321039
+ -0.07322344 -0.07323644 -0.07324937 -0.07326225 -0.07327506 -0.07328781
+ -0.07330051 -0.07331314 -0.07332571 -0.07333821 -0.07335066 -0.07336304
+ -0.07337536 -0.07338762 -0.07339982 -0.07341196 -0.07342403 -0.07343604
+ -0.07344799 -0.07345987 -0.07347169 -0.07348345 -0.07349515 -0.07350678
+ -0.07351835 -0.07352986 -0.0735413  -0.07355269 -0.073564   -0.07357526
+ -0.07358645 -0.07359758 -0.07360864 -0.07361965 -0.07363059 -0.07364146
+ -0.07365227 -0.07366302 -0.07367371 -0.07368433 -0.0736949  -0.07370539
+ -0.07371583 -0.0737262  -0.07373651 -0.07374676 -0.07375694 -0.07376707
+ -0.07377713 -0.07378712 -0.07379706 -0.07380693 -0.07381674 -0.07382649
+ -0.07383618 -0.07384581 -0.07385537 -0.07386488 -0.07387432 -0.0738837
+ -0.07389302 -0.07390228 -0.07391148 -0.07392062 -0.07392969 -0.07393871
+ -0.07394767 -0.07395657 -0.07396541 -0.07397418 -0.0739829  -0.07399156
+ -0.07400016 -0.07400871 -0.07401719 -0.07402562 -0.07403398 -0.07404229
+ -0.07405054 -0.07405874 -0.07406687 -0.07407495 -0.07408297 -0.07409094
+ -0.07409885 -0.0741067  -0.07411449 -0.07412223 -0.07412992 -0.07413754
+ -0.07414512 -0.07415264 -0.0741601  -0.07416751 -0.07417486 -0.07418216
+ -0.07418941 -0.0741966  -0.07420374 -0.07421082 -0.07421786 -0.07422484
+ -0.07423177 -0.07423864 -0.07424546 -0.07425224 -0.07425896 -0.07426563
+ -0.07427224 -0.07427881 -0.07428533 -0.07429179 -0.07429821 -0.07430458
+ -0.07431089 -0.07431716 -0.07432338 -0.07432955 -0.07433568 -0.07434175
+ -0.07434778 -0.07435375 -0.07435969 -0.07436557 -0.07437141 -0.0743772
+ -0.07438294 -0.07438864 -0.07439429 -0.0743999  -0.07440546 -0.07441098
+ -0.07441645 -0.07442188 -0.07442726 -0.0744326  -0.07443789 -0.07444314
+ -0.07444835 -0.07445352 -0.07445864 -0.07446372 -0.07446876 -0.07447376
+ -0.07447871 -0.07448363 -0.0744885  -0.07449333 -0.07449812 -0.07450288
+ -0.07450759 -0.07451226 -0.07451689 -0.07452148 -0.07452604 -0.07453055
+ -0.07453503 -0.07453947 -0.07454387 -0.07454823 -0.07455255 -0.07455684
+ -0.07456109 -0.07456531 -0.07456948 -0.07457363 -0.07457773 -0.0745818
+ -0.07458584 -0.07458983 -0.0745938  -0.07459773 -0.07460162 -0.07460549
+ -0.07460931 -0.07461311 -0.07461687 -0.07462059 -0.07462429 -0.07462795
+ -0.07463158 -0.07463517 -0.07463874 -0.07464227 -0.07464577 -0.07464924
+ -0.07465268 -0.07465609 -0.07465946 -0.07466281 -0.07466613 -0.07466941
+ -0.07467267 -0.0746759  -0.07467909 -0.07468226 -0.0746854  -0.07468852
+ -0.0746916  -0.07469465 -0.07469768 -0.07470068 -0.07470365 -0.0747066
+ -0.07470951 -0.07471241 -0.07471527 -0.07471811 -0.07472092 -0.0747237
+ -0.07472646 -0.0747292  -0.07473191 -0.07473459 -0.07473725 -0.07473988
+ -0.07474249 -0.07474508 -0.07474764 -0.07475018 -0.07475269 -0.07475518
+ -0.07475764 -0.07476009 -0.07476251 -0.0747649  -0.07476728 -0.07476963
+ -0.07477196 -0.07477427 -0.07477655 -0.07477882 -0.07478106 -0.07478328
+ -0.07478548 -0.07478766 -0.07478982 -0.07479196 -0.07479408 -0.07479617
+ -0.07479825 -0.07480031 -0.07480234 -0.07480436 -0.07480636 -0.07480834
+ -0.0748103  -0.07481224 -0.07481416 -0.07481607 -0.07481795 -0.07481982
+ -0.07482167 -0.0748235  -0.07482531 -0.07482711 -0.07482889]
+num points= 801 t0= 0.0 t_last= 0.2 v0= -0.075 v_last= -0.0748288867931

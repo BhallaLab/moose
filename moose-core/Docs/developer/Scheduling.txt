@@ -1,0 +1,145 @@
+This section describes the MOOSE multithreaded scheduling and how it
+interfaces with the parser, the Shell, and with MPI calls to other nodes.
+
+The code for this is mostly in shell/ProcessLoop.cpp.
+
+
+Overview:
+MOOSE sets off a number of threads on each node. If the machine has C cores,
+then C threads are used for computing, 1 thread is used for managing MPI
+data transfer, and 1 thread is used on node 0 only for interfacing between
+the Shell and the Parser. The number of compute threads C can be overridden on
+the command line, but defaults to the number of hardware cores.
+
+All threads go through process loops. As long as MOOSE is running, the system 
+keeps the threads going through process loops, and keeps them in sync through
+three barriers per cycle around the loop. 
+
+Barriers are checkpoints where the system guarantees that each
+thread will wait till all threads have arrived. MOOSE barriers differ from 
+regular Pthreads barriers in that there is a special, single-thread function
+executed within each barrier. You can think of the net effect of a bundle of
+wires which have tight ties (barriers) at three points. Between the ties 
+the wires hang loose and do their own calculations, but everything is brought 
+into sync at the ties.
+
+When MOOSE is idling, all these threads continue but the Process call does
+not get sent to compute objects.
+
+When MOOSE is running a calculation, then the Process call does get issued.
+
+
+Details:
+
+As long as MOOSE is running, and whether or not it is doing a simulation,
+the following process loop operates:
+
+
+Stage		Thread#	Description
+Phase 1		0:C-1	Carry out Process calculations on all simulated objects
+		C	Do nothing.
+		C+1	On node 0 only: Lock mutex for input from parser.
+
+Barrier1	Single	Clear StructuralQ. This accumulates operations
+			which alter the structure of the simulation, and thus
+			must be done single-threaded.
+			Swap inQ and outQ.
+			At the end of this barrier, all Process calculations
+			are all done and have sent their messages. Structural
+			operations have been done. The 
+			message queues have been swapped so that data is
+			ready to be read and acted upon.
+
+Phase 2		0:C-1	Clocks juggle the Ticks (on thread 0 only).
+			Deliver and execute local node messages.
+			Go into a loop to handle off-node messages.
+		C	Go into a loop to broadcast/receive all off-node msgs,
+			one node at a time.
+			This has to be done with a predetermined data block 
+			size, which is judged as a bit over the median data 
+			size. On the occasions where the data to come is bigger
+			than this block, there is an immediate resend initiated
+			that transfers the bigger block.
+			At present we don't have dynamic resizing of the 
+			median block size, but it should not be hard to set up.
+		C+1	On node 0 only: Do nothing.
+
+Barrier 2	Single	Swap mpiInQ and mpiRecvQ. This barrier is encountered
+			in the same loop as Phase 2, once for each node.
+			At the end of each round through this barrier, all 
+			off-node messages on the indexed node have been sent,
+			received, and acted upon.
+
+Phase 3		0:C-1	Complete execution for last node.
+		C	Do nothing
+		C+1	Unlock the mutex for input from parser
+
+Barrier 3	Single	Clear reduce operations, that is, operations where each
+			thread and each node collates information and reduces it
+			to a single quantity to go to either the master node
+			or to all nodes.
+			Change Clock state, between run, reinit, stop etc.
+			At the end of this barrier, all messages from all
+			nodes have been handled. The Clock knows what to
+			do for the next cycle. Typicaly it goes back to Phase 1.
+
+Messaging, scheduling, and threads:
+Broadly, at any instant during the Phases, there are two available Queues:
+the inQ and the outQ. 
+InQ: The inQ is a single, readonly, collated queue which
+is updated during Barrier 1. inQ has all the data from all the threads, and
+all the compute threads read it. It also contains all the data that needs to
+go off-node. 
+outQ: The outQ is subdivided into one writable queue per thread, so there is
+no chance of overwriting data. Starting from Phase 2, the outQ accumulates
+messaging entries. This can be from messages sent in response to other 
+messages in Phase 2, or more commonly from messages sent during the Process
+operation in Phase 1. Finally, in Barrier1 at swapQ, all the content from
+all the outQs is stitched together to make up the inQ, and all the subQs from
+the outQ are cleared.
+
+This same theme is repeated between nodes. The mpiInQ is the collated Q that
+has arrived from the sending node, and its contents are identical to the inQ
+of the sending node. The mpiRecvQ is a buffer sitting waiting for the next 
+cycle of data to come from the next node.
+
+
+Clocks and scheduling.
+
+The Clock class coordinates the operation of a vector of Ticks. There
+is a single Clock object ( ClockId = 1 ) in the simulation.
+The Tick objects are present in an array on the Clock. Each Tick has a 
+timestep (dt), and connects to a target Elements through messages.
+Unlike regular messages, which send their requests through the Queueing system,
+the Tick directly traverses through all messages, and calls the
+'process' function on the target Elements. This hands it down to the 
+DataHandler, which iterates through all the target objects within the Element,
+and calls the specified Process function. Any function having the
+appropriate arguments could be called here. This is how different phases of
+Process, as well as Reinit, are called through the same mechanism.
+
+
+In Phase 1:
+The Clock and its child Ticks are called in parallel by all the threads. The
+thread decomposition is done by the DataHandler.
+
+In Phase 2:
+On thread 0 only, the Clock handles advancing of timesteps on Phase 2. 
+	After each Tick is called, it advances its current Time by dt.
+	The sequencing for advancing Tick timings is done by the Clock, by
+	brute force sorting of the Ticks after every pass through the Process 
+	loop.
+	Ticks are sorted first by dt, and if that is the same, by their 
+	own index. So if Tick 2 and 3 have the same dt, Tick 2 will always 
+	be called first.
+
+In Barrier 3:
+The Clock executes Clock::checkProcState, which among other things decides
+whether to keep doing what it was (typically running Process or idling).
+Calls to alter ProcState are called only during phase 2, typically resulting
+from the Shell sending messages to the clock to do things.
+
+Reinit goes through almost identical phases and operations as the steps
+	for advancing the simulation. The main difference is that the 
+	function called on the target objects at Reinit, is of course, reinit.
+

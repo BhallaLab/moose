@@ -1,0 +1,32 @@
+Naming conventions:
+General: Use CamelCase
+Don't use underscores as word separators.
+Classes start with caps
+Fields and functions start with lower case, except for scientific
+	conventions (e.g., Vm_) in which case the scientific convention is used.
+Private fields end with an underscore (e.g., Vm_ );
+Use spaces liberally, and always after a comma.
+Field assignment functions (set/get) start with set/get<fieldName>
+
+Naming of MOOSE fields and functions:
+Fields (ValueFinfos): Just use the name of the field, e.g., Vm, x, y, z.
+Message sources (SrcFinfos): Use the name of the field, e.g., output,
+	unless there is a name-clash with a Fields. Then use name<Suffix>
+	e.g., nOut, xOut, VmOut.
+	If the message source is to request a return value, generally use the
+	form request<fieldName>
+Message destination (DestFinfos): Use the name of the function, typically a 
+	verb. e.g., increment, process. 
+	Special case comes up with the internal set/get functions of fields,
+	which are implemented as DestFinfos. Here the DestFinfos are
+	automatically named set_<fieldname> and get_<fieldname>
+	If the message dest handles a request or other operation as part of
+	a shared message, generally use the form
+	handle<name>
+	If there is an overlap with a SharedMessage or field after applying
+	all these rules, then use the form handle<name>.
+Shared messages (SharedFinfos): Use the name of the message.
+	If there is an overlap with any other message, the SharedMessage takes
+	precedence. This is because Shared Messages are the interface users
+	will normally use. Try to avoid overlaps with field names.
+

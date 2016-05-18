@@ -1,0 +1,7 @@
+release/*
+!.gitignore
+/nbproject
+/build
+manifest.mf
+.project
+/build.xml
