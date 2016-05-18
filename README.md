@@ -5,11 +5,11 @@ stable MOOSE code.
 
 # Building
 
-  mkdir _build
-  cd _build
-  cmake ..
-  make 
-  sudo make install
+    mkdir _build
+    cd _build
+    cmake ..
+    make 
+    sudo make install
 
 
 # Repositories
