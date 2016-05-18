@@ -1,6 +1,15 @@
-# Building and installing moose
+# Pre-built packages
 
-## Download the latest source code of moose from github or sourceforge.
+Use our repositories hosted at [Open Build Service](http://build.opensuse.org).
+We have packages for Debian, Ubuntu, CentOS, Fedora, OpenSUSE/SUSE, RHEL,
+Scientific Linux.  Visit the following page and follow the instructions there. 
+
+https://software.opensuse.org/download.html?project=home:moose&package=moose
+
+
+# Building from source
+
+First, Download the latest source code of moose from github.
 
     $ git clone https://github.com/BhallaLab/moose
     $ cd moose
@@ -46,15 +55,12 @@ On Ubuntu-120.4 or higher, these can be installed with:
 
     $ mkdir _build
     $ cd _build 
-    $ cmake -DBUILD_MOOGLI=OFF -DWITH_DOC=OFF ..
+    $ cmake -DWITH_DOC=OFF ..
     $ make 
     $ ctest --output-on-failure
 
 This will build moose and its python extentions, `ctest` will run few tests to
 check if build process was successful.
-
-If you also want MOOGLI then pass `-DBUILD_MOOGLI=ON`.  Also see the section
-__Building and installing moogli__ for more details about its dependencies.
 
 To install MOOSE into non-standard directory, pass additional argument
 `-DCMAKE_INSTALL_PREFIX=path/to/install/dir` to cmake.
@@ -92,7 +98,7 @@ On Ubuntu, following packages should suffice:
     libqt4-dev 
 
 
-### Travis
+## Travis
 
 We use `Travis-CI` to build MOOSE after every commit. You can see `.travis.yml`
 file in our repository. It has all instructions to build MOOSE on `Ubuntu-12.04
