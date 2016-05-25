@@ -1,0 +1,889 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>MOOSE builtins &mdash; MOOSE 3.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '3.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="MOOSE 3.0 documentation" href="index.html" />
+    <link rel="next" title="MOOSE Classes" href="moose_classes.html" />
+    <link rel="prev" title="Welcome to MOOSE documentation!" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="moose_classes.html" title="MOOSE Classes"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to MOOSE documentation!"
+             accesskey="P">previous</a> |</li>
+        <li><a href="http://moose.ncbs.res.in/">MOOSE Homepage</a> &raquo;</li>      
+        <li><a href="index.html">MOOSE 3.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-moose">
+<span id="moose-builtins"></span><h1>MOOSE builtins<a class="headerlink" href="#module-moose" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="moose-multiscale-object-oriented-simulation-environment">
+<h2>MOOSE = Multiscale Object Oriented Simulation Environment.<a class="headerlink" href="#moose-multiscale-object-oriented-simulation-environment" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="how-to-use-the-documentation">
+<h3>How to use the documentation<a class="headerlink" href="#how-to-use-the-documentation" title="Permalink to this headline">¶</a></h3>
+<p>MOOSE documentation is split into Python documentation and builtin
+documentation. The functions and classes that are only part of the
+Python interface can be viewed via Python&#8217;s builtin <tt class="docutils literal"><span class="pre">help</span></tt>
+function:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">help</span><span class="p">(</span><span class="n">moose</span><span class="o">.</span><span class="n">connect</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>...</p>
+<p>The documentation built into main C++ code of MOOSE can be accessed
+via the module function <tt class="docutils literal"><span class="pre">doc</span></tt>:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">moose</span><span class="o">.</span><span class="n">doc</span><span class="p">(</span><span class="s">&#39;Neutral&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>...</p>
+<p>To get documentation about a particular field:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">moose</span><span class="o">.</span><span class="n">doc</span><span class="p">(</span><span class="s">&#39;Neutral.childMsg&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="brief-overview-of-pymoose">
+<h2>Brief overview of PyMOOSE<a class="headerlink" href="#brief-overview-of-pymoose" title="Permalink to this headline">¶</a></h2>
+<p>Classes:</p>
+<div class="section" id="vec">
+<h3>vec<a class="headerlink" href="#vec" title="Permalink to this headline">¶</a></h3>
+<p>this is the unique identifier of a MOOSE object. Note that you can
+create multiple references to the same MOOSE object in Python, but as
+long as they have the same path/id value, they all point to the same
+entity in MOOSE.</p>
+<p>Constructor:</p>
+<p>You can create a new vec using the constructor:</p>
+<p>vec(path, dimension, classname)</p>
+<p>Fields:</p>
+<p>value &#8211; unsigned integer representation of id of this vec</p>
+<p>path &#8211; string representing the path corresponding this vec</p>
+<p>shape &#8211; tuple containing the dimensions of this vec</p>
+<p>Apart from these, every vec exposes the fields of all its elements
+in a vectorized form. For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">iaf</span> <span class="o">=</span> <span class="n">moose</span><span class="o">.</span><span class="n">vec</span><span class="p">(</span><span class="s">&#39;/iaf&#39;</span><span class="p">,</span> <span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="s">&#39;IntFire&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">iaf</span><span class="o">.</span><span class="n">Vm</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> 
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">iaf</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">Vm</span> 
+<span class="go">5.0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">print</span> <span class="n">iaf</span><span class="o">.</span><span class="n">Vm</span>
+<span class="go">array([ 0.,  1.,  2.,  3.,  4.,  5.,  6.,  7.,  8.,  9.])</span>
+</pre></div>
+</div>
+<p>Methods:</p>
+<p>vec implements part of the sequence protocol:</p>
+<p>len(em) &#8211; the first dimension of em.</p>
+<p>em[n] &#8211; the n-th element in em.</p>
+<p>em[n1:n2] &#8211; a tuple containing n1 to n2-th (exclusive) element in em.</p>
+<p>elem in em &#8211; True if elem is contained in em.</p>
+</div>
+<div class="section" id="melement">
+<h3>melement<a class="headerlink" href="#melement" title="Permalink to this headline">¶</a></h3>
+<p>Single moose object. It has three numbers to uniquely identify it:</p>
+<p>id - id of the vec containing this element</p>
+<p>dataIndex - index of this element in the container vec</p>
+<p>fieldIndex - if this is a tertiary object, i.e. acts
+as a field in another element (like synapse[0] in IntFire[1]), then
+the index of this field in the containing element.</p>
+<p>Methods:</p>
+<p>getId &#8211; vec object containing this element.
+vec() &#8211; vec object containing this element.</p>
+<p>getDataIndex() &#8211; unsigned integer representing the index of this
+element in containing MOOSE object.</p>
+<p>getFieldIndex() &#8211; unsigned integer representing the index of this
+element as a field in the containing Element.</p>
+<p>getFieldType(field) &#8211; human readable datatype information of field</p>
+<p>getField(field) &#8211; get value of field</p>
+<p>setField(field, value) &#8211; assign value to field</p>
+<p>getFieldNames(fieldType) &#8211; tuple containing names of all the fields
+of type fieldType. fieldType can be valueFinfo, lookupFinfo, srcFinfo,
+destFinfo and sharedFinfo. If nothing is passed, a union of all of the
+above is used and all the fields are returned.</p>
+<p>connect(srcField, destObj, destField, msgType) &#8211; connect srcField of
+this element to destField of destObj.</p>
+<p>melement is something like an abstract base class in C++. The concrete
+base class is Neutral. However you do not need to cast objects down to
+access their fields. The PyMOOSE interface will automatically do the
+check for you and raise an exception if the specified field does not
+exist for the current element.</p>
+</div>
+<div class="section" id="creating-melements">
+<h3>Creating melements<a class="headerlink" href="#creating-melements" title="Permalink to this headline">¶</a></h3>
+<p>To create the objects of concrete subclasses of melement, the class
+can be called as follows:</p>
+<p>melement(path, dims, dtype, parent)</p>
+<p>path: This is like unix filesystem path and is the concatenation of
+name of the element to be created and that of all its ancestors
+spearated by <cite>/</cite>. For example, path=`/a/b` will create the element
+named <cite>b</cite> under element <cite>a</cite>. Note that if <cite>a</cite> does not exist, this
+will raise an error. However, if <cite>parent</cite> is specified, <cite>path</cite> should
+contain only the name of the element.</p>
+<p>dims: (optional) tuple specifying the dimension of the containing melement to be
+created. It is (1,) by default.</p>
+<p>dtype: string specifying the class name of the element to be created.</p>
+<p>parent: (optional) string specifying the path of the parent element or
+the Id or the ObjId of the parent element or a reference to the parent
+element. If this is specified, the first argument <cite>path</cite> is treated as
+the name of the element to be created.</p>
+<p>All arguments can be passed as keyword arguments.</p>
+<p>For concrete subclasses of melement, you do not need to pass the class
+argument because the class name is passed automatically to <cite>melement</cite>
+__init__ method.</p>
+<p>a = Neutral(&#8216;alpha&#8217;) # Creates element named <cite>alpha</cite> under current working element
+b = Neutral(&#8216;alpha/beta&#8217;) # Creates the element named <cite>beta</cite> under <cite>alpha</cite>
+c = Cell(&#8216;charlie&#8217;, parent=a) # creates element <cite>charlie</cite> under <cite>alpha</cite>
+d = DiffAmp(&#8216;delta&#8217;, parent=&#8217;alpha/beta&#8217;) # creates element <cite>delta</cite> under <cite>beta</cite></p>
+</div>
+<div class="section" id="module-functions">
+<h3>module functions<a class="headerlink" href="#module-functions" title="Permalink to this headline">¶</a></h3>
+<p>element(path) - returns a reference to an existing object converted to
+the right class. Raises ValueError if path does not exist.</p>
+<p>copy(src=&lt;src&gt;, dest=&lt;dest&gt;, name=&lt;name_of_the_copy&gt;, n=&lt;num_copies&gt;,
+copyMsg=&lt;whether_to_copy_messages) &#8211; make a copy of source object as
+a child of the destination object.</p>
+<p>move(src, dest) &#8211; move src object under dest object.</p>
+<p>useClock(tick, path, update_function) &#8211; schedule &lt;update_function&gt; of
+every object that matches &lt;path&gt; on clock no. &lt;tick&gt;. Most commonly
+the function is &#8216;process&#8217;.  NOTE: unlike earlier versions, now
+autoschedule is not available. You have to call useClock for every
+element that should be updated during the simulation.</p>
+<p>The sequence of clockticks with the same dt is according to their
+number. This is utilized for controlling the order of updates in
+various objects where it matters.</p>
+<p>The following convention should be observed when assigning clockticks
+to various components of a model:</p>
+<p>Clock ticks 0-3 are for electrical (biophysical) components, 4 and 5
+are for chemical kinetics, 6 and 7 are for lookup tables and stimulus,
+8 and 9 are for recording tables.</p>
+<p>Generally, &#8216;process&#8217; is the method to be assigned a clock
+tick. Notable exception is &#8216;init&#8217; method of Compartment class which is
+assigned tick 0.</p>
+<p>0 : Compartment: &#8216;init&#8217;
+1 : Compartment: &#8216;process&#8217;
+2 : HHChannel and other channels: &#8216;process&#8217;
+3 : CaConc : &#8216;process&#8217;
+4,5 : Elements for chemical kinetics : &#8216;process&#8217;
+6,7 : Lookup (tables), stimulus : &#8216;process&#8217;
+8,9 : Tables for plotting : process</p>
+<p>Example: 
+moose.useClock(0, &#8216;/model/compartment_1&#8217;, &#8216;init&#8217;)
+moose.useClock(1, &#8216;/model/compartment_1&#8217;, &#8216;process&#8217;)</p>
+<p>setClock(tick, dt) &#8211; set dt of clock no &lt;tick&gt;.</p>
+<p>start(runtime) &#8211; start simulation of &lt;runtime&gt; time.</p>
+<p>reinit() &#8211; reinitialize simulation.</p>
+<p>stop() &#8211; stop simulation</p>
+<p>isRunning() &#8211; true if simulation is in progress, false otherwise.</p>
+<p>exists(path) &#8211; true if there is a pre-existing object with the specified path.</p>
+<p>loadModel(filepath, modelpath) &#8211; load file in &lt;filepath&gt; into node
+&lt;modelpath&gt; of the moose model-tree.</p>
+<p>setCwe(obj) &#8211; set the current working element to &lt;obj&gt; - which can be
+either a string representing the path of the object in the moose
+model-tree, or an vec.
+ce(obj) &#8211; an alias for setCwe.</p>
+<p>getCwe() &#8211; returns vec containing the current working element.
+pwe() &#8211; an alias for getCwe.</p>
+<p>showfields(obj) &#8211; print the fields in object in human readable format</p>
+<p>le(obj) &#8211; list element under object, if no parameter specified, list
+elements under current working element</p>
+<dl class="function">
+<dt id="moose.pwe">
+<tt class="descclassname">moose.</tt><tt class="descname">pwe</tt><big>(</big><big>)</big><a class="headerlink" href="#moose.pwe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print present working element. Convenience function for GENESIS
+users. If you want to retrieve the element in stead of printing
+the path, use moose.getCwe()</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="moose.le">
+<tt class="descclassname">moose.</tt><tt class="descname">le</tt><big>(</big><em>el=None</em><big>)</big><a class="headerlink" href="#moose.le" title="Permalink to this definition">¶</a></dt>
+<dd><p>List elements under <cite>el</cite> or current element if no argument
+specified.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>el</strong> : str/melement/vec/None</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>The element or the path under which to look. If <cite>None</cite>, children</dt>
+<dd><p class="first last">of current working element are displayed.</p>
+</dd>
+</dl>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="moose.ce">
+<tt class="descclassname">moose.</tt><tt class="descname">ce</tt><big>(</big><big>)</big><a class="headerlink" href="#moose.ce" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the current working element. &#8216;ce&#8217; is an alias of this function</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="moose.showfield">
+<tt class="descclassname">moose.</tt><tt class="descname">showfield</tt><big>(</big><em>el</em>, <em>field='*'</em>, <em>showtype=False</em><big>)</big><a class="headerlink" href="#moose.showfield" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show the fields of the element <cite>el</cite>, their data types and
+values in human readable format. Convenience function for GENESIS
+users.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>el</strong> : melement/str</p>
+<blockquote>
+<div><p>Element or path of an existing element.</p>
+</div></blockquote>
+<p><strong>field</strong> : str</p>
+<blockquote>
+<div><p>Field to be displayed. If &#8216;*&#8217; (default), all fields are displayed.</p>
+</div></blockquote>
+<p><strong>showtype</strong> : bool</p>
+<blockquote>
+<div><p>If True show the data type of each field. False by default.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="moose.showmsg">
+<tt class="descclassname">moose.</tt><tt class="descname">showmsg</tt><big>(</big><em>el</em><big>)</big><a class="headerlink" href="#moose.showmsg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print the incoming and outgoing messages of <cite>el</cite>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>el</strong> : melement/vec/str</p>
+<blockquote>
+<div><p>Object whose messages are to be displayed.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="moose.doc">
+<tt class="descclassname">moose.</tt><tt class="descname">doc</tt><big>(</big><em>arg</em>, <em>inherited=True</em>, <em>paged=True</em><big>)</big><a class="headerlink" href="#moose.doc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display the documentation for class or field in a class.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>arg</strong> : str/class/melement/vec</p>
+<blockquote>
+<div><p>A string specifying a moose class name and a field name
+separated by a dot. e.g., &#8216;Neutral.name&#8217;. Prepending <cite>moose.</cite>
+is allowed. Thus moose.doc(&#8216;moose.Neutral.name&#8217;) is equivalent
+to the above.    
+It can also be string specifying just a moose class name or a
+moose class or a moose object (instance of melement or vec
+or there subclasses). In that case, the builtin documentation
+for the corresponding moose class is displayed.</p>
+</div></blockquote>
+<p><strong>paged: bool</strong></p>
+<blockquote>
+<div><p>Whether to display the docs via builtin pager or print and
+exit. If not specified, it defaults to False and
+moose.doc(xyz) will print help on xyz and return control to
+command line.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first">None</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises :</th><td class="field-body"><p class="first"><strong>NameError</strong></p>
+<blockquote class="last">
+<div><p>If class or field does not exist.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="moose.element">
+<tt class="descclassname">moose.</tt><tt class="descname">element</tt><big>(</big><em>arg</em><big>)</big> &rarr; moose object<a class="headerlink" href="#moose.element" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a path or an object to the appropriate builtin moose class
+instance</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>arg</strong> : str/vec/moose object</p>
+<blockquote>
+<div><p>path of the moose element to be converted or another element (possibly
+available as a superclass instance).</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first">melement</p>
+<blockquote class="last">
+<div><p>MOOSE element (object) corresponding to the <cite>arg</cite> converted to write subclass.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="moose.getFieldNames">
+<tt class="descclassname">moose.</tt><tt class="descname">getFieldNames</tt><big>(</big><em>className</em>, <em>finfoType='valueFinfo'</em><big>)</big> &rarr; tuple<a class="headerlink" href="#moose.getFieldNames" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a tuple containing the name of all the fields of <cite>finfoType</cite>
+kind.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>className</strong> : string</p>
+<blockquote>
+<div><p>Name of the class to look up.</p>
+</div></blockquote>
+<p><strong>finfoType</strong> : string</p>
+<blockquote>
+<div><p>The kind of field (<cite>valueFinfo</cite>, <cite>srcFinfo</cite>, <cite>destFinfo</cite>,
+<cite>lookupFinfo</cite>, <cite>fieldElementFinfo</cite>.).</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first">tuple</p>
+<blockquote class="last">
+<div><p>Names of the fields of type <cite>finfoType</cite> in class <cite>className</cite>.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="moose.copy">
+<tt class="descclassname">moose.</tt><tt class="descname">copy</tt><big>(</big><em>src</em>, <em>dest</em>, <em>name</em>, <em>n</em>, <em>toGlobal</em>, <em>copyExtMsg</em><big>)</big> &rarr; bool<a class="headerlink" href="#moose.copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make copies of a moose object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>src</strong> : vec, element or str</p>
+<blockquote>
+<div><p>source object.</p>
+</div></blockquote>
+<p><strong>dest</strong> : vec, element or str</p>
+<blockquote>
+<div><p>Destination object to copy into.</p>
+</div></blockquote>
+<p><strong>name</strong> : str</p>
+<blockquote>
+<div><p>Name of the new object. If omitted, name of the original will be used.</p>
+</div></blockquote>
+<p><strong>n</strong> : int</p>
+<blockquote>
+<div><p>Number of copies to make.</p>
+</div></blockquote>
+<p><strong>toGlobal</strong> : int</p>
+<blockquote>
+<div><p>Relevant for parallel environments only. If false, the copies will
+reside on local node, otherwise all nodes get the copies.</p>
+</div></blockquote>
+<p><strong>copyExtMsg</strong> : int</p>
+<blockquote>
+<div><p>If true, messages to/from external objects are also copied.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first">vec</p>
+<blockquote class="last">
+<div><p>newly copied vec</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="moose.move">
+<tt class="descclassname">moose.</tt><tt class="descname">move</tt><big>(</big><big>)</big><a class="headerlink" href="#moose.move" title="Permalink to this definition">¶</a></dt>
+<dd><p>Move a vec object to a destination.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="moose.delete">
+<tt class="descclassname">moose.</tt><tt class="descname">delete</tt><big>(</big><em>obj</em><big>)</big> &rarr; None<a class="headerlink" href="#moose.delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Delete the underlying moose object. This does not delete any of the
+Python objects referring to this vec but does invalidate them. Any
+attempt to access them will raise a ValueError.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>id</strong> : vec</p>
+<blockquote>
+<div><p>vec of the object to be deleted.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="moose.useClock">
+<tt class="descclassname">moose.</tt><tt class="descname">useClock</tt><big>(</big><big>)</big><a class="headerlink" href="#moose.useClock" title="Permalink to this definition">¶</a></dt>
+<dd><p>Schedule objects on a specified clock</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="moose.setClock">
+<tt class="descclassname">moose.</tt><tt class="descname">setClock</tt><big>(</big><big>)</big><a class="headerlink" href="#moose.setClock" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the dt of a clock.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="moose.start">
+<tt class="descclassname">moose.</tt><tt class="descname">start</tt><big>(</big><em>time</em><big>)</big> &rarr; None<a class="headerlink" href="#moose.start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run simulation for <cite>t</cite> time. Advances the simulator clock by <cite>t</cite>
+time.</p>
+<p>After setting up a simulation, YOU MUST CALL MOOSE.REINIT() before
+CALLING MOOSE.START() TO EXECUTE THE SIMULATION. Otherwise, the
+simulator behaviour will be undefined. Once moose.reinit() has been
+called, you can call moose.start(t) as many time as you like. This
+will continue the simulation from the last state for <cite>t</cite> time.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>t</strong> : float</p>
+<blockquote>
+<div><p>duration of simulation.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition-see-also admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="last docutils">
+<dt><a class="reference internal" href="#moose.reinit" title="moose.reinit"><tt class="xref py py-obj docutils literal"><span class="pre">moose.reinit</span></tt></a></dt>
+<dd>(Re)initialize simulation</dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="function">
+<dt id="moose.reinit">
+<tt class="descclassname">moose.</tt><tt class="descname">reinit</tt><big>(</big><big>)</big> &rarr; None<a class="headerlink" href="#moose.reinit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reinitialize simulation.</p>
+<p>This function (re)initializes moose simulation. It must be called
+before you start the simulation (see moose.start). If you want to
+continue simulation after you have called moose.reinit() and
+moose.start(), you must NOT call moose.reinit() again. Calling
+moose.reinit() again will take the system back to initial setting
+(like clear out all data recording tables, set state variables to
+their initial values, etc.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="moose.stop">
+<tt class="descclassname">moose.</tt><tt class="descname">stop</tt><big>(</big><big>)</big><a class="headerlink" href="#moose.stop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stop simulation</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="moose.isRunning">
+<tt class="descclassname">moose.</tt><tt class="descname">isRunning</tt><big>(</big><big>)</big><a class="headerlink" href="#moose.isRunning" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if the simulation is currently running.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="moose.exists">
+<tt class="descclassname">moose.</tt><tt class="descname">exists</tt><big>(</big><big>)</big><a class="headerlink" href="#moose.exists" title="Permalink to this definition">¶</a></dt>
+<dd><p>True if there is an object with specified path.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="moose.writeSBML">
+<tt class="descclassname">moose.</tt><tt class="descname">writeSBML</tt><big>(</big><big>)</big><a class="headerlink" href="#moose.writeSBML" title="Permalink to this definition">¶</a></dt>
+<dd><p>Export biochemical model to an SBML file.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="moose.readSBML">
+<tt class="descclassname">moose.</tt><tt class="descname">readSBML</tt><big>(</big><big>)</big><a class="headerlink" href="#moose.readSBML" title="Permalink to this definition">¶</a></dt>
+<dd><p>Import SBML model to Moose.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="moose.loadModel">
+<tt class="descclassname">moose.</tt><tt class="descname">loadModel</tt><big>(</big><em>filename</em>, <em>modelpath</em>, <em>solverclass</em><big>)</big> &rarr; vec<a class="headerlink" href="#moose.loadModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load model from a file to a specified path.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>filename</strong> : str</p>
+<blockquote>
+<div><p>model description file.</p>
+</div></blockquote>
+<p><strong>modelpath</strong> : str</p>
+<blockquote>
+<div><p>moose path for the top level element of the model to be created.</p>
+</div></blockquote>
+<p><strong>solverclass</strong> : str, optional</p>
+<blockquote>
+<div><p>solver type to be used for simulating the model.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first">vec</p>
+<blockquote class="last">
+<div><p>loaded model container vec.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="moose.saveModel">
+<tt class="descclassname">moose.</tt><tt class="descname">saveModel</tt><big>(</big><em>source</em>, <em>filename</em><big>)</big> &rarr; None<a class="headerlink" href="#moose.saveModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Save model rooted at <cite>source</cite> to file <cite>filename</cite>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>source</strong> : vec/element/str</p>
+<blockquote>
+<div><p>root of the model tree</p>
+</div></blockquote>
+<p><strong>filename</strong> : str</p>
+<blockquote>
+<div><p>destination file to save the model in.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="moose.connect">
+<tt class="descclassname">moose.</tt><tt class="descname">connect</tt><big>(</big><em>src</em>, <em>src_field</em>, <em>dest</em>, <em>dest_field</em>, <em>message_type</em><big>)</big> &rarr; bool<a class="headerlink" href="#moose.connect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a message between <cite>src_field</cite> on <cite>src</cite> object to <cite>dest_field</cite>
+on <cite>dest</cite> object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>src</strong> : element/vec/string</p>
+<blockquote>
+<div><p>the source object (or its path)</p>
+</div></blockquote>
+<p><strong>src_field</strong> : str</p>
+<blockquote>
+<div><p>the source field name. Fields listed under <cite>srcFinfo</cite> and
+<cite>sharedFinfo</cite> qualify for this.</p>
+</div></blockquote>
+<p><strong>dest</strong> : element/vec/string</p>
+<blockquote>
+<div><p>the destination object.</p>
+</div></blockquote>
+<p><strong>dest_field</strong> : str</p>
+<blockquote>
+<div><p>the destination field name. Fields listed under <cite>destFinfo</cite>
+and <cite>sharedFinfo</cite> qualify for this.</p>
+</div></blockquote>
+<p><strong>message_type</strong> : str (optional)</p>
+<blockquote>
+<div><p>Type of the message. Can be <cite>Single</cite>, <cite>OneToOne</cite>, <cite>OneToAll</cite>.
+If not specified, it defaults to <cite>Single</cite>.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first">melement</p>
+<blockquote class="last">
+<div><p>message-manager for the newly created message.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="moose.getCwe">
+<tt class="descclassname">moose.</tt><tt class="descname">getCwe</tt><big>(</big><big>)</big><a class="headerlink" href="#moose.getCwe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the current working element. &#8216;pwe&#8217; is an alias of this function.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="moose.setCwe">
+<tt class="descclassname">moose.</tt><tt class="descname">setCwe</tt><big>(</big><big>)</big><a class="headerlink" href="#moose.setCwe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the current working element. &#8216;ce&#8217; is an alias of this function</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="moose.getFieldDict">
+<tt class="descclassname">moose.</tt><tt class="descname">getFieldDict</tt><big>(</big><em>className</em>, <em>finfoType</em><big>)</big> &rarr; dict<a class="headerlink" href="#moose.getFieldDict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get dictionary of field names and types for specified class.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>className</strong> : str</p>
+<blockquote>
+<div><p>MOOSE class to find the fields of.</p>
+</div></blockquote>
+<p><strong>finfoType</strong> : str (optional)</p>
+<blockquote>
+<div><p>Finfo type of the fields to find. If empty or not specified, all
+fields will be retrieved.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first">dict</p>
+<blockquote class="last">
+<div><p>field names and their types.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>This behaviour is different from <cite>getFieldNames</cite> where only
+<cite>valueFinfo`s are returned when `finfoType</cite> remains unspecified.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="moose.getField">
+<tt class="descclassname">moose.</tt><tt class="descname">getField</tt><big>(</big><big>)</big><a class="headerlink" href="#moose.getField" title="Permalink to this definition">¶</a></dt>
+<dd><p>getField(element, field, fieldtype) &#8211; Get specified field of specified type from object vec.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="moose.seed">
+<tt class="descclassname">moose.</tt><tt class="descname">seed</tt><big>(</big><em>seedvalue</em><big>)</big> &rarr; None<a class="headerlink" href="#moose.seed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reseed MOOSE random number generator.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>seed</strong> : int</p>
+<blockquote>
+<div><p>Optional value to use for seeding. If 0, a random seed is
+automatically created using the current system time and other
+information. If not specified, it defaults to 0.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns :</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="moose.rand">
+<tt class="descclassname">moose.</tt><tt class="descname">rand</tt><big>(</big><em>) -&gt; [0</em>, <em>1</em><big>)</big><a class="headerlink" href="#moose.rand" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns :</th><td class="field-body">float in [0, 1) real interval generated by MT19937.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="moose.wildcardFind">
+<tt class="descclassname">moose.</tt><tt class="descname">wildcardFind</tt><big>(</big><em>expression</em><big>)</big> &rarr; tuple of melements.<a class="headerlink" href="#moose.wildcardFind" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find an object by wildcard.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters :</th><td class="field-body"><p class="first"><strong>expression</strong> : str</p>
+<blockquote class="last">
+<div><p>MOOSE allows wildcard expressions of the form:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">{</span><span class="n">PATH</span><span class="p">}</span><span class="o">/</span><span class="p">{</span><span class="n">WILDCARD</span><span class="p">}[{</span><span class="n">CONDITION</span><span class="p">}]</span>
+</pre></div>
+</div>
+<p>where {PATH} is valid path in the element tree.
+{WILDCARD} can be <cite>#</cite> or <cite>##</cite>.</p>
+<p><cite>#</cite> causes the search to be restricted to the children of the
+element specified by {PATH}.</p>
+<p><cite>##</cite> makes the search to recursively go through all the descendants
+of the {PATH} element.
+{CONDITION} can be:</p>
+<div class="highlight-python"><pre>TYPE={CLASSNAME} : an element satisfies this condition if it is of
+class {CLASSNAME}.
+ISA={CLASSNAME} : alias for TYPE={CLASSNAME}
+CLASS={CLASSNAME} : alias for TYPE={CLASSNAME}
+FIELD({FIELDNAME}){OPERATOR}{VALUE} : compare field {FIELDNAME} with
+{VALUE} by {OPERATOR} where {OPERATOR} is a comparison operator (=,
+!=, &gt;, &lt;, &gt;=, &lt;=).</pre>
+</div>
+<p>For example, /mymodel/##[FIELD(Vm)&gt;=-65] will return a list of all
+the objects under /mymodel whose Vm field is &gt;= -65.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="moose.quit">
+<tt class="descclassname">moose.</tt><tt class="descname">quit</tt><big>(</big><big>)</big><a class="headerlink" href="#moose.quit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finalize MOOSE threads and quit MOOSE. This is made available for debugging purpose only. It will automatically get called when moose module is unloaded. End user should not use this function.</p>
+</dd></dl>
+
+</div>
+</div>
+<p>,</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">MOOSE builtins</a><ul>
+<li><a class="reference internal" href="#moose-multiscale-object-oriented-simulation-environment">MOOSE = Multiscale Object Oriented Simulation Environment.</a><ul>
+<li><a class="reference internal" href="#how-to-use-the-documentation">How to use the documentation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#brief-overview-of-pymoose">Brief overview of PyMOOSE</a><ul>
+<li><a class="reference internal" href="#vec">vec</a></li>
+<li><a class="reference internal" href="#melement">melement</a></li>
+<li><a class="reference internal" href="#creating-melements">Creating melements</a></li>
+<li><a class="reference internal" href="#module-functions">module functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Welcome to MOOSE documentation!</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="moose_classes.html"
+                        title="next chapter">MOOSE Classes</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/moose_builtins.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="moose_classes.html" title="MOOSE Classes"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to MOOSE documentation!"
+             >previous</a> |</li>
+             <li><a href="http://moose.ncbs.res.in/">MOOSE Homepage</a> &raquo;</li> 
+        <li><a href="index.html">MOOSE 3.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Upinder Bhalla, Niraj Dudani, Aditya Gilra, Aviral Goel, Subhasis Ray and Dilawar Singh.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
+    </div>
+  </body>
+</html>

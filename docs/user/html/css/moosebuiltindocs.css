@@ -1,0 +1,16 @@
+#index-for-moose-classes > table, #index-for-moose-functions > table {
+    table-layout: fixed;
+}
+
+th:nth-child( 1 ) {
+    width: 15%;
+}
+
+th:nth-child( 2 ) {
+    width: 30%;
+}
+
+/*
+ * Shows table-of-contents only 2 levels deep, and hides beyond that.
+ */
+div#TOC > ul > li > ul > li ul { display: none; }

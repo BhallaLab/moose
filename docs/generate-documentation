@@ -1,0 +1,14 @@
+echo "###############################################################"
+echo "# Generating C++ Documentation                                #"
+echo "###############################################################"
+#Files will be created in cpp/html with in `doxygen` folder
+orginal=$(echo `pwd`)
+cd doxygen
+doxygen Doxyfile
+cd $orginal
+
+echo "##############################################################"
+echo "# Generating Python Documentation                            #"
+echo "##############################################################"
+#Files will be created in _build/html `py` folder
+( cd user/py && make html || true )
