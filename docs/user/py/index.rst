@@ -27,6 +27,7 @@ Contents:
    :maxdepth: 2
    :numbered:
 
+   moose_build
    moose_quickstart
    moose_cookbook
    moose_builtins
