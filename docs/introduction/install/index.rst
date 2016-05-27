@@ -21,7 +21,8 @@ First, Download the latest source code of moose from github.
 Install dependencies
 ~~~~~~~~~~~~~~~~~~~
 
-For moose-core:
+
+For `pymoose` (python module of MOOSE), following additional packages are required:
 
 - gsl-1.16 or higher.
 - libhdf5 
@@ -38,25 +39,21 @@ For moose-core:
         - ctest --output-on-failure # optional
         - sudo make install 
 
-For python module of MOOSE, following additional packages are required:
-
 - Development package of python e.g. libpython-dev 
 - python-numpy 
 
-For python-gui, we need some more addtional packages
+For MOOSE Graphical User Interface (GUI), there are additional dependencies: 
     
-- matplotlib
-- setuptools  (cmake uses it to install moose python extension and moogli)
-- suds 
-- Python bindings for Qt4 or higher
-- Python OpenGL
-- Python bindings for Qt's OpenGL module
+- python-matplotlib 
+- Python-qt4
 
-On Ubuntu-120.4 or higher, these can be installed with:
-    
-    sudo apt-get install python-matplotlib python-qt4 python-qt4-gl 
+On Ubuntu/Fedora, these can be installed with:
 
-## Use `cmake` to build moose:
+    sudo apt-get install python-matplotlib python-qt4
+    sudo yum install python-matplotlib python-qt4 
+
+Now use `cmake` to build moose
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     $ mkdir _build
     $ cd _build 
@@ -64,16 +61,13 @@ On Ubuntu-120.4 or higher, these can be installed with:
     $ make 
     $ ctest --output-on-failure
 
-This will build moose and its python extentions, `ctest` will run few tests to
+This will build pyMOOSE (MOOSE's python extention), `ctest` will run few tests to
 check if build process was successful.
 
 To install MOOSE into non-standard directory, pass additional argument
 `-DCMAKE_INSTALL_PREFIX=path/to/install/dir` to cmake.
 
 After that installation is pretty easy.
-
-Install
-~~~~~~~
 
     $ sudo make install
 
@@ -103,4 +97,3 @@ On Ubuntu, following packages should suffice:
 
     $ sudo apt-get install python-qt4-dev python-qt4-gl libopenscenegraph-dev python-sip-dev
     libqt4-dev 
-
