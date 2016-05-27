@@ -4,8 +4,8 @@ Introduction
 .. toctree::
    :maxdepth: 1
 
-   install
-   release_notes
-   changes
-   known_issues
+   install/index
+   release_notes/index
+   changes/index
+   known_issues/index
 
