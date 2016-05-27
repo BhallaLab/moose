@@ -1,6 +1,6 @@
-==============================================
-Getting started with python scripting for MOOSE
-==============================================
+=====================================
+Getting started with python scripting 
+=====================================
 
 .. :Author: Subhasis Ray
 .. :Date:   December 12, 2012, 
