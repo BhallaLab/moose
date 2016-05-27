@@ -2,11 +2,8 @@
 Getting started with python scripting 
 =====================================
 
-.. :Author: Subhasis Ray
-.. :Date:   December 12, 2012, 
-.. :Last-Updated: Jan 21, 2016
-.. :By:	    Harsha Rani
-		  
+.. :Authors: Subhasis Ray, Harsha Rani, Dilawar Singh, Upinder Bhalla
+
 .. _quickstart-intro:
 
 Introduction
@@ -14,13 +11,14 @@ Introduction
 
 This document describes how to use the ``moose`` module in Python
 scripts or in an interactive Python shell. It aims to give you enough
-overview to help you start scripting using MOOSE and extract farther
+overview to help you start scripting using MOOSE and extract further
 information that may be required for advanced work. Knowledge of
 Python or programming in general will be helpful. If you just want to
 simulate existing models in one of the supported formats, you can fire
 the MOOSE GUI and locate the model file using the ``File`` menu and
-load it. The GUI is described in separate document. If you
-are looking for recipes for specific tasks, take a look at
+load it. The GUI is described in separate document. 
+.. todo:: link to moose-gui documentation.
+If you are looking for recipes for specific tasks, take a look at
 :doc:`moose_cookbook`. The example code in the boxes can be entered in
 a Python shell.
 
@@ -79,11 +77,11 @@ represented by classes and individual instances of those types are
 objects of those classes. Objects are the building-blocks of models in
 MOOSE. We call MOOSE objects ``element`` and use object and element
 interchangeably in the context of MOOSE. Elements are conceptually laid
-out in a tree-like hierarchical structure. If you are familiar with file
-system hierarchies in common operating systems, this should be simple.
+out in a tree-like hierarchical structure just like file
+system hierarchies in common operating systems.
 
-At the top of the object hierarchy sits the ``Shell``, equivalent to the
-root directory in UNIX-based systems and represented by the path ``/``.
+At the top of the object hierarchy sits the ``Shell`` (equivalent to the
+root directory in UNIX-based systems and represented by the path ``/``).
 You can list the existing objects under ``/`` using the ``le`` function. ::
 
         >>> moose.le()
