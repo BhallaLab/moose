@@ -1,8 +1,10 @@
+User documentation
+=================
+
 Contents:
 
 .. toctree::
    :maxdepth: 2
-   :numbered:
 
    moose_quickstart
    moose_cookbook

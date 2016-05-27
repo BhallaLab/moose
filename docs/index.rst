@@ -5,6 +5,7 @@
 
 the Multiscale Object-Oriented Simulation Environment
 =====================================================
+
 What is MOOSE and what is it good for?
 --------------------------------------
 MOOSE is the Multiscale Object-Oriented Simulation Environment. It is designed to simulate neural systems ranging from subcellular components and biochemical reactions to complex models of single neurons, circuits, and large networks. MOOSE can operate at many levels of detail, from stochastic chemical computations, to multicompartment single-neuron models, to spiking neuron network models.
@@ -28,6 +29,7 @@ Contents:
    :numbered:
 
    introduction/index
+
    user/py/index
 
 Indices and tables
