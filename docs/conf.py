@@ -35,6 +35,7 @@ sys.path.append(os.path.abspath('../../moose-examples/tutorials/ExcInhNetCaPlast
 extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.mathjax',
               'sphinx.ext.autosummary',
+              'sphinx.ext.todo',
               'sphinx.ext.viewcode',
               'numpydoc'
 		]
