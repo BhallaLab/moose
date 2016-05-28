@@ -1,32 +1,57 @@
-Installing MOOSE
-===============
+Installation
+============
 
 Use pre-built packages
 ----------------------
 
-Use our repositories hosted at [Open Build Service](http://build.opensuse.org).
-We have packages for Debian, Ubuntu, CentOS, Fedora, OpenSUSE/SUSE, RHEL,
-Scientific Linux.  Visit the following page and follow the instructions there. 
+We strongly recommend that you use our repositories hosted at [Open Build
+Service](http://build.opensuse.org).  We have packages for Debian, Ubuntu,
+CentOS, Fedora, OpenSUSE/SUSE, RHEL, Scientific Linux.  Visit the following page
+and follow the instructions. 
 
 https://software.opensuse.org/download.html?project=home:moose&package=moose
+
+You can get both `moose` and `moogli` from the repositories after adding the
+repository to your package manager e.g.
+
+On Debian/Ubuntu 
+    
+    $ sudo apt-get install moose moogli 
+
+On CentOS/RHEL/Fedora/Scientific Linux
+    
+    $ sudo yum install moose moogli 
+
+On openSUSE 
+
+    $ sudo zypper install moose moolgi
+
+
+Pre-built binary packages takes care of dependencies. And also you don't have to
+build the MOOSE by yourself. In case, your distribution is not listed above or
+you want to build the lastest development code, following section lists out the
+steps to build MOOSE from its source code.
 
 Building from source
 -------------------
 
-First, Download the latest source code of moose from github.
+First, Download the latest source code of moose from github using `git`
 
     $ git clone https://github.com/BhallaLab/moose
-    $ cd moose
+
+Or, alternatively, you can download the `zip` file by clicking on the following
+link, https://github.com/BhallaLab/moose/archive/master.zip. Unzip the file to
+get the source code.
 
 Install dependencies
 ~~~~~~~~~~~~~~~~~~~
+Next, you have to install all required dependencies.
 
-
-For `pymoose` (python module of MOOSE), following additional packages are required:
-
-- gsl-1.16 or higher.
-- libhdf5 
-- libsbml (optional)
+- cmake
+- gsl-1.16 or higher [Source code](ftp://ftp.gnu.org/gnu/gsl/).
+- libhdf5 development package. Get it from
+- libsbml (5.9.0, optional). You can download it from
+  [here](https://sourceforge.net/projects/sbml/files/libsbml/5.9.0/stable/)
 
     Make sure that `libsml` is installed with `zlib` and `lxml` support.
     If you are using buildtools, then use the following to install libsbml.
@@ -34,38 +59,57 @@ For `pymoose` (python module of MOOSE), following additional packages are requir
         - wget http://sourceforge.net/projects/sbml/files/libsbml/5.9.0/stable/libSBML-5.9.0-core-src.tar.gz
         - tar -xzvf libSBML-5.9.0-core-src.tar.gz 
         - cd libsbml-5.9.0 
-        - ./configure --prefix=/usr --with-zlib --with-bzip2 --with-libxml 
+        - ./configure --prefix=/usr --with-zlib --with-libxml 
         - make 
-        - ctest --output-on-failure # optional
         - sudo make install 
 
-- Development package of python e.g. libpython-dev 
-- python-numpy 
+- python development package
+- python numpy 
+
+On Ubuntu these can be installed by following command:
+    
+    $ sudo apt-get install libhdf5-dev cmake libgsl0-dev 
+
+On CentOS/Fedora/RHEL
+    $ sudo yum install hdf5-devel cmake libgsl-dev
+
+On OpenSUSE 
+    $ sudo zypper install hdf5-devel cmake libgsl-dev
 
 For MOOSE Graphical User Interface (GUI), there are additional dependencies: 
     
-- python-matplotlib 
+- matplotlib 
 - Python-qt4
 
-On Ubuntu/Fedora, these can be installed with:
+On Ubuntu/Debian, these can be installed with:
 
-    sudo apt-get install python-matplotlib python-qt4
-    sudo yum install python-matplotlib python-qt4 
+    $ sudo apt-get install python-matplotlib python-qt4
+
+On CentOS/Fedora/RHEL,
+
+    $ sudo yum install python-matplotlib python-qt4 
 
 Now use `cmake` to build moose
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+    $ cd /to/moose/source/code
     $ mkdir _build
     $ cd _build 
-    $ cmake -DWITH_DOC=OFF ..
+    $ cmake  ..
     $ make 
     $ ctest --output-on-failure
 
 This will build pyMOOSE (MOOSE's python extention), `ctest` will run few tests to
 check if build process was successful.
 
-To install MOOSE into non-standard directory, pass additional argument
-`-DCMAKE_INSTALL_PREFIX=path/to/install/dir` to cmake.
+    To install MOOSE into non-standard directory, pass additional argument
+    `-DCMAKE_INSTALL_PREFIX=path/to/install/dir` to cmake e.g.
+
+        $ cmake -DCMAKE_INSTALL_PREFIC=$HOME/.local .. 
+
+    To use, different version of python,
+
+        $ cmake -DPYTHON_EXECUTABLE=/opt/python3/bin/python3 ..
 
 After that installation is pretty easy.
 
@@ -73,6 +117,8 @@ After that installation is pretty easy.
 
 Building and installing moogli 
 -----------------------------
+
+Prefer the packages from the repository.
 
 MOOGLI is subproject of moogli for visualizing models. Details can be found
 [here](http://moose.ncbs.res.in/moogli).
