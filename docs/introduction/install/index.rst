@@ -25,14 +25,13 @@ Visit `this page
 pick you distribution and follow instructions.
 
 .. note:: 
-    Package ``moogli`` will also be available in addition to moose on almost all
-    of these distributions (except CentOS-6). Use the same command to install
-    moogli as well e.g. ``sudo apt-get install moogli`` or ``sudo yum
-    install moogli``.
+    ``moogli`` is also available in the same repositories (except CentOS-6). 
+    Use your package manager to install moogli as well e.g. ``sudo apt-get install moogli`` 
+    or ``sudo yum install moogli``.
 
 .. raw:: html
     <iframe
-    src="http://software.opensuse.org/download/package.iframe?project=<projectname>&package=<packagename>"></iframe>
+    src="http://software.opensuse.org/download/package.iframe?project=moose&package=moose"></iframe>
 
 .. todo:: Packages for gentoo, Arch Linux
 
