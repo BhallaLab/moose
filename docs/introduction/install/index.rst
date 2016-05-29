@@ -18,16 +18,19 @@ and follow instructions.
 After adding the repositories to your package manager (read the instructed on the site) 
 You can install both `moose` and `moogli` using your package manager.
 
-On ``Debian/Ubuntu``::
+On ``Debian/Ubuntu``
+::
     $ sudo apt-get install moose moogli 
 
-On ``CentOS/RHEL/Fedora/Scientific Linux``::
+On ``CentOS/RHEL/Fedora/Scientific Linux``
+::
     $ sudo yum install moose moogli 
 
-On ``openSUSE``::
+On ``openSUSE``
+::
     $ sudo zypper install moose moolgi
 
-.. todo:: gentoo, Arch Linux
+.. todo:: Packages for gentoo, Arch Linux
 
 In case your distribution is not listed on `our repository page
 <https://software.opensuse.org/download.html?project=home:moose&package=moose>`_
@@ -37,13 +40,15 @@ out the steps to build MOOSE from its source code.
 Building MOOSE 
 --------------
 
-First, you need to get the source code. You can use ``git`` (to clone the whole
+First, you need to get the source code. You can use ``git`` (clone the 
 repository) or download snapshot of github repo by clicking on `this link
 <https://github.com/BhallaLab/moose/archive/master.zip>`_.::
     $ git clone https://github.com/BhallaLab/moose
 
-Or,::
+Or,
+::
     $ wget https://github.com/BhallaLab/moose/archive/master.zip
+    $ unzip master.zip
 
 If you don't want lasest snapshot of ``MOOSE``, you can download other released
 versions from here `https://github.com/BhallaLab/moose/releases`.
@@ -53,43 +58,40 @@ Install dependencies
 Next, you need to install required dependencies.
 
 - cmake (version 2.8 or higher)
-- gsl-1.16 or higher `Source code <ftp://ftp.gnu.org/gnu/gsl/>`_.
+- gsl-1.16 or higher `download <ftp://ftp.gnu.org/gnu/gsl/>`_.
 - libhdf5 development package.
-- libsbml (5.9.0, optional). You can download it from
-  `here <https://sourceforge.net/projects/sbml/files/libsbml/5.9.0/stable/>`_
-
-    Make sure that `libsml` is installed with `zlib` and `lxml` support.
-    If you are using buildtools, then use the following to install libsbml::
-        $ wget http://sourceforge.net/projects/sbml/files/libsbml/5.9.0/stable/libSBML-5.9.0-core-src.tar.gz
-        $ tar -xzvf libSBML-5.9.0-core-src.tar.gz 
-        $ cd libsbml-5.9.0 
-        $ ./configure --prefix=/usr --with-zlib --with-libxml 
-        $ make 
-        $ sudo make install 
-
+- libsbml (5.9.0, optional).  `download <https://sourceforge.net/projects/sbml/files/libsbml/5.9.0/stable/>`_
 - python development package
 - numpy 
 
-On Ubuntu these can be installed by following command::
+.. note:: 
+    `libsml` needs to be compiled with ``zlib`` and ``lxml`` support without
+    which, you might face link time errors. Following instructions are known to 
+    work::
+        $ wget http://sourceforge.net/projects/sbml/files/libsbml/5.9.0/stable/libSBML-5.9.0-core-src.tar.gz
+        $ tar -xzvf libSBML-5.9.0-core-src.tar.gz 
+        $ cd libsbml-5.9.0 
+        $ ./configure --with-zlib --with-libxml 
+        $ make 
+        $ sudo make install 
+
+Most of the dependencies can be installed using package manager.
+
+On ``Debian/Ubuntu`` 
+::
     $ sudo apt-get install libhdf5-dev cmake libgsl0-dev libpython-dev python-numpy 
 
-On CentOS/Fedora/RHEL::
+.. note::
+    Ubuntu 12.04 does not have required version of ``gsl`` (required 1.16 or
+    higher, available 1.15). On Ubuntu 16.04, package name is ``libgsl-dev``. 
+
+On ``CentOS/Fedora/RHEL/Scientific Linux``  
+::
     $ sudo yum install hdf5-devel cmake libgsl-dev python-devel python-numpy
 
-On OpenSUSE::
+On ``OpenSUSE``  
+::
     $ sudo zypper install hdf5-devel cmake libgsl-dev python-devel python-numpy 
-
-For MOOSE Graphical User Interface (``moose-gui``), some additional dependencies
-are required
-    
-- matplotlib 
-- Python-qt4
-
-On Ubuntu/Debian, these can be installed with::
-    $ sudo apt-get install python-matplotlib python-qt4
-
-On CentOS/Fedora/RHEL::
-    $ sudo yum install python-matplotlib python-qt4 
 
 Now use `cmake` to build moose
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -105,50 +107,103 @@ Now use `cmake` to build moose
 This will build pyMOOSE (MOOSE's python extention), `ctest` will run few tests to
 check if build process was successful.
 
+.. note::
     To install MOOSE into non-standard directory, pass additional argument
-    `-DCMAKE_INSTALL_PREFIX=path/to/install/dir` to cmake e.g.
-
+    `-DCMAKE_INSTALL_PREFIX=path/to/install/dir` to cmake 
+    ::
         $ cmake -DCMAKE_INSTALL_PREFIC=$HOME/.local .. 
 
-    To use, different version of python,
-
+    To use different version of python 
+    ::
         $ cmake -DPYTHON_EXECUTABLE=/opt/python3/bin/python3 ..
 
-After that installation is pretty easy.
-
+After that installation is pretty easy 
+::
     $ sudo make install
 
 If everything went fine, you should be able to import moose in python shell.
 
-.. codeblock:: python
-    $ python 
-    >>> import moose
+.. code-block:: python
+    import moose
 
+
+Graphical User Interface (GUI)
+------------------------------
+
+You can get the source of ``moose-gui`` from `here
+<https://github.com/BhallaLab/moose-gui>`_. You can download it either by
+clicking on `this link <https://github.com/BhallaLab/moose-gui/archive/master.zip>`_ 
+or by using ``git`` ::
+    $ git clone https://github.com/BhallaLab/moose-gui
+
+To be able to launch ``moose-gui``, you need to install some more packages
+
+- matplotlib 
+- python-qt4
+
+On ``Ubuntu/Debian``, these can be installed with
+::
+    $ sudo apt-get install python-matplotlib python-qt4
+
+On ``CentOS/Fedora/RHEL``
+::
+    $ sudo yum install python-matplotlib python-qt4 
+
+Now you can fire up the GUI
+::
+    $ cd /to/moose-gui
+    $ python mgui.py 
+
+.. note:: 
+    If you have installed ``moose`` using the package, then GUI is launched by
+    running following commnad::
+        $ moosegui
 
 Building moogli 
 ---------------
 
-Prefer the packages from the repository.
-
 ``moogli`` is subproject of ``MOOSE`` for visualizing models. More details can
-be found `here<http://moose.ncbs.res.in/moogli>`_.
+be found `here <http://moose.ncbs.res.in/moogli>`_.
 
-Installing ``moogli`` could be tricky. It depends on ``OpenSceneGraph`` (version
-3.0.x) which not be easily available for your system. Depending on
-your distribution, you would need following packages to be installed.
+Prefer installing ``moogli`` packages from the repository as indicated on the
+top of this page. Link to ``moogli`` repository is given below
 
-- Development package of libopenscenegraph 
-- `libQGLViewer-2.3.15-py<https://gforge.inria.fr/frs/?group_id=773>`_. Install
-instructions `here<http://www.libqglviewer.com//installUnix.html#linux>`_.
+`https://software.opensuse.org/download.html?project=home%3Amoose&package=moogli`
 
-- `PyQGLViewer0.10<https://gforge.inria.fr/frs/?group_id=773>`_ (first install
-libQGLViewer-2.3.15-py) and untar contents::
-    $ cd /path/to/PyQGLViewer0.10
-    $ python setup.py build # to compile
-    $ python setup.py install # to install on your system
-    $ python setup.py bdist # to create a binary distribution
+.. note::
+    If you have already added the repository, ``moogli`` is already available in
+    your package-manager.
 
-On Ubuntu, following packages should suffice::
-    $ sudo apt-get install python-qt4-dev python-qt4-gl libopenscenegraph-dev python-sip-dev
-    libqt4-dev 
 
+To get the latest source code of ``moogli``, click on `this link <https://github.com/BhallaLab/moogli/archive/master.zip>`_.
+
+Building ``moogli`` could be tricky. It depends on ``OpenSceneGraph`` (version
+3.2.0 or higher) which may not be easily available for your operating system.
+For this reason, we distribute required ``OpenSceneGraph`` with ``moogli``
+source code.
+
+Depending on distribution of your operating system, you would need following
+packages to be installed.
+
+On ``Ubuntu/Debian``
+::
+    $ sudo apt-get install python-qt4-dev python-qt4-gl python-sip-dev libqt4-dev 
+
+On ``Fedora/CentOS/RHEL``
+::
+    $ sudo yum install sip-devel PyQt4-devel qt4-devel libjpeg-devel PyQt4 
+
+On ``openSUSE``
+::
+    $ sudo zypper install python-sip python-qt4-devel libqt4-devel python-qt4
+
+After this, building and installing ``moogli`` should be as simple as::
+    $ cd /path/to/moogli
+    $ mkdir _build
+    $ cd _build
+    $ cmake ..
+    $ make 
+    $ sudo make install
+
+If you run into troubles, please report it on our `github repository
+<https://github.com/BhallaLab/moose/issues>`_.
