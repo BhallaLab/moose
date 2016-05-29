@@ -1,14 +1,18 @@
+#!/bin/bash
+
 echo "###############################################################"
 echo "# Generating C++ Documentation                                #"
 echo "###############################################################"
 #Files will be created in cpp/html with in `doxygen` folder
-orginal=$(echo `pwd`)
-cd doxygen
-doxygen Doxyfile
-cd $orginal
+( 
+    cd doxygen
+    doxygen Doxyfile
+)
 
 echo "##############################################################"
 echo "# Generating Python Documentation                            #"
 echo "##############################################################"
-#Files will be created in _build/html `py` folder
-( cd user/py && make html || true )
+#Files will be created in _build/html 
+mkdir -p _build
+sphinx-build . _build
+

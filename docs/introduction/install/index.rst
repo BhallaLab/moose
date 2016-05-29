@@ -4,50 +4,57 @@ Installation
 Use pre-built packages
 ----------------------
 
-We recommend that you use our repositories hosted at `Open Build Service <http://build.opensuse.org>`_. 
-We have `MOOSE` and `moogli` packages for Debian, Ubuntu, CentOS, Fedora, OpenSUSE/SUSE, RHEL, Scientific Linux. 
-Visit `this page <https://software.opensuse.org/download.html?project=home:moose&package=moose>`_ 
+We recommend that you use our repositories hosted at `Open Build Service
+<http://build.opensuse.org>`_.  We have packages of both ``MOOSE`` and
+``moogli`` for Debian, Ubuntu, CentOS, Fedora, OpenSUSE/SUSE, RHEL, Scientific
+Linux.  Visit `this page
+<https://software.opensuse.org/download.html?project=home:moose&package=moose>`_
 and follow instructions.
+
+.. raw:: html
+    <iframe
+    src="http://software.opensuse.org/download/package.iframe?project=<projectname>&package=<packagename>"></iframe>
 
 After adding the repositories to your package manager (read the instructed on the site) 
 You can install both `moose` and `moogli` using your package manager.
 
-On Debian/Ubuntu ::
-    
+On ``Debian/Ubuntu``::
     $ sudo apt-get install moose moogli 
 
-On CentOS/RHEL/Fedora/Scientific Linux::
-    
+On ``CentOS/RHEL/Fedora/Scientific Linux``::
     $ sudo yum install moose moogli 
 
-On openSUSE ::
-
+On ``openSUSE``::
     $ sudo zypper install moose moolgi
 
-In case your distribution is not listed on the repository page or
-you want to build the lastest development code, following section lists out the
-steps to build MOOSE from its source code.
+.. todo:: gentoo, Arch Linux
 
-Building from source
--------------------
+In case your distribution is not listed on `our repository page
+<https://software.opensuse.org/download.html?project=home:moose&package=moose>`_
+, or if you want to build the lastest development code, following section lists
+out the steps to build MOOSE from its source code.
 
-First, Download the latest source code of moose from github using `git`::
+Building MOOSE 
+--------------
 
+First, you need to get the source code. You can use ``git`` (to clone the whole
+repository) or download snapshot of github repo by clicking on `this link
+<https://github.com/BhallaLab/moose/archive/master.zip>`_.::
     $ git clone https://github.com/BhallaLab/moose
 
-Or, alternatively, you can download the ``zip`` file by clicking on the following
-link, https://github.com/BhallaLab/moose/archive/master.zip. Unzip the file to
-get the source code::
-
+Or,::
     $ wget https://github.com/BhallaLab/moose/archive/master.zip
+
+If you don't want lasest snapshot of ``MOOSE``, you can download other released
+versions from here `https://github.com/BhallaLab/moose/releases`.
 
 Install dependencies
 ~~~~~~~~~~~~~~~~~~~
-Next, you have to install required dependencies.
+Next, you need to install required dependencies.
 
 - cmake (version 2.8 or higher)
 - gsl-1.16 or higher `Source code <ftp://ftp.gnu.org/gnu/gsl/>`_.
-- libhdf5 development package. Get it from
+- libhdf5 development package.
 - libsbml (5.9.0, optional). You can download it from
   `here <https://sourceforge.net/projects/sbml/files/libsbml/5.9.0/stable/>`_
 
@@ -69,10 +76,11 @@ On Ubuntu these can be installed by following command::
 On CentOS/Fedora/RHEL::
     $ sudo yum install hdf5-devel cmake libgsl-dev python-devel python-numpy
 
-On OpenSUSE 
+On OpenSUSE::
     $ sudo zypper install hdf5-devel cmake libgsl-dev python-devel python-numpy 
 
-For MOOSE Graphical User Interface (GUI), some additional dependencies are required
+For MOOSE Graphical User Interface (``moose-gui``), some additional dependencies
+are required
     
 - matplotlib 
 - Python-qt4
@@ -110,31 +118,37 @@ After that installation is pretty easy.
 
     $ sudo make install
 
-Building and installing moogli 
------------------------------
+If everything went fine, you should be able to import moose in python shell.
+
+.. codeblock:: python
+    $ python 
+    >>> import moose
+
+
+Building moogli 
+---------------
 
 Prefer the packages from the repository.
 
-MOOGLI is subproject of moogli for visualizing models. Details can be found
-[here](http://moose.ncbs.res.in/moogli).
+``moogli`` is subproject of ``MOOSE`` for visualizing models. More details can
+be found `here<http://moose.ncbs.res.in/moogli>`_.
 
-MOOGLI dependencies are huge! It uses `OpenSceneGraph` which has its own
-dependencies. In nutshell, depending on your distribution, you would need
-following packages to be installed.
+Installing ``moogli`` could be tricky. It depends on ``OpenSceneGraph`` (version
+3.0.x) which not be easily available for your system. Depending on
+your distribution, you would need following packages to be installed.
 
 - Development package of libopenscenegraph 
-- [libQGLViewer-2.3.15-py](https://gforge.inria.fr/frs/?group_id=773). Install
-instructions [here](http://www.libqglviewer.com//installUnix.html#linux)
+- `libQGLViewer-2.3.15-py<https://gforge.inria.fr/frs/?group_id=773>`_. Install
+instructions `here<http://www.libqglviewer.com//installUnix.html#linux>`_.
 
-- [PyQGLViewer0.10](https://gforge.inria.fr/frs/?group_id=773) (first install
-libQGLViewer-2.3.15-py) and untar contents.
-
-    $ cd / PyQGLViewer0.10
+- `PyQGLViewer0.10<https://gforge.inria.fr/frs/?group_id=773>`_ (first install
+libQGLViewer-2.3.15-py) and untar contents::
+    $ cd /path/to/PyQGLViewer0.10
     $ python setup.py build # to compile
     $ python setup.py install # to install on your system
     $ python setup.py bdist # to create a binary distribution
 
-On Ubuntu, following packages should suffice:
-
+On Ubuntu, following packages should suffice::
     $ sudo apt-get install python-qt4-dev python-qt4-gl libopenscenegraph-dev python-sip-dev
     libqt4-dev 
+
