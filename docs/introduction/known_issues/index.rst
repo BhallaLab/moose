@@ -1,7 +1,7 @@
-Known Issues and bugs 
-===================
+Known issues
+===========
 
-Full report can be found at following places
+Full report can be found at the following places
 
 - Related to build, packages and documentation `https://github.com/BhallaLab/moose/issues`
 - Related to python interface of MOOSE `https://github.com/BhallaLab/moose-core/issues`
