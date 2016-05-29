@@ -4,100 +4,95 @@ Installation
 Use pre-built packages
 ----------------------
 
-We strongly recommend that you use our repositories hosted at [Open Build
-Service](http://build.opensuse.org).  We have packages for Debian, Ubuntu,
-CentOS, Fedora, OpenSUSE/SUSE, RHEL, Scientific Linux.  Visit the following page
-and follow the instructions. 
+We recommend that you use our repositories hosted at `Open Build Service <http://build.opensuse.org>`_. 
+We have `MOOSE` and `moogli` packages for Debian, Ubuntu, CentOS, Fedora, OpenSUSE/SUSE, RHEL, Scientific Linux. 
+Visit `this page <https://software.opensuse.org/download.html?project=home:moose&package=moose>`_ 
+and follow instructions.
 
-https://software.opensuse.org/download.html?project=home:moose&package=moose
+After adding the repositories to your package manager (read the instructed on the site) 
+You can install both `moose` and `moogli` using your package manager.
 
-You can get both `moose` and `moogli` from the repositories after adding the
-repository to your package manager e.g.
-
-On Debian/Ubuntu 
+On Debian/Ubuntu ::
     
     $ sudo apt-get install moose moogli 
 
-On CentOS/RHEL/Fedora/Scientific Linux
+On CentOS/RHEL/Fedora/Scientific Linux::
     
     $ sudo yum install moose moogli 
 
-On openSUSE 
+On openSUSE ::
 
     $ sudo zypper install moose moolgi
 
-
-Pre-built binary packages takes care of dependencies. And also you don't have to
-build the MOOSE by yourself. In case, your distribution is not listed above or
+In case your distribution is not listed on the repository page or
 you want to build the lastest development code, following section lists out the
 steps to build MOOSE from its source code.
 
 Building from source
 -------------------
 
-First, Download the latest source code of moose from github using `git`
+First, Download the latest source code of moose from github using `git`::
 
     $ git clone https://github.com/BhallaLab/moose
 
-Or, alternatively, you can download the `zip` file by clicking on the following
+Or, alternatively, you can download the ``zip`` file by clicking on the following
 link, https://github.com/BhallaLab/moose/archive/master.zip. Unzip the file to
-get the source code.
+get the source code::
+
+    $ wget https://github.com/BhallaLab/moose/archive/master.zip
 
 Install dependencies
 ~~~~~~~~~~~~~~~~~~~
-Next, you have to install all required dependencies.
+Next, you have to install required dependencies.
 
-- cmake
-- gsl-1.16 or higher [Source code](ftp://ftp.gnu.org/gnu/gsl/).
+- cmake (version 2.8 or higher)
+- gsl-1.16 or higher `Source code <ftp://ftp.gnu.org/gnu/gsl/>`_.
 - libhdf5 development package. Get it from
 - libsbml (5.9.0, optional). You can download it from
-  [here](https://sourceforge.net/projects/sbml/files/libsbml/5.9.0/stable/)
+  `here <https://sourceforge.net/projects/sbml/files/libsbml/5.9.0/stable/>`_
 
     Make sure that `libsml` is installed with `zlib` and `lxml` support.
-    If you are using buildtools, then use the following to install libsbml.
-
-        - wget http://sourceforge.net/projects/sbml/files/libsbml/5.9.0/stable/libSBML-5.9.0-core-src.tar.gz
-        - tar -xzvf libSBML-5.9.0-core-src.tar.gz 
-        - cd libsbml-5.9.0 
-        - ./configure --prefix=/usr --with-zlib --with-libxml 
-        - make 
-        - sudo make install 
+    If you are using buildtools, then use the following to install libsbml::
+        $ wget http://sourceforge.net/projects/sbml/files/libsbml/5.9.0/stable/libSBML-5.9.0-core-src.tar.gz
+        $ tar -xzvf libSBML-5.9.0-core-src.tar.gz 
+        $ cd libsbml-5.9.0 
+        $ ./configure --prefix=/usr --with-zlib --with-libxml 
+        $ make 
+        $ sudo make install 
 
 - python development package
-- python numpy 
+- numpy 
 
-On Ubuntu these can be installed by following command:
-    
-    $ sudo apt-get install libhdf5-dev cmake libgsl0-dev 
+On Ubuntu these can be installed by following command::
+    $ sudo apt-get install libhdf5-dev cmake libgsl0-dev libpython-dev python-numpy 
 
-On CentOS/Fedora/RHEL
-    $ sudo yum install hdf5-devel cmake libgsl-dev
+On CentOS/Fedora/RHEL::
+    $ sudo yum install hdf5-devel cmake libgsl-dev python-devel python-numpy
 
 On OpenSUSE 
-    $ sudo zypper install hdf5-devel cmake libgsl-dev
+    $ sudo zypper install hdf5-devel cmake libgsl-dev python-devel python-numpy 
 
-For MOOSE Graphical User Interface (GUI), there are additional dependencies: 
+For MOOSE Graphical User Interface (GUI), some additional dependencies are required
     
 - matplotlib 
 - Python-qt4
 
-On Ubuntu/Debian, these can be installed with:
-
+On Ubuntu/Debian, these can be installed with::
     $ sudo apt-get install python-matplotlib python-qt4
 
-On CentOS/Fedora/RHEL,
-
+On CentOS/Fedora/RHEL::
     $ sudo yum install python-matplotlib python-qt4 
 
 Now use `cmake` to build moose
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+.. codeblock:: bash
     $ cd /to/moose/source/code
     $ mkdir _build
     $ cd _build 
     $ cmake  ..
     $ make 
-    $ ctest --output-on-failure
+    $ ctest --output-on-failure  # optional
 
 This will build pyMOOSE (MOOSE's python extention), `ctest` will run few tests to
 check if build process was successful.
