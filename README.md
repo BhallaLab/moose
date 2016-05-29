@@ -2,8 +2,6 @@
 
 # About
 
-URL : http://moose.ncbs.res.in/
-
 MOOSE is the Multiscale Object-Oriented Simulation Environment. It is designed
 to simulate neural systems ranging from subcellular components and biochemical
 reactions to complex models of single neurons, circuits, and large networks.
