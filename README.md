@@ -1,5 +1,10 @@
 [![Build Status - master](https://travis-ci.org/BhallaLab/moose.svg?branch=master)](https://travis-ci.org/BhallaLab/moose)   [![Documentation Status](https://readthedocs.org/projects/moose/badge/?version=latest)](https://readthedocs.org/projects/moose/?badge=latest)
 
+This is the parent repository of [MOOSE simulator](https://moose.ncbs.res.in).
+It keeps the snanshots of its components: core (written in C++) and python 
+scripting interface, MOOSE's Graphical User Interface (GUI). This should be the 
+source of stable MOOSE code.
+
 # About
 
 MOOSE is the Multiscale Object-Oriented Simulation Environment. It is designed
@@ -21,11 +26,6 @@ provides data representations and solvers (of course!), but also a scripting
 interface with Python, graphical displays with Matplotlib, PyQt, and OpenGL, and
 support for many model formats. These include SBML, NeuroML, GENESIS kkit and
 cell.p formats, HDF5 and NSDF for data writing.
-
-This is the parent repository of [MOOSE simulator](https://moose.ncbs.res.in).
-It keeps the snanshots of components of MOOSE: core (written in C++) of MOOSE,
-python scripting interface, and its graphical user interface (GUI). This is your
-source stable MOOSE code.
 
 # VERSION
 
