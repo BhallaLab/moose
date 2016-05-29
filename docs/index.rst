@@ -42,7 +42,6 @@ Contents:
 
 .. toctree::
    :maxdepth: 2
-   :numbered:
 
    introduction/index
    user/py/quickstart/index

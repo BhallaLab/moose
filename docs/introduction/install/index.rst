@@ -4,41 +4,60 @@ Installation
 Use pre-built packages
 ----------------------
 
+Linux
+^^^^^
+
 We recommend that you use our repositories hosted at `Open Build Service
 <http://build.opensuse.org>`_.  We have packages of both ``MOOSE`` and
-``moogli`` for Debian, Ubuntu, CentOS, Fedora, OpenSUSE/SUSE, RHEL, Scientific
-Linux.  Visit `this page
+``moogli`` for following distributions
+
+- Debian 7.0, 8.0
+- Ubuntu 12.04, 14.04, 15.04, 15.10, 16.04 
+- CentOS 6, 7 
+- Fedora 20, 21, 22, 23
+- OpenSUSE 13.1, 13.2, Factory ARM, Leap 42.1, Tumbleweed
+- SLE 12, 12 SP1
+- RHEL 7
+- Scientific Linux 7
+  
+Visit `this page
 <https://software.opensuse.org/download.html?project=home:moose&package=moose>`_
-and follow instructions.
+pick you distribution and follow instructions.
+
+.. note:: 
+    Package ``moogli`` will also be available in addition to moose on almost all
+    of these distributions (except CentOS-6). Use the same command to install
+    moogli as well e.g. ``sudo apt-get install moogli`` or ``sudo yum
+    install moogli``.
 
 .. raw:: html
     <iframe
     src="http://software.opensuse.org/download/package.iframe?project=<projectname>&package=<packagename>"></iframe>
 
-After adding the repositories to your package manager (read the instructed on the site) 
-You can install both `moose` and `moogli` using your package manager.
-
-On ``Debian/Ubuntu``
-::
-    $ sudo apt-get install moose moogli 
-
-On ``CentOS/RHEL/Fedora/Scientific Linux``
-::
-    $ sudo yum install moose moogli 
-
-On ``openSUSE``
-::
-    $ sudo zypper install moose moolgi
-
 .. todo:: Packages for gentoo, Arch Linux
 
-In case your distribution is not listed on `our repository page
-<https://software.opensuse.org/download.html?project=home:moose&package=moose>`_
-, or if you want to build the lastest development code, following section lists
-out the steps to build MOOSE from its source code.
+
+Mac OSX
+^^^^^^
+
+Download the ``dmg`` file from `here <https://github.com/BhallaLab/moose/releases/download/ghevar_3.0.2/Moose_3.0.2_OSX.dmg>`_.
+
+Alternatively, you can use ``homebrew`` to install ``moose``
+::
+    $ brew install moose 
+
+.. note::
+    Check the status of pull request here https://github.com/Homebrew/homebrew-science/pull/2958
+
+Windows/Cygwin
+^^^^^^^^^^^^^^
 
 Building MOOSE 
 --------------
+
+In case your distribution is not listed on `our repository page
+<https://software.opensuse.org/download.html?project=home:moose&package=moose>`_
+, or if you want to build the lastest development code, read on.
 
 First, you need to get the source code. You can use ``git`` (clone the 
 repository) or download snapshot of github repo by clicking on `this link
@@ -197,7 +216,8 @@ On ``openSUSE``
 ::
     $ sudo zypper install python-sip python-qt4-devel libqt4-devel python-qt4
 
-After this, building and installing ``moogli`` should be as simple as::
+After this, building and installing ``moogli`` should be as simple as
+::
     $ cd /path/to/moogli
     $ mkdir _build
     $ cd _build
