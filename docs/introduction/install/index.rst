@@ -4,42 +4,41 @@ Installation
 Use pre-built packages
 ----------------------
 
-We strongly recommend that you use our repositories hosted at [Open Build
-Service](http://build.opensuse.org).  We have packages for Debian, Ubuntu,
+We recommend that you use our repositories hosted at [Open Build
+Service](http://build.opensuse.org).  We have `MOOSE` and `moogli` packages for Debian, Ubuntu,
 CentOS, Fedora, OpenSUSE/SUSE, RHEL, Scientific Linux.  Visit the following page
 and follow the instructions. 
 
 https://software.opensuse.org/download.html?project=home:moose&package=moose
 
-You can get both `moose` and `moogli` from the repositories after adding the
-repository to your package manager e.g.
+After adding the repositories to you package manager (as instructed on the site) 
+You can install both `moose` and `moogli` using your package manager:
 
-On Debian/Ubuntu 
+On Debian/Ubuntu ::
     
     $ sudo apt-get install moose moogli 
 
-On CentOS/RHEL/Fedora/Scientific Linux
+On CentOS/RHEL/Fedora/Scientific Linux::
     
     $ sudo yum install moose moogli 
 
-On openSUSE 
+On openSUSE ::
 
     $ sudo zypper install moose moolgi
 
 
-Pre-built binary packages takes care of dependencies. And also you don't have to
-build the MOOSE by yourself. In case, your distribution is not listed above or
+In case, your distribution is not listed on the repository page or
 you want to build the lastest development code, following section lists out the
 steps to build MOOSE from its source code.
 
 Building from source
 -------------------
 
-First, Download the latest source code of moose from github using `git`
+First, Download the latest source code of moose from github using `git`::
 
     $ git clone https://github.com/BhallaLab/moose
 
-Or, alternatively, you can download the `zip` file by clicking on the following
+Or, alternatively, you can download the ``zip`` file by clicking on the following
 link, https://github.com/BhallaLab/moose/archive/master.zip. Unzip the file to
 get the source code.
 
@@ -47,11 +46,11 @@ Install dependencies
 ~~~~~~~~~~~~~~~~~~~
 Next, you have to install all required dependencies.
 
-- cmake
-- gsl-1.16 or higher [Source code](ftp://ftp.gnu.org/gnu/gsl/).
+- cmake (version 2.8 or higher)
+- gsl-1.16 or higher `Source code <ftp://ftp.gnu.org/gnu/gsl/>`_.
 - libhdf5 development package. Get it from
 - libsbml (5.9.0, optional). You can download it from
-  [here](https://sourceforge.net/projects/sbml/files/libsbml/5.9.0/stable/)
+  `here <https://sourceforge.net/projects/sbml/files/libsbml/5.9.0/stable/>`_
 
     Make sure that `libsml` is installed with `zlib` and `lxml` support.
     If you are using buildtools, then use the following to install libsbml.
