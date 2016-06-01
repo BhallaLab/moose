@@ -45,6 +45,7 @@ Contents:
 
    introduction/index
    user/py/quickstart/index
+   user/py/rdesigneur/index
    user/py/cookbook/index
    user/py/builtins/index
    user/py/classes/index
