@@ -5,6 +5,7 @@
 
 the Multiscale Object-Oriented Simulation Environment
 =====================================================
+
 What is MOOSE and what is it good for?
 --------------------------------------
 
@@ -15,7 +16,7 @@ MOOSE can operate at many levels of detail, from stochastic chemical
 computations, to multicompartment single-neuron models, to spiking neuron
 network models.
 
-.. figure:: ../../images/Gallery_Moose_Multiscale.png
+.. figure:: ./images/Gallery_Moose_Multiscale.png
    :alt: **multiple scales in moose**
    :scale: 50%
 
@@ -56,4 +57,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-

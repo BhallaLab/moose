@@ -25,7 +25,7 @@ The Hodgkin-Huxley demo
 This is a self-contained graphical demo implemented by Subhasis Ray,
 closely based on the 'Squid' demo by Mark Nelson which ran in GENESIS.
 
-.. figure:: ../../images/squid_demo.png
+.. figure:: ../../../images/squid_demo.png
    :alt: Hodgkin-Huxley's squid giant axon experiment
 
    Simulation of Hodgkin-Huxley's experiment on squid giant axon
@@ -51,7 +51,7 @@ Accessing and tweaking parameters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. automodule:: tweakingParameters
    :members:
-.. figure:: ../../images/tweakingParameters.png
+.. figure:: ../../../images/tweakingParameters.png
    :alt: Three oscillation patterns after tweaking model parameters.
 
 Storing simulation output
@@ -73,7 +73,7 @@ Sometimes you want to calculate arbitrary function of the state
 variables of one or more elements and feed the result into another
 element during a simulation. The Function class is useful for this.
 
-.. figure:: ../../images/function.png
+.. figure:: ../../../images/function.png
    :alt: Outputs of Function object calculating z = c0 * exp(c1 * x) * cos(y)
    :scale: 50%    
 
@@ -142,7 +142,7 @@ Finding steady states
 
 Making a dose-response curve
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. figure:: ../../images/chemDoseResponse.png
+.. figure:: ../../../images/chemDoseResponse.png
    :alt: Dose-response curve example for a bistable system.
 .. automodule:: chemDoseResponse
    :members:
@@ -323,7 +323,7 @@ in every compartment of the model neurons, so as to see nice oscillations
 and animations. The first example has a particularly striking pseudo-3D
 rendition of the neuron and the molecular spatial oscillations within it.
 
-.. figure:: ../../images/reacDiffBranchingNeuron.png
+.. figure:: ../../../images/reacDiffBranchingNeuron.png
    :alt: Pseudo-3-D rendition of branching neuron and the concs in it.
 
 .. automodule:: reacDiffBranchingNeuron
@@ -374,7 +374,7 @@ C\ :sub:`m`\ , as in the figure below.
 
 --------------
 
-.. figure:: ../../images/neuroncompartment.png
+.. figure:: ../../../images/neuroncompartment.png
    :align: center
    :alt: **Equivalent circuit of neuronal compartments**
 
@@ -621,7 +621,7 @@ stimulating the presynaptic cell as part of experimental setup. The
 cells are defined as single-compartments with Hodgkin-Huxley type Na+
 and K+ channels (see :ref:`hhmodel`)
 
-.. figure:: ../../images/twoCells.png
+.. figure:: ../../../images/twoCells.png
    :scale: 50%	    
    :alt: Two cells connected via synapse
       
@@ -643,7 +643,7 @@ Providing random input to a cell
 .. automodule:: randomspike
    :members:
 
-.. figure:: ../../images/randomSpike.png
+.. figure:: ../../../images/randomSpike.png
    :scale: 50%
    :alt: Random spike input to a cell
 

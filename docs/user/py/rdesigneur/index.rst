@@ -755,9 +755,9 @@ predefined chemical model file for Rdesigneur, which resides in the
 electrical calculations here as they are not needed. Here we plot out
 the number of receptors on every single spine as a function of time.
 
-(stuff here)
+.. todo:: (stuff here)
 
 Make a full multiscale model with complex spiny morphology and electrical and chemical signaling.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-(stuff here)
+.. todo:: (stuff here)

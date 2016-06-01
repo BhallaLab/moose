@@ -2,7 +2,6 @@ Introduction
 ============
 
 .. toctree::
-   :maxdepth: 1
 
    install/index
    release_notes/index

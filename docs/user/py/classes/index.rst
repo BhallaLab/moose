@@ -2,7 +2,6 @@
 .. As visible in the Python module
 .. Auto-generated on October 01, 2014
 
-=============
 MOOSE Classes
 =============
 
