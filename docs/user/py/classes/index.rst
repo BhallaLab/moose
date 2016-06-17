@@ -821,7 +821,10 @@ CaConcBase: Base class for Calcium concentration pool. Takes current from a chan
    Unassigned: Ticks 20-29 
    Special: 30-31 
    Data output is a bit special, since you may want to store data at different rates for electrical and chemical processes in the same model. Here you will have to specifically assign distinct clock ticks for the tables/fileIO objects handling output at different time-resolutions. Typically one uses tick 8 and 18.
-   Here are the detailed mappings of class to tick.
+   Here are the detailed mappings of class to tick
+   
+::
+
    	Class				Tick		dt 
    	DiffAmp				0		50e-6
    	Interpol			0		50e-6
@@ -887,12 +890,13 @@ CaConcBase: Base class for Calcium concentration pool. Takes current from a chan
    	Ksolve				16		0.1
    	Stats				17		1
    	Table				18		1
-   	TimeTable			18		1
+   	TimeTable                       18		1
+   	Streamer                        19      1
    	HDF5DataWriter			30		1
    	HDF5WriterBase			30		1
    	PostMaster			31		0.01
    	
-   	Note that the other classes are not scheduled at all.
+Note that the other classes are not scheduled at all.
 
    .. py:attribute:: clockControl
 
