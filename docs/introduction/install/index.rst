@@ -83,9 +83,9 @@ Next, you need to install required dependencies.
 - numpy 
 
 .. note:: 
-    `libsml` needs to be compiled with ``zlib`` and ``lxml`` support without
-    which, you might face link time errors. Following instructions are known to 
-    work::
+    `libsml` needs to be compiled with ``zlib`` and ``lxml`` (requires ``libxml2-dev`` or ``libxml2-devel``` 
+    package) support without which, you might face link time errors. Following instructions are known to 
+    work:: 
         $ wget http://sourceforge.net/projects/sbml/files/libsbml/5.9.0/stable/libSBML-5.9.0-core-src.tar.gz
         $ tar -xzvf libSBML-5.9.0-core-src.tar.gz 
         $ cd libsbml-5.9.0 
