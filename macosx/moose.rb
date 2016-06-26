@@ -1,8 +1,8 @@
 class Moose < Formula
   desc "Multiscale Object Oriented Simulation Environment"
   homepage "http://moose.ncbs.res.in"
-  url "https://github.com/BhallaLab/moose-full/archive/master.tar.gz"
-  version "3.0.2"
+  url "https://github.com/BhallaLab/moose/archive/master.tar.gz"
+  version "3.1.0"
 
   option "with-gui", "Enable gui support"
 
