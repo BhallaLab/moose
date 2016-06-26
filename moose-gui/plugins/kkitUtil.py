@@ -62,8 +62,11 @@ def colorCheck(fc_bgcolor,fcbg):
         elif fc_bgcolor.isdigit():
             """ color is int  a map from int to r,g,b triplets from pickled color map file """
             tc = int(fc_bgcolor)
-            tc = 2*tc
-            pickledColor = colorMap[tc]
+            tc = tc*2
+            if tc < len(colorMap):
+                pickledColor = colorMap[tc]
+            else:
+                pickledColor = (255, 0, 0)
             fc_bgcolor = QColor(*pickledColor)
 
         elif fc_bgcolor.isalpha() or fc_bgcolor.isalnum():

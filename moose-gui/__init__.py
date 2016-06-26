@@ -1,1 +1,1 @@
-all = [ "plugins" ]
+all = [ "plugins", 'suds' ]
