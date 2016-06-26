@@ -79,7 +79,7 @@ export PATH=${BREW_PREFIX}/bin:$PATH
         echo "[I] Brew exists. Not installing"
     fi
     echo "Copying moose.rb and moogli.rb"
-    cp $CURRDIR/../macosx/*.rb $BREW_PREFIX/Library/Formula/
+    rsync -azv --progress $CURRDIR/../macosx/*.rb $BREW_PREFIX/Library/Formula/
 
     # This even works without python.
     ## NOTE: DO NOT install matplotlib using brew unless also installing python
