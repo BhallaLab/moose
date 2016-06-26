@@ -20,8 +20,8 @@ export HOMEBREW_BUILD_FROM_SOURCE=YES
 ## This is not needed. Forgot why I put it here in first place.
 #CFLAGS+=-march=native
 
-APPNAME="Moose"
-VERSION="3.0.2"
+APPNAME="MOOSE"
+VERSION="3.1.0"
 MAC_NAME=`sw_vers -productVersion`
 PKGNAME="${APPNAME}_${VERSION}"
 
@@ -85,6 +85,7 @@ export PATH=${BREW_PREFIX}/bin:$PATH
     ## NOTE: DO NOT install matplotlib using brew unless also installing python
     ## using brew. Since we are going to uninstall later, use pip to install
     ## matplotlib and numpy.
+    $BREW update
     $BREW -v install homebrew/python/matplotlib --with-pyqt
     $BREW -v install homebrew/python/numpy
     $BREW link --overwrite matplotlib
