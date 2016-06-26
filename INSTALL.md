@@ -135,7 +135,3 @@ and add this to your .bashrc file (if you use bash shell):
 
 For other shells, look up your shell's manual to find out how to set environment
 variable in it.
-
-# GUI
-
-Follow instructions given at https://github.com/BhallaLab/moose-gui

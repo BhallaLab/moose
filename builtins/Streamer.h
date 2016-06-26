@@ -76,8 +76,9 @@ private:
     string format_;
     bool isOutfilePathSet_;
 
-    // dt_ of Table's clock
+    // dt_ and tick number of Table's clock
     vector<double> tableDt_;
+    vector<unsigned int> tableTick_;
 
     // This currTime is not computed using the ProcPtr but rather using Tables
     // dt_ and number of entries written.

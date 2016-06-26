@@ -65,7 +65,7 @@ void split(vector<string>& strs, string& input, const string& pat);
  *
  * @return  true if file is sane, else false.
  */
-bool is_valid_numpy_file( const string& npy_file );
+bool is_valid_numpy_file( FILE* fp );
 
 /**
  * @brief Parser header from a numpy file. Store it in vector.
@@ -182,7 +182,7 @@ void save_numpy(
         FILE* fp = fopen( outfile.c_str(), "wb" );
         if( NULL == fp )
         {
-            LOG( moose::warning, "Could not open file " << outfile );
+            moose::showWarn( "Could not open file " + outfile );
             return;
         }
         write_header<T>( fp, colnames, shape, version );
@@ -191,19 +191,31 @@ void save_numpy(
     else                                        /* Append mode. */
     {
         // Do a sanity check if file is really a numpy file.
-        if(! is_valid_numpy_file( outfile ) )
+        FILE* fp = fopen( outfile.c_str(), "r" );
+        if( ! fp )
         {
-            LOG( moose::warning,  
-                    outfile << " is not a valid numpy file" 
-                    << " I am not goind to write to it"
-               );
+            moose::showError( "Can't open " + outfile + " to validate" );
             return;
         }
+        else if(! is_valid_numpy_file( fp ) )
+        {
+            moose::showWarn( outfile + " is not a valid numpy file" 
+                    + " I am not goind to write to it"
+                    );
+            return;
+        }
+        if( fp )
+            fclose( fp );
         // And change the shape in header.
         change_shape_in_header( outfile, vec.size(), colnames.size() );
     }
 
     FILE* fp = fopen( outfile.c_str(), "ab" );
+    if( NULL == fp )
+    {
+        moose::showWarn( "Could not open " + outfile + " to write " );
+        return;
+    }
     fwrite( &vec[0], sizeof(T), vec.size(), fp );
     fclose( fp );
 

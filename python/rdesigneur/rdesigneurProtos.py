@@ -302,7 +302,7 @@ def addSpineProto( name = 'spine',
         chanList = (),
         caTau = 0.0
         ):
-    assert( moose.exists( parent ) )
+    assert moose.exists( parent ), "%s must exists" % parent
     spine = moose.Neutral( parent + '/' + name )
     shaft = buildCompt( spine, 'shaft', shaftLen, shaftDia, 0.0, RM, RA, CM )
     head = buildCompt( spine, 'head', headLen, headDia, shaftLen, RM, RA, CM )

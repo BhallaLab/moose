@@ -74,6 +74,13 @@ const Cinfo* Table::initCinfo()
         , &Table::getFormat
     );
 
+    static ValueFinfo< Table, string > name(
+        "name"
+        , "Name of the table."
+        , &Table::setName
+        , &Table::getName
+    );
+
     //////////////////////////////////////////////////////////////
     // MsgDest Definitions
     //////////////////////////////////////////////////////////////
@@ -119,6 +126,7 @@ const Cinfo* Table::initCinfo()
     {
         &threshold,		// Value
         &format,                // Value
+        &name,                  // Value
         &outfile,               // Value 
         &useStreamer,           // Value
         handleInput(),		// DestFinfo
@@ -190,7 +198,7 @@ const Cinfo* Table::initCinfo()
 
 static const Cinfo* tableCinfo = Table::initCinfo();
 
-Table::Table() : threshold_( 0.0 ) , lastTime_( 0.0 ) , input_( 0.0 )
+Table::Table() : threshold_( 0.0 ) , lastTime_( 0.0 ) , input_( 0.0 ), dt_( 0.0 )
 {
     // Initialize the directory to which each table should stream.
     rootdir_ = "_tables";
@@ -339,6 +347,17 @@ string Table::getFormat( void ) const
     return format_;
 }
 
+/*  User defined name  */
+string Table::getName( void ) const
+{
+    return tableName_;
+}
+
+void Table::setName( const string name )
+{
+    tableName_ = name ;
+}
+
 /* Enable/disable streamer support. */
 void Table::setUseStreamer( bool useStreamer )
 {
@@ -353,7 +372,7 @@ bool Table::getUseStreamer( void ) const
 /*  set/get outfile_ */
 void Table::setOutfile( string outpath )
 {
-    outfile_ = moose::createPosixPath( outpath );
+    outfile_ = moose::createMOOSEPath( outpath );
     if( ! moose::createParentDirs( outfile_ ) )
         outfile_ = moose::toFilename( outfile_ );
 

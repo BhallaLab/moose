@@ -28,10 +28,6 @@ for r in range( 10 ):
     pools += [ a1, a2, b1, b2 ]
 
 ksolve = moose.Ksolve( '/compt/ksolve' )
-try:
-    ksolve.method = 'rk4'
-except Exception as e:
-    pass
 stoich = moose.Stoich( '/compt/stoich' )
 stoich.compartment = compt
 stoich.ksolve = ksolve

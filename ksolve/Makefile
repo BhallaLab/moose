@@ -65,9 +65,10 @@ KinSparseMatrix.o:	KinSparseMatrix.h ../basecode/SparseMatrix.h
 ZombiePool.o:	../kinetics/PoolBase.h ZombiePoolInterface.h ZombiePool.h ../kinetics/lookupVolumeFromMesh.h
 ZombieBufPool.o:	../kinetics/PoolBase.h ZombiePoolInterface.h ZombiePool.h ZombieBufPool.h ../kinetics/lookupVolumeFromMesh.h
 ZombieBufPool.o:	../kinetics/PoolBase.h ZombiePoolInterface.h ZombiePool.h
-VoxelPoolsBase.o:	VoxelPoolsBase.h
+VoxelPoolsBase.o:	VoxelPoolsBase.h ../randnum/RNG.h
 VoxelPools.o:	VoxelPoolsBase.h VoxelPools.h OdeSystem.h RateTerm.h Stoich.h
-GssaVoxelPools.o:	VoxelPoolsBase.h GssaVoxelPools.h ../basecode/SparseMatrix.h KinSparseMatrix.h GssaSystem.h RateTerm.h Stoich.h
+GssaVoxelPools.o:	VoxelPoolsBase.h GssaVoxelPools.h ../basecode/SparseMatrix.h \
+    ../randnum/RNG.h KinSparseMatrix.h GssaSystem.h RateTerm.h Stoich.h
 RateTerm.o:		RateTerm.h
 FuncTerm.o:		FuncTerm.h
 Stoich.o:		RateTerm.h FuncTerm.h FuncRateTerm.h Stoich.h ../kinetics/PoolBase.h ../kinetics/ReacBase.h ../kinetics/EnzBase.h ../kinetics/CplxEnzBase.h ../basecode/SparseMatrix.h KinSparseMatrix.h ../scheduling/Clock.h ZombiePoolInterface.h

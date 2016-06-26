@@ -21,6 +21,9 @@
 #include "header.h"
 #include "Streamer.h"
 #include "Clock.h"
+#include "utility/utility.h"
+#include "../shell/Shell.h"
+
 
 const Cinfo* Streamer::initCinfo()
 {
@@ -141,7 +144,8 @@ Streamer::Streamer()
     columns_.push_back( "time" );               /* First column is time. */
     tables_.resize(0);
     tableIds_.resize(0);
-    columns_.resize(0);
+    tableTick_.resize(0);
+    tableDt_.resize(0);
     data_.resize(0);
 }
 
@@ -171,9 +175,67 @@ void Streamer::cleanUp( void )
  */
 void Streamer::reinit(const Eref& e, ProcPtr p)
 {
+
+    if( tables_.size() == 0 )
+    {
+        moose::showWarn( "Zero tables in streamer. Disabling Streamer" );
+        e.element()->setTick( -2 );             /* Disable process */
+        return;
+    }
+
+    Clock* clk = reinterpret_cast<Clock*>( Id(1).eref().data() );
+    for (size_t i = 0; i < tableIds_.size(); i++) 
+    {
+        int tickNum = tableIds_[i].element()->getTick();
+        double tick = clk->getTickDt( tickNum );
+        tableDt_.push_back( tick );
+        // Make sure that all tables have the same tick.
+        if( i > 0 )
+        {
+            if( tick != tableDt_[0] )
+            {
+                moose::showWarn( "Table " + tableIds_[i].path() + " has "
+                        " different clock dt. "
+                        " Make sure all tables added to Streamer have the same "
+                        " dt value."
+                        );
+            }
+        }
+    }
+
+
     // Push each table dt_ into vector of dt
     for( size_t i = 0; i < tables_.size(); i++)
-        tableDt_.push_back( tables_[i]->getDt() );
+    {
+        Id tId = tableIds_[i];
+        int tickNum = tId.element()->getTick();
+        tableDt_.push_back( clk->getTickDt( tickNum ) );
+    }
+
+
+    // Make sure all tables have same dt_ else disable the streamer.
+    vector<unsigned int> invalidTables;
+    for (size_t i = 1; i < tableTick_.size(); i++) 
+    {
+        if( tableTick_[i] != tableTick_[0] )
+        {
+            LOG( moose::warning
+                    , "Table " << tableIds_[i].path()
+                    << " has tick (dt) which is different than the first table."
+                    << endl 
+                    << " Got " << tableTick_[i] << " expected " << tableTick_[0]
+                    << endl << " Disabling this table."
+                    );
+            invalidTables.push_back( i );
+        }
+    }
+
+    for (size_t i = 0; i < invalidTables.size(); i++) 
+    {
+        tables_.erase( tables_.begin() + i );
+        tableDt_.erase( tableDt_.begin() + i );
+        tableIds_.erase( tableIds_.begin() + i );
+    }
 
     if( ! isOutfilePathSet_ )
     {
@@ -198,10 +260,9 @@ void Streamer::process(const Eref& e, ProcPtr p)
     // Prepare data.
     zipWithTime( data_, currTime_ );
     StreamerBase::writeToOutFile( outfilePath_, format_, "a", data_, columns_ );
+
     // clean the arrays
     data_.clear();
-    for(size_t i = 0; i < tables_.size(); i++ )
-        tables_[i]->clearVec();
 }
 
 
@@ -218,13 +279,16 @@ void Streamer::addTable( Id table )
             return;                             /* Already added. */
 
     Table* t = reinterpret_cast<Table*>(table.eref().data());
-
     tableIds_.push_back( table );
     tables_.push_back( t );
+    tableTick_.push_back( table.element()->getTick() );
 
-    // We don't want name of table here as column names since they may not be
-    // unique. However, paths of tables are guarenteed to be unique.
-    columns_.push_back( moose::moosePathToUserPath( table.path() ) );
+    // NOTE: If user can make sure that names are unique in table, using name is
+    // better than using the full path.
+    if( t->getName().size() > 0 )
+        columns_.push_back( t->getName( ) );
+    else
+        columns_.push_back( moose::moosePathToUserPath( table.path() ) );
 }
 
 /**
@@ -234,6 +298,8 @@ void Streamer::addTable( Id table )
  */
 void Streamer::addTables( vector<Id> tables )
 {
+    if( tables.size() == 0 )
+        return;
     for( vector<Id>::const_iterator it = tables.begin(); it != tables.end(); it++)
         addTable( *it );
 }
@@ -326,4 +392,8 @@ void Streamer::zipWithTime( vector<double>& data, double currTime)
         for( size_t i = 0; i < tables_.size(); i++)
             data.push_back( tables_[i]->getVec()[i] );
     }
+
+    // clear the data from tables now.
+    for(size_t i = 0; i < tables_.size(); i++ )
+        tables_[i]->clearVec();
 }

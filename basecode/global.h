@@ -17,7 +17,6 @@
 #include <sstream>
 
 
-
 #ifdef  USE_BOOST
 //#ifdef BOOST_FILESYSTEM_EXISTS
 #include <boost/filesystem.hpp>
@@ -126,7 +125,7 @@ namespace moose
      * @param path Reutrn path is given path if creation was successful, else
      * directory is renamed to a filename.
      */
-    string createPosixPath( const string& path );
+    string createMOOSEPath( const string& path );
 
     /**
      * @brief Convert a given value to string.

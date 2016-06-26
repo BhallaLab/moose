@@ -30,14 +30,28 @@
 // Code:
 
 #ifndef _UTILITY_H
-
-
-char shortType(std::string type);
-char innerType(char typecode);
-char shortFinfo(std::string ftype);
-
 #include "strutil.h"
-const map<std::string, std::string>& getArgMap();
+
+namespace moose {
+
+    char shortType(std::string type);
+    char innerType(char typecode);
+    char shortFinfo(std::string ftype);
+    const map<std::string, std::string>& getArgMap();
+
+    /**
+     * @brief Givem path of MOOSE element, return its name. It's behaviour is
+     * like `basename` of unix command e.g. /a/b/c --> c
+     *
+     * @return 
+     */
+    inline string basename( const string& path )
+    {
+        return path.substr( path.find_last_of('/') + 1 );
+    }
+
+}
+
 
 #endif // !_UTILITY_H
 
