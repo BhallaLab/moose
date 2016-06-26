@@ -1,9 +1,9 @@
 #!/bin/bash - 
 #===============================================================================
 #
-#          FILE: pull_subtree.sh
+#          FILE: add_subtree.sh
 # 
-#         USAGE: ./pull_subtree.sh 
+#         USAGE: ./add_subtree.sh 
 # 
 #   DESCRIPTION: 
 # 
@@ -23,11 +23,11 @@ set -x
 
 if [[ `pwd` == *"/moose" ]]; then
 
-    git subtree pull --prefix moose-core \
+    git subtree add --prefix moose-core \
         https://github.com/BhallaLab/moose-core master --squash
-    git subtree pull --prefix moose-examples \
+    git subtree add --prefix moose-examples \
         https://github.com/BhallaLab/moose-examples master --squash 
-    git subtree pull --prefix moose-gui \
+    git subtree add --prefix moose-gui \
         https://github.com/BhallaLab/moose-gui master --squash
 
 else
