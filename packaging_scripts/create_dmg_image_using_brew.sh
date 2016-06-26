@@ -20,8 +20,8 @@ export HOMEBREW_BUILD_FROM_SOURCE=YES
 ## This is not needed. Forgot why I put it here in first place.
 #CFLAGS+=-march=native
 
-APPNAME="Moose"
-VERSION="3.0.2"
+APPNAME="MOOSE"
+VERSION="3.1.2"
 MAC_NAME=`sw_vers -productVersion`
 PKGNAME="${APPNAME}_${VERSION}"
 
@@ -73,18 +73,18 @@ export PATH=${BREW_PREFIX}/bin:$PATH
 (
     cd $BREW_PREFIX
     if [ ! -f $BREW_PREFIX/bin/brew ]; then
-        curl -L https://github.com/Homebrew/homebrew/tarball/master | \
-            tar xz --strip 1 -C $BREW_PREFIX
+        curl -L https://github.com/Homebrew/homebrew/tarball/master |  tar xz --strip 1 -C $BREW_PREFIX
     else
         echo "[I] Brew exists. Not installing"
     fi
     echo "Copying moose.rb and moogli.rb"
-    cp $CURRDIR/../macosx/*.rb $BREW_PREFIX/Library/Formula/
+    rsync -azv --progress $CURRDIR/../macosx/*.rb $BREW_PREFIX/Library/Formula/
 
     # This even works without python.
     ## NOTE: DO NOT install matplotlib using brew unless also installing python
     ## using brew. Since we are going to uninstall later, use pip to install
     ## matplotlib and numpy.
+    $BREW update
     $BREW -v install homebrew/python/matplotlib --with-pyqt
     $BREW -v install homebrew/python/numpy
     $BREW link --overwrite matplotlib
