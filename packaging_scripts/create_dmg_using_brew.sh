@@ -21,7 +21,7 @@ export HOMEBREW_BUILD_FROM_SOURCE=YES
 #CFLAGS+=-march=native
 
 APPNAME="MOOSE"
-VERSION="3.1.2"
+VERSION="3.1.0"
 MAC_NAME=`sw_vers -productVersion`
 PKGNAME="${APPNAME}_${VERSION}"
 
@@ -73,7 +73,8 @@ export PATH=${BREW_PREFIX}/bin:$PATH
 (
     cd $BREW_PREFIX
     if [ ! -f $BREW_PREFIX/bin/brew ]; then
-        curl -L https://github.com/Homebrew/homebrew/tarball/master |  tar xz --strip 1 -C $BREW_PREFIX
+        curl -L https://github.com/Homebrew/homebrew/tarball/master | \
+            tar xz --strip 1 -C $BREW_PREFIX
     else
         echo "[I] Brew exists. Not installing"
     fi
