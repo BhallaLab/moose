@@ -56,13 +56,13 @@ from PyQt4 import QtGui, QtCore, Qt
 from plugins.setsolver import *
 
 def loadGenCsp(target,filename,solver="gsl"):
+    target = target.replace(" ", "")
     path = '/'+target
-    #Harsha: Moving the model under /modelname/model and graphs under /model/graphs.
+    #Moving the model under /modelname/model and graphs under /model/graphs.
     #This is passed while loading-time which will be easy for setting the stoich path
     mpath = '/'+target+'/'+"model"
     if moose.exists(mpath):
         moose.delete(mpath)
-    
     modelpath1 = moose.Neutral('%s' %(target))
     modelpath = moose.Neutral('%s/%s' %(modelpath1.path,"model"))
     model = moose.loadModel(filename, modelpath.path,solver)

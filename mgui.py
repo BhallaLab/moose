@@ -1101,27 +1101,25 @@ class MWindow(QtGui.QMainWindow):
                               self.tr('Load model from file'))
 
         if dialog.exec_():
-            fileNames = dialog.selectedFiles()
-            for fileName in fileNames:
-                modelName = dialog.getTargetPath()
-                if '/' in modelName:
-                    raise mexception.ElementNameError('Model name cannot contain `/`')
-                ret = loadFile(str(fileName),'%s' %(modelName),merge=False)
-                #ret = loadFile(str(fileName), '/model/%s' % (modelName), merge=False)
-		        #Harsha: This will clear out object editor's objectpath and make it invisible
-                self.objectEditSlot('/',False)
-
-                # Harsha: if subtype is None, in case of cspace then pluginLookup = /cspace/None
-                #     which will not call kkit plugin so cleaning to /cspace
-                pluginLookup = '%s/%s' % (ret['modeltype'], ret['subtype'])
-                try:
-                    pluginName = subtype_plugin_map['%s/%s' % (ret['modeltype'], ret['subtype'])]
-                except KeyError:
-                    pluginName = 'default'
-                print 'Loaded model', ret['model'].path
-                # if not moose.exists(ret['model'].path+'/info'):
-                #     moose.Annotator(ret['model'].path+'/info')
-
+            valid = False
+            ret = []
+            ret,pluginName = self.checkPlugin(dialog)
+            if pluginName == 'kkit':
+                compt = moose.wildcardFind(ret['model'].path+'/##[ISA=ChemCompt]')
+                if not len(compt):
+                    reply = QtGui.QMessageBox.question(self, "Model is empty","Model has no compartment, atleast one compartment should exist to display the widget\n Do you want another file",
+                                               QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
+                    if reply == QtGui.QMessageBox.Yes:
+                        dialog = LoaderDialog(self,self.tr('Load model from file'))
+                        if dialog.exec_():
+                            ret,pluginName = self.checkPlugin(dialog)
+                            ret,valid = self.dialog_check(ret)
+                    else:
+                        QtGui.QApplication.restoreOverrideCursor()        
+                        return
+                else:
+                    valid = True
+            if valid == True:
                 modelAnno = moose.Annotator(ret['model'].path+'/info')
                 if ret['subtype']:
                     modelAnno.modeltype = ret['subtype']
@@ -1133,6 +1131,46 @@ class MWindow(QtGui.QMainWindow):
                 if pluginName == 'kkit':
                     QtCore.QCoreApplication.sendEvent(self.plugin.getEditorView().getCentralWidget().view, QtGui.QKeyEvent(QtCore.QEvent.KeyPress, Qt.Qt.Key_A, Qt.Qt.NoModifier))
 
+    def checkPlugin(self,dialog):
+        fileNames = dialog.selectedFiles()
+        for fileName in fileNames:
+            modelName = dialog.getTargetPath()
+            if '/' in modelName:
+                raise mexception.ElementNameError('Model name cannot contain `/`')
+            ret = loadFile(str(fileName),'%s' %(modelName),merge=False)
+            #ret = loadFile(str(fileName), '/model/%s' % (modelName), merge=False)
+            #This will clear out object editor's objectpath and make it invisible
+            self.objectEditSlot('/',False)
+            #if subtype is None, in case of cspace then pluginLookup = /cspace/None
+            #     which will not call kkit plugin so cleaning to /cspace
+            pluginLookup = '%s/%s' % (ret['modeltype'], ret['subtype'])
+            try:
+                pluginName = subtype_plugin_map['%s/%s' % (ret['modeltype'], ret['subtype'])]
+            except KeyError:
+                pluginName = 'default'
+            print 'Loaded model', ret['model'].path
+            return ret,pluginName
+
+    def dialog_check(self,ret):
+        pluginLookup = '%s/%s' % (ret['modeltype'], ret['subtype'])
+        try:
+            pluginName = subtype_plugin_map['%s/%s' % (ret['modeltype'], ret['subtype'])]
+        except KeyError:
+            pluginName = 'default'
+        if pluginName == 'kkit':
+            compt = moose.wildcardFind(ret['model'].path+'/##[ISA=ChemCompt]')
+            if not len(compt):
+                reply = QtGui.QMessageBox.question(self, "Model is empty","Model has no compartment, atleast one compartment should exist to display the widget\n Do you want another file",
+                                           QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
+                if reply == QtGui.QMessageBox.Yes:
+                    dialog = LoaderDialog(self,self.tr('Load model from file'))
+                    if dialog.exec_():
+                        ret,pluginName = self.checkPlugin(dialog)
+                else:
+                    QtGui.QApplication.restoreOverrideCursor()        
+                    return
+            else:
+                return ret,True
     def newModelDialogSlot(self):
         #Harsha: Create a new dialog widget for model building
         self.popup.close()

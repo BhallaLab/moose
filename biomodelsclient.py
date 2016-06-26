@@ -45,7 +45,6 @@
 
 # Code:
 
-
 from suds.client import Client
 from suds.transport.http import HttpTransport as SudsHttpTransport
 import os
