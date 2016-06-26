@@ -20,8 +20,8 @@ export HOMEBREW_BUILD_FROM_SOURCE=YES
 ## This is not needed. Forgot why I put it here in first place.
 #CFLAGS+=-march=native
 
-APPNAME="Moose"
-VERSION="3.0.2"
+APPNAME="MOOSE"
+VERSION="3.1.2"
 MAC_NAME=`sw_vers -productVersion`
 PKGNAME="${APPNAME}_${VERSION}"
 
@@ -79,7 +79,7 @@ export PATH=${BREW_PREFIX}/bin:$PATH
         echo "[I] Brew exists. Not installing"
     fi
     echo "Copying moose.rb and moogli.rb"
-    cp $CURRDIR/../macosx/*.rb $BREW_PREFIX/Library/Formula/
+    cp -f $CURRDIR/../macosx/*.rb $BREW_PREFIX/Library/Formula/
 
     # This even works without python.
     ## NOTE: DO NOT install matplotlib using brew unless also installing python
