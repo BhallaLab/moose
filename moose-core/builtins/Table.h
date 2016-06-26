@@ -34,8 +34,11 @@ public:
     void setThreshold( double v );
     double getThreshold() const;
 
-    void setFormat( string format );
+    void setFormat( const string format );
     string getFormat( ) const;
+
+    void setName( const string name );
+    string getName( ) const;
 
     void setUseStreamer( bool status );
     bool getUseStreamer( void ) const;

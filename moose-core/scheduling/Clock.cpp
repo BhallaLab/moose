@@ -307,7 +307,7 @@ const Cinfo* Clock::initCinfo()
         "Name", "Clock",
         "Author", "Upinder S. Bhalla, Nov 2013, NCBS",
         "Description",
-        "Clock: Clock class. Handles sequencing of operations in simulations."
+
         "Every object scheduled for operations in MOOSE is connected to one"
         "of the 'Tick' entries on the Clock.\n"
         "The Clock manages 32 'Ticks', each of which has its own dt,"
@@ -413,9 +413,9 @@ const Cinfo* Clock::initCinfo()
         "	Gsolve				16		0.1\n"
         "	Ksolve				16		0.1\n"
         "	Stats				17		0.1\n"
-
         "	Table2				18		1\n"
-        "	Streamer			29		2\n"
+        "	Streamer			19		10\n"
+
         "	HDF5DataWriter			30		1\n"
         "	HDF5WriterBase			30		1\n"
         "	NSDFWriter			30		1\n"
@@ -591,6 +591,7 @@ void Clock::setTickDt( unsigned int i, double v )
     }
     for ( unsigned int j = 0; j < numTicks; ++j )
         numUsed += ( ticks_[j] != 0 );
+
     if ( numUsed == 0 )
     {
         dt_ = v;
@@ -897,7 +898,7 @@ void Clock::buildDefaultTick()
     defaultTick_["Stats"] = 17;
 
     defaultTick_["Table2"] = 18;
-    defaultTick_["Streamer"] = 29;
+    defaultTick_["Streamer"] = 19;
     defaultTick_["HDF5DataWriter"] = 30;
     defaultTick_["HDF5WriterBase"] = 30;
     defaultTick_["NSDFWriter"] = 30;
@@ -962,9 +963,9 @@ void Clock::buildDefaultTick()
     defaultDt_[5] = 50.0e-6;
     defaultDt_[6] = 50.0e-6;
     defaultDt_[7] = 50.0e-6;
-    defaultDt_[8] = 1.0e-4; // For the tables for electrical calculations
-    defaultDt_[9] = 0.0; // Not assigned
-    defaultDt_[10] = 0.01; // For diffusion.
+    defaultDt_[8] = 1.0e-4;                     // For the tables for electrical calculations
+    defaultDt_[9] = 0.0;                        // Not assigned
+    defaultDt_[10] = 0.01;                      // For diffusion.
     defaultDt_[11] = 0.1;
     defaultDt_[12] = 0.1;
     defaultDt_[13] = 0.1;
@@ -972,9 +973,10 @@ void Clock::buildDefaultTick()
     defaultDt_[15] = 0.1;
     defaultDt_[16] = 0.1;
     defaultDt_[17] = 0.1;
-    defaultDt_[18] = 1; // For tables for chemical calculations.
-    // 19-28 are not assigned.
-    defaultDt_[29] = 10; // For Streamer
+    defaultDt_[18] = 1;                         // For tables for chemical calculations.
+    defaultDt_[19] = 10;                        // For Streamer
+
+    // 20-29 are not assigned.
     defaultDt_[30] = 1;	// For the HDF writer
     defaultDt_[31] = 0.01; // For the postmaster.
 }

@@ -14,7 +14,10 @@
 #include "ChanBase.h"
 #include "ChanCommon.h"
 #include "MarkovChannel.h"
+
+#if USE_GSL
 #include <gsl/gsl_errno.h>
+#endif
 
 const Cinfo* MarkovChannel::initCinfo()
 {

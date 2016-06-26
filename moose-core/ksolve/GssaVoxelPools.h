@@ -100,7 +100,7 @@ private:
     /**
      * @brief RNG.
      */
-    moose::RNG<double>* rng_;
+    moose::RNG<double> rng_;
 
 };
 

@@ -52,6 +52,7 @@
 
 #include <ctime>
 #include <deque>
+#include <cstdio>
 
 #include "header.h"
 #include "../utility/utility.h"
@@ -62,7 +63,6 @@
 #include "NSDFWriter.h"
 #include "InputVariable.h"
 
-#define FILENAME "/tmp/HDF_testCreateStringDataset.h5"
 #define STR_DSET_NAME "vlenstr_dset"
 #define STR_DSET_LEN 4
 
@@ -73,7 +73,8 @@ void testCreateStringDataset()
     hsize_t size = STR_DSET_LEN;
     herr_t status;
     HDF5WriterBase writer;
-    file = H5Fcreate(FILENAME, H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
+    string h5Filename = std::tmpnam( NULL );
+    file = H5Fcreate(h5Filename.c_str(), H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
     dset = writer.createStringDataset(file, STR_DSET_NAME, size, size);
     assert(dset >= 0);
     memtype = H5Tcopy(H5T_C_S1);

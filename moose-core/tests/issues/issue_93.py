@@ -3,9 +3,12 @@
 import numpy as np
 import pylab as pl
 import moose
+import os
 import sys
 
 dt = 10e-6
+
+d = os.path.split( os.path.abspath( __file__ ) )[0]
 
 def loadAndRun(solver=True):
     simtime = 500e-3
@@ -36,6 +39,8 @@ def loadAndRun(solver=True):
     return vec
 
 def main( ):
+    print( '[INFO] See the detailed issue in %s/hsolve' % d )
+    quit()
     eeVec = loadAndRun( False )
     hsolveVec = loadAndRun( True )
     clk = moose.Clock( '/clock' )

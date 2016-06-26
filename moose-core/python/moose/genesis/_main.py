@@ -68,7 +68,6 @@ def write( modelpath, filename,sceneitems=None):
                         #This is when it comes from Gui where the objects are already layout on to scene
                         # so using thoes co-ordinates
                         xmin,ymin,xmax,ymax,positionInfoExist = getCor(modelpath,sceneitems)
-
                 gtId_vol = writeCompartment(modelpath,compt,f)
                 writePool(modelpath,f,gtId_vol)
                 reacList = writeReac(modelpath,f)
@@ -300,7 +299,7 @@ def storePlotMsgs( tgraphs,f):
                                         bg = getColorCheck(bg,GENESIS_COLOR_SEQUENCE)
                                         tabPath = re.sub("\[[0-9]+\]", "", tabPath)
                                         s = s+"addmsg /kinetics/" + trimPath( poolEle ) + " " + tabPath + \
-                                                " PLOT Co *" + poolName + " *" + bg +"\n";
+                                                " PLOT Co *" + poolName + " *" + str(bg) +"\n";
         f.write(s)
 
 def writeplot( tgraphs,f ):
@@ -340,36 +339,36 @@ def writePool(modelpath,f,volIndex):
                                         else:
                                                 slave_enable = 0
                                                 break
+                #Eliminated enzyme complex pool
+                if ((p.parent).className != "Enz" and (p.parent).className != "ZombieEnz"):
+                    xp = cord[p]['x']
+                    yp = cord[p]['y']
+                    x = ((xp-xmin)/(xmax-xmin))*multi
+                    y = ((yp-ymin)/(ymax-ymin))*multi
+                    #y = ((ymax-yp)/(ymax-ymin))*multi
+                    pinfo = p.path+'/info'
+                    if exists(pinfo):
+                            color = Annotator(pinfo).getField('color')
+                            color = getColorCheck(color,GENESIS_COLOR_SEQUENCE)
 
-                xp = cord[p]['x']
-                yp = cord[p]['y']
-                x = ((xp-xmin)/(xmax-xmin))*multi
-                y = ((yp-ymin)/(ymax-ymin))*multi
-                #y = ((ymax-yp)/(ymax-ymin))*multi
-
-                pinfo = p.path+'/info'
-                if exists(pinfo):
-                        color = Annotator(pinfo).getField('color')
-                        color = getColorCheck(color,GENESIS_COLOR_SEQUENCE)
-
-                        textcolor = Annotator(pinfo).getField('textColor')
-                        textcolor = getColorCheck(textcolor,GENESIS_COLOR_SEQUENCE)
-                geometryName = volIndex[p.volume]
-                volume = p.volume * NA * 1e-3
-
-                f.write("simundump kpool /kinetics/" + trimPath(p) + " 0 " +
-                        str(p.diffConst) + " " +
-                        str(0) + " " +
-                        str(0) + " " +
-                        str(0) + " " +
-                        str(p.nInit) + " " +
-                        str(0) + " " + str(0) + " " +
-                        str(volume)+ " " +
-                        str(slave_enable) +
-                        " /kinetics"+ geometryName + " " +
-                        str(color) +" " + str(textcolor) + " " + str(int(x)) + " " + str(int(y)) + " "+ str(0)+"\n")
+                            textcolor = Annotator(pinfo).getField('textColor')
+                            textcolor = getColorCheck(textcolor,GENESIS_COLOR_SEQUENCE)
+                    geometryName = volIndex[p.volume]
+                    volume = p.volume * NA * 1e-3
+                    f.write("simundump kpool /kinetics/" + trimPath(p) + " 0 " +
+                            str(p.diffConst) + " " +
+                            str(0) + " " +
+                            str(0) + " " +
+                            str(0) + " " +
+                            str(p.nInit) + " " +
+                            str(0) + " " + str(0) + " " +
+                            str(volume)+ " " +
+                            str(slave_enable) +
+                            " /kinetics"+ geometryName + " " +
+                            str(color) +" " + str(textcolor) + " " + str(int(x)) + " " + str(int(y)) + " "+ str(0)+"\n")
                 # print " notes ",notes
                 # return notes
+
 def getColorCheck(color,GENESIS_COLOR_SEQUENCE):
         if isinstance(color, str):
                 if color.startswith("#"):
@@ -407,6 +406,9 @@ def getxyCord(xcord,ycord,list1,sceneitems):
                                 co = sceneitems[item]
                                 xpos = co.scenePos().x()
                                 ypos =-co.scenePos().y()
+                                #xpos = co['x']
+                                #ypos = co['y']
+
                         cord[item] ={ 'x': xpos,'y':ypos}
                         xcord.append(xpos)
                         ycord.append(ypos)
@@ -420,7 +422,8 @@ def getCor(modelRoot,sceneitems):
         xmin = ymin = 0.0
         xmax = ymax = 1.0
         positionInfoExist = False
-        xcord = ycord = []
+        xcord = []
+        ycord = []
         mollist = realist = enzlist = cplxlist = tablist = funclist = []
         meshEntryWildcard = '/##[ISA=ChemCompt]'
         if modelRoot != '/':
@@ -439,18 +442,25 @@ def getCor(modelRoot,sceneitems):
                                 elif isinstance(element(m),PoolBase):
                                         mollist.append(m)
                                         objInfo =m.path+'/info'
-
+                                        #xx = xyPosition(objInfo,'x')
+                                        #yy = xyPosition(objInfo,'y')
+                                        
+                                
                                 if sceneitems == None:
                                         xx = xyPosition(objInfo,'x')
                                         yy = xyPosition(objInfo,'y')
                                 else:
-                                        c = sceneitems[m]
-                                        xx = c.scenePos().x()
-                                        yy =-c.scenePos().y()
-
+                                    c = sceneitems[m]
+                                    xx = c.scenePos().x()
+                                    yy =-c.scenePos().y()
+                                    #listq = sceneitems[m]
+                                    #xx = listq['x']
+                                    #yy = listq['y']
+                                    
                                 cord[m] ={ 'x': xx,'y':yy}
                                 xcord.append(xx)
                                 ycord.append(yy)
+                                
                         getxyCord(xcord,ycord,realist,sceneitems)
                         getxyCord(xcord,ycord,enzlist,sceneitems)
                         getxyCord(xcord,ycord,funclist,sceneitems)
@@ -582,12 +592,20 @@ def writeGui( f ):
         "simundump xtext /file/notes 0 1\n")
 def writeNotes(modelpath,f):
     notes = ""
-    items = wildcardFind(modelpath+"/##[ISA=ChemCompt],/##[ISA=ReacBase],/##[ISA=PoolBase],/##[ISA=EnzBase],/##[ISA=Function],/##[ISA=StimulusTable]")
+    items = []
+    items = wildcardFind(modelpath+"/##[ISA=ChemCompt]") +\
+            wildcardFind(modelpath+"/##[ISA=PoolBase]") +\
+            wildcardFind(modelpath+"/##[ISA=ReacBase]") +\
+            wildcardFind(modelpath+"/##[ISA=EnzBase]") +\
+            wildcardFind(modelpath+"/##[ISA=Function]") +\
+            wildcardFind(modelpath+"/##[ISA=StimulusTable]")
     for item in items:
-        info = item.path+'/info'
-        notes = Annotator(info).getField('notes')
-        if (notes):
-            f.write("call /kinetics/"+ trimPath(item)+"/notes LOAD \ \n\""+Annotator(info).getField('notes')+"\"\n")
+        if exists(item.path+'/info'):
+            info = item.path+'/info'
+            notes = Annotator(info).getField('notes')
+            if (notes):
+                f.write("call /kinetics/"+ trimPath(item)+"/notes LOAD \ \n\""+Annotator(info).getField('notes')+"\"\n")
+    
 def writeFooter1(f):
     f.write("\nenddump\n // End of dump\n")
 def writeFooter2(f):

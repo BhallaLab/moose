@@ -222,9 +222,9 @@ endif
 
 # To use GSL, pass USE_GSL=true ( anything on the right will do) in make command line
 ifdef USE_GSL
-#LIBS+= $(shell gsl-config --libs)
+LIBS+= $(shell gsl-config --libs)
 #LIBS+= -L/usr/lib -Wl,--no-as-needed -lgsl -lgslcblas -lm
-LIBS+= -L/usr/lib -lgsl -lgslcblas -lm
+#LIBS+= -L/usr/lib -lgsl -lgslcblas -lm
 CXXFLAGS+= -DUSE_GSL
 else
 LIBS+= -lm
