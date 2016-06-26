@@ -1,0 +1,958 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXAggregateTarget section */
+		41DB7FD751214824A81C7D32 /* _build_moose_core */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 3ED4E0B119A64A22B1EEA570 /* Build configuration list for PBXAggregateTarget "_build_moose_core" */;
+			buildPhases = (
+				71D0C0E202B141C0B60A2DAA /* CMake Rules */,
+			);
+			dependencies = (
+				C21FDB1373E54234AE2B5C57 /* PBXTargetDependency */,
+				2EB9D44DD56C46359739671F /* PBXTargetDependency */,
+			);
+			name = _build_moose_core;
+			productName = _build_moose_core;
+		};
+		5AAC7EEC478A4EF6A7131254 /* ALL_BUILD */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = B29F1556CD884A56AAD5C02D /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */;
+			buildPhases = (
+				84A5BB0F136E448C83C65DCD /* CMake Rules */,
+			);
+			dependencies = (
+				AA82B85EA94E480AB21BF6AC /* PBXTargetDependency */,
+				4AC32CF528F14CFEB2DD8F00 /* PBXTargetDependency */,
+				1320FE04805A46C5A093DB1F /* PBXTargetDependency */,
+			);
+			name = ALL_BUILD;
+			productName = ALL_BUILD;
+		};
+		883FC7E6EEE84CA18947CA72 /* install */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = F7F8E509239B4EC78B7B7584 /* Build configuration list for PBXAggregateTarget "install" */;
+			buildPhases = (
+				6AC8084B860846C1B95AE126 /* CMake PostBuild Rules */,
+			);
+			dependencies = (
+				0DB575E85D444E1A99819DA2 /* PBXTargetDependency */,
+			);
+			name = install;
+			productName = install;
+		};
+		A26BB601E0DF471AB4B74E04 /* ZERO_CHECK */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 3C06CE643765407594B89B65 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */;
+			buildPhases = (
+				51B5CE887A224344A2CF6448 /* CMake Rules */,
+			);
+			dependencies = (
+			);
+			name = ZERO_CHECK;
+			productName = ZERO_CHECK;
+		};
+		B720FD1F1F864C03899CB735 /* _moose_static_dependencies */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 64B7EF3E468448C3BCAFA612 /* Build configuration list for PBXAggregateTarget "_moose_static_dependencies" */;
+			buildPhases = (
+			);
+			dependencies = (
+				30E0F5B56C404529A09AB0EB /* PBXTargetDependency */,
+			);
+			name = _moose_static_dependencies;
+			productName = _moose_static_dependencies;
+		};
+/* End PBXAggregateTarget section */
+
+/* Begin PBXBuildStyle section */
+		361D11D592F442268622E6E7 /* Release */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = Release;
+		};
+		3E4C892F197A4F6BA5FDB352 /* RelWithDebInfo */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = RelWithDebInfo;
+		};
+		97CFF08CB3E449B687EE61C1 = {
+			isa = PBXBuildStyle;
+		};
+		E2A352CE22BC4C61848BB7DB /* Debug */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = Debug;
+		};
+		F2176532D73C459AB518C295 /* MinSizeRel */ = {
+			isa = PBXBuildStyle;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+			};
+			name = MinSizeRel;
+		};
+/* End PBXBuildStyle section */
+
+/* Begin PBXContainerItemProxy section */
+		4E61BFBED37E40D89C3BC77F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A519E2DAAEAC4146890D9338 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B720FD1F1F864C03899CB735;
+			remoteInfo = _moose_static_dependencies;
+		};
+		61C907F70C9F4C77859D050D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A519E2DAAEAC4146890D9338 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A26BB601E0DF471AB4B74E04;
+			remoteInfo = ZERO_CHECK;
+		};
+		71C17F3217DA4E828666C2A8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A519E2DAAEAC4146890D9338 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A26BB601E0DF471AB4B74E04;
+			remoteInfo = ZERO_CHECK;
+		};
+		7F63228BDF31441692B28EAD /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A519E2DAAEAC4146890D9338 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 41DB7FD751214824A81C7D32;
+			remoteInfo = _build_moose_core;
+		};
+		8A3AEE6505C64F7093BD4E47 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A519E2DAAEAC4146890D9338 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B720FD1F1F864C03899CB735;
+			remoteInfo = _moose_static_dependencies;
+		};
+		FC95DBFB6B33409198F33970 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A519E2DAAEAC4146890D9338 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A26BB601E0DF471AB4B74E04;
+			remoteInfo = ZERO_CHECK;
+		};
+		FDC5DE1562594BE294531123 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A519E2DAAEAC4146890D9338 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5AAC7EEC478A4EF6A7131254;
+			remoteInfo = ALL_BUILD;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		826545A6BD914B14843D0843 /* /Users/dilawar/Work/BhallaLab/moose-full/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		A2EA5E9B126447328BAC65C5 /* /Users/dilawar/Work/BhallaLab/moose-full/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		C9112CDDC4D645DB8C0BA0B6 /* /Users/dilawar/Work/BhallaLab/moose-full/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+		D80C4E5E22B8482AB3EF4E55 /* /Users/dilawar/Work/BhallaLab/moose-full/CMakeLists.txt */ = {isa = PBXFileReference; explicitFileType = sourcecode.text; fileEncoding = 4; name = CMakeLists.txt; path = CMakeLists.txt; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		223FF451EE1B4842950FA6BB = {
+			isa = PBXGroup;
+			children = (
+				9024492C65504D82AF322BD5 /* Sources */,
+				7F0AA0D44FF146FCBEF05AAB /* Resources */,
+				42AD21FEC8AB4E9FAA7FF712 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		42AD21FEC8AB4E9FAA7FF712 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		7F0AA0D44FF146FCBEF05AAB /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		9024492C65504D82AF322BD5 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				C40C913DF69443D88FD83B15 /* _build_moose_core */,
+				D05D126C17A54973887601B7 /* ALL_BUILD */,
+				FB0A37D39B7245928504DA3C /* _moose_static_dependencies */,
+				D099CEDF6490492B9538EE14 /* ZERO_CHECK */,
+			);
+			name = Sources;
+			sourceTree = "<group>";
+		};
+		96F0CF8186704E898317D236 /* CMake Rules */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "CMake Rules";
+			sourceTree = "<group>";
+		};
+		A11E63A0AF4648BBB5D5F1A4 /* CMake Rules */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "CMake Rules";
+			sourceTree = "<group>";
+		};
+		AE1696A30C20458C8C510943 /* CMake Rules */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "CMake Rules";
+			sourceTree = "<group>";
+		};
+		C40C913DF69443D88FD83B15 /* _build_moose_core */ = {
+			isa = PBXGroup;
+			children = (
+				AE1696A30C20458C8C510943 /* CMake Rules */,
+				C9112CDDC4D645DB8C0BA0B6 /* /Users/dilawar/Work/BhallaLab/moose-full/CMakeLists.txt */,
+			);
+			name = _build_moose_core;
+			sourceTree = "<group>";
+		};
+		D05D126C17A54973887601B7 /* ALL_BUILD */ = {
+			isa = PBXGroup;
+			children = (
+				96F0CF8186704E898317D236 /* CMake Rules */,
+				D80C4E5E22B8482AB3EF4E55 /* /Users/dilawar/Work/BhallaLab/moose-full/CMakeLists.txt */,
+			);
+			name = ALL_BUILD;
+			sourceTree = "<group>";
+		};
+		D099CEDF6490492B9538EE14 /* ZERO_CHECK */ = {
+			isa = PBXGroup;
+			children = (
+				A11E63A0AF4648BBB5D5F1A4 /* CMake Rules */,
+				826545A6BD914B14843D0843 /* /Users/dilawar/Work/BhallaLab/moose-full/CMakeLists.txt */,
+			);
+			name = ZERO_CHECK;
+			sourceTree = "<group>";
+		};
+		FB0A37D39B7245928504DA3C /* _moose_static_dependencies */ = {
+			isa = PBXGroup;
+			children = (
+				A2EA5E9B126447328BAC65C5 /* /Users/dilawar/Work/BhallaLab/moose-full/CMakeLists.txt */,
+			);
+			name = _moose_static_dependencies;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXProject section */
+		A519E2DAAEAC4146890D9338 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+			};
+			buildConfigurationList = 0E12F689A4C0434BBD8DACE3 /* Build configuration list for PBXProject "moose_full" */;
+			buildSettings = {
+			};
+			buildStyles = (
+				E2A352CE22BC4C61848BB7DB /* Debug */,
+				361D11D592F442268622E6E7 /* Release */,
+				F2176532D73C459AB518C295 /* MinSizeRel */,
+				3E4C892F197A4F6BA5FDB352 /* RelWithDebInfo */,
+			);
+			compatibilityVersion = "Xcode 3.2";
+			hasScannedForEncodings = 0;
+			mainGroup = 223FF451EE1B4842950FA6BB;
+			projectDirPath = ../;
+			projectRoot = "";
+			targets = (
+				5AAC7EEC478A4EF6A7131254 /* ALL_BUILD */,
+				A26BB601E0DF471AB4B74E04 /* ZERO_CHECK */,
+				41DB7FD751214824A81C7D32 /* _build_moose_core */,
+				B720FD1F1F864C03899CB735 /* _moose_static_dependencies */,
+				883FC7E6EEE84CA18947CA72 /* install */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		40B8742407EA4E88BC040BFF = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# shell script goes here
+exit 0";
+			showEnvVarsInLog = 0;
+		};
+		51B5CE887A224344A2CF6448 /* CMake Rules */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake Rules";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "make -C /Users/dilawar/Work/BhallaLab/moose-full/macosx -f /Users/dilawar/Work/BhallaLab/moose-full/macosx/CMakeScripts/ZERO_CHECK_cmakeRulesBuildPhase.make$CONFIGURATION all";
+			showEnvVarsInLog = 0;
+		};
+		6AC8084B860846C1B95AE126 /* CMake PostBuild Rules */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake PostBuild Rules";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "make -C /Users/dilawar/Work/BhallaLab/moose-full/macosx -f /Users/dilawar/Work/BhallaLab/moose-full/macosx/CMakeScripts/install_postBuildPhase.make$CONFIGURATION all";
+			showEnvVarsInLog = 0;
+		};
+		71D0C0E202B141C0B60A2DAA /* CMake Rules */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake Rules";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "make -C /Users/dilawar/Work/BhallaLab/moose-full/macosx -f /Users/dilawar/Work/BhallaLab/moose-full/macosx/CMakeScripts/_build_moose_core_cmakeRulesBuildPhase.make$CONFIGURATION all";
+			showEnvVarsInLog = 0;
+		};
+		84A5BB0F136E448C83C65DCD /* CMake Rules */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			name = "CMake Rules";
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "make -C /Users/dilawar/Work/BhallaLab/moose-full/macosx -f /Users/dilawar/Work/BhallaLab/moose-full/macosx/CMakeScripts/ALL_BUILD_cmakeRulesBuildPhase.make$CONFIGURATION all";
+			showEnvVarsInLog = 0;
+		};
+		CEFB152C949A475EAF3FCF1D = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# shell script goes here
+exit 0";
+			showEnvVarsInLog = 0;
+		};
+		D38586B946BD4BCCAC3E688C = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# shell script goes here
+exit 0";
+			showEnvVarsInLog = 0;
+		};
+		EEE53012CEE04EC0890ED24E = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# shell script goes here
+exit 0";
+			showEnvVarsInLog = 0;
+		};
+		F38CD92E271C49BABC61EBC2 = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# shell script goes here
+exit 0";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		0DB575E85D444E1A99819DA2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5AAC7EEC478A4EF6A7131254 /* ALL_BUILD */;
+			targetProxy = FDC5DE1562594BE294531123 /* PBXContainerItemProxy */;
+		};
+		1320FE04805A46C5A093DB1F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B720FD1F1F864C03899CB735 /* _moose_static_dependencies */;
+			targetProxy = 8A3AEE6505C64F7093BD4E47 /* PBXContainerItemProxy */;
+		};
+		2EB9D44DD56C46359739671F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B720FD1F1F864C03899CB735 /* _moose_static_dependencies */;
+			targetProxy = 4E61BFBED37E40D89C3BC77F /* PBXContainerItemProxy */;
+		};
+		30E0F5B56C404529A09AB0EB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A26BB601E0DF471AB4B74E04 /* ZERO_CHECK */;
+			targetProxy = 71C17F3217DA4E828666C2A8 /* PBXContainerItemProxy */;
+		};
+		4AC32CF528F14CFEB2DD8F00 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 41DB7FD751214824A81C7D32 /* _build_moose_core */;
+			targetProxy = 7F63228BDF31441692B28EAD /* PBXContainerItemProxy */;
+		};
+		AA82B85EA94E480AB21BF6AC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A26BB601E0DF471AB4B74E04 /* ZERO_CHECK */;
+			targetProxy = 61C907F70C9F4C77859D050D /* PBXContainerItemProxy */;
+		};
+		C21FDB1373E54234AE2B5C57 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A26BB601E0DF471AB4B74E04 /* ZERO_CHECK */;
+			targetProxy = FC95DBFB6B33409198F33970 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		142CC0F5BAAE4B4688188233 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'", );
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = _moose_static_dependencies;
+				SECTORDER_FLAGS = "";
+				SYMROOT = "/Users/dilawar/Work/BhallaLab/moose-full/macosx";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost", "-Wno-four-char-constants", "-Wno-unknown-pragmas", "$(inherited)", );
+			};
+			name = MinSizeRel;
+		};
+		1A5ED81A720749898D919C3C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'", );
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = _build_moose_core;
+				SECTORDER_FLAGS = "";
+				SYMROOT = "/Users/dilawar/Work/BhallaLab/moose-full/macosx";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost", "-Wno-four-char-constants", "-Wno-unknown-pragmas", "$(inherited)", );
+			};
+			name = Debug;
+		};
+		224BD4A68E5E400A910EEB17 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'", );
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				SYMROOT = "/Users/dilawar/Work/BhallaLab/moose-full/macosx";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost", "-Wno-four-char-constants", "-Wno-unknown-pragmas", "$(inherited)", );
+			};
+			name = Debug;
+		};
+		29A818C2373C440F88A4B98F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'", );
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = _moose_static_dependencies;
+				SECTORDER_FLAGS = "";
+				SYMROOT = "/Users/dilawar/Work/BhallaLab/moose-full/macosx";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost", "-Wno-four-char-constants", "-Wno-unknown-pragmas", "$(inherited)", );
+			};
+			name = Release;
+		};
+		2C858E55E3264A90B886E3D7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'", );
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				SYMROOT = "/Users/dilawar/Work/BhallaLab/moose-full/macosx";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost", "-Wno-four-char-constants", "-Wno-unknown-pragmas", "$(inherited)", );
+			};
+			name = Release;
+		};
+		3CC2FBFB53B74A588A8ACD0A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'", );
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				SYMROOT = "/Users/dilawar/Work/BhallaLab/moose-full/macosx";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost", "-Wno-four-char-constants", "-Wno-unknown-pragmas", "$(inherited)", );
+			};
+			name = Debug;
+		};
+		5833B6D7700540BA9B87AD90 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk;
+				SYMROOT = "/Users/dilawar/Work/BhallaLab/moose-full/macosx/build";
+			};
+			name = Release;
+		};
+		5E45AB0FE50C403BBEA11BB8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'", );
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				SYMROOT = "/Users/dilawar/Work/BhallaLab/moose-full/macosx";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost", "-Wno-four-char-constants", "-Wno-unknown-pragmas", "$(inherited)", );
+			};
+			name = Release;
+		};
+		6A76BCEF6AF542DA94D83FF1 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'", );
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				SYMROOT = "/Users/dilawar/Work/BhallaLab/moose-full/macosx";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost", "-Wno-four-char-constants", "-Wno-unknown-pragmas", "$(inherited)", );
+			};
+			name = RelWithDebInfo;
+		};
+		6C171FEEB09C4305861C55F2 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'", );
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				SYMROOT = "/Users/dilawar/Work/BhallaLab/moose-full/macosx";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost", "-Wno-four-char-constants", "-Wno-unknown-pragmas", "$(inherited)", );
+			};
+			name = RelWithDebInfo;
+		};
+		74269FEC37904896B4FB0117 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'", );
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				SYMROOT = "/Users/dilawar/Work/BhallaLab/moose-full/macosx";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost", "-Wno-four-char-constants", "-Wno-unknown-pragmas", "$(inherited)", );
+			};
+			name = Debug;
+		};
+		8B689551968C46CDBCF21DB5 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk;
+				SYMROOT = "/Users/dilawar/Work/BhallaLab/moose-full/macosx/build";
+			};
+			name = RelWithDebInfo;
+		};
+		9292A86481A7404DBAE96277 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'", );
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = _moose_static_dependencies;
+				SECTORDER_FLAGS = "";
+				SYMROOT = "/Users/dilawar/Work/BhallaLab/moose-full/macosx";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost", "-Wno-four-char-constants", "-Wno-unknown-pragmas", "$(inherited)", );
+			};
+			name = RelWithDebInfo;
+		};
+		9E9598C485F9432099E721FD /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk;
+				SYMROOT = "/Users/dilawar/Work/BhallaLab/moose-full/macosx/build";
+			};
+			name = MinSizeRel;
+		};
+		A03CFACFBA1D4BCDB5524B34 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'", );
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				SYMROOT = "/Users/dilawar/Work/BhallaLab/moose-full/macosx";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost", "-Wno-four-char-constants", "-Wno-unknown-pragmas", "$(inherited)", );
+			};
+			name = MinSizeRel;
+		};
+		A6F69A5874E14255887CFC45 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'", );
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ALL_BUILD;
+				SECTORDER_FLAGS = "";
+				SYMROOT = "/Users/dilawar/Work/BhallaLab/moose-full/macosx";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost", "-Wno-four-char-constants", "-Wno-unknown-pragmas", "$(inherited)", );
+			};
+			name = MinSizeRel;
+		};
+		A8C6C14D9F914D4BB1ED32B5 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'", );
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = ZERO_CHECK;
+				SECTORDER_FLAGS = "";
+				SYMROOT = "/Users/dilawar/Work/BhallaLab/moose-full/macosx";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost", "-Wno-four-char-constants", "-Wno-unknown-pragmas", "$(inherited)", );
+			};
+			name = RelWithDebInfo;
+		};
+		B198406C6232427AAEF98A66 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'", );
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = _build_moose_core;
+				SECTORDER_FLAGS = "";
+				SYMROOT = "/Users/dilawar/Work/BhallaLab/moose-full/macosx";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost", "-Wno-four-char-constants", "-Wno-unknown-pragmas", "$(inherited)", );
+			};
+			name = Release;
+		};
+		BA8AFA12578B438596792A47 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'", );
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = _build_moose_core;
+				SECTORDER_FLAGS = "";
+				SYMROOT = "/Users/dilawar/Work/BhallaLab/moose-full/macosx";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost", "-Wno-four-char-constants", "-Wno-unknown-pragmas", "$(inherited)", );
+			};
+			name = MinSizeRel;
+		};
+		C9D1FF035BE34D9692066125 /* MinSizeRel */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'", );
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				SYMROOT = "/Users/dilawar/Work/BhallaLab/moose-full/macosx";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost", "-Wno-four-char-constants", "-Wno-unknown-pragmas", "$(inherited)", );
+			};
+			name = MinSizeRel;
+		};
+		CCE46B1C568140F8A6AC71E7 /* RelWithDebInfo */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'", );
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = _build_moose_core;
+				SECTORDER_FLAGS = "";
+				SYMROOT = "/Users/dilawar/Work/BhallaLab/moose-full/macosx";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost", "-Wno-four-char-constants", "-Wno-unknown-pragmas", "$(inherited)", );
+			};
+			name = RelWithDebInfo;
+		};
+		CFC2F5D3DEF542548279741D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'", );
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = install;
+				SECTORDER_FLAGS = "";
+				SYMROOT = "/Users/dilawar/Work/BhallaLab/moose-full/macosx";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost", "-Wno-four-char-constants", "-Wno-unknown-pragmas", "$(inherited)", );
+			};
+			name = Release;
+		};
+		D0F1D76B1F65411FA0F9B135 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk;
+				SYMROOT = "/Users/dilawar/Work/BhallaLab/moose-full/macosx/build";
+			};
+			name = Debug;
+		};
+		F21A548C8989450E97413528 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = ("'CMAKE_INTDIR=\"$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME)\"'", );
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				INSTALL_PATH = "";
+				OTHER_LDFLAGS = " ";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = _moose_static_dependencies;
+				SECTORDER_FLAGS = "";
+				SYMROOT = "/Users/dilawar/Work/BhallaLab/moose-full/macosx";
+				USE_HEADERMAP = NO;
+				WARNING_CFLAGS = ("-Wmost", "-Wno-four-char-constants", "-Wno-unknown-pragmas", "$(inherited)", );
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		0E12F689A4C0434BBD8DACE3 /* Build configuration list for PBXProject "moose_full" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D0F1D76B1F65411FA0F9B135 /* Debug */,
+				5833B6D7700540BA9B87AD90 /* Release */,
+				9E9598C485F9432099E721FD /* MinSizeRel */,
+				8B689551968C46CDBCF21DB5 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		3C06CE643765407594B89B65 /* Build configuration list for PBXAggregateTarget "ZERO_CHECK" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3CC2FBFB53B74A588A8ACD0A /* Debug */,
+				5E45AB0FE50C403BBEA11BB8 /* Release */,
+				A03CFACFBA1D4BCDB5524B34 /* MinSizeRel */,
+				A8C6C14D9F914D4BB1ED32B5 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		3ED4E0B119A64A22B1EEA570 /* Build configuration list for PBXAggregateTarget "_build_moose_core" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1A5ED81A720749898D919C3C /* Debug */,
+				B198406C6232427AAEF98A66 /* Release */,
+				BA8AFA12578B438596792A47 /* MinSizeRel */,
+				CCE46B1C568140F8A6AC71E7 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		64B7EF3E468448C3BCAFA612 /* Build configuration list for PBXAggregateTarget "_moose_static_dependencies" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F21A548C8989450E97413528 /* Debug */,
+				29A818C2373C440F88A4B98F /* Release */,
+				142CC0F5BAAE4B4688188233 /* MinSizeRel */,
+				9292A86481A7404DBAE96277 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		B29F1556CD884A56AAD5C02D /* Build configuration list for PBXAggregateTarget "ALL_BUILD" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				74269FEC37904896B4FB0117 /* Debug */,
+				2C858E55E3264A90B886E3D7 /* Release */,
+				A6F69A5874E14255887CFC45 /* MinSizeRel */,
+				6C171FEEB09C4305861C55F2 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		F7F8E509239B4EC78B7B7584 /* Build configuration list for PBXAggregateTarget "install" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				224BD4A68E5E400A910EEB17 /* Debug */,
+				CFC2F5D3DEF542548279741D /* Release */,
+				C9D1FF035BE34D9692066125 /* MinSizeRel */,
+				6A76BCEF6AF542DA94D83FF1 /* RelWithDebInfo */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A519E2DAAEAC4146890D9338 /* Project object */;
+}
