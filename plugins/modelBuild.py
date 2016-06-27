@@ -63,7 +63,6 @@ def checkCreate(scene,view,modelpath,mobj,string,ret_string,num,event_pos,layout
         
         poolinfo = moose.Annotator(poolObj.path+'/info')
         #Compartment's one Pool object is picked to get the font size
-
         
         qGItem = PoolItem(poolObj,itemAtView)
         layoutPt.mooseId_GObj[poolObj] = qGItem
@@ -71,12 +70,15 @@ def checkCreate(scene,view,modelpath,mobj,string,ret_string,num,event_pos,layout
         bgcolor = getRandColor()
         qGItem.setDisplayProperties(posWrtComp.x(),posWrtComp.y(),QtGui.QColor('green'),bgcolor)
         poolinfo.color = str(bgcolor.getRgb())
-        if mType == "new_kkit":
-            poolinfo.x = posWrtComp.x()
-            poolinfo.y = posWrtComp.y()
+        #if mType == "new_kkit":
+        poolinfo.x = posWrtComp.x()
+        poolinfo.y = posWrtComp.y()
         view.emit(QtCore.SIGNAL("dropped"),poolObj)
         setupItem(modelpath.path,layoutPt.srcdesConnection)
         layoutPt.drawLine_arrow(False)
+        poolinfo.x = posWrtComp.x()
+        poolinfo.y = posWrtComp.y()
+        
         #Dropping is on compartment then update Compart size
         if isinstance(mobj,moose.ChemCompt):
             compt = layoutPt.qGraCompt[moose.element(mobj)]
@@ -88,9 +90,9 @@ def checkCreate(scene,view,modelpath,mobj,string,ret_string,num,event_pos,layout
         reacinfo = moose.Annotator(reacObj.path+'/info')
         qGItem = ReacItem(reacObj,itemAtView)
         qGItem.setDisplayProperties(posWrtComp.x(),posWrtComp.y(),"white", "white")
-        if mType == "new_kkit":
-            reacinfo.x = posWrtComp.x()
-            reacinfo.y = posWrtComp.y()
+        #if mType == "new_kkit":
+        reacinfo.x = posWrtComp.x()
+        reacinfo.y = posWrtComp.y()
         layoutPt.mooseId_GObj[reacObj] = qGItem
         view.emit(QtCore.SIGNAL("dropped"),reacObj)
         setupItem(modelpath.path,layoutPt.srcdesConnection)
@@ -106,9 +108,9 @@ def checkCreate(scene,view,modelpath,mobj,string,ret_string,num,event_pos,layout
         tabinfo = moose.Annotator(tabObj.path+'/info')
         qGItem = TableItem(tabObj,itemAtView)
         qGItem.setDisplayProperties(posWrtComp.x(),posWrtComp.y(),QtGui.QColor('white'),QtGui.QColor('white'))
-        if mType == "new_kkit":
-            tabinfo.x = posWrtComp.x()
-            tabinfo.y = posWrtComp.y()
+        #if mType == "new_kkit":
+        tabinfo.x = posWrtComp.x()
+        tabinfo.y = posWrtComp.y()
         layoutPt.mooseId_GObj[tabObj] = qGItem
         view.emit(QtCore.SIGNAL("dropped"),tabObj)
         setupItem(modelpath.path,layoutPt.srcdesConnection)
@@ -128,9 +130,9 @@ def checkCreate(scene,view,modelpath,mobj,string,ret_string,num,event_pos,layout
         #print " function ", posWrtComp.x(),posWrtComp.y()
         qGItem.setDisplayProperties(posWrtComp.x(),posWrtComp.y(),QtGui.QColor('red'),QtGui.QColor('green'))
         layoutPt.mooseId_GObj[funcObj] = qGItem
-        if mType == "new_kkit":
-            funcinfo.x = posWrtComp.x()
-            funcinfo.y = posWrtComp.y()
+        #if mType == "new_kkit":
+        funcinfo.x = posWrtComp.x()
+        funcinfo.y = posWrtComp.y()
         view.emit(QtCore.SIGNAL("dropped"),funcObj)
         setupItem(modelpath.path,layoutPt.srcdesConnection)
         layoutPt.drawLine_arrow(False)
@@ -159,9 +161,10 @@ def checkCreate(scene,view,modelpath,mobj,string,ret_string,num,event_pos,layout
             posWrtComp = pos
             bgcolor = getRandColor()
             qGItem.setDisplayProperties(posWrtComp.x(),posWrtComp.y()-40,QtGui.QColor('green'),bgcolor)
-            if mType == "new_kkit":
-                enzinfo.x = posWrtComp.x()
-                enzinfo.y = posWrtComp.y()
+            #if mType == "new_kkit":
+            enzinfo.x = posWrtComp.x()
+            enzinfo.y = posWrtComp.y()
+        
             enzinfo.color = str(bgcolor.name())
             e = moose.Annotator(enzinfo)
             #e.x = posWrtComp.x()
