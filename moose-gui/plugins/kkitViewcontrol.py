@@ -27,6 +27,7 @@ class GraphicalView(QtGui.QGraphicsView):
         self.setScene(parent)
         self.modelRoot = modelRoot
         self.sceneContainerPt = parent
+        self.sceneContainerPt.setItemIndexMethod(QtGui.QGraphicsScene.NoIndex)
         self.setDragMode(QtGui.QGraphicsView.RubberBandDrag)
         self.itemSelected = False
         self.customrubberBand = None
@@ -144,7 +145,6 @@ class GraphicalView(QtGui.QGraphicsView):
             initial = self.mapToScene(self.state["press"]["pos"])
             final = self.mapToScene(event.pos())
             displacement = final - initial
-            #print("Displacement", displacement)
             for item in self.selectedItems:
                 if isinstance(item, KineticsDisplayItem) and not isinstance(item,ComptItem) and not isinstance(item,CplxItem):
                     item.moveBy(displacement.x(), displacement.y())
@@ -164,6 +164,14 @@ class GraphicalView(QtGui.QGraphicsView):
                 initial = item.parent().pos()
                 final = self.mapToScene(event.pos())
                 displacement = final-initial
+                if isinstance(item.parent(),KineticsDisplayItem):
+                    itemPath = item.parent().mobj.path
+                    if moose.exists(itemPath):
+                        iInfo = itemPath+'/info'
+                        anno = moose.Annotator(iInfo)
+                        anno.x = self.mapToScene(event.pos()).x()
+                        anno.y = self.mapToScene(event.pos()).y()
+                
                 if not isinstance(item.parent(),FuncItem) and not isinstance(item.parent(),CplxItem):
                     self.removeConnector()
                     item.parent().moveBy(displacement.x(), displacement.y())
@@ -245,7 +253,6 @@ class GraphicalView(QtGui.QGraphicsView):
         self.state["release"]["mode"] = VALID
         self.state["release"]["item"] = item
         self.state["release"]["type"] = itemType
-
         clickedItemType = self.state["press"]["type"]
         if clickedItemType == ITEM:
             if not self.state["move"]["happened"]:
@@ -284,6 +291,7 @@ class GraphicalView(QtGui.QGraphicsView):
         self.move = False
         if clickedItemType  == CONNECTOR:
             actionType = str(self.state["press"]["item"].data(0).toString())
+            
             
             if actionType == "move":
                 QtGui.QApplication.setOverrideCursor(QtGui.QCursor(Qt.Qt.ArrowCursor))
@@ -1128,4 +1136,3 @@ class GraphicalView(QtGui.QGraphicsView):
             self.layoutPt.getMooseObj()
             setupItem(self.modelRoot,self.layoutPt.srcdesConnection)
             self.layoutPt.drawLine_arrow(False)
-

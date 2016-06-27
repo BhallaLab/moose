@@ -40,6 +40,7 @@ class KkitPlugin(MoosePlugin):
             self.fileinsertMenu.addAction(self.saveModelAction)
         self._menus.append(self.fileinsertMenu)
         self.getEditorView()
+        
     def SaveModelDialogSlot(self):
         type_sbml = 'SBML'
         type_genesis = 'Genesis'
@@ -71,10 +72,15 @@ class KkitPlugin(MoosePlugin):
                 elif writeerror == 0:
                      QtGui.QMessageBox.information(None,'Could not save the Model','\nThe filename could not be opened for writing')
             elif filters[str(filter_)] == 'Genesis':
-                #self.test = KkitEditorView(self).getCentralWidget().mooseId_GObj
+                self.sceneObj = KkitEditorView(self).getCentralWidget().mooseId_GObj
+                self.coOrdinates = {}
+                for k,v in self.sceneObj.items():
+                    if moose.exists(moose.element(k).path+'/info'):
+                        annoInfo = Annotator(k.path+'/info')
+                        self.coOrdinates[k] = {'x':annoInfo.x, 'y':annoInfo.y}
+
                 filename = filename
-                self.test = None
-                writeerror = write(self.modelRoot,str(filename),self.test)
+                writeerror = write(self.modelRoot,str(filename),self.coOrdinates)
                 if writeerror == False:
                     QtGui.QMessageBox.information(None,'Could not save the Model','\nCheck the file')
                 else:
@@ -305,7 +311,6 @@ class  KineticsWidget(EditorWidgetBase):
         self.editor             = None
 
     def reset(self):
-        #print "reset "
         self.createdItem = {}
         #This are created at drawLine
         self.lineItem_dict = {}
@@ -315,6 +320,7 @@ class  KineticsWidget(EditorWidgetBase):
         if hasattr(self,'sceneContainer'):
                 self.sceneContainer.clear()
         self.sceneContainer = QtGui.QGraphicsScene(self)
+        self.sceneContainer.setItemIndexMethod(QtGui.QGraphicsScene.NoIndex)
         sceneDim = self.sceneContainer.itemsBoundingRect()
         # if (sceneDim.width() == 0 and sceneDim.height() == 0):
         #     self.sceneContainer.setSceneRect(0,0,30,30)
@@ -332,6 +338,7 @@ class  KineticsWidget(EditorWidgetBase):
                 self.layout().removeWidget(self.view)
            #self.sceneContainer.setSceneRect(-self.width()/2,-self.height()/2,self.width(),self.height())
             self.view = GraphicalView(self.modelRoot,self.sceneContainer,self.border,self,self.createdItem)
+
             if isinstance(self,kineticEditorWidget):
                 self.view.setRefWidget("editorView")
                 self.view.setAcceptDrops(True)
@@ -540,6 +547,8 @@ class  KineticsWidget(EditorWidgetBase):
             #Annoinfo.x = xpos
             #Annoinfo.y = -ypos 
         graphicalObj.setDisplayProperties(xpos,ypos,textcolor,bgcolor)
+        Annoinfo.x = xpos
+        Annoinfo.y = ypos
 
     def positioninfo(self,iteminfo):
         Anno = moose.Annotator(self.modelRoot+'/info')
@@ -559,10 +568,11 @@ class  KineticsWidget(EditorWidgetBase):
             y = float(element(iteminfo).getField('y'))
             #Qt origin is at the top-left corner. The x values increase to the right and the y values increase downwards \
             #as compared to Genesis codinates where origin is center and y value is upwards, that is why ypos is negated
-            if Anno.modeltype == "kkit":
-                ypos = 1.0-(y-self.ymin)*self.yratio
-            else:
-                ypos = (y-self.ymin)*self.yratio
+            # if Anno.modeltype == "kkit":
+            #     ypos = 1.0-(y-self.ymin)*self.yratio
+            # else:
+            #     ypos = (y-self.ymin)*self.yratio
+            ypos = (y-self.ymin)*self.yratio
         xpos = (x-self.xmin)*self.xratio
 
         return(xpos,ypos)
@@ -642,10 +652,11 @@ class  KineticsWidget(EditorWidgetBase):
                 pen.setColor(QtCore.Qt.red)
             elif(endtype != 'cplx'):
                 p1 = (next((k for k,v in self.mooseId_GObj.items() if v == src), None))
-                pinfo = p1.path+'/info'
+                pinfo = p1.parent.path+'/info'
                 color,bgcolor = getColor(pinfo)
                 #color = QColor(color[0],color[1],color[2])
-                pen.setColor(color)
+                pen.setColor(bgcolor)
+
         elif isinstance(source, moose.PoolBase) or isinstance(source,moose.Function):
             pen.setColor(QtCore.Qt.blue)
         elif isinstance(source,moose.StimulusTable):
