@@ -693,6 +693,10 @@ class  KineticsWidget(EditorWidgetBase):
             linfo = moose.Annotator(l+'/info')
             for k, v in self.qGraCompt.items():
                 rectcompt = v.childrenBoundingRect()
+                comptBoundingRect = v.boundingRect()
+                if not comptBoundingRect.contains(rectcompt):
+                    self.updateCompartmentSize(v)
+                '''
                 if linfo.modeltype == "new_kkit":
                     #if newly built model then compartment is size is fixed for some size.
                     comptBoundingRect = v.boundingRect()
@@ -702,7 +706,7 @@ class  KineticsWidget(EditorWidgetBase):
                     #if already built model then compartment size depends on max and min objects
                     rectcompt = calculateChildBoundingRect(v)
                     v.setRect(rectcompt.x()-10,rectcompt.y()-10,(rectcompt.width()+20),(rectcompt.height()+20))
-
+                '''
     def updateCompartmentSize(self, compartment):
         compartmentBoundary = compartment.rect()
         #childrenBoundary    = compartment.childrenBoundingRect()
