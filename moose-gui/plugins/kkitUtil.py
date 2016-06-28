@@ -129,12 +129,13 @@ def handleCollisions(compartments, moveCallback, layoutPt,margin = 5.0):
 def calculateChildBoundingRect(compt):
     ''' In this function I am trying to calculate BoundingRect of the compartments
         looking into children and its children which default "ChildrenBoundingRect"
-        function doing but in multi-compartment cross-compartment reaction 
+        function was doing it but in multi-compartment cross-compartment reaction 
         the arrow width is taken into account which doesn't belong to this perticular compartment
     '''
     ypos = []
     xpos = []
     for l in compt.childItems():
+
         ''' All the children including pool,reac,enz,polygon(arrow),table '''
         if not isinstance(l,QtSvg.QGraphicsSvgItem):
             xpos.append((l.pos().x())+(l.boundingRect().bottomRight().x()))
@@ -154,5 +155,9 @@ def calculateChildBoundingRect(compt):
                      (not isinstance(ll,QtGui.QGraphicsEllipseItem))
                     ):
                     ypos.append(l.pos().y()+ll.pos().y()+ll.boundingRect().bottomRight().y())
-    calculateRectcompt = QtCore.QRectF(min(xpos),min(ypos),(max(xpos)-min(xpos)),(max(ypos)-min(ypos)))
+    if xpos and ypos:
+        calculateRectcompt = QtCore.QRectF(min(xpos),min(ypos),(max(xpos)-min(xpos)),(max(ypos)-min(ypos)))
+    else:
+        calculateRectcompt = compt.rect()
+        
     return calculateRectcompt
