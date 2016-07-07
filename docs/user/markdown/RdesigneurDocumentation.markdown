@@ -191,6 +191,162 @@ the model, this generates action potentials.
 
 ![Plot for HH squid simulation ](../../images/rdes3_squid.png)
 
+### HH Squid model in an axon
+Here we put the Hodgkin-Huxley squid model into a long compartment that is
+subdivided into many segments, so that we can watch action potentials 
+propagate. Most of this example is boilerplate code to build a spiral axon.
+There is a short *rdesigneur* segment that takes
+the spiral axon prototype and populates it with channels, and sets up the
+display. Later examples will show you how to read morphology files to specify
+the neuronal geometry.
+
+	import numpy as np
+	import moose
+	import pylab
+	import rdesigneur as rd
+
+	numAxonSegments = 200
+	comptLen = 10e-6
+	comptDia = 1e-6
+	RM = 1.0
+	RA = 10.0
+	CM = 0.01
+	
+	def makeAxonProto():
+    		axon = moose.Neuron( '/library/axon' )
+    		prev = rd.buildCompt( axon, 'soma', RM = RM, RA = RA, CM = CM, dia = 10e-6, x=0, dx=comptLen)
+    		theta = 0
+    		x = comptLen
+    		y = 0.0
+
+    		for i in range( numAxonSegments ):
+        		dx = comptLen * np.cos( theta )
+        		dy = comptLen * np.sin( theta )
+        		r = np.sqrt( x * x + y * y )
+        		theta += comptLen / r
+        		compt = rd.buildCompt( axon, 'axon' + str(i), RM = RM, RA = RA, CM = CM, x = x, y = y, dx = dx, dy = dy, dia = comptDia )
+        		moose.connect( prev, 'axial', compt, 'raxial' )
+        		prev = compt
+        		x += dx
+        		y += dy
+    		
+    		return axon
+
+	moose.Neutral( '/library' )
+	makeAxonProto()
+
+	rdes = rd.rdesigneur(
+    		chanProto = [['make_HH_Na()', 'Na'], ['make_HH_K()', 'K']],
+    		cellProto = [['elec','axon']],
+    		chanDistrib = [
+        		['Na', '#', 'Gbar', '1200' ],
+        		['K', '#', 'Gbar', '360' ]],
+    		stimList = [['soma', '1', '.', 'inject', '(t>0.01 && t<0.2) * 2e-11' ]],
+    		plotList = [['soma', '1', '.', 'Vm', 'Membrane potential']],
+    		moogList = [['#', '1', '.', 'Vm', 'Vm (mV)']]
+)
+
+	rdes.buildModel()
+	moose.reinit()
+
+	rdes.displayMoogli( 0.00005, 0.05, 0.0 )
+
+![Axon with propagating action potential](../../images/rdes3.1_axon.png)
+
+Note how we explicitly create the prototype axon on '/library', and then 
+specify it using the *cellProto* line in the rdesigneur.
+The moogList specifies the 3-D display. See below for how to set up and use
+these displays.
+
+### HH Squid model in a myelinated axon
+This is a curious cross-species chimera model, where we embed the HH equations
+into a myelinated example model. As for the regular axon above, most of the
+example is boilerplate setup code. Note how we restrict the HH channels to the
+nodes of Ranvier using a conditional test for the diameter of the axon
+segment.
+
+	
+	import numpy as np
+	import moose
+	import pylab
+	import rdesigneur as rd
+	
+	numAxonSegments = 405
+	nodeSpacing = 100
+	comptLen = 10e-6
+	comptDia = 2e-6 # 2x usual
+	RM = 100.0 # 10x usual
+	RA = 5.0
+	CM = 0.001 # 0.1x usual
+	
+	nodeDia = 1e-6
+	nodeRM = 1.0
+	nodeCM = 0.01
+	
+	def makeAxonProto():
+	    axon = moose.Neuron( '/library/axon' )
+	    x = 0.0
+	    y = 0.0
+	    prev = rd.buildCompt( axon, 'soma', RM = RM, RA = RA, CM = CM, dia = 10e-6, x=0, dx=comptLen)
+	    theta = 0
+	    x = comptLen
+	
+	    for i in range( numAxonSegments ):
+	        r = comptLen
+	        dx = comptLen * np.cos( theta )
+	        dy = comptLen * np.sin( theta )
+	        r = np.sqrt( x * x + y * y )
+	        theta += comptLen / r
+	        if i % nodeSpacing == 0:
+	            compt = rd.buildCompt( axon, 'axon' + str(i), RM = nodeRM, RA = RA, CM = nodeCM, x = x, y = y, dx = dx, dy = dy, dia = nodeDia )
+	        else:
+	            compt = rd.buildCompt( axon, 'axon' + str(i), RM = RM, RA = RA, CM = CM, x = x, y = y, dx = dx, dy = dy, dia = comptDia )
+	        moose.connect( prev, 'axial', compt, 'raxial' )
+	        prev = compt
+	        x += dx
+	        y += dy
+	    
+	    return axon
+	
+	moose.Neutral( '/library' )
+	makeAxonProto()
+	
+	rdes = rd.rdesigneur(
+	    chanProto = [['make_HH_Na()', 'Na'], ['make_HH_K()', 'K']],
+	    cellProto = [['elec','axon']],
+	    chanDistrib = [
+	        ['Na', '#', 'Gbar', '12000 * (dia < 1.5e-6)' ],
+	        ['K', '#', 'Gbar', '3600 * (dia < 1.5e-6)' ]],
+	    stimList = [['soma', '1', '.', 'inject', '(t>0.01 && t<0.2) * 1e-10' ]],
+	    plotList = [['soma,axon100,axon200,axon300,axon400', '1', '.', 'Vm', 'Membrane potential']],
+	    moogList = [['#', '1', '.', 'Vm', 'Vm (mV)']]
+	)
+	
+	rdes.buildModel()
+	
+	for i in moose.wildcardFind( "/model/elec/#/Na" ):
+	    print i.parent.name, i.Gbar
+	
+	moose.reinit()
+	
+	rdes.displayMoogli( 0.00005, 0.05, 0.0 )
+
+
+When you run the example, keep an eye out for a few things:
+
++	**saltatory conduction:** This is the way the action potential jumps
+	from one node of Ranvier to the next. Between the nodes it is just
+	passive propagation.
++	**Failure to propagate:** Observe that the second and fourth action
+	potentials fails to trigger propagation along the axon. Here we have
+	specially tuned the model properties so that this happens. With a larger
+	RA of 10.0, the model will be more reliable.
++	**Speed:** Compare the propagation speed with the previous, 
+	unmyelinated axon. Note that the current model is larger!
+
+
+![Myelinated axon with propagating action potential](../../images/rdes3.2_myelinated_axon.png)
+
 
 ### Reaction system in a single compartment
 Here we use the compartment as a place in which to embed a chemical model.
