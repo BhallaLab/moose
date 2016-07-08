@@ -4,7 +4,7 @@
 
 Upi Bhalla
 
-Dec 28 2015.
+July 8 2016.
 
 -----
 
@@ -345,7 +345,7 @@ When you run the example, keep an eye out for a few things:
 	unmyelinated axon. Note that the current model is larger!
 
 
-![Myelinated axon with propagating action potential](../../images/rdes3.2_myelinated_axon.png)
+![Myelinated axon with propagating action potential. Narrow juntion is Ranvier's node](../../images/rdes3.2_myelinated_axon.png)
 
 
 ### Reaction system in a single compartment
