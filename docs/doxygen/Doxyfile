@@ -758,26 +758,26 @@ WARN_LOGFILE           = cpp/doxygen-logfile
 # spaces.
 # Note: If this tag is empty the current directory is searched.
 
-INPUT                  = ../../basecode 	  \
-                         ../../biophysics         \
-                         ../../builtins           \
-                         ../../device             \
-                         ../../diffusion          \
-                         ../../hsolve             \
-                         ../../intfire            \
-                         ../../kinetics           \
-                         ../../ksolve             \
-                         ../../mesh           	  \
-                         ../../mpi                \
-                         ../../msg                \
-                         ../../randnum            \
-                         ../../pymoose            \
-                         ../../sbml               \
-                         ../../scheduling         \
-                         ../../shell              \
-                         ../../signeur            \
-                         ../../synapse            \
-                         ../../utility
+INPUT                  = ../../moose-core/basecode 	  \
+                         ../../moose-core/biophysics         \
+                         ../../moose-core/builtins           \
+                         ../../moose-core/device             \
+                         ../../moose-core/diffusion          \
+                         ../../moose-core/hsolve             \
+                         ../../moose-core/intfire            \
+                         ../../moose-core/kinetics           \
+                         ../../moose-core/ksolve             \
+                         ../../moose-core/mesh           	  \
+                         ../../moose-core/mpi                \
+                         ../../moose-core/msg                \
+                         ../../moose-core/randnum            \
+                         ../../moose-core/pymoose            \
+                         ../../moose-core/sbml               \
+                         ../../moose-core/scheduling         \
+                         ../../moose-core/shell              \
+                         ../../moose-core/signeur            \
+                         ../../moose-core/synapse            \
+                         ../../moose-core/utility
 
 
 # This tag can be used to specify the character encoding of the source files
