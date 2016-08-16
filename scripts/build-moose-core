@@ -1,6 +1,6 @@
 #!/bin/sh
 
-(cd ../moose-core; make clean; make USE_SBML=1)
+(cd ../moose-core; make clean; make)
 local_site_package_directory=`python -c "import site; print site.getusersitepackages()"`
 mkdir -p "$local_site_package_directory"
 echo $(echo `pwd` | sed "s/\/[^\/]*$//")'/moose-core/python' > "$local_site_package_directory/moose.pth"
