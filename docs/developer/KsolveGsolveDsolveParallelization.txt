@@ -1,0 +1,41 @@
+This file contatins the description of the parallel implementations of Ksolve::process, Gsolve::process, Dsolve::process .
+
+Ksolve : 
+   Kinetic solver implements a linear algebra solution for fast computation of the chemical reactions. 
+   The process function performs the calculations using the rungekutta method or order 5 on the various voxelpools involved at this timestep of the simulation.
+   This step is parallelized by distributing the voxels among the available threads.
+
+Gsolve : 
+   Stochastic solver solves the chemical reactions on a per molecule basis instead of using linear algebra solutions like the Kinetic solver.
+   The parallelization was done by dividing the molecules among the available threads.
+
+Dsolve : 
+   Calculates the diffusion gradient for every molecule. The parallelization technique is similar to Gsolve, where we distribute the molecules between the execution threads.
+
+
+Programming Models Used :
+   OpenMP - for the ease of use.
+   Pthreads - for the flexibility.
+
+   To avail a particular parallelization of a particular programming model we set the flag in the .h files of the respective solvers.
+   The environment variable NUM_THREADS, represents the number of threads with which the solvers can be run. It needs to have a value for proper execution. 
+
+Performance improvement due to parallelization :
+   Kmeans - 4.5X
+   Gsolve - 5.8X
+   Dsolve - 3.8X
+
+Performances improve with increasing problem sizes. 
+
+OpenMP vs Pthreads :
+   Compared to Pthreads based parallelization, OpenMP based parallelization gave better performance.
+   The reason for this is the optimization that is performed by the OpenMP framework. 
+   Once the OpenMP framework creates a parallel thread (at the first encounter of a "OpenMP parallel" directive), the threads are kept alive until the end of the program/application. 
+   However, with pthreads, the basic parallelization technique is to create the threads whenever a parallel section is encountered and to kill the threads once the work is done.  
+   This creates a heavy burden in cases where the overhead of thread creation-destruction is high. 
+   Hence, the pthread implementation was modified such that it creates threads once at the start of the application and killed at the end of the it. 
+   The threads are however allowed to work only when the main-thread has reached a point where parallel work is possible. 
+   For the rest of the time, the worker-threads are kept idle. This behaviour is achieved by the use of semaphores. 
+   Each worker-main thread pair is controlled using a pair of semaphores, using which messages are passed in between them. 
+   This optimization improved the performance of pthread-based implementation and we achived the speedups equivalent to the ones with OpenMP. 
+
