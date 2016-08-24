@@ -4,7 +4,7 @@
 
 Upi Bhalla
 
-July 8 2016.
+Dec 28 2015.
 
 -----
 
@@ -345,7 +345,7 @@ When you run the example, keep an eye out for a few things:
 	unmyelinated axon. Note that the current model is larger!
 
 
-![Myelinated axon with propagating action potential. Narrow juntion is Ranvier's node](../../images/rdes3.2_myelinated_axon.png)
+![Myelinated axon with propagating action potential](../../images/rdes3.2_myelinated_axon.png)
 
 
 ### Reaction system in a single compartment
@@ -832,6 +832,186 @@ rdesigneur format is itself meant to be an intermediate form for an
 eventual high-level, possibly XML-based multiscale modeling format.
 
 ![3-D display for spiny active neuron](../../images/rdes9_spiny_active.png)
+
+
+### Put a spine on a cylindrical compartment, give it synaptic input, and watch Ca diffuse.
+Calcium enters spines during strong synaptic input, how far does it spread 
+along the dendrites? This model is simple conceptually but illustrates several
+things:
+
+- Setting up random (Poisson) synaptic input to one or more spines
+- Setting up a reaction-diffusion system (Ca) coupled to an electrical
+system (Ca influx through channels). This uses a separate
+chemical definition script. One can replace this with more elaborate chemical
+schemes simply by changing the name of the script.
+- User definitions of prototypes (the soma in this example).
+- Assigning random number seeds.
+- The difference between electrical and chemical length scales. For numerical
+reasons, the discretization of reaction-diffusion systems into voxels normally
+happens on a smaller length scale (microns) than for electrical systems 
+(tens to hundreds of microns). In this example there is just one electrical
+compartment, but 50 chemical subdivisions.
+
+Most of the script is setting up the input and the prototypes. Rdesigneur
+is compact, as usual. First, the headers and parameter list:
+
+
+	import moose
+	import numpy as np
+	import rdesigneur as rd
+	
+	params = { 
+		'diffusionLength':1.0e-6,  # Diffusion characteristic length, used as voxel length too.
+		'dendDiameter': 1e-6,  # Diameter of section of dendrite in model
+		'dendLength': 50e-6,   # Length of section of dendrite in model
+		'spineSpacing': 30e-6,   # mean spacing between spines.
+		'diffConstCa':20.0e-12,  # Diffusion constant of Ca, m^2/sec
+		'spineFreq': 1,	 # Frequencey of input to spines
+		'gluWeight': 100,  # Weight for glutamate receptor
+		'nmdaWeight': 100, # weight for NMDA receptor
+		'chemModel':'spineCa_diffn.g',  # Chem model definition.
+		'RA': 1.0,		  # Axial resistivity of compartment, ohms.metre
+		'RM': 1.0,		  # membrane resistivity of compartment, ohms.metre^2
+		'CM': 0.01,		  # Specific capacitance of membrane, Farads/metre^2
+		'runtime': 3,	   # Simulation run time, sec.
+	}
+	
+Then, we define the prototypes for the soma compartment and the CaConc object
+that handles conversion of calcium current into calcium concentration:
+
+
+	def makePassiveSoma( name, length, diameter ):
+		elecid = moose.Neuron( '/library/' + name )
+		dend = moose.Compartment( elecid.path + '/soma' )
+		dend.diameter = diameter
+		dend.length = length
+		dend.Ra = params['RA'] * length * 4.0 / (diameter * diameter * np.pi)
+		dend.Rm = params['RM'] / (length * diameter * np.pi)
+		dend.Cm = params['CM'] * length * diameter * np.pi
+		dend.x = length
+		return elecid
+	
+	def makeCaConc( name ):
+		conc = moose.CaConc( '/library/' + name )
+		conc.tau = 0.0133333
+		conc.B = 17.402e12 # Conversion from Amps to milliMolar for soma
+		conc.Ca_base = 0.0 
+	
+
+Then, we define the stimulus including the poisson spike generator:
+
+	def attachStimulus():
+		numSpine = len( moose.wildcardFind( '/model/elec/head#' ) ) 
+		spikeInput = moose.RandSpike( '/model/elec/spineInput', numSpine )
+		spikeVec = spikeInput.vec
+		spikeVec.rate = params['spineFreq']
+	
+		j = 0 
+		for i in moose.wildcardFind( '/model/elec/head#' ):
+			sh = moose.element( i.path + '/glu/sh' )
+			sh.numSynapses = 1 
+			sh.synapse[0].weight = params['gluWeight']
+			moose.connect( spikeVec[j], 'spikeOut', sh.synapse[0], 'addSpike')
+			sh = moose.element( i.path + '/NMDA/sh' )
+			sh.numSynapses = 1 
+			sh.synapse[0].weight = params['nmdaWeight']
+			moose.connect( spikeVec[j], 'spikeOut', sh.synapse[0], 'addSpike')
+			j += 1
+	
+
+Having specified the framework for the model, here is the actual rdesigneur
+setup:
+	
+	moose.seed( 123 ) # One seed for the layout
+	library = moose.Neutral( '/library' )
+	makePassiveSoma( 'cell', params['dendLength'], params['dendDiameter'] )
+	makeCaConc( 'Ca_conc' )
+	
+	rdes = rd.rdesigneur(
+		chemPlotDt = 0.02,
+		diffusionLength = params['diffusionLength'],
+		spineProto = [['makeExcSpine()', 'spine']],
+		spineDistrib = [['spine', '#', str( params['spineSpacing'] ),'1e-7']],
+		chanDistrib = [["Ca_conc", "#", "tau", "0.0133", "thick","0.1e-6"]],
+		cellProto = [['cell', 'elec']],
+		chemProto = [['../chem/' + params['chemModel'], 'chem']],
+		chemDistrib = [['chem', '#soma#', 'install', '1' ]],
+		plotList = [
+			['soma', '1', '.', 'Vm', 'soma Vm'],
+			['soma', '1', 'dend/DEND/Ca', 'conc', '[dend Ca]'],
+			['#head#', '1', 'spine/Ca', 'conc', '[Spine Ca]'],
+			['#head#', '1', 'psd/Ca', 'conc', '[PSD Ca]'],
+		],
+		moogList = [['#', '1', 'dend/DEND/Ca', 'conc', 'dend Ca', 0, 0.5]],
+		adaptorList = [
+			[ 'Ca_conc', 'Ca', 'psd/Ca_input', 'concInit', 2e-6, 0.1 ],
+			[ 'Ca_conc', 'Ca','dend/DEND/Ca_input','concInit',2e-6,0.001],
+		]
+	)
+	for ca in moose.wildcardFind( '/library/##/Ca' ):
+		ca.diffConst = params['diffConstCa']
+	rdes.buildModel()
+	attachStimulus()
+	moose.reinit()
+	moose.seed( 3 ) # Another seed because the reinit does a reseed.
+	rdes.displayMoogli( 0.01, params['runtime'], 0.0 )
+	
+
+You will additionally need to copy over the chemical models for the calcium.
+These reside in the moose-examples/genesis directory. The simple model
+`spineCa_diffn.g`
+has calcium in spine PSD, spine head, and dendrite pools, with reactions
+for controlling input from the *Ca_conc* object. 
+
+With this done you can run the script and watch calcium spreading from the 
+location of the spine. There are three pulses of calcium, the first being
+quite weak.
+
+![Calcium influx from spine in middle of cylindrical compartment, spreading 
+into the dendrite and then axially in both directions.](../../images/rdes10_CaSpread.png)
+
+Once the simulation completes you'll also see a number of plots, so that you
+can figure out what the calcium influx was doing. Here, we have a single spine
+so there is just one trace for it. We have 50 chemical voxels along the
+dendrite, so there are 50 traces for the chemical time-course.
+
+![Time-course of Calcium buildup in spine and dendrite.](../../images/rdes10_CaTimecourse.png)
+
+
+Note the explicit assignment of random seeds using `moose.seed( 123 )`. By
+default, MOOSE generates a reasonably random seed using system information.
+Here, however, we want to be sure that the simulation always gives the same
+result. So we explicitly set the seed to a known number. Note also that
+we set the seed at two places: First, before setup, so that we ensure that the
+spines are going to come in the same number and place each time. Second, after
+`moose.reinit()` to make sure that the same pseudo-random sequence of 
+synaptic input and chemical stochastic calculations happens each run.
+
+Note also that this is run using stochastic methods for the chemical 
+calculations. This is the default. One can alter this using the following 
+line in rdesigneur:
+
+		useGssa = False
+
+As an exercise for the user, we also have a plug-in replaceable model for
+Ca influx, this one having a lot of calmodulin to act as a buffer. Replace
+the original line in the params dictionary as follows:
+
+		'chemModel':'spineCa_diffn.g'
+
+with
+
+		'chemModel':'spineCa_CaM_diffn.g'
+
+The resultant model has reduced free Ca++ buildup.
+
+Some other interesting things to try are:
+
+- Increase the diffusion constant for calcium. You might expect that this 
+would lead to faster flow of Ca from the spine to the dendrite, and hence a 
+higher peak in the dendrite. Try it and see.
+- Change the diameter of the dendrite.
+
 
 ### Build a spiny neuron from a morphology file and put a reaction-diffusion system in it.
 Rdesigneur is specially designed to take reaction systems with a dendrite,
