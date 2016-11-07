@@ -29,7 +29,7 @@ before_script:
     - sudo apt-get update -qq
     - sudo apt-get install libxml2-dev libbz2-dev wget
     - sudo apt-get install libhdf5-serial-dev
-    - sudo apt-get install python-numpy python-setuptools python-networkx
+    - sudo apt-get install python-numpy python-setuptools python-networkx python-pip
     - sudo apt-get install cmake cdbs
     - sudo apt-get install python-suds python-matplotlib python-nose
     - sudo apt-get install python-qt4-dev python-qt4-gl python-sip-dev libqt4-dev libopenscenegraph-dev
@@ -37,8 +37,6 @@ before_script:
     - sudo apt-get install git-buildpackage
 
 install:
-    - sbmlurl="http://sourceforge.net/projects/sbml/files/libsbml/5.9.0/stable/Linux/64-bit/libSBML-5.9.0-Linux-x64.deb"
-    - wget "$sbmlurl" -O libsbml.deb && sudo dpkg -i libsbml.deb 
     - wget http://ftp.debian.org/debian/pool/main/g/gsl/libgsl0ldbl_1.16+dfsg-2_amd64.deb -O gsl_1.16.deb
     - sudo dpkg -i gsl_1.16.deb
     - wget http://ftp.debian.org/debian/pool/main/g/gsl/libgsl0-dev_1.16+dfsg-2_amd64.deb -O gsl_1.16-dev.deb
