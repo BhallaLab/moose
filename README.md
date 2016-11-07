@@ -66,7 +66,7 @@ Look in the [moose-examples repository](https://github.com/BhallaLab/moose-examp
 - [tutorials](https://github.com/BhallaLab/moose-examples/tree/master/tutorials): Standalone scripts meant for teaching. Students are expected
   to modify the scripts to learn the principles of the models.
 - [squid](https://github.com/BhallaLab/moose-examples/tree/master/squid): The Hodkin-Huxley squid model, fully graphical interface.
-- [Genesis_files](https://github.com/BhallaLab/moose-examples/tree/master/Genesis_files): A number of kinetics models used in MOOSE demos.
+- [Genesis_files](https://github.com/BhallaLab/moose-examples/tree/master/genesis: A number of kinetics models used in MOOSE demos.
 - [neuroml](https://github.com/BhallaLab/moose-examples/tree/master/neuroml): A number of NeuroML models used in MOOSE demos
 - [traub_2005](https://github.com/BhallaLab/moose-examples/tree/master/traub_2005): Example scripts for each of the individual cell models from
   the Traub 2005 thalamocortical model.
