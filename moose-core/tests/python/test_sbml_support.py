@@ -40,13 +40,9 @@
 # 
 
 import moose
-import matplotlib
-import numpy as np
-import matplotlib.pyplot as plt
 import sys
-import pylab
 import os
-
+from moose.SBML import *
 script_dir = os.path.dirname( os.path.realpath( __file__) )
 
 print( "Using moose from: %s" % moose.__file__ )
@@ -59,31 +55,32 @@ def main():
 	As a general rule we created model under '/path/model' and plots under '/path/graphs'.\n
     """
 
-    mfile =  os.path.join( script_dir, 'chem_models/00001-sbml-l3v1.xml')
+    mfile =  os.path.join( script_dir, 'chem_models/acc27.g')
     runtime = 20.0
-        
-    # Loading the sbml file into MOOSE, models are loaded in path/model
-    sbmlId = moose.readSBML(mfile,'sbml')
+    writefile =  os.path.join( script_dir, 'chem_models/acc27.xml')    
+    
+    #Load model to moose and write to SBML
+    moose.loadModel(mfile,'/acc27')
+    writeerror,message,sbmlId = moose.SBML.mooseWriteSBML('/acc27',writefile)
+    if writeerror == -2:
+        print ( "Could not save the Model" )
+    elif writeerror == -1:
+        print ( "\n This model is not valid SBML Model, failed in the consistency check ")
+    elif writeerror == 0:
+        print ("Could not save the Model ")
+    elif writeerror == 1:
+        print ( "Model is loaded using \'loadModel\' function to moose and using \'moose.SBML.mooseWriteSBML\' converted to SBML. \n Ran for 20 Sec" )
+        # Reset and Run
+        moose.reinit()
+        moose.start(runtime)
     
 
-    s1 = moose.element('/sbml/model/compartment/S1')
-    s2= moose.element('/sbml/model/compartment/S2')
-                      
-    # Creating MOOSE Table, Table2 is for the chemical model
-    graphs = moose.Neutral( '/sbml/graphs' )
-    outputs1 = moose.Table2 ( '/sbml/graphs/concS1')
-    outputs2 = moose.Table2 ( '/sbml/graphs/concS2')
-
-    # connect up the tables
-    moose.connect( outputs1,'requestOut', s1, 'getConc' );
-    moose.connect( outputs2,'requestOut', s2, 'getConc' );
-
-        
-    # Reset and Run
-    moose.reinit()
-    moose.start(runtime)
-
 def displayPlots():
+    import matplotlib
+    import numpy as np
+    import matplotlib.pyplot as plt
+    import pylab
+
     # Display all plots.
     for x in moose.wildcardFind( '/sbml/graphs/#[TYPE=Table2]' ):
         t = np.arange( 0, x.vector.size, 1 ) #sec

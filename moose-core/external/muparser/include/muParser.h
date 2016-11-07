@@ -101,6 +101,7 @@ namespace mu
     static value_type  Rint(value_type);
     static value_type  Sign(value_type);
     static value_type  Fmod(value_type, value_type);
+    static value_type  Quot(value_type, value_type);
 
     // Random between a and b, with fixed seed.
     static value_type  Rand2(value_type, value_type, value_type); 

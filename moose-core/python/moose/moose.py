@@ -164,7 +164,7 @@ def showfield(el, field='*', showtype=False):
         max_type_len = max(len(dtype) for dtype in value_field_dict.values())
         max_field_len = max(len(dtype) for dtype in value_field_dict.keys())
         print('\n[', el.path, ']')
-        for key, dtype in value_field_dict.items():
+        for key, dtype in sorted( value_field_dict.items() ):
             if dtype == 'bad' or key == 'this' or key == 'dummy' or key == 'me' or dtype.startswith('vector') or 'ObjId' in dtype:
                 continue
             value = el.getField(key)
@@ -291,6 +291,13 @@ def getfielddoc(tokens, indent=''):
             raise NameError('`%s` has no field called `%s`' 
                     % (tokens[0], tokens[1]))
                     
+def toUnicode( v, encoding= 'utf8' ):
+    #if isinstance(v, str):
+        #return v
+    try:
+        return v.decode(encoding)
+    except (AttributeError, UnicodeEncodeError):
+        return str(v)
     
 def getmoosedoc(tokens, inherited=False):
     """Return MOOSE builtin documentation.
@@ -327,16 +334,17 @@ def getmoosedoc(tokens, inherited=False):
         except ValueError:
             raise NameError('name \'%s\' not defined.' % (tokens[0]))
         if len(tokens) > 1:
-            docstring.write(getfielddoc(tokens))
+            docstring.write( toUnicode( getfielddoc(tokens)) )
         else:
-            docstring.write('%s\n' % (class_element.docs))
+            docstring.write( toUnicode('%s\n' % (class_element.docs) ) )
             append_finfodocs(tokens[0], docstring, indent)
             if inherited:
                 mro = eval('_moose.%s' % (tokens[0])).mro()
                 for class_ in mro[1:]:
                     if class_ == _moose.melement:
                         break
-                    docstring.write('\n\n#Inherited from %s#\n' % (class_.__name__))
+                    docstring.write( toUnicode( 
+                        '\n\n#Inherited from %s#\n' % (class_.__name__) ) )
                     append_finfodocs(class_.__name__, docstring, indent)
                     if class_ == _moose.Neutral:    # Neutral is the toplevel moose class
                         break
@@ -350,14 +358,14 @@ def append_finfodocs(classname, docstring, indent):
     except ValueError:
         raise NameError('class \'%s\' not defined.' % (classname))
     for ftype, rname in finfotypes:
-        docstring.write('\n*%s*\n' % (rname.capitalize()))
+        docstring.write( toUnicode( '\n*%s*\n' % (rname.capitalize())) )
         try:
             finfo = _moose.element('%s/%s' % (class_element.path, ftype))
             for field in finfo.vec:
-                docstring.write('%s%s: %s\n' % 
-                            (indent, field.fieldName, field.type))
+                docstring.write( toUnicode( 
+                    '%s%s: %s\n' % (indent, field.fieldName, field.type)) )
         except ValueError:
-            docstring.write('%sNone\n' % (indent))
+            docstring.write( toUnicode( '%sNone\n' % (indent) ) )
     
     
 # the global pager is set from pydoc even if the user asks for paged

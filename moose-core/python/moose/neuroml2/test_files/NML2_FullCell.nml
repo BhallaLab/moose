@@ -3,15 +3,14 @@
 <neuroml xmlns="http://www.neuroml.org/schema/neuroml2"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:xi="http://www.w3.org/2001/XInclude"
-      xsi:schemaLocation="http://www.neuroml.org/schema/neuroml2 http://neuroml.svn.sourceforge.net/viewvc/neuroml/NeuroML2/Schemas/NeuroML2/NeuroML_v2alpha.xsd"
+      xsi:schemaLocation="http://www.neuroml.org/schema/neuroml2 ../Schemas/NeuroML2/NeuroML_v2beta3.xsd"
     id="NML2_FullCell">
         
 
 <!-- Example of a multicompartmental cell with biophysics in NeuroML 2 -->
 
-<!-- This is a "pure" NeuroML 2 file. It cannot yet be used a simulation by the LEMS 
-     Interpreter as this does not yet support multicompartment cells -->   
-
+<!-- This is a "pure" NeuroML 2 file. It cannot currently used for simulations with 
+     jLEMS/jNeuroML however, as jLEMS does not yet support multicompartmental cells -->    
 
     <include href="SimpleIonChannel.xml"/> <!-- Contains ionChannel NaConductance -->
 
@@ -25,12 +24,12 @@
         <annotation>
             <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
               <rdf:Description rdf:about="HippoCA1Cell">
-                <bqbiol:isVersionOf>
+                <bqbiol:is>
                   <rdf:Bag>
                     <!-- This cell model is a version of a hippocampal CA1 pyramidal cell -->
                     <rdf:li rdf:resource="urn:miriam:neurondb:258"/>
                   </rdf:Bag>
-                </bqbiol:isVersionOf>
+                </bqbiol:is>
               </rdf:Description>
             </rdf:RDF>
         </annotation>
@@ -82,26 +81,19 @@
 
             <membraneProperties> 
 
-                <channelPopulation id="naChansDend" ionChannel="NaConductance" segment="2" number="120000"/>   <!-- Use population instead of density -->
+                <channelPopulation id="naChansDend" ionChannel="NaConductance" segment="2" number="120000" erev="50mV"/>   <!-- Use population instead of density -->
 
-                <channelDensity id="pasChans" ionChannel="pas" condDensity="3.0 S_per_m2"/> <!-- no segmentGroup => all segments! -->
+                <channelDensity id="pasChans" ionChannel="pas" condDensity="3.0 S_per_m2" erev="-70mV"/> <!-- no segmentGroup => all segments! -->
 
-                <channelDensity id="naChansSoma" ionChannel="NaConductance" segmentGroup="soma_group" condDensity="120.0 mS_per_cm2"/>
+                <channelDensity id="naChansSoma" ionChannel="NaConductance" segmentGroup="soma_group" condDensity="120.0 mS_per_cm2" erev="50mV"/>
 
                 <specificCapacitance segmentGroup="soma_group" value="1.0 uF_per_cm2"/>
 
                 <specificCapacitance segmentGroup="dendrite_group" value="2.0 uF_per_cm2"/>
 
-                <reversalPotential species="na" value="55mV"/>
-
             </membraneProperties>
 
             <intracellularProperties>
-
-                <!-- Ions present inside the cell. -->
-                <species id="ca">
-                    <fixedConcentration  concentration="1e-5 mM"/>
-                </species>
 
                 <resistivity value="0.1 kohm_cm"/>  <!-- Used for specific axial resistance -->
 

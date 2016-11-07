@@ -57,6 +57,7 @@ extern void testShell();
 extern void testScheduling();
 extern void testSchedulingProcess();
 extern void testBuiltins();
+extern void testSynapse();
 extern void testBuiltinsProcess();
 
 extern void testMpiScheduling();
@@ -342,6 +343,7 @@ void nonMpiTests( Shell* s )
         MOOSE_TEST("testHsolve", testHSolve());
         //MOOSE_TEST("testGeom", testGeom());
         MOOSE_TEST("testMesh", testMesh());
+        MOOSE_TEST("testSynapse", testSynapse());
         MOOSE_TEST( "testSigneur", testSigNeur());
 #ifdef USE_SMOLDYN
         //MOOSE_TEST(testSmoldyn());

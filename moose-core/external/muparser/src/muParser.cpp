@@ -110,6 +110,7 @@ namespace mu
   value_type Parser::Exp(value_type v)  { return MathImpl<value_type>::Exp(v);  }
   value_type Parser::Abs(value_type v)  { return MathImpl<value_type>::Abs(v);  }
   value_type Parser::Fmod(value_type v1, value_type v2) { return fmod(v1, v2); }
+  value_type Parser::Quot(value_type v1, value_type v2) { return (int)(v1 / v2); }
 
   // If no seed is given, 
   value_type Parser::Rand( value_type seed ) 
@@ -336,6 +337,7 @@ namespace mu
       DefineFun(_T("avg"), Avg);
       DefineFun(_T("min"), Min);
       DefineFun(_T("max"), Max);
+      DefineFun(_T("quot"), Quot);
     }
   }
 

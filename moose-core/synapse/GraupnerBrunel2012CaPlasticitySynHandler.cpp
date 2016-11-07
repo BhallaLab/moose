@@ -10,8 +10,8 @@
 #include <queue>
 #include "header.h"
 #include "Synapse.h"
+#include "SynEvent.h" // only using the SynEvent class from this
 #include "SynHandlerBase.h"
-#include "SimpleSynHandler.h" // only using the SynEvent class from this
 #include "../randnum/Normal.h" // generate normal randum numbers for noisy weight update
 #include "GraupnerBrunel2012CaPlasticitySynHandler.h"
 

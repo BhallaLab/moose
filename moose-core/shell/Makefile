@@ -26,7 +26,8 @@ HEADERS = \
 default: $(TARGET)
 
 $(OBJ)	: $(HEADERS)
-Shell.o:	Shell.h Neutral.h ../scheduling/Clock.h ../sbml/MooseSbmlWriter.h ../sbml/MooseSbmlReader.h
+#Shell.o:	Shell.h Neutral.h ../scheduling/Clock.h ../sbml/MooseSbmlWriter.h ../sbml/MooseSbmlReader.h
+Shell.o:	Shell.h Neutral.h ../scheduling/Clock.h
 ShellCopy.o:	Shell.h Neutral.h ../scheduling/Clock.h
 ShellSetGet.o:	Shell.h
 ShellThreads.o:	Shell.h Neutral.h ../scheduling/Clock.h

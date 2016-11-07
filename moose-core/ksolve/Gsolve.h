@@ -76,6 +76,7 @@ class Gsolve: public ZombiePoolInterface
 		//////////////////////////////////////////////////////////////////
 		unsigned int getPoolIndex( const Eref& e ) const;
 		unsigned int getVoxelIndex( const Eref& e ) const;
+		vector< unsigned int > getNumFire( unsigned int voxel) const;
 
 		/**
 		 * Inherited. Needed for reac-diff calculations so the Gsolve can

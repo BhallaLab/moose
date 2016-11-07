@@ -115,7 +115,17 @@ double ZombieEnz::vGetK2( const Eref& e ) const
 
 void ZombieEnz::vSetKcat( const Eref& e, double v )
 {
+	double k2 = getK2( e );
+	double k3 = getKcat( e );
+	double ratio = 4.0;
+	if ( k3 > 1e-10 )
+		ratio = k2/k3;
+	double Km = (k2 + k3) / concK1_;
+	concK1_ = v * (1.0 + ratio) / Km;
+
+	stoich_->setEnzK1( e, concK1_ );
 	stoich_->setEnzK3( e, v );
+	stoich_->setEnzK2( e, v * ratio );
 }
 
 double ZombieEnz::vGetKcat( const Eref& e ) const

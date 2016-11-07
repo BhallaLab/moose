@@ -823,7 +823,7 @@ bool ReadCell::addSpikeGen(
 		shell_->doAddMsg(
 			"Single",
 			compt,
-			"VmSrc",
+			"VmOut",
 			chan,
 			"Vm"
 		);

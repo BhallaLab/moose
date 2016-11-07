@@ -20,7 +20,7 @@ class OdeSystem {
     public:
         OdeSystem()
             : method( "rk5" ),
-            initStepSize( 1 ),
+            initStepSize( 0.001 ),
             epsAbs( 1e-6 ),
             epsRel( 1e-6 )
     {;}

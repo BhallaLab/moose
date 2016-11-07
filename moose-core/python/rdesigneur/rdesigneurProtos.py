@@ -105,6 +105,40 @@ def make_HH_K(name = 'HH_K', parent='/library', vmin=-120e-3, vmax=40e-3, vdivs=
     k.tick = -1
     return k
 
+#========================================================================
+#                SynChan: Glu receptor
+#========================================================================
+
+def make_glu( name ):
+	if moose.exists( '/library/' + name ):
+		return
+	glu = moose.SynChan( '/library/' + name )
+	glu.Ek = 0.0
+	glu.tau1 = 2.0e-3
+	glu.tau2 = 9.0e-3
+        sh = moose.SimpleSynHandler( glu.path + '/sh' )
+        moose.connect( sh, 'activationOut', glu, 'activation' )
+        sh.numSynapses = 1
+        sh.synapse[0].weight = 1
+        return glu
+
+#========================================================================
+#                SynChan: GABA receptor
+#========================================================================
+
+def make_GABA( name ):
+	if moose.exists( '/library/' + name ):
+		return
+	GABA = moose.SynChan( '/library/' + name )
+	GABA.Ek = EK + 10.0e-3
+	GABA.tau1 = 4.0e-3
+	GABA.tau2 = 9.0e-3
+        sh = moose.SimpleSynHandler( GABA.path + '/sh' )
+        moose.connect( sh, 'activationOut', GABA, 'activation' )
+        sh.numSynapses = 1
+        sh.synapse[0].weight = 1
+
+
 def makeChemOscillator( name = 'osc', parent = '/library' ):
     model = moose.Neutral( parent + '/' + name )
     compt = moose.CubeMesh( model.path + '/kinetics' )
@@ -208,14 +242,20 @@ def transformNMDAR( path ):
             moose.connect( caconc[0], 'concOut', nmdar, 'assignIntCa' )
     ################################################################
     # Utility function for building a compartment, used for spines.
-def buildCompt( pa, name, length, dia, xoffset, RM, RA, CM ):
+    # Builds a compartment object downstream (further away from soma)
+    # of the specfied previous compartment 'pa'. If 'pa' is not a
+    # compartment, it builds it on 'pa'. It places the compartment
+    # on the end of 'prev', and at 0,0,0 otherwise.
+
+def buildCompt( pa, name, RM = 1.0, RA = 1.0, CM = 0.01, dia = 1.0e-6, x = 0.0, y = 0.0, z = 0.0, dx = 10e-6, dy = 0.0, dz = 0.0 ):
+    length = np.sqrt( dx * dx + dy * dy + dz * dz )
     compt = moose.Compartment( pa.path + '/' + name )
-    compt.x0 = xoffset
-    compt.y0 = 0
-    compt.z0 = 0
-    compt.x = length + xoffset
-    compt.y = 0
-    compt.z = 0
+    compt.x0 = x
+    compt.y0 = y
+    compt.z0 = z
+    compt.x = dx + x
+    compt.y = dy + y
+    compt.z = dz + z
     compt.diameter = dia
     compt.length = length
     xa = dia * dia * PI / 4.0
@@ -224,6 +264,9 @@ def buildCompt( pa, name, length, dia, xoffset, RM, RA, CM ):
     compt.Rm = RM / sa
     compt.Cm = CM * sa
     return compt
+
+def buildComptWrapper( pa, name, length, dia, xoffset, RM, RA, CM ):
+    return buildCompt( pa, name, RM, RA, CM, dia = dia, x = xoffset, dx = length )
 
     ################################################################
     # Utility function for building a synapse, used for spines.
@@ -302,10 +345,10 @@ def addSpineProto( name = 'spine',
         chanList = (),
         caTau = 0.0
         ):
-    assert moose.exists( parent ), "%s must exists" % parent
+    assert( moose.exists( parent ) ), "%s must exist" % parent
     spine = moose.Neutral( parent + '/' + name )
-    shaft = buildCompt( spine, 'shaft', shaftLen, shaftDia, 0.0, RM, RA, CM )
-    head = buildCompt( spine, 'head', headLen, headDia, shaftLen, RM, RA, CM )
+    shaft = buildComptWrapper( spine, 'shaft', shaftLen, shaftDia, 0.0, RM, RA, CM )
+    head = buildComptWrapper( spine, 'head', headLen, headDia, shaftLen, RM, RA, CM )
     moose.connect( shaft, 'axial', head, 'raxial' )
 
     if caTau > 0.0:
@@ -349,7 +392,7 @@ def makePassiveHHsoma(name = 'passiveHHsoma', parent='/library'):
     if not moose.exists( elecpath ):
         elecid = moose.Neuron( elecpath )
         dia = 500e-6
-        soma = buildCompt( elecid, 'soma', dia, dia, 0.0,
+        soma = buildComptWrapper( elecid, 'soma', dia, dia, 0.0,
             0.33333333, 3000, 0.01 )
         soma.initVm = -65e-3 # Resting of -65, from HH
         soma.Em = -54.4e-3 # 10.6 mV above resting of -65, from HH

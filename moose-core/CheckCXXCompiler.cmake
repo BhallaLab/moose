@@ -5,6 +5,7 @@ CHECK_CXX_COMPILER_FLAG( "-std=c++11" COMPILER_SUPPORTS_CXX11 )
 CHECK_CXX_COMPILER_FLAG( "-std=c++0x" COMPILER_SUPPORTS_CXX0X )
 CHECK_CXX_COMPILER_FLAG( "-Wno-strict-aliasing" COMPILER_WARNS_STRICT_ALIASING )
 
+
 # Turn warning to error: Not all of the options may be supported on all
 # versions of compilers. be careful here.
 add_definitions(-Wall

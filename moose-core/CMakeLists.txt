@@ -83,17 +83,9 @@ option(WITH_MPI  "Enable Openmpi support" OFF)
 option(WITH_BOOST "Use boost library instead of GSL" OFF)
 option(WITH_GSL  "Use gsl-library. Alternative is WITH_BOOST" ON)
 
-# If SBML is available, it will automaticall enable the support. If ON, then
-# libSBML must be present.
-option(WITH_SBML  "Enable SBML support. Automatically detected." OFF)
-
 # If GSL_STATIC_HOME is set, we use it to search for static gsl libs.
 option(GSL_STATIC_HOME 
     "Path prefix where static gsl library can be found e.g. /opt/sw/gsl116 " 
-    OFF
-    )
-option(SBML_STATIC_HOME 
-    "Path prefix where static sbml library can be found e.g. /opt/sbml/"
     OFF
     )
 option(HDF5_STATIC_HOME
@@ -164,57 +156,6 @@ include_directories( ${CMAKE_CURRENT_SOURCE_DIR} )
 if(WITH_BOOST)
     set(WITH_GSL OFF)
 endif(WITH_BOOST)
-
-# If this variable is used while packaging; we build this project using another
-# cmake script and pass the location of SBML static library using this variable.
-# Otherwise, this is useless. FIXME: This is not a clean solution.
-if(SBML_STATIC_HOME)
-    include_directories(${SBML_STATIC_HOME}/include)
-    find_library(LIBSBML_LIBRARIES
-        NAMES libsbml-static.a libsbml.a
-        PATHS "${SBML_STATIC_HOME}/lib" "${SBML_STATIC_HOME}/lib64"
-        NO_DEFAULT_PATH
-        )
-    message(STATUS "- Using static version of LIBSBML_LIBRARIES: ${LIBSBML_LIBRARIES}")
-    if(LIBSBML_LIBRARIES)
-        message(STATUS "- Successfully located SBML static library: ${LIBSBML_LIBRARIES}")
-    ELSE()
-        message(FATAL_ERROR 
-            "Can't find static libsbml libraries at path ${SBML_STATIC_HOME}"
-            )
-    endif()
-    set(LIBSBML_FOUND ON)
-else(SBML_STATIC_HOME)
-    pkg_check_modules(LIBSBML libsbml)
-    if(NOT LIBSBML_FOUND)
-        message(STATUS "pkg-config could not find sbml. Fallback to default")
-        find_package(LIBSBML)
-    endif()
-endif(SBML_STATIC_HOME)
-
-if(LIBSBML_FOUND)
-    message(STATUS "LIBSBML found ${LIBSBML_LIBRARIES}")
-    include_directories(${LIBSBML_INCLUDE_DIRS})
-    pkg_check_modules(LibXML2 libxml-2.0)
-    if (!LibXML2_FOUND)
-        find_package(LibXML2 REQUIRED)
-    endif()
-    include_directories(${LibXML2_INCLUDE_DIRS})
-else()
-    message(
-        "======================================================================\n"
-        "libsbml NOT found. \n\n"
-        "If you want to compile with SBML support, download and install \n"
-        "libsbml-5.9.0 from: \n"
-        "http://sourceforge.net/projects/sbml/files/libsbml/5.9.0/stable/ and\n"
-        "rerun cmake.\n\n"
-        "If you don't want SBML support then continue with `make`.\n\n"
-        "If you install libsbml to non-standard place, let the cmake know by\n"
-        "exporting environment variable SBML_DIR to the location.\n"
-        "=====================================================================\n"
-        )
-    SET(WITH_SBML OFF)
-endif()
 
 include_directories(msg basecode)
 
@@ -366,7 +307,6 @@ add_subdirectory(biophysics)
 add_subdirectory(builtins)
 add_subdirectory(utility)
 add_subdirectory(mesh)
-add_subdirectory(sbml)
 add_subdirectory(mpi)
 add_subdirectory(signeur)
 add_subdirectory(ksolve)
@@ -398,13 +338,6 @@ if(HDF5_STATIC_HOME)
     list(APPEND STATIC_LIBRARIES ${HDF5_LIBRARIES})
 elseif(HDF5_FOUND)
     list(APPEND SYSTEM_SHARED_LIBS ${HDF5_LIBRARIES})
-endif()
-
-LIST(APPEND STATIC_LIBRARIES moose_sbml)
-if(SBML_STATIC_HOME)
-    list(APPEND STATIC_LIBRARIES ${LIBSBML_LIBRARIES})
-elseif(LIBSBML_FOUND)
-    list(APPEND SYSTEM_SHARED_LIBS ${LIBSBML_LIBRARIES})
 endif()
 
 if(WITH_GSL)

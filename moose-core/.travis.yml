@@ -20,8 +20,9 @@ env:
     - CTEST_MODEL=Nightly
 cache: apt
 
-matrix:
-    allow_failures:
+#matrix:
+#    allow_failures:
+#        - clang
 
 before_script:
     - sudo apt-get install -qq libxml2-dev libbz2-dev
@@ -31,29 +32,31 @@ before_script:
     - sudo apt-get install -qq  python3-numpy python3-matplotlib python3-dev
     - sudo apt-get install -qq libboost-all-dev
     - sudo apt-get install -qq libgsl0-dev
-
-before_install:
-    - sbmlurl="http://sourceforge.net/projects/sbml/files/libsbml/5.9.0/stable/Linux/64-bit/libSBML-5.9.0-Linux-x64.deb"
-    - wget "$sbmlurl" -O libsbml.deb && sudo dpkg -i libsbml.deb 
-    - sudo apt-get install -f
+    - sudo apt-get install -qq python-pip python3-pip
+    - sudo apt-get install -qq libgraphviz-dev
+    - sudo pip install python-libsbml
+    - sudo pip3 install python-libsbml
+    - sudo pip3 install pygraphviz
 
 install:
     - echo "nothing to do here"
 
 script:
-    - sudo ldconfig /usr/lib64
     - # First test is normal make scripts. (outdated).
     - make 
-    - # Now test the cmake with gsl
+    - ## CMAKE based flow
     - mkdir -p _GSL_BUILD && cd _GSL_BUILD && cmake -DDEBUG=ON -DPYTHON_EXECUTABLE=/usr/bin/python ..
-    - make && ctest --output-on-failure
-    - cd .. # Build with python3.
-    - mkdir -p _GSL_BUILD2 && cd _GSL_BUILD2 && cmake -DDEBUG=ON -DPYTHON_EXECUTABLE=/usr/bin/python3 ..
     - make && ctest --output-on-failure
     - cd .. # Now with boost.
     - mkdir -p _BOOST_BUILD && cd _BOOST_BUILD && cmake -DWITH_BOOST=ON -DDEBUG=ON -DPYTHON_EXECUTABLE=/usr/bin/python ..
     - make && ctest --output-on-failure
-    - cd .. # Now with boost and python3.
+    - cd .. 
+    - echo "Python3 support. Removed python2-networkx and install python3"
+    - sudo apt-get remove -qq python-networkx
+    - sudo apt-get install -qq python3-networkx
+    - mkdir -p _GSL_BUILD2 && cd _GSL_BUILD2 && cmake -DDEBUG=ON -DPYTHON_EXECUTABLE=/usr/bin/python3 ..
+    - make && ctest --output-on-failure
+    - cd .. # Now with BOOST and python3
     - mkdir -p _BOOST_BUILD2 && cd _BOOST_BUILD2 && cmake -DWITH_BOOST=ON -DDEBUG=ON -DPYTHON_EXECUTABLE=/usr/bin/python3 ..
     - make && ctest --output-on-failure
     - cd ..
