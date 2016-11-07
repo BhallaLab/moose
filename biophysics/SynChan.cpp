@@ -199,10 +199,16 @@ void SynChan::normalizeGbar()
 /// Update alpha function terms for synaptic channel.
 double SynChan::calcGk()
 {
+		/*
 	X_ = getModulation() * activation_ * xconst1_ + X_ * xconst2_;
 	Y_ = X_ * yconst1_ + Y_ * yconst2_;
 	activation_ = 0.0;
 	return Y_ * norm_;
+	*/
+	X_ = activation_ * xconst1_ + X_ * xconst2_;
+	Y_ = X_ * yconst1_ + Y_ * yconst2_;
+	activation_ = 0.0;
+	return Y_ * norm_ * getModulation();
 }
 
 void SynChan::vProcess( const Eref& e, ProcPtr info )

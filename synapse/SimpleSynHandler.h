@@ -10,6 +10,7 @@
 #ifndef _SIMPLE_SYN_HANDLER_H
 #define _SIMPLE_SYN_HANDLER_H
 
+/*
 class SynEvent
 {
 	public:
@@ -34,6 +35,7 @@ struct CompareSynEvent
 		return lhs.time > rhs.time;
 	}
 };
+*/
 
 /**
  * This handles simple synapses without plasticity. It uses a priority

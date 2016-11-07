@@ -12,15 +12,30 @@ import math
 import matplotlib
 import sys
 import moose
+import os
+
+# Check if DISPLAY environment variable is properly set. If not, warn the user
+# and continue.
+hasDisplay = True
+display = os.environ.get('DISPLAY',  '' )
+if not display:
+    hasDisplay = False
+    print( "Warning: Environment variable DISPLAY is not set."
+            " Did you forget to pass -X or -Y switch to ssh command?\n" 
+            "Anyway, MOOSE will continue without graphics.\n"
+            )
+
 hasMoogli = True
-try: 
-    from PyQt4 import QtGui
-    import moogli
-    import moogli.extensions.moose
-    app = QtGui.QApplication(sys.argv)
-except Exception as e:
-    print( 'Warning: Moogli not found. All moogli calls will use dummy functions' )
-    hasMoogli = False
+
+if hasDisplay:
+    try: 
+        from PyQt4 import QtGui
+        import moogli
+        import moogli.extensions.moose
+        app = QtGui.QApplication(sys.argv)
+    except Exception as e:
+        print( 'Warning: Moogli not found. All moogli calls will use dummy functions' )
+        hasMoogli = False
 
 
 runtime = 0.0
@@ -40,15 +55,13 @@ def getComptParent( obj ):
 def prelude( view ):
     view.home()
     view.pitch( math.pi / 2.0 )
-    view.zoom( 0.3 )
+    view.zoom( 0.05 )
     #network.groups["soma"].set( "color", moogli.colors.RED )
 
 # This func is used for the first viewer, it has to handle advancing time.
 def interlude( view ):
     moose.start( moogliDt )
     val = [ moose.getField( i, view.mooField, "double" ) * view.mooScale for i in view.mooObj ]
-    #print "LEN = ", len( val ), "field = ", view.mooField
-    
     view.mooGroup.set("color", val, view.mapper)
     view.yaw( rotation )
     #print moogliDt, len( val ), runtime
@@ -132,6 +145,7 @@ def makeMoogli( rd, mooObj, moogliEntry, fieldInfo ):
                                  scalar_range=moogli.geometry.Vec2f(
                                      moogliEntry[5],
                                      moogliEntry[6]))
+    cb.set_num_labels(3)
     view.attach_color_bar(cb)
     view.rd = rd
     view.mooObj = displayObj

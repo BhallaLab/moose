@@ -114,7 +114,9 @@ ZombieFunction::~ZombieFunction()
 // MsgDest Definitions
 //////////////////////////////////////////////////////////////
 void ZombieFunction::process(const Eref &e, ProcPtr p)
-{;}
+{
+	_t = p->currTime;
+}
 
 void ZombieFunction::reinit(const Eref &e, ProcPtr p)
 {;}

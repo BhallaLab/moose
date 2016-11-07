@@ -79,7 +79,7 @@ default: $(TARGET)
 
 $(OBJ)	: $(HEADERS) ../shell/Shell.h
 Element.o:	FuncOrder.h
-testAsync.o:	SparseMatrix.h SetGet.h ../scheduling/Clock.h ../biophysics/IntFire.h ../synapse/SynHandlerBase.h ../synapse/SimpleSynHandler.h ../synapse/Synapse.h ../randnum/RNG.h
+testAsync.o:	SparseMatrix.h SetGet.h ../scheduling/Clock.h ../biophysics/IntFire.h ../synapse/SynEvent.h ../synapse/SynHandlerBase.h ../synapse/SimpleSynHandler.h ../synapse/Synapse.h ../randnum/RNG.h
 SparseMsg.o:	SparseMatrix.h
 SetGet.o:	SetGet.h ../shell/Neutral.h
 HopFunc.o:	HopFunc.h ../mpi/PostMaster.h

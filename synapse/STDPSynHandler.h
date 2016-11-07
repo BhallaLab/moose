@@ -10,6 +10,7 @@
 #ifndef _STDP_SYN_HANDLER_H
 #define _STDP_SYN_HANDLER_H
 
+/*
 class PreSynEvent: public SynEvent
 {
 	public:
@@ -50,6 +51,7 @@ struct ComparePostSynEvent
 		return lhs.time > rhs.time;
 	}
 };
+*/
 
 /**
  * This handles simple synapses without plasticity. It uses a priority

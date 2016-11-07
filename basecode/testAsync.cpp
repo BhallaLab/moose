@@ -18,6 +18,7 @@
 #include <queue>
 #include "../biophysics/IntFire.h"
 #include "../synapse/Synapse.h"
+#include "../synapse/SynEvent.h"
 #include "../synapse/SynHandlerBase.h"
 #include "../synapse/SimpleSynHandler.h"
 #include "SparseMatrix.h"

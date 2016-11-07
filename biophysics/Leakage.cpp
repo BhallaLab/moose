@@ -88,14 +88,23 @@ Leakage::~Leakage()
 
 void Leakage::vProcess( const Eref & e, ProcPtr p )
 {
+	ChanCommon::vSetGk( e, this->vGetGbar( e ) * this->vGetModulation( e ));
+	updateIk();
     sendProcessMsgs(e, p);
 }
 
 void Leakage::vReinit( const Eref & e, ProcPtr p )
 {
+	ChanCommon::vSetGk( e, this->vGetGbar( e ) * this->vGetModulation( e ));
+	updateIk();
     sendReinitMsgs(e, p);
 }
 
+void Leakage::vSetGbar( const Eref& e, double gbar )
+{
+		ChanCommon::vSetGk( e, gbar * this->vGetModulation( e ) );
+		ChanCommon::vSetGbar( e, gbar );
+}
 
 // 
 // Leakage.cpp ends here

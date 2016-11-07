@@ -154,8 +154,10 @@ namespace mu
 #else
     ParserTokenReader* ptr = new ParserTokenReader(*this);
     ptr->SetParent( a_pParent );
-    delete ptr;
-    return NULL;
+	return ptr;
+	// Upi Bhalla 13 June 2016: I think the original two lines below are wrong
+    // delete ptr;
+    // return NULL;
 #endif
 
   }

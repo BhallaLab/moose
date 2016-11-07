@@ -791,7 +791,8 @@ Id findParentComptOfReac( Id reac )
 
 		vector< Id > subVec;
 		reac.element()->getNeighbors( subVec, subFinfo );
-		assert( subVec.size() > 0 );
+		if ( subVec.size() == 0 ) // Dangling reaction
+			return Id();
 		// For now just put the reac in the compt belonging to the 
 		// first substrate
 		return getCompt( subVec[0] );
@@ -808,10 +809,10 @@ void ReadKkit::assignReacCompartments()
 	for ( map< string, Id >::iterator i = reacIds_.begin(); 
 		i != reacIds_.end(); ++i ) {
 		Id compt = findParentComptOfReac( i->second );
-		// if ( moveOntoCompartment_ ) {
+		if ( compt != Id() ) {
 			if ( ! (getCompt( i->second ).id == compt ) )
 				shell_->doMove( i->second, compt );
-		// }
+		}
 	}
 }
 
@@ -893,7 +894,7 @@ Id ReadKkit::buildEnz( const vector< string >& args )
 	// double vol = atof( args[ enzMap_[ "vol" ] ].c_str());
 	bool isMM = atoi( args[ enzMap_[ "usecomplex" ] ].c_str());
 	assert( poolVols_.find( pa ) != poolVols_.end() );
-	// double vol = poolVols_[ pa ];
+	double vol = poolVols_[ pa ];
 	
 	/**
 	 * vsf is vol scale factor, which is what GENESIS stores in 'vol' field
@@ -927,7 +928,12 @@ Id ReadKkit::buildEnz( const vector< string >& args )
 		// to do this assignments in raw #/cell units.
 		Field< double >::set( enz, "k3", k3 );
 		Field< double >::set( enz, "k2", k2 );
-		Field< double >::set( enz, "k1", k1 );
+		// Here we explicitly calculate Km because the substrates are
+		// not set up till later, and without them the volume calculations
+		// are confused.
+		double volScale = lookupVolumeFromMesh(pa.eref());
+		double Km = (k2+k3)/(k1 * KKIT_NA * vol ); // Scaling for uM to mM.
+		SetGet2< double, double >::set( enz, "setKmK1", Km, k1 );
 
 		string cplxName = tail + "_cplx";
 		string cplxPath = enzPath + "/" + cplxName;
@@ -945,6 +951,7 @@ Id ReadKkit::buildEnz( const vector< string >& args )
 			ObjId( enz, 0 ), "cplx",
 			ObjId( cplx, 0 ), "reac" ); 
 		assert( ret != ObjId() );
+
 
 		// cplx()->showFields();
 		// enz()->showFields();
@@ -1404,7 +1411,7 @@ void ReadKkit::addmsg( const vector< string >& args)
 			}
 			vector< Id > enzcplx;
 			i->second.element()->getNeighbors( enzcplx, 
-				i->second.element()->cinfo()->findFinfo( "toCplx" ) );
+				i->second.element()->cinfo()->findFinfo( "cplxOut" ) );
 			assert( enzcplx.size() == 1 );
 			pool = enzcplx[0];
 		}  else {

@@ -354,6 +354,7 @@ const Cinfo* Clock::initCinfo()
         "	SimpleSynHandler		1		50e-6\n"
         "   STDPSynHandler		1		50e-6\n"
         "   GraupnerBrunel2012CaPlasticitySynHandler    1		50e-6\n"
+        "   SeqSynHandler		1		50e-6\n"
         "	CaConc				1		50e-6\n"
         "	CaConcBase			1		50e-6\n"
         "	DifShell			1		50e-6\n"
@@ -714,7 +715,7 @@ void Clock::handleStep( const Eref& e, unsigned long numSteps )
     assert( activeTicks_.size() == activeTicksMap_.size() );
     nSteps_ += numSteps;
     runTime_ = nSteps_ * dt_;
-    for ( isRunning_ = true;
+    for ( isRunning_ = (activeTicks_.size() > 0 );
             isRunning_ && currentStep_ < nSteps_; currentStep_ += stride_ )
     {
         // Curr time is end of current step.
@@ -752,11 +753,12 @@ void Clock::handleStep( const Eref& e, unsigned long numSteps )
             }
         }
     }
+	if ( activeTicks_.size() == 0 )
+		currentTime_ = runTime_;
 
     info_.dt = dt_;
     isRunning_ = false;
     finished()->send( e );
-
 }
 
 /**
@@ -837,6 +839,7 @@ void Clock::buildDefaultTick()
     defaultTick_["SimpleSynHandler"] = 1;
     defaultTick_["STDPSynHandler"] = 1;
     defaultTick_["GraupnerBrunel2012CaPlasticitySynHandler"] = 1;
+    defaultTick_["SeqSynHandler"] = 1;
     defaultTick_["CaConc"] = 1;
     defaultTick_["CaConcBase"] = 1;
     defaultTick_["DifShell"] = 1;

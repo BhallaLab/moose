@@ -10,6 +10,7 @@
 #include <queue>
 #include "header.h"
 #include "Synapse.h"
+#include "SynEvent.h"
 #include "SynHandlerBase.h"
 #include "SimpleSynHandler.h"
 

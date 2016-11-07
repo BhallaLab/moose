@@ -125,6 +125,7 @@ void GssaVoxelPools::setNumReac( unsigned int n )
 {
     v_.clear();
     v_.resize( n, 0.0 );
+    numFire_.resize( n, 0 );
 }
 
 /**
@@ -201,6 +202,8 @@ void GssaVoxelPools::advance( const ProcInfo* p, const GssaSystem* g )
 
         double sign = double(v_[rindex] >= 0) - double(0 > v_[rindex] );
         g->transposeN.fireReac( rindex, Svec(), sign );
+		numFire_[rindex]++;
+		
         double r = rng_.uniform();
         while ( r <= 0.0 )
         {
@@ -246,6 +249,12 @@ void GssaVoxelPools::reinit( const GssaSystem* g )
     }
     t_ = 0.0;
     refreshAtot( g );
+	numFire_.assign( v_.size(), 0 );
+}
+
+vector< unsigned int > GssaVoxelPools::numFire() const
+{
+	return numFire_;
 }
 
 /////////////////////////////////////////////////////////////////////////

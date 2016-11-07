@@ -28,11 +28,11 @@ using namespace std;
 // Want to separate out this search path into the Makefile options
 #include "../scheduling/Clock.h"
 
-#ifdef USE_SBML
+/*#ifdef USE_SBML
 #include "../sbml/MooseSbmlWriter.h"
 #include "../sbml/MooseSbmlReader.h"
 #endif
-
+*/
 const unsigned int Shell::OkStatus = ~0;
 const unsigned int Shell::ErrorStatus = ~1;
 
@@ -419,6 +419,7 @@ void Shell::doUseClock( string path, string field, unsigned int tick )
 /**
  * Write given model to SBML file. Returns success value.
  */
+ /*
 int Shell::doWriteSBML( const string& fname, const string& modelpath )
 {
 #ifdef USE_SBML
@@ -431,10 +432,11 @@ int Shell::doWriteSBML( const string& fname, const string& modelpath )
     return -2;
 #endif
 }
+*/
 /**
  * read given SBML model to moose. Returns success value.
  */
-
+/*
 Id Shell::doReadSBML( const string& fname, const string& modelpath, const string& solverclass )
 {
 #ifdef USE_SBML
@@ -445,7 +447,7 @@ Id Shell::doReadSBML( const string& fname, const string& modelpath, const string
     return Id();
 #endif
 }
-
+*/
 
 ////////////////////////////////////////////////////////////////////////
 

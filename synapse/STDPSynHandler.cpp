@@ -10,9 +10,9 @@
 #include <queue>
 #include "header.h"
 #include "Synapse.h"
+#include "SynEvent.h" // only using the SynEvent class from this
 #include "SynHandlerBase.h"
 #include "STDPSynapse.h"
-#include "SimpleSynHandler.h" // only using the SynEvent class from this
 #include "STDPSynHandler.h"
 
 const Cinfo* STDPSynHandler::initCinfo()

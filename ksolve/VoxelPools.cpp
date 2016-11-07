@@ -60,7 +60,7 @@ void VoxelPools::reinit( double dt )
 	if ( !driver_ )
 		return;
 	gsl_odeiv2_driver_reset( driver_ );
-	gsl_odeiv2_driver_reset_hstart( driver_, dt );
+	gsl_odeiv2_driver_reset_hstart( driver_, dt / 10.0 );
 #endif
 }
 
