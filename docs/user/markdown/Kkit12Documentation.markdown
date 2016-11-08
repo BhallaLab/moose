@@ -22,7 +22,7 @@ July 8 2016.
         *   [Reaction](#reaction)
         *   [Mass-action enzymes](#mass-action-enzymes)
         *   [Michaelis-Menten Enzymes](#michaelis-menten-enzymes)
-        *   [Function](#function)
+        *   [Summation](#summation)
     *   [Model operations](#model-operations)
     *   [Model Building](#model-building)
 
@@ -237,17 +237,11 @@ but they make the assumption that the **E.S** is in a quasi-steady-state with **
     *   K~m~: Michaelis-Menten value for enzyme, in 'concentration' units.
     *   k~cat~: Production rate of enzyme, in '1/time' units. Equal to k~3~, the rate of the second, irreversible reaction.
 
-#### [Function](#TOC)
+#### [Summation](#TOC)
 
-Function objects can be used to evaluate expressions with arbitrary number of variables and constants. We can assign expression of the form:
+Summation object can be used to add specified variable values. The variables can be input from pool object.
 
-f(c0, c1, ..., cM, x0, x1, ..., xN, y0,..., yP ) 
-
-where ci‘s are constants and xi‘s and yi‘s are variables.
-
-It can parse mathematical expression defining a function and evaluate it and/or its derivative for specified variable values. The variables can be input from other moose objects. In case of arbitrary variable names, the source message must have the variabl'e name as the first argument.
-
-*   **Icon**: Colored rectangle with pool name. This is **'ƒ'** in the example image below. The input pools **'A'** and **'B'** connect to the **&fnof;** with blue arrows. The function ouput's to BuffPool
+*   **Icon**: This is **&Sigma;** in the example image below. The input pools **'A'** and **'B'** connect to the **&Sigma;** with blue arrows. The function ouput's to BuffPool
 
 ### [Model operations](#TOC)
 
