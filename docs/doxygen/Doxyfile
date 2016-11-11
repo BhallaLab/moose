@@ -772,7 +772,6 @@ INPUT                  = ../../moose-core/basecode 	  \
                          ../../moose-core/msg                \
                          ../../moose-core/randnum            \
                          ../../moose-core/pymoose            \
-                         ../../moose-core/sbml               \
                          ../../moose-core/scheduling         \
                          ../../moose-core/shell              \
                          ../../moose-core/signeur            \

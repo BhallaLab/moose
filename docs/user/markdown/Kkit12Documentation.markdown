@@ -242,6 +242,7 @@ but they make the assumption that the **E.S** is in a quasi-steady-state with **
 Summation object can be used to add specified variable values. The variables can be input from pool object.
 
 *   **Icon**: This is **&Sigma;** in the example image below. The input pools **'A'** and **'B'** connect to the **&Sigma;** with blue arrows. The function ouput's to BuffPool
+![](../../images/func.png)
 
 ### [Model operations](#TOC)
 
