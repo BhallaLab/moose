@@ -7,8 +7,7 @@ Gui documentation for MOOSE
 ============================
 
 MOOSE is the Multiscale Object-Oriented Simulation Environment. It can do all these calculations together. One of its major uses is to make biologically detailed models that combine electrical and chemical signaling.
-This document describes the salient features of the GUI and Kinetickit of MOOSE
-
+This document describes the salient features of the Rdesigneur, a interface to the multiscale modeling capabilities in MOOSE 
 Contents:
 
 .. toctree::
@@ -16,5 +15,4 @@ Contents:
    :numbered:
 
 
-   MooseGuiDocs
-   Kkit12Documentation
+   RdesigneurDocumentation
