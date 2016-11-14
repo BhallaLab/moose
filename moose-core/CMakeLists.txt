@@ -474,6 +474,7 @@ install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/scripts/moose
     DESTINATION bin
     )
 
+# This target is built by pymoose/CMakeLists.txt file.
 if(WITH_PYTHON)
     install(CODE 
         "
