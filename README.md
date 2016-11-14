@@ -7,37 +7,18 @@ source of stable MOOSE code.
 
 # About
 
-MOOSE is the Multiscale Object-Oriented Simulation Environment. It is designed
-to simulate neural systems ranging from subcellular components and biochemical
-reactions to complex models of single neurons, circuits, and large networks.
-MOOSE can operate at many levels of detail, from stochastic chemical
-computations, to multicompartment single-neuron models, to spiking neuron
-network models.
+MOOSE is the Multiscale Object-Oriented Simulation Environment. It is designed to simulate neural systems ranging from biochemical signaling to complex models of single neurons, circuits, and large networks. A typical use case is to model neural activity-driven synaptic plasticity, in which network activity to synapses triggers biochemical reaction-diffusion events, which in turn modulate ion channels to give rise to synaptic plasticity.
 
-MOOSE is multiscale: It can do all these calculations together. For example it
-handles interactions seamlessly between electrical and chemical signaling. MOOSE
-is object-oriented. Biological concepts are mapped into classes, and a model is
-built by creating instances of these classes and connecting them by messages.
-MOOSE also has classes whose job is to take over difficult computations in a
-certain domain, and do them fast. There are such solver classes for stochastic
-and deterministic chemistry, for diffusion, and for multicompartment neuronal
-models. MOOSE is a simulation environment, not just a numerical engine: It
-provides data representations and solvers (of course!), but also a scripting
-interface with Python, graphical displays with Matplotlib, PyQt, and OpenGL, and
-support for many model formats. These include SBML, NeuroML, GENESIS kkit and
-cell.p formats, HDF5 and NSDF for data writing.
+MOOSE can operate at many levels of detail, from stochastic chemical computations, to multicompartment single-neuron models, to spiking neuron network models.
+
+MOOSE is multiscale: It can do all these calculations together. For example it handles interactions seamlessly between electrical and chemical signaling. MOOSE is object-oriented. Biological concepts are mapped into classes, and a model is built by creating instances of these classes and connecting them by messages. MOOSE also has classes whose job is to take over difficult computations in a certain domain, and do them fast. There are such solver classes for stochastic and deterministic chemistry, for diffusion, and for multicompartment neuronal models. MOOSE is a simulation environment, not just a numerical engine: It provides data representations and solvers (of course!), but also a scripting interface with Python, graphical displays with Matplotlib, PyQt, and OpenGL, and support for many model formats. These include SBML, NeuroML, GENESIS kkit and cell.p formats, HDF5 and NSDF for data writing.
+
 
 # VERSION
 
-This is MOOSE 3.0.2pre "Ghevar". The Ghevar release is the third of series 3 of MOOSE releases.
+## Chamcham 3.1.1 
 
-Ghevar is a Rajasthani sweet with a stiff porous body soaked in sugar syrup.
-
-MOOSE 3.0.2pre is an evolutionary increment over 3.0.1::
-
-- There has been substantial development on the multiscale modeling front, with
-the implementation of the rdesigneur class and affiliated features. 
-- MOOSE can now read NeuroMorpho .swc files natively.
+MOOSE 3.1 is an evolutionary update. It has a new Python-based SBML reader, improved handling of reaction-diffusion systems, and substantial refinements to the rdesigneur interface for setting up multiscale models. Several additional rdesigneur tutorials have been implemented. 
 
 # LICENSE
 
