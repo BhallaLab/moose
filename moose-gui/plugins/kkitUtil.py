@@ -13,7 +13,7 @@ colormap_file = open(os.path.join(config.settings[config.KEY_COLORMAP_DIR], 'rai
 colorMap = pickle.load(colormap_file)
 colormap_file.close()
 
-ignoreColor= ["mistyrose","antiquewhite","aliceblue","azure","bisque","black","blanchedalmond","blue","cornsilk","darkolivegreen","darkslategray","dimgray","floralwhite","gainsboro","ghostwhite","honeydew","ivory","lavender","lavenderblush","lemonchiffon","lightcyan","lightgoldenrodyellow","lightgray","lightyellow","linen","mediumblue","mintcream","navy","oldlace","papayawhip","saddlebrown","seashell","snow","wheat","white","whitesmoke"]
+ignoreColor= ["mistyrose","antiquewhite","aliceblue","azure","bisque","black","blanchedalmond","blue","cornsilk","darkolivegreen","darkslategray","dimgray","floralwhite","gainsboro","ghostwhite","honeydew","ivory","lavender","lavenderblush","lemonchiffon","lightcyan","lightgoldenrodyellow","lightgray","lightyellow","linen","mediumblue","mintcream","navy","oldlace","papayawhip","saddlebrown","seashell","snow","wheat","white","whitesmoke","aquamarine","lightsalmon","moccasin","limegreen","snow","sienna","beige","dimgrey","lightsage"]
 matplotcolor = {}
 for name,hexno in matplotlib.colors.cnames.iteritems():
     matplotcolor[name]=hexno
@@ -56,6 +56,8 @@ def colorCheck(fc_bgcolor,fcbg):
         if string its taken as colorname further down in validColorcheck checked for valid color, \
         but for tuple and list its taken as r,g,b value.
     """
+    #import re
+    #fc_bgcolor = re.sub('[^a-zA-Z0-9-_*.]', '', fc_bgcolor)
     if isinstance(fc_bgcolor,str):
         if fc_bgcolor.startswith("#"):
             fc_bgcolor = QColor(fc_bgcolor)
@@ -138,14 +140,13 @@ def calculateChildBoundingRect(compt):
 
         ''' All the children including pool,reac,enz,polygon(arrow),table '''
         if not isinstance(l,QtSvg.QGraphicsSvgItem):
-            xpos.append((l.pos().x())+(l.boundingRect().bottomRight().x()))
-            xpos.append(l.pos().x())
-            ypos.append(l.pos().y()+l.boundingRect().bottomRight().y())
-            ypos.append(l.pos().y())
-            
+            if (not isinstance(l,QtGui.QGraphicsPolygonItem)):
+                xpos.append((l.pos().x())+(l.boundingRect().bottomRight().x()))
+                xpos.append(l.pos().x())
+                ypos.append(l.pos().y()+l.boundingRect().bottomRight().y())
+                ypos.append(l.pos().y())
         if (isinstance(l,PoolItem) or isinstance(l,EnzItem)):
             ''' For Enz cplx height and for pool function height needs to be taken'''
-
             for ll in l.childItems():
                 ''' eleminating polygonItem (arrow) [This is happen in cross-compartment model that arrow from one compartment will be child]
                     pool's outboundary RectItem and Enz's outerboundary Ellipse is eleminating since its same 

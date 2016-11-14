@@ -46,9 +46,32 @@ def addSolver(modelRoot,solver):
 				setCompartmentSolver(modelRoot,currentSolver)
 				return True
 	return False
-
+	
+def positionCompt( compt, side, shiftUp ):
+	y0 = compt.y0
+	y1 = compt.y1
+	if ( shiftUp ):
+		compt.y0 =  (y0 + side)
+		compt.y1 =  (y1 + side)
+	else:
+		compt.y0 = (y0 - y1 )
+		compt.y1 = 0
+		
 def setCompartmentSolver(modelRoot,solver):
 	compts = moose.wildcardFind(modelRoot+'/##[ISA=ChemCompt]')
+
+	if ( len(compts) > 3 ):
+		print "Warning: setSolverOnCompt Cannot handle " ,
+		len(compts) , " chemical compartments\n"
+		return;
+	
+	if ( len(compts) == 2 ):
+		positionCompt( compts[0], compts[1].dy, True )
+	
+	if ( len(compts) == 3 ):
+		positionCompt( compts[0], compts[1].dy, True )
+		positionCompt( compts[2], compts[1].dy, False )
+	
 	for compt in compts:
 		if ( solver == 'gsl' ) or (solver == 'Runge Kutta'):
 			ksolve = moose.Ksolve( compt.path+'/ksolve' )
@@ -60,15 +83,15 @@ def setCompartmentSolver(modelRoot,solver):
 			stoich.ksolve = ksolve
 			if moose.exists(compt.path):
 				stoich.path = compt.path+"/##"
+
 	stoichList = moose.wildcardFind(modelRoot+'/##[ISA=Stoich]')
+	
 	if len( stoichList ) == 2:
 		stoichList[1].buildXreacs( stoichList[0] )
+	
 	if len( stoichList ) == 3:
 		stoichList[1].buildXreacs (stoichList [0])
 		stoichList[1].buildXreacs (stoichList [2])
 
 	for i in stoichList:
 		i.filterXreacs()
-	
-	for x in moose.wildcardFind( modelRoot+'/data/graph#/#' ):
-		x.tick = 18

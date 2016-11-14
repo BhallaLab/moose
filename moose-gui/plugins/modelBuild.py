@@ -25,13 +25,16 @@ def checkCreate(scene,view,modelpath,mobj,string,ret_string,num,event_pos,layout
     #     modelRoot = modelpath[0:modelpath.find('/',1)]
     # else:
     #     modelRoot = modelpath
+    print "28 ",modelpath
     if moose.exists(modelpath+'/info'):
         mType = moose.Annotator((moose.element(modelpath+'/info'))).modeltype
-    
+    print " 1 event_pos ",event_pos
     itemAtView = view.sceneContainerPt.itemAt(view.mapToScene(event_pos))
+    print "2 ",itemAtView
     pos = view.mapToScene(event_pos)
+    print " 3 ",pos
     modelpath = moose.element(modelpath)
-
+    print " model path @34 ",modelpath
     if num:
         string_num = ret_string+str(num)
     else:
@@ -121,11 +124,17 @@ def checkCreate(scene,view,modelpath,mobj,string,ret_string,num,event_pos,layout
             updateCompartmentSize(compt)
     elif string == "Function":
         posWrtComp = (itemAtView.mapFromScene(pos)).toPoint()
-
         funcObj = moose.Function(mobj.path+'/'+string_num)
         funcinfo = moose.Annotator(funcObj.path+'/info')
-        moose.connect( funcObj, 'valueOut', mobj ,'setN' )
-        funcParent = layoutPt.mooseId_GObj[element(mobj.path)]
+        #moose.connect( funcObj, 'valueOut', mobj ,'setN' )
+        poolclass = ["ZombieBufPool","BufPool"]
+        comptclass = ["CubeMesh","cyclMesh"]
+        if mobj.className in poolclass:
+            funcParent = layoutPt.mooseId_GObj[element(mobj.path)]
+        elif mobj.className in comptclass:
+            funcParent = layoutPt.qGraCompt[moose.element(mobj)]
+            posWrtComp = funcParent.mapFromScene(pos).toPoint()
+            #posWrtComp = (itemAtView.mapFromScene(pos)).toPoint()
         qGItem = FuncItem(funcObj,funcParent)
         #print " function ", posWrtComp.x(),posWrtComp.y()
         qGItem.setDisplayProperties(posWrtComp.x(),posWrtComp.y(),QtGui.QColor('red'),QtGui.QColor('green'))
@@ -222,7 +231,6 @@ def createObj(scene,view,modelpath,string,pos,layoutPt):
             mobj = itemAtView.parent().mobj
         else:
             mobj = itemAtView.mobj
-    
     if string == "CubeMesh" or string == "CylMesh":
         ret_string,num = findUniqId(moose.element(modelpath),"Compartment",0)
         comptexist = moose.wildcardFind(modelpath+'/##[ISA=ChemCompt]')
@@ -245,6 +253,9 @@ def createObj(scene,view,modelpath,string,pos,layoutPt):
             ret_string,num = findUniqId(mobj,string,num)
 
     elif string == "Function":
+        mobj = findCompartment(mobj)
+        ret_string,num = findUniqId(mobj,string,num)
+        '''
         if itemAt != None:
             if ((mobj).className != "BufPool"):    
                 QtGui.QMessageBox.information(None,'Drop Not possible','\'{newString}\' has to have BufPool as its parent'.format(newString =string),QtGui.QMessageBox.Ok)
@@ -254,7 +265,7 @@ def createObj(scene,view,modelpath,string,pos,layoutPt):
         else:
             QtGui.QMessageBox.information(None,'Drop Not possible','\'{newString}\' has to have BufPool as its parent'.format(newString =string),QtGui.QMessageBox.Ok)
             return
-
+        '''
     elif string == "Enz" or string == "MMenz":
         if itemAt != None:
             if ((mobj).className != "Pool" and (mobj).className != "BufPool"):    

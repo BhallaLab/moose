@@ -60,7 +60,7 @@ class FuncItem(KineticsDisplayItem):
     fontMetrics = QtGui.QFontMetrics(font)
     def __init__(self, mobj, parent):
         super(FuncItem, self).__init__(mobj, parent)
-        self.setFlag(QtGui.QGraphicsItem.ItemIsMovable, False)
+        self.setFlag(QtGui.QGraphicsItem.ItemIsMovable, True)
         self.funcImage = QImage('icons/classIcon/Function.png').scaled(15,33)
         self.bg = QtGui.QGraphicsRectItem(self)
         self.bg.setAcceptHoverEvents(True)
@@ -75,8 +75,14 @@ class FuncItem(KineticsDisplayItem):
         
     def setDisplayProperties(self,x,y,textcolor,bgcolor):
         """Set the display properties of this item."""
-        #With Respect to BuffPool (parent) I am placing at 0,30 (which is below the BuffPool)
-        self.setGeometry(0, 30,self.gobj.boundingRect().width(),self.gobj.boundingRect().height())
+        #With Respect to BuffPool (as parent which is in old genesis) then function are placed at 0,30 (which is below the BuffPool)
+        #else if droped from the GUI then placed wrt position
+        #self.setGeometry(0, 30,self.gobj.boundingRect().width(),self.gobj.boundingRect().height())
+        #self.setGeometry(x,y)
+        if self.gobj.mobj.parent.className == "ZombieBufPool" or self.gobj.mobj.parent.className == "BufPool":
+            self.setGeometry(0, 30,self.gobj.boundingRect().width(),self.gobj.boundingRect().height())
+        else:
+            self.setGeometry(x,y,self.gobj.boundingRect().width(),self.gobj.boundingRect().height())
         self.bg.setBrush(QtGui.QBrush(bgcolor))
         self.setFlag(QtGui.QGraphicsItem.ItemIsMovable,False)
     def refresh(self,scale):
@@ -126,7 +132,7 @@ class PoolItem(KineticsDisplayItem):
     """Class for displaying pools. Uses a QGraphicsSimpleTextItem to
     display the name."""    
     #fontMetrics = None
-    font =QtGui.QFont(KineticsDisplayItem.defaultFontName)
+    font = QtGui.QFont(KineticsDisplayItem.defaultFontName)
     font.setPointSize(KineticsDisplayItem.defaultFontSize)
     fontMetrics = QtGui.QFontMetrics(font)
     def __init__(self, mobj, parent):

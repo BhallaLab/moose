@@ -6,9 +6,9 @@
 # Maintainer:
 # Created: Wed Jun 30 11:18:34 2010 (+0530)
 # Version:
-# Last-Updated: Wed Mar 28 14:26:59 2014 (+0530)
+# Last-Updated: Wed Aug 3 15:55:59 2016 (+0530)
 #           By: Harsha
-#     Update #: 917
+#     Update #: 
 # URL:
 # Keywords:
 # Compatibility:
@@ -206,10 +206,33 @@ class ObjectEditModel(QtCore.QAbstractTableModel):
                 value = type(oldValue)(value)
                 ann.setField(field,value)
                 self.undoStack.append((index,oldValue))
+            elif field == "vector":
+                for ch in ['[',']']:
+                    if ch in value:
+                        value = value.replace(ch," ")
+                value = value.replace(",", " ")
+                valuelist = []
+                if value.find(',') != -1:
+                    valuelist = value.split(",")
+                elif value.find(' ') != -1:
+                    valuelist = value.split(" ")
+                else:
+                    valuelist = value
+                vectorlist = []
+                for d in valuelist:
+                    try:
+                        float(d)
+                        vectorlist.append(float(d))
+                    except:
+                        pass
+                from numpy import array
+                a = array( vectorlist )
+                self.mooseObject.setField(field, a)
+            
             else:
                 oldValue = self.mooseObject.getField(field)
                 value = type(oldValue)(value)
-                self.mooseObject.setField(field, value)
+                tt = self.mooseObject.setField(field, value)
                 self.undoStack.append((index, oldValue))
             if field == 'name':
                 self.emit(QtCore.SIGNAL('objectNameChanged(PyQt_PyObject)'), self.mooseObject)
@@ -265,7 +288,7 @@ class ObjectEditModel(QtCore.QAbstractTableModel):
                     flag |= QtCore.Qt.ItemIsEditable
             
             if isinstance(self.mooseObject, moose.PoolBase) or isinstance(self.mooseObject,moose.Function): 
-                if field == 'volume':# or field == 'expr':
+                if field == 'volume' or field == 'expr':
                     pass
                 elif setter in self.mooseObject.getFieldNames('destFinfo'):
                     flag |= QtCore.Qt.ItemIsEditable
