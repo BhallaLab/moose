@@ -17,25 +17,30 @@ include(FindPkgConfig)
 
 # If from command line, version info is not passed, use the git to generate a
 # version file. If GIT fails, use the previous known version.
-set(VERSION_FILE ${CMAKE_SOURCE_DIRECTORY}/VERSION)
+set(VERSION_FILE ${CMAKE_CURRENT_SOURCE_DIR}/VERSION)
 find_program(GIT_EXEC "git")
 message( STATUS "Looking for git ${GIT_EXEC}" )
-if( (NOT VERSION) AND GITEXEC)
+if( (NOT MOOSE_VERSION) AND GIT_EXEC)
     execute_process( 
         COMMAND ${GIT_EXEC} describe --tags --long
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-        OUTPUT_VARIABLE GIT_VERSION_OUTPUT
+        OUTPUT_VARIABLE MOOSE_VERSION
         OUTPUT_STRIP_TRAILING_WHITESPACE
         )
-    file(WRITE ${VERSION_FILE} ${GIT_VERSION_OUTPUT})
-    add_definitions( -DMOOSE_VERSION="${GIT_VERSION_OUTPUT}")
-elseif( (NOT VERSION) AND (NOT GIT_EXEC) )
-    file( READ ${VERSION_FILE} GIT_VERSION_OUTPUT )
-    add_definitions( -DMOOSE_VERSION="${GIT_VERSION_OUTPUT}")
+    message(STATUS "+ Writing ${MOOSE_VERSION} to ${VERSION_FILE}" )
+    file(WRITE ${VERSION_FILE} ${MOOSE_VERSION})
+elseif( (NOT MOOSE_VERSION) AND (NOT GIT_EXEC) )
+    message(STATUS "+ Reading ${VERSION_FILE}" )
+    file(READ ${VERSION_FILE} GIT_VERSION_OUTPUT )
+elseif(MOOSE_VERSION)
+    message(STATUS "+ Using user VERSION ${MOOSE_VERSION}" )
+    file(WRITE ${VERSION_FILE} ${MOOSE_VERSION})
 else()
-    add_definitions( -DMOOSE_VERSION="${VERSION}")
+    message(FATAL_ERROR "Could not determine MOOSE_VERSION" )
 endif( )
 
+add_definitions( -DMOOSE_VERSION="${MOOSE_VERSION}")
+message( STATUS "MOOSE Version ${MOOSE_VERSION}" )
 
 # This snippet is from LLVM project.
 # Sanity check our source directory to make sure that we are not trying to
