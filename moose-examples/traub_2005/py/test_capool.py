@@ -6,9 +6,9 @@
 # Maintainer: 
 # Created: Sun Jun  3 20:31:03 2012 (+0530)
 # Version: 
-# Last-Updated: Mon Jun  4 11:58:01 2012 (+0530)
+# Last-Updated: Sat Aug  6 15:27:45 2016 (-0400)
 #           By: subha
-#     Update #: 61
+#     Update #: 70
 # URL: 
 # Keywords: 
 # Compatibility: 
@@ -28,6 +28,7 @@
 # 
 
 # Code:
+from __future__ import print_function
 
 import uuid
 import numpy as np
@@ -70,28 +71,28 @@ def run_capool(poolname, Gbar, simtime):
     ik_data = params['Ik']
     params['Ca'] = ca_data
     moose.reinit()
-    print 'Starting simulation', testId, 'for', simtime, 's'
+    print('Starting simulation', testId, 'for', simtime, 's')
     moose.start(simtime)
-    print 'Finished simulation'
+    print('Finished simulation')
     vm_file = 'data/%s_Vm.dat' % (poolname)
     gk_file = 'data/%s_Gk.dat' % (poolname)
     ik_file = 'data/%s_Ik.dat' % (poolname)
     ca_file = 'data/%s_Ca.dat' % (poolname)
     tseries = np.array(range(len(vm_data.vector))) * simdt
-    print 'Vm:', len(vm_data.vector), 'Gk', len(gk_data.vector), 'Ik', len(ik_data.vector)
+    print('Vm:', len(vm_data.vector), 'Gk', len(gk_data.vector), 'Ik', len(ik_data.vector))
     data = np.c_[tseries, vm_data.vector]
     np.savetxt(vm_file, data)
-    print 'Saved Vm in', vm_file
+    print('Saved Vm in', vm_file)
     data = np.c_[tseries, gk_data.vector]
     np.savetxt(gk_file, data)
-    print 'Saved Gk in', gk_file
+    print('Saved Gk in', gk_file)
     data = np.c_[tseries, ik_data.vector]
     np.savetxt(ik_file, data)
-    print 'Saved Ik in', ik_file
-    print '>>', len(ca_data.vector)
+    print('Saved Ik in', ik_file)
+    print('>>', len(ca_data.vector))
     data = np.c_[tseries, ca_data.vector]
     np.savetxt(ca_file, data)
-    print 'Saved [Ca2+] in', ca_file
+    print('Saved [Ca2+] in', ca_file)
     return params
     
 
@@ -102,7 +103,7 @@ class TestCaPool(ChannelTestBase):
     vm = np.array(params['Vm'].vector)
     gk = np.array(params['Gk'].vector)
     ca = np.array(params['Ca'].vector)
-    print len(ca)
+    print(len(ca))
     tseries = np.arange(0, len(vm), 1.0) * simdt
     
     def testCaPool_Vm_Neuron(self):
@@ -116,7 +117,7 @@ class TestCaPool(ChannelTestBase):
         self.assertLess(err, 0.01)
         
     def testCaPool_Ca_Neuron(self):
-        print self.ca.shape
+        print(self.ca.shape)
         data = np.c_[self.tseries, self.ca]
         err = compare_channel_data(data, self.poolname, 'Ca', 'neuron', x_range=(simtime/10.0, simtime), plot=True)
         self.assertLess(err, 0.01)

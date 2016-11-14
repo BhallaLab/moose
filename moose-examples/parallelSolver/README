@@ -1,0 +1,14 @@
+Parallel solvers are implemented for Ksolve, Dsolve and Gsolve.
+
+Instructions to run the solvers in parallel. 
+
+1) Clone the repository from github/BhallaLab/moose-core/tree/multithreaded 
+   i.e., the multithreaded branch of the moose-core. 
+
+2) Build the code, compile and run it.
+
+3) Set the environment variable NUM_THREADS to the number of threads with which you want to execute your script. 
+
+4) The environment variable has to be set to make use of the parallelization. It runs with 1 thread by default(sequential). 
+
+3) Run your python script regularly. The framwork will pick up the number of threads set by you and parallelize the solvers using them.

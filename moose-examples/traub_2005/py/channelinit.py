@@ -6,9 +6,9 @@
 # Maintainer: 
 # Created: Wed May 23 21:24:11 2012 (+0530)
 # Version: 
-# Last-Updated: Fri May 25 11:42:08 2012 (+0530)
+# Last-Updated: Sat Aug  6 14:35:20 2016 (-0400)
 #           By: subha
-#     Update #: 74
+#     Update #: 75
 # URL: 
 # Keywords: 
 # Compatibility: 
@@ -53,6 +53,7 @@ def init_chanlib():
     _channels.update(archan.initARChannelPrototypes())
     _channels.update(cachans.initCaChannelPrototypes())
     _channels.update(capool.initCaPoolPrototypes())    
+    _channels['spike'] = moose.SpikeGen('{}/spike'.format(config.modelSettings.libpath))
     return _channels
 
 init_chanlib()        

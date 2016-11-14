@@ -6,9 +6,9 @@
 # Maintainer: 
 # Created: Sat May 26 10:41:37 2012 (+0530)
 # Version: 
-# Last-Updated: Fri Dec  7 16:27:24 2012 (+0530)
+# Last-Updated: Sat Aug  6 15:45:51 2016 (-0400)
 #           By: subha
-#     Update #: 400
+#     Update #: 414
 # URL: 
 # Keywords: 
 # Compatibility: 
@@ -28,6 +28,7 @@
 # 
 
 # Code:
+from __future__ import print_function
 
 import os
 os.environ['NUMPTHREADS'] = '1'
@@ -57,7 +58,7 @@ PLOTDT = 0.25e-3
 lib = moose.Neutral(config.modelSettings.libpath)
 
 def setup_clocks(simdt, plotdt):
-    print 'Setting up clocks: simdt', simdt, 'plotdt', plotdt
+    print( 'Setting up clocks: simdt', simdt, 'plotdt', plotdt)
     moose.setClock(INITCLOCK, simdt)
     moose.setClock(ELECCLOCK, simdt)
     moose.setClock(CHANCLOCK, simdt)
@@ -132,18 +133,18 @@ def step_run(simtime, steptime, verbose=True):
     """Run the simulation in steps of `steptime` for `simtime`."""
     clock = moose.Clock('/clock')
     if verbose:
-        print 'Starting simulation for', simtime
+        print( 'Starting simulation for', simtime)
     while clock.currentTime < simtime - steptime:
         moose.start(steptime)
         if verbose:
-            print 'Simulated till', clock.currentTime, 's'
+            print( 'Simulated till', clock.currentTime, 's')
     remaining = simtime - clock.currentTime
     if remaining > 0:
         if verbose:
-            print 'Running the remaining', remaining, 's'
+            print( 'Running the remaining', remaining, 's')
         moose.start(remaining)
     if verbose:
-        print 'Finished simulation'
+        print( 'Finished simulation')
     
 
 def make_testcomp(containerpath):
@@ -241,7 +242,7 @@ def compare_data_arrays(left, right, relative='maxw', plot=False, x_range=None):
 
     """
     if len(left.shape) != len(right.shape):
-        print left.shape, right.shape
+        print( left.shape, right.shape)
         raise ValueError('Arrays to be compared must have same dimensions.')
     # y is the intrepolation result for x array using xp and fp when xp and x do not match.
     # xp and fp are interpolation table's independent and dependent variables
@@ -269,7 +270,7 @@ def compare_data_arrays(left, right, relative='maxw', plot=False, x_range=None):
     else:
         raise ValueError('Cannot handle more than 2 dimensional arrays.')
     if left.shape[0] != right.shape[0]:
-        print 'Array sizes not matching: (%d <> %d) - interpolating' % (left.shape[0], right.shape[0])
+        print( 'Array sizes not matching: (%d <> %d) - interpolating' % (left.shape[0], right.shape[0]))
         y = np.interp(x, xp, fp)
     else: # assume we have the same X values when sizes are the same
         y = np.array(fp)
@@ -283,7 +284,7 @@ def compare_data_arrays(left, right, relative='maxw', plot=False, x_range=None):
         xp = xp[indices]
         fp = fp[indices]
     err = y - yp
-    print min(err), max(err), min(y), max(y), min(yp), max(yp)
+    print( min(err), max(err), min(y), max(y), min(yp), max(yp))
     # I measure a conservative relative error as maximum of all the
     # errors between pairs of points with
     all_y = np.r_[y, yp]
@@ -310,7 +311,7 @@ def compare_cell_dump(left, right, rtol=1e-3, atol=1e-8, row_header=True, col_he
     """This is a utility function to compare various compartment
     parameters for a single cell model dumped in csv format using
     NEURON and MOOSE."""
-    print 'Comparing:', left, 'with', right
+    print( 'Comparing:', left, 'with', right)
     ret = True
     left_file = open(left, 'rb')
     right_file = open(right, 'rb')
@@ -323,11 +324,11 @@ def compare_cell_dump(left, right, rtol=1e-3, atol=1e-8, row_header=True, col_he
     rheader.remove('comp')
     rheader = sorted(rheader)
     if len(lheader) != len(rheader):
-        print 'Column number mismatch: left %d <-> right %d' % (len(lheader), len(rheader))
+        print( 'Column number mismatch: left %d <-> right %d' % (len(lheader), len(rheader)))
         return False
     for ii in range(len(lheader)):
         if lheader[ii] != rheader[ii]:
-            print ii, '-th column name mismatch:', lheader[ii], '<->', rheader[ii]
+            print( ii, '-th column name mismatch:', lheader[ii], '<->', rheader[ii])
             return False    
     index = 2
     left_end = False
@@ -342,15 +343,15 @@ def compare_cell_dump(left, right, rtol=1e-3, atol=1e-8, row_header=True, col_he
         except StopIteration:
             right_end = True
         if left_end and not right_end:
-            print left, 'run out of line after', index, 'rows'
+            print( left, 'run out of line after', index, 'rows')
             return False
         if right_end and not left_end:
-            print right, 'run out of line after', index, 'rows'
+            print( right, 'run out of line after', index, 'rows')
             return False
         if left_end and right_end:
             return ret
         if len(left_row) != len(right_row):
-            print 'No. of columns differ: left - ', len(left_row), 'right -', len(right_row)
+            print( 'No. of columns differ: left - ', len(left_row), 'right -', len(right_row))
             ret = False
             break        
         for key in lheader:
@@ -358,11 +359,11 @@ def compare_cell_dump(left, right, rtol=1e-3, atol=1e-8, row_header=True, col_he
                 left = float(left_row[key])
                 right = float(right_row[key])
                 if not np.allclose(float(left), float(right), rtol=rtol, atol=atol):
-                    print 'Mismatch in row:%s, column:%s. Values: %g <> %g' % (index, key, left, right)
+                    print( 'Mismatch in row:%s, column:%s. Values: %g <> %g' % (index, key, left, right))
                     ret = False
             except ValueError, e:
-                print e
-                print 'Row:', index, 'Key:', key, left_row[key], right_row[key]
+                print( e)
+                print( 'Row:', index, 'Key:', key, left_row[key], right_row[key])
         index = index + 1
     return ret
 

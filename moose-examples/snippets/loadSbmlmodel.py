@@ -42,6 +42,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sys
 import pylab
+from moose.SBML import *
+import os.path
 
 def main():
     """ This example illustrates loading, running of an SBML model defined in XML format.\n
@@ -51,37 +53,43 @@ def main():
 	As a general rule we created model under '/path/model' and plots under '/path/graphs'.\n
     """
 
-    mfile = '../genesis/00001-sbml-l3v1.xml'
-    runtime = 20.0
-
-    if (len(sys.argv) >= 3):
-        if sys.argv[1][0]=='/':
-            mfile = sys.argv[1]
-        else:
-            mfile = '../genesis/'+sys.argv[1]
-        
-        runtime = float(sys.argv[2])
-        
-    # Loading the sbml file into MOOSE, models are loaded in path/model
-    sbmlId = moose.readSBML(mfile,'sbml')
+    mfile = "../genesis/00001-sbml-l3v1.xml"
+    try:
+        sys.argv[1]
+    except:
+        pass
+    else:
+        mfile = sys.argv[1]
     
-
-    s1 = moose.element('/sbml/model/compartment/S1')
-    s2= moose.element('/sbml/model/compartment/S2')
-                      
-    # Creating MOOSE Table, Table2 is for the chemical model
-    graphs = moose.Neutral( '/sbml/graphs' )
-    outputs1 = moose.Table2 ( '/sbml/graphs/concS1')
-    outputs2 = moose.Table2 ( '/sbml/graphs/concS2')
-
-    # connect up the tables
-    moose.connect( outputs1,'requestOut', s1, 'getConc' );
-    moose.connect( outputs2,'requestOut', s2, 'getConc' );
-
+    try:
+        sys.argv[2]
+    except:
+        runtime = 20.0
+    else:
+        runtime = float(sys.argv[2])
+    
+    # Loading the sbml file into MOOSE, models are loaded in path/model
+    sbmlId = mooseReadSBML(mfile,'/sbml')
         
-    # Reset and Run
-    moose.reinit()
-    moose.start(runtime)
+    if sbmlId.path != '/':
+        s1 = moose.element('/sbml/model/compartment/S1')
+        s2= moose.element('/sbml/model/compartment/S2')
+                          
+        # Creating MOOSE Table, Table2 is for the chemical model
+        graphs = moose.Neutral( '/sbml/graphs' )
+        outputs1 = moose.Table2 ( '/sbml/graphs/concS1')
+        outputs2 = moose.Table2 ( '/sbml/graphs/concS2')
+
+        # connect up the tables
+        moose.connect( outputs1,'requestOut', s1, 'getConc' );
+        moose.connect( outputs2,'requestOut', s2, 'getConc' );
+
+            
+        # Reset and Run
+        moose.reinit()
+        moose.start(runtime)
+        return sbmlId,True
+    return sbmlId,False
 
 def displayPlots():
     # Display all plots.
@@ -95,5 +103,6 @@ def displayPlots():
     quit()
 if __name__=='__main__':
     
-    main()
-    displayPlots()
+    modelPath, modelpathexist = main()
+    if modelpathexist == True:
+        displayPlots()
