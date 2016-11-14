@@ -360,6 +360,7 @@ public:
         return entry.size();
     }
 
+#if 0
     void rowOperation( unsigned int row, unary_function< T, void>& f )
     {
         assert( row < nrows_ );
@@ -376,6 +377,7 @@ public:
         for ( i = N_.begin() + rs; i != end; ++i )
             f( *i );
     }
+#endif 
 
     /**
      * Adds a row to the sparse matrix, must go strictly in row order.
