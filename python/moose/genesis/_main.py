@@ -588,7 +588,7 @@ def writePool(modelpath,f,volIndex,sceneitems):
                 color = getRandColor()
             if textcolor == ""  or textcolor == " ":
                 textcolor = getRandColor()
-	    print " trimPath",trimPath(p)
+	    #print " trimPath",trimPath(p)
             f.write("simundump kpool /kinetics/" + trimPath(p) + " 0 " +
                     str(p.diffConst) + " " +
                     str(0) + " " +
