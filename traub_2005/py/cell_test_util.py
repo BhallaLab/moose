@@ -6,9 +6,9 @@
 # Maintainer: 
 # Created: Mon Oct 15 15:03:09 2012 (+0530)
 # Version: 
-# Last-Updated: Thu Jul 18 18:36:07 2013 (+0530)
+# Last-Updated: Sat Aug  6 15:33:12 2016 (-0400)
 #           By: subha
-#     Update #: 299
+#     Update #: 303
 # URL: 
 # Keywords: 
 # Compatibility: 
@@ -28,6 +28,7 @@
 # 
 
 # Code:
+from __future__ import print_function
 
 from datetime import datetime
 import time
@@ -71,7 +72,7 @@ def setup_current_step_model(model_container,
     solver: str - numerical method to use, can be `hsolve` or `ee`
     """
     classname = 'cells.%s' % (celltype)
-    print 'mc=', model_container, 'dc=', data_container, 'ct=', celltype, 'pa=', pulsearray, 'classname=', classname
+    print('mc=', model_container, 'dc=', data_container, 'ct=', celltype, 'pa=', pulsearray, 'classname=', classname)
     cell_class = eval(classname)
     cell = cell_class('%s/%s' % (model_container.path, celltype))
     pulsegen = moose.PulseGen('%s/pulse' % (model_container.path))
@@ -205,7 +206,7 @@ class SingleCellCurrentStepTest(unittest.TestCase):
             pylab.plot(nrn_data[nrn_indices,0], nrn_data[nrn_indices,1], 
                        label='Vm (mV) - neuron')
         except IOError:
-            print 'No neuron data found.'
+            print('No neuron data found.')
         pylab.legend()
         pylab.subplot(212)
         pylab.title('Presynaptic Vm')
@@ -220,7 +221,7 @@ class SingleCellCurrentStepTest(unittest.TestCase):
             pylab.plot(nrn_data[nrn_indices,0], nrn_data[nrn_indices,1], 
                        label='Vm (mV) - neuron')
         except IOError:
-            print 'No neuron data found.'
+            print('No neuron data found.')
         pylab.legend()
         pylab.show()
         

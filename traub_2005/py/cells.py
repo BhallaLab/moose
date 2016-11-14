@@ -6,9 +6,9 @@
 # Maintainer: 
 # Created: Fri Mar  9 23:17:17 2012 (+0530)
 # Version: 
-# Last-Updated: Fri Jul 10 15:56:23 2015 (+0530)
+# Last-Updated: Sat Aug  6 15:25:57 2016 (-0400)
 #           By: subha
-#     Update #: 692
+#     Update #: 694
 # URL: 
 # Keywords: 
 # Compatibility: 
@@ -28,7 +28,7 @@
 # 
 
 # Code:
-
+from __future__ import print_function
 import csv
 import numpy as np
 from collections import defaultdict
@@ -90,7 +90,7 @@ def read_keyvals(filename):
                 if not tokens:
                     continue
                 if len(tokens) != 2:
-                    print filename, ' - Tokens: ', tokens, len(tokens)
+                    print(filename, ' - Tokens: ', tokens, len(tokens))
                     return None
                 ret[tokens[1]].add(tokens[0])
     except IOError:

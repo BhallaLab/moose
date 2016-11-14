@@ -6,9 +6,9 @@
 # Maintainer: 
 # Created: Fri Mar  8 11:26:13 2013 (+0530)
 # Version: 
-# Last-Updated: Thu Jul 18 15:12:01 2013 (+0530)
-#           By: subha
-#     Update #: 366
+# Last-Updated: Thu Aug 11 11:29:36 2016 (-0400)
+#           By: Subhasis Ray
+#     Update #: 389
 # URL: 
 # Keywords: 
 # Compatibility: 
@@ -28,6 +28,7 @@
 # 
 
 # Code:
+from __future__ import print_function
 
 """
 Display/save the topology of one or all cells in traub_2005 demo.
@@ -43,7 +44,6 @@ sys.path.append('../../../python')
 import os
 import numpy as np
 import matplotlib.pyplot as plt
-import pygraphviz
 import networkx as nx
 import moose
 import cells
@@ -76,8 +76,8 @@ def cell_to_graph(cell, label=False):
         msg = 'distalOut'
     else:
         raise Exception('No neighbors on raxial or distal')
-    es = [(c1.path, c2[0].path, {'weight': 2/ (moose.Compartment(c1).Ra + moose.Compartment(c2).Ra)}) \
-              for c1 in moose.wildcardFind('%s/##[ISA=Compartment]' % (cell.path)) \
+    es = [(c1.path, c2[0].path, {'weight': 2/ (c1.Ra + c2[0].Ra)}) \
+              for c1 in moose.wildcardFind('%s/##[ISA=CompartmentBase]' % (cell.path)) \
               for c2 in moose.Compartment(c1).neighbors[msg]]
     g = nx.Graph()
     g.add_edges_from(es)
@@ -109,7 +109,7 @@ def plot_cell_topology(cell, label=False):
     weights = np.array([g.edge[e[0]][e[1]]['weight'] for e in g.edges()])
     try:
         pos = nx.graphviz_layout(g,prog='twopi',root=cell.path + '/comp_1')
-    except NameError:
+    except (NameError, AttributeError) as e:
         # this is the best networkx can do by itself. Its Furchtman
         # Reingold layout ends up with overlapping edges even for a
         # tree. igraph does much better.
@@ -131,7 +131,6 @@ import sys
 from getopt import getopt
 
 if __name__ == '__main__':
-    print sys.argv
     optlist, args = getopt(sys.argv[1:], 'lhp:c:', ['help'])
     celltype = ''
     pdf = ''
@@ -144,15 +143,14 @@ if __name__ == '__main__':
         elif arg[0] == '-l':
             label = True
         elif arg[0] == '-h' or arg[0] == '--help':
-            print 'Usage: %s [-c CellType [-p filename]]' % (sys.argv[0])
-            print 'Display/save the morphology of cell type "CellType".'
-            print 'Options:'
-            print '-c celltype (optional) display only an instance of the specified cell type. If CellType is empty or not specified, all prototype cells are displayed.'
-            print '-l label the compartments'
-            print '-p  filename (optional) save outputin a pdf file named "filename".'
-            print '-h,--help print this help'
+            print('Usage: %s [-c CellType [-p filename]]' % (sys.argv[0]))
+            print('Display/save the morphology of cell type "CellType".')
+            print('Options:')
+            print('-c celltype (optional) display only an instance of the specified cell type. If CellType is empty or not specified, all prototype cells are displayed.')
+            print('-l label the compartments')
+            print('-p  filename (optional) save outputin a pdf file named "filename".')
+            print('-h,--help print this help')
             sys.exit(0)
-    print 'args', optlist, args
     figures = []
     if len(celltype) > 0:
         try:
@@ -162,10 +160,9 @@ if __name__ == '__main__':
             # print 'Label', label
             plot_cell_topology(cell, label=label)
         except KeyError:
-            print '%s: no such cell type. Available are:' % (celltype)
+            print( '%s: no such cell type. Available are:' % (celltype))
             for ii in cells.init_prototypes().keys():
-                print ii,
-            print 
+                print( ii)
             sys.exit(1)    
     else:
         for cell, proto in cells.init_prototypes().items():

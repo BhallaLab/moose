@@ -6,9 +6,9 @@
 # Maintainer: 
 # Created: Sat Dec 19 22:27:27 2015 (-0500)
 # Version: 
-# Last-Updated: Tue Dec 29 12:50:02 2015 (-0500)
+# Last-Updated: Thu Aug 11 11:09:33 2016 (-0400)
 #           By: Subhasis Ray
-#     Update #: 134
+#     Update #: 135
 # URL: 
 # Keywords: 
 # Compatibility: 
@@ -100,7 +100,7 @@ def write_nsdf():
         pulse.delay[0] = 5 * (ii+1)
         pulse.width[0] = 20
         t_lead.threshold = 0.5
-        moose.connect(pulse, 'output', t_lead,'Vm');
+        moose.connect(pulse, 'output', t_lead,'Vm')
         moose.connect(nsdf, 'requestOut', pulse, 'getOutputValue')
         # ei = nsdf.eventInput[ii]
         # moose.connect(t_lead, 'spikeOut', ei, 'input')

@@ -6,9 +6,9 @@
 # Maintainer: 
 # Created: Sat May 26 10:29:41 2012 (+0530)
 # Version: 
-# Last-Updated: Wed May 30 21:47:11 2012 (+0530)
+# Last-Updated: Sat Aug  6 15:46:06 2016 (-0400)
 #           By: subha
-#     Update #: 349
+#     Update #: 417
 # URL: 
 # Keywords: 
 # Compatibility: 
@@ -28,6 +28,7 @@
 # 
 
 # Code:
+from __future__ import print_function
 
 import os
 os.environ['NUMPTHREADS'] = '1'
@@ -52,30 +53,30 @@ class TestNaF(ChannelTestBase):
     tseries = np.array(range(0, len(params['Vm'].vector))) * simdt
 
     def testNaF_Vm_Moose(self):
-        print 'Testing MOOSE Vm  ...',
+        print('Testing MOOSE Vm  ...',)
         err = compare_channel_data(self.vm, TestNaF.channelname, 'Vm', 'moose', x_range=(simtime/10.0, simtime))
         self.assertLess(err, 0.01)
-        print 'OK'
+        print('OK')
         
     def testNaF_Gk_Moose(self):
-        print 'Testing MOOSE Gk  ...',
+        print('Testing MOOSE Gk  ...',)
         err = compare_channel_data(self.gk, TestNaF.channelname, 'Gk', 'moose', x_range=(simtime/10.0, simtime))
         self.assertLess(err, 0.05)
-        print 'OK'
+        print('OK')
 
     def testNaF_Vm_Neuron(self):
-        print 'Testing NEURON Vm  ...',
+        print('Testing NEURON Vm  ...', end='')
         data = np.c_[self.tseries, self.vm]
         err = compare_channel_data(data, self.channelname, 'Vm', 'neuron', x_range=(simtime/10.0, simtime))
         self.assertLess(err, 0.01)        
-        print 'OK'
+        print('OK')
 
     def testNaF_Gk_Neuron(self):
-        print 'Testing NEURON Gk  ...',
+        print('Testing NEURON Gk  ...', end='')
         data = np.c_[self.tseries, self.gk]
         err = compare_channel_data(data, self.channelname, 'Gk', 'neuron', x_range=(simtime/10.0, simtime))
         self.assertLess(err, 0.05)
-        print 'OK'
+        print('OK')
 
 class TestNaF_TCR(ChannelTestBase):
     channelname = 'NaF_TCR'
@@ -84,30 +85,30 @@ class TestNaF_TCR(ChannelTestBase):
     gk = np.asarray(params['Gk'].vector)
     tseries = np.array(range(0, len(params['Vm'].vector))) * simdt
     def testNaF_TCR_Vm_Moose(self):
-        print 'Testing MOOSE Vm  ...',
+        print('Testing MOOSE Vm  ...', end='')
         err = compare_channel_data(self.vm, TestNaF_TCR.channelname, 'Vm', 'moose', x_range=(simtime/10.0, simtime))
         self.assertLess(err, 0.01)
-        print 'OK'
+        print('OK')
         
     def testNaF_TCR_Gk_Moose(self):
-        print 'Testing MOOSE Gk  ...',
+        print('Testing MOOSE Gk  ...', end='')
         err = compare_channel_data(self.gk, TestNaF_TCR.channelname, 'Gk', 'moose', x_range=(simtime/10.0, simtime))
         self.assertLess(err, 0.05)
-        print 'OK'
+        print('OK')
 
     def testNaF_TCR_Vm_Neuron(self):
-        print 'Testing NEURON Vm  ...',
+        print('Testing NEURON Vm  ...', end='')
         data = np.c_[self.tseries, self.vm]
         err = compare_channel_data(data, self.channelname, 'Vm', 'neuron', x_range=(simtime/10.0, simtime))
         self.assertLess(err, 0.01)        
-        print 'OK'
+        print('OK')
 
     def testNaF_TCR_Gk_Neuron(self):
-        print 'Testing NEURON Gk  ...',
+        print('Testing NEURON Gk  ...', end='')
         data = np.c_[self.tseries, self.gk]
         err = compare_channel_data(data, self.channelname, 'Gk', 'neuron', x_range=(simtime/10.0, simtime), plot=True)
         self.assertLess(err, 0.05)
-        print 'OK'
+        print('OK')
 
 
 class TestNaF2(ChannelTestBase):
@@ -117,30 +118,30 @@ class TestNaF2(ChannelTestBase):
     gk = np.asarray(params['Gk'].vector)
     tseries = np.array(range(0, len(params['Vm'].vector))) * simdt
     def testNaF2_Vm_Moose(self):
-        print 'Testing MOOSE Vm  ...',
+        print('Testing MOOSE Vm  ...', end='')
         err = compare_channel_data(self.vm, TestNaF2.channelname, 'Vm', 'moose', x_range=(simtime/10.0, simtime))
         self.assertLess(err, 0.01)
-        print 'OK'
+        print('OK', end='')
         
     def testNaF2_Gk_Moose(self):
-        print 'Testing MOOSE Gk  ...',
+        print('Testing MOOSE Gk  ...', end='')
         err = compare_channel_data(self.gk, TestNaF2.channelname, 'Gk', 'moose', x_range=(simtime/10.0, simtime))
         self.assertLess(err, 0.05)
-        print 'OK'
+        print('OK')
 
     def testNaF2_Vm_Neuron(self):
-        print 'Testing NEURON Vm  ...',
+        print('Testing NEURON Vm  ...', end='')
         data = np.c_[self.tseries, self.vm]
         err = compare_channel_data(data, self.channelname, 'Vm', 'neuron', x_range=(simtime/10.0, simtime))
         self.assertLess(err, 0.01)        
-        print 'OK'
+        print('OK')
 
     def testNaF2_Gk_Neuron(self):
-        print 'Testing NEURON Gk  ...',
+        print('Testing NEURON Gk  ...', end='')
         data = np.c_[self.tseries, self.gk]
         err = compare_channel_data(data, self.channelname, 'Gk', 'neuron', x_range=(simtime/10.0, simtime), plot=True)
         self.assertLess(err, 0.05)
-        print 'OK'
+        print('OK')
 
 
 class TestNaF2_nRT(ChannelTestBase):
@@ -150,30 +151,30 @@ class TestNaF2_nRT(ChannelTestBase):
     gk = np.asarray(params['Gk'].vector)
     tseries = np.array(range(0, len(params['Vm'].vector))) * simdt
     def testNaF2_nRT_Vm_Moose(self):
-        print 'Testing MOOSE Vm  ...',
+        print('Testing MOOSE Vm  ...', end='')
         err = compare_channel_data(self.vm, TestNaF2_nRT.channelname, 'Vm', 'moose', x_range=(simtime/10.0, simtime))
         self.assertLess(err, 0.01)
-        print 'OK'
+        print('OK')
         
     def testNaF2_nRT_Gk_Moose(self):
-        print 'Testing MOOSE Gk  ...',
+        print('Testing MOOSE Gk  ...', end='')
         err = compare_channel_data(self.gk, TestNaF2_nRT.channelname, 'Gk', 'moose', x_range=(simtime/10.0, simtime))
         self.assertLess(err, 0.05)
-        print 'OK'
+        print('OK')
 
     def testNaF2_nRT_Vm_Neuron(self):
-        print 'Testing NEURON Vm  ...',
+        print('Testing NEURON Vm  ...', end='')
         data = np.c_[self.tseries, self.vm]
         err = compare_channel_data(data, self.channelname, 'Vm', 'neuron', x_range=(simtime/10.0, simtime))
         self.assertLess(err, 0.01)        
-        print 'OK'
+        print('OK')
 
     def testNaF2_nRT_Gk_Neuron(self):
-        print 'Testing NEURON Gk  ...',
+        print('Testing NEURON Gk  ...', end='')
         data = np.c_[self.tseries, self.gk]
         err = compare_channel_data(data, self.channelname, 'Gk', 'neuron', x_range=(simtime/10.0, simtime), plot=True)
         self.assertLess(err, 0.05)
-        print 'OK'
+        print('OK')
 
 class TestNaP(ChannelTestBase):
     channelname = 'NaP'
@@ -182,30 +183,30 @@ class TestNaP(ChannelTestBase):
     gk = np.asarray(params['Gk'].vector)
     tseries = np.array(range(0, len(params['Vm'].vector))) * simdt
     def testNaP_Vm_Moose(self):
-        print 'Testing MOOSE Vm  ...',
+        print('Testing MOOSE Vm  ...', end='')
         err = compare_channel_data(self.vm, TestNaP.channelname, 'Vm', 'moose', x_range=(simtime/10.0, simtime))
         self.assertLess(err, 0.01)
-        print 'OK'
+        print('OK')
         
     def testNaP_Gk_Moose(self):
-        print 'Testing MOOSE Gk  ...',
+        print('Testing MOOSE Gk  ...', end='')
         err = compare_channel_data(self.gk, TestNaP.channelname, 'Gk', 'moose', x_range=(simtime/10.0, simtime))
         self.assertLess(err, 0.05)
-        print 'OK'
+        print('OK')
 
     def testNaP_Vm_Neuron(self):
-        print 'Testing NEURON Vm  ...',
+        print( 'Testing NEURON Vm  ...', end='')
         data = np.c_[self.tseries, self.vm]
         err = compare_channel_data(data, self.channelname, 'Vm', 'neuron', x_range=(simtime/10.0, simtime))
         self.assertLess(err, 0.01)        
-        print 'OK'
+        print('OK')
 
     def testNaP_Gk_Neuron(self):
-        print 'Testing NEURON Gk  ...',
+        print('Testing NEURON Gk  ...', end='')
         data = np.c_[self.tseries, self.gk]
         err = compare_channel_data(data, self.channelname, 'Gk', 'neuron', x_range=(simtime/10.0, simtime), plot=True)
         self.assertLess(err, 0.05)
-        print 'OK'
+        print('OK')
 
 
 class TestNaPF(ChannelTestBase):
@@ -215,30 +216,30 @@ class TestNaPF(ChannelTestBase):
     gk = np.asarray(params['Gk'].vector)
     tseries = np.array(range(0, len(params['Vm'].vector))) * simdt
     def testNaPF_Vm_Moose(self):
-        print 'Testing MOOSE Vm  ...',
+        print('Testing MOOSE Vm  ...', end='')
         err = compare_channel_data(self.vm, TestNaPF.channelname, 'Vm', 'moose', x_range=(simtime/10.0, simtime))
         self.assertLess(err, 0.01)
-        print 'OK'
+        print('OK')
         
     def testNaPF_Gk_Moose(self):
-        print 'Testing MOOSE Gk  ...',
+        print('Testing MOOSE Gk  ...', end='')
         err = compare_channel_data(self.gk, TestNaPF.channelname, 'Gk', 'moose', x_range=(simtime/10.0, simtime))
         self.assertLess(err, 0.05)
-        print 'OK'
+        print('OK')
 
     def testNaPF_Vm_Neuron(self):
-        print 'Testing NEURON Vm  ...',
+        print('Testing NEURON Vm  ...', end='')
         data = np.c_[self.tseries, self.vm]
         err = compare_channel_data(data, self.channelname, 'Vm', 'neuron', x_range=(simtime/10.0, simtime))
         self.assertLess(err, 0.01)        
-        print 'OK'
+        print('OK')
 
     def testNaPF_Gk_Neuron(self):
-        print 'Testing NEURON Gk  ...',
+        print('Testing NEURON Gk  ...', end='')
         data = np.c_[self.tseries, self.gk]
         err = compare_channel_data(data, self.channelname, 'Gk', 'neuron', x_range=(simtime/10.0, simtime), plot=True)
         self.assertLess(err, 0.05)
-        print 'OK'
+        print('OK')
 
 
 class TestNaPF_SS(ChannelTestBase):
@@ -248,30 +249,30 @@ class TestNaPF_SS(ChannelTestBase):
     gk = np.asarray(params['Gk'].vector)
     tseries = np.array(range(0, len(params['Vm'].vector))) * simdt
     def testNaPF_SS_Vm_Moose(self):
-        print 'Testing MOOSE Vm  ...',
+        print('Testing MOOSE Vm  ...', end='')
         err = compare_channel_data(self.vm, TestNaPF_SS.channelname, 'Vm', 'moose', x_range=(simtime/10.0, simtime))
         self.assertLess(err, 0.01)
-        print 'OK'
+        print('OK')
         
     def testNaPF_SS_Gk_Moose(self):
-        print 'Testing MOOSE Gk  ...',
+        print('Testing MOOSE Gk  ...', end='')
         err = compare_channel_data(self.gk, TestNaPF_SS.channelname, 'Gk', 'moose', x_range=(simtime/10.0, simtime))
         self.assertLess(err, 0.05)
-        print 'OK'
+        print('OK')
 
     def testNaPF_SS_Vm_Neuron(self):
-        print 'Testing NEURON Vm  ...',
+        print('Testing NEURON Vm  ...', end='')
         data = np.c_[self.tseries, self.vm]
         err = compare_channel_data(data, self.channelname, 'Vm', 'neuron', x_range=(simtime/10.0, simtime))
         self.assertLess(err, 0.01)        
-        print 'OK'
+        print('OK')
 
     def testNaPF_SS_Gk_Neuron(self):
-        print 'Testing NEURON Gk  ...',
+        print('Testing NEURON Gk  ...', end='')
         data = np.c_[self.tseries, self.gk]
         err = compare_channel_data(data, self.channelname, 'Gk', 'neuron', x_range=(simtime/10.0, simtime), plot=True)
         self.assertLess(err, 0.05)
-        print 'OK'
+        print('OK')
 
 
 class TestNaPF_TCR(ChannelTestBase):
@@ -281,30 +282,30 @@ class TestNaPF_TCR(ChannelTestBase):
     gk = np.asarray(params['Gk'].vector)
     tseries = np.array(range(0, len(params['Vm'].vector))) * simdt
     def testNaPF_TCR_Vm_Moose(self):
-        print 'Testing MOOSE Vm  ...',
+        print('Testing MOOSE Vm  ...', end='')
         err = compare_channel_data(self.vm, TestNaPF_TCR.channelname, 'Vm', 'moose', x_range=(simtime/10.0, simtime))
         self.assertLess(err, 0.01)
-        print 'OK'
+        print('OK')
         
     def testNaPF_TCR_Gk_Moose(self):
-        print 'Testing MOOSE Gk  ...',
+        print('Testing MOOSE Gk  ...', end='')
         err = compare_channel_data(self.gk, TestNaPF_TCR.channelname, 'Gk', 'moose', x_range=(simtime/10.0, simtime))
         self.assertLess(err, 0.05)
-        print 'OK'
+        print('OK')
 
     def testNaPF_TCR_Vm_Neuron(self):
-        print 'Testing NEURON Vm  ...',
+        print('Testing NEURON Vm  ...', end='')
         data = np.c_[self.tseries, self.vm]
         err = compare_channel_data(data, self.channelname, 'Vm', 'neuron', x_range=(simtime/10.0, simtime))
         self.assertLess(err, 0.01)        
-        print 'OK'
+        print('OK')
 
     def testNaPF_TCR_Gk_Neuron(self):
-        print 'Testing NEURON Gk  ...',
+        print('Testing NEURON Gk  ...', end='')
         data = np.c_[self.tseries, self.gk]
         err = compare_channel_data(data, self.channelname, 'Gk', 'neuron', x_range=(simtime/10.0, simtime), plot=True)
         self.assertLess(err, 0.05)
-        print 'OK'
+        print('OK')
 
 
 if __name__ == '__main__':

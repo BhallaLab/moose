@@ -52,8 +52,10 @@ save the model back to Genesis format
 import sys
 #sys.path.append('../../python')
 import moose
+from moose.genesis import *
 
 if __name__ == '__main__':
     """ The script demonstates to convert Chemical (Genesis) file back to Genesis file using moose """
     model = moose.loadModel('../genesis/reaction.g', '/model')
-    moose.saveModel('/model', 'testsave.g')
+    written = write('/model', 'testsave.g')
+    print written

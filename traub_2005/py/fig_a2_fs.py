@@ -6,9 +6,9 @@
 # Maintainer: 
 # Created: Thu Jun 27 12:06:52 2013 (+0530)
 # Version: 
-# Last-Updated: Thu Jun 27 12:36:17 2013 (+0530)
+# Last-Updated: Sat Aug  6 15:28:07 2016 (-0400)
 #           By: subha
-#     Update #: 29
+#     Update #: 30
 # URL: 
 # Keywords: 
 # Compatibility: 
@@ -49,6 +49,7 @@ Reproduce the experiment for Fig A2 in Traub et al 2005.
 
 FS (deep basket cell) with 0.5 nA current pusle simulated for 1 s
 """
+from __future__ import print_function
 
 import numpy as np
 import pylab
@@ -105,7 +106,7 @@ def main():
                np.vstack((t, inject, vm)).transpose())
     msg = 'Saved data for %g A current pulse in %s' % (amp, fname)
     config.logger.info(msg)
-    print msg
+    print(msg)
     pylab.title('%g nA' % (amp*1e9))
     pylab.plot(t, vm, label='soma-Vm (mV)')
     stim_boundary = np.flatnonzero(np.diff(inject))

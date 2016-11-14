@@ -6,9 +6,9 @@
 # Maintainer: 
 # Created: Wed Jun 26 17:07:59 2013 (+0530)
 # Version: 
-# Last-Updated: Fri Jun 28 16:05:19 2013 (+0530)
+# Last-Updated: Sat Aug  6 15:46:14 2016 (-0400)
 #           By: subha
-#     Update #: 160
+#     Update #: 161
 # URL: 
 # Keywords: 
 # Compatibility: 
@@ -105,7 +105,7 @@ def main():
                    np.vstack((t, inject, vm)).transpose())
         msg = 'Saved data for %g A current pulse in %s' % (a, fname)
         config.logger.info(msg)
-        print msg
+        print( msg)
         pylab.subplot(3,1,ii+1)
         pylab.title('%g nA' % (a*1e9))
         pylab.plot(t, vm, label='soma-Vm (mV)')
