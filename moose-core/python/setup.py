@@ -31,6 +31,9 @@ __status__           = "Development"
 import os
 from distutils.core import setup
 
+with open( '../../VERSION', 'r' ) as f:
+    version = f.read( )
+
 try:
     import importlib.machinery
     suffix = importlib.machinery.EXTENSION_SUFFIXES[0]
@@ -39,21 +42,23 @@ except Exception as e:
 
 setup(
         name='moose',
-        version='3.0.2',
+        version=version,
         description='MOOSE python scripting module.',
-        author='Dilwar Singh',
-        author_email='dilawars@ncbs.res.in',
+        author='MOOSERes',
+        author_email='bhalla@ncbs.res.in',
+        maintainer='Dilawar Singh',
+        maintainer_email='dilawars@ncbs.res.in',
         url='http://moose.ncbs.res.in',
         packages=[
             'rdesigneur'
             , 'moose'
+            , 'moose.SBML'
             , 'moose.neuroml'
             , 'moose.genesis'
             ],
         package_dir = { 
             'moose' : 'moose' 
             , 'rdesigneur' : 'rdesigneur'
-            , 'genesis' : 'genesis'
             },
         package_data = { 'moose' : ['_moose' + suffix] },
     ) 
