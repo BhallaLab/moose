@@ -1204,7 +1204,9 @@ class PlotWidget(QWidget):
             x = np.linspace(0, xSrc.currentTime, len(y))
         elif isinstance(xSrc, moose.Table):
             x = xSrc.vector.copy()
-        filename = str(directory)+'/'+'%s.csv' % (ySrc.name)
+        nameVec = ySrc.neighbors['requestOut']
+        name = moose.element(nameVec[0]).name
+        filename = str(directory)+'/'+'%s.csv' %(name)
         np.savetxt(filename, np.vstack((x, y)).transpose())
         print 'Saved data from %s and %s in %s' % (xSrc.path, ySrc.path, filename)
 
@@ -1224,7 +1226,7 @@ class PlotWidget(QWidget):
         if fileDialog2.exec_():
             directory = fileDialog2.directory().path()
             for line in self.lineToDataSource.keys():
-                self.saveCsv(line,directory)
+		        self.saveCsv(line,directory)
 
 
     def getMenus(self):

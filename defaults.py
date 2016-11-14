@@ -9,6 +9,9 @@ PLOT_FIELDS={
     'CaConc':['Ca']
     }
 FIELD_UNITS={
+    'volume':'m3',
+    'Km':'mM',
+    'kcat':'s-1',
     'Vm':'V',
     'conc':'mM',
     'concInit':'mM',

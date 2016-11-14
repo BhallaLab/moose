@@ -54,6 +54,7 @@ from os.path import basename
 from os.path import splitext
 from PyQt4 import QtGui, QtCore, Qt
 from plugins.setsolver import *
+from moose.SBML import *
 
 def loadGenCsp(target,filename,solver="gsl"):
     target = target.replace(" ", "")
@@ -99,7 +100,6 @@ def loadGenCsp(target,filename,solver="gsl"):
     return(modelpath1,modelpath1.path)
 
 def loadFile(filename, target, solver="gsl", merge=True):
-    print " solver @ loadFile",solver
     """Try to load a model from specified `filename` under the element
     `target`.
 
@@ -187,7 +187,7 @@ def loadFile(filename, target, solver="gsl", merge=True):
             if target != '/':
                 if moose.exists(target):
                     moose.delete(target)
-            model = moose.readSBML(filename,target,'gsl')
+            model = mooseReadSBML(filename,target)
             if moose.exists(moose.element(model).path):
                 moose.Annotator(moose.element(model).path+'/info').modeltype = "sbml"
             addSolver(target,'gsl')

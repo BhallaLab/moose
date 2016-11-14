@@ -3,6 +3,7 @@ from PyQt4 import QtGui, QtCore, Qt
 from default import *
 from moose import *
 from moose.genesis import write
+from moose import SBML
 #sys.path.append('plugins')
 from mplugin import *
 from kkitUtil import *
@@ -62,22 +63,54 @@ class KkitPlugin(MoosePlugin):
         if filename:
             filename = filename
             if filters[str(filter_)] == 'SBML':
-                writeerror = moose.writeSBML(self.modelRoot,str(filename))
-                if writeerror == -2:
-                    QtGui.QMessageBox.warning(None,'Could not save the Model','\n WriteSBML :  This copy of MOOSE has not been compiled with SBML writing support.')
-                elif writeerror == -1:
-                    QtGui.QMessageBox.warning(None,'Could not save the Model','\n This model is not valid SBML Model, failed in the consistency check')
-                elif writeerror == 1:
-                    QtGui.QMessageBox.information(None,'Saved the Model','\n File saved to \'{filename}\''.format(filename =filename+'.xml'),QtGui.QMessageBox.Ok)
-                elif writeerror == 0:
-                     QtGui.QMessageBox.information(None,'Could not save the Model','\nThe filename could not be opened for writing')
-            elif filters[str(filter_)] == 'Genesis':
                 self.sceneObj = KkitEditorView(self).getCentralWidget().mooseId_GObj
                 self.coOrdinates = {}
                 for k,v in self.sceneObj.items():
                     if moose.exists(moose.element(k).path+'/info'):
                         annoInfo = Annotator(k.path+'/info')
                         self.coOrdinates[k] = {'x':annoInfo.x, 'y':annoInfo.y}
+
+                #writeerror = moose.writeSBML(self.modelRoot,str(filename),self.coOrdinates)
+                writeerror = -2
+                conisitencyMessages = ""
+                writtentofile = "/test.xml"
+                writeerror,consistencyMessages,writtentofile = moose.SBML.mooseWriteSBML(self.modelRoot,str(filename),self.coOrdinates)
+                if writeerror == -2:
+                    #QtGui.QMessageBox.warning(None,'Could not save the Model','\n WriteSBML :  This copy of MOOSE has not been compiled with SBML writing support.')
+                    QtGui.QMessageBox.warning(None,'Could not save the Model',consistencyMessages)
+                elif writeerror == -1:
+                    QtGui.QMessageBox.warning(None,'Could not save the Model','\n This model is not valid SBML Model, failed in the consistency check')
+                elif writeerror == 1:
+                    QtGui.QMessageBox.information(None,'Saved the Model','\n File saved to \'{filename}\''.format(filename =filename+'.xml'),QtGui.QMessageBox.Ok)
+                elif writeerror == 0:
+                     QtGui.QMessageBox.information(None,'Could not save the Model','\nThe filename could not be opened for writing')
+
+            elif filters[str(filter_)] == 'Genesis':
+                mdtype = moose.Annotator(self.modelRoot+'/info')
+                self.coOrdinates = {}
+                xycord = []
+                self.sceneObj = KkitEditorView(self).getCentralWidget().mooseId_GObj
+                #Here get x,y coordinates from the Annotation, to save layout position 
+                # into genesis
+                for k,v in self.sceneObj.items():
+                    if moose.exists(moose.element(k).path+'/info'):
+                        annoInfo = Annotator(k.path+'/info')
+                        self.coOrdinates[k] = {'x':annoInfo.x, 'y':annoInfo.y}
+                if mdtype.modeltype != "kkit":
+                    #If coordinates come from kkit then directly transfering the co-ordinates 
+                    # else zoomed in factor is applied before saving it to genesis form
+                    for k,v in self.coOrdinates.items():
+                        xycord.append(v['x'])
+                        xycord.append(v['y'])
+                    cmin = min(xycord)
+                    cmax = max(xycord)
+                    for k,v in self.coOrdinates.items():
+                        x = v['x']
+                        xprime = int((20*(float(v['x']-cmin)/float(cmax-cmin)))-10)
+                        v['x'] = xprime
+                        y = v['y']
+                        yprime = int((20*(float(v['y']-cmin)/float(cmax-cmin)))-10)
+                        v['y'] = -yprime
 
                 filename = filename
                 writeerror = write(self.modelRoot,str(filename),self.coOrdinates)
@@ -309,6 +342,13 @@ class  KineticsWidget(EditorWidgetBase):
         self.mooseId_GObj       = {}
         self.srcdesConnection   = {}
         self.editor             = None
+        self.xmin               = 0.0
+        self.xmax               = 1.0
+        self.ymin               = 0.0
+        self.ymax               = 1.0
+        self.xratio             = 1.0
+        self.yratio             = 1.0
+
 
     def reset(self):
         self.createdItem = {}
@@ -330,6 +370,7 @@ class  KineticsWidget(EditorWidgetBase):
 
     def updateModelView(self):
         self.getMooseObj()
+        minmaxratiodict = {'xmin':self.xmin,'xmax':self.xmax,'ymin':self.ymin,'ymax':self.ymax,'xratio':self.xratio,'yratio':self.yratio}
         if not self.m:
             #At the time of model building
             # when we want an empty GraphicView while creating new model,
@@ -337,7 +378,7 @@ class  KineticsWidget(EditorWidgetBase):
             if hasattr(self, 'view') and isinstance(self.view, QtGui.QWidget):
                 self.layout().removeWidget(self.view)
            #self.sceneContainer.setSceneRect(-self.width()/2,-self.height()/2,self.width(),self.height())
-            self.view = GraphicalView(self.modelRoot,self.sceneContainer,self.border,self,self.createdItem)
+            self.view = GraphicalView(self.modelRoot,self.sceneContainer,self.border,self,self.createdItem,minmaxratiodict)
 
             if isinstance(self,kineticEditorWidget):
                 self.view.setRefWidget("editorView")
@@ -355,7 +396,7 @@ class  KineticsWidget(EditorWidgetBase):
             #self.drawLine_arrow()
             if hasattr(self, 'view') and isinstance(self.view, QtGui.QWidget):
                 self.layout().removeWidget(self.view)
-            self.view = GraphicalView(self.modelRoot,self.sceneContainer,self.border,self,self.createdItem)
+            self.view = GraphicalView(self.modelRoot,self.sceneContainer,self.border,self,self.createdItem,minmaxratiodict)
             if isinstance(self,kineticEditorWidget):
                 #self.getMooseObj()
                 self.mooseObjOntoscene()
@@ -380,10 +421,10 @@ class  KineticsWidget(EditorWidgetBase):
         # setupItem
         self.m = wildcardFind(self.modelRoot+'/##[ISA=ChemCompt]')
         if self.m:
-            self.xmin = 0.0
-            self.xmax = 1.0
-            self.ymin = 0.0
-            self.ymax = 1.0
+            # self.xmin = 0.0
+            # self.xmax = 1.0
+            # self.ymin = 0.0
+            # self.ymax = 1.0
             self.autoCordinatepos = {}
             self.srcdesConnection = {}
 
@@ -402,6 +443,7 @@ class  KineticsWidget(EditorWidgetBase):
                 self.xmin,self.xmax,self.ymin,self.ymax,self.autoCordinatepos = autoCoordinates(self.meshEntry,self.srcdesConnection)
             # TODO: size will be dummy at this point, but size I need the availiable size from the Gui
             self.size= QtCore.QSize(1000 ,550)
+
             if self.xmax-self.xmin != 0:
                 self.xratio = (self.size.width()-10)/(self.xmax-self.xmin)
             else: self.xratio = self.size.width()-10
@@ -409,8 +451,13 @@ class  KineticsWidget(EditorWidgetBase):
             if self.ymax-self.ymin:
                 self.yratio = (self.size.height()-10)/(self.ymax-self.ymin)
             else: self.yratio = (self.size.height()-10)
+            
             self.xratio = int(self.xratio)
             self.yratio = int(self.yratio)
+            if self.xratio == 0:
+                self.xratio = 1
+            if self.yratio == 0:
+                self.yratio = 1
             
     def sizeHint(self):
         return QtCore.QSize(800,400)
@@ -493,8 +540,13 @@ class  KineticsWidget(EditorWidgetBase):
                 self.mooseId_GObj[element(tabObj.getId())] = tabItem
 
             for funcObj in find_index(memb,'function'):
-                funcinfo = moose.element(funcObj.parent).path+'/info'
-                funcParent =self.mooseId_GObj[element(funcObj.parent)]
+                funcinfo = moose.element(funcObj).path+'/info'
+                if funcObj.parent.className == "ZombieBufPool" or funcObj.parent.className == "BufPool":
+                    funcinfo = moose.element(funcObj).path+'/info'
+                    Af = Annotator(funcinfo)
+                    funcParent =self.mooseId_GObj[element(funcObj.parent)]
+                elif funcObj.parent.className == "CubeMesh" or funcObj.parent.className == "CylMesh":
+                    funcParent = self.qGraCompt[cmpt]
                 funcItem = FuncItem(funcObj,funcParent)
                 self.mooseId_GObj[element(funcObj.getId())] = funcItem
                 self.setupDisplay(funcinfo,funcItem,"Function")
@@ -513,7 +565,6 @@ class  KineticsWidget(EditorWidgetBase):
     def comptChilrenBoundingRect(self):
         for k, v in self.qGraCompt.items():
             # compartment's rectangle size is calculated depending on children
-            #rectcompt = v.childrenBoundingRect()
             rectcompt = calculateChildBoundingRect(v)
             v.setRect(rectcompt.x()-10,rectcompt.y()-10,(rectcompt.width()+20),(rectcompt.height()+20))
             v.setPen(QtGui.QPen(Qt.QColor(66,66,66,100), self.comptPen, Qt.Qt.SolidLine, Qt.Qt.RoundCap, Qt.Qt.RoundJoin))
@@ -536,9 +587,22 @@ class  KineticsWidget(EditorWidgetBase):
                 bgcolor = getRandColor()
                 Annoinfo.color = str(bgcolor.name())
         if isinstance(self,kineticEditorWidget):
-            xpos,ypos = self.positioninfo(info)
+            funct = ["Function","ZombieFunction"]
+            comptt = ["CubeMesh","CylMesh"]
+
+            if objClass in funct:
+                poolt = ["ZombieBufPool","BufPool"]
+                if graphicalObj.mobj.parent.className in poolt:
+                    xpos = 0
+                    ypos = 30
+                if graphicalObj.mobj.parent.className in comptt:
+                    xpos,ypos = self.positioninfo(info)
+            else:
+                xpos,ypos = self.positioninfo(info)
+
             self.xylist = [xpos,ypos]
             self.xyCord[moose.element(info).parent] = [xpos,ypos]
+
         elif isinstance(self,kineticRunWidget):
             self.editormooseId_GObj = self.editor.getCentralWidget().mooseId_GObj
             editorItem = self.editormooseId_GObj[moose.element(info).parent]
@@ -547,8 +611,8 @@ class  KineticsWidget(EditorWidgetBase):
             #Annoinfo.x = xpos
             #Annoinfo.y = -ypos 
         graphicalObj.setDisplayProperties(xpos,ypos,textcolor,bgcolor)
-        Annoinfo.x = xpos
-        Annoinfo.y = ypos
+        #Annoinfo.x = xpos
+        #Annoinfo.y = ypos
 
     def positioninfo(self,iteminfo):
         Anno = moose.Annotator(self.modelRoot+'/info')
@@ -572,9 +636,8 @@ class  KineticsWidget(EditorWidgetBase):
             #     ypos = 1.0-(y-self.ymin)*self.yratio
             # else:
             #     ypos = (y-self.ymin)*self.yratio
-            ypos = (y-self.ymin)*self.yratio
+            ypos = 1.0 - (y-self.ymin)*self.yratio
         xpos = (x-self.xmin)*self.xratio
-
         return(xpos,ypos)
 
     def drawLine_arrow(self, itemignoreZooming=False):
@@ -601,7 +664,10 @@ class  KineticsWidget(EditorWidgetBase):
                         self.lineCord(src,des,items,itemignoreZooming)
             elif isinstance(out,list):
                 if len(out) == 0:
-                    print "Func pool doesn't have sumtotal"
+                    if inn.className == "StimulusTable":
+                        print inn.name +" doesn't have output"
+                    elif inn.className == "ZombieFunction" or inn.className == "Function":
+                        print inn.name + " doesn't have sumtotal "
                 else:
                     src = self.mooseId_GObj[inn]
                     for items in (items for items in out ):
@@ -692,7 +758,8 @@ class  KineticsWidget(EditorWidgetBase):
             l = elePath[0:pos]
             linfo = moose.Annotator(l+'/info')
             for k, v in self.qGraCompt.items():
-                rectcompt = v.childrenBoundingRect()
+                #rectcompt = v.childrenBoundingRect()
+                rectcompt = calculateChildBoundingRect(v)
                 comptBoundingRect = v.boundingRect()
                 if not comptBoundingRect.contains(rectcompt):
                     self.updateCompartmentSize(v)
@@ -709,8 +776,12 @@ class  KineticsWidget(EditorWidgetBase):
                 '''
     def updateCompartmentSize(self, compartment):
         compartmentBoundary = compartment.rect()
+        #print " compartmentBoundary ",compartmentBoundary, "  ",compartment.childrenBoundingRect()
+        #compartmentBoundary =compartment.childrenBoundingRect()
         #childrenBoundary    = compartment.childrenBoundingRect()
+        #print " 758 ",compartment.childrenBoundaryRect()
         childrenBoundary = calculateChildBoundingRect(compartment)
+        #print " ch ",childrenBoundary
         x = min(compartmentBoundary.x(), childrenBoundary.x())
         y = min(compartmentBoundary.y(), childrenBoundary.y())
         width = max(compartmentBoundary.width(), childrenBoundary.width())
@@ -732,9 +803,9 @@ class  KineticsWidget(EditorWidgetBase):
             # Checking if src (srcdes[0]) or des (srcdes[1]) is ZombieEnz,
             # if yes then need to check if cplx is connected to any mooseObject,
             # so that when Enzyme is moved, cplx connected arrow to other mooseObject(poolItem) should also be updated
-            if( type(srcdes[0]) == EnzItem):
+            if( type(srcdes[0]) == EnzItem or type(srcdes[0] == MMEnzItem)):
                 self.cplxUpdatearrow(srcdes[0])
-            elif( type(srcdes[1]) == EnzItem):
+            elif( type(srcdes[1]) == EnzItem or type(srcdes[1] == MMEnzItem)):
                 self.cplxUpdatearrow(srcdes[1])
             # For calcArrow(src,des,endtype,itemignoreZooming) is to be provided
             arrow = calcArrow(srcdes,self.itemignoreZooming,self.iconScale)

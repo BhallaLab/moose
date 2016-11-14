@@ -10,8 +10,9 @@ from moose import utils
 
 class GraphicalView(QtGui.QGraphicsView):
 
-    def __init__(self, modelRoot,parent,border,layoutPt,createdItem):
+    def __init__(self, modelRoot,parent,border,layoutPt,createdItem,minmaxratio):
         QtGui.QGraphicsView.__init__(self,parent)
+        self.minmaxratioDict = minmaxratio
         self.state = None
         self.move  = False
         self.resetState()
@@ -136,7 +137,6 @@ class GraphicalView(QtGui.QGraphicsView):
 
 
     def editorMouseMoveEvent(self, event):
-
         if self.state["press"]["mode"] == INVALID:
             self.state["move"]["happened"] = False
             return
@@ -148,7 +148,7 @@ class GraphicalView(QtGui.QGraphicsView):
             for item in self.selectedItems:
                 if isinstance(item, KineticsDisplayItem) and not isinstance(item,ComptItem) and not isinstance(item,CplxItem):
                     item.moveBy(displacement.x(), displacement.y())
-                    self.layoutPt.positionChange(item.mobj.path)            
+                    self.layoutPt.positionChange(item.mobj.path)   
             self.state["press"]["pos"] = event.pos()
             return
 
@@ -161,7 +161,8 @@ class GraphicalView(QtGui.QGraphicsView):
             actionType = str(item.data(0).toString())
             if actionType == "move":
                 QtGui.QApplication.setOverrideCursor(QtGui.QCursor(QtCore.Qt.CrossCursor))
-                initial = item.parent().pos()
+                initial = self.mapToScene(self.state["press"]["pos"])
+                #initial = item.parent().pos()
                 final = self.mapToScene(event.pos())
                 displacement = final-initial
                 if isinstance(item.parent(),KineticsDisplayItem):
@@ -169,10 +170,18 @@ class GraphicalView(QtGui.QGraphicsView):
                     if moose.exists(itemPath):
                         iInfo = itemPath+'/info'
                         anno = moose.Annotator(iInfo)
-                        anno.x = self.mapToScene(event.pos()).x()
-                        anno.y = self.mapToScene(event.pos()).y()
+                        modelAnno = moose.Annotator(self.modelRoot+'/info')
+                        if modelAnno.modeltype == "kkit":
+                            x = ((self.mapToScene(event.pos()).x())+(self.minmaxratioDict['xmin']*self.minmaxratioDict['xratio']))/self.minmaxratioDict['xratio']
+                            y = (1.0 - self.mapToScene(event.pos()).y()+(self.minmaxratioDict['ymin']*self.minmaxratioDict['yratio']))/self.minmaxratioDict['yratio']
+                            anno.x = x
+                            anno.y = y
+                        elif(modelAnno.modeltype == "new_kkit" or modelAnno.modeltype == "sbml" or modelAnno.modeltype == "cspace"):
+                            anno.x = self.mapToScene(event.pos()).x()
+                            anno.y = self.mapToScene(event.pos()).y()
                 
-                if not isinstance(item.parent(),FuncItem) and not isinstance(item.parent(),CplxItem):
+                #if not isinstance(item.parent(),FuncItem) and not isinstance(item.parent(),CplxItem):
+                if not isinstance(item.parent(),CplxItem):
                     self.removeConnector()
                     item.parent().moveBy(displacement.x(), displacement.y())
                     if isinstance(item.parent(),PoolItem):
@@ -241,8 +250,9 @@ class GraphicalView(QtGui.QGraphicsView):
     
     def editorMouseReleaseEvent(self, event):
         if self.move:
-            #self.move = False
+            self.move = False
             self.setCursor(Qt.Qt.ArrowCursor)
+
         if self.state["press"]["mode"] == INVALID:
             self.state["release"]["mode"] = INVALID
             self.resetState()
@@ -410,7 +420,6 @@ class GraphicalView(QtGui.QGraphicsView):
                 startingPosition = self.state["press"]["pos"]
                 endingPosition = event.pos()
                 displacement   = endingPosition - startingPosition
-
                 x0 = startingPosition.x() 
                 x1 = endingPosition.x()
                 y0 = startingPosition.y() 
@@ -531,6 +540,7 @@ class GraphicalView(QtGui.QGraphicsView):
             self.xDisp = 0
             self.yDisp = 0
             self.connectionSign = None
+
             if isinstance(item.mobj,PoolBase) or isinstance(item.mobj,ReacBase):
                 if l == "clone":
                     self.connectionSign = QtSvg.QGraphicsSvgItem('icons/clone.svg')
@@ -545,6 +555,7 @@ class GraphicalView(QtGui.QGraphicsView):
                     self.connectionSign.setZValue(1)
                     self.connectionSign.setToolTip("Click and drag to clone the object")
                     self.connectorlist["clone"] = self.connectionSign 
+                    
             if isinstance(item.mobj,PoolBase):
                 if l == "plot":
                     self.connectionSign = QtSvg.QGraphicsSvgItem('icons/plot.svg')
@@ -561,29 +572,45 @@ class GraphicalView(QtGui.QGraphicsView):
                     self.connectorlist["plot"] = self.connectionSign
 
             if l == "move":
-                self.connectionSign = QtSvg.QGraphicsSvgItem('icons/move.svg')
-                self.connectionSign.setData(0, QtCore.QVariant("move"))
-                self.connectionSign.setParent(self.connectionSource)
-                self.connectionSign.setToolTip("Drag to move.")
-                self.connectionSign.setScale(
-                    (1.0 * rectangle.height()) / self.connectionSign.boundingRect().height()
-                                            )
-                position = item.mapToParent(rectangle.topLeft())
-                self.xDisp = 15
-                self.yDisp = 2
-                self.connectionSign.setZValue(1)
-                self.connectorlist["move"] = self.connectionSign
+                if ((item.mobj.parent.className == "ZombieEnz") or (item.mobj.parent.className == "Enz")):
+                    pass
+                else:
+                    self.connectionSign = QtSvg.QGraphicsSvgItem('icons/move.svg')
+                    self.connectionSign.setData(0, QtCore.QVariant("move"))
+                    self.connectionSign.setParent(self.connectionSource)
+                    self.connectionSign.setToolTip("Drag to move.")
+                    if ( item.mobj.className == "ZombieFunction" or item.mobj.className == "Function"):
+                        self.connectionSign.setScale(
+                        (0.75 * rectangle.height()) / self.connectionSign.boundingRect().height()
+                                                )
+                    else:
+                        self.connectionSign.setScale(
+                            (1 * rectangle.height()) / self.connectionSign.boundingRect().height()
+                                                    )
+                    position = item.mapToParent(rectangle.topLeft())
+                    self.xDisp = 15
+                    self.yDisp = 2
+                    self.connectionSign.setZValue(1)
+                    self.connectorlist["move"] = self.connectionSign
             elif l == "delete":
-                self.connectionSign = QtSvg.QGraphicsSvgItem('icons/delete.svg')
-                self.connectionSign.setParent(self.connectionSource)
-                self.connectionSign.setData(0, QtCore.QVariant("delete"))
-                self.connectionSign.setScale(
-                    (1.0 * rectangle.height()) / self.connectionSign.boundingRect().height()
-                                            )
-                position = item.mapToParent(rectangle.topRight())
-                self.connectionSign.setZValue(1)
-                self.connectionSign.setToolTip("Delete the object")
-                self.connectorlist["delete"] = self.connectionSign
+                if ((item.mobj.parent.className == "ZombieEnz") or (item.mobj.parent.className == "Enz")):
+                    pass
+                else:
+                    self.connectionSign = QtSvg.QGraphicsSvgItem('icons/delete.svg')
+                    self.connectionSign.setParent(self.connectionSource)
+                    self.connectionSign.setData(0, QtCore.QVariant("delete"))
+                    if ( item.mobj.className == "ZombieFunction" or item.mobj.className == "Function"):
+                        self.connectionSign.setScale(
+                        (0.75 * rectangle.height()) / self.connectionSign.boundingRect().height()
+                                                )
+                    else:
+                        self.connectionSign.setScale(
+                            (1.0 * rectangle.height()) / self.connectionSign.boundingRect().height()
+                                                )
+                    position = item.mapToParent(rectangle.topRight())
+                    self.connectionSign.setZValue(1)
+                    self.connectionSign.setToolTip("Delete the object")
+                    self.connectorlist["delete"] = self.connectionSign
 
             if self.connectionSign != None:
                 self.connectionSign.setFlag(QtGui.QGraphicsItem.ItemIsSelectable,True)
@@ -1096,16 +1123,34 @@ class GraphicalView(QtGui.QGraphicsView):
             des.expr = expr
             moose.connect( src, 'nOut', des.x[numVariables], 'input' )
             
-        elif ( isinstance(moose.element(src),Function) and (moose.element(des).className=="Pool") ):
+        elif ( isinstance(moose.element(src),Function) and (moose.element(des).className=="Pool") or  
+               isinstance(moose.element(src),ZombieFunction) and (moose.element(des).className=="ZombiePool")
+            ):
                 if ((element(des).parent).className != 'Enz'):
-                    moose.connect(src, 'valueOut', des, 'increment', 'OneToOne')
+                    #moose.connect(src, 'valueOut', des, 'increment', 'OneToOne')
+                    found = False
+                    if len(moose.element(src).neighbors["valueOut"]):
+                        for psl in moose.element(src).neighbors["valueOut"]:
+                            if moose.element(psl) == moose.element(des):
+                                found = True
+                    if found == False:
+                        moose.connect(src, 'valueOut', des, 'setN', 'OneToOne')
+                    else:
+                        srcdesString = '\"'+moose.element(src).name+'\" is already connected to \"'+ moose.element(des).name +'\" \n'
+                        QtGui.QMessageBox.information(None,'Connection Not possible','{srcdesString}'.format(srcdesString = srcdesString),QtGui.QMessageBox.Ok)
+
+                    
                 else:
                     srcdesString = element(src).className+'-- EnzCplx'
                     QtGui.QMessageBox.information(None,'Connection Not possible','\'{srcdesString}\' not allowed to connect'.format(srcdesString = srcdesString),QtGui.QMessageBox.Ok)
                     callsetupItem = False
-        elif ( isinstance(moose.element(src),Function) and (moose.element(des).className=="BufPool") ):
+        elif ( isinstance(moose.element(src),Function) and (moose.element(des).className=="BufPool") or  
+               isinstance(moose.element(src),ZombieFunction) and (moose.element(des).className=="ZombieBufPool")
+            ):
                 moose.connect(src, 'valueOut', des, 'setN', 'OneToOne')
-        elif ( isinstance(moose.element(src),Function) and (isinstance(moose.element(des),ReacBase) ) ):
+        elif ( isinstance(moose.element(src),Function) and (isinstance(moose.element(des),ReacBase) ) or
+               isinstance(moose.element(src),ZombieFunction) and (moose.element(des).className=="ZombieReac")
+            ):
                 moose.connect(src, 'valueOut', des, 'setNumKf', 'OneToOne')
         elif (((isinstance(moose.element(src),ReacBase))or (isinstance(moose.element(src),EnzBase))) and (isinstance(moose.element(des),PoolBase))):
             found = False
