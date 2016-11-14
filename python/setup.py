@@ -31,7 +31,9 @@ __status__           = "Development"
 import os
 from distutils.core import setup
 
-with open( '../../VERSION', 'r' ) as f:
+script_dir = os.path.dirname( os.path.abspath( __FILE__ ) )
+
+with open( os.path.join( script_dir, '../../VERSION'), 'r' ) as f:
     version = f.read( )
 
 try:
