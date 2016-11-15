@@ -3,11 +3,10 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Gui documentation for MOOSE
-============================
+Reaction Diffusion and Electrical SIGnaling in NEURons
+=======================================================
+Rdesigneur (Reaction Diffusion and Electrical SIGnaling in NEURons) is an interface to the multiscale modeling capabilities in MOOSE.
 
-MOOSE is the Multiscale Object-Oriented Simulation Environment. It can do all these calculations together. One of its major uses is to make biologically detailed models that combine electrical and chemical signaling.
-This document describes the salient features of the Rdesigneur, a interface to the multiscale modeling capabilities in MOOSE 
 Contents:
 
 .. toctree::
