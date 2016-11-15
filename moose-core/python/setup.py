@@ -31,10 +31,15 @@ __status__           = "Development"
 import os
 from distutils.core import setup
 
-script_dir = os.path.dirname( os.path.abspath( __FILE__ ) )
+script_dir = os.path.dirname( os.path.abspath( __file__ ) )
 
-with open( os.path.join( script_dir, '../../VERSION'), 'r' ) as f:
-    version = f.read( )
+version = '3.1'
+try:
+    with open( os.path.join( script_dir, '..', 'VERSION'), 'r' ) as f:
+        version = f.read( )
+except Exception as e:
+    print( 'Failed to read VERSION %s' % e )
+    print( 'Using default 3.1' )
 
 try:
     import importlib.machinery
