@@ -1,0 +1,312 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>1. MOOSE Snippet &mdash; MOOSE 3.2 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="MOOSE 3.2 documentation" href="index.html"/>
+        <link rel="prev" title="Snippets of MOOSE" href="index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="http://moose.ncbs.res.in/" class="icon icon-home"> MOOSE
+          
+
+          
+            
+            <img src="_static/moose_logo.png" class="logo" />
+          
+          </a>
+          
+            
+            
+              <div class="version">
+                3.2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="">1. MOOSE Snippet</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#scripting-parser">1.1. Scripting Parser</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#class-features">1.2. Class features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#network-models">1.3. Network Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#single-neuron-models">1.4. Single Neuron Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#signaling-pathways">1.5. Signaling Pathways</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-scriptKineticModel">1.5.1. Define a kinetic model using the scripting in moose</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-scriptKineticSolver">1.5.2. Set up of kinetic solver</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#multi-scale-models">1.6. Multi scale models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#d-graphics">1.7. 3-D graphics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#load-run-saving-pre-existing-model-files">1.8. Load-Run-Saving pre-existing model files</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-loadKineticModel">1.8.1. Load Kinetics Models</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-loadSbmlmodel">1.8.2. Load SBML Models</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-loadCspaceModel">1.8.3. Load Cspace Models</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-convert_Genesis2Sbml">1.8.4. Save Models to Sbml format</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">MOOSE</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="http://moose.ncbs.res.in">MOOSE</a> &raquo;</li>
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>1. MOOSE Snippet</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/snippet.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="moose-snippet">
+<h1>1. MOOSE Snippet<a class="headerlink" href="#moose-snippet" title="Permalink to this headline">¶</a></h1>
+<p>The MOOSE Snippet contains examples showing you how to do specific
+tasks in MOOSE.</p>
+<div class="section" id="scripting-parser">
+<h2>1.1. Scripting Parser<a class="headerlink" href="#scripting-parser" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="class-features">
+<h2>1.2. Class features<a class="headerlink" href="#class-features" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="network-models">
+<h2>1.3. Network Models<a class="headerlink" href="#network-models" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="single-neuron-models">
+<h2>1.4. Single Neuron Models<a class="headerlink" href="#single-neuron-models" title="Permalink to this headline">¶</a></h2>
+<p>Some salient properties of neuronal building blocks in MOOSE are described below.</p>
+</div>
+<div class="section" id="signaling-pathways">
+<h2>1.5. Signaling Pathways<a class="headerlink" href="#signaling-pathways" title="Permalink to this headline">¶</a></h2>
+<p>This section show some of the chemical signaling pathways related settings</p>
+<div class="section" id="module-scriptKineticModel">
+<span id="define-a-kinetic-model-using-the-scripting-in-moose"></span><h3>1.5.1. Define a kinetic model using the scripting in moose<a class="headerlink" href="#module-scriptKineticModel" title="Permalink to this headline">¶</a></h3>
+<p>This example illustrates how to define a kinetic model using the
+scripting interface. Normally one uses standard model formats like
+SBML or kkit to concisely define kinetic models, but in some cases one
+would like to modify the model through the script.
+This example creates a bistable model having two enzymes and a reaction.
+One of the enzymes is autocatalytic.
+The model is set up to run using default Exponential Euler integration.
+The snippet scriptKineticSolver.py uses the much better GSL 
+Runge-Kutta-Fehlberg integration scheme on this same model.</p>
+</div>
+<div class="section" id="module-scriptKineticSolver">
+<span id="set-up-of-kinetic-solver"></span><h3>1.5.2. Set up of kinetic solver<a class="headerlink" href="#module-scriptKineticSolver" title="Permalink to this headline">¶</a></h3>
+</div>
+</div>
+<div class="section" id="multi-scale-models">
+<h2>1.6. Multi scale models<a class="headerlink" href="#multi-scale-models" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="d-graphics">
+<h2>1.7. 3-D graphics<a class="headerlink" href="#d-graphics" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="load-run-saving-pre-existing-model-files">
+<h2>1.8. Load-Run-Saving pre-existing model files<a class="headerlink" href="#load-run-saving-pre-existing-model-files" title="Permalink to this headline">¶</a></h2>
+<p>This section of the documentation explains how to load-run-save predefined models in MOOSE.</p>
+<div class="section" id="module-loadKineticModel">
+<span id="load-kinetics-models"></span><h3>1.8.1. Load Kinetics Models<a class="headerlink" href="#module-loadKineticModel" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="loadKineticModel.main">
+<code class="descclassname">loadKineticModel.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/loadKineticModel.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#loadKineticModel.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>This example illustrates loading, running, and saving a kinetic model 
+defined in kkit format. It uses a default kkit model but you can specify another using the command line <code class="docutils literal"><span class="pre">python</span> <span class="pre">filename</span> <span class="pre">runtime</span> <span class="pre">solver</span></code>. We use the gsl solver here. The model already defines a couple of plots and sets the runtime to 20 seconds.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-loadSbmlmodel">
+<span id="load-sbml-models"></span><h3>1.8.2. Load SBML Models<a class="headerlink" href="#module-loadSbmlmodel" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="loadSbmlmodel.main">
+<code class="descclassname">loadSbmlmodel.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/loadSbmlmodel.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#loadSbmlmodel.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>This example illustrates loading, running of an SBML model defined in XML format.</p>
+<p>The model 00001-sbml-l3v1.xml is taken from l3v1 SBML testcase.</p>
+<p>Plots are setup.</p>
+<p>Model is run for 20sec.</p>
+<p>As a general rule we created model under &#8216;/path/model&#8217; and plots under &#8216;/path/graphs&#8217;.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-loadCspaceModel">
+<span id="load-cspace-models"></span><h3>1.8.3. Load Cspace Models<a class="headerlink" href="#module-loadCspaceModel" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="loadCspaceModel.main">
+<code class="descclassname">loadCspaceModel.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/loadCspaceModel.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#loadCspaceModel.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>This example illustrates loading and running, a kinetic model 
+defined in cspace format. We use the gsl solver here. The model already
+defines a couple of plots and sets the runtime to 3000 seconds.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-convert_Genesis2Sbml">
+<span id="save-models-to-sbml-format"></span><h3>1.8.4. Save Models to Sbml format<a class="headerlink" href="#module-convert_Genesis2Sbml" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="convert_Genesis2Sbml.main">
+<code class="descclassname">convert_Genesis2Sbml.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/convert_Genesis2Sbml.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#convert_Genesis2Sbml.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>This example illustrates loading a kinetic model defined in Genesis format
+into Moose using loadModel function and using writeSBML function
+one can save the model into SBML format.</p>
+<p>Moose needs to be compiled with libsbml</p>
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="Snippets of MOOSE" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'3.2',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

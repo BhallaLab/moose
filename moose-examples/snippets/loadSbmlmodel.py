@@ -70,8 +70,10 @@ def main():
     
     # Loading the sbml file into MOOSE, models are loaded in path/model
     sbmlId = mooseReadSBML(mfile,'/sbml')
-        
-    if sbmlId.path != '/':
+    if isinstance(sbmlId, (list, tuple)):
+	    print sbmlId
+    elif sbmlId.path != '/':
+    
         s1 = moose.element('/sbml/model/compartment/S1')
         s2= moose.element('/sbml/model/compartment/S2')
                           
