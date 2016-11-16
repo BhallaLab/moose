@@ -236,12 +236,12 @@ endif()
 if(HDF5_STATIC_HOME)
     SET(HDF5_INCLUDE_DIRS "${HDF5_STATIC_HOME}/include")
     find_library(HDF5_LIBRARY 
-        NAME libhdf5-static.a
+        NAMES libhdf5-static.a libhdf5.a
         PATHS ${HDF5_STATIC_HOME}/lib ${HDF5_STATIC_HOME}/lib64
         NO_DEFAULT_PATH
         )
     find_library(HDF5_HL_LIBRARY
-        NAME libhdf5_hl-static.a
+        NAMES libhdf5_hl-static.a libhdf5_hl.a
         PATHS ${HDF5_STATIC_HOME}/lib ${HDF5_STATIC_HOME}/lib64
         NO_DEFAULT_PATH
         )
