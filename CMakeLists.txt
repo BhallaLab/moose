@@ -13,37 +13,24 @@ option(WITH_CUDA "Use CUDA/GPU" OFF)
 option(WITH_MPI "Use MPI" OFF)
 
 ## intialize paths
-set(MOOSE_CORE_DIR "${CMAKE_SOURCE_DIR}/moose-core")
+set(MOOSE_CORE_SOURCE_DIR "${CMAKE_SOURCE_DIR}/moose-core")
 set(MOOSE_CORE_BUILD_DIR ${CMAKE_BINARY_DIR}/_build_moose_core)
 set(MOOSE_CORE_INSTALL_DIR ${CMAKE_BINARY_DIR}/_install_moose_core)
-FILE(MAKE_DIRECTORY ${MOOSE_CORE_BUILD_DIR})
+file(MAKE_DIRECTORY ${MOOSE_CORE_BUILD_DIR})
 set(DATA_DIR ${CMAKE_SOURCE_DIR}/data)
 
 set(OUTPUT_MOOSEBIN ${MOOSE_CORE_BUILD_DIR}/moose.bin)
-set(OUTPUT_MOOSESDIST ${MOOSE_CORE_BUILD_DIR}/moose-${MOOSE_VERSION}.tar.gz)
+
+configure_file( ${CMAKE_SOURCE_DIR}/build_moose_core.sh.in 
+    ${CMAKE_BINARY_DIR}/build_moose_core.sh )
+
+add_custom_target( moose-core ALL DEPENDS ${OUTPUT_MOOSEBIN} )
+add_custom_command( OUTPUT ${OUTPUT_MOOSEBIN}
+    COMMAND MAKE=$(MAKE) bash -c ${CMAKE_BINARY_DIR}/build_moose_core.sh
+    VERBATIM
+    )
 
 find_package(PythonInterp REQUIRED)
-include(ExternalProject)
-ExternalProject_Add(
-   moose-core
-   PREFIX ${CMAKE_CURRENT_BINARY_DIR}
-   SOURCE_DIR  ${CMAKE_SOURCE_DIR}/moose-core
-   BINARY_DIR ${MOOSE_CORE_BUILD_DIR}
-   CMAKE_ARGS -DCMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER} 
-       -DVERSION=${MOOSE_VERSION}
-       -DCMAKE_INSTALL_PREFIX=${MOOSE_CORE_INSTALL_DIR}
-       -DPYTHON_EXECUTABLE=${PYTHON_EXECUTABLE}
-       -DDEBUG=${DEBUG}
-       -DWITH_DOC=${WITH_DOC}
-       -DWITH_BOOST=${WITH_BOOST}
-       -DWITH_MPI=${WITH_MPI}
-       -DWITH_CUDA=${WITH_CUDA}
-   TEST_COMMAND ""     # No tests
-) 
-
-INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}}/moose-core/include)
-LINK_DIRECTORIES(${CMAKE_SOURCE_DIR}}/moose-core/lib)
-
 ## moose-gui
 ## TODO: moose-gui should be a python module.
 set(MOOSE_GUI_DIR ${CMAKE_SOURCE_DIR}/moose-gui)

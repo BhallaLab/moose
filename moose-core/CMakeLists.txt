@@ -94,36 +94,15 @@ option(DEBUG "Build with debug support" OFF)
 option(GPROF "Build for profiling using gprof" OFF)
 option(ENABLE_UNIT_TESTS "Enable unit tests (DEBUG should also be ON)" OFF)
 option(WITH_PYTHON "Build native python extension" ON)
-option(WITH_CYTHON "Build python extension using Cython. (experimental)" OFF)
 option(WITH_MPI  "Enable Openmpi support" OFF)
 option(WITH_BOOST "Use boost library instead of GSL" OFF)
 option(WITH_GSL  "Use gsl-library. Alternative is WITH_BOOST" ON)
-
-# If GSL_STATIC_HOME is set, we use it to search for static gsl libs.
-option(GSL_STATIC_HOME 
-    "Path prefix where static gsl library can be found e.g. /opt/sw/gsl116 " 
-    OFF
-    )
-option(HDF5_STATIC_HOME
-    "Path prefix where static hdf5 library can be found e.g /opt/sw/hdf5 "
-    OFF
-    )
 
 ################################# CMKAE MACROS #################################
 
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules")
 
 ############################ BUILD CONFIGURATION #################################
-
-# VERBOSITY OF OUTPUT
-if(VERBOSITY)
-    message(STATUS "Verbosity of output is ${VERBOSITY}. This is not implemented
-    yet!")
-    add_definitions(-DVERBOSITY=${VERBOSITY})
-else()
-    message(STATUS "Moose will be quiet")
-    add_definitions(-DQUIET_MODE)
-endif()
 
 # Default macros
 add_definitions(-DUSE_GENESIS_PARSER)
@@ -232,29 +211,8 @@ elseif(WITH_BOOST)
     endif(BOOST_RANDOM_DEVICE_EXISTS)
 endif()
 
-## Setup hdf5
-if(HDF5_STATIC_HOME)
-    SET(HDF5_INCLUDE_DIRS "${HDF5_STATIC_HOME}/include")
-    find_library(HDF5_LIBRARY 
-        NAMES libhdf5-static.a libhdf5.a
-        PATHS ${HDF5_STATIC_HOME}/lib ${HDF5_STATIC_HOME}/lib64
-        NO_DEFAULT_PATH
-        )
-    find_library(HDF5_HL_LIBRARY
-        NAMES libhdf5_hl-static.a libhdf5_hl.a
-        PATHS ${HDF5_STATIC_HOME}/lib ${HDF5_STATIC_HOME}/lib64
-        NO_DEFAULT_PATH
-        )
-    SET(HDF5_LIBRARIES ${HDF5_LIBRARY} ${HDF5_HL_LIBRARY})
-    SET(HDF5_FOUND TRUE)
-ELSE(HDF5_STATIC_HOME)
-    pkg_check_modules(HDF5 hdf5)
-    if(NOT HDF5_FOUND)
-        message(STATUS "pkg-config could not find hdf5. fallback to default")
-        find_package(HDF5 COMPONENTS CXX HL REQUIRED)
-     endif()
-endif(HDF5_STATIC_HOME)
 
+find_package(HDF5 COMPONENTS CXX HL)
 if(NOT HDF5_FOUND)
     message(
         "==================================================================\n"
@@ -269,13 +227,6 @@ if(NOT HDF5_FOUND)
         " variable HDF5_ROOT to the location. Rerun cmake \n"
         "================================================================ \n"
         )
-ELSEIF(HDF5_FOUND AND (NOT HDF5_STATIC_HOME))
-    if(HDF5_HL_LIBRARIES)
-        set(HDF5_LIBRARIES ${HDF5_HL_LIBRARIES})
-    else()
-        set(HDF5_LIBRARIES "-lhdf5 -lhdf5_hl")
-    endif()
-    include_directories(${HDF5_INCLUDE_DIRS})
 endif(NOT HDF5_FOUND)
 
 if(HDF5_FOUND)
@@ -347,15 +298,6 @@ endif(WITH_BOOST)
 # Here we make sure that the correct static version is linked; if a correct
 # shared version is found then link the shared version in SYSTEM_SHARED_LIBS.
 
-# If CMAKE_STATIC_LIBRARIES are mentiond on command line, use it as list.
-set(STATIC_LIBRARIES  "")
-
-if(HDF5_STATIC_HOME)
-    list(APPEND STATIC_LIBRARIES ${HDF5_LIBRARIES})
-elseif(HDF5_FOUND)
-    list(APPEND SYSTEM_SHARED_LIBS ${HDF5_LIBRARIES})
-endif()
-
 if(WITH_GSL)
     if(GSL_STATIC_HOME)
         message(STATUS "Using STATIC gsl libraries: ${GSL_LIBRARIES}")
@@ -365,11 +307,6 @@ if(WITH_GSL)
         list(APPEND SYSTEM_SHARED_LIBS ${GSL_LIBRARIES})
     endif()
 endif()
-
-# Deprecated.
-#if(READLINE_FOUND AND TERMCAP_FOUND)
-#    list(APPEND SYSTEM_SHARED_LIBS ${Readline_LIBRARY} ${TERMCAP_LIBRARY})
-#endif()
 
 if(WITH_MPI)
     if(MPI_CXX_FOUND)
@@ -386,16 +323,6 @@ else()
     add_subdirectory(external/muparser)
     list(APPEND MOOSE_LIBRARIES muparser)
 endif()
-
-#pkg_check_modules(TINYXML tinyxml)
-#if(TINYXML_FOUND)
-    #message(STATUS "Using system tinyxml ${TINYXML_VERSION}")
-    #list(APPEND SYSTEM_SHARED_LIBS ${TINYXML_LIBRARIES})
-#else()
-    #message(STATUS "Using private tinyxml")
-    #add_subdirectory(external/tinyxml)
-    #list(APPEND MOOSE_LIBRARIES tinyxml)
-#endif()
 
 ###################################### LINKING #################################
 list(APPEND MOOSE_LIBRARIES
@@ -427,7 +354,6 @@ if(MACOSX)
     target_link_libraries(libmoose
         "-Wl,-all_load"
         ${MOOSE_LIBRARIES}
-        ${STATIC_LIBRARIES}
         )
 
     target_link_libraries(libmoose
@@ -438,7 +364,6 @@ ELSE(MACOSX)
     target_link_libraries(libmoose 
         "-Wl,--whole-archive"
         ${MOOSE_LIBRARIES}
-        ${STATIC_LIBRARIES}
         "-Wl,--no-whole-archive"
         ${SYSTEM_SHARED_LIBS}
         )
@@ -446,13 +371,7 @@ endif(MACOSX)
 
 add_dependencies(moose.bin libmoose)
 
-# This target is only for testing purpose. It links to libmoose.
-if(CMAKE_VERSION VERSION_LESS "2.8.0")
-    message(STATUS "Using a fix for cmake ( < 2.8)")
-    target_link_libraries(moose.bin PUBLIC moose ${CMAKE_DL_LIBS})
-ELSE()
-    target_link_libraries(moose.bin LINK_PUBLIC moose ${CMAKE_DL_LIBS})
-ENDIF()
+target_link_libraries(moose.bin LINK_PUBLIC moose ${CMAKE_DL_LIBS})
 
 ######################### BUILD PYMOOSE ########################################
 # Root of all python module.

@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# NOTICE: This file is parsed by cmake to create a shell script. Not all syntax
+# will play well with cmake. CMAKE replaces @FOO@ and ${FOO} with cmake variable
+# values.
+
+if [ -z "$MAKE" ]; then
+    MAKE=make
+fi
+
+echo "Building MOOSE"
+(
+    cd @MOOSE_CORE_BUILD_DIR@
+    cmake -DCMAKE_INSTALL_PREFIX=@MOOSE_CORE_INSTALL_DIR@ \
+        @CMAKE_MOOSE_CORE_ARGS@ \
+        @MOOSE_CORE_SOURCE_DIR@ 
+    $MAKE
+    $MAKE install
+)
+
