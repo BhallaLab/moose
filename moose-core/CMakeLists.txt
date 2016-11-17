@@ -157,42 +157,28 @@ include_directories(msg basecode)
 set_target_properties(libmoose PROPERTIES COMPILE_DEFINITIONS  "MOOSE_LIB")
 set_target_properties(libmoose PROPERTIES PREFIX "")
 
+## Variable to collect all static libraries.
+set(STATIC_LIBRARIES "" )
+
 if(WITH_GSL)
-    if(GSL_STATIC_HOME)
-        SET(GSL_INCLUDE_DIRS "${GSL_STATIC_HOME}/include")
-        find_library(GSL_LIBRARY 
-            NAME libgsl.a 
-            PATHS ${GSL_STATIC_HOME}/lib ${GSL_STATIC_HOME}/lib64
-            NO_DEFAULT_PATH
+    find_package(GSL 1.16)
+    if(NOT GSL_FOUND)
+        message(FATAL_ERROR 
+            "=====================================================================\n"
+            " FATAL gsl(>1.16) not found.\n\n"
+            " MOOSE requires Gnu Scientific Library (GSL) 1.16 or higher. \n"
+            " Please install the `dev` or `devel` package e.g. \n"
+            "     $ sudo apt-get install libgsl0-dev \n"
+            "     $ sudo yum install libgsl-devel \n"
+            "     $ brew install gsl \n\n"
+            " Or build and install gsl from source code \n"
+            "     https://www.gnu.org/software/gsl/ \n"
+            " After installing gsl, rerun cmake.\n\n"
+            " If you install gsl in non-standard place, set the GSL_HOME environment \n"
+            " variable. CMAKE use this to search for required files. \n"
+            "====================================================================\n"
             )
-        find_library(GSLCBLAS_LIBRARY
-            NAME libgslcblas.a 
-            PATHS ${GSL_STATIC_HOME}/lib ${GSL_STATIC_HOME}/lib64 
-            NO_DEFAULT_PATH
-            )
-        SET(GSL_LIBRARIES ${GSL_LIBRARY} ${GSLCBLAS_LIBRARY})
-        message(STATUS "STATIC GSL_LIBRARIES ${GSL_LIBRARIES}")
-        set(GSL_FOUND TRUE)
-    ELSE()
-        find_package(GSL 1.16)
-        if(NOT GSL_FOUND)
-            message(FATAL_ERROR 
-                "=====================================================================\n"
-                " FATAL gsl(>1.16) not found.\n\n"
-                " MOOSE requires Gnu Scientific Library (GSL) 1.16 or higher. \n"
-                " Please install the `dev` or `devel` package e.g. \n"
-                "     $ sudo apt-get install libgsl0-dev \n"
-                "     $ sudo yum install libgsl-devel \n"
-                "     $ brew install gsl \n\n"
-                " Or build and install gsl from source code \n"
-                "     https://www.gnu.org/software/gsl/ \n"
-                " After installing gsl, rerun cmake.\n\n"
-                " If you install gsl in non-standard place, set the GSL_HOME environment \n"
-                " variable. CMAKE use this to search for required files. \n"
-                "====================================================================\n"
-                )
-        endif(NOT GSL_FOUND)
-    endif()
+    endif(NOT GSL_FOUND)
     add_definitions(-DUSE_GSL)
     # GSL is also used in RNG (whenever applicable), therefore include paths are
     # top level.
@@ -232,6 +218,14 @@ endif(NOT HDF5_FOUND)
 if(HDF5_FOUND)
     add_definitions( -DUSE_HDF5 )
     include_directories( ${HDF5_INCLUDE_DIRS} )
+    foreach(HDF5_LIB ${HDF5_LIBRARIES})
+        get_filename_component( HDF5_LIB_EXT ${HDF5_LIB} EXT )
+        if( ${HDF5_LIB_EXT} STREQUAL ".a" )
+            list(APPEND STATIC_LIBRARIES ${HDF5_LIB} )
+        else( )
+            list(APPEND SYSTEM_SHARED_LIBS ${HDF5_LIB} )
+        endif( )
+    endforeach( )
 endif( HDF5_FOUND )
 
 # This is a fix for new HDF5 package on Debian/Ubuntu which installs hdf5
@@ -264,6 +258,47 @@ if(WITH_MPI)
     endif()
 endif(WITH_MPI)
 
+# These are always shared libraries.
+set(SYSTEM_SHARED_LIBS ${LibXML2_LIBRARIES})
+if(WITH_BOOST)
+    list(APPEND SYSTEM_SHARED_LIBS ${LAPACK_LIBRARIES})
+    list(APPEND SYSTEM_SHARED_LIBS ${Boost_LIBRARIES})
+endif(WITH_BOOST)
+
+# These libraries could be static of dynamic.
+# When building packages on OBS or launchpad, we build static library of a
+# dependencies if a correct version is not found. 
+# Here we make sure that the correct static version is linked; if a correct
+# shared version is found then link the shared version in SYSTEM_SHARED_LIBS.
+if(WITH_GSL)
+    message(STATUS "Using STATIC gsl libraries: ${GSL_LIBRARIES}")
+
+    foreach(GSL_LIB ${GSL_LIBRARIES} )
+        get_filename_component( GSL_LIB_EXT ${GSL_LIB} EXT )
+        if( GSL_LIB_EXT STREQUAL ".a" )
+            list(APPEND STATIC_LIBRARIES ${GSL_LIB})
+        else()
+            list(APPEND SYSTEM_SHARED_LIBS ${GSL_LIB})
+        endif( )
+    endforeach( )
+endif()
+
+if(WITH_MPI)
+    if(MPI_CXX_FOUND)
+        list(APPEND SYSTEM_SHARED_LIBS ${MPI_CXX_LIBRARIES})
+    endif()
+endif(WITH_MPI)
+
+pkg_check_modules(MUPARSER muparser)
+if(MUPARSER_FOUND)
+    message(STATUS "Using system muparser ${MUPARSER_VERSION}")
+    list(APPEND SYSTEM_SHARED_LIBS ${MUPARSER_LIBRARIES})
+else()
+    message(STATUS "Using private muparser")
+    add_subdirectory(external/muparser)
+    list(APPEND MOOSE_LIBRARIES muparser)
+endif()
+
 # Add subdirectroeis
 add_subdirectory(basecode)
 add_subdirectory(msg)
@@ -284,45 +319,6 @@ add_subdirectory(benchmarks)
 add_subdirectory(kinetics)
 add_subdirectory(synapse)
 add_subdirectory(intfire)
-
-# These are always shared libraries.
-set(SYSTEM_SHARED_LIBS ${LibXML2_LIBRARIES})
-if(WITH_BOOST)
-    list(APPEND SYSTEM_SHARED_LIBS ${LAPACK_LIBRARIES})
-    list(APPEND SYSTEM_SHARED_LIBS ${Boost_LIBRARIES})
-endif(WITH_BOOST)
-
-# These libraries could be static of dynamic.
-# When building packages on OBS or launchpad, we build static library of a
-# dependencies if a correct version is not found. 
-# Here we make sure that the correct static version is linked; if a correct
-# shared version is found then link the shared version in SYSTEM_SHARED_LIBS.
-
-if(WITH_GSL)
-    if(GSL_STATIC_HOME)
-        message(STATUS "Using STATIC gsl libraries: ${GSL_LIBRARIES}")
-        list(APPEND STATIC_LIBRARIES ${GSL_LIBRARIES})
-    else()
-        message(STATUS "Using system gsl : ${GSL_LIBRARIES}")
-        list(APPEND SYSTEM_SHARED_LIBS ${GSL_LIBRARIES})
-    endif()
-endif()
-
-if(WITH_MPI)
-    if(MPI_CXX_FOUND)
-        list(APPEND SYSTEM_SHARED_LIBS ${MPI_CXX_LIBRARIES})
-    endif()
-endif(WITH_MPI)
-
-pkg_check_modules(MUPARSER muparser)
-if(MUPARSER_FOUND)
-    message(STATUS "Using system muparser ${MUPARSER_VERSION}")
-    list(APPEND SYSTEM_SHARED_LIBS ${MUPARSER_LIBRARIES})
-else()
-    message(STATUS "Using private muparser")
-    add_subdirectory(external/muparser)
-    list(APPEND MOOSE_LIBRARIES muparser)
-endif()
 
 ###################################### LINKING #################################
 list(APPEND MOOSE_LIBRARIES
@@ -354,6 +350,7 @@ if(MACOSX)
     target_link_libraries(libmoose
         "-Wl,-all_load"
         ${MOOSE_LIBRARIES}
+        ${STATIC_LIBRARIES}
         )
 
     target_link_libraries(libmoose
@@ -364,6 +361,7 @@ ELSE(MACOSX)
     target_link_libraries(libmoose 
         "-Wl,--whole-archive"
         ${MOOSE_LIBRARIES}
+        ${STATIC_LIBRARIES}
         "-Wl,--no-whole-archive"
         ${SYSTEM_SHARED_LIBS}
         )
