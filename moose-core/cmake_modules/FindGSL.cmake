@@ -22,6 +22,7 @@
 ## --------------------------------
 ##
 
+message( STATUS "GSL_ROOT_DIR value $ENV{GSL_ROOT_DIR}")
 
 IF(WIN32)
 
@@ -48,13 +49,11 @@ IF(WIN32)
   
 ELSE(WIN32)
   IF(UNIX) 
-    SET(GSL_CONFIG_PREFER_PATH "$ENV{GSL_HOME}/bin")
-    # MESSAGE("++ DEBUG: GSL_CONFIG_PREFER_PATH: ${GSL_CONFIG_PREFER_PATH}")
-     
+    SET(GSL_CONFIG_PREFER_PATH "$ENV{GSL_ROOT_DIR}/bin")
     # GSL_CONFIG must be cleared. This script may be called again after installing
     # the proper version of gsl
-    if(EXISTS "$ENV{GSL_HOME}")
-	set(GSL_CONFIG "$ENV{GSL_HOME}/bin/gsl-config")
+    if(EXISTS "$ENV{GSL_ROOT_DIR}")
+	set(GSL_CONFIG "$ENV{GSL_ROOT_DIR}/bin/gsl-config")
 	MESSAGE(STATUS "gsl-config from environment variable: ${GSL_CONFIG}")
 	set(GSL_INCLUDE_DIRS)
         set(GSL_LIBRARIES)

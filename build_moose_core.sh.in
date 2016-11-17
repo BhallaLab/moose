@@ -16,5 +16,6 @@ echo "Building MOOSE"
         @MOOSE_CORE_SOURCE_DIR@ 
     $MAKE
     $MAKE install
+    ctest --output-on-failure || echo "Some tests failed"
 )
 
