@@ -16,7 +16,8 @@ import sys, os
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-sys.path.insert(0, os.path.abspath('../../../python'))
+
+sys.path.insert(0, os.path.abspath('../../../../moose-core/python'))
 sys.path.append(os.path.abspath('../../../../moose-examples/snippets'))
 sys.path.append(os.path.abspath('../../../../moose-examples/tutorials/ChemicalOscillators'))
 sys.path.append(os.path.abspath('../../../../moose-examples/tutorials/ChemicalBistables'))
@@ -122,7 +123,7 @@ html_theme = 'sphinx_rtd_theme'
 
 # The name of an image file (relative to this directory) to place at the top
 # of the sidebar.
-html_logo = '../../images/moose_logo.png'
+html_logo = '../../../images/moose_logo.png'
 
 # The name of an image file (within the static path) to use as favicon of the
 # docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
@@ -201,7 +202,7 @@ latex_documents = [
 
 # The name of an image file (relative to this directory) to place at the top of
 # the title page.
-latex_logo = '../../images/moose_logo.png'
+latex_logo = '../../../images/moose_logo.png'
 
 # For "manual" documents, if this is true, then toplevel headings are parts,
 # not chapters.

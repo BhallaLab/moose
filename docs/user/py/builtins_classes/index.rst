@@ -5,7 +5,7 @@
 
 the Multiscale Object-Oriented Simulation Environment
 =====================================================
-The MOOSE Cookbook contains recipes showing you, how to do specific tasks in MOOSE
+Automatically generated documentation for MOOSE built-in functions and MOOSE classes, as accessed through Python.
 
 Contents:
 
@@ -13,7 +13,8 @@ Contents:
    :maxdepth: 2
    :numbered:
 
-   moose_cookbook
+   moose_builtins
+   moose_classes
 
 Indices and tables
 ==================
