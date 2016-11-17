@@ -48,7 +48,7 @@
 built into pymoose and moose python scripts."""
 
 import sys
-sys.path.append('../../../python')
+sys.path.append('../../../../moose-core/python')
 import cStringIO
 import re
 import inspect
@@ -173,7 +173,7 @@ def extract_all_func_doc(docio, indent='   '):
 if __name__ == '__main__':
     classes_doc = 'moose_classes.rst'
     builtins_doc = 'moose_builtins.rst'
-    overview_doc = 'moose_overview.rst'
+    #overview_doc = 'moose_overview.rst'
     if len(sys.argv)  > 1:
         classes_doc = sys.argv[1]
     if len(sys.argv) > 2:
