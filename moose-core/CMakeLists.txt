@@ -159,6 +159,8 @@ set_target_properties(libmoose PROPERTIES PREFIX "")
 
 ## Variable to collect all static libraries.
 set(STATIC_LIBRARIES "" )
+# Collect all shared libraries here.
+set(SYSTEM_SHARED_LIBS ${LibXML2_LIBRARIES})
 
 if(WITH_GSL)
     find_package(GSL 1.16)
@@ -262,8 +264,6 @@ if(WITH_MPI)
     endif()
 endif(WITH_MPI)
 
-# These are always shared libraries.
-set(SYSTEM_SHARED_LIBS ${LibXML2_LIBRARIES})
 if(WITH_BOOST)
     list(APPEND SYSTEM_SHARED_LIBS ${LAPACK_LIBRARIES})
     list(APPEND SYSTEM_SHARED_LIBS ${Boost_LIBRARIES})
