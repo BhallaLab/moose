@@ -4,8 +4,9 @@
 # 
 # GSL_FOUND       = system has GSL lib
 #
-# GSL_LIBRARIES   = full path to the libraries
-#    on Unix/Linux with additional linker flags from "gsl-config --libs"
+# GSL_VERSION       = gsl version
+#
+# GSL_LIBRARIES   =  name of the libraries.
 #
 # GSL_INCLUDE_DIRS      = where to find headers 
 # 
@@ -73,7 +74,7 @@ ELSE(WIN32)
             /opt/lib /opt/lib64
         )
 
-    FIND_PATH(GSL_INCLUDE_DIRS NAMES gsl/gsl_blas.h gsl/gsl.h
+    FIND_PATH(GSL_INCLUDE_DIRS NAMES gsl/gsl_blas.h
         PATHS 
             $ENV{GSL_ROOT_DIR}/include $ENV{GSL_ROOT_DIR}/include
             /opt/include /opt/include
@@ -85,11 +86,18 @@ ELSE(WIN32)
 
 ENDIF(WIN32)
 
+# FIND version
+file(READ "${GSL_INCLUDE_DIRS}/gsl/gsl_version.h" GSL_VERSION_TEXT)
+string(REGEX REPLACE ".*define[ ]+GSL_MAJOR_VERSION[ ]*([0-9]+).*"  "\\1"
+    GSL_MAJOR_VERSION "${GSL_VERSION_TEXT}")
+string(REGEX REPLACE ".*define[ ]+GSL_MINOR_VERSION[ ]*([0-9]+).*"  "\\1"
+    GSL_MINOR_VERSION "${GSL_VERSION_TEXT}")
+set(GSL_VERSION "${GSL_MAJOR_VERSION}.${GSL_MINOR_VERSION}")
 
-IF(GSL_LIBRARIES)
-    IF(GSL_INCLUDE_DIRS OR GSL_CXX_FLAGS)
+IF(GSL_LIBRARIES AND GSL_VERSION)
+    IF(GSL_INCLUDE_DIRS)
         SET(GSL_FOUND 1)
         MESSAGE(STATUS "Found GSL ${GSL_LIBRARIES}")
-    ENDIF(GSL_INCLUDE_DIRS OR GSL_CXX_FLAGS)
-ENDIF(GSL_LIBRARIES)
+    ENDIF(GSL_INCLUDE_DIRS)
+ENDIF()
 
