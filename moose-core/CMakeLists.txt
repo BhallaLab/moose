@@ -218,7 +218,7 @@ endif(NOT HDF5_FOUND)
 if(HDF5_FOUND)
     add_definitions( -DUSE_HDF5 )
     include_directories( ${HDF5_INCLUDE_DIRS} )
-    foreach(HDF5_LIB ${HDF5_CXX_LIBRARIES} ${HDF5_HL_LIBRARIES} )
+    foreach(HDF5_LIB ${HDF5_LIBRARIES} )
         if(HDF5_LIB)
             get_filename_component( HDF5_LIB_EXT ${HDF5_LIB} EXT )
             if(HDF5_LIB_EXT)
@@ -269,14 +269,11 @@ if(WITH_BOOST)
     list(APPEND SYSTEM_SHARED_LIBS ${Boost_LIBRARIES})
 endif(WITH_BOOST)
 
-# These libraries could be static of dynamic.
-# When building packages on OBS or launchpad, we build static library of a
-# dependencies if a correct version is not found. 
-# Here we make sure that the correct static version is linked; if a correct
-# shared version is found then link the shared version in SYSTEM_SHARED_LIBS.
+# These libraries could be static of dynamic. We need to discrimate between
+# these two types because of --whole-archive option. See
+# BhallaLab/moose-core#66,
 if(WITH_GSL)
     message(STATUS "Using STATIC gsl libraries: ${GSL_LIBRARIES}")
-
     foreach(GSL_LIB ${GSL_LIBRARIES} )
         if(GSL_LIB)
             get_filename_component( GSL_LIB_EXT ${GSL_LIB} EXT )
@@ -351,6 +348,11 @@ list(APPEND MOOSE_LIBRARIES
     basecode
     )
 
+# Make sure to remove duplicates.
+list(REMOVE_DUPLICATES STATIC_LIBRARIES)
+if(SYSTEM_SHARED_LIBS)
+    list(REMOVE_DUPLICATES SYSTEM_SHARED_LIBS)
+endif( )
 
 # MAC linker does not understand many of gnu-ld options.
 message( STATUS "Shared libs: ${SYSTEM_SHARED_LIBS}")
