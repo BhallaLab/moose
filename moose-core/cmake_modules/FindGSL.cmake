@@ -25,7 +25,10 @@
 #
 
 # Set this envrionment variable to search in this path first.
-message( STATUS "GSL_ROOT_DIR value $ENV{GSL_ROOT_DIR}")
+SET(GSL_ROOT_DIR $ENV{GSL_ROOT_DIR})
+if(GSL_ROOT_DIR)
+    message( STATUS "Debug: GSL_ROOT_DIR value ${GSL_ROOT_DIR}")
+endif(GSL_ROOT_DIR)
 
 IF(WIN32)
 
@@ -54,7 +57,7 @@ ELSE(WIN32)
 
     IF(GSL_USE_STATIC_LIBRARIES)
         SET(GSL_LIB_NAMES libgsl.a)
-        SET(GSL_CBLAS_LIB_NAMES libgslclabs.a)
+        SET(GSL_CBLAS_LIB_NAMES libgslcblas.a)
     ELSE(GSL_USE_STATIC_LIBRARIES)
         SET(GSL_LIB_NAMES gsl)
         SET(GSL_CBLAS_LIB_NAMES gslcblas)
@@ -63,41 +66,42 @@ ELSE(WIN32)
     FIND_LIBRARY(GSL_LIB 
         NAMES ${GSL_LIB_NAMES} 
         PATHS 
-            $ENV{GSL_ROOT_DIR}/lib $ENV{GSL_ROOT_DIR}/lib64
+            ${GSL_ROOT_DIR}/lib ${GSL_ROOT_DIR}/lib64
             /opt/lib /opt/lib64
         )
 
     FIND_LIBRARY(GSLCBLAS_LIB 
         NAMES ${GSL_CBLAS_LIB_NAMES}
         PATHS 
-            $ENV{GSL_ROOT_DIR}/lib $ENV{GSL_ROOT_DIR}/lib64
+            ${GSL_ROOT_DIR}/lib ${GSL_ROOT_DIR}/lib64
             /opt/lib /opt/lib64
         )
+    IF (GSL_LIB AND GSLCBLAS_LIB)
+        SET (GSL_LIBRARIES "${GSL_LIB} ${GSLCBLAS_LIB}")
+    ENDIF (GSL_LIB AND GSLCBLAS_LIB)
 
     FIND_PATH(GSL_INCLUDE_DIRS NAMES gsl/gsl_blas.h
-        PATHS 
-            $ENV{GSL_ROOT_DIR}/include $ENV{GSL_ROOT_DIR}/include
-            /opt/include /opt/include
+        PATHS ${GSL_ROOT_DIR}/include /opt/include 
         )
 
-    IF (GSL_LIB AND GSLCBLAS_LIB)
-        SET (GSL_LIBRARIES ${GSL_LIB} ${GSLCBLAS_LIB})
-    ENDIF (GSL_LIB AND GSLCBLAS_LIB)
 
 ENDIF(WIN32)
 
 # FIND version
-file(READ "${GSL_INCLUDE_DIRS}/gsl/gsl_version.h" GSL_VERSION_TEXT)
-string(REGEX REPLACE ".*define[ ]+GSL_MAJOR_VERSION[ ]*([0-9]+).*"  "\\1"
-    GSL_MAJOR_VERSION "${GSL_VERSION_TEXT}")
-string(REGEX REPLACE ".*define[ ]+GSL_MINOR_VERSION[ ]*([0-9]+).*"  "\\1"
-    GSL_MINOR_VERSION "${GSL_VERSION_TEXT}")
-set(GSL_VERSION "${GSL_MAJOR_VERSION}.${GSL_MINOR_VERSION}")
+if(GSL_INCLUDE_DIRS)
+    file(READ "${GSL_INCLUDE_DIRS}/gsl/gsl_version.h" GSL_VERSION_TEXT)
+    string(REGEX REPLACE ".*define[ ]+GSL_MAJOR_VERSION[ ]*([0-9]+).*"  "\\1"
+        GSL_MAJOR_VERSION "${GSL_VERSION_TEXT}")
+    string(REGEX REPLACE ".*define[ ]+GSL_MINOR_VERSION[ ]*([0-9]+).*"  "\\1"
+        GSL_MINOR_VERSION "${GSL_VERSION_TEXT}")
+    set(GSL_VERSION "${GSL_MAJOR_VERSION}.${GSL_MINOR_VERSION}")
+    message(STATUS "GSL version : ${GSL_VERSION}")
+endif(GSL_INCLUDE_DIRS)
 
 IF(GSL_LIBRARIES AND GSL_VERSION)
     IF(GSL_INCLUDE_DIRS)
-        SET(GSL_FOUND 1)
         MESSAGE(STATUS "Found GSL ${GSL_LIBRARIES}")
+        SET(GSL_FOUND 1)
     ENDIF(GSL_INCLUDE_DIRS)
 ENDIF()
 
