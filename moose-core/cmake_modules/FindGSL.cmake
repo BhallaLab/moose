@@ -77,7 +77,7 @@ ELSE(WIN32)
             /opt/lib /opt/lib64
         )
     IF (GSL_LIB AND GSLCBLAS_LIB)
-        SET (GSL_LIBRARIES "${GSL_LIB} ${GSLCBLAS_LIB}")
+        SET (GSL_LIBRARIES ${GSL_LIB} ${GSLCBLAS_LIB})
     ENDIF (GSL_LIB AND GSLCBLAS_LIB)
 
     FIND_PATH(GSL_INCLUDE_DIRS NAMES gsl/gsl_blas.h
