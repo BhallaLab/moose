@@ -76,4 +76,4 @@ MOOSE can also read .swc files from NeuroMorpho.org.
 
 # Documentation
 
-Complete MOOSE Documentation can be found at -  http://moose.ncbs.res.in/content/view/5/6/
+Complete MOOSE Documentation can be found at -  https://moose.ncbs.res.in/?q=documentation
