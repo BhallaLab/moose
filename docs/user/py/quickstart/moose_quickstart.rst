@@ -659,9 +659,7 @@ ported from GENESIS.
 
 If the built-in MOOSE classes do not satisfy your needs entirely, you
 are welcome to add new classes to MOOSE. The API documentation will
-help you get started. Finally, you can join the `moose mailing list
-<https://lists.sourceforge.net/lists/listinfo/moose-generic>`__ and
-request for help.
+help you get started.
 
 
 .. [1]
