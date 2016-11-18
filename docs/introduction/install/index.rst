@@ -78,20 +78,8 @@ Next, you need to install required dependencies.
 - cmake (version 2.8 or higher)
 - gsl-1.16 or higher `download <ftp://ftp.gnu.org/gnu/gsl/>`_.
 - libhdf5 development package.
-- libsbml (5.9.0, optional).  `download <https://sourceforge.net/projects/sbml/files/libsbml/5.9.0/stable/>`_
 - python development package
 - numpy 
-
-.. note:: 
-    `libsml` needs to be compiled with ``zlib`` and ``lxml`` (requires ``libxml2-dev`` or ``libxml2-devel``` 
-    package) support without which, you might face link time errors. Following instructions are known to 
-    work:: 
-        $ wget http://sourceforge.net/projects/sbml/files/libsbml/5.9.0/stable/libSBML-5.9.0-core-src.tar.gz
-        $ tar -xzvf libSBML-5.9.0-core-src.tar.gz 
-        $ cd libsbml-5.9.0 
-        $ ./configure --with-zlib --with-libxml 
-        $ make 
-        $ sudo make install 
 
 Most of the dependencies can be installed using package manager.
 
@@ -175,7 +163,7 @@ Now you can fire up the GUI
 .. note:: 
     If you have installed ``moose`` using the package, then GUI is launched by
     running following commnad::
-        $ moosegui
+        $ moose
 
 Building moogli 
 ---------------
