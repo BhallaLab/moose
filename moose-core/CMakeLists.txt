@@ -285,7 +285,7 @@ endif(WITH_BOOST)
 # these two types because of --whole-archive option. See
 # BhallaLab/moose-core#66,
 if(WITH_GSL)
-    message(STATUS "Using STATIC gsl libraries: ${GSL_LIBRARIES}")
+    message(STATUS "Using gsl libraries: ${GSL_LIBRARIES}")
     foreach(GSL_LIB ${GSL_LIBRARIES} )
         if(GSL_LIB)
             get_filename_component( GSL_LIB_EXT ${GSL_LIB} EXT )
