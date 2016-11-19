@@ -15,8 +15,8 @@ add_custom_target(moose ALL)
 
 ## intialize paths
 set(PYMOOSE_SOURCE_DIR "${CMAKE_SOURCE_DIR}/moose-core")
-set(PYMOOSE_BUILD_DIR ${CMAKE_BINARY_DIR}/__moose_core_build)
-set(PYMOOSE_INSTALL_DIR ${CMAKE_BINARY_DIR}/__moose_core_install)
+set(PYMOOSE_BUILD_DIR ${CMAKE_BINARY_DIR}/__moose-core_build)
+set(PYMOOSE_INSTALL_DIR ${CMAKE_BINARY_DIR}/__moose-core_install)
 
 set(MOOSE_GUI_DIR ${CMAKE_SOURCE_DIR}/moose-gui)
 set(MOOSE_GUI_INSTALL_DIR ${CMAKE_BINARY_DIR}/__moose-gui_install)
@@ -30,13 +30,13 @@ file(MAKE_DIRECTORY ${PYMOOSE_BUILD_DIR})
 # different platform.
 set(OUTPUT_MOOSEBIN ${PYMOOSE_BUILD_DIR}/moose.bin)
 
-configure_file( ${CMAKE_SOURCE_DIR}/build_moose_core.sh.in 
-    ${CMAKE_BINARY_DIR}/build_moose_core.sh )
+configure_file( ${CMAKE_SOURCE_DIR}/build_moose-core.sh.in 
+    ${CMAKE_BINARY_DIR}/build_moose-core.sh )
 
 # Build pymoose module.
 add_custom_target( moose-core ALL DEPENDS ${OUTPUT_MOOSEBIN} )
 add_custom_command( OUTPUT ${OUTPUT_MOOSEBIN}
-    COMMAND MAKE=$(MAKE) bash -c ${CMAKE_BINARY_DIR}/build_moose_core.sh
+    COMMAND MAKE=$(MAKE) bash -c ${CMAKE_BINARY_DIR}/build_moose-core.sh
     VERBATIM
     )
 
@@ -67,14 +67,16 @@ install(DIRECTORY ${PYMOOSE_INSTALL_DIR}/
     PATTERN ".git" EXCLUDE
     )
 
-install(DIRECTORY ${MOOSE_GUI_INSTALL_DIR}
-    DESTINATION ${CMAKE_INSTALL_PREFIX}/lib/moose/gui
-    PATTERN ".git" EXCLUDE
+install(DIRECTORY ${MOOSE_GUI_INSTALL_DIR}/
+    DESTINATION lib/moose/gui
+    PATTERN ".git*" EXCLUDE
     )
 
-install(DIRECTORY ${MOOSE_EXAMPLE_DIR}
-    DESTINATION ${CMAKE_INSTALL_PREFIX}
-    PATTERN ".git" EXCLUDE 
+install(DIRECTORY ${MOOSE_EXAMPLE_DIR}/
+    DESTINATION lib/moose/moose-examples
+    PATTERN ".git*" EXCLUDE 
+    PATTERN "_travis*" EXCLUDE
+    PATTERN ".travis*" EXCLUDE
     )
 
 configure_file( ${CMAKE_SOURCE_DIR}/cmake/moose.in ${CMAKE_BINARY_DIR}/moose )
