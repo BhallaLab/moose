@@ -218,16 +218,21 @@ if(NOT HDF5_FOUND)
 endif(NOT HDF5_FOUND)
 
 if(HDF5_FOUND)
-    add_definitions( -DUSE_HDF5 )
-    # Latest cmake could not find libhdf5_hl.a libraries despite of setting
-    # USE_HDF5_STATIC_LIBRARIES.
-    if(USE_HDF5_STATIC_LIBRARIES AND $ENV{HDF5_ROOT})
-        find_library(HDF5_CXX_LIBRARIES libhdf5.a PATHS $ENV{HDF5_ROOT})
-        find_library(HDF5_HL_LIBRARIES libhdf5_hl.a PATHS $ENV{HDF5_ROOT})
-    endif()
-    
     include_directories( ${HDF5_INCLUDE_DIRS} )
-    foreach(HDF5_LIB ${HDF5_CXX_LIBRARIES} ${HDF5_HL_LIBRARIES} )
+    add_definitions( -DUSE_HDF5 )
+    if(HDF5_USE_STATIC_LIBRARIES)
+	message(STATUS "Finding static HDF5 libraries in $ENV{HDF5_ROOT}")
+        find_library(HDF5_CXX_LIBRARIES NAMES libhdf5.a 
+            PATHS $ENV{HDF5_ROOT}/lib $ENV{HDF5_ROOT}/lib64
+            )
+        find_library(HDF5_HL_LIBRARIES NAMES libhdf5_hl.a
+            PATHS $ENV{HDF5_ROOT}/lib $ENV{HDF5_ROOT}/lib64 
+            )
+    endif()
+
+    set(HDF5_LIBRARIES ${HDF5_CXX_LIBRARIES} ${HDF5_HL_LIBRARIES})
+    message(STATUS "MOOSE will use ${HDF5_LIBRARIES}" )
+    foreach(HDF5_LIB ${HDF5_LIBRARIES})
         if(HDF5_LIB)
             get_filename_component( HDF5_LIB_EXT ${HDF5_LIB} EXT )
             if(HDF5_LIB_EXT)
