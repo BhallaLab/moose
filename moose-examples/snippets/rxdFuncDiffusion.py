@@ -62,7 +62,8 @@ for t in range( 0, runtime-1, updateDt ):
 print("Time = %s " % ( time.time() - t1) )
 pylab.ylim( 0, 1.05 )
 pylab.legend()
-outfile = '%s.png' % sys.argv[0]
-pylab.savefig( outfile )
-print( '[INFO] Wrote results to %s' % outfile )
+pylab.show( )
+# outfile = '%s.png' % sys.argv[0]
+# pylab.savefig( outfile )
+# print( '[INFO] Wrote results to %s' % outfile )
 
