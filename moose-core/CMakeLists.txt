@@ -224,7 +224,7 @@ if(HDF5_FOUND)
     if(USE_HDF5_STATIC_LIBRARIES AND $ENV{HDF5_ROOT})
         find_library(HDF5_CXX_LIBRARIES libhdf5.a PATHS $ENV{HDF5_ROOT})
         find_library(HDF5_HL_LIBRARIES libhdf5_hl.a PATHS $ENV{HDF5_ROOT})
-    endif(USE_HDF5_STATIC_LIBRARIES)
+    endif()
     
     include_directories( ${HDF5_INCLUDE_DIRS} )
     foreach(HDF5_LIB ${HDF5_CXX_LIBRARIES} ${HDF5_HL_LIBRARIES} )
