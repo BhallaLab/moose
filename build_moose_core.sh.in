@@ -10,10 +10,13 @@ fi
 
 echo "Building MOOSE"
 (
-    cd @MOOSE_CORE_BUILD_DIR@
-    cmake -DCMAKE_INSTALL_PREFIX=@MOOSE_CORE_INSTALL_DIR@ \
-        @CMAKE_MOOSE_CORE_ARGS@ \
-        @MOOSE_CORE_SOURCE_DIR@ 
+    export GSL_ROOT_DIR=@GSL_ROOT_DIR@
+    export HDF5_ROOT=@HDF5_ROOT@
+    cd @PYMOOSE_BUILD_DIR@
+    cmake -DCMAKE_INSTALL_PREFIX=@PYMOOSE_INSTALL_DIR@ \
+        -DCMAKE_BUILD_TYPE=Release \
+        @CMAKE_PYMOOSE_ARGS@ \
+        @PYMOOSE_SOURCE_DIR@ 
     $MAKE
     ctest -V || echo "Some tests failed"
     $MAKE install
