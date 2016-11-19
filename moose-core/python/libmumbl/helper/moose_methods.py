@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+
 
 """moose_methods.py:  Some helper function related with moose to do multiscale
 modelling.

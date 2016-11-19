@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+
 
 __author__  = "Dilawar Singh <dilawars@ncbs.res.in>"
 

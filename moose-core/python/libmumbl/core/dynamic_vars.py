@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+
 
 """dynamic_vars.py: Class to create variables out of strings.
 

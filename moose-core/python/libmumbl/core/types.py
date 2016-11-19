@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+
 
 """types.py: Implement some data-types.
 
