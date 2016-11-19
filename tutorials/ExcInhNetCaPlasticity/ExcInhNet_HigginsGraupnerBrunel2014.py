@@ -672,8 +672,9 @@ def load_plot_Fig5():
         #plt.ylabel("# per bin")
 
     fig.tight_layout()
-    f.close()
-    fig.savefig("HGB2014_Fig5ab_MOOSE.tif",dpi=fig_dpi)
+    # plt.show( )
+    # f.close()
+    # fig.savefig("HGB2014_Fig5ab_MOOSE.tif",dpi=fig_dpi)
 
 def extra_plots(net):
     ## extra plots apart from the spike rasters

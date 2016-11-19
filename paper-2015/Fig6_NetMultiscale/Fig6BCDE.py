@@ -309,7 +309,7 @@ def connectDetailedNeuron():
             x.vec.weight = nprand.rand( exc.numEntries ) * excWeightMax
             #x.parent.tick = 4
             x.parent.parent.tick = 4
-            print '+',
+            print('+', end=' ')
             totGluWt += sum(x.vec.weight) * x.parent.parent.Gbar
 
     seed = excSeed
@@ -325,7 +325,7 @@ def connectDetailedNeuron():
             x.vec.weight = nprand.rand( exc.numEntries ) * nmdaWeightMax
             #x.parent.tick = 4
             x.parent.parent.tick = 4
-            print '*',
+            print('*', end=' ')
             totNMDAWt += sum(x.vec.weight) * x.parent.parent.Gbar
 
     seed = inhSeed
@@ -340,11 +340,11 @@ def connectDetailedNeuron():
             x.vec.weight = nprand.rand( inh.numEntries ) * inhWeightMax
             #x.parent.tick = 4
             x.parent.parent.tick = 4
-            print '-',
+            print('-', end=' ')
             totGABAWt += sum(x.vec.weight) * x.parent.parent.Gbar
 
-    print 'connectDetailedNeuron: numExc = ', numExc, ', numNMDA=', numNMDA, ', numInh = ', numInh
-    print 'connectDetailedNeuron: totWts Glu = ', totGluWt, ', NMDA = ', totNMDAWt, ', GABA = ', totGABAWt
+    print('connectDetailedNeuron: numExc = ', numExc, ', numNMDA=', numNMDA, ', numInh = ', numInh)
+    print('connectDetailedNeuron: totWts Glu = ', totGluWt, ', NMDA = ', totNMDAWt, ', GABA = ', totGABAWt)
 
 #############################################
 # Exc-Inh network base class without connections
@@ -447,7 +447,7 @@ class ExcInhNetBase:
         numVms = 10
         self.plots = moose.Table( '/plotVms', numVms )
         ## draw numVms out of N neurons
-        nrnIdxs = random.sample(range(self.N),numVms)
+        nrnIdxs = random.sample(list(range(self.N)),numVms)
         for i in range( numVms ):
             moose.connect( self.network.vec[nrnIdxs[i]], 'VmOut', \
                 self.plots.vec[i], 'input')
@@ -572,7 +572,7 @@ class ExcInhNet(ExcInhNetBase):
 
             ## Connections from some Exc neurons to each Exc neuron
             ## draw excC number of neuron indices out of NmaxExc neurons
-            preIdxs = random.sample(range(self.NmaxExc),self.excC)
+            preIdxs = random.sample(list(range(self.NmaxExc)),self.excC)
             ## connect these presynaptically to i-th post-synaptic neuron
             for synnum,preIdx in enumerate(preIdxs):
                 synidx = i*self.excC+synnum
@@ -625,7 +625,7 @@ class ExcInhNet(ExcInhNetBase):
 
             ## Connections from some Inh neurons to each Exc neuron
             ## draw inhC=incC-excC number of neuron indices out of inhibitory neurons
-            preIdxs = random.sample(range(self.NmaxExc,self.N),self.incC-self.excC)
+            preIdxs = random.sample(list(range(self.NmaxExc,self.N)),self.incC-self.excC)
             ## connect these presynaptically to i-th post-synaptic neuron
             for synnum,preIdx in enumerate(preIdxs):
                 synij = self.synsIE.vec[i].synapse[synnum]
@@ -640,7 +640,7 @@ class ExcInhNet(ExcInhNetBase):
             self.synsI.vec[i].numSynapses = self.incC
 
             ## draw excC number of neuron indices out of NmaxExc neurons
-            preIdxs = random.sample(range(self.NmaxExc),self.excC)
+            preIdxs = random.sample(list(range(self.NmaxExc)),self.excC)
             ## connect these presynaptically to i-th post-synaptic neuron
             for synnum,preIdx in enumerate(preIdxs):
                 synij = self.synsI.vec[i].synapse[synnum]
@@ -650,7 +650,7 @@ class ExcInhNet(ExcInhNetBase):
                 synij.weight = self.J   # activation = weight
 
             ## draw inhC=incC-excC number of neuron indices out of inhibitory neurons
-            preIdxs = random.sample(range(self.NmaxExc,self.N),self.incC-self.excC)
+            preIdxs = random.sample(list(range(self.NmaxExc,self.N)),self.incC-self.excC)
             ## connect these presynaptically to i-th post-synaptic neuron
             for synnum,preIdx in enumerate(preIdxs):
                 synij = self.synsI.vec[i].synapse[ self.excC + synnum ]
@@ -828,7 +828,7 @@ def create_viewer(rdes):
      #    dendrite.set_colors(moogli.core.Vec4f(173 / 255.0, 216 / 255.0, 230 / 255.0, 1.0))
 
     [shape.set_radius(shape.get_apex_radius() * 4.0) for shape in
-     network.groups["spine"].groups["head"].shapes.values()]
+     list(network.groups["spine"].groups["head"].shapes.values())]
     # print "Creating LIFS"
     soma = network.shapes[rdes.soma.path]
 
@@ -858,8 +858,8 @@ def create_viewer(rdes):
     # print "Creating Viewer"
     viewer = moogli.Viewer("viewer") # prelude = prelude, interlude = interlude)
     # print "Created Viewer"
-    viewer.attach_shapes(network.shapes.values())
-    viewer.attach_shapes(lifs.shapes.values())
+    viewer.attach_shapes(list(network.shapes.values()))
+    viewer.attach_shapes(list(lifs.shapes.values()))
     # print "Attached Shapes"
     view = moogli.View("view")
     viewer.attach_view(view)
@@ -873,7 +873,7 @@ if __name__=='__main__':
     ## Instantiate either ExcInhNetBase or ExcInhNet below
     #net = ExcInhNetBase(N=N)
     net = ExcInhNet(N=N)
-    print net
+    print(net)
     moose.le( '/' )
     moose.le( '/network' )
     rdes = buildRdesigneur()
@@ -916,17 +916,17 @@ if __name__=='__main__':
 
     moose.reinit()
     t1 = time.time()
-    print 'starting'
+    print('starting')
     #moose.start(simtime)
     for currTime in np.arange( 0, simtime, updateDt ):
         moose.start(updateDt)
         lastt = net.network.vec.lastEventTime
         lastt = np.exp( 2 * (lastt - currTime ) )
-        print currTime, time.time() - t1
+        print(currTime, time.time() - t1)
         ret.set_array( lastt )
         fig2.canvas.draw()
 
-    print 'runtime, t = ', time.time() - t1
+    print('runtime, t = ', time.time() - t1)
 
     if plotif:
         net._plot( fig )
@@ -937,4 +937,4 @@ if __name__=='__main__':
     plt.show()
     plt.savefig( fname + '.svg', bbox_inches='tight')
     print( "Hit 'enter' to exit" )
-    raw_input()
+    input()

@@ -111,9 +111,9 @@ def main():
     pylab.suptitle('Dose-Reponse Curve for a bistable system')
     
     pylab.legend(loc=3)
-    plt.savefig(outputDir + "/" + modelName +"_doseResponse" + ".png")
+    #plt.savefig(outputDir + "/" + modelName +"_doseResponse" + ".png")
     plt.show()
-    plt.close(fig0)
+    #plt.close(fig0)
     quit()
     
 
