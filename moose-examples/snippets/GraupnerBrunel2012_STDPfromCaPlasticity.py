@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+
 #/**********************************************************************
 #** This program is part of 'MOOSE', the
 #** Messaging Object Oriented Simulation Environment.

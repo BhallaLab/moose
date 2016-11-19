@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+
 # pulsegen.py --- 
 # 
 # Filename: pulsegen.py

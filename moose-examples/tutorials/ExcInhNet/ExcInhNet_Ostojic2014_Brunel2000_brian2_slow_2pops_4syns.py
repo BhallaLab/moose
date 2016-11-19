@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+
 '''
 The LIF network is based on:
 Ostojic, S. (2014).

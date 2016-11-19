@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+
 # testHsolve.py --- 
 # Upi Bhalla, NCBS Bangalore, 9 June 2013.
 #

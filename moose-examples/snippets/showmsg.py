@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+
 """This is to show a _raw_ way of traversing messages."""
 import sys
 sys.path.append('../../python')

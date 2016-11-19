@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+
 # Author: Subhasis Ray
 
 """HDF5 is a self-describing file format for storing large
