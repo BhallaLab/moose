@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+
 
 __author__  = "Dilawar Singh <dilawars@ncbs.res.in>"
 __date__    = "Mon 21 Oct 2013 11:37:01 PM IST"

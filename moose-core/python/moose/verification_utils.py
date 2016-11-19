@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+
 
 """verification_utils.py:
 
