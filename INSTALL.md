@@ -2,14 +2,13 @@
 
 Use our repositories hosted at [Open Build Service](http://build.opensuse.org).
 We have packages for Debian, Ubuntu, CentOS, Fedora, OpenSUSE/SUSE, RHEL,
-Scientific Linux.  Visit the following page and follow the instructions there. 
+Scientific Linux.  Visit the following page for instructions.
 
 https://software.opensuse.org/download.html?project=home:moose&package=moose
 
 # Building MOOSE from source
 
-If you really want to build `MOOSE` from source, you can either use `cmake` (recommended) 
-or GNU `make` based flow.
+To build `MOOSE` from source, you can either use `cmake` (recommended) or GNU `make` based flow.
 
 Download the latest source code of moose from github or sourceforge.
 
@@ -21,20 +20,8 @@ For moose-core:
 
 - gsl-1.16 or higher.
 - libhdf5-dev (optional) 
-- libsbml-dev (5.9.0, optional)
 - python-dev 
 - python-numpy 
-
-__Note on libsbml__
-Make sure that `libsml` is installed with `zlib` and `lxml` support. Following instructions 
-are known to work.
-
-    - wget http://sourceforge.net/projects/sbml/files/libsbml/5.9.0/stable/libSBML-5.9.0-core-src.tar.gz
-    - tar -xzvf libSBML-5.9.0-core-src.tar.gz 
-    - cd libsbml-5.9.0 
-    - ./configure --prefix=/usr --with-zlib --with-bzip2 --with-libxml 
-    - make 
-    - sudo make install 
 
 On Ubuntu-12.04 or higher, these can be installed with:
     
@@ -81,17 +68,17 @@ calling make:
     export LDFLAGS= -L/opt/libsbml/lib
 
   
-## Release build:
+### Release build:
 
     cd moose
     make BUILD=release
 
-## Debug build:
+### Debug build:
     
     cd moose
     make BUILD=debug
 
-## Python 3K
+### Python 3K
 
 By default, MOOSE is built for Python 2. In case you want to build MOOSE for
 Python 3K, you need to pass the additional flag:
