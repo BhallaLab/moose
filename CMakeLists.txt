@@ -31,12 +31,14 @@ add_custom_command( OUTPUT ${OUTPUT_MOOSEBIN}
     )
 
 find_package(PythonInterp REQUIRED)
+
 ## moose-gui
 ## TODO: moose-gui should be a python module.
 set(MOOSE_GUI_DIR ${CMAKE_SOURCE_DIR}/moose-gui)
 
 install(DIRECTORY ${MOOSE_CORE_INSTALL_DIR}/
     DESTINATION ${CMAKE_INSTALL_PREFIX}
+    PATTERN ".git" EXCLUDE
     )
 
 install(DIRECTORY ${MOOSE_GUI_DIR}
@@ -44,7 +46,8 @@ install(DIRECTORY ${MOOSE_GUI_DIR}
     PATTERN ".git" EXCLUDE
     )
 
-install(PROGRAMS ${DATA_DIR}/moosegui
+configure_file( ${CMAKE_SOURCE_DIR}/cmake/moose.in ${CMAKE_BINARY_DIR}/moose )
+install(PROGRAMS ${CMAKE_BINARY_DIR}/moose
     DESTINATION bin
     )
 
@@ -63,4 +66,15 @@ add_custom_command(OUTPUT  __uninstall_moose-gui__
     COMMAND ${CMAKE_COMMAND} -E remove_directory
     ${CMAKE_INSTALL_PREFIX}/lib/moose/gui
     COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_INSTALL_PREFIX}/bin/moosegui
+    )
+
+################################################################################
+# CTEST 
+#################################################################################
+enable_testing( )
+add_test( NAME test_pymoose_sanity COMMAND ${PYTHON_EXECUTABLE} -c "import moose")
+add_test( NAME test_moogli_sanity COMMAND ${PYTHON_EXECUTABLE} -c "import moogli")
+
+set_tests_properties( test_pymoose_sanity test_moogli_sanity  
+    PROPERTIES ENVIRONMENT "PYTHONPATH=${MOOSE_CORE_BUILD_DIR}/python"
     )
