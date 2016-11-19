@@ -733,23 +733,17 @@ void Clock::handleStep( const Eref& e, unsigned long numSteps )
             ++k;
         }
 
-        // Don't write too much. When 10% of simulation is over, write to
-        // the file. We need 10 points. We just use a sine function
-        // which cross 0 ten time in this time interval.
-        // NOTE: Dont use == 0.0 since we may never get a sample for
-        // which sine is 0.0. Hoever, getting 1.0 or -1.0 is very likely
-        // since sin function is relatively flat when its value is near
-        // 1.0/-1.0.
-        // NOTE: Use cosine instead of sin to sample 0%, 10% etc.
+        // When 10% of simulation is over, notify user when notify_ is set to
+        // true.
         if( notify_ )
         {
-            if( cos(20 * M_PI * currentTime_ / runTime_) == 1.0)
+            if( fmod(100 * currentTime_ / runTime_ , 10.0) == 0.0 )
             {
                 time( &rawtime );
                 timeinfo = localtime( &rawtime );
                 strftime(now, 80, "%c", timeinfo);
                 cout << "@ " << now << ": " << 100 * currentTime_ / runTime_ 
-                    << "% of total " << runTime_ << " is over." << endl;
+                    << "% of total " << runTime_ << " seconds is over." << endl;
             }
         }
     }
