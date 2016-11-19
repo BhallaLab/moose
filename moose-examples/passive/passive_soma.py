@@ -56,7 +56,8 @@ def main():
     moose.start(t)
     time_vector = pylab.linspace(0, t, len(vmtab.vector))
     pylab.plot(time_vector, vmtab.vector)
-    pylab.savefig('soma_passive.png')
+    pylab.show( )
+    # pylab.savefig('soma_passive.png')
 
 if __name__ == '__main__':
     main()
