@@ -1,3 +1,4 @@
+from __future__ import print_function
 
 #/**********************************************************************
 #** This program is part of 'MOOSE', the
@@ -33,11 +34,9 @@ from PyQt4 import Qt, QtCore, QtGui
 from numpy import random as nprand
 from moose.neuroml.NeuroML import NeuroML
 import sys
-sys.path.append( "/home/bhalla/moose/trunk/Demos/util" )
 import rdesigneur as rd
 import moogli
 cellname = "./cells_channels/CA1_nochans.morph.xml"
-#cellname = "./ca1_minimal.p"
 fname = "fig6bcde"
 
 #############################################
