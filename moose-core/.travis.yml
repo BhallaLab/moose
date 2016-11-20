@@ -20,9 +20,9 @@ env:
     - CTEST_MODEL=Nightly
 cache: apt
 
-#matrix:
-#    allow_failures:
-#        - clang
+matrix:
+    allow_failures:
+        - clang
 
 before_script:
     - sudo apt-get install -qq libxml2-dev libbz2-dev
@@ -42,7 +42,9 @@ install:
     - echo "nothing to do here"
 
 script:
-    - # First test is normal make scripts. (outdated).
+    - First check no python3 incompatible file.
+    - python3 -m compileall -q .
+    - # Then run the old make scripts
     - make 
     - ## CMAKE based flow
     - mkdir -p _GSL_BUILD && cd _GSL_BUILD && cmake -DDEBUG=ON -DPYTHON_EXECUTABLE=/usr/bin/python ..
