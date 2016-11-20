@@ -20,29 +20,31 @@ env:
     - CTEST_MODEL=Nightly
 cache: apt
 
-#matrix:
-#    allow_failures:
-#        - clang
+matrix:
+    allow_failures:
+        - clang
 
 before_script:
     - sudo apt-get install -qq libxml2-dev libbz2-dev
     - sudo apt-get install -qq libhdf5-serial-dev
     - sudo apt-get install -qq make cmake
-    - sudo apt-get install -qq python-numpy python-matplotlib python-networkx
-    - sudo apt-get install -qq python3-numpy python3-matplotlib python3-dev 
+    - sudo apt-get install -qq  python-numpy python-matplotlib python-networkx
+    - sudo apt-get install -qq  python3-numpy python3-matplotlib python3-dev
     - sudo apt-get install -qq libboost-all-dev
     - sudo apt-get install -qq libgsl0-dev
     - sudo apt-get install -qq python-pip python3-pip
     - sudo apt-get install -qq libgraphviz-dev
-    - # sudo pip install python-libsbml
-    - # sudo pip3 install python-libsbml
-    - # sudo pip3 install pygraphviz
+    - sudo pip install python-libsbml
+    - sudo pip3 install python-libsbml
+    - sudo pip3 install pygraphviz
 
 install:
     - echo "nothing to do here"
 
 script:
-    - # First test is normal make scripts. (outdated).
+    - First check no python3 incompatible file.
+    - python3 -m compileall -q .
+    - # Then run the old make scripts
     - make 
     - ## CMAKE based flow
     - mkdir -p _GSL_BUILD && cd _GSL_BUILD && cmake -DDEBUG=ON -DPYTHON_EXECUTABLE=/usr/bin/python ..

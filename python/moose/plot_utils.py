@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+
 
 """plot_utils.py: Some utility function for plotting data in moose.
 
