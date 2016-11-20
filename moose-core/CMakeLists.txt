@@ -33,7 +33,7 @@ elseif( (NOT MOOSE_VERSION) AND (NOT GIT_EXEC) )
     message(STATUS "+ Reading ${VERSION_FILE}" )
     file(READ ${VERSION_FILE} GIT_VERSION_OUTPUT )
 elseif(MOOSE_VERSION)
-    message(STATUS "+ Using user VERSION ${MOOSE_VERSION}" )
+    message(STATUS "+ Using user specified VERSION = ${MOOSE_VERSION}" )
     file(WRITE ${VERSION_FILE} ${MOOSE_VERSION})
 else()
     message(FATAL_ERROR "Could not determine MOOSE_VERSION" )
@@ -127,17 +127,6 @@ if(GPROF AND DEBUG)
     set(CMAKE_EXE_LINKER_FLAGS_DEBUG "-pg")
 endif()
 
-IF(NOTIFY_PROGRESS)
-    IF(COMPILER_SUPPORTS_CXX11 OR COMPILER_SUPPORTS_CXX0X)
-        MESSAGE(STATUS "MOOSE will occasionally write to __moose__progress__ file "
-            " status of simulation (done time/total time)"
-            )
-    ELSE()
-        MESSAGE(FATAL_ERROR "No c++11 or c++0x support in compiler."
-            "You can not use -DNOTIFY_PROGRESS=ON without it"
-            )
-    ENDIF()
-ENDIF()
 ################################### TARGETS ####################################
 
 add_library(libmoose SHARED basecode/main.cpp)
@@ -228,10 +217,10 @@ if(HDF5_FOUND)
         find_library(HDF5_HL_LIBRARIES NAMES libhdf5_hl.a
             PATHS $ENV{HDF5_ROOT}/lib $ENV{HDF5_ROOT}/lib64 
             )
+        set(HDF5_LIBRARIES ${HDF5_CXX_LIBRARIES} ${HDF5_HL_LIBRARIES})
     endif()
 
-    set(HDF5_LIBRARIES ${HDF5_CXX_LIBRARIES} ${HDF5_HL_LIBRARIES})
-    message(STATUS "MOOSE will use ${HDF5_LIBRARIES}" )
+    message(STATUS "MOOSE will following HDF5 ${HDF5_LIBRARIES}" )
     foreach(HDF5_LIB ${HDF5_LIBRARIES})
         if(HDF5_LIB)
             get_filename_component( HDF5_LIB_EXT ${HDF5_LIB} EXT )
@@ -244,6 +233,8 @@ if(HDF5_FOUND)
             endif()
         endif( )
     endforeach( )
+else( HDF5_FOUND )
+    message(STATUS "HDF5 is not found" )
 endif( HDF5_FOUND )
 
 # This is a fix for new HDF5 package on Debian/Ubuntu which installs hdf5
