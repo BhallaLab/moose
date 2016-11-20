@@ -10,7 +10,9 @@ option(WITH_BOOST "Use Boost libraries instead of GSL" OFF)
 option(WITH_CUDA "Use CUDA/GPU" OFF)
 option(WITH_MPI "Use MPI" OFF)
 
+# Required packages.
 find_package(PythonInterp REQUIRED)
+
 add_custom_target(moose ALL)
 
 ## intialize paths
