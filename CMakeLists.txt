@@ -41,21 +41,22 @@ add_custom_command( OUTPUT ${OUTPUT_MOOSEBIN}
     )
 
 # Now build moose-gui and moose-examples.
+# Make sure each script is compilable. Else report an error.
 add_custom_target( gui ALL 
-    COMMAND ${CMAKE_COMMAND} -E copy_directory 
-        ${MOOSE_GUI_DIR} ${MOOSE_GUI_INSTALL_DIR} 
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${MOOSE_GUI_DIR} ${MOOSE_GUI_INSTALL_DIR} 
+    COMMAND ${PYTHON_EXECUTABLE} -m compileall -q ${MOOSE_GUI_INSTALL_DIR}
     COMMENT "Building moose-gui"
     VERBATIM
     )
 
-# Now copy moose-examples.
-add_custom_command( TARGET gui POST_BUILD
-    COMAMND ${CMAKE_COMMAND} -E copy_directory 
-        ${MOOSE_EXAMPLE_DIR} ${MOOSE_EXAMPLE_INSTALL_DIR}
+add_custom_target( examples ALL 
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${MOOSE_EXAMPLE_DIR} ${MOOSE_EXAMPLE_INSTALL_DIR}
+    COMMAND ${PYTHON_EXECUTABLE} -m compileall -q ${MOOSE_EXAMPLE_INSTALL_DIR}
     VERBATIM
     )
 
-add_dependencies(moose moose-core gui)
+add_dependencies(moose moose-core gui examples)
+add_dependencies(examples  gui)
 
 
 ## moose-gui
@@ -65,11 +66,13 @@ set(MOOSE_GUI_DIR ${CMAKE_SOURCE_DIR}/moose-gui)
 install(DIRECTORY ${PYMOOSE_INSTALL_DIR}/
     DESTINATION ${CMAKE_INSTALL_PREFIX}
     PATTERN ".git" EXCLUDE
+    PATTERN "*.pyc" EXCLUDE
     )
 
 install(DIRECTORY ${MOOSE_GUI_INSTALL_DIR}/
     DESTINATION lib/moose/gui
     PATTERN ".git*" EXCLUDE
+    PATTERN "*.pyc" EXCLUDE
     )
 
 install(DIRECTORY ${MOOSE_EXAMPLE_DIR}/
@@ -77,6 +80,7 @@ install(DIRECTORY ${MOOSE_EXAMPLE_DIR}/
     PATTERN ".git*" EXCLUDE 
     PATTERN "_travis*" EXCLUDE
     PATTERN ".travis*" EXCLUDE
+    PATTERN "*.pyc" EXCLUDE
     )
 
 configure_file( ${CMAKE_SOURCE_DIR}/cmake/moose.in ${CMAKE_BINARY_DIR}/moose )
