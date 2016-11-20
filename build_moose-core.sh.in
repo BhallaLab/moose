@@ -1,4 +1,6 @@
 #!/bin/bash
+set -x 
+set -e
 
 # NOTICE: This file is parsed by cmake to create a shell script. Not all syntax
 # will play well with cmake. CMAKE replaces @FOO@ and ${FOO} with cmake variable
@@ -18,7 +20,7 @@ echo "Building MOOSE"
         @CMAKE_PYMOOSE_ARGS@ \
         @PYMOOSE_SOURCE_DIR@ 
     $MAKE
-    ctest -V || echo "Some tests failed"
+    ctest -output-on-failure || echo "Some tests failed"
     $MAKE install
 )
 
