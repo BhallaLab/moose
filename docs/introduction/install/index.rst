@@ -8,8 +8,7 @@ Linux
 ^^^^^
 
 We recommend that you use our repositories hosted at `Open Build Service
-<http://build.opensuse.org>`_.  We have packages of both ``MOOSE`` and
-``moogli`` for following distributions
+<http://build.opensuse.org>`_.  We have packages for the following distributions
 
 - Debian 7.0, 8.0
 - Ubuntu 12.04, 14.04, 15.04, 15.10, 16.04 
@@ -25,9 +24,7 @@ Visit `this page
 pick you distribution and follow instructions.
 
 .. note:: 
-    ``moogli`` is also available in the same repositories (except CentOS-6). 
-    Use your package manager to install moogli as well e.g. ``sudo apt-get install moogli`` 
-    or ``sudo yum install moogli``.
+    ``moogli`` (tool to visualize network activity) is not available for CentOS-6. 
 
 .. raw:: html
     <iframe
@@ -43,10 +40,8 @@ Download the ``dmg`` file from `here <https://github.com/BhallaLab/moose/release
 
 Alternatively, you can use ``homebrew`` to install ``moose``
 ::
-    $ brew install moose 
+    $ brew install homebrew/science/moose
 
-.. note::
-    Check the status of pull request here https://github.com/Homebrew/homebrew-science/pull/2958
 
 Windows/Cygwin
 ^^^^^^^^^^^^^^
@@ -73,13 +68,15 @@ versions from here `https://github.com/BhallaLab/moose/releases`.
 
 Install dependencies
 ~~~~~~~~~~~~~~~~~~~
-Next, you need to install required dependencies.
+
+Next, you need to install required dependencies. Depending on your OS, names of 
+following packages may vary.
 
 - cmake (version 2.8 or higher)
 - gsl-1.16 or higher `download <ftp://ftp.gnu.org/gnu/gsl/>`_.
-- libhdf5 development package.
-- python development package
-- numpy 
+- libhdf5 development package e.g. `libhdf5-serial-dev` or `libhdf5-devel`
+- python development package e.g. `python-dev` or `python-devel`
+- numpy e.g. `python-numpy` or `numpy`
 
 Most of the dependencies can be installed using package manager.
 
@@ -161,7 +158,7 @@ Now you can fire up the GUI
     $ python mgui.py 
 
 .. note:: 
-    If you have installed ``moose`` using the package, then GUI is launched by
+    If you have installed ``moose`` package, then GUI is launched by
     running following commnad::
         $ moose
 
@@ -171,20 +168,14 @@ Building moogli
 ``moogli`` is subproject of ``MOOSE`` for visualizing models. More details can
 be found `here <http://moose.ncbs.res.in/moogli>`_.
 
-Prefer installing ``moogli`` packages from the repository as indicated on the
-top of this page. Link to ``moogli`` repository is given below
-
-`https://software.opensuse.org/download.html?project=home%3Amoose&package=moogli`
-
-.. note::
-    If you have already added the repository, ``moogli`` is already available in
-    your package-manager.
+`Moogli` is part of `moose` package. Building moogli can be tricky because of 
+multiple depednecies it has.
 
 
 To get the latest source code of ``moogli``, click on `this link <https://github.com/BhallaLab/moogli/archive/master.zip>`_.
 
-Building ``moogli`` could be tricky. It depends on ``OpenSceneGraph`` (version
-3.2.0 or higher) which may not be easily available for your operating system.
+Moogli depends on ``OpenSceneGraph`` (version 3.2.0 or higher) which may not 
+be easily available for your operating system.
 For this reason, we distribute required ``OpenSceneGraph`` with ``moogli``
 source code.
 
