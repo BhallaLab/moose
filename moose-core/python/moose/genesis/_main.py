@@ -276,6 +276,8 @@ def autoCoordinates(meshEntry,srcdesConnection):
                     G.add_edge(element(items[0]).path,inn.path)
     
     position = nx.graphviz_layout(G, prog = 'dot')
+    if int( nx.__version__.split( '.' )[-1] ) >= 11:
+        position = nx.spring_layout( G )
     #agraph = nx.to_agraph(G)
     #agraph.draw("writetogenesis.png", format = 'png', prog = 'dot')
     sceneitems = {}
