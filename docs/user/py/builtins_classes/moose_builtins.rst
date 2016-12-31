@@ -6,6 +6,7 @@
 MOOSE builtins
 ==============
 
+
 This document describes classes and functions specific to the MOOSE
 Python module. This is an API reference.
 
@@ -21,5 +22,4 @@ Python module. This is an API reference.
        
 .. automodule:: moose
     :show-inheritance:
-    :members: DestField, ElementField, LookupField, ce, connect, copy, delete, doc, element, exists, getCwe, getField, getFieldDict, getFieldNames, isRunning, le, loadModel, melement, move, pwe, quit, rand, reinit, seed, setClock, setCwe, showfield, showmsg, start, stop, useClock, vec, wildcardFind 
-
+    :members: DestField, ElementField, LookupField, ce, connect, copy, delete, doc, element, exists, getCwe, getField, getFieldDict, getFieldNames, isRunning, le, loadModel, melement, move, pwe, quit, rand, reinit, seed, setClock, setCwe, showfield, showmsg, start, stop, useClock, vec, wildcardFind, mooseWriteSBML, mooseReadSBML, mooseWriteKkit, mooseaddChemSolver, moosedeleteChemSolver
