@@ -1,18 +1,16 @@
-sudo: required
-dist: trusty
 language: cpp
+dist: trusty
+sudo: required 
 compiler:
     - gcc
     - clang
 os:
     - linux
+    - osx
 notifications:
     email:
         recipients:
             - dilawar.s.rajput@gmail.com
-            - bhalla@ncbs.res.in
-            - hrani@ncbs.res.in
-            - ray.subhasis@gmail.com
         on_success: change
         on_failure: always
 
@@ -21,45 +19,17 @@ env:
 cache: apt
 
 matrix:
-    allow_failures:
-        - clang
-
-before_script:
-    - sudo apt-get install -qq libxml2-dev libbz2-dev
-    - sudo apt-get install -qq libhdf5-serial-dev
-    - sudo apt-get install -qq make cmake
-    - sudo apt-get install -qq  python-numpy python-matplotlib python-networkx
-    - sudo apt-get install -qq  python3-numpy python3-matplotlib python3-dev
-    - sudo apt-get install -qq libboost-all-dev
-    - sudo apt-get install -qq libgsl0-dev
-    - sudo apt-get install -qq python-pip python3-pip
-    - sudo apt-get install -qq libgraphviz-dev
-    - sudo pip install python-libsbml
-    - sudo pip3 install python-libsbml
-    - sudo pip3 install pygraphviz
-
-install:
-    - echo "nothing to do here"
+    allow_failure:
+        os: osx
+        
+before_script : 
+    - echo "OSX related"
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ./.travis/travis_prepare_osx.sh; fi
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo ./.travis/travis_prepare_linux.sh; fi
 
 script:
-    - First check no python3 incompatible file.
-    - python3 -m compileall -q .
-    - # Then run the old make scripts
-    - make 
-    - ## CMAKE based flow
-    - mkdir -p _GSL_BUILD && cd _GSL_BUILD && cmake -DDEBUG=ON -DPYTHON_EXECUTABLE=/usr/bin/python ..
-    - make && ctest --output-on-failure
-    - cd .. # Now with boost.
-    - mkdir -p _BOOST_BUILD && cd _BOOST_BUILD && cmake -DWITH_BOOST=ON -DDEBUG=ON -DPYTHON_EXECUTABLE=/usr/bin/python ..
-    - make && ctest --output-on-failure
-    - cd .. 
-    - echo "Python3 support. Removed python2-networkx and install python3"
-    - sudo apt-get remove -qq python-networkx
-    - sudo apt-get install -qq python3-networkx
-    - mkdir -p _GSL_BUILD2 && cd _GSL_BUILD2 && cmake -DDEBUG=ON -DPYTHON_EXECUTABLE=/usr/bin/python3 ..
-    - make && ctest --output-on-failure
-    - cd .. # Now with BOOST and python3
-    - mkdir -p _BOOST_BUILD2 && cd _BOOST_BUILD2 && cmake -DWITH_BOOST=ON -DDEBUG=ON -DPYTHON_EXECUTABLE=/usr/bin/python3 ..
-    - make && ctest --output-on-failure
-    - cd ..
-    - echo "All done. Phew"
+    - # checking if any python3 incompatible file is in the source tree.
+    - python2 -m compileall -q .
+    - if type python3 -c 'import sys' > /dev/null; then python3 -m compileall -q . ; fi
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ./.travis/travis_build_osx.sh; fi
+    - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./.travis/travis_build_linux.sh; fi

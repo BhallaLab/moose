@@ -52,7 +52,7 @@ public:
      * @param format 
      *
      *  npy : numpy binary format (version 1 and 2), version 1 is default.
-     *  csv : comma separated value (delimiter ',' )
+     *  csv or dat: comma separated value (delimiter ' ' )
      *
      * @param  openmode (write or append)
      * 

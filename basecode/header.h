@@ -107,6 +107,8 @@ class Neutral;
 #include "SharedFinfo.h"
 #include "FieldElementFinfo.h"
 #include "FieldElement.h"
+#include "../builtins/Streamer.h"
 #include "../shell/Neutral.h"
+
 
 #endif // _HEADER_H

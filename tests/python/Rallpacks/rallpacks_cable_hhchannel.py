@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """rallpacks_cable_hhchannel.py: 
 
     A cable with 1000 compartments with HH-type channels in it.
@@ -20,6 +18,7 @@ __status__           = "Development"
 import moose
 from moose import utils
 
+import time
 import os
 import numpy as np
 import matplotlib.pyplot as plt
@@ -192,12 +191,8 @@ def setupSolver( hsolveDt ):
 
 def simulate( runTime, dt):
     """ Simulate the cable """
-    moose.useClock(0, '/cable/##', 'process')
-    moose.useClock(0, '/cable/##', 'init')
-    moose.useClock(1, '/##', 'process')
     moose.reinit()
     setupSolver( hsolveDt = dt )
-    utils.verify()
     moose.start( runTime )
 
 def main(args):
@@ -205,10 +200,9 @@ def main(args):
     dt = args['dt']
     makeCable(args)
     setupDUT( dt )
-    table0 = utils.recordAt( '/table0', cable[0], 'vm')
-    table1 = utils.recordAt( '/table1', cable[-1], 'vm')
+    t = time.time() 
     simulate( args['run_time'], dt )
-    utils.plotTables( [ table0, table1 ], file = args['output'], xscale = dt )
+    print( 'Time to run %f seconds ' % ( time.time() - t ) )
 
 if __name__ == '__main__':
     import argparse

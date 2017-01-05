@@ -1,69 +1,63 @@
-"""
-Test Kkit capabilities of PyMOOSE
-"""
-from __future__ import print_function
-    
-__author__           = "Dilawar Singh"
-__copyright__        = "Copyright 2015, Dilawar Singh and NCBS Bangalore"
-__credits__          = ["NCBS Bangalore"]
-__license__          = "GNU GPL"
-__version__          = "1.0.0"
-__maintainer__       = "Dilawar Singh"
-__email__            = "dilawars@ncbs.res.in"
-__status__           = "Development"
+import matplotlib
+# Tests may be run over ssh without -X e.g. on travis.
+matplotlib.use( 'Agg' )
 
+import matplotlib.pyplot as plt
+import numpy
 import sys
 import os
-
 import moose
-import moose.utils as mu
 
-# the model lives in the same directory as the test script
-modeldir = os.path.dirname(__file__)
-
-# All conc in micro-molar. MOOSE units are SI units.
-genesisReference = {
-        'MAPK_p.Co' : 0.00517021
-        , 'PKC_dash_active.Co' : 0.0923311
-        , 'nuc_MAPK_p.Co' : 2.3449e-6
-        , 'tot_MAPK.Co' : 0.00051749 
-        , 'MKP_dash_1.Co' : 0.00051749
-        , 'PDGFR.Co' : 0.10833
-        , 'PDGF.Co' : 0
-        , 'tot_MKP1.Co' : 0.000316181 
-        }
+scriptdir = os.path.dirname( os.path.realpath( __file__ ) )
+print( 'Script dir %s' % scriptdir )
 
 def main():
-    modelname = os.path.join(modeldir, 'chem_models/mkp1_feedback_effects_acc4.g')
-    model = moose.loadModel(modelname, '/model', 'gsl')
-    tables = moose.wildcardFind('/##[TYPE=Table2]')
-    records = {}
-    for t in tables: 
-        tabname = t.path.split('/')[-1].replace("[0]", "")
-        records[tabname] = t
-    moose.reinit()
-    moose.start(200)
-    check(records)
+        """ This example illustrates loading, running, and saving a kinetic model 
+        defined in kkit format. It uses a default kkit model but you can specify another using the command line ``python filename runtime solver``. We use the gsl solver here. The model already defines a couple of plots and sets the runtime to 20 seconds.
+        """
+        solver = "gsl"  # Pick any of gsl, gssa, ee..
+        mfile = os.path.join( scriptdir, 'genesis/kkit_objects_example.g' )
+        runtime = 20.0
+        if ( len( sys.argv ) >= 3 ):
+            if sys.argv[1][0] == '/':
+                mfile = sys.argv[1]
+            else:
+                mfile = './genesis/' + sys.argv[1]
+                runtime = float( sys.argv[2] )
+        if ( len( sys.argv ) == 4 ):
+                solver = sys.argv[3]
+        modelId = moose.loadModel( mfile, 'model', solver )
+        # Increase volume so that the stochastic solver gssa 
+        # gives an interesting output
+        #compt = moose.element( '/model/kinetics' )
+        #compt.volume = 1e-19 
 
-def check(records):
-    assert len(records) > 0, "No moose.Table2 created."
-    failed = False
-    for tabname in records:
-        if tabname in genesisReference:
-            genVal =  genesisReference[tabname]
-            mooseVal = 1e3 * records[tabname].vector[-1]
-            error = 100.0 % ( mooseVal - genVal ) / genVal
-            if abs(error) > 0.1:
-                failed = True
-            print("{:20}: Gensis/MOOSE: {:>10} {:>10}. %error: {}".format(
-                tabname, genVal, mooseVal, error)
-               )
-        else:
-            print("[WARN] %s not found in genesis reference" % tabname)
-    if failed:
-        quit(1)
-    else:
-        quit(0)
+        moose.reinit()
+        moose.start( runtime ) 
 
+        # Report parameters
+        '''
+        for x in moose.wildcardFind( '/model/kinetics/##[ISA=PoolBase]' ):
+                print x.name, x.nInit, x.concInit
+        for x in moose.wildcardFind( '/model/kinetics/##[ISA=ReacBase]' ):
+                print x.name, 'num: (', x.numKf, ', ',  x.numKb, '), conc: (', x.Kf, ', ', x.Kb, ')'
+        for x in moose.wildcardFind('/model/kinetics/##[ISA=EnzBase]'):
+                print x.name, '(', x.Km, ', ',  x.numKm, ', ', x.kcat, ')'
+                '''
+
+        # Display all plots.
+        for x in moose.wildcardFind( '/model/#graphs/conc#/#' ):
+            t = numpy.arange( 0, x.vector.size, 1 ) * x.dt
+            plt.plot( t, x.vector, label=x.name )
+
+        vals = x.vector
+        stats = [ vals.min(), vals.max( ), vals.mean(), vals.std( ) ]
+        expected = [ 0.0, 0.00040464 , 0.0001444 , 0.00013177 ]
+        assert numpy.allclose(stats, expected, rtol=1e-4) , 'Got %s expected %s' % (stats, expected ) 
+        plt.legend()
+        plt.savefig( '%s.png' % sys.argv[0] )
+        print( 'Wrote results to %s.png' % sys.argv[0] )
+
+# Run the 'main' if this script is executed standalone.
 if __name__ == '__main__':
-    main()
+        main()

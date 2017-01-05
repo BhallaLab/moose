@@ -89,6 +89,7 @@ namespace moose {
      */
     void mtseed( unsigned int x )
     {
+        moose::__rng_seed__ = x;
         moose::rng.setSeed( x );
         isRNGInitialized = true;
     }
