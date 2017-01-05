@@ -180,7 +180,7 @@ int moose_ObjId_init_from_path(_ObjId * self, PyObject * args,
     ostringstream err;
     // First see if there is an existing object with at path
     self->oid_ = ObjId(path);
-    PyTypeObject * basetype = getBaseClass((PyObject*)self);
+    PyTypeObject* basetype = getBaseClass((PyObject*)self);
     string basetype_str;
     if (type == NULL){
         if (basetype == NULL){
@@ -210,15 +210,26 @@ int moose_ObjId_init_from_path(_ObjId * self, PyObject * args,
     } else { // this is a non-root existing element
         // If the current class is a subclass of some predefined
         // moose class, do nothing.
+        string className = self->oid_.element()->cinfo()->name();
+        map <string, PyTypeObject * >::iterator ii = 
+        	get_moose_classes().find( className );
+        PyTypeObject * basetype = 0;
+        if ( ii != get_moose_classes().end() ) {
+    	    basetype = ii->second;
+            basetype_str = string(basetype->tp_name).substr(6); // remove `moose.` prefix from type name
+        } else {
+            err << "Unknown class: " << className << endl;
+            basetype = getBaseClass((PyObject*)self);
+        }
         if ((basetype != NULL) && PyType_IsSubtype(mytype, basetype)){
             return 0;
         }
         // element exists at this path, but it does not inherit from any moose class.
         // throw an error
         err << "cannot convert "
-            << Field<string>::get(self->oid_, "className")
+			<< className 
             << " to "
-            << basetype_str
+            << mytypename
             << ". To get the existing object use `moose.element(obj)` instead.";
         PyErr_SetString(PyExc_TypeError, err.str().c_str());
         return -1;

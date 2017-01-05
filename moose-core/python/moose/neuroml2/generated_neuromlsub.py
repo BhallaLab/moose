@@ -20,7 +20,8 @@
 import sys
 from lxml import etree as etree_
 
-import ??? as supermod
+# FIXME: Comment it out 
+# import ??? as supermod
 
 def parsexml_(infile, parser=None, **kwargs):
     if parser is None:

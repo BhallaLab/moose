@@ -115,6 +115,7 @@ def test( ):
     print( time ) 
     assert data.shape >= (58,), data.shape
     print( '[INFO] Test 2 passed' )
+    return 0
 
 def main( ):
     sanity_test( )

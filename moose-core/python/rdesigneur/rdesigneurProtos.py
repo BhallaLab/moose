@@ -110,33 +110,33 @@ def make_HH_K(name = 'HH_K', parent='/library', vmin=-120e-3, vmax=40e-3, vdivs=
 #========================================================================
 
 def make_glu( name ):
-	if moose.exists( '/library/' + name ):
-		return
-	glu = moose.SynChan( '/library/' + name )
-	glu.Ek = 0.0
-	glu.tau1 = 2.0e-3
-	glu.tau2 = 9.0e-3
-        sh = moose.SimpleSynHandler( glu.path + '/sh' )
-        moose.connect( sh, 'activationOut', glu, 'activation' )
-        sh.numSynapses = 1
-        sh.synapse[0].weight = 1
-        return glu
+    if moose.exists( '/library/' + name ):
+        return
+    glu = moose.SynChan( '/library/' + name )
+    glu.Ek = 0.0
+    glu.tau1 = 2.0e-3
+    glu.tau2 = 9.0e-3
+    sh = moose.SimpleSynHandler( glu.path + '/sh' )
+    moose.connect( sh, 'activationOut', glu, 'activation' )
+    sh.numSynapses = 1
+    sh.synapse[0].weight = 1
+    return glu
 
 #========================================================================
 #                SynChan: GABA receptor
 #========================================================================
 
 def make_GABA( name ):
-	if moose.exists( '/library/' + name ):
-		return
-	GABA = moose.SynChan( '/library/' + name )
-	GABA.Ek = EK + 10.0e-3
-	GABA.tau1 = 4.0e-3
-	GABA.tau2 = 9.0e-3
-        sh = moose.SimpleSynHandler( GABA.path + '/sh' )
-        moose.connect( sh, 'activationOut', GABA, 'activation' )
-        sh.numSynapses = 1
-        sh.synapse[0].weight = 1
+    if moose.exists( '/library/' + name ):
+        return
+    GABA = moose.SynChan( '/library/' + name )
+    GABA.Ek = EK + 10.0e-3
+    GABA.tau1 = 4.0e-3
+    GABA.tau2 = 9.0e-3
+    sh = moose.SimpleSynHandler( GABA.path + '/sh' )
+    moose.connect( sh, 'activationOut', GABA, 'activation' )
+    sh.numSynapses = 1
+    sh.synapse[0].weight = 1
 
 
 def makeChemOscillator( name = 'osc', parent = '/library' ):
