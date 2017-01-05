@@ -24,11 +24,11 @@ set -x
 if [[ `pwd` == *"/moose" ]]; then
 
     git subtree pull --prefix moose-core \
-        https://github.com/BhallaLab/moose-core master --squash
+        https://github.com/BhallaLab/moose-core chamcham --squash
     git subtree pull --prefix moose-examples \
-        https://github.com/BhallaLab/moose-examples master --squash 
+        https://github.com/BhallaLab/moose-examples chamcham --squash 
     git subtree pull --prefix moose-gui \
-        https://github.com/BhallaLab/moose-gui master --squash
+        https://github.com/BhallaLab/moose-gui chamcham --squash
 
 else
     echo "Run this script from top-level git directory."
