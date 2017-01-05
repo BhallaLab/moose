@@ -1,3 +1,4 @@
+from __future__ import print_function 
 
 #*******************************************************************
 # * File:            merge.py
@@ -52,9 +53,9 @@ def merge(A,B):
 	comptAdict = comptList(apath)
 	comptBdict = comptList(bpath)
 
-	for key in comptBdict.keys():
+	for key in list(comptBdict.keys()):
 
-		if not comptAdict.has_key(key):
+		if key not in comptAdict:
 			# comptBdict[key] - compartment from model B which does not exist in model A
 			moose.copy(comptBdict[key],moose.element(apath))
 		else:			
@@ -81,10 +82,10 @@ def merge(A,B):
 						c = moose.copy(pool,neutral_compartment)
 						copied.append(c)
 					elif (pool.parent).className == "ZombieEnz" or (pool.parent).className == "Enz":
-						print " Pool not in modelA but enz parent",pool.name
+						print(" Pool not in modelA but enz parent",pool.name)
 						pass
 					else:
-						print " Check this pool, parent which doesn't have ChemCompt or Enz",
+						print(" Check this pool, parent which doesn't have ChemCompt or Enz", end=' ')
 			
 			#Mergering StimulusTable
 			stimName_a = []
@@ -173,9 +174,9 @@ def merge(A,B):
 						rBprdname = subprdList(reac,"prd")
 						mooseConnect(comptAdict[key].path,reac,rBsubname,"sub")
 						mooseConnect(comptAdict[key].path,reac,rBprdname,"prd")
-	print "\ncopied: ", copied, \
+	print("\ncopied: ", copied, \
 		 "\n\nDuplicated: ",duplicated, \
-		  "\n\nwarning: ",war_msg
+		  "\n\nwarning: ",war_msg)
 	return copied,duplicated,war_msg
 def loadModels(filename):
 	apath = '/'

@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from __future__ import print_function
 from subprocess import check_output as run
 from datetime import datetime
 from itertools import groupby
@@ -18,10 +19,10 @@ def authors(filename):
 def new_copyright(filename, previous):
     def f():
         au = list(authors(filename))
-        alldates = map(itemgetter(1), au)
-        aup = sorted(au + map(lambda a: (a, None), previous), key=itemgetter(0))
+        alldates = list(map(itemgetter(1), au))
+        aup = sorted(au + [(a, None) for a in previous], key=itemgetter(0))
         for author, records in groupby(aup, itemgetter(0)):
-            dates = filter(None, map(itemgetter(1), records))
+            dates = [_f for _f in map(itemgetter(1), records) if _f]
             if not dates: dates = alldates
             start = min(dates)
             end = max(dates)
@@ -29,7 +30,7 @@ def new_copyright(filename, previous):
             line = 'Copyright ' + fmt.format(start.year, end.year) + ' ' + author
             key = (start, author)
             yield key, line
-    return map(itemgetter(1), sorted(f()))
+    return list(map(itemgetter(1), sorted(f())))
 
 def fix_copyright(filename):
     # Find copyright block in original file
@@ -46,19 +47,19 @@ def fix_copyright(filename):
             lines.append(i)
             names.append(d['name'].strip())
     if len(prefix) != 1:
-        print 'Not found:', filename
+        print('Not found:', filename)
         return
     prefix = list(prefix)[0]
 
-    print filename
+    print(filename)
     new = iter(new_copyright(filename, names))
     with open(filename, 'w') as f:
         for i, line in enumerate(content):
             if i in lines:
                 for repl in new:
-                    print >>f, prefix + repl
+                    print(prefix + repl, file=f)
             else:
-                print >>f, line,
+                print(line, end=' ', file=f)
     pass
 
 def all_files():

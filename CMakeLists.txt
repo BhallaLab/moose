@@ -33,7 +33,7 @@ elseif( (NOT MOOSE_VERSION) AND (NOT GIT_EXEC) )
     message(STATUS "+ Reading ${VERSION_FILE}" )
     file(READ ${VERSION_FILE} GIT_VERSION_OUTPUT )
 elseif(MOOSE_VERSION)
-    message(STATUS "+ Using user VERSION ${MOOSE_VERSION}" )
+    message(STATUS "+ Using user specified VERSION = ${MOOSE_VERSION}" )
     file(WRITE ${VERSION_FILE} ${MOOSE_VERSION})
 else()
     message(FATAL_ERROR "Could not determine MOOSE_VERSION" )
@@ -118,7 +118,7 @@ elseif(ENABLE_UNIT_TESTS)
 else()
     message(STATUS "Building for Release/No unit tests.")
     set(CMAKE_BUILD_TYPE Release)
-    add_definitions(-UDO_UNIT_TESTS -O3)
+    add_definitions(-UDO_UNIT_TESTS -DQUIET_MODE -O3)
 endif()
 
 if(GPROF AND DEBUG)
@@ -127,17 +127,6 @@ if(GPROF AND DEBUG)
     set(CMAKE_EXE_LINKER_FLAGS_DEBUG "-pg")
 endif()
 
-IF(NOTIFY_PROGRESS)
-    IF(COMPILER_SUPPORTS_CXX11 OR COMPILER_SUPPORTS_CXX0X)
-        MESSAGE(STATUS "MOOSE will occasionally write to __moose__progress__ file "
-            " status of simulation (done time/total time)"
-            )
-    ELSE()
-        MESSAGE(FATAL_ERROR "No c++11 or c++0x support in compiler."
-            "You can not use -DNOTIFY_PROGRESS=ON without it"
-            )
-    ENDIF()
-ENDIF()
 ################################### TARGETS ####################################
 
 add_library(libmoose SHARED basecode/main.cpp)
@@ -176,7 +165,7 @@ if(WITH_GSL)
             " Or build and install gsl from source code \n"
             "     https://www.gnu.org/software/gsl/ \n"
             " After installing gsl, rerun cmake.\n\n"
-            " If you install gsl in non-standard place, set the GSL_HOME environment \n"
+            " If you install gsl in non-standard place, set the GSL_ROOT_DIR environment \n"
             " variable. CMAKE use this to search for required files. \n"
             "====================================================================\n"
             )
@@ -186,7 +175,7 @@ if(WITH_GSL)
     # top level.
     include_directories( ${GSL_INCLUDE_DIRS} )
 elseif(WITH_BOOST)
-    find_package(Boost 1.44 COMPONENTS filesystem random REQUIRED)
+    find_package(Boost 1.44 COMPONENTS system filesystem random REQUIRED)
     find_package( LAPACK REQUIRED )
     add_definitions( -DUSE_BOOST -UUSE_GSL )
     include_directories( ${Boost_INCLUDE_DIRS} )
@@ -228,10 +217,17 @@ if(HDF5_FOUND)
         find_library(HDF5_HL_LIBRARIES NAMES libhdf5_hl.a
             PATHS $ENV{HDF5_ROOT}/lib $ENV{HDF5_ROOT}/lib64 
             )
+        set(HDF5_LIBRARIES ${HDF5_CXX_LIBRARIES} ${HDF5_HL_LIBRARIES})
     endif()
+    
+    # Make sure, HDF5_HL_LIBRARIES are set. The COMPONENTS in find_package may
+    # or may not work. See BhallaLab/moose-core#163. 
+    if(NOT HDF5_HL_LIBRARIES)
+        set(HDF5_HL_LIBRARIES ${HDF5_HL_LIBRARIES})
+    endif(NOT HDF5_HL_LIBRARIES)
+    list(APPEND HDF5_LIBRARIES ${HDF5_HL_LIBRARIES})
 
-    set(HDF5_LIBRARIES ${HDF5_CXX_LIBRARIES} ${HDF5_HL_LIBRARIES})
-    message(STATUS "MOOSE will use ${HDF5_LIBRARIES}" )
+    message(STATUS "MOOSE will use following HDF5 ${HDF5_LIBRARIES}" )
     foreach(HDF5_LIB ${HDF5_LIBRARIES})
         if(HDF5_LIB)
             get_filename_component( HDF5_LIB_EXT ${HDF5_LIB} EXT )
@@ -244,6 +240,8 @@ if(HDF5_FOUND)
             endif()
         endif( )
     endforeach( )
+else( HDF5_FOUND )
+    message(STATUS "HDF5 is not found" )
 endif( HDF5_FOUND )
 
 # This is a fix for new HDF5 package on Debian/Ubuntu which installs hdf5
@@ -285,7 +283,7 @@ endif(WITH_BOOST)
 # these two types because of --whole-archive option. See
 # BhallaLab/moose-core#66,
 if(WITH_GSL)
-    message(STATUS "Using STATIC gsl libraries: ${GSL_LIBRARIES}")
+    message(STATUS "Using gsl libraries: ${GSL_LIBRARIES}")
     foreach(GSL_LIB ${GSL_LIBRARIES} )
         if(GSL_LIB)
             get_filename_component( GSL_LIB_EXT ${GSL_LIB} EXT )
@@ -391,7 +389,10 @@ endif(MACOSX)
 
 add_dependencies(moose.bin libmoose)
 
-target_link_libraries(moose.bin LINK_PUBLIC moose ${CMAKE_DL_LIBS})
+target_link_libraries(moose.bin moose ${CMAKE_DL_LIBS})
+if( WITH_BOOST )
+    target_link_libraries( moose.bin ${Boost_LIBRARIES} )
+endif( WITH_BOOST )
 
 ######################### BUILD PYMOOSE ########################################
 # Root of all python module.

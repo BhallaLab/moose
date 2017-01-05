@@ -632,7 +632,7 @@ class MorphML():
                     moose.connect(channel,'channel',compartment,'channel')
             ## if mechanism is present in compartment, just wrap it
             else:
-                neutralObj = moose.Neutral(compartment.path+'/'+mechanismname)
+                neutralObj = moose.element(compartment.path+'/'+mechanismname)
                 if 'CaConc' == neutralObj.className: # Ion concentration pool
                     caconc = moose.CaConc(compartment.path+'/'+mechanismname) # wraps existing channel
                     channel = None
