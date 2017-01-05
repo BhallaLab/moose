@@ -28,11 +28,6 @@ using namespace std;
 // Want to separate out this search path into the Makefile options
 #include "../scheduling/Clock.h"
 
-/*#ifdef USE_SBML
-#include "../sbml/MooseSbmlWriter.h"
-#include "../sbml/MooseSbmlReader.h"
-#endif
-*/
 const unsigned int Shell::OkStatus = ~0;
 const unsigned int Shell::ErrorStatus = ~1;
 
@@ -50,10 +45,6 @@ double Shell::runtime_( 0.0 );
 
 const Cinfo* Shell::initCinfo()
 {
-
-#ifdef ENABLE_LOGGER
-    clock_t t = clock();
-#endif
 
 ////////////////////////////////////////////////////////////////
 // Value Finfos
@@ -369,6 +360,21 @@ void Shell::doStart( double runtime, bool notify )
 {
     Id clockId( 1 );
     SetGet2< double, bool >::set( clockId, "start", runtime, notify );
+
+    /*-----------------------------------------------------------------------------
+     *  Now that simulation is over, call cleanUp function of Streamer class
+     *  objects. The purpose of this is to write whatever is left in tables to
+     *  the output file.
+     *-----------------------------------------------------------------------------*/
+    vector< ObjId > streamers;
+    wildcardFind( "/##[TYPE=Streamer]", streamers );
+    LOG( moose::debug,  "total streamers " << streamers.size( ) );
+    for( vector<ObjId>::const_iterator itr = streamers.begin()
+            ; itr != streamers.end(); itr++ )
+    {
+        Streamer* pStreamer = reinterpret_cast<Streamer*>( itr->data( ) );
+        pStreamer->cleanUp( );
+    }
 }
 
 bool isDoingReinit()
@@ -398,14 +404,6 @@ void Shell::doStop( )
 void Shell::doSetClock( unsigned int tickNum, double dt )
 {
     LookupField< unsigned int, double >::set( ObjId( 1 ), "tickDt", tickNum, dt );
-
-    // FIXME:
-    // HACK: If clock 18 is being updated, make sure that clock 19 (streamer is also
-    // updated with correct dt (10 or 100*dt). This is bit hacky.
-    if( tickNum == 18 )
-        LookupField< unsigned int, double >::set( ObjId( 1 ), "tickDt"
-                , tickNum + 1, max( 100 * dt, 10.0 )
-                );
 }
 
 void Shell::doUseClock( string path, string field, unsigned int tick )
@@ -415,41 +413,6 @@ void Shell::doUseClock( string path, string field, unsigned int tick )
             "useClock", path, field, tick, msgIndex );
     // innerUseClock( path, field, tick);
 }
-
-/**
- * Write given model to SBML file. Returns success value.
- */
- /*
-int Shell::doWriteSBML( const string& fname, const string& modelpath )
-{
-#ifdef USE_SBML
-    moose::SbmlWriter sw;
-    int ret = sw.write( fname, modelpath );
-    return ret;
-#else
-
-    cerr << "Shell::WriteSBML: This copy of MOOSE has not been compiled with SBML writing support.\n";
-    return -2;
-#endif
-}
-*/
-/**
- * read given SBML model to moose. Returns success value.
- */
-/*
-Id Shell::doReadSBML( const string& fname, const string& modelpath, const string& solverclass )
-{
-#ifdef USE_SBML
-    moose::SbmlReader sr;
-    return sr.read( fname, modelpath,solverclass);
-#else
-    cerr << "Shell::ReadSBML: This copy of MOOSE has not been compiled with SBML reading support.\n";
-    return Id();
-#endif
-}
-*/
-
-////////////////////////////////////////////////////////////////////////
 
 void Shell::doMove( Id orig, ObjId newParent )
 {
@@ -610,36 +573,6 @@ bool Shell::chopPath( const string& path, vector< string >& ret,
     return isAbsolute;
 }
 
-/*
-/// non-static func. Fallback which treats index brackets as part of
-/// name string, and does not try to extract integer indices.
-ObjId Shell::doFindWithoutIndexing( const string& path ) const
-{
-	Id curr = Id();
-	vector< string > names;
-	vector< vector< unsigned int > > indices;
-	bool isAbsolute = chopString( path, names, '/' );
-
-	if ( !isAbsolute )
-		curr = cwe_;
-
-	for ( vector< string >::iterator i = names.begin();
-		i != names.end(); ++i ) {
-		if ( *i == "." ) {
-		} else if ( *i == ".." ) {
-			curr = Neutral::parent( curr.eref() ).id;
-		} else {
-			curr = Neutral::child( curr.eref(), *i );
-		}
-	}
-
-	assert( curr.element() );
-	assert( curr.element()->dataHandler() );
-	return ObjId( curr, 0 );
-}
-*/
-
-/// non-static func. Returns the Id found by traversing the specified path.
 ObjId Shell::doFind( const string& path ) const
 {
     if ( path == "/" || path == "/root" )
@@ -1078,6 +1011,9 @@ void Shell::handleUseClock( const Eref& e,
     		*/
 }
 
+/**
+ * @brief This function is NOT called when simulation ends normally.
+ */
 void Shell::handleQuit()
 {
     Shell::keepLooping_ = 0;
@@ -1099,13 +1035,6 @@ void Shell::error( const string& text )
     cout << "Error: Shell:: " << text << endl;
 }
 
-/*
-void Shell::wildcard( const string& path, vector< ObjId >& list )
-{
-	wildcardFind( path, list );
-}
-*/
-
 /**
  * @brief Clean-up MOOSE before shutting down. This function is called whenever
  * keyboard interrupt terminates the simulation.
@@ -1118,7 +1047,7 @@ void Shell::cleanSimulation()
     Neutral::children( sheller, kids );
     for ( vector< Id >::iterator i = kids.begin(); i != kids.end(); ++i )
     {
-        if ( i->value() > 4 )
+        if ( i->value() > 4 )                   /* These are created by users */
         {
             LOG( moose::debug
                     , "Shell::cleanSimulation: deleted cruft at " <<
