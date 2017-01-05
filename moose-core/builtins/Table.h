@@ -25,45 +25,45 @@ public:
     Table();
     ~Table();
 
-    Table& operator=( const Table& tab );
+    Table& operator= ( const Table& tab );
 
     //////////////////////////////////////////////////////////////////
     // Field assignment stuff
     //////////////////////////////////////////////////////////////////
 
-    void setThreshold( double v );
+    void setThreshold ( double v );
     double getThreshold() const;
 
-    void setFormat( const string format );
+    void setFormat ( const string format );
     string getFormat( ) const;
 
-    void setName( const string name );
-    string getName( ) const;
+    void setColumnName( const string colname );
+    string getColumnName( ) const;
 
-    void setUseStreamer( bool status );
-    bool getUseStreamer( void ) const;
+    void setUseStreamer ( bool status );
+    bool getUseStreamer ( void ) const;
 
-    void setOutfile( string outfilepath );
-    string getOutfile( void ) const;
+    void setOutfile ( string outfilepath );
+    string getOutfile ( void ) const;
 
     // Access the dt_ of table.
-    double getDt( void ) const;
+    double getDt ( void ) const;
 
-    void zipWithTime( 
-            const vector<double>& yvec
-            , vector<double>& tvec
-            , const double& lasttime 
-            );
+    void zipWithTime (
+        const vector<double>& yvec
+        , vector<double>& tvec
+        , const double& lasttime
+    );
 
     //////////////////////////////////////////////////////////////////
     // Dest funcs
     //////////////////////////////////////////////////////////////////
 
-    void process( const Eref& e, ProcPtr p );
-    void reinit( const Eref& e, ProcPtr p );
+    void process ( const Eref& e, ProcPtr p );
+    void reinit ( const Eref& e, ProcPtr p );
 
-    void input( double v );
-    void spike( double v );
+    void input ( double v );
+    void spike ( double v );
 
     //////////////////////////////////////////////////////////////////
     // Lookup funcs for table
@@ -77,14 +77,19 @@ private:
     double input_;
 
     /**
-     * @brief Keep the data, each entry is preceeded by time value. 
+     * @brief Keep the data, each entry is preceeded by time value.
      * t0, v0, t1, v1, t2, v2 etc.
      */
     vector<double> data_;
     vector<string> columns_;                    /* Store the name of tables */
 
     string tablePath_;
-    string tableName_;
+
+
+    /**
+     * @brief Column name of this table. Use it when writing data to a datafile.
+     */
+    string tableColumnName_;
 
     /**
      * @brief If stream is set to true, then stream to outfile_. Default value
@@ -105,10 +110,10 @@ private:
     /**
      * @brief Wheather or not outfile path is set by user
      */
-    bool outfileIsSet_;                         
+    bool outfileIsSet_;
 
     /**
-     * @brief format of data. Currently fixed to csv.
+     * @brief format of data. Default to csv.
      */
     string format_;
 

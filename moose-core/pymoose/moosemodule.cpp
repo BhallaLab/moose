@@ -1791,50 +1791,6 @@ PyObject * moose_exists(PyObject * dummy, PyObject * args)
     return Py_BuildValue("i", Id(path) != Id() || string(path) == "/" || string(path) == "/root");
 }
 
-//Harsha : For writing genesis file to sbml
-/*
-PyObject * moose_writeSBML(PyObject * dummy, PyObject * args)
-{
-    char * fname = NULL, * modelpath = NULL;
-    if(!PyArg_ParseTuple(args, "ss:moose_writeSBML", &modelpath, &fname))
-    {
-        return NULL;
-    }
-    int ret = SHELLPTR->doWriteSBML(string(modelpath),string(fname));
-    return Py_BuildValue("i", ret);
-}
-*/
-/*
-PyObject * moose_readSBML(PyObject * dummy, PyObject * args)
-{
-    char * fname = NULL, * modelpath = NULL, * solverclass = NULL;
-    if(!PyArg_ParseTuple(args, "ss|s:moose_readSBML", &fname, &modelpath, &solverclass))
-    {
-        return NULL;
-    }
-    //Id ret = SHELLPTR->doReadSBML(string(fname), string(modelpath));
-    //return Py_BuildValue("i", ret);
-    _Id * model = (_Id*)PyObject_New(_Id, &IdType);
-    //model->id_ = SHELLPTR->doReadSBML(string(fname), string(modelpath), string(solverclass));
-    if (!solverclass)
-    {
-        model->id_ = SHELLPTR->doReadSBML(string(fname), string(modelpath));
-    }
-    else
-    {
-        model->id_ = SHELLPTR->doReadSBML(string(fname), string(modelpath), string(solverclass));
-    }
-
-    if (model->id_ == Id())
-    {
-        Py_XDECREF(model);
-        PyErr_SetString(PyExc_IOError, "could not load model");
-        return NULL;
-    }
-    PyObject * ret = reinterpret_cast<PyObject*>(model);
-    return ret;
-}
-*/
 PyDoc_STRVAR(moose_loadModel_documentation,
              "loadModel(filename, modelpath, solverclass) -> vec\n"
              "\n"
@@ -1882,7 +1838,7 @@ PyObject * moose_loadModel(PyObject * dummy, PyObject * args)
     PyObject * ret = reinterpret_cast<PyObject*>(model);
     return ret;
 }
-
+/*
 PyDoc_STRVAR(moose_saveModel_documentation,
              "saveModel(source, filename) -> None\n"
              "\n"
@@ -1939,7 +1895,7 @@ PyObject * moose_saveModel(PyObject * dummy, PyObject * args)
     SHELLPTR->doSaveModel(model, filename);
     Py_RETURN_NONE;
 }
-
+*/
 PyObject * moose_setCwe(PyObject * dummy, PyObject * args)
 {
     PyObject * element = NULL;
@@ -3075,15 +3031,11 @@ static PyMethodDef MooseMethods[] =
     {"stop", (PyCFunction)moose_stop, METH_VARARGS, "Stop simulation"},
     {"isRunning", (PyCFunction)moose_isRunning, METH_VARARGS, "True if the simulation is currently running."},
     {"exists", (PyCFunction)moose_exists, METH_VARARGS, "True if there is an object with specified path."},
-    //{"writeSBML", (PyCFunction)moose_writeSBML, METH_VARARGS, "Export biochemical model to an SBML file."},
-    //{"readSBML",  (PyCFunction)moose_readSBML,  METH_VARARGS, "Import SBML model to Moose."},
     {"loadModel", (PyCFunction)moose_loadModel, METH_VARARGS, moose_loadModel_documentation},
-    {"saveModel", (PyCFunction)moose_saveModel, METH_VARARGS, moose_saveModel_documentation},
+    //{"saveModel", (PyCFunction)moose_saveModel, METH_VARARGS, moose_saveModel_documentation},
     {"connect", (PyCFunction)moose_connect, METH_VARARGS, moose_connect_documentation},
     {"getCwe", (PyCFunction)moose_getCwe, METH_VARARGS, "Get the current working element. 'pwe' is an alias of this function."},
-    // {"pwe", (PyCFunction)moose_getCwe, METH_VARARGS, "Get the current working element. 'getCwe' is an alias of this function."},
     {"setCwe", (PyCFunction)moose_setCwe, METH_VARARGS, "Set the current working element. 'ce' is an alias of this function"},
-    // {"ce", (PyCFunction)moose_setCwe, METH_VARARGS, "Set the current working element. setCwe is an alias of this function."},
     {"getFieldDict", (PyCFunction)moose_getFieldDict, METH_VARARGS, moose_getFieldDict_documentation},
     {
         "getField", (PyCFunction)moose_getField, METH_VARARGS,

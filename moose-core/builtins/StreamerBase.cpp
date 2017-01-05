@@ -65,10 +65,10 @@ void StreamerBase::writeToOutFile( const string& filepath
     if( data.size() == 0 )
         return;
 
-    if( "csv" == outputFormat )
-        writeToCSVFile( filepath, openmode, data, columns );
-    else if( "npy" == outputFormat )
+    if( "npy" == outputFormat )
         writeToNPYFile( filepath, openmode, data, columns );
+    else if( "csv" == outputFormat or "dat" == outputFormat )
+        writeToCSVFile( filepath, openmode, data, columns );
     else
     {
         LOG( moose::warning, "Unsupported format " << outputFormat 
@@ -76,7 +76,6 @@ void StreamerBase::writeToOutFile( const string& filepath
            );
         writeToCSVFile( filepath, openmode, data, columns );
     }
-
 }
 
 

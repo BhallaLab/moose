@@ -30,7 +30,7 @@
 
 using namespace std;
 
-class Streamer
+class Streamer : public StreamerBase 
 {
 
 public:
@@ -56,7 +56,7 @@ public:
     void removeTable( Id table );
     void removeTables( vector<Id> table );
 
-    void zipWithTime( vector<double>& data, double currTime);
+    void zipWithTime( );
 
     /** Dest functions.
      * The process function called by scheduler on every tick
