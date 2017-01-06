@@ -36,9 +36,10 @@ pick you distribution and follow instructions.
 Mac OSX
 ^^^^^^
 
-Download the ``dmg`` file from `here <https://github.com/BhallaLab/moose/releases/download/ghevar_3.0.2/Moose_3.0.2_OSX.dmg>`_.
+:strike:`Download the ``dmg`` file from `here <https://github.com/BhallaLab/moose/releases/download/ghevar_3.0.2/Moose_3.0.2_OSX.dmg>`_.` We no longer build `dmg` files. 
 
-Alternatively, you can use ``homebrew`` to install ``moose``
+
+On MacOSX, `MOOSE` is available via `homebrew <https://brew.sh>`_.
 ::
     $ brew install homebrew/science/moose
 
