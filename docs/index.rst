@@ -48,8 +48,7 @@ Contents:
    user/py/quickstart/index
    user/py/rdesigneur/index
    user/py/cookbook/index
-   user/py/builtins/index
-   user/py/classes/index
+   user/py/builtins_classes/index
 
 Indices and tables
 ==================
