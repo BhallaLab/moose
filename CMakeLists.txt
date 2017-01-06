@@ -32,7 +32,7 @@ file(MAKE_DIRECTORY ${PYMOOSE_BUILD_DIR})
 # different platform.
 set(OUTPUT_MOOSEBIN ${PYMOOSE_BUILD_DIR}/moose.bin)
 
-configure_file( ${CMAKE_SOURCE_DIR}/build_moose-core.sh.in 
+configure_file( ${CMAKE_SOURCE_DIR}/cmake/build_moose-core.sh.in 
     ${CMAKE_BINARY_DIR}/build_moose-core.sh )
 
 # Build pymoose module.
