@@ -15,4 +15,3 @@ echo "##############################################################"
 #Files will be created in _build/html 
 mkdir -p _build
 sphinx-build . _build
-
