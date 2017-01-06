@@ -683,6 +683,3 @@ Animation of values along an axis
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Using MOOGLI widgets to display a neuron
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-
-		
