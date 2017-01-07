@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+
 '''
 The LIF network is based on:
 Ostojic, S. (2014).
@@ -107,12 +107,12 @@ con_i = Synapses(Pi,neurons,'',pre='v_post+=-g*J',clock=clocksyn)
 random.seed(100) # set seed for reproducibility of simulations
 for i in range(0,N):
     ## draw excC number of neuron indices out of NmaxExc neurons
-    preIdxs = random.sample(range(NE),excC)
+    preIdxs = random.sample(list(range(NE)),excC)
     ## connect these presynaptically to i-th post-synaptic neuron
     for synnum,preIdx in enumerate(preIdxs):
         con_e[preIdx,i]=True
     ## draw inhC=C-excC number of neuron indices out of inhibitory neurons
-    preIdxs = random.sample(range(N-NE),C-excC)
+    preIdxs = random.sample(list(range(N-NE)),C-excC)
     ## connect these presynaptically to i-th post-synaptic neuron
     for synnum,preIdx in enumerate(preIdxs):
         con_i[preIdx,i]=True
@@ -135,21 +135,21 @@ popm_e = PopulationRateMonitor(Pe,bin=1.*ms)
 popm_i = PopulationRateMonitor(Pi,bin=1.*ms)
 
 # voltage monitor
-sm_e_vm = StateMonitor(Pe,'v',record=range(10),clock=clocknrn)
+sm_e_vm = StateMonitor(Pe,'v',record=list(range(10)),clock=clocknrn)
 
 # ###########################################
 # Simulate
 # ###########################################
 
-print "Setup complete, running for",simtime,"at dt =",dt,"s."
+print(("Setup complete, running for",simtime,"at dt =",dt,"s."))
 t1 = time.time()
 run(simtime,report='text')
-print 'inittime + runtime, t = ', time.time() - t1
+print(('inittime + runtime, t = ', time.time() - t1))
 
-print "For g,J =",g,J,"mean exc rate =",\
-    sm_e.nspikes/float(Nmon_exc)/(simtime/second),'Hz.'
-print "For g,J =",g,J,"mean inh rate =",\
-    sm_i.nspikes/float(Nmon-Nmon_exc)/(simtime/second),'Hz.'
+print(("For g,J =",g,J,"mean exc rate =",\
+    sm_e.nspikes/float(Nmon_exc)/(simtime/second),'Hz.'))
+print(("For g,J =",g,J,"mean inh rate =",\
+    sm_i.nspikes/float(Nmon-Nmon_exc)/(simtime/second),'Hz.'))
 
 # ###########################################
 # Analysis functions

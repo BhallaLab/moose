@@ -40,7 +40,7 @@ spineAngleDistrib = 2*numpy.pi
 # Here we define a function that is used to make a cell prototype. Normally
 # it would load in a model from a file.
 def makeCellProto( name ):
-    print 'IN: makeCellProto( ', name, ')'
+    print(('IN: makeCellProto( ', name, ')'))
     elec = moose.Neuron( '/library/' + name )
     ecompt = []
     for i in range( numDendSegments ):
@@ -63,7 +63,7 @@ rd.makeCellProto = makeCellProto
 def makeChemProto( name ):
     chem = moose.Neutral( '/library/' + name )
     for i in ( 'dend', 'spine', 'psd' ):
-        print 'making ', i
+        print(('making ', i))
         compt = moose.CubeMesh( chem.path + '/' + i )
         compt.volume = 1e-18
         ca = moose.Pool( compt.path + '/Ca' )
@@ -109,7 +109,7 @@ def addPlot( objpath, field, plot, tick ):
         tab.tick = tick
         return tab 
     else:
-        print "failed in addPlot(", objpath, field, plot, tick, ")" 
+        print(("failed in addPlot(", objpath, field, plot, tick, ")")) 
         return 0
 
 def plotVm( plot, name ):
@@ -202,4 +202,4 @@ def getMidpts( compt ):
 
 # Run the 'main' if this script is executed standalone.
 if __name__ == '__main__':
-	main()
+        main()

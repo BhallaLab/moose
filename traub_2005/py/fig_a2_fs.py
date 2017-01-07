@@ -49,7 +49,7 @@ Reproduce the experiment for Fig A2 in Traub et al 2005.
 
 FS (deep basket cell) with 0.5 nA current pusle simulated for 1 s
 """
-from __future__ import print_function
+
 
 import numpy as np
 import pylab

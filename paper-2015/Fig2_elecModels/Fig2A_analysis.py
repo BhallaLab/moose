@@ -13,7 +13,7 @@ fulltime = 1200         #s
 plotdt = 1              #s
 numpts = int(fulltime/plotdt)+1
 
-print 'reading'
+print('reading')
 wts = []
 while True:
     next_line = ''
@@ -23,7 +23,7 @@ while True:
     if next_line == '': break
     next_wt = [float(fh.readline()) for i in range(numpts)]
     wts.append(next_wt)
-    print 'weight',len(wts)
+    print(('weight',len(wts)))
 
 
 hiAve = np.zeros( len( wts[0] ) )
@@ -54,7 +54,7 @@ dumpVec( f, 'lowExample', wts[5] )
 f.close()
 
 
-print 'numHi = ', numHi, ' plotting...'
+print(('numHi = ', numHi, ' plotting...'))
 figure()
 plot(transpose(wts))
 plot( hiAve, linewidth=4 )

@@ -8,8 +8,9 @@
 ## See the file COPYING.LIB for the full notice.
 #########################################################################
 
+from __future__ import print_function
+
 import sys
-sys.path.append('../../python')
 import os
 os.environ['NUMPTHREADS'] = '1'
 import math
@@ -19,6 +20,7 @@ import matplotlib.pyplot as plt
 import moose
 import proto18
 
+scriptDir = os.path.dirname( os.path.realpath( __file__ ) )
 #EREST_ACT = -70e-3
 
 def loadElec():
@@ -33,19 +35,19 @@ def loadElec():
     for x in moose.wildcardFind( "/library/##" ):
         x.tick = -1
     model = moose.Neutral( '/model' )
-    cellId = moose.loadModel( 'soma.p', '/model/elec', "Neutral" )
+    cellId = moose.loadModel( 
+            os.path.join( scriptDir, 'soma.p')
+            , '/model/elec', "Neutral" 
+            )
     moose.setCwe( '/' )
-    '''
-    hsolve = moose.HSolve( '/model/elec/hsolve' )
-    hsolve.dt = 50.0e-6
-    hsolve.target = '/model/elec/soma'
-    moose.reinit()
-    '''
     return cellId
 
 def loadChem():
     chem = moose.Neutral( '/model/chem' )
-    modelId = moose.loadModel( '../genesis/chanPhosphByCaMKII.g', '/model/chem', 'gsl' )
+    modelId = moose.loadModel(
+            os.path.join( scriptDir, '..', 'genesis', 'chanPhosphByCaMKII.g' )
+                , '/model/chem', 'gsl' 
+                )
     nmstoich = moose.element( '/model/chem/kinetics/stoich' )
 
 def makeModel():
@@ -87,7 +89,7 @@ def addPlot( objpath, field, plot, tick ):
         tab.tick = tick
         return tab
     else:
-        print "failed in addPlot(", objpath, field, plot, tick, ")"
+        print(("failed in addPlot(", objpath, field, plot, tick, ")"))
         return 0
 
 def main():
@@ -177,4 +179,4 @@ def main():
     quit()
 
 if __name__ == '__main__':
-	main()
+        main()

@@ -35,37 +35,37 @@ moose.useClock(0, '/##[ISA=Compartment]', 'init')
 moose.useClock(1, '/##[ISA=Compartment]', 'process')
 
 # List the ticks connected to an element.
-print 'Ticks connected to `process` method of', comp.path
+print(('Ticks connected to `process` method of', comp.path))
 for tick in comp.neighbors['process']:
-    print ' ->',tick.path
+    print((' ->',tick.path))
 
 # Different ticks can be connected to different fields.
-print 'Ticks connected to `init` method of', comp.path
+print(('Ticks connected to `init` method of', comp.path))
 for tick in comp.neighbors['init']:
-    print ' ->',tick.path
+    print((' ->',tick.path))
 
 # View the scheduled elements using the tick nos.
 t = moose.element('/clock')
-print 'Elements on tick 0'
+print('Elements on tick 0')
 for e in t.neighbors['proc0']:
-    print ' ->', e.path
-print 'Elements on tick 1'
+    print((' ->', e.path))
+print('Elements on tick 1')
 for e in t.neighbors['proc1']:
-    print ' ->', e.path    
+    print((' ->', e.path))    
 
 ch = moose.HHChannel('/comp/chan')
 moose.useClock(1, ch.path, 'process')
-print ch.path, 'has been scheduled'
-print 'Elements on tick 1'
+print((ch.path, 'has been scheduled'))
+print('Elements on tick 1')
 for e in t.neighbors['proc1']:
-    print ' ->', e.path
+    print((' ->', e.path))
 
 # Go through elements by wildcard search and list the ticks connected.
 # This can be slow when the model is too big.
 for el in moose.wildcardFind('/##[ISA=Compartment]'):
-    print 'Ticks connected to `process` method of', el.path
+    print(('Ticks connected to `process` method of', el.path))
     for t in moose.element(el).neighbors['process']:
-        print ' ->', t.path
+        print((' ->', t.path))
 
 # <codecell>
 

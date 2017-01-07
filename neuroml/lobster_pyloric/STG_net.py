@@ -74,9 +74,9 @@ def loadRunSTGNeuroML_L123(filename):
 
     # monitor synaptic current
     soma2 = moose.element(soma2_path)
-    print "Children of",soma2_path,"are:"
+    print(("Children of",soma2_path,"are:"))
     for child in soma2.children:
-        print child.className, child.path
+        print((child.className, child.path))
     if graded_syn:
         syn_path = soma2_path+'/DoubExpSyn_Ach__cells-0-_AB_PD_0-0-_Soma_0'
         syn = moose.element(syn_path)
@@ -85,11 +85,11 @@ def loadRunSTGNeuroML_L123(filename):
         syn = moose.element(syn_path)
     syn_Ik = setupTable('DoubExpSyn_Ach_Ik',syn,'Ik')
 
-    print "Reinit MOOSE ... "
+    print("Reinit MOOSE ... ")
     resetSim(['/elec',cells_path], simdt, plotdt, simmethod='hsolve')
 
-    print "Using graded synapses? = ", graded_syn
-    print "Running model filename = ",filename," ... "
+    print(("Using graded synapses? = ", graded_syn))
+    print(("Running model filename = ",filename," ... "))
     moose.start(runtime)
     tvec = np.arange(0.0,runtime+2*plotdt,plotdt)
     tvec = tvec[ : soma1Vm.vector.size ]
@@ -139,7 +139,7 @@ def loadRunSTGNeuroML_L123(filename):
     plt.title('Ach syn current in '+soma2_path)
     plt.xlabel('time (s)')
     plt.ylabel('Isyn (S)')
-    print "Showing plots ..."
+    print("Showing plots ...")
     
     plt.show()
 

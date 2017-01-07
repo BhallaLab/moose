@@ -28,7 +28,7 @@
 # 
 
 # Code:
-from __future__ import print_function
+
 import csv
 import numpy as np
 from collections import defaultdict
@@ -101,7 +101,7 @@ def adjust_chanlib(cdict):
     """Update the revarsal potentials for channels. Set the initial X
     value for AR channel. Set the tau for Ca pool."""
     channel_dict = init_chanlib()
-    for ch in channel_dict.values():
+    for ch in list(channel_dict.values()):
         config.logger.info('adjusting properties of %s' % (ch.path))
         if isinstance(ch, kchans.KChannel):
             ch.Ek = cdict['EK']
@@ -142,7 +142,7 @@ def read_prototype(celltype, cdict):
     leveldict = read_keyvals('%s/%s.levels' % (config.modelSettings.protodir, celltype))
     depths = read_keyvals('%s/%s.depths' % (config.modelSettings.protodir, celltype))
     depthdict = {}
-    for level, depthset in depths.items():
+    for level, depthset in list(depths.items()):
         if len(depthset) != 1:
             raise Exception('Depth set must have only one entry.')
         depthdict[level] = depthset.pop()
@@ -165,7 +165,7 @@ def assign_depths(cell, depthdict, leveldict):
     """
     if not depthdict:
         return
-    for level, depth in depthdict.items():
+    for level, depth in list(depthdict.items()):
         z = float(depth)
         complist = leveldict[level]
         for comp_number in complist:
@@ -187,15 +187,14 @@ class CellMeta(type):
                         break
             if annotation is not None:
                 info = moose.Annotator('%s/info' % (proto.path))
-                info.notes = '\n'.join('"%s": "%s"' % kv for kv in annotation.items())
+                info.notes = '\n'.join('"%s": "%s"' % kv for kv in list(annotation.items()))
             if 'soma_tauCa' in cdict:
                 moose.element(proto.path + '/comp_1/CaPool').tau = cdict['soma_tauCa']
             cdict['prototype'] = proto
         return type.__new__(cls, name, bases, cdict)
 
     
-class CellBase(moose.Neuron):
-    __metaclass__ = CellMeta
+class CellBase(moose.Neuron, CellMeta):
     annotation = {'cno': 'cno_0000020'}
     def __init__(self, path):
         if not moose.exists(path):

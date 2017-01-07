@@ -36,9 +36,9 @@ plot_it('r')
 interval = 50
 
 t1 = time.time()
-for i in xrange(1, 5):
+for i in range(1, 5):
     h.continuerun(i * interval)
     plot_it()
-print "Time = ", time.time() - t1
+print(("Time = ", time.time() - t1))
 
 pyplot.show()

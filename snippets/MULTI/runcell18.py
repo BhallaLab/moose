@@ -6,10 +6,10 @@ import moose
 import proto18
 
 def dumpPlots( fname ):
-	if ( os.path.exists( fname ) ):
-		os.remove( fname )
-	tab.xplot( fname, 'soma.Vm' )
-	catab.xplot( fname, 'soma.Ca' )
+    if ( os.path.exists( fname ) ):
+        os.remove( fname )
+    tab.xplot( fname, 'soma.Vm' )
+    catab.xplot( fname, 'soma.Ca' )
 
 library = moose.Neutral( '/library' )
 moose.setCwe( '/library' )
@@ -38,7 +38,7 @@ soma.inject = 2e-10
 moose.connect( tab, 'requestOut', soma, 'getVm' )
 capool = moose.element( '/cell/soma/Ca_conc' )
 moose.connect( catab, 'requestOut', capool, 'getCa' )
-print 1
+print((1))
 dt = 50e-6
 moose.setClock( 0, dt )
 moose.setClock( 1, dt )
@@ -49,12 +49,12 @@ moose.useClock( 1, '/cell/##[ISA=Compartment]', 'process' )
 moose.useClock( 2, '/cell/##[ISA!=Compartment]', 'process' )
 moose.useClock( 3, '/graphs/soma,/graphs/ca', 'process' )
 
-print 2
+print((2))
 moose.reinit()
-print 3
+print((3))
 moose.start( 0.1 )
 dumpPlots( '50usec.plot' )
-print 4
+print((4))
 moose.reinit()
 hsolve = moose.HSolve( '/cell/hsolve' )
 moose.useClock( 1, '/cell/hsolve', 'process' )
@@ -62,10 +62,10 @@ hsolve.dt = dt
 hsolve.target = '/cell/soma'
 moose.reinit()
 moose.reinit()
-print 5
+print((5))
 moose.start( 0.1 )
-print 6
+print((6))
 
 dumpPlots( 'h50usec.plot' )
 
-print 7
+print((7))

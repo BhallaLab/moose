@@ -197,7 +197,7 @@ These neurons show bursting in response to inhibitory input."""
         neuron = self._get_neuron(key)
         pulsegen = self._make_pulse_input(key)
         if pulsegen is None:
-            print key, 'Not implemented.'
+            print((key, 'Not implemented.'))
             
     def simulate(self, key):
         self.setup(key)
@@ -207,7 +207,7 @@ These neurons show bursting in response to inhibitory input."""
         try:
             Vm = self.Vm_tables[key]
             u = self.u_tables[key]
-        except KeyError, e:
+        except KeyError as e:
             Vm = moose.Table(self.data_container.path + '/' + key + '_Vm')
             nrn = self.neurons[key]
             moose.connect(Vm, 'requestOut', nrn, 'getVm')
@@ -217,7 +217,7 @@ These neurons show bursting in response to inhibitory input."""
             self.u_tables[key] = utable
         try:
             Im = self.inject_tables[key]
-        except KeyError, e:
+        except KeyError as e:
             Im = moose.Table(self.data_container.path + '/' + key + '_inject') # May be different for non-pulsegen sources.
             Im.connect('requestOut', self._get_neuron(key), 'getIm')
             self.inject_tables[key] = Im
@@ -237,7 +237,7 @@ These neurons show bursting in response to inhibitory input."""
         time = linspace(0, IzhikevichDemo.parameters[key][7], len(Vm.vector))
         # DEBUG
         nrn = self._get_neuron(key)
-        print 'a = %g, b = %g, c = %g, d = %g, initVm = %g, initU = %g' % (nrn.a,nrn.b, nrn.c, nrn.d, nrn.initVm, nrn.initU)
+        print(('a = %g, b = %g, c = %g, d = %g, initVm = %g, initU = %g' % (nrn.a,nrn.b, nrn.c, nrn.d, nrn.initVm, nrn.initU)))
         #! DEBUG
         return (time, Vm, Im)
 
@@ -246,14 +246,14 @@ These neurons show bursting in response to inhibitory input."""
         try:
             params = IzhikevichDemo.parameters[key]
         except KeyError as e:
-            print ' %s : Invalid neuron type. The valid types are:' % (key)
+            print((' %s : Invalid neuron type. The valid types are:' % (key)))
             for key in IzhikevichDemo.parameters:
-                print key
+                print(key)
             raise e
         try:
             neuron = self.neurons[key]
             return neuron
-        except KeyError, e:
+        except KeyError as e:
             neuron = moose.IzhikevichNrn(self.model_container.path + '/' + key)
 
         if key == 'integrator' or key == 'Class_1': # Integrator has different constants
@@ -354,7 +354,7 @@ These neurons show bursting in response to inhibitory input."""
             self.inputs[key] = input_table
             return input_table                        
         else:
-            print key, ': Stimulus is not based on pulse generator.'
+            print((key, ': Stimulus is not based on pulse generator.'))
             raise
         pulsegen = self._make_pulsegen(key, 
                                       firstLevel,
@@ -529,9 +529,9 @@ try:
         plot(time, Im.vector)
         subplot(3,1,3)
         show()
-        print 'Finished simulation.'
+        print('Finished simulation.')
 except ImportError:
-    print 'Matplotlib not installed.'
+    print('Matplotlib not installed.')
 
 # 
 # Izhikevich.py ends here

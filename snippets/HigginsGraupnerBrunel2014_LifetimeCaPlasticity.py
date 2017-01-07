@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+
 #/**********************************************************************
 #** This program is part of 'MOOSE', the
 #** Messaging Object Oriented Simulation Environment.
@@ -126,18 +126,18 @@ moose.seed(100)
 moose.reinit()
 
 # function to make the aPlus and aMinus settle to equilibrium values
-print "Rates of pre- and post-syanptic neurons =",frate
+print(("Rates of pre- and post-syanptic neurons =",frate))
 WtSeries = []
 numsteps = int(runtime/dt)
 for i in range(numrepeats):
     syn.synapse[0].weight = 1.0 # starting weight to decay from
     syn.Ca = 0.0
-    print "Repeat number",i,"running..."
+    print(("Repeat number",i,"running..."))
     moose.start(runtime)
     WtSeries.append(WtTable.vector[i*numsteps:(i+1)*numsteps])
 WtSeries = array(WtSeries)
 WtMean = mean(WtSeries,axis=0)
-print "plotting..."
+print("plotting...")
 
 # ###########################################
 # Plot the simulated weights and Ca vs time

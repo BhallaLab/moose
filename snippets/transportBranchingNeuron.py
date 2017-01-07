@@ -73,7 +73,7 @@ def makeModel():
     
     moose.element( '/model/chem/compt0/a[0]' ).concInit = aConcInit
     twigs = findTwigs( compt0 )
-    print 'twigs = ', twigs
+    print(('twigs = ', twigs))
     for i in twigs:
         e = moose.element( '/model/chem/compt0/b[' + str(i) + ']' )
         e.concInit = bConcInit
@@ -126,8 +126,8 @@ def makeDisplay():
         return ( timeSeries, fig, aline, bline, timeLabel, yp )
 
 def updateDisplay( plotlist ):
-	a = moose.vec( '/model/chem/compt0/a' )
-	b = moose.vec( '/model/chem/compt0/b' )
+        a = moose.vec( '/model/chem/compt0/a' )
+        b = moose.vec( '/model/chem/compt0/b' )
         plotlist[2].set_ydata( a.conc * plotScale + plotlist[5]  )
         plotlist[3].set_ydata( b.conc * plotScale + plotlist[5]  )
         plotlist[1].canvas.draw()
@@ -140,7 +140,7 @@ def finalizeDisplay( plotlist, cPlotDt ):
     plt.legend()
     plotlist[1].canvas.draw()
     print( "Hit 'enter' to exit" )
-    raw_input()
+    eval(input())
 
 def makeChemModel( compt ):
     
@@ -208,10 +208,10 @@ def main():
         plotlist[4].set_text( "time = %d" % i )
         updateDisplay( plotlist )
 
-    print 'mass consv a = ', a0, sum( a.n ), ', b = ', b0, sum( b.n )
+    print(('mass consv a = ', a0, sum( a.n ), ', b = ', b0, sum( b.n )))
 
     finalizeDisplay( plotlist, plotdt )
 
 # Run the 'main' if this script is executed standalone.
 if __name__ == '__main__':
-	main()
+        main()

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+
 # Author: Subhasis Ray
 
 """HDF5 is a self-describing file format for storing large
@@ -92,7 +92,7 @@ def example():
     moose.start(30.0)
     hdfwriter.close()
     vm_tab.plainPlot('hdfdemo_Vm.csv')
-    print 'Finished simulation. Data was saved in', hdfwriter.filename
+    print(('Finished simulation. Data was saved in', hdfwriter.filename))
 
    
 if __name__ == '__main__':

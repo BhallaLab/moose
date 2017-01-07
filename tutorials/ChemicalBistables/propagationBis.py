@@ -50,70 +50,70 @@ import matplotlib.image as mpimg
 import moose
 
 def makeModel():
-		# create container for model
-		r0 = 1e-6	# m
-		r1 = 0.5e-6	# m. Note taper.
-		num = 200
-		diffLength = 1e-6 # m
-		comptLength = num * diffLength	# m
-		diffConst = 20e-12 # m^2/sec
-		concA = 1 # millimolar
-		diffDt = 0.02  # for the diffusion
-		chemDt = 0.2   # for the reaction
+                # create container for model
+                r0 = 1e-6        # m
+                r1 = 0.5e-6        # m. Note taper.
+                num = 200
+                diffLength = 1e-6 # m
+                comptLength = num * diffLength        # m
+                diffConst = 20e-12 # m^2/sec
+                concA = 1 # millimolar
+                diffDt = 0.02  # for the diffusion
+                chemDt = 0.2   # for the reaction
                 mfile = '../../genesis/M1719.g'
 
-		model = moose.Neutral( 'model' )
-		compartment = moose.CylMesh( '/model/kinetics' )
+                model = moose.Neutral( 'model' )
+                compartment = moose.CylMesh( '/model/kinetics' )
 
-		# load in model
+                # load in model
                 modelId = moose.loadModel( mfile, '/model', 'ee' )
-		a = moose.element( '/model/kinetics/a' )
-		b = moose.element( '/model/kinetics/b' )
-		c = moose.element( '/model/kinetics/c' )
+                a = moose.element( '/model/kinetics/a' )
+                b = moose.element( '/model/kinetics/b' )
+                c = moose.element( '/model/kinetics/c' )
 
                 ac = a.concInit
                 bc = b.concInit
                 cc = c.concInit
 
-		compartment.r0 = r0
-		compartment.r1 = r1
-		compartment.x0 = 0
-		compartment.x1 = comptLength
-		compartment.diffLength = diffLength
-		assert( compartment.numDiffCompts == num )
+                compartment.r0 = r0
+                compartment.r1 = r1
+                compartment.x0 = 0
+                compartment.x1 = comptLength
+                compartment.diffLength = diffLength
+                assert( compartment.numDiffCompts == num )
 
-		# Assign parameters
+                # Assign parameters
                 for x in moose.wildcardFind( '/model/kinetics/##[ISA=PoolBase]' ):
                     #print 'pools: ', x, x.name
                     x.diffConst = diffConst
 
-		# Make solvers
-		ksolve = moose.Ksolve( '/model/kinetics/ksolve' )
-		dsolve = moose.Dsolve( '/model/dsolve' )
+                # Make solvers
+                ksolve = moose.Ksolve( '/model/kinetics/ksolve' )
+                dsolve = moose.Dsolve( '/model/dsolve' )
                 # Set up clocks.
-		moose.setClock( 10, diffDt )
+                moose.setClock( 10, diffDt )
                 for i in range( 11, 17 ):
-		    moose.setClock( i, chemDt )
+                    moose.setClock( i, chemDt )
 
-		stoich = moose.Stoich( '/model/kinetics/stoich' )
-		stoich.compartment = compartment
-		stoich.ksolve = ksolve
-		stoich.dsolve = dsolve
-		stoich.path = "/model/kinetics/##"
-                print 'dsolve.numPools, num = ', dsolve.numPools, num
+                stoich = moose.Stoich( '/model/kinetics/stoich' )
+                stoich.compartment = compartment
+                stoich.ksolve = ksolve
+                stoich.dsolve = dsolve
+                stoich.path = "/model/kinetics/##"
+                print(('dsolve.numPools, num = ', dsolve.numPools, num))
                 b.vec[num-1].concInit *= 1.01 # Break symmetry.
 
 def main():
                 runtime = 100
                 displayInterval = 2
-		makeModel()
-		dsolve = moose.element( '/model/dsolve' )
-		moose.reinit()
-		#moose.start( runtime ) # Run the model for 10 seconds.
+                makeModel()
+                dsolve = moose.element( '/model/dsolve' )
+                moose.reinit()
+                #moose.start( runtime ) # Run the model for 10 seconds.
 
-		a = moose.element( '/model/kinetics/a' )
-		b = moose.element( '/model/kinetics/b' )
-		c = moose.element( '/model/kinetics/c' )
+                a = moose.element( '/model/kinetics/a' )
+                b = moose.element( '/model/kinetics/b' )
+                c = moose.element( '/model/kinetics/c' )
 
                 img = mpimg.imread( 'propBis.png' )
                 #imgplot = plt.imshow( img )
@@ -143,7 +143,7 @@ def main():
                     timeLabel.set_text( "time = %d" % t )
                     fig.canvas.draw()
 
-                print 'Swapping concs of b and c in half the cylinder'
+                print('Swapping concs of b and c in half the cylinder')
                 for i in range( b.numData/2 ):
                     temp = b.vec[i].conc
                     b.vec[i].conc = c.vec[i].conc
@@ -159,10 +159,10 @@ def main():
                     fig.canvas.draw()
 
                 print( "Hit 'enter' to exit" )
-                raw_input()
+                eval(input())
 
 
 
 # Run the 'main' if this script is executed standalone.
 if __name__ == '__main__':
-	main()
+        main()

@@ -7,6 +7,8 @@
 ## See the file COPYING.LIB for the full notice.
 #########################################################################
 
+from __future__ import print_function
+
 import moose
 import pylab
 import numpy
@@ -26,10 +28,10 @@ def main():
         """
         # the kkit reader doesn't know how to do multicompt solver setup.
         solver = "ee"  
-	mfile = '../genesis/OSC_diff_vols.g'
-	runtime = 3000.0
+        mfile = '../genesis/OSC_diff_vols.g'
+        runtime = 3000.0
         simDt = 1.0
-	modelId = moose.loadModel( mfile, 'model', solver )
+        modelId = moose.loadModel( mfile, 'model', solver )
         #moose.delete( '/model/kinetics/A/Stot' )
         compt0 = moose.element( '/model/kinetics' )
         compt1 = moose.element( '/model/compartment_1' )
@@ -52,37 +54,37 @@ def main():
         stoich1.ksolve = ksolve1
         stoich1.path = '/model/compartment_1/##'
         #stoich0.buildXreacs( stoich1 )
-        print ksolve0.numLocalVoxels, ksolve0.numPools, stoich0.numAllPools
+        print(ksolve0.numLocalVoxels, ksolve0.numPools, stoich0.numAllPools)
         assert( ksolve0.numLocalVoxels == 1 )
         assert( ksolve0.numPools == 7 )
         assert( stoich0.numVarPools == 5 )
         assert( stoich0.numBufPools == 1 )
         assert( stoich0.numProxyPools == 1 )
         assert( stoich0.numAllPools == 7 )
-        print len( stoich0.proxyPools[stoich1] ),
-        print len( stoich1.proxyPools[stoich0] )
+        print(len( stoich0.proxyPools[stoich1] ), end=' ')
+        print(len( stoich1.proxyPools[stoich0] ))
         assert( len( stoich0.proxyPools[stoich1] ) == 1 )
         assert( len( stoich1.proxyPools[stoich0] ) == 1 )
-        print ksolve1.numLocalVoxels, ksolve1.numPools, stoich1.numAllPools
+        print(ksolve1.numLocalVoxels, ksolve1.numPools, stoich1.numAllPools)
         assert( ksolve1.numLocalVoxels == 1 )
         assert( ksolve1.numPools == 6 )
         assert( stoich1.numAllPools == 6 )
         stoich0.buildXreacs( stoich1 )
-        print moose.element( '/model/kinetics/endo' )
-        print moose.element( '/model/compartment_1/exo' )
+        print(moose.element( '/model/kinetics/endo' ))
+        print(moose.element( '/model/compartment_1/exo' ))
         moose.le( '/model/compartment_1' )
-	moose.reinit()
-	moose.start( runtime ) 
+        moose.reinit()
+        moose.start( runtime ) 
 
-	# Display all plots.
-	for x in moose.wildcardFind( '/model/#graphs/conc#/#' ):
+        # Display all plots.
+        for x in moose.wildcardFind( '/model/#graphs/conc#/#' ):
             t = numpy.arange( 0, x.vector.size, 1 ) * simDt
             pylab.plot( t, x.vector, label=x.name )
         pylab.legend()
         pylab.show()
 
-	#quit()
+        #quit()
 
 # Run the 'main' if this script is executed standalone.
 if __name__ == '__main__':
-	main()
+        main()

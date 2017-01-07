@@ -44,11 +44,17 @@
 # 
 
 # Code:
-"""Implementation of Rall 1964 model of dendritic branching. All units
-SI."""
+
+
+
+"""
+Implementation of Rall 1964 model of dendritic branching. All units
+SI.
+
+"""
+from __future__ import print_function
 
 import sys
-
 import math
 import pylab
 import moose
@@ -73,7 +79,7 @@ Ra = RA * length / (math.pi * diameter * diameter / 4.0)
 
 Ek = Em + 1e-3
 
-print 'tau =', tau, 'lambda =', lambda_
+print('tau =', tau, 'lambda =', lambda_)
 
 # Rall used `0.05 * tau`, but that does not reproduce in our
 # case. Why? Sym vs Asym comp??
@@ -176,7 +182,7 @@ def run_model_fig6():
     """Do a simulation for fig6 and plot data."""
     for ch in moose.wildcardFind('/model/##[ISA=ChanBase]'):
         ch.Gk = 1.0/Rm
-    print 'Starting for', inject_time
+    print('Starting for', inject_time)
     moose.start(inject_time)
     for ch in moose.wildcardFind('/model/##[ISA=ChanBase]'):
         ch.Gk = 0.0
@@ -235,8 +241,8 @@ def run_model_fig7(chans_1, chans_2, chans_3):
     to_run = simtime
     delta_t = 0.25 * tau
     for ii in range(0, len(chans_1), 2):
-        print ii
-        print '-----------------'
+        print(ii)
+        print('-----------------')
         chans_1[ii].Gk = 1 / Rm
         chans_1[ii+1].Gk = 1 / Rm
         chans_2[-ii-1].Gk = 1 / Rm
@@ -245,11 +251,11 @@ def run_model_fig7(chans_1, chans_2, chans_3):
             chan.Gk = 0.25 / Rm
         
         for chan in chans_1:
-            print chan.Gk,
-        print
+            print(chan.Gk, end=' ')
+        print()
         for chan in chans_2:
-            print chan.Gk,
-        print
+            print(chan.Gk, end=' ')
+        print()
         moose.start(delta_t)
         for chan in chans_1:
             chan.Gk = 0.0

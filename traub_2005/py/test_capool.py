@@ -28,7 +28,7 @@
 # 
 
 # Code:
-from __future__ import print_function
+
 
 import uuid
 import numpy as np
@@ -78,21 +78,21 @@ def run_capool(poolname, Gbar, simtime):
     gk_file = 'data/%s_Gk.dat' % (poolname)
     ik_file = 'data/%s_Ik.dat' % (poolname)
     ca_file = 'data/%s_Ca.dat' % (poolname)
-    tseries = np.array(range(len(vm_data.vector))) * simdt
-    print('Vm:', len(vm_data.vector), 'Gk', len(gk_data.vector), 'Ik', len(ik_data.vector))
+    tseries = np.array(list(range(len(vm_data.vector)))) * simdt
+    print(('Vm:', len(vm_data.vector), 'Gk', len(gk_data.vector), 'Ik', len(ik_data.vector)))
     data = np.c_[tseries, vm_data.vector]
     np.savetxt(vm_file, data)
-    print('Saved Vm in', vm_file)
+    print(('Saved Vm in', vm_file))
     data = np.c_[tseries, gk_data.vector]
     np.savetxt(gk_file, data)
-    print('Saved Gk in', gk_file)
+    print(('Saved Gk in', gk_file))
     data = np.c_[tseries, ik_data.vector]
     np.savetxt(ik_file, data)
-    print('Saved Ik in', ik_file)
-    print('>>', len(ca_data.vector))
+    print(('Saved Ik in', ik_file))
+    print(('>>', len(ca_data.vector)))
     data = np.c_[tseries, ca_data.vector]
     np.savetxt(ca_file, data)
-    print('Saved [Ca2+] in', ca_file)
+    print(('Saved [Ca2+] in', ca_file))
     return params
     
 
@@ -103,7 +103,7 @@ class TestCaPool(ChannelTestBase):
     vm = np.array(params['Vm'].vector)
     gk = np.array(params['Gk'].vector)
     ca = np.array(params['Ca'].vector)
-    print(len(ca))
+    print(le(ca))
     tseries = np.arange(0, len(vm), 1.0) * simdt
     
     def testCaPool_Vm_Neuron(self):

@@ -49,13 +49,20 @@ into Moose using "loadModel" function and using "saveModel" function one can
 save the model back to Genesis format
 """
 
+import os
 import sys
-#sys.path.append('../../python')
 import moose
 from moose.genesis import *
 
+cwd = os.path.dirname( os.path.realpath( __file__ ) )
+
 if __name__ == '__main__':
-    """ The script demonstates to convert Chemical (Genesis) file back to Genesis file using moose """
-    model = moose.loadModel('../genesis/reaction.g', '/model')
+    """ 
+    The script demonstates to convert Chemical (Genesis) file back to Genesis 
+    file using moose 
+    """
+    model = moose.loadModel( 
+            os.path.join( cwd, '../genesis/reaction.g' ), '/model'
+            )
     written = write('/model', 'testsave.g')
-    print written
+    print( written )

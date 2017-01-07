@@ -175,7 +175,7 @@ def displayPlots():
         for k in i[0].vec:
             plt.plot( timePts, k.vector * i[4] )
         #plt.title( i.name )
-        print i[0].name
+        print((i[0].name))
 
     plt.xlabel( 'Time (s)', fontsize = 16 )
     plt.show()
@@ -194,7 +194,7 @@ def main():
     moose.reinit()
     buildPlots()
     # Run for baseline, tetanus, and post-tetanic settling time 
-    print 'starting...'
+    print('starting...')
     t1 = time.time()
     moose.start( baselineTime )
     caPsd = moose.vec( '/model/chem/psd/Ca_input' )
@@ -218,12 +218,12 @@ def main():
     caPsd.concInit = basalCa
     caDend.concInit = basalCa
     moose.start( postLtdTime )
-    print 'real time = ', time.time() - t1
+    print(('real time = ', time.time() - t1))
 
     if do3D:
         app = QtGui.QApplication(sys.argv)
         compts = moose.wildcardFind( "/model/elec/#[ISA=compartmentBase]" )
-        ecomptPath = map( lambda x : x.path, compts )
+        ecomptPath = [x.path for x in compts]
         morphology = moogli.read_morphology_from_moose(name = "", path = "/model/elec")
         morphology.create_group( "group_all", ecomptPath, -0.08, 0.02, \
             [0.0, 0.5, 1.0, 1.0], [1.0, 0.0, 0.0, 0.9] )

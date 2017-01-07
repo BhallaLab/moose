@@ -254,7 +254,7 @@ def run_clamp(model_dict, clamp, levels, holding=0.0, simtime=100e-3):
     for level in levels:
         model_dict['command'].level[0] = level
         model_dict['command'].baseLevel = holding
-        print 'Running %s with holding=%g, level=%g' % (clamp, holding, model_dict['command'].level[0])
+        print(('Running %s with holding=%g, level=%g' % (clamp, holding, model_dict['command'].level[0])))
         run_sim(model_dict['model'], model_dict['data'], simtime)
         ivec.append(np.asarray(model_dict['inject_tab'].vector))
         cvec.append(np.asarray(model_dict['command_tab'].vector))

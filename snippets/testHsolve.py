@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+
 # testHsolve.py --- 
 # Upi Bhalla, NCBS Bangalore, 9 June 2013.
 #
@@ -103,7 +103,7 @@ def create_squid():
     nachan.Xpower = 3
     xGate = moose.HHGate(nachan.path + '/gateX')    
     xGate.setupAlpha(Na_m_params + [VDIVS, VMIN, VMAX])
-	#This is important: one can run without it but the output will diverge.
+        #This is important: one can run without it but the output will diverge.
     xGate.useInterpolation = 1
     nachan.Ypower = 1
     yGate = moose.HHGate(nachan.path + '/gateY')
@@ -295,7 +295,7 @@ def test_elec_alone():
     hsolve.target = '/n/compt'
     moose.le( '/n' )
     for dt in ( 20e-6, 50e-6, 100e-6 ):
-        print 'running at dt =', dt
+        print(('running at dt =', dt))
         moose.setClock( 0, dt )
         moose.setClock( 1, dt )
         moose.setClock( 2, dt )

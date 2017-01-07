@@ -78,80 +78,80 @@ VMAX = 120e-3 + EREST_ACT
 VDIVS = 3000
 
 def makeChannelPrototypes():
-	"""Create channel prototypes for readcell."""
-	library = moose.Neutral( '/library' )
-	moose.setCwe( '/library' )
-	compt = moose.SymCompartment( '/library/symcompartment' )
-	Em = EREST_ACT + 10.613e-3
-	compt.Em = Em
-	compt.initVm = EREST_ACT
-	compt.Cm = 7.85e-9 * 0.5
-	compt.Rm = 4.2e5 * 5.0
-	compt.Ra = 7639.44e3
-	nachan = moose.HHChannel( '/library/Na' )
-	nachan.Xpower = 3
-	xGate = moose.HHGate(nachan.path + '/gateX')	
-	xGate.setupAlpha(Na_m_params + [VDIVS, VMIN, VMAX])
-	xGate.useInterpolation = 1
-	nachan.Ypower = 1
-	yGate = moose.HHGate(nachan.path + '/gateY')
-	yGate.setupAlpha(Na_h_params + [VDIVS, VMIN, VMAX])
-	yGate.useInterpolation = 1
-	nachan.Gbar = 0.942e-3
-	nachan.Ek = 115e-3+EREST_ACT
+        """Create channel prototypes for readcell."""
+        library = moose.Neutral( '/library' )
+        moose.setCwe( '/library' )
+        compt = moose.SymCompartment( '/library/symcompartment' )
+        Em = EREST_ACT + 10.613e-3
+        compt.Em = Em
+        compt.initVm = EREST_ACT
+        compt.Cm = 7.85e-9 * 0.5
+        compt.Rm = 4.2e5 * 5.0
+        compt.Ra = 7639.44e3
+        nachan = moose.HHChannel( '/library/Na' )
+        nachan.Xpower = 3
+        xGate = moose.HHGate(nachan.path + '/gateX')        
+        xGate.setupAlpha(Na_m_params + [VDIVS, VMIN, VMAX])
+        xGate.useInterpolation = 1
+        nachan.Ypower = 1
+        yGate = moose.HHGate(nachan.path + '/gateY')
+        yGate.setupAlpha(Na_h_params + [VDIVS, VMIN, VMAX])
+        yGate.useInterpolation = 1
+        nachan.Gbar = 0.942e-3
+        nachan.Ek = 115e-3+EREST_ACT
 
-	kchan = moose.HHChannel( '/library/K' )
-	kchan.Xpower = 4.0
-	xGate = moose.HHGate(kchan.path + '/gateX')	
-	xGate.setupAlpha(K_n_params + [VDIVS, VMIN, VMAX])
-	xGate.useInterpolation = 1
-	kchan.Gbar = 0.2836e-3
-	kchan.Ek = -12e-3+EREST_ACT
+        kchan = moose.HHChannel( '/library/K' )
+        kchan.Xpower = 4.0
+        xGate = moose.HHGate(kchan.path + '/gateX')        
+        xGate.setupAlpha(K_n_params + [VDIVS, VMIN, VMAX])
+        xGate.useInterpolation = 1
+        kchan.Gbar = 0.2836e-3
+        kchan.Ek = -12e-3+EREST_ACT
 
 def addPlot( objpath, field, plot ):
-	assert moose.exists( objpath )
-	tab = moose.Table( '/graphs/' + plot )
-	obj = moose.element( objpath )
-	moose.connect( tab, 'requestOut', obj, field )
-	return tab
+        assert moose.exists( objpath )
+        tab = moose.Table( '/graphs/' + plot )
+        obj = moose.element( objpath )
+        moose.connect( tab, 'requestOut', obj, field )
+        return tab
 
 def dumpPlots():
-	plots = moose.wildcardFind( '/graphs/##[ISA=Table]' )
-	for x in moose.wildcardFind( '/graphs/##[ISA=Table]' ):
-	    t = numpy.arange( 0, x.size ) * x.dt # msec
-	    pylab.plot( t, x.vector, label=x.name)
+        plots = moose.wildcardFind( '/graphs/##[ISA=Table]' )
+        for x in moose.wildcardFind( '/graphs/##[ISA=Table]' ):
+            t = numpy.arange( 0, x.size ) * x.dt # msec
+            pylab.plot( t, x.vector, label=x.name)
 
-	pylab.legend()
-	pylab.show()
+        pylab.legend()
+        pylab.show()
 
 def makeModel():
-	makeChannelPrototypes()
-	cellId = moose.loadModel( 'dotp.p', '/model', 'Neutral' )
-	moose.element( '/model/soma' ).inject = 1.7e-9
-	graphs = moose.Neutral( '/graphs' )
-	addPlot( '/model/soma', 'getVm', 'somaVm' )
-	addPlot( '/model/apical_14', 'getVm', 'midVm' )
-	addPlot( '/model/lat_15_2', 'getVm', 'latVm' )
-	addPlot( '/model/apical_19', 'getVm', 'tipVm' )
+        makeChannelPrototypes()
+        cellId = moose.loadModel( 'dotp.p', '/model', 'Neutral' )
+        moose.element( '/model/soma' ).inject = 1.7e-9
+        graphs = moose.Neutral( '/graphs' )
+        addPlot( '/model/soma', 'getVm', 'somaVm' )
+        addPlot( '/model/apical_14', 'getVm', 'midVm' )
+        addPlot( '/model/lat_15_2', 'getVm', 'latVm' )
+        addPlot( '/model/apical_19', 'getVm', 'tipVm' )
 
 def testModel( useSolver ):
-	plotDt = 2e-4
-	if ( useSolver ):
-		elecDt = 50e-6
-		chemDt = 2e-3
+        plotDt = 2e-4
+        if ( useSolver ):
+                elecDt = 50e-6
+                chemDt = 2e-3
 
-	makeModel()
-	moose.setClock( 18, plotDt )
+        makeModel()
+        moose.setClock( 18, plotDt )
 
-	moose.reinit()
-	moose.start( 0.1 )
-	dumpPlots()
+        moose.reinit()
+        moose.start( 0.1 )
+        dumpPlots()
 
 def main():
-	testModel( 1 )
+        testModel( 1 )
 
 if __name__ == '__main__':
-	main()
+        main()
 
 # 
 # neuronFromDotp.py ends here
