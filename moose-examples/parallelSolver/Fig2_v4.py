@@ -22,7 +22,7 @@ def singleCompt( name, params ):
     steptime = 100
 
     CaStim.expr += ' + x2 * (t > ' + str( runtime ) + ' ) * ( t < ' + str( runtime + steptime ) +  ' )'
-    print CaStim.expr
+    print(CaStim.expr)
     tab = moose.Table2( '/model/' + name + '/Atab' )
     #for i in range( 10, 19 ):
         #moose.setClock( i, 0.01 )
@@ -86,7 +86,7 @@ def plotPanelB():
     panelBticks.append( np.arange( 0, 6.00001, 2 ) )
     moose.delete( '/model' )
 
-    for i in zip( panelB, panelBticks, range( len( panelB ) ) ):
+    for i in zip( panelB, panelBticks, list(range( len( panelB ))) ):
         plotPos = i[2] + 5
         ax = plotBoilerplate( 'B', plotPos )
         plt.plot( i[0][1], i[0][2] )
@@ -114,9 +114,9 @@ def runPanelCDEF( name, dist, seqDt, numSpine, seq, stimAmpl ):
         #moose.setClock( i, 0.02 )
     A = moose.vec( '/model/chem/dend/A' )
     Z = moose.vec( '/model/chem/dend/Z' )
-    print moose.element( '/model/chem/dend/A/Adot' ).expr
-    print moose.element( '/model/chem/dend/B/Bdot' ).expr
-    print moose.element( '/model/chem/dend/Ca/CaStim' ).expr
+    print(moose.element( '/model/chem/dend/A/Adot' ).expr)
+    print(moose.element( '/model/chem/dend/B/Bdot' ).expr)
+    print(moose.element( '/model/chem/dend/Ca/CaStim' ).expr)
     phase = moose.vec( '/model/chem/dend/phase' )
     ampl = moose.vec( '/model/chem/dend/ampl' )
     vel = moose.vec( '/model/chem/dend/vel' )
@@ -132,7 +132,7 @@ def runPanelCDEF( name, dist, seqDt, numSpine, seq, stimAmpl ):
     moose.reinit()
     runtime = 50
     snapshot = preStim + seqDt * (numSpine - 0.8)
-    print snapshot
+    print(snapshot)
     #snapshot = 26
     moose.start( snapshot )
     avec = moose.vec( '/model/chem/dend/A' ).n
@@ -205,7 +205,7 @@ def plotPanelCDEF( seq, row ):
         plt.plot( t, tplot[i] )
     ax.yaxis.set_ticks( np.arange( 0, 5.00001, 2.0 ) )
 
-    for i in zip( range(4), (4.0, 3.0, 10, 4 ), (1, 1, 5, 2) ):
+    for i in zip( list(range(4)), (4.0, 3.0, 10, 4 ), (1, 1, 5, 2) ):
         ax = plotBoilerplate( xLabel, 9 + start + i[0], 'Position( um)' )
         plt.plot( xplot[i[0]][:50] )
         ax.yaxis.set_ticks( np.arange( 0, i[1] * 1.0000001, i[2] ) )
@@ -221,7 +221,7 @@ if __name__ == '__main__':
     plotPanelB()
     plotPanelCDEF( [0,1,2,3,4], 3 )
     plotPanelCDEF( [4,1,0,3,2], 4 )
-    print ("Time taken = ", time.time() - t1)
+    print(("Time taken = ", time.time() - t1))
     plt.tight_layout()
         
     plt.show()

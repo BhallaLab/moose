@@ -72,8 +72,8 @@ stimtab.stepSize = 0.0
 # stimtab.startTime = 0.0
 # stimtab.stopTime = simtime
 stimtab.vector = np.linspace(-4, 4, 1000)
-print stimtab.vector
-print interpol.vector
+print((stimtab.vector))
+print((interpol.vector))
 moose.connect(stimtab, 'output', interpol, 'input')
 
 

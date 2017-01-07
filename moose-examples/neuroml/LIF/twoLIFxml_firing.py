@@ -37,10 +37,10 @@ def create_twoLIFs():
 
 def run_twoLIFs():
 	## reset and run the simulation
-	print "Reinit MOOSE."
+	print("Reinit MOOSE.")
 	## from moose_utils.py sets clocks and resets
 	resetSim(['/cells[0]'], SIMDT, PLOTDT, simmethod='ee')
-	print "Running now..."
+	print("Running now...")
 	moose.start(RUNTIME)
 
 if __name__ == '__main__':
@@ -64,7 +64,7 @@ if __name__ == '__main__':
     moose.connect(IF2SynChanTable,'requestOut',IF2Soma.path+'/exc_syn','getIk')
 
     run_twoLIFs()
-    print "Spiketimes :",IF1spikesTable.vector
+    print(("Spiketimes :",IF1spikesTable.vector))
     ## plot the membrane potential of the neuron
     timevec = arange(0.0,RUNTIME+PLOTDT/2.0,PLOTDT)
     figure(facecolor='w')

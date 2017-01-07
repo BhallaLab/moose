@@ -48,7 +48,7 @@
 """
 Display channel properties graphically
 """
-from __future__ import print_function
+
 from datetime import datetime
 from PyQt4 import QtCore, QtGui
 from matplotlib import mlab
@@ -115,7 +115,7 @@ class HHChanView(QtGui.QWidget):
             self.channelListWidget = QtGui.QListWidget(self)
             self.channelListWidget.setSelectionMode( QtGui.QAbstractItemView.ExtendedSelection)
         root = str(self.rootEdit.text())
-        for chan in self.getChannels(root).values():
+        for chan in list(self.getChannels(root).values()):
             self.channelListWidget.addItem(chan.name)
         self.update()
         return self.channelListWidget
@@ -154,7 +154,9 @@ class HHChanView(QtGui.QWidget):
         self.mhaxes.set_title('Activation/Inactivation')
         self.tauaxes = self.figure.add_subplot(2, 1, 2)
         self.tauaxes.set_title('Tau')
+        print((self.channels))
         for item in self.getChannelListWidget().selectedItems():
+            print((item.text()))
             chan = self.channels[str(item.text())]
             if chan.Xpower > 0:
                 path = '{}/gateX'.format(chan.path)
@@ -194,6 +196,19 @@ class NetworkXWidget(QtGui.QWidget):
         if len(sizes) == 0:
             print('Empty graph for cell. Make sure proto file has `*asymmetric` on top. I cannot handle symmetric compartmental connections')
             return
+        weights = np.array([g.edge[e[0]][e[1]]['weight'] for e in g.edges()])
+        pos = nx.graphviz_layout(g, prog='twopi')
+        xmin, ymin, xmax, ymax = 1e9, 1e9, -1e9, -1e9
+        for p in list(pos.values()):
+            if xmin > p[0]:
+                xmin = p[0]
+            if xmax < p[0]:
+                xmax = p[0]
+            if ymin > p[1]:
+                ymin = p[1]
+            if ymax < p[1]:
+                ymax = p[1]        
+        edge_widths = 10.0 * weights / max(weights)
         node_colors = ['k' if x in axon else 'gray' for x in g.nodes()]
         lw = [1 if n.endswith('comp_1') else 0 for n in g.nodes()]
         self.axes.clear()
@@ -300,6 +315,7 @@ class CellView(QtGui.QWidget):
 
     def displayCellMorphology(self, cellpath):
         cell = moose.element(cellpath)
+        print('HERE')
         graph = cell_to_graph(cell)
         self.getCellMorphologyWidget().displayGraph(graph)
 
@@ -319,8 +335,11 @@ class CellView(QtGui.QWidget):
                                            [1e9, 0, 0]])
         # moose.le(model_container)
         # moose.le(data_container)
+        print('11111')
+        print((model_container.path, data_container.path))
         params['modelRoot'] = model_container.path
         params['dataRoot'] = data_container.path
+        print('here')
         return params
 
     def displaySelected(self):
@@ -386,7 +405,7 @@ class CellView(QtGui.QWidget):
         self.vmAxes.legend()
         self.plotCanvas.draw()
         td = np.mean(tdlist)
-        print('Simulating %g s took %g s of computer time' % (simtime, td))
+        print(('Simulating %g s took %g s of computer time' % (simtime, td)))
         # self.plotFigure.tight_layout()
 
     def getPlotWidget(self):

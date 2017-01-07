@@ -154,7 +154,7 @@ class ChannelMeta(type):
             mstring.value = mstring_field[1]
         if 'annotation' in cdict:
             info = moose.Annotator('%s/info' % (proto.path))
-            info.notes = '\n'.join('%s: %s' % kv for kv in cdict['annotation'].items())
+            info.notes = '\n'.join('%s: %s' % kv for kv in list(cdict['annotation'].items()))
             # print proto.path, info.notes
         cdict['prototype'] = proto
         prototypes[name] = proto
@@ -162,10 +162,9 @@ class ChannelMeta(type):
         return type.__new__(cls, name, bases, cdict)
 
 
-class ChannelBase(moose.HHChannel):
+class ChannelBase(moose.HHChannel, ChannelMeta):
     annotation = {'cno': 'cno_0000047'}
     abstract = True
-    __metaclass__ = ChannelMeta
     def __init__(self, path, xpower=1, ypower=0, Ek=0.0):
         moose.HHChannel.__init__(self, path)
 

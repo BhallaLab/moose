@@ -62,7 +62,7 @@ rdes = rd.rdesigneur(
 rdes.buildModel()
 
 for i in moose.wildcardFind( "/model/elec/#/Na" ):
-    print i.parent.name, i.Gbar
+    print(i.parent.name, i.Gbar)
 
 moose.reinit()
 

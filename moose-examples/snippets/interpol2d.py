@@ -61,18 +61,18 @@ def interpolation_demo():
     # Make a 50 element array with entries at equal distance from
     # [0,1) and reshape it into a 10x5 matrix and assign to table.
     matrix = np.linspace(0, 1.0, 50).reshape(10, 5)
-    print 'Setting table to'
-    print matrix
+    print('Setting table to')
+    print(matrix)
     interpol.tableVector2D = matrix
     # interpolating beyond top left corner.
     # value should be 
     pos = (0.8, 0.3)
     
-    print 'Interpolated value at', pos
-    print interpol.z[pos[0], pos[1]]
+    print(('Interpolated value at', pos))
+    print((interpol.z[pos[0], pos[1]]))
     
-    print 'Point going out of bound on both x and y', interpol.z[1.1, 1.1]
-    print 'Point going out of bound on both x and y', interpol.z[0.5, 1.1]
+    print(('Point going out of bound on both x and y', interpol.z[1.1, 1.1]))
+    print(('Point going out of bound on both x and y', interpol.z[0.5, 1.1]))
 
 if __name__ == '__main__':
     interpolation_demo()

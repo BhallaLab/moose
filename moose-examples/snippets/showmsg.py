@@ -14,9 +14,9 @@ mid = moose.connect(net, 'spikeOut', synapse, 'addSpike', 'Sparse') # This creat
 msg = moose.element(mid)
 msg.setRandomConnectivity(connectionProbability, 5)
 for n in net.vec:
-    print 'Messages from %s.spikeOut' % (n.path)
+    print(('Messages from %s.spikeOut' % (n.path)))
     node = moose.element(n)
     for dest, df in zip(node.msgDests['spikeOut'], node.msgDestFunctions['spikeOut']):
-        print '\t--> %s.%s' % (dest.path, df)
+        print(('\t--> %s.%s' % (dest.path, df)))
 
 

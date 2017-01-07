@@ -29,7 +29,7 @@
 #
 
 # Code:
-from __future__ import print_function
+
 
 import os
 os.environ['NUMPTHREADS'] = '1'
@@ -142,7 +142,7 @@ class TestSingleComp(unittest.TestCase):
         tab = moose.Table('%s/Vm' % (self.data.path))
         self.tables['Vm'] = tab
         moose.connect(tab, 'requestOut', self.soma, 'getVm')
-        for channelname, conductance in channel_density.items():
+        for channelname, conductance in list(channel_density.items()):
             chanclass = eval(channelname)
             channel = insert_channel(self.soma, chanclass, conductance, density=True)
             if issubclass(chanclass, KChannel):
@@ -189,8 +189,8 @@ class TestSingleComp(unittest.TestCase):
             nrndata = np.loadtxt('../nrn/data/singlecomp_Vm.dat')
             vm_axis.plot(nrndata[:,0], nrndata[:,1], label='Vm (mV) - nrn')
             ca_axis.plot(nrndata[:,0], nrndata[:,2], label='Ca (mM) - nrn')
-        except IOError, e:
-            print( e)
+        except IOError as e:
+            print(e)
         tseries = np.linspace(0, simtime, len(self.tables['Vm'].vector)) * 1e3
         # plotcount = len(channel_density) + 1
         # rows = int(np.sqrt(plotcount) + 0.5)

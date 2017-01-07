@@ -187,7 +187,7 @@ def create_spine( parentCompt, parentObj, index, frac, length, dia, theta ):
     return head
 
 def create_spine_with_receptor( compt, cell, index, frac ):
-    FaradayConst = 96485.3415			# s A / mol
+    FaradayConst = 96485.3415                        # s A / mol
     spineLength = 5.0e-6
     spineDia = 4.0e-6
     head = create_spine( compt, cell, index, frac, spineLength, spineDia, 0.0 )
@@ -199,10 +199,10 @@ def create_spine_with_receptor( compt, cell, index, frac ):
     moose.connect( head, 'channel', gluR, 'channel', 'single' )
 
     caPool = moose.CaConc( head.path + '/ca' )
-    caPool.CaBasal = 1e-4 		# 0.1 micromolar
+    caPool.CaBasal = 1e-4                 # 0.1 micromolar
     caPool.tau = 0.01
     B = 1.0 / ( FaradayConst * spineLength * spineDia * spineDia *math.pi/4)
-    B = B / 20.0 				# scaling factor for Ca buffering
+    B = B / 20.0                                 # scaling factor for Ca buffering
     caPool.B = B
     moose.connect( gluR, 'IkOut', caPool, 'current', 'single' )
 
@@ -227,7 +227,7 @@ def display_plots( name ):
     pylab.figure()
     for x in moose.wildcardFind( '/graphs/#' ):
         pos = numpy.arange( 0, x.vector.size ) * x.dt
-        print len( pos ), len( x.vector )
+        print((len( pos ), len( x.vector )))
         pylab.plot( pos, x.vector, label=x.name )
     pylab.legend()
     pylab.title( name )

@@ -205,7 +205,7 @@ def test_hhcomp():
     model = moose.Neutral('/model')
     data = moose.Neutral('/data')    
     comp, na, k = create_hhcomp(parent=model.path)
-    print comp.Rm, comp.Cm, na.Ek, na.Gbar, k.Ek, k.Gbar
+    print((comp.Rm, comp.Cm, na.Ek, na.Gbar, k.Ek, k.Gbar))
     pg = moose.PulseGen('%s/pg' % (model.path))
     pg.firstDelay = 20e-3
     pg.firstWidth = 40e-3

@@ -71,84 +71,84 @@ def wildcard_setup():
 def wildcard_test():
     # TYPE matches the type of the object
     wildcard = '/alfa/bravo/#[TYPE=HHChannel2D]'
-    print '\nElements Matching:', wildcard
+    print(('\nElements Matching:', wildcard))
     for element in moose.wildcardFind(wildcard):
-        print '\t', element.path
+        print(('\t', element.path))
 
     # ISA matches elements of specified type or its subclasses
     wildcard = '/alfa/bravo/#[ISA=HHChannel]'
-    print '\nElements Matching:', wildcard
+    print(('\nElements Matching:', wildcard))
     for element in moose.wildcardFind(wildcard):
-        print '\t', element.path
+        print(('\t', element.path))
 
     # HHChannel and HHChannel2D are subclasses of ChanBase
     wildcard = '/alfa/bravo/#[ISA=ChanBase]'
-    print '\nElements Matching:', wildcard
+    print(('\nElements Matching:', wildcard))
     for element in moose.wildcardFind(wildcard):
-        print '\t', element.path
+        print(('\t', element.path))
 
     # HHChannel and HHChannel2D are subclasses of ChanBase
     wildcard = '/alfa/bravo/#[TYPE=ChanBase]'
-    print '\nElements Matching:', wildcard
+    print(('\nElements Matching:', wildcard))
     for element in moose.wildcardFind(wildcard):
-        print '\t', element.path
+        print(('\t', element.path))
 
     # `#` can be used only once and matches all subsequent characters in name
     wildcard = '/alfa/bravo/charl?e'
-    print '\nElements Matching:', wildcard
+    print(('\nElements Matching:', wildcard))
     for element in moose.wildcardFind(wildcard):
-        print '\t', element.path
+        print(('\t', element.path))
 
     # `?` can be used any number of times but substitutes a single character
     wildcard = '/alfa/bravo/fox#'
-    print '\nElements Matching:', wildcard
+    print(('\nElements Matching:', wildcard))
     for element in moose.wildcardFind(wildcard):
-        print '\t', element.path
+        print(('\t', element.path))
 
     # Specify `##` to search through all levels below the path prefixing it
     wildcard = '/##[ISA=ChanBase]'
-    print '\nElements Matching:', wildcard
+    print(('\nElements Matching:', wildcard))
     for element in moose.wildcardFind(wildcard):
-        print '\t', element.path
+        print(('\t', element.path))
 
     # You can even select by field - but if the field does not exist,
     # this will produce a lot of harmless error messages in debug
     # builds.
     wildcard = '/##[FIELD(name)=echo]'
-    print '\nElements Matching:', wildcard
+    print(('\nElements Matching:', wildcard))
     for element in moose.wildcardFind(wildcard):
-        print '\t', element.path
+        print(('\t', element.path))
 
     # == and = are same
     wildcard = '/##[FIELD(name)==echo]'
-    print '\nElements Matching:', wildcard
+    print(('\nElements Matching:', wildcard))
     for element in moose.wildcardFind(wildcard):
-        print '\t', element.path
+        print(('\t', element.path))
 
     # Comparison operators other than == are allowed for floating point number fields
     wildcard = '/alfa/##[FIELD(Gbar)<1e-6]'
-    print '\nElements Matching:', wildcard
+    print(('\nElements Matching:', wildcard))
     for element in moose.wildcardFind(wildcard):
-        print '\t', element.path, moose.element(element).Gbar
+        print(('\t', element.path, moose.element(element).Gbar))
 
     # Equality is not defined for floating point fields
     wildcard = '/alfa/##[FIELD(Gbar)=1e-6]'
-    print '\nElements Matching:', wildcard
+    print(('\nElements Matching:', wildcard))
     for element in moose.wildcardFind(wildcard):
-        print '\t', element.path, moose.element(element).Gbar
+        print(('\t', element.path, moose.element(element).Gbar))
 
     # Another operator is !=
     wildcard = '/alfa/bravo/#[TYPE!=HHChannel]'
-    print '\nElements Matching:', wildcard
+    print(('\nElements Matching:', wildcard))
     for element in moose.wildcardFind(wildcard):
-        print '\t', element.path, ', class:', element.className
+        print(('\t', element.path, ', class:', element.className))
 
     # With `##` you can get a listing of all elements under a path if
     # you don't use a condition
     wildcard = '/alfa/##'
-    print '\nElements Matching:', wildcard
+    print(('\nElements Matching:', wildcard))
     for element in moose.wildcardFind(wildcard):
-        print '\t', element.path, ', class:', element.className
+        print(('\t', element.path, ', class:', element.className))
     
 
 if __name__ == '__main__':

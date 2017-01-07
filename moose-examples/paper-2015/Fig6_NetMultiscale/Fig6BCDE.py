@@ -1,6 +1,6 @@
 from __future__ import print_function
 
-#/**********************************************************************
+#**********************************************************************
 #** This program is part of 'MOOSE', the
 #** Messaging Object Oriented Simulation Environment.
 #**           Copyright (C) 2003-2014 Upinder S. Bhalla. and NCBS
@@ -12,6 +12,7 @@ from __future__ import print_function
 '''
 This LIF network with Ca plasticity is based on:
 David Higgins, Michael Graupner, Nicolas Brunel
+
     Memory Maintenance in Synapses with Calcium-Based
     Plasticity in the Presence of Background Activity
     PLOS Computational Biology, 2014.
@@ -22,7 +23,10 @@ This variant has 2500 LIF neurons
 Upi Bhalla, Nov 2014: Appended single neuron model.
 This script generates the panels in Figure 6. It takes a long time,
 about 65 minutes to run 30 seconds of simulation time.
+
 '''
+
+from __future__ import print_function
 
 ## import modules and functions to be used
 import numpy as np
@@ -936,4 +940,4 @@ if __name__=='__main__':
     plt.show()
     plt.savefig( fname + '.svg', bbox_inches='tight')
     print( "Hit 'enter' to exit" )
-    input()
+    eval(input())

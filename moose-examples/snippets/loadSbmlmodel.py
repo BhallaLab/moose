@@ -47,10 +47,10 @@ import os.path
 
 def main():
     """ This example illustrates loading, running of an SBML model defined in XML format.\n
-	The model 00001-sbml-l3v1.xml is taken from l3v1 SBML testcase.\n
-	Plots are setup.\n
-	Model is run for 20sec.\n
-	As a general rule we created model under '/path/model' and plots under '/path/graphs'.\n
+        The model 00001-sbml-l3v1.xml is taken from l3v1 SBML testcase.\n
+        Plots are setup.\n
+        Model is run for 20sec.\n
+        As a general rule we created model under '/path/model' and plots under '/path/graphs'.\n
     """
 
     mfile = "../genesis/00001-sbml-l3v1.xml"
@@ -67,11 +67,14 @@ def main():
         runtime = 20.0
     else:
         runtime = float(sys.argv[2])
+        
+    # Loading the sbml file into MOOSE, models are loaded in path/model
+    sbmlId = moose.SBML.readSBML.mooseReadSBML(mfile,'sbml')
     
     # Loading the sbml file into MOOSE, models are loaded in path/model
     sbmlId = mooseReadSBML(mfile,'/sbml')
     if isinstance(sbmlId, (list, tuple)):
-	    print sbmlId
+            print(sbmlId)
     elif sbmlId.path != '/':
     
         s1 = moose.element('/sbml/model/compartment/S1')

@@ -130,7 +130,7 @@ def createVmViewer(rdes):
     mapper = moogli.utilities.mapper(colormap, normalizer)
 
     def prelude(view):
-        vms = [moose.element(x).Vm for x in network.shapes.keys()]
+        vms = [moose.element(x).Vm for x in list(network.shapes.keys())]
         network.set("color", vms, mapper)
         view.pitch(PI/2.0)
         view.down(450)
@@ -145,7 +145,7 @@ def createVmViewer(rdes):
         view.yaw(0.01)
 
     viewer = moogli.Viewer("vm-viewer")
-    viewer.attach_shapes(network.shapes.values())
+    viewer.attach_shapes(list(network.shapes.values()))
     view = moogli.View("vm-view",
                        prelude=prelude,
                        interlude=interlude)
@@ -167,7 +167,7 @@ def main():
     if do3D:
         app = QtGui.QApplication(sys.argv)
         compts = moose.wildcardFind( "/model/elec/#[ISA=CompartmentBase]" )
-        print "LEN = ", len( compts )
+        print(("LEN = ", len( compts )))
         for i in compts:
             n = i.name[:4]
             if ( n == 'head' or n == 'shaf' ):

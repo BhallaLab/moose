@@ -119,9 +119,9 @@ def main():
     #### CHOOSE ONE OF THE NEURON KEYS AS choiceKey FROM BELOW DICTIONARY ####
     #choiceKey = 'LIF'
     #### No need, am inputting it from the user on the terminal
-    choiceKeys = neuronChoices.keys() # keys() does not retain the order in dict defn above!
-    choiceIndex = input('Choose a number corresponding to your desired neuron: '+ \
-                        str([(i,key) for (i,key) in enumerate(choiceKeys)])+' -- ')
+    choiceKeys = list(neuronChoices.keys()) # keys() does not retain the order in dict defn above!
+    choiceIndex = eval(input('Choose a number corresponding to your desired neuron: '+ \
+                        str([(i,key) for (i,key) in enumerate(choiceKeys)])+' -- '))
     choiceKey = choiceKeys[choiceIndex]
     neuronChoice = neuronChoices[choiceKey]
 
@@ -171,7 +171,7 @@ def main():
         network.vec.vPeak = vPeak           # reset at vPeak, not at thresh
         network.vec.inject = 5e-9  # Amp    # injected current I
 
-    print "Injecting current =",network.vec[0].inject,"in",choiceKey,"neuron."
+    print(("Injecting current =",network.vec[0].inject,"in",choiceKey,"neuron."))
 
     # ###########################################
     # Setting up table

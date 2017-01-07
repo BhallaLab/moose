@@ -125,12 +125,12 @@ def setup_model():
     nsdf.mode = 2 #overwrite existing file
     nsdf.flushLimit = 100
     moose.connect(nsdf, 'requestOut', pulse, 'getOutputValue')
-    print 'event input', nsdf.eventInput, nsdf.eventInput.num
-    print nsdf
+    print(('event input', nsdf.eventInput, nsdf.eventInput.num))
+    print(nsdf)
 
     nsdf.eventInput.num = 1
     ei = nsdf.eventInput[0]
-    print ei.path
+    print((ei.path))
     moose.connect(t_lead, 'spikeOut', nsdf.eventInput[0], 'input')
     tab = moose.Table('spiketab')
     tab.threshold = t_lead.threshold
@@ -138,10 +138,10 @@ def setup_model():
     for ii in range(32):
         moose.setClock(ii, dt)
     moose.connect(pulse, 'output', tab, 'spike')
-    print 'Starting simulation at:', datetime.now().isoformat()
+    print(('Starting simulation at:', datetime.now().isoformat()))
     moose.reinit()
     moose.start(simtime)
-    print 'Finished simulation at:', datetime.now().isoformat()
+    print(('Finished simulation at:', datetime.now().isoformat()))
     np.savetxt('nsdf.txt', tab.vector)
     ###################################
     # Set the environment attributes

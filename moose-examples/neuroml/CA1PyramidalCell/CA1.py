@@ -31,16 +31,16 @@ def loadGran98NeuroML_L123(filename):
     #somaIKCa = setupTable('somaIKCa',moose.HHChannel(soma_path+'/Gran_KCa_98'),'Gk')
     #KDrX = setupTable('ChanX',moose.HHChannel(soma_path+'/Gran_KDr_98'),'X')
     soma = moose.Compartment(soma_path)
-    print "Reinit MOOSE ... "
+    print("Reinit MOOSE ... ")
     resetSim(['/elec','/cells'],simdt,plotdt,simmethod='ee') # from moose.utils
-    print "Running ... "
+    print("Running ... ")
     moose.start(runtime)
     tvec = arange(0.0,runtime,simdt)
     plot(tvec,somaVm.vector[1:])
     title('Soma Vm')
     xlabel('time (s)')
     ylabel('Voltage (V)')
-    print "Showing plots ..."
+    print("Showing plots ...")
     show()
 
 if __name__ == "__main__":
