@@ -47,18 +47,31 @@
 
 #include "header.h"
 #include "DifBuffer.h"
+#include "ElementValueFinfo.h"
 #include "../utility/numutil.h"
 #include <cmath>
 
-static SrcFinfo4< double, double, double, double >* reactionOut()
+SrcFinfo4< double, double, double, double >* DifBuffer::reactionOut()
 {
   static SrcFinfo4< double, double, double, double > reactionOut(
-      "reactionOut",
-      "Sends out reaction rates (forward and backward), and concentrations"
-       " (free-buffer and bound-buffer molecules).");
+								 "reactionOut",
+								 "Sends out reaction rates (forward and backward), and concentrations"
+								 " (free-buffer and bound-buffer molecules).");
   return &reactionOut;
 }
                                                                  
+
+SrcFinfo2< double, double >* DifBuffer::innerDifSourceOut(){
+  static SrcFinfo2< double, double > sourceOut("innerDifSourceOut",
+					       "Sends out source information.");
+  return &sourceOut;
+}
+
+SrcFinfo2< double, double >* DifBuffer::outerDifSourceOut(){
+  static SrcFinfo2< double, double > sourceOut("outerDifSourceOut",
+					       "Sends out source information.");
+  return &sourceOut;
+}
 
 const Cinfo * DifBuffer::initCinfo()
 {
@@ -69,43 +82,41 @@ const Cinfo * DifBuffer::initCinfo()
                            "Reinit happens only in stage 0",
                            new ProcOpFunc< DifBuffer >( &DifBuffer::reinit));
     
-  static Finfo* processShared_0[] = {
+  static Finfo* processShared[] = {
     &process,
     &reinit
   };
 
-  static SharedFinfo process_0(
-      "process_0", 
-      "Here we create 2 shared finfos to attach with the Ticks. This is because we want to perform DifBuffer "
-      "computations in 2 stages, much as in the Compartment object. "
-      "In the first stage we send out the concentration value to other DifBuffers and Buffer elements. We also "
-      "receive fluxes and currents and sum them up to compute ( dC / dt ). "
-      "In the second stage we find the new C value using an explicit integration method. "
-      "This 2-stage procedure eliminates the need to store and send prev_C values, as was common in GENESIS.",
-      processShared_0,
-      sizeof( processShared_0 ) / sizeof( Finfo* ));
+  static SharedFinfo proc(
+			       "proc", 
+			       "Here we create 2 shared finfos to attach with the Ticks. This is because we want to perform DifBuffer "
+			       "computations in 2 stages, much as in the Compartment object. "
+			       "In the first stage we send out the concentration value to other DifBuffers and Buffer elements. We also",
+			       processShared,
+			       sizeof( processShared ) / sizeof( Finfo* ));
 	
-  static DestFinfo process1( "process",
+  /*static DestFinfo process1( "process",
                              "Handle process call",
                              new ProcOpFunc< DifBuffer >( &DifBuffer::process_1 ) );
   static DestFinfo reinit1( "reinit", 
                             "Reinit happens only in stage 0",
-                            new ProcOpFunc< DifBuffer >( &DifBuffer::reinit_1)
-                            );
+                            new ProcOpFunc< DifBuffer >( &DifBuffer::reinit_1 ) );
+  
   static Finfo* processShared_1[] = {
     &process1, &reinit1        
   };
-    
+  
   static SharedFinfo process_1( "process_1",
                                 "Second process call",
                                 processShared_1,
                                 sizeof( processShared_1 ) / sizeof( Finfo* ) );
-
+  */
   //// Diffusion related shared messages
+  
+  
   static DestFinfo concentration("concentration",
                                  "Receives concentration (from DifShell).",
-                                 new OpFunc1<DifBuffer, double>(&DifBuffer::concentration));
-  
+                                 new EpFunc1<DifBuffer, double>(&DifBuffer::buffer));
   static Finfo* bufferShared[] = {
     &concentration, reactionOut()
   };
@@ -126,7 +137,7 @@ const Cinfo * DifBuffer::initCinfo()
 
   static DestFinfo fluxFromOut( "fluxFromOut",
                                 "Destination message",
-                                new OpFunc2< DifBuffer, double, double > ( &DifBuffer::fluxFromOut ));
+                                new EpFunc2< DifBuffer, double, double > ( &DifBuffer::fluxFromOut ));
     
   static Finfo* innerDifShared[] = {
     innerDifSourceOut(),
@@ -141,7 +152,8 @@ const Cinfo * DifBuffer::initCinfo()
                                sizeof( innerDifShared ) / sizeof( Finfo* ));
 
   static DestFinfo fluxFromIn( "fluxFromIn", "",
-                               new OpFunc2< DifBuffer, double, double> ( &DifBuffer::fluxFromIn ) );
+                               new EpFunc2< DifBuffer, double, double> ( &DifBuffer::fluxFromIn) );
+  
   static Finfo* outerDifShared[] = {
     &fluxFromIn,
     outerDifSourceOut(),
@@ -155,78 +167,104 @@ const Cinfo * DifBuffer::initCinfo()
   ////////////////////////////
   // Field defs
   ////////////////////////////
-  static ValueFinfo<DifBuffer, double> activation("activation",
+  static ElementValueFinfo<DifBuffer, double> activation("activation",
                                                   "Ion concentration from incoming conc message.",
                                                   &DifBuffer::setActivation,
                                                   &DifBuffer::getActivation);
-  static ValueFinfo<DifBuffer, double> D("D",
+  static ElementValueFinfo<DifBuffer, double> kf("kf",
+					  "Forward rate constant of buffer molecules 1/mM/s (?)",
+					  &DifBuffer::setKf,
+					  &DifBuffer::getKf);
+  static ElementValueFinfo<DifBuffer, double> kb("kb",
+					  "Backward rate constant of buffer molecules. 1/s",
+					  &DifBuffer::setKb,
+					  &DifBuffer::getKb);
+  static ElementValueFinfo<DifBuffer, double> D("D",
                                          "Diffusion constant of buffer molecules. m^2/s",
                                          &DifBuffer::setD,
                                          &DifBuffer::getD);
-  static ReadOnlyValueFinfo<DifBuffer, double> bFree("bFree",
+  static ReadOnlyElementValueFinfo<DifBuffer, double> bFree("bFree",
                                                      "Free buffer concentration",
                                                      &DifBuffer::getBFree);
-  static ReadOnlyValueFinfo<DifBuffer, double> bBound("bBound",
+  static ReadOnlyElementValueFinfo<DifBuffer, double> bBound("bBound",
                                                       "Bound buffer concentration",
                                                       &DifBuffer::getBBound);
-  static ReadOnlyValueFinfo<DifBuffer, double> prevFree("prevFree",
-                                                      "Free buffer concentration in previous step",
-                                                      &DifBuffer::getPrevFree);
-  static ReadOnlyValueFinfo<DifBuffer, double> prevBound("prevBound",
-                                                      "Bound buffer concentration in previous step",
-                                                      &DifBuffer::getPrevBound);
-  static ValueFinfo<DifBuffer, double> bTot("bTot",
+  /*  static ReadOnlyElementValueFinfo<DifBuffer, double> prevFree("prevFree",
+							"Free buffer concentration in previous step",
+							&DifBuffer::getPrevFree);
+  static ReadOnlyElementValueFinfo<DifBuffer, double> prevBound("prevBound",
+							 "Bound buffer concentration in previous step",
+							 &DifBuffer::getPrevBound);*/
+  static ElementValueFinfo<DifBuffer, double> bTot("bTot",
                                             "Total buffer concentration.",
                                             &DifBuffer::setBTot,
                                             &DifBuffer::getBTot);  
-  static ValueFinfo<DifBuffer, double> length("length",
+  static ElementValueFinfo<DifBuffer, double> length("length",
                                               "Length of shell",
                                               &DifBuffer::setLength,
                                               &DifBuffer::getLength);
-  static ValueFinfo<DifBuffer, double> diameter("diameter",
+  static ElementValueFinfo<DifBuffer, double> diameter("diameter",
                                                 "Diameter of shell",
                                                 &DifBuffer::setDiameter,
                                                 &DifBuffer::getDiameter);
-  static ValueFinfo<DifBuffer, int> shapeMode("shapeMode",
+  static ElementValueFinfo<DifBuffer, int> shapeMode("shapeMode",
                                               "shape of the shell: SHELL=0, SLICE=SLAB=1, USERDEF=3",
                                               &DifBuffer::setShapeMode,
                                               &DifBuffer::getShapeMode);
   
-  static ValueFinfo<DifBuffer, double> thick("thickness",
-                                             "Thickness of shell",
-                                             &DifBuffer::setThickness,
-                                             &DifBuffer::getThickness);
+  static ElementValueFinfo<DifBuffer, double> thickness("thickness",
+						 "Thickness of shell",
+						 &DifBuffer::setThickness,
+						 &DifBuffer::getThickness);
  
-  static ValueFinfo<DifBuffer, double> innerArea("innerArea",
+  static ElementValueFinfo<DifBuffer, double> innerArea("innerArea",
                                                  "Inner area of shell",
                                                  &DifBuffer::setInnerArea,
                                                  &DifBuffer::getInnerArea);
-  static ValueFinfo<DifBuffer, double> outerArea("outerArea",
+  static ElementValueFinfo<DifBuffer, double> outerArea("outerArea",
                                                  "Outer area of shell",
                                                  &DifBuffer::setOuterArea,
                                                  &DifBuffer::getOuterArea);
+  static ElementValueFinfo< DifBuffer, double> volume( "volume", "",
+						&DifBuffer::setVolume,
+						&DifBuffer::getVolume );
   
   ////
   // DestFinfo
   ////
   static Finfo * difBufferFinfos[] = {
+    //////////////////////////////////////////////////////////////////
+    // Field definitions
+    //////////////////////////////////////////////////////////////////
+    
     &activation,
     &D,
     &bFree,
     &bBound,
     &bTot,
-    // &prevFree,
-    // &prevBound,
+    &kf,
+    &kb,
+    //&prevFree,
+    //&prevBound,
     &length,
     &diameter,
     &shapeMode,
     &thickness,
     &innerArea,
     &outerArea,
-    &process,
-    &reinit,
+    &volume,
+    //////////////////////////////////////////////////////////////////
+    // SharedFinfo definitions
+    /////////////////////////////////////////////////////////////////
+    &proc,
+    reactionOut(),
+    innerDifSourceOut(),
+    outerDifSourceOut(),
     &innerDif,
     &outerDif,
+    //////////////////////////////////////////////////////////////////
+    // DestFinfo definitions
+    //////////////////////////////////////////////////////////////////
     &concentration,    
   };
 
@@ -238,13 +276,13 @@ const Cinfo * DifBuffer::initCinfo()
   };
   static Dinfo<DifBuffer> dinfo;
   static Cinfo difBufferCinfo(
-      "DifBuffer",
-      Neutral::initCinfo(),
-      difBufferFinfos,
-      sizeof(difBufferFinfos)/sizeof(Finfo*),
-      &dinfo,
-      doc,
-      sizeof(doc)/sizeof(string));
+			      "DifBuffer",
+			      Neutral::initCinfo(),
+			      difBufferFinfos,
+			      sizeof(difBufferFinfos)/sizeof(Finfo*),
+			      &dinfo,
+			      doc,
+			      sizeof(doc)/sizeof(string));
 
   return &difBufferCinfo;
 }
@@ -256,18 +294,36 @@ static const Cinfo * difBufferCinfo = DifBuffer::initCinfo();
 // Class functions
 ////////////////////////////////////////////////////////////////////////////////
 
-DifBuffer::DifBuffer()//konstruktor?
-{ ; }
+DifBuffer::DifBuffer() :
+  activation_(0),
+  Af_(0),
+  Bf_(0),
+  bFree_(0),
+  bBound_(0),
+  //  prevFree_(0),
+  //prevBound_(0),
+  bTot_(0),
+  kf_(0),
+  kb_(0),
+  D_(0),
+  shapeMode_(0),
+  diameter_(0),
+  length_(0),
+  thickness_(0),
+  outerArea_(0),
+  innerArea_(0),
+  volume_(0)
+{}
 
 ////////////////////////////////////////////////////////////////////////////////
 // Field access functions
 ////////////////////////////////////////////////////////////////////////////////
-double DifBuffer::getActivation() const
+double DifBuffer::getActivation(const Eref& e) const
 {
   return activation_;
 }
 
-void DifBuffer::setActivation(double value)
+void DifBuffer::setActivation(const Eref& e,double value)
 {
   if ( value  < 0.0 ) {
     cerr << "Error: DifBuffer: Activation cannot be negative!\n";
@@ -276,32 +332,33 @@ void DifBuffer::setActivation(double value)
   activation_ = value;
 }
 
-double DifBuffer::getBFree() const
+
+double DifBuffer::getBFree(const Eref& e) const
 {
   return bFree_;
 }
 
-double DifBuffer::getBBound() const
+double DifBuffer::getBBound(const Eref& e) const
 {
   return bBound_;
 }
 
-double DifBuffer::getPrevFree() const
+/*double DifBuffer::getPrevFree(const Eref& e) const
 {
   return prevFree_;
 }
 
-double DifBuffer::getPrevBound() const
+double DifBuffer::getPrevBound(const Eref& e) const
 {
   return prevBound_;
 }
-
-double DifBuffer::getBTot() const
+*/
+double DifBuffer::getBTot(const Eref& e) const
 {
   return bTot_;
 }
 
-void DifBuffer::setBTot(double value)
+void DifBuffer::setBTot(const Eref& e,double value)
 {
   if ( value  < 0.0 ) {
     cerr << "Error: DifBuffer: Total buffer concentration cannot be negative!\n";
@@ -311,12 +368,12 @@ void DifBuffer::setBTot(double value)
 }
 
 
-double DifBuffer::getKf() const
+double DifBuffer::getKf(const Eref& e) const
 {
   return kf_;
 }
 
-void DifBuffer::setKf(double value)
+void DifBuffer::setKf(const Eref& e,double value)
 {
   if ( value  < 0.0 ) {
     cerr << "Error: DifBuffer: Kf cannot be negative!\n";
@@ -326,12 +383,12 @@ void DifBuffer::setKf(double value)
 }
 
 
-double DifBuffer::getKb() const
+double DifBuffer::getKb(const Eref& e) const
 {
   return kb_;
 }
 
-void DifBuffer::setKb(double value)
+void DifBuffer::setKb(const Eref& e,double value)
 {
   if ( value  < 0.0 ) {
     cerr << "Error: DifBuffer: Kb cannot be negative!\n";
@@ -340,40 +397,41 @@ void DifBuffer::setKb(double value)
   kb_ = value;
 }
 
-double DifBuffer::getD() const
+double DifBuffer::getD(const Eref& e) const
 {
   return D_;
 }
 
-void DifBuffer::setD(double value)
+void DifBuffer::setD(const Eref& e,double value)
 {
+  
   if ( value  < 0.0 ) {
-    cerr << "Error: DifBuffer: Diffusion constant, D, cannot be negative!\n";
+    cerr << " Error: DifBuffer: Diffusion constant, D, cannot be negative!\n";
     return;
   }
   D_ = value;
 }
 
-double DifBuffer::getShapeMode() const
+int DifBuffer::getShapeMode(const Eref& e) const
 {
   return shapeMode_;
 }
 
-void DifBuffer::setShapeMode(int value)
+void DifBuffer::setShapeMode(const Eref& e,int value)
 {
-  if ( value  != 1 && value !=2 && value != 3 ) {
-    cerr << "Error: DifBuffer: Diffusion constant, D, cannot be negative!\n";
+  if ( value  != 0 && value !=1 && value != 3 ) {
+    cerr << "Error: DifBuffer: Shape mode can only be 0, 1 or 3";
     return;
   }
   shapeMode_ = value;
 }
 
-double DifBuffer::getLength() const
+double DifBuffer::getLength(const Eref& e) const
 {
   return length_;
 }
 
-void DifBuffer::setLength(int value)
+void DifBuffer::setLength(const Eref& e,double value)
 {
   if ( value < 0.0) {
     cerr << "Error: DifBuffer: Length cannot be negative!\n";
@@ -382,12 +440,12 @@ void DifBuffer::setLength(int value)
   length_ = value;
 }
 
-double DifBuffer::getDiameter() const
+double DifBuffer::getDiameter(const Eref& e) const
 {
   return diameter_;
 }
 
-void DifBuffer::setDiameter(int value)
+void DifBuffer::setDiameter(const Eref& e,double value)
 {
   if ( value < 0.0) {
     cerr << "Error: DifBuffer: Diameter cannot be negative!\n";
@@ -396,12 +454,12 @@ void DifBuffer::setDiameter(int value)
   diameter_ = value;
 }
 
-double DifBuffer::getThickness() const
+double DifBuffer::getThickness(const Eref& e) const
 {
   return thickness_;
 }
 
-void DifBuffer::setThickness(int value)
+void DifBuffer::setThickness(const Eref& e,double value)
 {
   if ( value < 0.0) {
     cerr << "Error: DifBuffer: Thickness cannot be negative!\n";
@@ -410,85 +468,181 @@ void DifBuffer::setThickness(int value)
   thickness_ = value;
 }
 
-void DifBuffer::setVolume( double volume )
+void DifBuffer::setVolume(const Eref& e, double volume )
 {
-	if ( shapeMode_ != 3 )
-		cerr << "Warning: DifBuffer: Trying to set volume, when shapeMode is not USER-DEFINED\n";
+  if ( shapeMode_ != 3 )
+    cerr << "Warning: DifBuffer: Trying to set volume, when shapeMode is not USER-DEFINED\n";
 	
-	if ( volume < 0.0 ) {
-		cerr << "Error: DifBuffer: volume cannot be negative!\n";
-		return;
-	}
+  if ( volume < 0.0 ) {
+    cerr << "Error: DifBuffer: volume cannot be negative!\n";
+    return;
+  }
 	
-	volume_ = volume;
+  volume_ = volume;
 }
 
-double DifBuffer::getVolume( ) const
+double DifBuffer::getVolume(const Eref& e ) const
 {
-	return volume_;
+  return volume_;
 }
 
-void DifBuffer::setOuterArea( double outerArea )
+void DifBuffer::setOuterArea(const Eref& e, double outerArea )
 {
-    if (shapeMode_ != 3 )
-        cerr << "Warning: DifBuffer: Trying to set outerArea, when shapeMode is not USER-DEFINED\n";
+  if (shapeMode_ != 3 )
+    cerr << "Warning: DifBuffer: Trying to set outerArea, when shapeMode is not USER-DEFINED\n";
 	
-    if ( outerArea < 0.0 ) {
-        cerr << "Error: DifBuffer: outerArea cannot be negative!\n";
-        return;
-    }
+  if ( outerArea < 0.0 ) {
+    cerr << "Error: DifBuffer: outerArea cannot be negative!\n";
+    return;
+  }
 	
-    outerArea_ = outerArea;
+  outerArea_ = outerArea;
 }
 
-double DifBuffer::getOuterArea( ) const
+double DifBuffer::getOuterArea(const Eref& e ) const
 {
-    return outerArea_;
+  return outerArea_;
 }
 
-void DifBuffer::setInnerArea( double innerArea )
+void DifBuffer::setInnerArea(const Eref& e, double innerArea )
 {
-    if ( shapeMode_ != 3 )
-        cerr << "Warning: DifBuffer: Trying to set innerArea, when shapeMode is not USER-DEFINED\n";
+  if ( shapeMode_ != 3 )
+    cerr << "Warning: DifBuffer: Trying to set innerArea, when shapeMode is not USER-DEFINED\n";
     
-    if ( innerArea < 0.0 ) {
-        cerr << "Error: DifBuffer: innerArea cannot be negative!\n";
-        return;
-    }
+  if ( innerArea < 0.0 ) {
+    cerr << "Error: DifBuffer: innerArea cannot be negative!\n";
+    return;
+  }
     
-    innerArea_ = innerArea;
+  innerArea_ = innerArea;
 }
 
-double DifBuffer::getInnerArea() const
+double DifBuffer::getInnerArea(const Eref& e) const
 {
-    return innerArea_;
+  return innerArea_;
 }
 // Dest function for conenctration received from DifShell.  This
 // function updates buffer concentration and sends back immediately
 // using call back.
 // TODO: complete this ... where do we get dt from? ProcPtr p->dt
-void DifBuffer::concentration(double conc)
+//Check DifShell
+
+//In Genesis the following are messages:
+
+
+void DifBuffer::reinit( const Eref& e, ProcPtr p )
 {
-  activation_ = conc;
-  Af_ += kb_ * bBound_;
-  Bf_ += kf_ * activation_;
-  bFree_ += (Af_ - bFree_ * Bf_) * dt_;  
+  localReinit_0( e, p );
 }
 
-void DifBuffer::fluxFromIn(double innerC, double innerThickness)
+void DifBuffer::process( const Eref& e, ProcPtr p )
+{
+  localProcess_0( e, p );
+}
+
+/*void DifBuffer::process_1(const Eref& e, ProcPtr p )
+{
+  localProcess_1( e, p );
+}
+
+void DifBuffer::reinit_1(const Eref& e, ProcPtr p )
+{
+  ;
+}
+*/
+void DifBuffer::buffer(const Eref& e,
+		       double C )
+{
+  activation_ = C;
+}
+
+
+void DifBuffer::localProcess_0( const Eref & e, ProcPtr p )
+{
+  /**
+   * Send ion concentration and thickness to adjacent DifShells. They will
+   * then compute their incoming fluxes.
+   */
+
+  innerDifSourceOut()->send( e, bFree_, thickness_ );
+  outerDifSourceOut()->send( e, bFree_, thickness_ );
+  Af_ += kb_ * bBound_;
+  Bf_ += kf_ * activation_;
+  bFree_ += (Af_ - bFree_ * Bf_) * p->dt;
+  reactionOut()->send(e,kf_,kb_,bFree_,bBound_);
+  /**
+   * Send ion concentration to ion buffers. They will send back information on
+   * the reaction (forward / backward rates ; free / bound buffer concentration)
+   * immediately, which this DifShell will use to find amount of ion captured
+   * or released in the current time-step.
+   */
+
+}
+
+void DifBuffer::localReinit_0( const Eref& e, ProcPtr p )
+{
+	
+  const double dOut = diameter_;
+  const double dIn = diameter_ - thickness_;
+	
+  switch ( shapeMode_ )
+    {
+      /*
+       * Onion Shell
+       */
+    case 0:
+      if ( length_ == 0.0 ) { // Spherical shell
+	volume_ = ( M_PI / 6.0 ) * ( dOut * dOut * dOut - dIn * dIn * dIn );
+	outerArea_ = M_PI * dOut * dOut;
+	innerArea_ = M_PI * dIn * dIn;
+      } else { // Cylindrical shell
+	volume_ = ( M_PI * length_ / 4.0 ) * ( dOut * dOut - dIn * dIn );
+	outerArea_ = M_PI * dOut * length_;
+	innerArea_ = M_PI * dIn * length_;
+      }
+	
+      break;
+	
+      /*
+       * Cylindrical Slice
+       */
+    case 1:
+      volume_ = M_PI * diameter_ * diameter_ * thickness_ / 4.0;
+      outerArea_ = M_PI * diameter_ * diameter_ / 4.0;
+      innerArea_ = outerArea_;
+      break;
+	
+      /*
+       * User defined
+       */
+    case 3:
+      // Nothing to be done here. Volume and inner-, outer areas specified by
+      // user.
+      break;
+	
+    default:
+      assert( 0 );
+    }
+}
+/*
+void DifBuffer::localProcess_1(const Eref& e, ProcPtr p )
+{
+  //activation_ = conc;
+  Af_ += kb_ * bBound_;
+  Bf_ += kf_ * activation_;
+  bFree_ += (Af_ - bFree_ * Bf_) * p->dt;  
+}
+*/
+void DifBuffer::fluxFromIn(const Eref& e,double innerC, double innerThickness)
 {
   double dif = 2 * D_ * innerArea_ / ((thickness_ + innerThickness) * volume_);
   Af_ += dif * innerC;
   Bf_ += dif;
 }
 
-void DifBuffer::fluxFromOut(double outerC, double outerThickness)
+void DifBuffer::fluxFromOut(const Eref& e,double outerC, double outerThickness)
 {
   double dif = 2 * D_ * outerArea_ / ((thickness_ + outerThickness)  * volume_);
   Af_ += dif * outerC;
   Bf_ += dif;
 }
-
-
-// 
-// DifBuffer.cpp ends here
