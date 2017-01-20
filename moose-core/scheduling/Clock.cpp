@@ -839,6 +839,7 @@ void Clock::buildDefaultTick()
     defaultTick_["CaConc"] = 1;
     defaultTick_["CaConcBase"] = 1;
     defaultTick_["DifShell"] = 1;
+    defaultTick_["DifBuffer"] = 1;
     defaultTick_["MgBlock"] = 1;
     defaultTick_["Nernst"] = 1;
     defaultTick_["RandSpike"] = 1;
