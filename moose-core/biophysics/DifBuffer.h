@@ -1,54 +1,16 @@
-/* DifBuffer.h --- 
- * 
- * Filename: DifBuffer.h
- * Description: 
- * Author: Subhasis Ray
- * Maintainer: 
- * Created: Mon Feb 16 11:42:50 2015 (-0500)
- * Version: 
- * Package-Requires: ()
- * Last-Updated: Mon Feb 23 10:49:54 2015 (-0500)
- *           By: Subhasis Ray
- *     Update #: 25
- * URL: 
- * Doc URL: 
- * Keywords: 
- * Compatibility: 
- * 
- */
-
-/* Commentary: 
- * 
- * 
- * 
- */
-
-/* Change Log:
- * 
- * 
- */
-
-/* This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or (at
- * your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with GNU Emacs.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/* Code: */
-
+/**********************************************************************
+ ** This program is part of 'MOOSE', the
+ ** Multiscale Object Oriented Simulation Environment.
+ **           copyright (C) 2003-2008
+ **           Upinder S. Bhalla, Niraj Dudani and NCBS
+ ** It is made available under the terms of the
+ ** GNU Lesser General Public License version 2.1
+ ** See the file COPYING.LIB for the full notice.
+ *****/
 #ifndef _DifBuffer_h
 #define _DifBuffer_h
 
-class DifBuffer
-{
+class DifBuffer: public DifBufferBase{
  public:
   DifBuffer();
   
@@ -63,7 +25,10 @@ class DifBuffer
   void vSetActivation(const Eref& e,double value);
 
   double vGetBFree(const Eref& e) const;
+  void vSetBFree(const Eref& e,double value);
+
   double vGetBBound(const Eref& e) const;
+  void vSetBBound(const Eref& e,double value);
 
   double vGetBTot(const Eref& e) const;           //  total buffer concentration in mM (free + bound)
   void vSetBTot(const Eref& e,double value);
@@ -76,10 +41,27 @@ class DifBuffer
   
   double vGetD(const Eref& e) const;          // diffusion constant of buffer molecules, m^2/sec
   void vSetD(const Eref& e,double value);
-  
-  //void concentration();
+  void vSetShapeMode(const Eref& e, unsigned int shapeMode );
+  unsigned int vGetShapeMode(const Eref& e) const;
 
- 
+  void vSetLength(const Eref& e, double length );
+  double vGetLength(const Eref& e) const;
+
+  void vSetDiameter(const Eref& e, double diameter );
+  double vGetDiameter(const Eref& e) const;
+
+  void vSetThickness(const Eref& e, double thickness );
+  double vGetThickness(const Eref& e) const;
+  
+  void vSetVolume(const Eref& e, double volume );
+  double vGetVolume(const Eref& e) const;
+  
+  void vSetOuterArea(const Eref& e, double outerArea );
+  double vGetOuterArea(const Eref& e) const;
+
+  void vSetInnerArea(const Eref& e, double innerArea );
+  double vGetInnerArea(const Eref& e) const;
+  
   static const Cinfo * initCinfo();
 
  private:
@@ -98,6 +80,13 @@ class DifBuffer
   double kf_; //forward rate constant
   double kb_; //backward rate constant
   double D_; //diffusion constant
+   unsigned int shapeMode_;
+  double length_;
+  double diameter_;
+  double thickness_;
+  double volume_;
+  double outerArea_;
+  double innerArea_;
   static const double EPSILON;
 };
 

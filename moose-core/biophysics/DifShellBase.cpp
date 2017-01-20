@@ -100,42 +100,42 @@ const Cinfo* DifShellBase::initCinfo()
 				sizeof( outerDifShared ) / sizeof( Finfo* ));
  
   static ElementValueFinfo< DifShellBase, double> C( "C", 
-						 "Concentration C",// is computed by the DifShell",
-						 &DifShellBase::setC,
-						 &DifShellBase::getC);
+						     "Concentration C",// is computed by the DifShell",
+						     &DifShellBase::setC,
+						     &DifShellBase::getC);
   static ElementValueFinfo< DifShellBase, double> Ceq( "Ceq", "",
-						   &DifShellBase::setCeq,
-						   &DifShellBase::getCeq);
+						       &DifShellBase::setCeq,
+						       &DifShellBase::getCeq);
   static ElementValueFinfo< DifShellBase, double> D( "D", "",
-						 &DifShellBase::setD,
-						 &DifShellBase::getD);
+						     &DifShellBase::setD,
+						     &DifShellBase::getD);
   static ElementValueFinfo< DifShellBase, double> valence( "valence", "",
-						       &DifShellBase::setValence,
-						       &DifShellBase::getValence);
+							   &DifShellBase::setValence,
+							   &DifShellBase::getValence);
   static ElementValueFinfo< DifShellBase, double> leak( "leak", "",
-						    &DifShellBase::setLeak,
-						    &DifShellBase::getLeak);
+							&DifShellBase::setLeak,
+							&DifShellBase::getLeak);
   static ElementValueFinfo< DifShellBase, unsigned int> shapeMode( "shapeMode", "",
-							       &DifShellBase::setShapeMode,
-							       &DifShellBase::getShapeMode);
+								   &DifShellBase::setShapeMode,
+								   &DifShellBase::getShapeMode);
   static ElementValueFinfo< DifShellBase, double> length( "length", "",
-						      &DifShellBase::setLength,
-						      &DifShellBase::getLength);
+							  &DifShellBase::setLength,
+							  &DifShellBase::getLength);
   static ElementValueFinfo< DifShellBase, double> diameter( "diameter", "",
-							&DifShellBase::setDiameter,
-							&DifShellBase::getDiameter );
+							    &DifShellBase::setDiameter,
+							    &DifShellBase::getDiameter );
   static ElementValueFinfo< DifShellBase, double> thickness( "thickness", "",
-							 &DifShellBase::setThickness,
-							 &DifShellBase::getThickness );
+							     &DifShellBase::setThickness,
+							     &DifShellBase::getThickness );
   static ElementValueFinfo< DifShellBase, double> volume( "volume", "",
-						      &DifShellBase::setVolume,
-						      &DifShellBase::getVolume );
+							  &DifShellBase::setVolume,
+							  &DifShellBase::getVolume );
   static ElementValueFinfo< DifShellBase, double> outerArea( "outerArea", "",
-							 &DifShellBase::setOuterArea,
-							 &DifShellBase::getOuterArea);
+							     &DifShellBase::setOuterArea,
+							     &DifShellBase::getOuterArea);
   static ElementValueFinfo< DifShellBase, double> innerArea( "innerArea", "",
-							 &DifShellBase::setInnerArea,
-							 &DifShellBase::getInnerArea );
+							     &DifShellBase::setInnerArea,
+							     &DifShellBase::getInnerArea );
 
     
   static DestFinfo influx( "influx", "",
@@ -183,9 +183,9 @@ const Cinfo* DifShellBase::initCinfo()
     //////////////////////////////////////////////////////////////////
     &proc,
     &buffer,
-    // concentrationOut(),
-    //innerDifSourceOut(),
-    //outerDifSourceOut(),
+    concentrationOut(),
+    innerDifSourceOut(),
+    outerDifSourceOut(),
     &innerDif,
     &outerDif,
     //////////////////////////////////////////////////////////////////
@@ -213,15 +213,16 @@ const Cinfo* DifShellBase::initCinfo()
       "changes in concentration due to pumping, buffering and channel currents, by "
       "talking to the appropriate objects.",
     };
-  static Dinfo< DifShellBase> dinfo;
+  static ZeroSizeDinfo< int > dinfo;
+  //static Dinfo< DifShellBase> dinfo;
   static Cinfo difShellBaseCinfo(
-			     "DifShellBase",
-			     Neutral::initCinfo(),
-			     difShellBaseFinfos,
-			     sizeof( difShellBaseFinfos ) / sizeof( Finfo* ),
-			     &dinfo,
-			     doc,
-			     sizeof( doc ) / sizeof( string ));
+				 "DifShellBase",
+				 Neutral::initCinfo(),
+				 difShellBaseFinfos,
+				 sizeof( difShellBaseFinfos ) / sizeof( Finfo* ),
+				 &dinfo,
+				 doc,
+				 sizeof( doc ) / sizeof( string ));
 
   return &difShellBaseCinfo;
 }
@@ -229,14 +230,7 @@ const Cinfo* DifShellBase::initCinfo()
 //Cinfo *object*  corresponding to the class.
 static const Cinfo* difShellBaseCinfo = DifShellBase::initCinfo();
 
-DifShellBase::DifShellBase() :
-  shapeMode_( 0 ),
-  length_( 0.0 ),
-  diameter_( 0.0 ),
-  thickness_( 0.0 ),
-  volume_( 0.0 ),
-  outerArea_( 0.0 ),
-  innerArea_( 0.0 )
+DifShellBase::DifShellBase()
 { ; }
 
 void DifShellBase::setC( const Eref& e, double C)
@@ -250,7 +244,7 @@ double DifShellBase::getC(const Eref& e) const
 
 void DifShellBase::setCeq( const Eref& e, double Ceq )
 {
-  vSetCeq(e,C);
+  vSetCeq(e,Ceq);
 }
 
 double DifShellBase::getCeq(const Eref& e ) const
@@ -260,7 +254,7 @@ double DifShellBase::getCeq(const Eref& e ) const
 
 void DifShellBase::setD(const Eref& e, double D )
 {
-  vSetD(e,D)
+  vSetD(e,D);
 }
 
 double DifShellBase::getD(const Eref& e ) const
@@ -290,115 +284,72 @@ double DifShellBase::getLeak(const Eref& e ) const
 
 void DifShellBase::setShapeMode(const Eref& e, unsigned int shapeMode )
 {
-  if ( shapeMode != 0 && shapeMode != 1 && shapeMode != 3 ) {
-    cerr << "Error: DifShell: I only understand shapeModes 0, 1 and 3.\n";
-    return;
-  }
-  shapeMode_ = shapeMode;
+  vSetShapeMode(e,shapeMode);
 }
 
 unsigned int DifShellBase::getShapeMode(const Eref& e) const
 {
-  return shapeMode_;
+  return vGetShapeMode(e);
 }
 
 void DifShellBase::setLength(const Eref& e, double length )
 {
-  if ( length < 0.0 ) {
-    cerr << "Error: DifShell: length cannot be negative!\n";
-    return;
-  }
-	
-  length_ = length;
+  vSetLength(e,length);
 }
 
 double DifShellBase::getLength(const Eref& e ) const
 {
-  return length_;
+  return vGetLength(e);
 }
 
 void DifShellBase::setDiameter(const Eref& e, double diameter )
 {
-  if ( diameter < 0.0 ) {
-    cerr << "Error: DifShell: diameter cannot be negative!\n";
-    return;
-  }
-	
-  diameter_ = diameter;
+  vSetDiameter(e,diameter);
 }
 
 double DifShellBase::getDiameter(const Eref& e ) const
 {
-  return diameter_;
+  return vGetDiameter(e);
 }
 
 void DifShellBase::setThickness( const Eref& e, double thickness )
 {
-  if ( thickness < 0.0 ) {
-    cerr << "Error: DifShell: thickness cannot be negative!\n";
-    return;
-  }
-	
-  thickness_ = thickness;
+  vSetThickness(e,thickness);
 }
 
 double DifShellBase::getThickness(const Eref& e) const
 {
-  return thickness_;
+  return vGetThickness(e);
 }
 
 void DifShellBase::setVolume(const Eref& e, double volume )
 {
-  if ( shapeMode_ != 3 )
-    cerr << "Warning: DifShell: Trying to set volume, when shapeMode is not USER-DEFINED\n";
-	
-  if ( volume < 0.0 ) {
-    cerr << "Error: DifShell: volume cannot be negative!\n";
-    return;
-  }
-	
-  volume_ = volume;
+  vSetVolume(e,volume);
 }
 
 double DifShellBase::getVolume(const Eref& e ) const
 {
-  return volume_;
+  return vGetVolume(e);
 }
 
 void DifShellBase::setOuterArea(const Eref& e, double outerArea )
 {
-  if (shapeMode_ != 3 )
-    cerr << "Warning: DifShell: Trying to set outerArea, when shapeMode is not USER-DEFINED\n";
-	
-  if ( outerArea < 0.0 ) {
-    cerr << "Error: DifShell: outerArea cannot be negative!\n";
-    return;
-  }
-	
-  outerArea_ = outerArea;
+  vSetOuterArea(e,outerArea);
 }
 
 double DifShellBase::getOuterArea(const Eref& e ) const
 {
-  return outerArea_;
+  return vGetOuterArea(e);
 }
 
 void DifShellBase::setInnerArea(const Eref& e, double innerArea )
 {
-  if ( shapeMode_ != 3 )
-    cerr << "Warning: DifShell: Trying to set innerArea, when shapeMode is not USER-DEFINED\n";
-    
-  if ( innerArea < 0.0 ) {
-    cerr << "Error: DifShell: innerArea cannot be negative!\n";
-    return;
-  }
-    
-  innerArea_ = innerArea;
+  vSetInnerArea(e,innerArea);
 }
 
 double DifShellBase::getInnerArea(const Eref& e) const
 {
-  return innerArea_;
+  return vGetInnerArea(e);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -416,92 +367,92 @@ void DifShellBase::process( const Eref& e, ProcPtr p )
 }
 
 void DifShellBase::buffer(
-		      const Eref& e,
-		      double kf,
-		      double kb,
-		      double bFree,
-		      double bBound )
+			  const Eref& e,
+			  double kf,
+			  double kb,
+			  double bFree,
+			  double bBound )
 {
   vBuffer( e, kf, kb, bFree, bBound );
 }
 
 void DifShellBase::fluxFromOut(const Eref& e,
-			   double outerC,
-			   double outerThickness )
+			       double outerC,
+			       double outerThickness )
 {
   vFluxFromOut(e, outerC, outerThickness );
 }
 
 void DifShellBase::fluxFromIn(
-			  const Eref& e,
-			  double innerC,
-			  double innerThickness )
+			      const Eref& e,
+			      double innerC,
+			      double innerThickness )
 {
   vFluxFromIn( e, innerC, innerThickness );
 }
 
 void DifShellBase::influx(const Eref& e,
-		      double I )
+			  double I )
 {
   vInflux( e, I );
 }
 
 void DifShellBase::outflux(const Eref& e,
-		       double I )
+			   double I )
 {
   vOutflux(e, I );
 }
 
 void DifShellBase::fInflux(const Eref& e,
-		       double I,
-		       double fraction )
+			   double I,
+			   double fraction )
 {
   vFInflux(e, I, fraction );
 }
 
 void DifShellBase::fOutflux(const Eref& e,
-			double I,
-			double fraction )
+			    double I,
+			    double fraction )
 {
   vFOutflux(e, I, fraction );
 }
 
 void DifShellBase::storeInflux(const Eref& e,
-			   double flux )
+			       double flux )
 {
   vStoreInflux( e, flux );
 }
 
 void DifShellBase::storeOutflux(const Eref& e,
-			    double flux )
+				double flux )
 {
   vStoreOutflux(e, flux );
 }
 
 void DifShellBase::tauPump(const Eref& e,
-		       double kP,
-		       double Ceq )
+			   double kP,
+			   double Ceq )
 {
   vTauPump( e, kP, Ceq );
 }
 
 void DifShellBase::eqTauPump(const Eref& e,
-			 double kP )
+			     double kP )
 {
   vEqTauPump(e, kP );
 }
 
 void DifShellBase::mmPump(const Eref& e,
-		      double vMax,
-		      double Kd )
+			  double vMax,
+			  double Kd )
 {
   vMMPump(e, vMax, Kd );
 }
 
 void DifShellBase::hillPump(const Eref& e,
-			double vMax,
-			double Kd,
-			unsigned int hill )
+			    double vMax,
+			    double Kd,
+			    unsigned int hill )
 {
   vHillPump(e, vMax, Kd, hill );
 }
@@ -509,57 +460,57 @@ void DifShellBase::vSetSolver( const Eref& e, Id hsolve )
 {;}
 
 void DifShellBase::zombify( Element* orig, const Cinfo* zClass, 
-				Id hsolve )
+			    Id hsolve )
 {
-	if ( orig->cinfo() == zClass )
-		return;
-	unsigned int start = orig->localDataStart();
-	unsigned int num = orig->numLocalData();
-	if ( num == 0 )
-		return;
-	unsigned int len = 12;
-	vector< double > data( num * len );
+  if ( orig->cinfo() == zClass )
+    return;
+  unsigned int start = orig->localDataStart();
+  unsigned int num = orig->numLocalData();
+  if ( num == 0 )
+    return;
+  unsigned int len = 12;
+  vector< double > data( num * len );
 
-	unsigned int j = 0;
+  unsigned int j = 0;
 	
-	for ( unsigned int i = 0; i < num; ++i ) {
-	  Eref er( orig, i + start );
-	  const DifShell* ds = 
-	    reinterpret_cast< const DifShell* >( er.data() );
-	  data[j + 0] = ds->getC( er );
-	  data[j + 1] = ds->getCeq( er );
-	  data[j + 2] = ds->getD( er );
-	  data[j + 3] = ds->getValence( er );
-	  data[j + 4] = ds->getLeak( er );
-	  data[j + 5] = ds->getShapeMode( er );
-	  data[j + 6] = ds->getLength( er );
-	  data[j + 7] = ds->getDiameter( er );
-	  data[j + 8] = ds->getThickness( er );
-	  data[j + 9] = ds->getVolume( er );
-	  data[j + 10] = ds->getOuterArea( er );
-	  data[j + 11] = ds->getInnerArea( er );
-	  j += len;
-	}
-	orig->zombieSwap( zClass );
-	j = 0;
-	for ( unsigned int i = 0; i < num; ++i ) {
-	  Eref er( orig, i + start );
-	  const DifShell* ds = 
-	    reinterpret_cast< const DifShell* >( er.data() );
-	  ds->vSetSolver(er,hsolve);
-	  ds->setC(er, data[j+0]);
-	  ds->setCeq(er, data[j + 1]);
-	  ds->setD(er, data[j + 2]);
-	  ds->setValence(er, data[j + 3]);
-	  ds->setLeak(er, data[j + 4]);
-	  ds->setShapeMode(er, data[j + 5]);
-	  ds->setLength(er, data[j + 6]);
-	  ds->setDiameter(er, data[j + 7]);
-	  ds->setThickness(er, data[j + 8]);
-	  ds->setVolume(er, data[j + 9]);
-	  ds->setOuterArea(er, data[j + 10]);
-	  ds->setInnerArea(er, data[j + 11]);
-	  j += len; //??
-	}
+  for ( unsigned int i = 0; i < num; ++i ) {
+    Eref er( orig, i + start );
+    const DifShellBase* ds = 
+      reinterpret_cast< const DifShellBase* >( er.data() );
+    data[j + 0] = ds->getC( er );
+    data[j + 1] = ds->getCeq( er );
+    data[j + 2] = ds->getD( er );
+    data[j + 3] = ds->getValence( er );
+    data[j + 4] = ds->getLeak( er );
+    data[j + 5] = ds->getShapeMode( er );
+    data[j + 6] = ds->getLength( er );
+    data[j + 7] = ds->getDiameter( er );
+    data[j + 8] = ds->getThickness( er );
+    data[j + 9] = ds->getVolume( er );
+    data[j + 10] = ds->getOuterArea( er );
+    data[j + 11] = ds->getInnerArea( er );
+    j += len;
+  }
+  orig->zombieSwap( zClass );
+  j = 0;
+  for ( unsigned int i = 0; i < num; ++i ) {
+    Eref er( orig, i + start );
+    DifShellBase* ds = 
+      reinterpret_cast< DifShellBase* >( er.data() );
+    ds->vSetSolver(er,hsolve);
+    ds->setC(er, data[j+0]);
+    ds->setCeq(er, data[j + 1]);
+    ds->setD(er, data[j + 2]);
+    ds->setValence(er, data[j + 3]);
+    ds->setLeak(er, data[j + 4]);
+    ds->setShapeMode(er, data[j + 5]);
+    ds->setLength(er, data[j + 6]);
+    ds->setDiameter(er, data[j + 7]);
+    ds->setThickness(er, data[j + 8]);
+    ds->setVolume(er, data[j + 9]);
+    ds->setOuterArea(er, data[j + 10]);
+    ds->setInnerArea(er, data[j + 11]);
+    j += len; //??
+  }
 	
 }

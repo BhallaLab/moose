@@ -16,7 +16,7 @@ class DifShellBase
 {
  public:
   DifShellBase();
- /////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////
   // Dest functions
   /////////////////////////////////////////////////////////////
   void reinit( const Eref & e, ProcPtr p );
@@ -47,7 +47,7 @@ class DifShellBase
   virtual void vStoreInflux(const Eref& e, double flux ) = 0;
   virtual void vStoreOutflux(const Eref& e, double flux ) = 0;
   virtual void vTauPump(const Eref& e, double kP, double Ceq ) = 0;
-  virtual void rEqTauPump(const Eref& e, double kP ) = 0;
+  virtual void vEqTauPump(const Eref& e, double kP ) = 0;
   virtual void vMMPump(const Eref& e, double vMax, double Kd ) = 0;
   virtual void vHillPump(const Eref& e, double vMax, double Kd, unsigned int hill ) = 0;
   /////////////////////////////////////////////////////////////
@@ -104,12 +104,32 @@ class DifShellBase
 
   virtual void vSetLeak(const Eref& e, double leak ) = 0;
   virtual double vGetLeak(const Eref& e) const = 0;
+  
+  virtual void vSetShapeMode(const Eref& e, unsigned int shapeMode ) = 0;
+  virtual unsigned int vGetShapeMode(const Eref& e) const = 0;
 
+  virtual void vSetLength(const Eref& e, double length ) = 0;
+  virtual double vGetLength(const Eref& e) const = 0;
+
+  virtual void vSetDiameter(const Eref& e, double diameter ) = 0;
+  virtual double vGetDiameter(const Eref& e) const = 0;
+
+  virtual void vSetThickness(const Eref& e, double thickness ) = 0;
+  virtual double vGetThickness(const Eref& e) const = 0;
+
+  virtual void vSetVolume(const Eref& e, double volume ) = 0;
+  virtual double vGetVolume(const Eref& e) const = 0;
+
+  virtual void vSetOuterArea(const Eref& e, double outerArea ) = 0;
+  virtual double vGetOuterArea(const Eref& e) const = 0;
+
+  virtual void vSetInnerArea(const Eref& e, double innerArea ) = 0;
+  virtual double vGetInnerArea(const Eref& e) const = 0;
 
   
-  void vSetSolver( const Eref& e, Id hsolve );
-  void zombify( Element* orig, const Cinfo* zClass, 
-		Id hsolve );
+  virtual void vSetSolver( const Eref& e, Id hsolve );
+  static void zombify( Element* orig, const Cinfo* zClass, 
+		       Id hsolve );
   static SrcFinfo1< double >* concentrationOut();
   static SrcFinfo2< double, double >* innerDifSourceOut();
   static SrcFinfo2< double, double >* outerDifSourceOut();
@@ -117,13 +137,6 @@ class DifShellBase
   
  private:
 
-  unsigned int shapeMode_;
-  double length_;
-  double diameter_;
-  double thickness_;
-  double volume_;
-  double outerArea_;
-  double innerArea_;
 
 
 };

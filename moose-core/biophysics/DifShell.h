@@ -11,8 +11,7 @@
 #ifndef _DIFSHELL_H
 #define _DIFSHELL_H
 
-class DifShell: public DifShellBase
-{
+class DifShell: public DifShellBase{
  public:
   DifShell();
 
@@ -54,6 +53,26 @@ class DifShell: public DifShellBase
   void vSetLeak(const Eref& e, double leak );
   double vGetLeak(const Eref& e) const;
 
+  void vSetShapeMode(const Eref& e, unsigned int shapeMode );
+  unsigned int vGetShapeMode(const Eref& e) const;
+
+  void vSetLength(const Eref& e, double length );
+  double vGetLength(const Eref& e) const;
+
+  void vSetDiameter(const Eref& e, double diameter );
+  double vGetDiameter(const Eref& e) const;
+
+  void vSetThickness(const Eref& e, double thickness );
+  double vGetThickness(const Eref& e) const;
+
+  void vSetVolume(const Eref& e, double volume );
+  double vGetVolume(const Eref& e) const;
+
+  void vSetOuterArea(const Eref& e, double outerArea );
+  double vGetOuterArea(const Eref& e) const;
+
+  void vSetInnerArea(const Eref& e, double innerArea );
+  double vGetInnerArea(const Eref& e) const;
   static const Cinfo * initCinfo();
   
                 
@@ -68,6 +87,13 @@ class DifShell: public DifShellBase
   double D_;
   double valence_;
   double leak_;
+  unsigned int shapeMode_;
+  double length_;
+  double diameter_;
+  double thickness_;
+  double volume_;
+  double outerArea_;
+  double innerArea_;
 
   static const double EPSILON;
   /// Faraday's constant (Coulomb / Mole)

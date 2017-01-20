@@ -14,6 +14,7 @@
 class DifBufferBase
 {
 public:
+  DifBufferBase();
   
   void buffer(const Eref& e,double C);
   void reinit( const Eref & e, ProcPtr p );
@@ -31,8 +32,11 @@ public:
   void setActivation(const Eref& e,double value);
 
   double getBFree(const Eref& e) const;
+  void setBFree(const Eref& e,double value);
+  
   double getBBound(const Eref& e) const;
-
+  void setBBound(const Eref& e,double value);
+ 
   double getBTot(const Eref& e) const;           //  total buffer concentration in mM (free + bound)
   void setBTot(const Eref& e,double value);
 
@@ -46,8 +50,8 @@ public:
   void setD(const Eref& e,double value);
 
   
-  int getShapeMode(const Eref& e) const; 
-  void setShapeMode(const Eref& e,int value); // variables SHELL=0, SLICE=SLAB=1, USERDEF=3.
+  unsigned int getShapeMode(const Eref& e) const; 
+  void setShapeMode(const Eref& e,unsigned int value); // variables SHELL=0, SLICE=SLAB=1, USERDEF=3.
 
   double getLength(const Eref& e) const; //             shell length
   void setLength(const Eref& e,double value);
@@ -72,7 +76,11 @@ public:
   virtual void vSetActivation(const Eref& e,double value) = 0;
 
   virtual double vGetBFree(const Eref& e) const = 0;
+  virtual void vSetBFree(const Eref& e,double value) = 0;
+    
   virtual double vGetBBound(const Eref& e) const = 0;
+  virtual void vSetBBound(const Eref& e,double value) = 0;
+    
 
   virtual double vGetBTot(const Eref& e) const = 0;           //  total buffer concentration in mM (free + bound)
   virtual void vSetBTot(const Eref& e,double value) = 0;
@@ -86,19 +94,37 @@ public:
   virtual double vGetD(const Eref& e) const = 0;          // diffusion constant of buffer molecules, m^2/sec
   virtual void vSetD(const Eref& e,double value) = 0;
 
+  virtual void vSetShapeMode(const Eref& e, unsigned int shapeMode ) = 0;
+  virtual unsigned int vGetShapeMode(const Eref& e) const = 0;
+
+  virtual void vSetLength(const Eref& e, double length ) = 0;
+  virtual double vGetLength(const Eref& e) const = 0;
+
+  virtual void vSetDiameter(const Eref& e, double diameter ) = 0;
+  virtual double vGetDiameter(const Eref& e) const = 0;
+
+  virtual void vSetThickness(const Eref& e, double thickness ) = 0;
+  virtual double vGetThickness(const Eref& e) const = 0;
+
+  virtual void vSetVolume(const Eref& e, double volume ) = 0;
+  virtual double vGetVolume(const Eref& e) const = 0;
+
+  virtual void vSetOuterArea(const Eref& e, double outerArea ) = 0;
+  virtual double vGetOuterArea(const Eref& e) const = 0;
+
+  virtual void vSetInnerArea(const Eref& e, double innerArea ) = 0;
+  virtual double vGetInnerArea(const Eref& e) const = 0;
+  
   static SrcFinfo4< double, double, double, double >* reactionOut();
   static SrcFinfo2< double, double >* innerDifSourceOut();
   static SrcFinfo2< double, double >* outerDifSourceOut();
   static const Cinfo * initCinfo();
+  virtual void vSetSolver( const Eref& e, Id hsolve );
+  static void zombify( Element* orig, const Cinfo* zClass, 
+		Id hsolve );
 private:
   
-  unsigned int shapeMode_;
-  double length_;
-  double diameter_;
-  double thickness_;
-  double volume_;
-  double outerArea_;
-  double innerArea_;
+ 
   
 };
 

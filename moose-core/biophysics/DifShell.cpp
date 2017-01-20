@@ -9,8 +9,9 @@
  **********************************************************************/
 
 #include "header.h"
-#include "DifShell.h"
 #include "DifShellBase.h"
+#include "DifShell.h"
+
 
 const double DifShell::EPSILON = 1.0e-10;
 const double DifShell::F = 96485.3415; /* C / mol like in genesis */
@@ -32,7 +33,7 @@ const Cinfo* DifShell::initCinfo()
   static Dinfo< DifShell > dinfo;
   static Cinfo difShellCinfo(
 			     "DifShell",
-			     Neutral::initCinfo(),
+			     DifShellBase::initCinfo(),
 			     0,
 			     0,
 			     &dinfo,
@@ -59,7 +60,14 @@ DifShell::DifShell() :
   Ceq_( 0.0 ),
   D_( 0.0 ),
   valence_( 0.0 ),
-  leak_( 0.0 )
+  leak_( 0.0 ),
+  shapeMode_(0),
+  length_(0),
+  diameter_(0),
+  thickness_(0),
+  volume_(0),
+  outerArea_(0),
+  innerArea_(0)
 { ; }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -136,6 +144,122 @@ double DifShell::vGetLeak(const Eref& e ) const
 {
   return leak_;
 }
+
+
+void DifShell::vSetShapeMode(const Eref& e, unsigned int shapeMode )
+{
+  if ( shapeMode != 0 && shapeMode != 1 && shapeMode != 3 ) {
+    cerr << "Error: DifShell: I only understand shapeModes 0, 1 and 3.\n";
+    return;
+  }
+  shapeMode_ = shapeMode;
+}
+
+unsigned int DifShell::vGetShapeMode(const Eref& e) const
+{
+  return shapeMode_;
+}
+
+void DifShell::vSetLength(const Eref& e, double length )
+{
+  if ( length < 0.0 ) {
+    cerr << "Error: DifShell: length cannot be negative!\n";
+    return;
+  }
+	
+  length_ = length;
+}
+
+double DifShell::vGetLength(const Eref& e ) const
+{
+  return length_;
+}
+
+void DifShell::vSetDiameter(const Eref& e, double diameter )
+{
+  if ( diameter < 0.0 ) {
+    cerr << "Error: DifShell: diameter cannot be negative!\n";
+    return;
+  }
+	
+  diameter_ = diameter;
+}
+
+double DifShell::vGetDiameter(const Eref& e ) const
+{
+  return diameter_;
+}
+
+void DifShell::vSetThickness( const Eref& e, double thickness )
+{
+  if ( thickness < 0.0 ) {
+    cerr << "Error: DifShell: thickness cannot be negative!\n";
+    return;
+  }
+	
+  thickness_ = thickness;
+}
+
+double DifShell::vGetThickness(const Eref& e) const
+{
+  return thickness_;
+}
+
+void DifShell::vSetVolume(const Eref& e, double volume )
+{
+  if ( shapeMode_ != 3 )
+    cerr << "Warning: DifShell: Trying to set volume, when shapeMode is not USER-DEFINED\n";
+	
+  if ( volume < 0.0 ) {
+    cerr << "Error: DifShell: volume cannot be negative!\n";
+    return;
+  }
+	
+  volume_ = volume;
+}
+
+double DifShell::vGetVolume(const Eref& e ) const
+{
+  return volume_;
+}
+
+void DifShell::vSetOuterArea(const Eref& e, double outerArea )
+{
+  if (shapeMode_ != 3 )
+    cerr << "Warning: DifShell: Trying to set outerArea, when shapeMode is not USER-DEFINED\n";
+	
+  if ( outerArea < 0.0 ) {
+    cerr << "Error: DifShell: outerArea cannot be negative!\n";
+    return;
+  }
+	
+  outerArea_ = outerArea;
+}
+
+double DifShell::vGetOuterArea(const Eref& e ) const
+{
+  return outerArea_;
+}
+
+void DifShell::vSetInnerArea(const Eref& e, double innerArea )
+{
+  if ( shapeMode_ != 3 )
+    cerr << "Warning: DifShell: Trying to set innerArea, when shapeMode is not USER-DEFINED\n";
+    
+  if ( innerArea < 0.0 ) {
+    cerr << "Error: DifShell: innerArea cannot be negative!\n";
+    return;
+  }
+    
+  innerArea_ = innerArea;
+}
+
+double DifShell::vGetInnerArea(const Eref& e) const
+{
+  return innerArea_;
+}
+
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Local dest functions
@@ -236,6 +360,7 @@ void DifShell::vFluxFromOut(const Eref& e, double outerC, double outerThickness 
    * We could pre-compute ( D / Volume ), but let us leave the optimizations
    * for the solver.
    */
+  //cout << "FluxFromOut "<<outerC<<" "<<outerThickness;
   dCbyDt_ +=  diff * outerC;
   Cmultiplier_ += diff ;
 }
@@ -245,7 +370,7 @@ void DifShell::vFluxFromIn(const Eref& e, double innerC, double innerThickness )
   //influx from inner shell
   //double dx = ( innerThickness + thickness_ ) / 2.0;
   double diff = 2.*( D_ / volume_ ) * ( innerArea_ / (innerThickness + thickness_) );
-
+  //cout << "FluxFromIn "<<innerC<<" "<<innerThickness;
   dCbyDt_ +=  diff *  innerC ;
   Cmultiplier_ += diff ;
 }

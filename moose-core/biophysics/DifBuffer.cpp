@@ -46,6 +46,7 @@
 // Code:
 
 #include "header.h"
+#include "DifBufferBase.h"
 #include "DifBuffer.h"
 #include "ElementValueFinfo.h"
 #include "../utility/numutil.h"
@@ -65,7 +66,7 @@ const Cinfo * DifBuffer::initCinfo()
   static Dinfo<DifBuffer> dinfo;
   static Cinfo difBufferCinfo(
 			      "DifBuffer",
-			      Neutral::initCinfo(),
+			      DifBufferBase::initCinfo(),
 			      0,
 			      0,
 			      &dinfo,
@@ -83,13 +84,23 @@ static const Cinfo * difBufferCinfo = DifBuffer::initCinfo();
 ////////////////////////////////////////////////////////////////////////////////
 
 DifBuffer::DifBuffer() :
+  activation_(0),
+  Af_(0),
+  Bf_(0),
+  bFree_(0),
+  bBound_(0),
+  bTot_(0),
+  kf_(0),
+  kb_(0),
+  D_(0),
   shapeMode_(0),
-  diameter_(0),
   length_(0),
+  diameter_(0),
   thickness_(0),
+  volume_(0),
   outerArea_(0),
-  innerArea_(0),
-  volume_(0)
+  innerArea_(0)
+
 {}
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -114,11 +125,39 @@ double DifBuffer::vGetBFree(const Eref& e) const
 {
   return bFree_;
 }
+void DifBuffer::vSetBFree(const Eref& e,double value)
+{
+  if ( value  < 0.0 ) {
+    cerr << "Error: DifBuffer: Free Buffer cannot be negative!\n";
+    return;
+  }
+  if (value > bTot_){
+    cerr << "Error: DifBuffer: Free Buffer cannot exceed total buffer!\n";
+    return;
+  }
+  bFree_ = value;
+  bBound_ = bTot_ - bFree_;
+}
 
 double DifBuffer::vGetBBound(const Eref& e) const
 {
   return bBound_;
 }
+
+void DifBuffer::vSetBBound(const Eref& e,double value)
+{
+  if ( value  < 0.0 ) {
+    cerr << "Error: DifBuffer: Bound Buffer cannot be negative!\n";
+    return;
+  }
+  if (value > bTot_){
+    cerr << "Error: DifBuffer: Bound Buffer cannot exceed total buffer!\n";
+    return;
+  }
+  bBound_ = value;
+  bFree_ = bTot_ - bBound_;
+}
+
 
 double DifBuffer::vGetBTot(const Eref& e) const
 {
@@ -181,11 +220,128 @@ void DifBuffer::vSetD(const Eref& e,double value)
 }
 
 
+void DifBuffer::vSetShapeMode(const Eref& e, unsigned int shapeMode )
+{
+  if ( shapeMode != 0 && shapeMode != 1 && shapeMode != 3 ) {
+    cerr << "Error: DifBuffer: I only understand shapeModes 0, 1 and 3.\n";
+    return;
+  }
+  shapeMode_ = shapeMode;
+}
+
+unsigned int DifBuffer::vGetShapeMode(const Eref& e) const
+{
+  return shapeMode_;
+}
+
+void DifBuffer::vSetLength(const Eref& e, double length )
+{
+  if ( length < 0.0 ) {
+    cerr << "Error: DifBuffer: length cannot be negative!\n";
+    return;
+  }
+	
+  length_ = length;
+}
+
+double DifBuffer::vGetLength(const Eref& e ) const
+{
+  return length_;
+}
+
+void DifBuffer::vSetDiameter(const Eref& e, double diameter )
+{
+  if ( diameter < 0.0 ) {
+    cerr << "Error: DifBuffer: diameter cannot be negative!\n";
+    return;
+  }
+	
+  diameter_ = diameter;
+}
+
+double DifBuffer::vGetDiameter(const Eref& e ) const
+{
+  return diameter_;
+}
+
+void DifBuffer::vSetThickness( const Eref& e, double thickness )
+{
+  if ( thickness < 0.0 ) {
+    cerr << "Error: DifBuffer: thickness cannot be negative!\n";
+    return;
+  }
+	
+  thickness_ = thickness;
+}
+
+double DifBuffer::vGetThickness(const Eref& e) const
+{
+  return thickness_;
+}
+
+void DifBuffer::vSetVolume(const Eref& e, double volume )
+{
+  if ( shapeMode_ != 3 )
+    cerr << "Warning: DifBuffer: Trying to set volume, when shapeMode is not USER-DEFINED\n";
+	
+  if ( volume < 0.0 ) {
+    cerr << "Error: DifBuffer: volume cannot be negative!\n";
+    return;
+  }
+	
+  volume_ = volume;
+}
+
+double DifBuffer::vGetVolume(const Eref& e ) const
+{
+  return volume_;
+}
+
+void DifBuffer::vSetOuterArea(const Eref& e, double outerArea )
+{
+  if (shapeMode_ != 3 )
+    cerr << "Warning: DifBuffer: Trying to set outerArea, when shapeMode is not USER-DEFINED\n";
+	
+  if ( outerArea < 0.0 ) {
+    cerr << "Error: DifBuffer: outerArea cannot be negative!\n";
+    return;
+  }
+	
+  outerArea_ = outerArea;
+}
+
+double DifBuffer::vGetOuterArea(const Eref& e ) const
+{
+  return outerArea_;
+}
+
+void DifBuffer::vSetInnerArea(const Eref& e, double innerArea )
+{
+  if ( shapeMode_ != 3 )
+    cerr << "Warning: DifBuffer: Trying to set innerArea, when shapeMode is not USER-DEFINED\n";
+    
+  if ( innerArea < 0.0 ) {
+    cerr << "Error: DifBuffer: innerArea cannot be negative!\n";
+    return;
+  }
+    
+  innerArea_ = innerArea;
+}
+
+double DifBuffer::vGetInnerArea(const Eref& e) const
+{
+  return innerArea_;
+}
+
+
+
+
 void DifBuffer::vBuffer(const Eref& e,
 		       double C )
 {
   activation_ = C;
 }
+
 
 double DifBuffer::integrate( double state, double dt, double A, double B )
 {

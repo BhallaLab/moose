@@ -137,7 +137,7 @@ const Cinfo * DifBufferBase::initCinfo()
                                                 "Diameter of shell",
                                                 &DifBufferBase::setDiameter,
                                                 &DifBufferBase::getDiameter);
-  static ElementValueFinfo<DifBufferBase, int> shapeMode("shapeMode",
+  static ElementValueFinfo<DifBufferBase, unsigned int> shapeMode("shapeMode",
                                               "shape of the shell: SHELL=0, SLICE=SLAB=1, USERDEF=3",
                                               &DifBufferBase::setShapeMode,
                                               &DifBufferBase::getShapeMode);
@@ -191,9 +191,9 @@ const Cinfo * DifBufferBase::initCinfo()
     &innerDif,
     &outerDif,
     //
-    //reactionOut(),
-    //innerDifSourceOut(),
-    //outerDifSourceOut(),
+    reactionOut(),
+    innerDifSourceOut(),
+    outerDifSourceOut(),
     //////////////////////////////////////////////////////////////////
     // DestFinfo definitions
     //////////////////////////////////////////////////////////////////
@@ -206,7 +206,7 @@ const Cinfo * DifBufferBase::initCinfo()
     "Description", "Models diffusible buffer where total concentration is constant. It is"
     " coupled with a DifShell.",
   };
-  static Dinfo<DifBufferBase> dinfo;
+  static ZeroSizeDinfo<int> dinfo;
   static Cinfo difBufferCinfo(
 			      "DifBufferBase",
 			      Neutral::initCinfo(),
@@ -226,15 +226,8 @@ static const Cinfo * difBufferCinfo = DifBufferBase::initCinfo();
 // Class functions
 ////////////////////////////////////////////////////////////////////////////////
 
-DifBufferBase::DifBufferBase() :
-  shapeMode_(0),
-  diameter_(0),
-  length_(0),
-  thickness_(0),
-  outerArea_(0),
-  innerArea_(0),
-  volume_(0)
-{}
+DifBufferBase::DifBufferBase()
+{ ; }
 
 
 double DifBufferBase::getActivation(const Eref& e) const
@@ -253,9 +246,18 @@ double DifBufferBase::getBFree(const Eref& e) const
   return vGetBFree(e);
 }
 
+void DifBufferBase::setBFree(const Eref& e,double value)
+{
+  vSetBFree(e,value);
+}
+
 double DifBufferBase::getBBound(const Eref& e) const
 {
   return vGetBBound(e);
+}
+void DifBufferBase::setBBound(const Eref& e,double value)
+{
+  vSetBBound(e,value);
 }
 
 double DifBufferBase::getBTot(const Eref& e) const
@@ -299,117 +301,77 @@ void DifBufferBase::setD(const Eref& e,double value)
   vSetD(e,value);
 }
 
-int DifBufferBase::getShapeMode(const Eref& e) const
+void DifBufferBase::setShapeMode(const Eref& e, unsigned int shapeMode )
 {
-  return shapeMode_;
+  vSetShapeMode(e,shapeMode);
 }
 
-void DifBufferBase::setShapeMode(const Eref& e,int value)
+unsigned int DifBufferBase::getShapeMode(const Eref& e) const
 {
-  if ( value  != 0 && value !=1 && value != 3 ) {
-    cerr << "Error: DifBuffer: Shape mode can only be 0, 1 or 3";
-    return;
-  }
-  shapeMode_ = value;
+  return vGetShapeMode(e);
 }
 
-double DifBufferBase::getLength(const Eref& e) const
+void DifBufferBase::setLength(const Eref& e, double length )
 {
-  return length_;
+  vSetLength(e,length);
 }
 
-void DifBufferBase::setLength(const Eref& e,double value)
+double DifBufferBase::getLength(const Eref& e ) const
 {
-  if ( value < 0.0) {
-    cerr << "Error: DifBuffer: Length cannot be negative!\n";
-    return;
-  }
-  length_ = value;
+  return vGetLength(e);
 }
 
-double DifBufferBase::getDiameter(const Eref& e) const
+void DifBufferBase::setDiameter(const Eref& e, double diameter )
 {
-  return diameter_;
+  vSetDiameter(e,diameter);
 }
 
-void DifBufferBase::setDiameter(const Eref& e,double value)
+double DifBufferBase::getDiameter(const Eref& e ) const
 {
-  if ( value < 0.0) {
-    cerr << "Error: DifBuffer: Diameter cannot be negative!\n";
-    return;
-  }
-  diameter_ = value;
+  return vGetDiameter(e);
+}
+
+void DifBufferBase::setThickness( const Eref& e, double thickness )
+{
+  vSetThickness(e,thickness);
 }
 
 double DifBufferBase::getThickness(const Eref& e) const
 {
-  return thickness_;
-}
-
-void DifBufferBase::setThickness(const Eref& e,double value)
-{
-  if ( value < 0.0) {
-    cerr << "Error: DifBuffer: Thickness cannot be negative!\n";
-    return;
-  }
-  thickness_ = value;
+  return vGetThickness(e);
 }
 
 void DifBufferBase::setVolume(const Eref& e, double volume )
 {
-  if ( shapeMode_ != 3 )
-    cerr << "Warning: DifBuffer: Trying to set volume, when shapeMode is not USER-DEFINED\n";
-	
-  if ( volume < 0.0 ) {
-    cerr << "Error: DifBuffer: volume cannot be negative!\n";
-    return;
-  }
-	
-  volume_ = volume;
+  vSetVolume(e,volume);
 }
 
 double DifBufferBase::getVolume(const Eref& e ) const
 {
-  return volume_;
+  return vGetVolume(e);
 }
 
 void DifBufferBase::setOuterArea(const Eref& e, double outerArea )
 {
-  if (shapeMode_ != 3 )
-    cerr << "Warning: DifBuffer: Trying to set outerArea, when shapeMode is not USER-DEFINED\n";
-	
-  if ( outerArea < 0.0 ) {
-    cerr << "Error: DifBuffer: outerArea cannot be negative!\n";
-    return;
-  }
-	
-  outerArea_ = outerArea;
+  vSetOuterArea(e,outerArea);
 }
 
 double DifBufferBase::getOuterArea(const Eref& e ) const
 {
-  return outerArea_;
+  return vGetOuterArea(e);
 }
 
 void DifBufferBase::setInnerArea(const Eref& e, double innerArea )
 {
-  if ( shapeMode_ != 3 )
-    cerr << "Warning: DifBuffer: Trying to set innerArea, when shapeMode is not USER-DEFINED\n";
-    
-  if ( innerArea < 0.0 ) {
-    cerr << "Error: DifBuffer: innerArea cannot be negative!\n";
-    return;
-  }
-    
-  innerArea_ = innerArea;
+  vSetInnerArea(e,innerArea);
 }
 
 double DifBufferBase::getInnerArea(const Eref& e) const
 {
-  return innerArea_;
+  return vGetInnerArea(e);
 }
 
-}
+
 
 void DifBufferBase::buffer(const Eref& e,double C)
 {
@@ -432,4 +394,66 @@ void DifBufferBase:: fluxFromOut(const Eref& e,double outerC, double outerThickn
 void DifBufferBase:: fluxFromIn(const Eref& e,double innerC, double innerThickness )
 {
   vFluxFromIn(e,innerC,innerThickness);
+}
+void DifBufferBase::vSetSolver( const Eref& e, Id hsolve )
+{;}
+
+void DifBufferBase::zombify( Element* orig, const Cinfo* zClass, 
+				Id hsolve )
+{
+	if ( orig->cinfo() == zClass )
+		return;
+	unsigned int start = orig->localDataStart();
+	unsigned int num = orig->numLocalData();
+	if ( num == 0 )
+		return;
+	unsigned int len = 14;
+	vector< double > data( num * len );
+
+	unsigned int j = 0;
+	
+	for ( unsigned int i = 0; i < num; ++i ) {
+	  Eref er( orig, i + start );
+	  const DifBufferBase* ds = 
+	    reinterpret_cast< const DifBufferBase* >( er.data() );
+	  data[j + 0] = ds->getActivation( er );
+	  data[j + 1] = ds->getBFree( er );
+	  data[j + 2] = ds->getBBound( er );
+	  data[j + 3] = ds->getBTot( er );
+	  data[j + 4] = ds->getKf( er );
+	  data[j + 5] = ds->getKb( er );
+	  data[j + 6] = ds->getD( er );
+	  data[j + 7] = ds->getShapeMode( er );
+	  data[j + 8] = ds->getLength( er );
+	  data[j + 9] = ds->getDiameter( er );
+	  data[j + 10] = ds->getThickness( er );
+	  data[j + 11] = ds->getVolume( er );
+	  data[j + 12] = ds->getOuterArea( er );
+	  data[j + 13] = ds->getInnerArea( er );
+	  j += len;
+	}
+	orig->zombieSwap( zClass );
+	j = 0;
+	for ( unsigned int i = 0; i < num; ++i ) {
+	  Eref er( orig, i + start );
+	  DifBufferBase* ds = 
+	    reinterpret_cast< DifBufferBase* >( er.data() );
+	  ds->vSetSolver(er,hsolve);
+	  ds->setActivation(er, data[j+0]);
+	  ds->setBFree(er, data[j + 1]);
+	  ds->setBBound(er, data[j + 2]);
+	  ds->setBTot(er, data[j + 3]);
+	  ds->setKf(er, data[j + 4]);
+	  ds->setKb(er, data[j + 5]);
+	  ds->setD(er, data[j + 6]);
+	  ds->setShapeMode(er, data[j + 7]);
+	  ds->setLength(er, data[j + 8]);
+	  ds->setDiameter(er, data[j + 9]);
+	  ds->setThickness(er, data[j + 10]);
+	  ds->setVolume(er, data[j + 11]);
+	  ds->setOuterArea(er, data[j + 12]);
+	  ds->setInnerArea(er, data[j + 13]);
+	  j += len; //??
+	}
+	
 }
