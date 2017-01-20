@@ -369,9 +369,7 @@ void DifBuffer::vProcess( const Eref & e, ProcPtr p )
    * then compute their incoming fluxes.
    */
 
-  innerDifSourceOut()->send( e, prevFree_, thickness_ );
-  outerDifSourceOut()->send( e, prevFree_, thickness_ );
-  reactionOut()->send(e,kf_,kb_,bFree_,bBound_);
+  
   
   Af_ += kb_ * bBound_;
   Bf_ += kf_ * activation_;
@@ -381,25 +379,31 @@ void DifBuffer::vProcess( const Eref & e, ProcPtr p )
   prevFree_ = bFree_;
   prevBound_ = bBound_;
  
-  Af_ = 0;
-  Bf_= 0;
   /**
    * Send ion concentration to ion buffers. They will send back information on
    * the reaction (forward / backward rates ; free / bound buffer concentration)
    * immediately, which this DifShell will use to find amount of ion captured
    * or released in the current time-step.
    */
+  innerDifSourceOut()->send( e, prevFree_, thickness_ );
+  outerDifSourceOut()->send( e, prevFree_, thickness_ );
+  reactionOut()->send(e,kf_,kb_,bFree_,bBound_);
+  Af_ = 0;
+  Bf_= 0;
 
 }
 
 void DifBuffer::vReinit( const Eref& e, ProcPtr p )
 {
 	
+  Af_ = 0;
+  Bf_= 0;
+  double rOut = diameter_/2.;
   
-  const double rOut = diameter_/2.;
-  
-  const double rIn = rOut - thickness_;
-  
+  double rIn = rOut - thickness_;
+
+  if (rIn<0)
+	 rIn = 0.;
   switch ( shapeMode_ )
     {
       /*
@@ -443,18 +447,21 @@ void DifBuffer::vReinit( const Eref& e, ProcPtr p )
   prevFree_ = bFree_;
   bBound_ = bTot_ - bFree_;
   prevBound_ = bBound_;
+  innerDifSourceOut()->send( e, prevFree_, thickness_ );
+  outerDifSourceOut()->send( e, prevFree_, thickness_ );
+  
 }
 
 void DifBuffer::vFluxFromIn(const Eref& e,double innerC, double innerThickness)
 {
-  double dif = 2 * D_ * innerArea_ / ((thickness_ + innerThickness) * volume_);
+  double dif = 2 * D_ * innerArea_ / (thickness_ + innerThickness)/ volume_;
   Af_ += dif * innerC;
   Bf_ += dif;
 }
 
 void DifBuffer::vFluxFromOut(const Eref& e,double outerC, double outerThickness)
 {
-  double dif = 2 * D_ * outerArea_ / ((thickness_ + outerThickness)  * volume_);
+  double dif = 2 * D_ * outerArea_ / (thickness_ + outerThickness) / volume_;
   Af_ += dif * outerC;
   Bf_ += dif;
 }

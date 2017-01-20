@@ -281,9 +281,12 @@ void DifShell::vReinit( const Eref& e, ProcPtr p )
   dCbyDt_ = leak_;
   Cmultiplier_ = 0;
 
-  const double rOut = diameter_/2.;
+  double rOut = diameter_/2.;
   
-  const double rIn = rOut - thickness_;
+  double rIn = rOut - thickness_;
+
+  if (rIn <0)
+	  rIn = 0.;
   
   switch ( shapeMode_ )
     {
@@ -326,6 +329,8 @@ void DifShell::vReinit( const Eref& e, ProcPtr p )
   C_= Ceq_;
   prevC_ = Ceq_;
   concentrationOut()->send( e, C_ );
+  innerDifSourceOut()->send( e, prevC_, thickness_ );
+  outerDifSourceOut()->send( e, prevC_, thickness_ );
 }
 
 void DifShell::vProcess( const Eref & e, ProcPtr p )
@@ -335,9 +340,7 @@ void DifShell::vProcess( const Eref & e, ProcPtr p )
    * then compute their incoming fluxes.
    */
   
-  innerDifSourceOut()->send( e, prevC_, thickness_ );
-  outerDifSourceOut()->send( e, prevC_, thickness_ );
-  concentrationOut()->send( e, C_ );
+ 
   C_ = integrate(C_,p->dt,dCbyDt_,Cmultiplier_);
  
   /**
@@ -351,6 +354,9 @@ void DifShell::vProcess( const Eref & e, ProcPtr p )
   //cout<<"Shell "<< C_<<" ";
   dCbyDt_ = leak_;
   Cmultiplier_ = 0;
+  innerDifSourceOut()->send( e, prevC_, thickness_ );
+  outerDifSourceOut()->send( e, prevC_, thickness_ );
+  concentrationOut()->send( e, C_ );
 
 }
 void DifShell::vBuffer(const Eref& e,
@@ -365,7 +371,7 @@ void DifShell::vBuffer(const Eref& e,
 
 void DifShell::vFluxFromOut(const Eref& e, double outerC, double outerThickness )
 {
-  double diff =2.* ( D_ / volume_ ) * ( outerArea_ / (outerThickness + thickness_) );
+  double diff =2.*  D_  *  outerArea_ / (outerThickness + thickness_) /volume_;
   //influx from outer shell
   /**
    * We could pre-compute ( D / Volume ), but let us leave the optimizations
@@ -380,7 +386,7 @@ void DifShell::vFluxFromIn(const Eref& e, double innerC, double innerThickness )
 {
   //influx from inner shell
   //double dx = ( innerThickness + thickness_ ) / 2.0;
-  double diff = 2.*( D_ / volume_ ) * ( innerArea_ / (innerThickness + thickness_) );
+  double diff = 2.* D_ * innerArea_ / (innerThickness + thickness_) /volume_;
   //cout << "FluxFromIn "<<innerC<<" "<<innerThickness;
   dCbyDt_ +=  diff *  innerC ;
   Cmultiplier_ += diff ;
