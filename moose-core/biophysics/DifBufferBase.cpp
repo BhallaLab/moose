@@ -41,12 +41,12 @@ const Cinfo * DifBufferBase::initCinfo()
   };
 
   static SharedFinfo proc(
-			       "proc", 
-			       "Here we create 2 shared finfos to attach with the Ticks. This is because we want to perform DifBufferBase "
-			       "computations in 2 stages, much as in the Compartment object. "
-			       "In the first stage we send out the concentration value to other DifBufferBases and Buffer elements. We also",
-			       processShared,
-			       sizeof( processShared ) / sizeof( Finfo* ));
+			  "proc", 
+			  "Here we create 2 shared finfos to attach with the Ticks. This is because we want to perform DifBufferBase "
+			  "computations in 2 stages, much as in the Compartment object. "
+			  "In the first stage we send out the concentration value to other DifBufferBases and Buffer elements. We also",
+			  processShared,
+			  sizeof( processShared ) / sizeof( Finfo* ));
   
   static DestFinfo concentration("concentration",
                                  "Receives concentration (from DifShell).",
@@ -74,8 +74,8 @@ const Cinfo * DifBufferBase::initCinfo()
                                 new EpFunc2< DifBufferBase, double, double > ( &DifBufferBase::fluxFromOut ));
     
   static Finfo* innerDifShared[] = {
-      &fluxFromOut,
-      DifBufferBase::innerDifSourceOut()
+    &fluxFromOut,
+    DifBufferBase::innerDifSourceOut()
     
   };
     
@@ -104,60 +104,62 @@ const Cinfo * DifBufferBase::initCinfo()
   // Field defs
   ////////////////////////////
   static ElementValueFinfo<DifBufferBase, double> activation("activation",
-                                                  "Ion concentration from incoming conc message.",
-                                                  &DifBufferBase::setActivation,
-                                                  &DifBufferBase::getActivation);
+							     "Ion concentration from incoming conc message.",
+							     &DifBufferBase::setActivation,
+							     &DifBufferBase::getActivation);
   static ElementValueFinfo<DifBufferBase, double> kf("kf",
-					  "Forward rate constant of buffer molecules 1/mM/s (?)",
-					  &DifBufferBase::setKf,
-					  &DifBufferBase::getKf);
+						     "Forward rate constant of buffer molecules 1/mM/s (?)",
+						     &DifBufferBase::setKf,
+						     &DifBufferBase::getKf);
   static ElementValueFinfo<DifBufferBase, double> kb("kb",
-					  "Backward rate constant of buffer molecules. 1/s",
-					  &DifBufferBase::setKb,
-					  &DifBufferBase::getKb);
+						     "Backward rate constant of buffer molecules. 1/s",
+						     &DifBufferBase::setKb,
+						     &DifBufferBase::getKb);
   static ElementValueFinfo<DifBufferBase, double> D("D",
-                                         "Diffusion constant of buffer molecules. m^2/s",
-                                         &DifBufferBase::setD,
-                                         &DifBufferBase::getD);
-  static ReadOnlyElementValueFinfo<DifBufferBase, double> bFree("bFree",
-                                                     "Free buffer concentration",
-                                                     &DifBufferBase::getBFree);
-  static ReadOnlyElementValueFinfo<DifBufferBase, double> bBound("bBound",
-                                                      "Bound buffer concentration",
-                                                      &DifBufferBase::getBBound);
+						    "Diffusion constant of buffer molecules. m^2/s",
+						    &DifBufferBase::setD,
+						    &DifBufferBase::getD);
+  static ElementValueFinfo<DifBufferBase, double> bFree("bFree",
+							"Free buffer concentration",
+							&DifBufferBase::setBFree,
+							&DifBufferBase::getBFree);
+  static ElementValueFinfo<DifBufferBase, double> bBound("bBound",
+							 "Bound buffer concentration",
+							 &DifBufferBase::setBBound,
+							 &DifBufferBase::getBBound);
   static ElementValueFinfo<DifBufferBase, double> bTot("bTot",
-                                            "Total buffer concentration.",
-                                            &DifBufferBase::setBTot,
-                                            &DifBufferBase::getBTot);  
+						       "Total buffer concentration.",
+						       &DifBufferBase::setBTot,
+						       &DifBufferBase::getBTot);  
   static ElementValueFinfo<DifBufferBase, double> length("length",
-                                              "Length of shell",
-                                              &DifBufferBase::setLength,
-                                              &DifBufferBase::getLength);
+							 "Length of shell",
+							 &DifBufferBase::setLength,
+							 &DifBufferBase::getLength);
   static ElementValueFinfo<DifBufferBase, double> diameter("diameter",
-                                                "Diameter of shell",
-                                                &DifBufferBase::setDiameter,
-                                                &DifBufferBase::getDiameter);
+							   "Diameter of shell",
+							   &DifBufferBase::setDiameter,
+							   &DifBufferBase::getDiameter);
   static ElementValueFinfo<DifBufferBase, unsigned int> shapeMode("shapeMode",
-                                              "shape of the shell: SHELL=0, SLICE=SLAB=1, USERDEF=3",
-                                              &DifBufferBase::setShapeMode,
-                                              &DifBufferBase::getShapeMode);
+								  "shape of the shell: SHELL=0, SLICE=SLAB=1, USERDEF=3",
+								  &DifBufferBase::setShapeMode,
+								  &DifBufferBase::getShapeMode);
   
   static ElementValueFinfo<DifBufferBase, double> thickness("thickness",
-						 "Thickness of shell",
-						 &DifBufferBase::setThickness,
-						 &DifBufferBase::getThickness);
+							    "Thickness of shell",
+							    &DifBufferBase::setThickness,
+							    &DifBufferBase::getThickness);
  
   static ElementValueFinfo<DifBufferBase, double> innerArea("innerArea",
-                                                 "Inner area of shell",
-                                                 &DifBufferBase::setInnerArea,
-                                                 &DifBufferBase::getInnerArea);
+							    "Inner area of shell",
+							    &DifBufferBase::setInnerArea,
+							    &DifBufferBase::getInnerArea);
   static ElementValueFinfo<DifBufferBase, double> outerArea("outerArea",
-                                                 "Outer area of shell",
-                                                 &DifBufferBase::setOuterArea,
-                                                 &DifBufferBase::getOuterArea);
+							    "Outer area of shell",
+							    &DifBufferBase::setOuterArea,
+							    &DifBufferBase::getOuterArea);
   static ElementValueFinfo< DifBufferBase, double> volume( "volume", "",
-						&DifBufferBase::setVolume,
-						&DifBufferBase::getVolume );
+							   &DifBufferBase::setVolume,
+							   &DifBufferBase::getVolume );
   
   ////
   // DestFinfo
@@ -399,61 +401,61 @@ void DifBufferBase::vSetSolver( const Eref& e, Id hsolve )
 {;}
 
 void DifBufferBase::zombify( Element* orig, const Cinfo* zClass, 
-				Id hsolve )
+			     Id hsolve )
 {
-	if ( orig->cinfo() == zClass )
-		return;
-	unsigned int start = orig->localDataStart();
-	unsigned int num = orig->numLocalData();
-	if ( num == 0 )
-		return;
-	unsigned int len = 14;
-	vector< double > data( num * len );
+  if ( orig->cinfo() == zClass )
+    return;
+  unsigned int start = orig->localDataStart();
+  unsigned int num = orig->numLocalData();
+  if ( num == 0 )
+    return;
+  unsigned int len = 14;
+  vector< double > data( num * len );
 
-	unsigned int j = 0;
+  unsigned int j = 0;
 	
-	for ( unsigned int i = 0; i < num; ++i ) {
-	  Eref er( orig, i + start );
-	  const DifBufferBase* ds = 
-	    reinterpret_cast< const DifBufferBase* >( er.data() );
-	  data[j + 0] = ds->getActivation( er );
-	  data[j + 1] = ds->getBFree( er );
-	  data[j + 2] = ds->getBBound( er );
-	  data[j + 3] = ds->getBTot( er );
-	  data[j + 4] = ds->getKf( er );
-	  data[j + 5] = ds->getKb( er );
-	  data[j + 6] = ds->getD( er );
-	  data[j + 7] = ds->getShapeMode( er );
-	  data[j + 8] = ds->getLength( er );
-	  data[j + 9] = ds->getDiameter( er );
-	  data[j + 10] = ds->getThickness( er );
-	  data[j + 11] = ds->getVolume( er );
-	  data[j + 12] = ds->getOuterArea( er );
-	  data[j + 13] = ds->getInnerArea( er );
-	  j += len;
-	}
-	orig->zombieSwap( zClass );
-	j = 0;
-	for ( unsigned int i = 0; i < num; ++i ) {
-	  Eref er( orig, i + start );
-	  DifBufferBase* ds = 
-	    reinterpret_cast< DifBufferBase* >( er.data() );
-	  ds->vSetSolver(er,hsolve);
-	  ds->setActivation(er, data[j+0]);
-	  ds->setBFree(er, data[j + 1]);
-	  ds->setBBound(er, data[j + 2]);
-	  ds->setBTot(er, data[j + 3]);
-	  ds->setKf(er, data[j + 4]);
-	  ds->setKb(er, data[j + 5]);
-	  ds->setD(er, data[j + 6]);
-	  ds->setShapeMode(er, data[j + 7]);
-	  ds->setLength(er, data[j + 8]);
-	  ds->setDiameter(er, data[j + 9]);
-	  ds->setThickness(er, data[j + 10]);
-	  ds->setVolume(er, data[j + 11]);
-	  ds->setOuterArea(er, data[j + 12]);
-	  ds->setInnerArea(er, data[j + 13]);
-	  j += len; //??
-	}
+  for ( unsigned int i = 0; i < num; ++i ) {
+    Eref er( orig, i + start );
+    const DifBufferBase* ds = 
+      reinterpret_cast< const DifBufferBase* >( er.data() );
+    data[j + 0] = ds->getActivation( er );
+    data[j + 1] = ds->getBFree( er );
+    data[j + 2] = ds->getBBound( er );
+    data[j + 3] = ds->getBTot( er );
+    data[j + 4] = ds->getKf( er );
+    data[j + 5] = ds->getKb( er );
+    data[j + 6] = ds->getD( er );
+    data[j + 7] = ds->getShapeMode( er );
+    data[j + 8] = ds->getLength( er );
+    data[j + 9] = ds->getDiameter( er );
+    data[j + 10] = ds->getThickness( er );
+    data[j + 11] = ds->getVolume( er );
+    data[j + 12] = ds->getOuterArea( er );
+    data[j + 13] = ds->getInnerArea( er );
+    j += len;
+  }
+  orig->zombieSwap( zClass );
+  j = 0;
+  for ( unsigned int i = 0; i < num; ++i ) {
+    Eref er( orig, i + start );
+    DifBufferBase* ds = 
+      reinterpret_cast< DifBufferBase* >( er.data() );
+    ds->vSetSolver(er,hsolve);
+    ds->setActivation(er, data[j+0]);
+    ds->setBFree(er, data[j + 1]);
+    ds->setBBound(er, data[j + 2]);
+    ds->setBTot(er, data[j + 3]);
+    ds->setKf(er, data[j + 4]);
+    ds->setKb(er, data[j + 5]);
+    ds->setD(er, data[j + 6]);
+    ds->setShapeMode(er, data[j + 7]);
+    ds->setLength(er, data[j + 8]);
+    ds->setDiameter(er, data[j + 9]);
+    ds->setThickness(er, data[j + 10]);
+    ds->setVolume(er, data[j + 11]);
+    ds->setOuterArea(er, data[j + 12]);
+    ds->setInnerArea(er, data[j + 13]);
+    j += len; //??
+  }
 	
 }
