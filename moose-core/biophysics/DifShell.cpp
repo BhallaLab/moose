@@ -205,7 +205,7 @@ double DifShell::vGetThickness(const Eref& e) const
   return thickness_;
 }
 
-void DifShell::vSetVolume(const Eref& e, double volume )
+void DifShell::vSetVolume(const Eref&  e, double volume )
 {
   if ( shapeMode_ != 3 )
     cerr << "Warning: DifShell: Trying to set volume, when shapeMode is not USER-DEFINED\n";
@@ -278,9 +278,10 @@ void DifShell::vReinit( const Eref& e, ProcPtr p )
   dCbyDt_ = leak_;
   Cmultiplier_ = 0;
   C_ = Ceq_;
-  const double dOut = diameter_;
-  const double dIn = diameter_ - thickness_;
-	
+  const double rOut = diameter_/2.;
+  
+  const double rIn = rOut - thickness_;
+  
   switch ( shapeMode_ )
     {
       /*
@@ -288,13 +289,13 @@ void DifShell::vReinit( const Eref& e, ProcPtr p )
        */
     case 0:
       if ( length_ == 0.0 ) { // Spherical shell
-	volume_ = ( M_PI / 6.0 ) * ( dOut * dOut * dOut - dIn * dIn * dIn );
-	outerArea_ = M_PI * dOut * dOut;
-	innerArea_ = M_PI * dIn * dIn;
+	volume_ = 4./3.* M_PI * ( rOut * rOut * rOut - rIn * rIn * rIn );
+	outerArea_ = 4*M_PI * rOut * rOut;
+	innerArea_ = 4*M_PI * rIn * rIn;
       } else { // Cylindrical shell
-	volume_ = ( M_PI * length_ / 4.0 ) * ( dOut * dOut - dIn * dIn );
-	outerArea_ = M_PI * dOut * length_;
-	innerArea_ = M_PI * dIn * length_;
+	volume_ = ( M_PI * length_  ) * ( rOut * rOut - rIn * rIn );
+	outerArea_ = 2*M_PI * rOut * length_;
+	innerArea_ = 2*M_PI * rIn * length_;
       }
 		
       break;
@@ -360,7 +361,7 @@ void DifShell::vFluxFromOut(const Eref& e, double outerC, double outerThickness 
    * We could pre-compute ( D / Volume ), but let us leave the optimizations
    * for the solver.
    */
-  //cout << "FluxFromOut "<<outerC<<" "<<outerThickness;
+  
   dCbyDt_ +=  diff * outerC;
   Cmultiplier_ += diff ;
 }
