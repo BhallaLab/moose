@@ -39,6 +39,7 @@ OBJ = \
 	testBiophysics.o	\
 	IzhikevichNrn.o	\
 	DifShell.o	\
+	DifBuffer.o	\
 	Leakage.o	\
 	VectorTable.o	\
 	MarkovRateTable.o	\
@@ -95,6 +96,7 @@ SwcSegment.o: SwcSegment.h ../utility/Vec.h
 ReadSwc.o: CompartmentBase.h Compartment.h SymCompartment.h SwcSegment.h ReadSwc.h ../shell/Shell.h ../utility/Vec.h
 IzhikevichNrn.o: IzhikevichNrn.h
 DifShell.o: DifShell.h
+DifBuffer.o: DifBuffer.h
 testBiophysics.o: IntFire.h CompartmentBase.h Compartment.h HHChannel.h HHGate.h 
 VectorTable.o : VectorTable.h
 MarkovGslSolver.o : MarkovGslSolver.h 
