@@ -19,8 +19,10 @@ class DifShell
   /////////////////////////////////////////////////////////////
   // Field access functions
   /////////////////////////////////////////////////////////////
+  
+  void setC(const Eref& e,double C);
   double getC( const Eref& e) const;
-
+  
   void setCeq(const Eref& e,double Ceq );
   double getCeq(const Eref& e) const;
 
@@ -149,8 +151,10 @@ class DifShell
   void localEqTauPump(const Eref& e, double kP );
   void localMMPump(const Eref& e, double vMax, double Kd );
   void localHillPump(const Eref& e, double vMax, double Kd, unsigned int hill );
-
+  double integrate( double state, double dt, double A, double B );
+  
   double dCbyDt_;
+  double Cmultiplier_;
   double C_;
   double Ceq_;
   double D_;
@@ -163,9 +167,11 @@ class DifShell
   double volume_;
   double outerArea_;
   double innerArea_;
-		
+
+  static const double EPSILON;
   /// Faraday's constant (Coulomb / Mole)
-  static const double F_;
+  static const double F;
+  
 };
 
 #endif // _DifShell_h

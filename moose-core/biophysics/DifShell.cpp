@@ -13,8 +13,9 @@
 #include "ElementValueFinfo.h"
 #include "../utility/numutil.h"
 #include <cmath>
-#include <boost/numeric/odeint.hpp>
-using namespace boost::numeric;
+const double DifShell::EPSILON = 1.0e-10;
+const double DifShell::F = 96485.3415; /* C / mol like in genesis */
+
 SrcFinfo1< double >* DifShell::concentrationOut()
 {
   static SrcFinfo1< double > concentrationOut("concentrationOut",
@@ -268,10 +269,11 @@ static const Cinfo* difShellCinfo = DifShell::initCinfo();
 ////////////////////////////////////////////////////////////////////////////////
 
 /// Faraday's constant (Coulomb / Mole)
-const double DifShell::F_ = 96485.3415; /* C / mol like in genesis */
+
 
 DifShell::DifShell() :
   dCbyDt_( 0.0 ),
+  Cmultiplier_(0.0),
   C_( 0.0 ),
   Ceq_( 0.0 ),
   D_( 0.0 ),
@@ -592,10 +594,19 @@ void DifShell::hillPump(const Eref& e,
 ////////////////////////////////////////////////////////////////////////////////
 // Local dest functions
 ////////////////////////////////////////////////////////////////////////////////
+double DifShell::integrate( double state, double dt, double A, double B )
+{
+	if ( B > EPSILON ) {
+		double x = exp( -B * dt );
+		return state * x + ( A / B ) * ( 1 - x );
+	}
+	return state + A * dt ;
+}
 
 void DifShell::localReinit_0( const Eref& e, ProcPtr p )
 {
   dCbyDt_ = leak_;
+  Cmultiplier_ = 0;
   C_ = Ceq_;
   const double dOut = diameter_;
   const double dIn = diameter_ - thickness_;
@@ -649,7 +660,8 @@ void DifShell::localProcess_0( const Eref & e, ProcPtr p )
   
   innerDifSourceOut()->send( e, C_, thickness_ );
   outerDifSourceOut()->send( e, C_, thickness_ );
-  C_ += dCbyDt_ * p->dt;
+  
+  C_ = integrate(C_,p->dt,dCbyDt_,Cmultiplier_);
   
   /**
    * Send ion concentration to ion buffers. They will send back information on
@@ -673,7 +685,8 @@ void DifShell::localBuffer(const Eref& e,
 			   double bFree,
 			   double bBound )
 {
-  dCbyDt_ += -kf * bFree * C_ + kb * bBound;
+  dCbyDt_ += kb * bBound;
+  Cmultiplier_ -= kf * bFree;
 }
 
 void DifShell::localFluxFromOut(const Eref& e, double outerC, double outerThickness )
@@ -684,7 +697,8 @@ void DifShell::localFluxFromOut(const Eref& e, double outerC, double outerThickn
    * We could pre-compute ( D / Volume ), but let us leave the optimizations
    * for the solver.
    */
-  dCbyDt_ += ( D_ / volume_ ) * ( outerArea_ / dx ) * ( outerC - C_ );
+  dCbyDt_ += ( D_ / volume_ ) * ( outerArea_ / dx ) * outerC;
+  Cmultiplier_ -= ( D_ / volume_ ) * ( outerArea_ / dx ) ;
 }
 
 void DifShell::localFluxFromIn(const Eref& e, double innerC, double innerThickness )
@@ -692,7 +706,8 @@ void DifShell::localFluxFromIn(const Eref& e, double innerC, double innerThickne
   //influx from inner shell
   double dx = ( innerThickness + thickness_ ) / 2.0;
 	
-  dCbyDt_ += ( D_ / volume_ ) * ( innerArea_ / dx ) * ( innerC - C_ );
+  dCbyDt_ += ( D_ / volume_ ) * ( innerArea_ / dx ) *  innerC ;
+  Cmultiplier_ -= ( D_ / volume_ ) * ( innerArea_ / dx ) ;
 }
 
 void DifShell::localInflux(const Eref& e,	double I )
@@ -702,7 +717,7 @@ void DifShell::localInflux(const Eref& e,	double I )
    * F_: Faraday's constant: Coulomb / mole
    * valence_: charge on ion: dimensionless
    */
-  dCbyDt_ += I / ( F_ * valence_ * volume_ );
+  dCbyDt_ += I / ( F * valence_ * volume_ );
 }
 
 /**
@@ -710,17 +725,17 @@ void DifShell::localInflux(const Eref& e,	double I )
  */
 void DifShell::localOutflux(const Eref& e, double I )
 {
-  dCbyDt_ -= I / ( F_ * valence_ * volume_ );
+  dCbyDt_ -= I / ( F * valence_ * volume_ );
 }
 
 void DifShell::localFInflux(const Eref& e, double I, double fraction )
 {
-  dCbyDt_ += fraction * I / ( F_ * valence_ * volume_ );
+  dCbyDt_ += fraction * I / ( F * valence_ * volume_ );
 }
 
 void DifShell::localFOutflux(const Eref& e, double I, double fraction )
 {
-  dCbyDt_ -= fraction * I / ( F_ * valence_ * volume_ );
+  dCbyDt_ -= fraction * I / ( F * valence_ * volume_ );
 }
 
 void DifShell::localStoreInflux(const Eref& e, double flux )
@@ -735,7 +750,9 @@ void DifShell::localStoreOutflux(const Eref& e, double flux )
 
 void DifShell::localTauPump(const Eref& e, double kP, double Ceq )
 {
-  dCbyDt_ += -kP * ( C_ - Ceq );
+  // dCbyDt_ += -kP * ( C_ - Ceq );
+  dCbyDt_ += kP*Ceq;
+  Cmultiplier_ -= kP;
 }
 
 /**
@@ -743,16 +760,19 @@ void DifShell::localTauPump(const Eref& e, double kP, double Ceq )
  */
 void DifShell::localEqTauPump(const Eref& e, double kP )
 {
-  dCbyDt_ += -kP * ( C_ - Ceq_ );
+  //dCbyDt_ += -kP * ( C_ - Ceq_ );
+  dCbyDt_ += kP*Ceq_;
+  Cmultiplier_ -= kP;
 }
 
 void DifShell::localMMPump(const Eref& e, double vMax, double Kd )
 {
-  dCbyDt_ += -( vMax / volume_ ) * ( C_ / ( C_ + Kd ) );
+  Cmultiplier_ += -( vMax / volume_ )  / ( C_ + Kd ) ;
 }
 
 void DifShell::localHillPump(const Eref& e, double vMax, double Kd, unsigned int hill )
 {
+  //This needs fixing
   double ch;
   switch( hill )
     {
