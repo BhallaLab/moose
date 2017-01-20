@@ -23,7 +23,7 @@ const Cinfo* DifShell::initCinfo()
   static string doc[] =
     {
       "Name", "DifShell",
-      "Author", "Niraj Dudani. Ported to async13 by Subhasis Ray.",
+      "Author", "Niraj Dudani. Ported to async13 by Subhasis Ray. Rewritten by Asia Jedrzejewska-Szmek",
       "Description", "DifShell object: Models diffusion of an ion (typically calcium) within an "
       "electric compartment. A DifShell is an iso-concentration region with respect to "
       "the ion. Adjoining DifShells exchange flux of this ion, and also keep track of "
@@ -431,7 +431,7 @@ void DifShell::vEqTauPump(const Eref& e, double kP )
 
 void DifShell::vMMPump(const Eref& e, double vMax, double Kd )
 {
-  Cmultiplier_ += -( vMax / volume_ )  / ( C_ + Kd ) ;
+  Cmultiplier_ += ( vMax / volume_ )  / ( C_ + Kd ) ;
 }
 
 void DifShell::vHillPump(const Eref& e, double vMax, double Kd, unsigned int hill )

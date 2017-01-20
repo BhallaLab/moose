@@ -50,6 +50,9 @@ const Cinfo* DifShellBase::initCinfo()
 			  "Shared message to receive Process message from scheduler",
 			  processShared, sizeof( processShared ) / sizeof( Finfo* ));
     
+
+
+  
   static DestFinfo reaction( "reaction",
 			     "Here the DifShell receives reaction rates (forward and backward), and concentrations for the "
 			     "free-buffer and bound-buffer molecules.",
@@ -58,21 +61,16 @@ const Cinfo* DifShellBase::initCinfo()
   static Finfo* bufferShared[] = {
     DifShellBase::concentrationOut(), &reaction
   };
+  
   static SharedFinfo buffer( "buffer",
-			     "This is a shared message from a DifShell to a Buffer (FixBuffer or DifBuffer). "
-			     "During stage 0:\n "
-			     " - DifShell sends ion concentration\n"
-			     " - Buffer updates buffer concentration and sends it back immediately using a call-back.\n"
-			     " - DifShell updates the time-derivative ( dC / dt ) \n"
-			     "\n"
-			     "During stage 1: \n"
-			     " - DifShell advances concentration C \n\n"
-			     "This scheme means that the Buffer does not need to be scheduled, and it does its computations when "
-			     "it receives a cue from the DifShell. May not be the best idea, but it saves us from doing the above "
-			     "computations in 3 stages instead of 2." ,
+			     "This is a shared message from a DifShell to a Buffer (FixBuffer or DifBuffer). " ,
 			     bufferShared,
 			     sizeof( bufferShared ) / sizeof( Finfo* ));
-
+  /////
+  
+  
+  
+ 
   static DestFinfo fluxFromOut( "fluxFromOut",
 				"Destination message",
 				new EpFunc2< DifShellBase, double, double > ( &DifShellBase::fluxFromOut ));
@@ -137,7 +135,8 @@ const Cinfo* DifShellBase::initCinfo()
 							     &DifShellBase::setInnerArea,
 							     &DifShellBase::getInnerArea );
 
-    
+  static DestFinfo mmPump( "mmPump", "Here DifShell receives pump outflux",
+			   new EpFunc2< DifShellBase, double, double >( &DifShellBase::mmPump ) );  
   static DestFinfo influx( "influx", "",
 			   new EpFunc1< DifShellBase, double > (&DifShellBase::influx ));
   static DestFinfo outflux( "outflux", "",
@@ -154,8 +153,6 @@ const Cinfo* DifShellBase::initCinfo()
 			    new EpFunc2< DifShellBase, double, double >( &DifShellBase::tauPump ) );
   static DestFinfo eqTauPump( "eqTauPump", "",
 			      new EpFunc1< DifShellBase, double >( &DifShellBase::eqTauPump ) );
-  static DestFinfo mmPump( "mmPump", "",
-			   new EpFunc2< DifShellBase, double, double >( &DifShellBase::mmPump ) );
   static DestFinfo hillPump( "hillPump", "",
 			     new EpFunc3< DifShellBase, double, double, unsigned int >( &DifShellBase::hillPump ) );
   static Finfo* difShellBaseFinfos[] = {
