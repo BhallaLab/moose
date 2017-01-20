@@ -571,9 +571,8 @@ void DifShell::localReinit_0( const Eref& e, ProcPtr p )
 {
 	dCbyDt_ = leak_;
 	
-	double Pi = M_PI;
-	double dOut = diameter_;
-	double dIn = diameter_ - thickness_;
+	const double dOut = diameter_;
+	const double dIn = diameter_ - thickness_;
 	
 	switch ( shapeMode_ )
 	{
@@ -582,13 +581,13 @@ void DifShell::localReinit_0( const Eref& e, ProcPtr p )
 	 */
 	case 0:
 		if ( length_ == 0.0 ) { // Spherical shell
-			volume_ = ( Pi / 6.0 ) * ( dOut * dOut * dOut - dIn * dIn * dIn );
-			outerArea_ = Pi * dOut * dOut;
-			innerArea_ = Pi * dIn * dIn;
+			volume_ = ( M_PI / 6.0 ) * ( dOut * dOut * dOut - dIn * dIn * dIn );
+			outerArea_ = M_PI * dOut * dOut;
+			innerArea_ = M_PI * dIn * dIn;
 		} else { // Cylindrical shell
-			volume_ = ( Pi * length_ / 4.0 ) * ( dOut * dOut - dIn * dIn );
-			outerArea_ = Pi * dOut * length_;
-			innerArea_ = Pi * dIn * length_;
+			volume_ = ( M_PI * length_ / 4.0 ) * ( dOut * dOut - dIn * dIn );
+			outerArea_ = M_PI * dOut * length_;
+			innerArea_ = M_PI * dIn * length_;
 		}
 		
 		break;
@@ -597,8 +596,8 @@ void DifShell::localReinit_0( const Eref& e, ProcPtr p )
 	 * Cylindrical Slice
 	 */
 	case 1:
-		volume_ = Pi * diameter_ * diameter_ * thickness_ / 4.0;
-		outerArea_ = Pi * diameter_ * diameter_ / 4.0;
+		volume_ = M_PI * diameter_ * diameter_ * thickness_ / 4.0;
+		outerArea_ = M_PI * diameter_ * diameter_ / 4.0;
 		innerArea_ = outerArea_;
 		break;
 	
