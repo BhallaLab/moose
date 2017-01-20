@@ -38,6 +38,7 @@ set(BIOPHYSICS_SRCS
 	DifShell.cpp
 	DifBufferBase.cpp
 	DifBuffer.cpp
+	MMPump.cpp
 	Leakage.cpp	
 	VectorTable.cpp	
 	MarkovRateTable.cpp	

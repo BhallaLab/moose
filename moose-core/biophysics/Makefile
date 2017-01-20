@@ -42,6 +42,7 @@ OBJ = \
 	DifShell.o	\
 	DifBufferBase.o	\
 	DifBuffer.o	\
+	MMpump.o \
 	Leakage.o	\
 	VectorTable.o	\
 	MarkovRateTable.o	\
@@ -101,6 +102,7 @@ DifShellBase.o: DifShellBase.h
 DifShell.o: DifShellBase.h DifShell.h 
 DifBufferBase.o: DifBufferBase.h
 DifBuffer.o:  DifBufferBase.h DifBuffer.h
+MMPump.o: MMPump.h
 testBiophysics.o: IntFire.h CompartmentBase.h Compartment.h HHChannel.h HHGate.h 
 VectorTable.o : VectorTable.h
 MarkovGslSolver.o : MarkovGslSolver.h 
