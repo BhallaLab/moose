@@ -381,7 +381,8 @@ void DifBuffer::vProcess( const Eref & e, ProcPtr p )
   prevFree_ = bFree_;
   prevBound_ = bBound_;
  
-
+  Af_ = 0;
+  Bf_= 0;
   /**
    * Send ion concentration to ion buffers. They will send back information on
    * the reaction (forward / backward rates ; free / bound buffer concentration)
