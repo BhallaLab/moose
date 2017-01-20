@@ -8,149 +8,57 @@
  ** See the file COPYING.LIB for the full notice.
  **********************************************************************/
 
-#ifndef _DifShell_h
-#define _DifShell_h
+#ifndef _DIFSHELL_H
+#define _DIFSHELL_H
 
-class DifShell
+class DifShell: public DifShellBase
 {
  public:
   DifShell();
-		
-  /////////////////////////////////////////////////////////////
-  // Field access functions
-  /////////////////////////////////////////////////////////////
-  
-  void setC(const Eref& e,double C);
-  double getC( const Eref& e) const;
-  
-  void setCeq(const Eref& e,double Ceq );
-  double getCeq(const Eref& e) const;
-
-  void setD(const Eref& e, double D );
-  double getD(const Eref& e) const;
-
-  void setValence(const Eref& e, double valence );
-  double getValence(const Eref& e) const;
-
-  void setLeak(const Eref& e, double leak );
-  double getLeak(const Eref& e) const;
-
-  void setShapeMode(const Eref& e, unsigned int shapeMode );
-  unsigned int getShapeMode(const Eref& e) const;
-
-  void setLength(const Eref& e, double length );
-  double getLength(const Eref& e) const;
-
-  void setDiameter(const Eref& e, double diameter );
-  double getDiameter(const Eref& e) const;
-
-  void setThickness(const Eref& e, double thickness );
-  double getThickness(const Eref& e) const;
-
-  void setVolume(const Eref& e, double volume );
-  double getVolume(const Eref& e) const;
-
-  void setOuterArea(const Eref& e, double outerArea );
-  double getOuterArea(const Eref& e) const;
-
-  void setInnerArea(const Eref& e, double innerArea );
-  double getInnerArea(const Eref& e) const;
 
   /////////////////////////////////////////////////////////////
   // Dest functions
   /////////////////////////////////////////////////////////////
-  void reinit( const Eref & e, ProcPtr p );
+  void vReinit( const Eref & e, ProcPtr p );
+  void vProcess(const Eref & e, ProcPtr p );
+  void vBuffer(const Eref& e, double kf, double kb, double bFree, double bBound );
+  void vFluxFromOut(const Eref& e, double outerC, double outerThickness );
+  void vFluxFromIn(const Eref& e, double innerC, double innerThickness );
+  void vInflux(const Eref& e, double I );
+  void vOutflux(const Eref& e, double I );
+  void vFInflux(const Eref& e, double I, double fraction );
+  void vFOutflux(const Eref& e, double I, double fraction );
+  void vStoreInflux(const Eref& e, double flux );
+  void vStoreOutflux(const Eref& e, double flux );
+  void vTauPump(const Eref& e, double kP, double Ceq );
+  void vEqTauPump(const Eref& e, double kP );
+  void vMMPump(const Eref& e, double vMax, double Kd );
+  void vHillPump(const Eref& e, double vMax, double Kd, unsigned int hill );
+  
+  /////////////////////////////////////////////////////////////
+  // Field access functions
+  /////////////////////////////////////////////////////////////
+  
+  void vSetC(const Eref& e,double C);
+  double vGetC( const Eref& e) const;
+  
+  void vSetCeq(const Eref& e,double Ceq );
+  double vGetCeq(const Eref& e) const;
 
-  void process(const Eref & e, ProcPtr p );
-  /*
-    void process_1(const Eref & e, ProcPtr p );
+  void vSetD(const Eref& e, double D );
+  double vGetD(const Eref& e) const;
 
-    void reinit_1(const Eref & e, ProcPtr p ); // dummyFunc
-  */
-  void buffer(
-	      const Eref& e,
-	      double kf,
-	      double kb,
-	      double bFree,
-	      double bBound );
+  void vSetValence(const Eref& e, double valence );
+  double vGetValence(const Eref& e) const;
 
-  void fluxFromOut(
-		   const Eref& e,
-		   double outerC,
-		   double outerThickness );
+  void vSetLeak(const Eref& e, double leak );
+  double vGetLeak(const Eref& e) const;
 
-  void fluxFromIn(
-		  const Eref& e,
-		  double innerC,
-		  double innerThickness );
-
-  void influx(
-	      const Eref& e,
-	      double I );
-
-  void outflux(
-	       const Eref& e,  
-	       double I );
-
-  void fInflux(
-	       const Eref& e,
-	       double I,
-	       double fraction );
-
-  void fOutflux(
-		const Eref& e,
-		double I,
-		double fraction );
-
-  void storeInflux(
-		   const Eref& e, 
-		   double flux );
-
-  void storeOutflux(
-		    const Eref& e,	  
-		    double flux );
-
-  void tauPump(
-	       const Eref& e,
-	       double kP,
-	       double Ceq );
-
-  void eqTauPump(
-		 const Eref& e,
-		 double kP );
-
-  void mmPump(
-	      const Eref& e,	    
-	      double vMax,
-	      double Kd );
-
-  void hillPump(
-		const Eref& e,
-		double vMax,
-		double Kd,
-		unsigned int hill );
-  static SrcFinfo1< double >* concentrationOut();
-  static SrcFinfo2< double, double >* innerDifSourceOut();
-  static SrcFinfo2< double, double >* outerDifSourceOut();
   static const Cinfo * initCinfo();
+  
                 
  private:
-  void localReinit_0(  const Eref & e, ProcPtr p );
-  void localProcess_0( const Eref & e, ProcPtr p );
-  //void localProcess_1( const Eref & e, ProcPtr p );
-  void localBuffer(const Eref& e, double kf, double kb, double bFree, double bBound );
-  void localFluxFromOut( const Eref& e,double outerC, double outerThickness );
-  void localFluxFromIn(const Eref& e, double innerC, double innerThickness );
-  void localInflux(const Eref& e,	double I );
-  void localOutflux( const Eref& e,double I );
-  void localFInflux(const Eref& e, double I, double fraction );
-  void localFOutflux(const Eref& e, double I, double fraction );
-  void localStoreInflux(const Eref& e, double flux );
-  void localStoreOutflux(const Eref& e, double flux );
-  void localTauPump(const Eref& e, double kP, double Ceq );
-  void localEqTauPump(const Eref& e, double kP );
-  void localMMPump(const Eref& e, double vMax, double Kd );
-  void localHillPump(const Eref& e, double vMax, double Kd, unsigned int hill );
+
   double integrate( double state, double dt, double A, double B );
   
   double dCbyDt_;
@@ -160,13 +68,6 @@ class DifShell
   double D_;
   double valence_;
   double leak_;
-  unsigned int shapeMode_;
-  double length_;
-  double diameter_;
-  double thickness_;
-  double volume_;
-  double outerArea_;
-  double innerArea_;
 
   static const double EPSILON;
   /// Faraday's constant (Coulomb / Mole)
@@ -174,4 +75,4 @@ class DifShell
   
 };
 
-#endif // _DifShell_h
+#endif // _DIFSHELL_H

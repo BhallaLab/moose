@@ -33,8 +33,10 @@ set(BIOPHYSICS_SRCS
 	SynChan.cpp	
         NMDAChan.cpp
 	testBiophysics.cpp	
-	IzhikevichNrn.cpp	
+	IzhikevichNrn.cpp
+	DifShellBase.cpp
 	DifShell.cpp
+	DifBufferBase.cpp
 	DifBuffer.cpp
 	Leakage.cpp	
 	VectorTable.cpp	
