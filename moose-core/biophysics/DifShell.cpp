@@ -371,7 +371,7 @@ void DifShell::vBuffer(const Eref& e,
 
 void DifShell::vFluxFromOut(const Eref& e, double outerC, double outerThickness )
 {
-  double diff =2.*  D_  *  outerArea_ / (outerThickness + thickness_) /volume_;
+  double diff =2.*  D_ /volume_ *  outerArea_ / (outerThickness + thickness_) ;
   //influx from outer shell
   /**
    * We could pre-compute ( D / Volume ), but let us leave the optimizations
@@ -386,8 +386,7 @@ void DifShell::vFluxFromIn(const Eref& e, double innerC, double innerThickness )
 {
   //influx from inner shell
   //double dx = ( innerThickness + thickness_ ) / 2.0;
-  double diff = 2.* D_ * innerArea_ / (innerThickness + thickness_) /volume_;
-  //cout << "FluxFromIn "<<innerC<<" "<<innerThickness;
+  double diff = 2.* D_/volume_ * innerArea_ / (innerThickness + thickness_);
   dCbyDt_ +=  diff *  innerC ;
   Cmultiplier_ += diff ;
 }

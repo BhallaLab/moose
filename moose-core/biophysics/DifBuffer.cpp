@@ -454,14 +454,14 @@ void DifBuffer::vReinit( const Eref& e, ProcPtr p )
 
 void DifBuffer::vFluxFromIn(const Eref& e,double innerC, double innerThickness)
 {
-  double dif = 2 * D_ * innerArea_ / (thickness_ + innerThickness)/ volume_;
+  double dif = 2 * D_  / volume_* innerArea_ / (thickness_ + innerThickness);
   Af_ += dif * innerC;
   Bf_ += dif;
 }
 
 void DifBuffer::vFluxFromOut(const Eref& e,double outerC, double outerThickness)
 {
-  double dif = 2 * D_ * outerArea_ / (thickness_ + outerThickness) / volume_;
+  double dif = 2 * D_  / volume_* outerArea_ / (thickness_ + outerThickness);
   Af_ += dif * outerC;
   Bf_ += dif;
 }
