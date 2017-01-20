@@ -357,6 +357,9 @@ const Cinfo* Clock::initCinfo()
         "	CaConc				1		50e-6\n"
         "	CaConcBase			1		50e-6\n"
         "	DifShell			1		50e-6\n"
+	"	DifShellBase			1		50e-6\n"
+	"	DifBuffer			1		50e-6\n"
+	"	DifBufferBase			1		50e-6\n"
         "	MgBlock				1		50e-6\n"
         "	Nernst				1		50e-6\n"
         "	RandSpike			1		50e-6\n"
@@ -839,7 +842,9 @@ void Clock::buildDefaultTick()
     defaultTick_["CaConc"] = 1;
     defaultTick_["CaConcBase"] = 1;
     defaultTick_["DifShell"] = 1;
+    defaultTick_["DifShellBase"] = 1;
     defaultTick_["DifBuffer"] = 1;
+    defaultTick_["DifBufferBase"] = 1;
     defaultTick_["MgBlock"] = 1;
     defaultTick_["Nernst"] = 1;
     defaultTick_["RandSpike"] = 1;
