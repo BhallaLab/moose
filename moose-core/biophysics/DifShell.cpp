@@ -323,6 +323,9 @@ void DifShell::vReinit( const Eref& e, ProcPtr p )
     default:
       assert( 0 );
     }
+  C_= Ceq_;
+  prevC_ = Ceq_;
+  concentrationOut()->send( e, C_ );
 }
 
 void DifShell::vProcess( const Eref & e, ProcPtr p )

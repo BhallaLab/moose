@@ -439,6 +439,10 @@ void DifBuffer::vReinit( const Eref& e, ProcPtr p )
       assert( 0 );
     }
   
+  bFree_ = bTot_/(1+activation_*kf_/kb_);
+  prevFree_ = bFree_;
+  bBound_ = bTot_ - bFree_;
+  prevBound_ = bBound_;
 }
 
 void DifBuffer::vFluxFromIn(const Eref& e,double innerC, double innerThickness)
