@@ -13,7 +13,8 @@
 #include "ElementValueFinfo.h"
 #include "../utility/numutil.h"
 #include <cmath>
-
+#include <boost/numeric/odeint.hpp>
+using namespace boost::numeric;
 SrcFinfo1< double >* DifShell::concentrationOut()
 {
   static SrcFinfo1< double > concentrationOut("concentrationOut",
@@ -24,13 +25,13 @@ SrcFinfo1< double >* DifShell::concentrationOut()
 SrcFinfo2< double, double >* DifShell::innerDifSourceOut(){
   static SrcFinfo2< double, double > sourceOut("innerDifSourceOut",
 					       "Sends out source information.");
-  return & sourceOut;
+  return &sourceOut;
 }
 
 SrcFinfo2< double, double >* DifShell::outerDifSourceOut(){
   static SrcFinfo2< double, double > sourceOut("outerDifSourceOut",
 					       "Sends out source information.");
-  return & sourceOut;
+  return &sourceOut;
 }
 
 
@@ -83,7 +84,7 @@ const Cinfo* DifShell::initCinfo()
 			     new EpFunc4< DifShell, double, double, double, double >( &DifShell::buffer ));
     
   static Finfo* bufferShared[] = {
-    concentrationOut(), &reaction
+    DifShell::concentrationOut(), &reaction
   };
   static SharedFinfo buffer( "buffer",
 			     "This is a shared message from a DifShell to a Buffer (FixBuffer or DifBuffer). "
@@ -105,8 +106,9 @@ const Cinfo* DifShell::initCinfo()
 				new EpFunc2< DifShell, double, double > ( &DifShell::fluxFromOut ));
  
   static Finfo* innerDifShared[] = {
-    innerDifSourceOut(),
-    &fluxFromOut
+    &fluxFromOut,
+    DifShell::innerDifSourceOut(),
+  
   };
   static SharedFinfo innerDif( "innerDif",
 			       "This shared message (and the next) is between DifShells: adjoining shells exchange information to "
@@ -120,17 +122,21 @@ const Cinfo* DifShell::initCinfo()
     
   static Finfo* outerDifShared[] = {
     &fluxFromIn,
-    outerDifSourceOut(),
+    DifShell::outerDifSourceOut(),
   };
 
   static  SharedFinfo outerDif( "outerDif",
 				"Using this message, an outer shell sends to, and receives from its inner shell." ,
 				outerDifShared,
 				sizeof( outerDifShared ) / sizeof( Finfo* ));
-
-  static ReadOnlyElementValueFinfo< DifShell, double> C( "C", 
-							 "Concentration C is computed by the DifShell and is read-only",
-							 &DifShell::getC);
+  
+  //Should be changed it to ElementValueFinfo, to correctly set initial
+  //conditions (AJS)
+ 
+  static ElementValueFinfo< DifShell, double> C( "C", 
+						 "Concentration C",// is computed by the DifShell",
+						 &DifShell::setC,
+						 &DifShell::getC);
   static ElementValueFinfo< DifShell, double> Ceq( "Ceq", "",
 						   &DifShell::setCeq,
 						   &DifShell::getCeq);
@@ -211,9 +217,9 @@ const Cinfo* DifShell::initCinfo()
     //////////////////////////////////////////////////////////////////
     &proc,
     &buffer,
-    concentrationOut(),
-    innerDifSourceOut(),
-    outerDifSourceOut(),
+    // concentrationOut(),
+    //innerDifSourceOut(),
+    //outerDifSourceOut(),
     &innerDif,
     &outerDif,
     //////////////////////////////////////////////////////////////////
@@ -262,7 +268,7 @@ static const Cinfo* difShellCinfo = DifShell::initCinfo();
 ////////////////////////////////////////////////////////////////////////////////
 
 /// Faraday's constant (Coulomb / Mole)
-const double DifShell::F_ = 0.0;
+const double DifShell::F_ = 96485.3415; /* C / mol like in genesis */
 
 DifShell::DifShell() :
   dCbyDt_( 0.0 ),
@@ -284,6 +290,17 @@ DifShell::DifShell() :
 // Field access functions
 ////////////////////////////////////////////////////////////////////////////////
 /// C is a read-only field
+
+
+void DifShell::setC( const Eref& e, double C)
+{
+  if ( C < 0.0 ) {
+    cerr << "Error: DifShell: C cannot be negative!\n";
+    return;
+  }
+	
+  C_ = C;
+}
 double DifShell::getC(const Eref& e) const
 {
   return C_;
@@ -579,7 +596,7 @@ void DifShell::hillPump(const Eref& e,
 void DifShell::localReinit_0( const Eref& e, ProcPtr p )
 {
   dCbyDt_ = leak_;
-  
+  C_ = Ceq_;
   const double dOut = diameter_;
   const double dIn = diameter_ - thickness_;
 	
@@ -629,10 +646,11 @@ void DifShell::localProcess_0( const Eref & e, ProcPtr p )
    * Send ion concentration and thickness to adjacent DifShells. They will
    * then compute their incoming fluxes.
    */
+  
   innerDifSourceOut()->send( e, C_, thickness_ );
   outerDifSourceOut()->send( e, C_, thickness_ );
   C_ += dCbyDt_ * p->dt;
-  dCbyDt_ = leak_;
+  
   /**
    * Send ion concentration to ion buffers. They will send back information on
    * the reaction (forward / backward rates ; free / bound buffer concentration)
@@ -640,6 +658,7 @@ void DifShell::localProcess_0( const Eref & e, ProcPtr p )
    * or released in the current time-step.
    */
   concentrationOut()->send( e, C_ );
+  dCbyDt_ = leak_;
 }
 /*
   void DifShell::localProcess_1( const Eref& e, ProcPtr p )
@@ -660,7 +679,7 @@ void DifShell::localBuffer(const Eref& e,
 void DifShell::localFluxFromOut(const Eref& e, double outerC, double outerThickness )
 {
   double dx = ( outerThickness + thickness_ ) / 2.0;
-	
+  //influx from outer shell
   /**
    * We could pre-compute ( D / Volume ), but let us leave the optimizations
    * for the solver.
@@ -670,6 +689,7 @@ void DifShell::localFluxFromOut(const Eref& e, double outerC, double outerThickn
 
 void DifShell::localFluxFromIn(const Eref& e, double innerC, double innerThickness )
 {
+  //influx from inner shell
   double dx = ( innerThickness + thickness_ ) / 2.0;
 	
   dCbyDt_ += ( D_ / volume_ ) * ( innerArea_ / dx ) * ( innerC - C_ );
