@@ -50,7 +50,7 @@ const Cinfo * MMPump::initCinfo()
   ////
   // DestFinfo
   ////
-  static Finfo * difBufferFinfos[] = {
+  static Finfo * difMMPumpFinfos[] = {
     //////////////////////////////////////////////////////////////////
     // Field definitions
     //////////////////////////////////////////////////////////////////
@@ -73,15 +73,14 @@ const Cinfo * MMPump::initCinfo()
   static string doc[] = {
     "Name", "MMPump",
     "Author", "Subhasis Ray (ported from GENESIS2)",
-    "Description", "Models diffusible buffer where total concentration is constant. It is"
-    " coupled with a DifShell.",
+    "Description", "Models Michaelis-Menten pump. It is coupled with a DifShell.",
   };
   static ZeroSizeDinfo<int> dinfo;
   static Cinfo MMPumpCinfo(
 			      "MMPump",
 			      Neutral::initCinfo(),
-			      difBufferFinfos,
-			      sizeof(difBufferFinfos)/sizeof(Finfo*),
+			      difMMPumpFinfos,
+			      sizeof(difMMPumpFinfos)/sizeof(Finfo*),
 			      &dinfo,
 			      doc,
 			      sizeof(doc)/sizeof(string));
