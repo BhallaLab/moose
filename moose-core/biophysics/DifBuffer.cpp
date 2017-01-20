@@ -118,7 +118,7 @@ const Cinfo * DifBuffer::initCinfo()
                                  "Receives concentration (from DifShell).",
                                  new EpFunc1<DifBuffer, double>(&DifBuffer::buffer));
   static Finfo* bufferShared[] = {
-    &concentration, reactionOut()
+    &concentration, DifBuffer::reactionOut()
   };
   static SharedFinfo buffer( "buffer",
                              "This is a shared message with DifShell. "
@@ -140,8 +140,9 @@ const Cinfo * DifBuffer::initCinfo()
                                 new EpFunc2< DifBuffer, double, double > ( &DifBuffer::fluxFromOut ));
     
   static Finfo* innerDifShared[] = {
-    innerDifSourceOut(),
-    &fluxFromOut
+      &fluxFromOut,
+      DifBuffer::innerDifSourceOut()
+    
   };
     
   static SharedFinfo innerDif( "innerDif",
@@ -155,8 +156,9 @@ const Cinfo * DifBuffer::initCinfo()
                                new EpFunc2< DifBuffer, double, double> ( &DifBuffer::fluxFromIn) );
   
   static Finfo* outerDifShared[] = {
-    &fluxFromIn,
-    outerDifSourceOut(),
+    &fluxFromIn,  
+    DifBuffer::outerDifSourceOut(),
+
   };
 
   static  SharedFinfo outerDif( "outerDif",
@@ -257,11 +259,13 @@ const Cinfo * DifBuffer::initCinfo()
     // SharedFinfo definitions
     /////////////////////////////////////////////////////////////////
     &proc,
-    reactionOut(),
-    innerDifSourceOut(),
-    outerDifSourceOut(),
+    &buffer,
     &innerDif,
     &outerDif,
+    //
+    //reactionOut(),
+    //innerDifSourceOut(),
+    //outerDifSourceOut(),
     //////////////////////////////////////////////////////////////////
     // DestFinfo definitions
     //////////////////////////////////////////////////////////////////
