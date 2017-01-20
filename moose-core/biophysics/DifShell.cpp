@@ -58,6 +58,7 @@ DifShell::DifShell() :
   Cmultiplier_(0.0),
   C_( 0.0 ),
   Ceq_( 0.0 ),
+  prevC_(0.0),
   D_( 0.0 ),
   valence_( 0.0 ),
   leak_( 0.0 ),
@@ -84,6 +85,7 @@ void DifShell::vSetC( const Eref& e, double C)
   }
 	
   C_ = C;
+  prevC_ = C_;
 }
 double DifShell::vGetC(const Eref& e) const
 {
@@ -270,6 +272,7 @@ double DifShell::integrate( double state, double dt, double A, double B )
 		double x = exp( -B * dt );
 		return state * x + ( A / B ) * ( 1 - x );
 	}
+
 	return state + A * dt ;
 }
 
@@ -277,7 +280,7 @@ void DifShell::vReinit( const Eref& e, ProcPtr p )
 {
   dCbyDt_ = leak_;
   Cmultiplier_ = 0;
-  C_ = Ceq_;
+
   const double rOut = diameter_/2.;
   
   const double rIn = rOut - thickness_;
@@ -329,19 +332,23 @@ void DifShell::vProcess( const Eref & e, ProcPtr p )
    * then compute their incoming fluxes.
    */
   
-  innerDifSourceOut()->send( e, C_, thickness_ );
-  outerDifSourceOut()->send( e, C_, thickness_ );
+  innerDifSourceOut()->send( e, prevC_, thickness_ );
+  outerDifSourceOut()->send( e, prevC_, thickness_ );
+  concentrationOut()->send( e, C_ );
   C_ = integrate(C_,p->dt,dCbyDt_,Cmultiplier_);
-    
+ 
   /**
    * Send ion concentration to ion buffers. They will send back information on
    * the reaction (forward / backward rates ; free / bound buffer concentration)
    * immediately, which this DifShell will use to find amount of ion captured
    * or released in the current time-step.
    */
-  concentrationOut()->send( e, C_ );
+  prevC_ = C_;
+
+  //cout<<"Shell "<< C_<<" ";
   dCbyDt_ = leak_;
   Cmultiplier_ = 0;
+
 }
 void DifShell::vBuffer(const Eref& e,
 			   double kf,

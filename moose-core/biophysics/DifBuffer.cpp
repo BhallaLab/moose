@@ -89,6 +89,8 @@ DifBuffer::DifBuffer() :
   Bf_(0),
   bFree_(0),
   bBound_(0),
+  prevFree_(0),
+  prevBound_(0),
   bTot_(0),
   kf_(0),
   kb_(0),
@@ -137,6 +139,9 @@ void DifBuffer::vSetBFree(const Eref& e,double value)
   }
   bFree_ = value;
   bBound_ = bTot_ - bFree_;
+  prevFree_= bFree_;
+  prevBound_ = bBound_;
+  
 }
 
 double DifBuffer::vGetBBound(const Eref& e) const
@@ -156,6 +161,8 @@ void DifBuffer::vSetBBound(const Eref& e,double value)
   }
   bBound_ = value;
   bFree_ = bTot_ - bBound_;
+  prevFree_= bFree_;
+  prevBound_ = bBound_;
 }
 
 
@@ -172,6 +179,7 @@ void DifBuffer::vSetBTot(const Eref& e,double value)
   }
   bTot_ = value;
   bFree_ = bTot_;
+  bBound_ = 0;
 }
 
 
@@ -340,6 +348,7 @@ void DifBuffer::vBuffer(const Eref& e,
 		       double C )
 {
   activation_ = C;
+  //cout<<"Buffer"<< C<<" ";
 }
 
 
@@ -360,14 +369,19 @@ void DifBuffer::vProcess( const Eref & e, ProcPtr p )
    * then compute their incoming fluxes.
    */
 
-  innerDifSourceOut()->send( e, bFree_, thickness_ );
-  outerDifSourceOut()->send( e, bFree_, thickness_ );
+  innerDifSourceOut()->send( e, prevFree_, thickness_ );
+  outerDifSourceOut()->send( e, prevFree_, thickness_ );
+  reactionOut()->send(e,kf_,kb_,bFree_,bBound_);
+  
   Af_ += kb_ * bBound_;
   Bf_ += kf_ * activation_;
+  
   bFree_ = integrate(bFree_,p->dt,Af_,Bf_);
   bBound_ = bTot_ - bFree_;
-    
-  reactionOut()->send(e,kf_,kb_,bFree_,bBound_);
+  prevFree_ = bFree_;
+  prevBound_ = bBound_;
+ 
+
   /**
    * Send ion concentration to ion buffers. They will send back information on
    * the reaction (forward / backward rates ; free / bound buffer concentration)
@@ -380,10 +394,11 @@ void DifBuffer::vProcess( const Eref & e, ProcPtr p )
 void DifBuffer::vReinit( const Eref& e, ProcPtr p )
 {
 	
-  const double dOut = diameter_;
-  const double dIn = diameter_ - thickness_;
-  bFree_ = bTot_;
-  bBound_ = 0;
+  
+  const double rOut = diameter_/2.;
+  
+  const double rIn = rOut - thickness_;
+  
   switch ( shapeMode_ )
     {
       /*
@@ -391,15 +406,15 @@ void DifBuffer::vReinit( const Eref& e, ProcPtr p )
        */
     case 0:
       if ( length_ == 0.0 ) { // Spherical shell
-	volume_ = ( M_PI / 6.0 ) * ( dOut * dOut * dOut - dIn * dIn * dIn );
-	outerArea_ = M_PI * dOut * dOut;
-	innerArea_ = M_PI * dIn * dIn;
+	volume_ = 4./3.* M_PI * ( rOut * rOut * rOut - rIn * rIn * rIn );
+	outerArea_ = 4*M_PI * rOut * rOut;
+	innerArea_ = 4*M_PI * rIn * rIn;
       } else { // Cylindrical shell
-	volume_ = ( M_PI * length_ / 4.0 ) * ( dOut * dOut - dIn * dIn );
-	outerArea_ = M_PI * dOut * length_;
-	innerArea_ = M_PI * dIn * length_;
+	volume_ = ( M_PI * length_  ) * ( rOut * rOut - rIn * rIn );
+	outerArea_ = 2*M_PI * rOut * length_;
+	innerArea_ = 2*M_PI * rIn * length_;
       }
-	
+		
       break;
 	
       /*
@@ -422,6 +437,7 @@ void DifBuffer::vReinit( const Eref& e, ProcPtr p )
     default:
       assert( 0 );
     }
+  
 }
 
 void DifBuffer::vFluxFromIn(const Eref& e,double innerC, double innerThickness)

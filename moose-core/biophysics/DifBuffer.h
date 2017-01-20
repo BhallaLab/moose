@@ -74,6 +74,8 @@ class DifBuffer: public DifBufferBase{
   double Bf_;
   double bFree_; //free buffer concentration
   double bBound_; //bound buffer concentration
+  double prevFree_;
+  double prevBound_;
   //double prevFree_; //bFree at previous time
   //double prevBound_; //bBound at previous time
   double bTot_; //bFree+bBound

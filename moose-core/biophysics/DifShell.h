@@ -84,6 +84,7 @@ class DifShell: public DifShellBase{
   double Cmultiplier_;
   double C_;
   double Ceq_;
+  double prevC_;
   double D_;
   double valence_;
   double leak_;
