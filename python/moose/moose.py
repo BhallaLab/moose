@@ -33,7 +33,7 @@ except Exception as e:
     print('\tError was %s' % e)
     genesisSupport_ = False
 
-from . import add_Delete_ChemicalSolver 
+import chemUtil.add_Delete_ChemicalSolver
 
 sequence_types = ['vector<double>',
                   'vector<int>',
@@ -106,7 +106,7 @@ def mooseWriteSBML(modelpath, filenpath, sceneitems={}):
     return SBML.writeSBML.mooseWriteSBML(modelpath, filepath, sceneitems)
 
 
-def mooseWriteKkit(modelpath, filepath):
+def mooseWriteKkit(modelpath, filepath,sceneitems={}):
     """Writes  loded model under modelpath to a file in Kkit format.
 
     keyword arguments:\n
@@ -119,7 +119,7 @@ def mooseWriteKkit(modelpath, filepath):
         print('GENESIS(kkit) support was not loaded')
         return None
 
-    return moose.genesis.writeKkit.mooseWiteKkit(modelpath, filepath)
+    return genesis.writeKkit.mooseWriteKkit(modelpath, filepath,sceneitems)
 
 
 def moosedeleteChemSolver(modelpath):
@@ -128,7 +128,7 @@ def moosedeleteChemSolver(modelpath):
         this should be followed by mooseaddChemSolver for add solvers on to compartment to simulate else
         default is Exponential Euler (ee)
     """
-    return add_Delete_ChemicalSolver.moosedeleteChemSolver(modelpath)
+    return chemUtil.add_Delete_ChemicalSolver.moosedeleteChemSolver(modelpath)
 
 
 def mooseaddChemSolver(modelpath, solver):
@@ -142,7 +142,7 @@ def mooseaddChemSolver(modelpath, solver):
               "Runge Kutta"       ("gsl")
 
     """
-    return add_Delete_ChemicalSolver.mooseaddChemSolver(modelpath, solver)
+    return chemUtil.add_Delete_ChemicalSolver.mooseaddChemSolver(modelpath, solver)
 
 ################################################################
 # Wrappers for global functions
