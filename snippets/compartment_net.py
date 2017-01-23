@@ -67,10 +67,10 @@ def create_population(container, size):
 
     """
     path = container.path
-    print path, size, type(path)
+    print((path, size, type(path)))
     comps = create_1comp_neuron('{}/neuron'.format(path), number=size)
     synpath = path+'/synchan'
-    print synpath, size, type(size)
+    print((synpath, size, type(size)))
     synchan = moose.vec(synpath, n=size, dtype='SynChan')
     synchan.Gbar = 1e-8
     synchan.tau1 = 2e-3
@@ -109,14 +109,14 @@ def make_synapses(spikegen, synhandler, connprob=1.0, delay=5e-3):
         sh.synapse.vec.delay = 5e-3
         for ii, syn in enumerate(sh.synapse):
             msg = moose.connect(spikegen[ii], 'spikeOut', syn, 'addSpike')
-            print 'Connected', spikegen[ii].path, 'to', syn.path, 'on', sh.path
+            print(('Connected', spikegen[ii].path, 'to', syn.path, 'on', sh.path))
             
 def create_network(size=2):
     """Create a network containing two neuronal populations, pop_A and
     pop_B and connect them up"""
     net = moose.Neutral('network')
     pop_a = create_population(moose.Neutral('/network/pop_A'), size)
-    print pop_a
+    print(pop_a)
     pop_b = create_population(moose.Neutral('/network/pop_B'), size)
     make_synapses(pop_a['spikegen'], pop_b['synhandler'])
     pulse = moose.PulseGen('pulse')
@@ -156,7 +156,7 @@ if __name__ == '__main__':
     moose.start(simtime)
     plt.subplot(221)
     for oid in vm_a.vec:
-        print oid, oid.vector.shape
+        print((oid, oid.vector.shape))
         plt.plot(oid.vector, label=oid.path)
     plt.legend()
     plt.subplot(223)

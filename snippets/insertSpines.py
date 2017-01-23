@@ -56,7 +56,7 @@ def main():
     # Now we set up the display
     compts = moose.wildcardFind( "/model/elec/#[ISA=CompartmentBase]" )
     compts[0].inject = inject
-    ecomptPath = map( lambda x : x.path, compts )
+    ecomptPath = [x.path for x in compts]
     morphology = moogli.read_morphology_from_moose(name = "", path = "/model/elec")
     #morphology.create_group( "group_all", ecomptPath, -0.08, 0.02, \
     #        [0.0, 0.5, 1.0, 1.0], [1.0, 0.0, 0.0, 0.9] ) 
@@ -67,7 +67,7 @@ def main():
     viewer.set_background_color( 1.0, 1.0, 1.0, 1.0 )
     def callback( morphology, viewer ):
         moose.start( frameRunTime )
-        Vm = map( lambda x: moose.element( x ).Vm, compts )
+        Vm = [moose.element( x ).Vm for x in compts]
         morphology.set_color( "group_all", Vm )
         currTime = moose.element( '/clock' ).currentTime
         #print currTime, compts[0].Vm

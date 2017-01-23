@@ -303,7 +303,7 @@ class SquidAxon(moose.Compartment):
         self.temperature = celsius + CELSIUS_TO_KELVIN
 
     def use_defaults(self):
-        for field, value in SquidAxon.defaults.items():
+        for field, value in list(SquidAxon.defaults.items()):
             setattr(self, field, value)
 
 class SquidModel(moose.Neutral):
@@ -311,13 +311,13 @@ class SquidModel(moose.Neutral):
     def __init__(self, path):
         moose.Neutral.__init__(self, path)
         self.squid_axon = SquidAxon(path+'/squid_axon')
-        print self.squid_axon.Na_channel.Gbar, self.squid_axon.K_channel.Gbar
+        print((self.squid_axon.Na_channel.Gbar, self.squid_axon.K_channel.Gbar))
         self.current_clamp = moose.PulseGen(path+'/pulsegen')
         self.current_clamp.firstDelay = 5.0 # ms
         self.current_clamp.firstWidth = 40 # ms
         self.current_clamp.firstLevel = 0.1 # uA
         self.current_clamp.secondDelay = 1e9
-        print 'Current clamp connected:', moose.connect(self.current_clamp, 'output', self.squid_axon, 'injectMsg')
+        print(('Current clamp connected:', moose.connect(self.current_clamp, 'output', self.squid_axon, 'injectMsg')))
 
         self.Vm_table = moose.Table('%s/Vm' % (self.path))
         moose.connect(self.Vm_table, 'requestOut', self.squid_axon, 'getVm')
@@ -345,19 +345,19 @@ class SquidModel(moose.Neutral):
 
     def save_data(self):
         self.Vm_table.xplot('Vm.dat', 'Vm')
-        print 'Vm saved to Vm.dat'
+        print('Vm saved to Vm.dat')
         if hasattr(self, 'gK_table'):
             self.gK_table.xplot('gK.dat', 'gK')
             numpy.savetxt('K_alpha_n.dat', self.squid_axon.K_channel.alpha_m)
             numpy.savetxt('K_beta_n.dat', self.squid_axon.K_channel.beta_m)
-            print 'K conductance saved to gK.dat'
+            print('K conductance saved to gK.dat')
         if hasattr(self, 'gNa_table'):
             self.gNa_table.xplot('gNa.dat', 'gNa')
             numpy.savetxt('Na_alpha_m.dat', self.squid_axon.Na_channel.alpha_m)
             numpy.savetxt('Na_beta_m.dat', self.squid_axon.Na_channel.beta_m)
             numpy.savetxt('Na_alpha_h.dat', self.squid_axon.Na_channel.alpha_h)
             numpy.savetxt('Na_beta_h.dat', self.squid_axon.Na_channel.beta_h)
-            print 'Na conductance saved to gNa.dat'
+            print('Na conductance saved to gNa.dat')
 
             
         

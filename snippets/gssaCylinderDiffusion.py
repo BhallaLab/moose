@@ -9,12 +9,12 @@
 
 
 import sys
-sys.path.append('../../python')
 import math
 import pylab
 import numpy
 import matplotlib.pyplot as plt
 import moose
+print(('[INFO] Using moose from %s' % moose.__file__ ))
 
 import os
 import signal 
@@ -58,11 +58,11 @@ def makeModel():
     The concentrations of all molecules are displayed in an animation.
     """
     # create container for model
-    r0 = 2e-6	# m
-    r1 = 1e-6	# m
+    r0 = 2e-6        # m
+    r1 = 1e-6        # m
     num = 100
     diffLength = 1e-6 # m
-    len = num * diffLength	# m
+    len = num * diffLength        # m
     diffConst = 10e-12
     #motorRate = 1e-6
     #diffConst = 0
@@ -108,7 +108,7 @@ def makeModel():
     os.kill( PID, signal.SIGUSR1 )
     stoich.path = "/model/compartment/##"
 
-    print dsolve.numPools
+    print((dsolve.numPools))
     assert( dsolve.numPools == 4 )
     a.vec.concInit = concA
     b.vec.concInit = concA / 5.0
@@ -178,22 +178,24 @@ def main():
     for t in numpy.arange( 0, runtime, plotdt ):
         moose.start( plotdt )
         updatePlots( plotlist, t )
-    # moose.start( runtime ) # Run the model
+
+    # save the final result to a file.
+    outfile = '%s.png' % sys.argv[0]
+    plt.savefig( outfile )
+    print(( '[INFO] Saved results to %s' % outfile ))
 
     atot2 = sum( a.vec.n )
     btot2 = sum( b.vec.n )
     ctot2 = sum( c.vec.n )
     dtot2 = sum( d.vec.n )
 
-    print 'Ratio of initial to final total numbers of of a, b, c, d = '
-    print atot2/atot, btot2/btot, ctot2/ctot, dtot2/dtot
-    print 'Initial to final (b+c)=', (btot2 + ctot2) / (btot + ctot )
-    print "\nHit 'enter' to exit"
-    #raw_input()
-
+    msg = 'Ratio of initial to final total numbers of '
+    msg += 'a=%f b=%f, c=%f, d=%f'% (atot2/atot, btot2/btot, ctot2/ctot, dtot2/dtot)
+    print(msg)
+    print(('Initial to final (b+c)=%f' % (float(btot2 + ctot2) / (btot + ctot ))))
     quit()
 
 
 # Run the 'main' if this script is executed standalone.
 if __name__ == '__main__':
-	main()
+    main()

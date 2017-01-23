@@ -55,7 +55,7 @@ c.vec.nInit = [ 100 for q in x ]
 
 # Run and plot it.
 moose.reinit()
-print dir(compt)
+print((dir(compt)))
 updateDt = 50
 runtime = updateDt * 4
 plt = pylab.plot( x, c.vec.n, label='t = 0 ')
@@ -63,7 +63,7 @@ t1 = time.time()
 for t in range( 0, runtime-1, updateDt ):
     moose.start( updateDt )
     plt = pylab.plot( x, c.vec.n, label='t = '+str(t + updateDt) )
-print "Time = ", time.time() - t1
+print(("Time = ", time.time() - t1))
 
 pylab.ylim( 0, 105 )
 pylab.legend()

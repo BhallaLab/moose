@@ -52,7 +52,7 @@ compartment and the membrane voltage in both compartments are recorded
 and saved into a csv file.
 
 """
-from __future__ import print_function
+
 import sys
 import numpy as np
 import moose

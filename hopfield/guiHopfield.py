@@ -53,7 +53,7 @@ class DesignerMainWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.connect(self.computeSynWeightsPushButton,QtCore.SIGNAL('clicked()'),self.computeAllWeights)
 
     def saveInput(self):
-        print 'saving current pattern as input'
+        print('saving current pattern as input')
         inpList = []
         for i in range(100):
             exec(('inpList.append(int(self.pushButton_%s.isChecked()))' %i))

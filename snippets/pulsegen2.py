@@ -40,7 +40,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; see the file COPYING.  If not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth
-# Floor, Boston, MA 02110-1301, USA.#!/usr/bin/env python
+# Floor, Boston, MA 02110-1301, USA.
 
 # 
 # 
@@ -164,7 +164,7 @@ pylab.plot(plotGate.vector)
 pylab.title('Free Running Gate')
 pylab.tight_layout()
 pylab.show()
-print "pulsegen.py: finished simulation"
+print("pulsegen.py: finished simulation")
 
 # 
 # pulsegen2.py ends here

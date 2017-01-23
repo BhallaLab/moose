@@ -101,10 +101,10 @@ def vclamp_demo(simtime=50.0, dt=1e-2):
     moose.useClock(2, '%s/##[TYPE=VClamp]' % (container.path), 'process')
     moose.useClock(3, '%s/##[TYPE=Table]' % (container.path), 'process')
     moose.reinit()
-    print 'RC filter in VClamp:: tau:', clamp.tau
-    print 'PID controller in VClamp:: ti:', clamp.ti, 'td:', clamp.td, 'gain:', clamp.gain
+    print(('RC filter in VClamp:: tau:', clamp.tau))
+    print(('PID controller in VClamp:: ti:', clamp.ti, 'td:', clamp.td, 'gain:', clamp.gain))
     moose.start(simtime)
-    print 'Finished simulation for %g seconds' % (simtime)
+    print(('Finished simulation for %g seconds' % (simtime)))
     tseries = linspace(0, simtime, len(vmtab.vector))
     subplot(211)
     title('Membrane potential and clamp voltage')

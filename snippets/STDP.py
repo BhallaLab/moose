@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+
 #/**********************************************************************
 #** This program is part of 'MOOSE', the
 #** Messaging Object Oriented Simulation Environment.
@@ -157,7 +157,7 @@ def main():
     t_extent = 20e-3 # s
     # dt = tpost - tpre
     # negative dt corresponds to post before pre
-    print '-----------------------------------------------'
+    print('-----------------------------------------------')
     for deltat in arange(t_extent,0.0,-ddt):
         reset_settle()
         # post neuron spike
@@ -167,9 +167,9 @@ def main():
         make_neuron_spike(0)
         moose.start(1e-3)
         dw = ( syn.synapse[0].weight - weight ) / weight
-        print 'post before pre, dt = %1.3f s, dw/w = %1.3f'%(-deltat,dw)
+        print(('post before pre, dt = %1.3f s, dw/w = %1.3f'%(-deltat,dw)))
         dwlist_neg.append(dw)
-    print '-----------------------------------------------'
+    print('-----------------------------------------------')
     # positive dt corresponds to pre before post
     dwlist_pos = []
     for deltat in arange(ddt,t_extent+ddt,ddt):
@@ -181,9 +181,9 @@ def main():
         make_neuron_spike(1)
         moose.start(1e-3)
         dw = ( syn.synapse[0].weight - weight ) / weight
-        print 'pre before post, dt = %1.3f s, dw/w = %1.3f'%(deltat,dw)
+        print(('pre before post, dt = %1.3f s, dw/w = %1.3f'%(deltat,dw)))
         dwlist_pos.append(dw)
-    print '-----------------------------------------------'
+    print('-----------------------------------------------')
 
     # ###########################################
     # Plot the simulated Vm-s and STDP curve

@@ -109,7 +109,7 @@ def interlude( view ):
 	view.yaw( 0.01 )
 
 def create_viewer(rdes):
-    print ' doing viewer for ', rdes.soma.path
+    print((' doing viewer for ', rdes.soma.path))
     network = moogli.extensions.moose.read(rdes.elecid.path)
     normalizer = moogli.utilities.normalizer(-0.08,
                                              0.02,
@@ -125,10 +125,10 @@ def create_viewer(rdes):
                                                                   0.9)])
     mapper = moogli.utilities.mapper(colormap, normalizer)
 
-    vms = [moose.element(x).Vm for x in network.shapes.keys()]
+    vms = [moose.element(x).Vm for x in list(network.shapes.keys())]
     network.set("color", vms, mapper)
     viewer = moogli.Viewer("vm-viewer")
-    viewer.attach_shapes(network.shapes.values())
+    viewer.attach_shapes(list(network.shapes.values()))
     view = moogli.View("vm-view", interlude=interlude )
     viewer.attach_view(view)
     viewer.show()
@@ -143,7 +143,7 @@ def main():
     viewers = []
     j = 0
     for i in elecFileNames:
-        print i
+        print(i)
         ename = '/model' + str(j)
         rdes.cellProtoList = [ ['./cells/' + i, 'elec' ] ]
         rdes.buildModel( ename )

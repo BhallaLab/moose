@@ -43,6 +43,10 @@
 # 
 
 # Code:
+
+from __future__ import print_function
+
+
 import moose
 
 def many_ematrix_to_one_element():
@@ -73,9 +77,9 @@ def many_ematrix_to_one_element():
         # synchan.synapse[ii].delay = ii  * 1e-3
         # synchan.synapse[ii].weight = (ii+1) * 0.1
     for sg in spikegens:
-        print sg.path, '-->',
+        print(sg.path, '-->', end=' ')
         for m in sg.msgOut:
-            print moose.element(m).adjacent[sg].path
+            print(moose.element(m).adjacent[sg].path)
     
 if __name__ == '__main__':
     many_ematrix_to_one_element()

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+
 # -*- coding: utf-8 -*-
 import sys
 import math
@@ -8,7 +8,7 @@ from pylab import *
 try:
     import moose
 except ImportError:
-    print "ERROR: Could not import moose. Please add the directory containing moose.py in your PYTHONPATH"
+    print("ERROR: Could not import moose. Please add the directory containing moose.py in your PYTHONPATH")
     import sys
     sys.exit(1)
 

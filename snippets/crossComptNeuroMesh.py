@@ -12,7 +12,10 @@ import math
 import pylab
 import numpy
 import matplotlib.pyplot as plt
+import sys
 import moose
+
+print(( '[INFO] Using moose from %s' % moose.__file__ ))
 
 def makeCompt( name, parent, dx, dy, dia ):
     RM = 1.0
@@ -67,40 +70,40 @@ def makeNeuron( numSeg ):
 def makeModel():
                 numSeg = 5
                 diffConst = 0.0
-		# create container for model
-		model = moose.Neutral( 'model' )
-		compt0 = moose.NeuroMesh( '/model/compt0' )
+                # create container for model
+                model = moose.Neutral( 'model' )
+                compt0 = moose.NeuroMesh( '/model/compt0' )
                 compt0.separateSpines = 1
                 compt0.geometryPolicy = 'cylinder'
-		compt1 = moose.SpineMesh( '/model/compt1' )
+                compt1 = moose.SpineMesh( '/model/compt1' )
                 moose.connect( compt0, 'spineListOut', compt1, 'spineList', 'OneToOne' )
-		compt2 = moose.PsdMesh( '/model/compt2' )
+                compt2 = moose.PsdMesh( '/model/compt2' )
                 moose.connect( compt0, 'psdListOut', compt2, 'psdList', 'OneToOne' )
 
-		# create molecules and reactions
-		a = moose.Pool( '/model/compt0/a' )
-		b = moose.Pool( '/model/compt1/b' )
-		c = moose.Pool( '/model/compt2/c' )
-		reac0 = moose.Reac( '/model/compt0/reac0' )
-		reac1 = moose.Reac( '/model/compt1/reac1' )
+                # create molecules and reactions
+                a = moose.Pool( '/model/compt0/a' )
+                b = moose.Pool( '/model/compt1/b' )
+                c = moose.Pool( '/model/compt2/c' )
+                reac0 = moose.Reac( '/model/compt0/reac0' )
+                reac1 = moose.Reac( '/model/compt1/reac1' )
 
-		# connect them up for reactions
-		moose.connect( reac0, 'sub', a, 'reac' )
-		moose.connect( reac0, 'prd', b, 'reac' )
-		moose.connect( reac1, 'sub', b, 'reac' )
-		moose.connect( reac1, 'prd', c, 'reac' )
+                # connect them up for reactions
+                moose.connect( reac0, 'sub', a, 'reac' )
+                moose.connect( reac0, 'prd', b, 'reac' )
+                moose.connect( reac1, 'sub', b, 'reac' )
+                moose.connect( reac1, 'prd', c, 'reac' )
 
-		# Assign parameters
-		a.diffConst = diffConst
-		b.diffConst = diffConst
-		c.diffConst = diffConst
-		a.concInit = 1
-		b.concInit = 12.1
-		c.concInit = 1
-		reac0.Kf = 1
-		reac0.Kb = 1
-		reac1.Kf = 1
-		reac1.Kb = 1
+                # Assign parameters
+                a.diffConst = diffConst
+                b.diffConst = diffConst
+                c.diffConst = diffConst
+                a.concInit = 1
+                b.concInit = 12.1
+                c.concInit = 1
+                reac0.Kf = 1
+                reac0.Kb = 1
+                reac1.Kf = 1
+                reac1.Kb = 1
 
                 # Create a 'neuron' with a dozen spiny compartments.
                 elec = makeNeuron( numSeg )
@@ -143,25 +146,25 @@ def makeModel():
                 stoich2.filterXreacs()
 
 
-                print a.vec.volume, b.vec.volume, c.vec.volume
-		a.vec.concInit = range( numSeg + 1, 0, -1 )
-		b.vec.concInit = [5.0 * ( 1 + x ) for x in range( numSeg )]
-		c.vec.concInit = range( 1, numSeg + 1 )
-                print a.vec.concInit, b.vec.concInit, c.vec.concInit
+                print((a.vec.volume, b.vec.volume, c.vec.volume))
+                a.vec.concInit = list(range( numSeg + 1, 0, -1))
+                b.vec.concInit = [5.0 * ( 1 + x ) for x in range( numSeg )]
+                c.vec.concInit = list(range( 1, numSeg + 1))
+                print((a.vec.concInit, b.vec.concInit, c.vec.concInit))
 
-		# Create the output tables
-		graphs = moose.Neutral( '/model/graphs' )
-		outputA = moose.Table2 ( '/model/graphs/concA' )
-		outputB = moose.Table2 ( '/model/graphs/concB' )
-		outputC = moose.Table2 ( '/model/graphs/concC' )
+                # Create the output tables
+                graphs = moose.Neutral( '/model/graphs' )
+                outputA = moose.Table2 ( '/model/graphs/concA' )
+                outputB = moose.Table2 ( '/model/graphs/concB' )
+                outputC = moose.Table2 ( '/model/graphs/concC' )
 
-		# connect up the tables
+                # connect up the tables
                 a1 = moose.element( '/model/compt0/a[' + str( numSeg )+ ']')
                 b1 = moose.element( '/model/compt1/b[' +str(numSeg - 1)+']')
                 c1 = moose.element( '/model/compt2/c[' +str(numSeg - 1)+']')
-		moose.connect( outputA, 'requestOut', a1, 'getConc' );
-		moose.connect( outputB, 'requestOut', b1, 'getConc' );
-		moose.connect( outputC, 'requestOut', c1, 'getConc' );
+                moose.connect( outputA, 'requestOut', a1, 'getConc' );
+                moose.connect( outputB, 'requestOut', b1, 'getConc' );
+                moose.connect( outputC, 'requestOut', c1, 'getConc' );
 
 
 def main():
@@ -232,10 +235,13 @@ def display():
         line4, = timeseries.plot( t, x.vector, label=x.name )
     plt.legend()
     fig.canvas.draw()
+    outfile = '%s.png' % sys.argv[0] 
+    # print( "Hit 'enter' to exit" )
+    # raw_input()
+    plt.savefig( outfile )
+    print(('[INFO] Results are saved to %s' % outfile ))
 
-    print( "Hit 'enter' to exit" )
-    raw_input()
 
 # Run the 'main' if this script is executed standalone.
 if __name__ == '__main__':
-	main()
+        main()

@@ -306,7 +306,7 @@ def createChemModel( neuroCompt, spineCompt, psdCompt ):
 
 # Just for printf debugging
 def printMolVecs( title ):
-    print title
+    print(title)
     """    
     nCa = moose.vec( '/model/chem/neuroMesh/Ca' )
     sCa = moose.vec( '/model/chem/spineMesh/Ca' )
@@ -477,7 +477,7 @@ def testCubeMultiscale( useSolver ):
     moose.reinit()
     t = time.time()
     moose.start( 1.0 )
-    print("Total time taken: %s sec for 1.0 sec of simulation" % (time.time() - t))
+    print(("Total time taken: %s sec for 1.0 sec of simulation" % (time.time() - t)))
     dumpPlots( plotName )
 
 def main():

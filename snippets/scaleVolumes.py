@@ -13,74 +13,74 @@ import numpy
 import moose
 
 def makeModel():
-		# create container for model
-		model = moose.Neutral( 'model' )
-		compartment = moose.CubeMesh( '/model/compartment' )
-		compartment.volume = 1e-20
-		# the mesh is created automatically by the compartment
-		mesh = moose.element( '/model/compartment/mesh' ) 
+                # create container for model
+                model = moose.Neutral( 'model' )
+                compartment = moose.CubeMesh( '/model/compartment' )
+                compartment.volume = 1e-20
+                # the mesh is created automatically by the compartment
+                mesh = moose.element( '/model/compartment/mesh' ) 
 
-		# create molecules and reactions
-		a = moose.Pool( '/model/compartment/a' )
-		b = moose.Pool( '/model/compartment/b' )
-		c = moose.Pool( '/model/compartment/c' )
-		enz1 = moose.Enz( '/model/compartment/b/enz1' )
-		enz2 = moose.Enz( '/model/compartment/c/enz2' )
-		cplx1 = moose.Pool( '/model/compartment/b/enz1/cplx' )
-		cplx2 = moose.Pool( '/model/compartment/c/enz2/cplx' )
-		reac = moose.Reac( '/model/compartment/reac' )
+                # create molecules and reactions
+                a = moose.Pool( '/model/compartment/a' )
+                b = moose.Pool( '/model/compartment/b' )
+                c = moose.Pool( '/model/compartment/c' )
+                enz1 = moose.Enz( '/model/compartment/b/enz1' )
+                enz2 = moose.Enz( '/model/compartment/c/enz2' )
+                cplx1 = moose.Pool( '/model/compartment/b/enz1/cplx' )
+                cplx2 = moose.Pool( '/model/compartment/c/enz2/cplx' )
+                reac = moose.Reac( '/model/compartment/reac' )
 
-		# connect them up for reactions
-		moose.connect( enz1, 'sub', a, 'reac' )
-		moose.connect( enz1, 'prd', b, 'reac' )
-		moose.connect( enz1, 'enz', b, 'reac' )
-		moose.connect( enz1, 'cplx', cplx1, 'reac' )
+                # connect them up for reactions
+                moose.connect( enz1, 'sub', a, 'reac' )
+                moose.connect( enz1, 'prd', b, 'reac' )
+                moose.connect( enz1, 'enz', b, 'reac' )
+                moose.connect( enz1, 'cplx', cplx1, 'reac' )
 
-		moose.connect( enz2, 'sub', b, 'reac' )
-		moose.connect( enz2, 'prd', a, 'reac' )
-		moose.connect( enz2, 'enz', c, 'reac' )
-		moose.connect( enz2, 'cplx', cplx2, 'reac' )
+                moose.connect( enz2, 'sub', b, 'reac' )
+                moose.connect( enz2, 'prd', a, 'reac' )
+                moose.connect( enz2, 'enz', c, 'reac' )
+                moose.connect( enz2, 'cplx', cplx2, 'reac' )
 
-		moose.connect( reac, 'sub', a, 'reac' )
-		moose.connect( reac, 'prd', b, 'reac' )
+                moose.connect( reac, 'sub', a, 'reac' )
+                moose.connect( reac, 'prd', b, 'reac' )
 
-		# connect them up to the compartment for volumes
-		#for x in ( a, b, c, cplx1, cplx2 ):
-		#			moose.connect( x, 'mesh', mesh, 'mesh' )
+                # connect them up to the compartment for volumes
+                #for x in ( a, b, c, cplx1, cplx2 ):
+                #                        moose.connect( x, 'mesh', mesh, 'mesh' )
 
-		# Assign parameters
-		a.concInit = 1
-		b.concInit = 0
-		c.concInit = 0.01
-		enz1.kcat = 0.4
-		enz1.Km = 4
-		enz2.kcat = 0.6
-		enz2.Km = 0.01
-		reac.Kf = 0.001
-		reac.Kb = 0.01
+                # Assign parameters
+                a.concInit = 1
+                b.concInit = 0
+                c.concInit = 0.01
+                enz1.kcat = 0.4
+                enz1.Km = 4
+                enz2.kcat = 0.6
+                enz2.Km = 0.01
+                reac.Kf = 0.001
+                reac.Kb = 0.01
 
-		# Create the output tables
-		graphs = moose.Neutral( '/model/graphs' )
-		outputA = moose.Table2( '/model/graphs/concA' )
-		outputB = moose.Table2( '/model/graphs/concB' )
+                # Create the output tables
+                graphs = moose.Neutral( '/model/graphs' )
+                outputA = moose.Table2( '/model/graphs/concA' )
+                outputB = moose.Table2( '/model/graphs/concB' )
 
-		# connect up the tables
-		moose.connect( outputA, 'requestOut', a, 'getConc' );
-		moose.connect( outputB, 'requestOut', b, 'getConc' );
+                # connect up the tables
+                moose.connect( outputA, 'requestOut', a, 'getConc' );
+                moose.connect( outputB, 'requestOut', b, 'getConc' );
 
                 '''
-		# Schedule the whole lot
-		moose.setClock( 4, 0.01 ) # for the computational objects
-		moose.setClock( 8, 1.0 ) # for the plots
-		# The wildcard uses # for single level, and ## for recursive.
-		moose.useClock( 4, '/model/compartment/##', 'process' )
-		moose.useClock( 8, '/model/graphs/#', 'process' )
+                # Schedule the whole lot
+                moose.setClock( 4, 0.01 ) # for the computational objects
+                moose.setClock( 8, 1.0 ) # for the plots
+                # The wildcard uses # for single level, and ## for recursive.
+                moose.useClock( 4, '/model/compartment/##', 'process' )
+                moose.useClock( 8, '/model/graphs/#', 'process' )
                 '''
 
 def displayPlots():
-		for x in moose.wildcardFind( '/model/graphs/conc#' ):
-				t = numpy.arange( 0, x.vector.size, 1 ) #sec
-				pylab.plot( t, x.vector, label=x.name )
+                for x in moose.wildcardFind( '/model/graphs/conc#' ):
+                                t = numpy.arange( 0, x.vector.size, 1 ) #sec
+                                pylab.plot( t, x.vector, label=x.name )
 
 def main():
 
@@ -128,7 +128,7 @@ def main():
     for vol in ( 1e-19, 1e-20, 1e-21, 3e-22, 1e-22, 3e-23, 1e-23 ):
         # Set the volume
         compt.volume = vol
-        print 'vol = ', vol, ', a.concInit = ', a.concInit, ', a.nInit = ', a.nInit
+        print(('vol = ', vol, ', a.concInit = ', a.concInit, ', a.nInit = ', a.nInit))
 
         moose.reinit()
         moose.start( 100.0 ) # Run the model for 100 seconds.
@@ -149,11 +149,11 @@ def main():
         # Iterate through all plots, dump their contents to data.plot.
         displayPlots()
         pylab.show( block=False )
-        print 'vol = ', vol, 'hit enter to go to next plot'
-        raw_input()
+        print(('vol = ', vol, 'hit enter to go to next plot'))
+        eval(input())
 
     quit()
 
 # Run the 'main' if this script is executed standalone.
 if __name__ == '__main__':
-	main()
+        main()

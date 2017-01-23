@@ -58,9 +58,9 @@ class HopfieldNetwork():
                         memory[j] = -1
                     self.synWeights[i*len(memory)+j] += memory[i]*memory[j]
 
-        print self.synWeights[0:100]
+        print((self.synWeights[0:100]))
         self.numMemories += 1
-        print self.numMemories, '#number Of saved memories'
+        print((self.numMemories, '#number Of saved memories'))
 
     def createNetwork(self):
         '''setting up of the cells and their connections'''

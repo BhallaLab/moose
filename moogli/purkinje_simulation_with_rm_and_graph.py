@@ -30,8 +30,8 @@ filename = os.path.join( os.path.split(os.path.realpath(__file__))[0]
 popdict, projdict = moose.neuroml.loadNeuroML_L123(filename)
 
 # setting up hsolve object for each neuron
-for popinfo in popdict.values():
-    for cell in popinfo[1].values():
+for popinfo in list(popdict.values()):
+    for cell in list(popinfo[1].values()):
         solver = moose.HSolve(cell.path + "/hsolve")
         solver.target = cell.path
 
@@ -49,17 +49,11 @@ moose.reinit()
 SIMULATION_DELTA = 0.001
 SIMULATION_TIME  = 0.03
 
-ALL_COMPARTMENTS = map( lambda x : x.path
-                      , moose.wildcardFind("/cells[0]/##[ISA=CompartmentBase]")
-                      )
+ALL_COMPARTMENTS = [x.path for x in moose.wildcardFind("/cells[0]/##[ISA=CompartmentBase]")]
 
-BASE_RM_VALUE = min( map( lambda x : moose.element(x).Rm
-                        , ALL_COMPARTMENTS
-                        )
+BASE_RM_VALUE = min( [moose.element(x).Rm for x in ALL_COMPARTMENTS]
                    )
-PEAK_RM_VALUE = max( map( lambda x : moose.element(x).Rm
-                        , ALL_COMPARTMENTS
-                        )
+PEAK_RM_VALUE = max( [moose.element(x).Rm for x in ALL_COMPARTMENTS]
                    )
 BASE_RM_COLOR = [0.0, 1.0, 0.0, 0.1]
 PEAK_RM_COLOR = [1.0, 0.0, 0.0, 1.0]
@@ -111,9 +105,7 @@ def create_vm_visualizer():
 
     # set initial color of all compartments in accordance with their vm
     vm_morphology.set_color( "group-all"
-                           , map( lambda x : moose.element(x).Vm
-                                , ALL_COMPARTMENTS
-                                )
+                           , [moose.element(x).Vm for x in ALL_COMPARTMENTS]
                            )
 
     # instantiate the visualizer with the morphology object created earlier
@@ -130,9 +122,7 @@ def create_vm_visualizer():
         # a value higher than peak value will be clamped to peak value
         # a value lower than base value will be clamped to base value.
         morphology.set_color( "group-all"
-                            , map( lambda x : moose.element(x).Vm
-                                 , ALL_COMPARTMENTS
-                                 )
+                            , [moose.element(x).Vm for x in ALL_COMPARTMENTS]
                             )
         # if the callback returns true, it will be called again.
         # if it returns false it will not be called again.
@@ -181,9 +171,7 @@ def create_rm_visualizer():
 
     # set initial color of all compartments in accordance with their rm
     morphology.set_color( "group-all"
-                        , map( lambda x : moose.element(x).Rm
-                             , ALL_COMPARTMENTS
-                             )
+                        , [moose.element(x).Rm for x in ALL_COMPARTMENTS]
                         )
 
     # instantiate the visualizer with the morphology object created earlier

@@ -37,20 +37,20 @@ cell.synapse[0].delay = 10e-3
 #else, goes back to 0 in tau time
 
 VmVal = moose.Table(cellPath+'/Vm_cell')
-print 'table>cellVm:', moose.connect(VmVal, 'requestOut', cell, 'getVm')
+print(('table>cellVm:', moose.connect(VmVal, 'requestOut', cell, 'getVm')))
 spikeTime = moose.Table(cellPath+'/spikeTimes')
-print 'table>cellSpike:', moose.connect(cell, 'spike', spikeTime, 'input')
+print(('table>cellSpike:', moose.connect(cell, 'spike', spikeTime, 'input')))
 
 inSpkGen = moose.SpikeGen(cellPath+'/inSpkGen')
 inSpkGen.setField('threshold', 2.0)
 inSpkGen.setField('edgeTriggered', True)
 
 if inputGiven == 1:
-    print 'pulse>spike:', moose.connect(pg, 'output', moose.element(cellPath+'/inSpkGen'), 'Vm')
+    print(('pulse>spike:', moose.connect(pg, 'output', moose.element(cellPath+'/inSpkGen'), 'Vm')))
     inTable = moose.Table(cellPath+'/inSpkGen/inTable')
-    print 'table>spike:',moose.connect(inTable, 'requestOut', inSpkGen, 'getHasFired')
+    print(('table>spike:',moose.connect(inTable, 'requestOut', inSpkGen, 'getHasFired')))
 
-print 'spike>cell:', moose.connect(inSpkGen, 'spikeOut', cell.synapse[0] ,'addSpike')
+print(('spike>cell:', moose.connect(inSpkGen, 'spikeOut', cell.synapse[0] ,'addSpike')))
 #print 'spike>cell:', moose.connect(pg, 'output', cell ,'injectDest')
 
 moose.setClock(0, 1e-4)
