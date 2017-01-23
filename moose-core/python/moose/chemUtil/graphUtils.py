@@ -1,9 +1,19 @@
 import moose
-import pygraphviz as pgv
-#import networkx as nx
+
+pygraphvizFound_ = True
+try:
+    import pygraphviz as pgv
+except Exception as e:
+    pygraphvizFound_ = False
 
 def autoCoordinates(meshEntry,srcdesConnection):
+    global pygraphvizFound_ 
     positionInfo = {}
+
+    if not pygraphvizFound_:
+        print( '[warn] python-pygraphviz could not be found.' )
+        print( '\tMOOSE Install pygraphviz to use this feature' )
+        return positionInfo
 
     if meshEntry:
         #G = nx.Graph()
@@ -67,7 +77,7 @@ def autoCoordinates(meshEntry,srcdesConnection):
             ann.x = float(valuelist[0])
             ann.y = float(valuelist[1])
 
-    return(positionInfo)
+    return positionInfo
 
 def find_index(value, key):
     """ Value.get(key) to avoid expection which would raise if empty value in dictionary for a given key """
