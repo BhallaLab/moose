@@ -33,7 +33,13 @@ except Exception as e:
     print('\tError was %s' % e)
     genesisSupport_ = False
 
-import chemUtil.add_Delete_ChemicalSolver
+chemUtilSupport_ = True
+try:
+    import chemUtil.add_Delete_ChemicalSolver
+except Exception as e:
+    chemUtilSupport_ = False
+    print( 'Failed to import utility module chemUtil' )
+    print( '\tError was %s' % e )
 
 sequence_types = ['vector<double>',
                   'vector<int>',
