@@ -18,16 +18,16 @@ mechanisms = {
 
 import sys
 if len(sys.argv)<2:
-    print("Selecting a channel randomly form %s" % list(mechanisms.keys()))
-    channel_name = random.choice( mechanisms.keys() )
-    print("Selected %s" % channel_name )
+    print(("Selecting a channel randomly form %s" % list(mechanisms.keys())))
+    channel_name = random.choice( list(mechanisms.keys()) )
+    print(("Selected %s" % channel_name ))
 else:
     channel_name = sys.argv[1]
 
 if channel_name in mechanisms:
     mechanism_vars = mechanisms[channel_name]
 else:
-    print("Undefined channel, please use one of", list(mechanisms.keys()))
+    print(("Undefined channel, please use one of", list(mechanisms.keys())))
     sys.exit(1)
 
 CELSIUS = 35 # degrees Centigrade
@@ -39,7 +39,7 @@ from pylab import *
 if __name__ == "__main__":
 
     for varidx in range(len(mechanism_vars)/2): # loop over each inf and tau
-        print( "Running for %s" % varidx )
+        print(( "Running for %s" % varidx ))
         var = ['X','Y','Z'][varidx]
         gate = moose.element('/library/'+channel_name+'/gate'+var)
         VMIN = gate.min

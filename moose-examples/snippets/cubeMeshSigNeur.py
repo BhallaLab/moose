@@ -155,9 +155,9 @@ def createPool( compt, name, concInit ):
 
 # This is a Ca-activated enzyme that phosphorylates and inactivates kChan
 # as per the following scheme:
-# 		Ca + inact_kinase <===> Ca.kinase
-# 		kChan ----- Ca.kinase -----> kChan_p
-# 		kChan_p -------> kChan
+#                 Ca + inact_kinase <===> Ca.kinase
+#                 kChan ----- Ca.kinase -----> kChan_p
+#                 kChan_p -------> kChan
 def createChemModel( neuroCompt ):
     dendCa = createPool( neuroCompt, 'Ca', 1e-4 )
     dendKinaseInact = createPool( neuroCompt, 'inact_kinase', 1e-4 )

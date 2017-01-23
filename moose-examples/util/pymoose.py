@@ -34,12 +34,12 @@ def listmsg(pymoose_object):
     """Print a list of the messages on this object.
 
     """
-    print 'Incoming messages:'
+    print('Incoming messages:')
     for msg in pymoose_object.inMessages():
-        print msg
-    print 'Outgoing messages:'
+        print(msg)
+    print('Outgoing messages:')
     for msg in pymoose_object.outMessages():
-        print msg
+        print(msg)
 
 # 
 # pymoose.py ends here

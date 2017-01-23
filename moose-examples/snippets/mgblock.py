@@ -133,7 +133,7 @@ def test_mgblock():
     for i in range( 10 ):
         moose.setClock( i, simdt )
     moose.setClock( Gnmda.tick, plotdt )
-    print spikegen.dt, Gnmda.dt
+    print((spikegen.dt, Gnmda.dt))
     moose.reinit()
     moose.start( simtime )
     t = pylab.linspace(0, simtime*1e3, len(Vm.vector))

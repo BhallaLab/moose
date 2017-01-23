@@ -62,11 +62,11 @@ class IzhikevichGui(QtGui.QMainWindow):
         self.controlPanel = QtGui.QFrame(self.demoFrame)
         self.figureNo = {}
         self.buttons = {}
-        for key, value in IzhikevichDemo.parameters.items():
+        for key, value in list(IzhikevichDemo.parameters.items()):
             button = QtGui.QPushButton(key, self.controlPanel)
             self.figureNo[value[0]] = key
             self.buttons[key] = button
-        keys = self.figureNo.keys()
+        keys = list(self.figureNo.keys())
         keys.sort()
         length = len(keys)
         rows = int(numpy.rint(numpy.sqrt(length)))

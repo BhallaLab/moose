@@ -13,6 +13,9 @@ import matplotlib.image as mpimg
 import pylab
 import numpy
 import sys
+import os
+
+scriptDir = os.path.dirname( os.path.realpath( __file__ ) )
 
 def main():
         """
@@ -34,37 +37,39 @@ def main():
         'turn off'
         by setting the system calcium levels to zero for a while. This
         is a somewhat unphysiological manipulation!
+
         """
+
         solver = "gsl"  # Pick any of gsl, gssa, ee..
         #solver = "gssa"  # Pick any of gsl, gssa, ee..
-	mfile = '../../genesis/acc35.g'
-	runtime = 2000.0
-	if ( len( sys.argv ) == 2 ):
-                solver = sys.argv[1]
-	modelId = moose.loadModel( mfile, 'model', solver )
+        mfile = os.path.join( scriptDir, '..', '..', 'genesis' , 'acc35.g' )
+        runtime = 2000.0
+        if ( len( sys.argv ) == 2 ):
+            solver = sys.argv[1]
+        modelId = moose.loadModel( mfile, 'model', solver )
         # Increase volume so that the stochastic solver gssa 
         # gives an interesting output
         compt = moose.element( '/model/kinetics' )
         compt.volume = 5e-19 
 
-	moose.reinit()
-	moose.start( 500 ) 
+        moose.reinit()
+        moose.start( 500 ) 
         moose.element( '/model/kinetics/PDGFR/PDGF' ).concInit = 0.0001
-	moose.start( 400 ) 
+        moose.start( 400 ) 
         moose.element( '/model/kinetics/PDGFR/PDGF' ).concInit = 0.0
-	moose.start( 2000 ) 
+        moose.start( 2000 ) 
         moose.element( '/model/kinetics/Ca' ).concInit = 0.0
-	moose.start( 500 ) 
+        moose.start( 500 ) 
         moose.element( '/model/kinetics/Ca' ).concInit = 0.00008
-	moose.start( 2000 ) 
+        moose.start( 2000 ) 
 
-	# Display all plots.
+        # Display all plots.
         img = mpimg.imread( 'mapkFB.png' )
         fig = plt.figure( figsize=(12, 10 ) )
         png = fig.add_subplot( 211 )
         imgplot = plt.imshow( img )
         ax = fig.add_subplot( 212 )
-	x = moose.wildcardFind( '/model/#graphs/conc#/#' )
+        x = moose.wildcardFind( '/model/#graphs/conc#/#' )
         t = numpy.arange( 0, x[0].vector.size, 1 ) * x[0].dt
         ax.plot( t, x[0].vector, 'b-', label=x[0].name )
         ax.plot( t, x[1].vector, 'c-', label=x[1].name )
@@ -77,4 +82,4 @@ def main():
 
 # Run the 'main' if this script is executed standalone.
 if __name__ == '__main__':
-	main()
+        main()

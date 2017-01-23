@@ -28,7 +28,7 @@
 # 
 
 # Code:
-from __future__ import print_function
+
 
 import os
 os.environ['NUMPTHREADS'] = '1'
@@ -335,11 +335,11 @@ def compare_cell_dump(left, right, rtol=1e-3, atol=1e-8, row_header=True, col_he
     right_end = False
     while True:
         try:
-            left_row = left_reader.next()
+            left_row = next(left_reader)
         except StopIteration:
             left_end = True
         try:
-            right_row = right_reader.next()
+            right_row = next(right_reader)
         except StopIteration:
             right_end = True
         if left_end and not right_end:
@@ -359,11 +359,11 @@ def compare_cell_dump(left, right, rtol=1e-3, atol=1e-8, row_header=True, col_he
                 left = float(left_row[key])
                 right = float(right_row[key])
                 if not np.allclose(float(left), float(right), rtol=rtol, atol=atol):
-                    print( 'Mismatch in row:%s, column:%s. Values: %g <> %g' % (index, key, left, right))
+                    print(('Mismatch in row:%s, column:%s. Values: %g <> %g' % (index, key, left, right)))
                     ret = False
-            except ValueError, e:
-                print( e)
-                print( 'Row:', index, 'Key:', key, left_row[key], right_row[key])
+            except ValueError as e:
+                print(e)
+                print(('Row:', index, 'Key:', key, left_row[key], right_row[key]))
         index = index + 1
     return ret
 

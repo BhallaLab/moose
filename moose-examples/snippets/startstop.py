@@ -77,11 +77,11 @@ def main():
     moose.setClock( table.tick, dt )
     moose.reinit()
     clock = moose.element('/clock')
-    print dt
-    print 'dt = ', dt, ', Total simulation time = ', simtime
-    print 'Running simulation for', simtime, 'seconds'
+    print(dt)
+    print(('dt = ', dt, ', Total simulation time = ', simtime))
+    print(('Running simulation for', simtime, 'seconds'))
     moose.start( simtime )
-    print 'Simulator time:', clock.currentTime
+    print(('Simulator time:', clock.currentTime))
     # Here we change the pulse delay and then run again.
     pulse.delay[0] = 1.0
     moose.start( simtime )
@@ -93,13 +93,13 @@ def main():
 
     # Here is yet another way to change clocks used by the table
     moose.useClock( 9, '/model/pulse/tab', 'process' )
-    print table.tick
+    print((table.tick))
     moose.setClock( 9, dt / 2.0 )
     moose.start( simtime )
 
     # Finally, here we change the pulse delay to 1 second and run again.
 
-    print 'Simulator time at end of simulation', clock.currentTime
+    print(('Simulator time at end of simulation', clock.currentTime))
     pylab.plot(pylab.linspace(0, clock.currentTime, len(table.vector)), table.vector)    
     pylab.show()
 

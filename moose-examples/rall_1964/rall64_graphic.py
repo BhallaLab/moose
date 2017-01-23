@@ -133,7 +133,7 @@ ax_data.set_xlim(0, simtime/tau)
 ax_data.set_ylim(0, 0.15)
 ax_data.set_xlabel('Time (t/tau)')
 ax_data.set_ylabel('Membrane voltage  (Vm - Em)/(Ek - Vm)')
-print lines
+print(lines)
 plt.legend()
 schedule()
 fanim = anim.FuncAnimation(fig, update, fargs=None, interval=25, repeat=False)

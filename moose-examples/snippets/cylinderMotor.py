@@ -30,36 +30,36 @@ import signal
 PID = os.getpid()
 
 def doNothing( *args ):
-		pass
+                pass
 
 signal.signal( signal.SIGUSR1, doNothing )
 
 def makeModel():
-		# create container for model
-		r0 = 1e-6	# m
-		r1 = 1e-6	# m
-		num = 25
-		diffLength = 1e-6 # m
-		len = num * diffLength	# m
-		diffConst = 1e-12 # m^2/sec
-		motorConst = 1e-6 # m/sec
-		concA = 1 # millimolar
+                # create container for model
+                r0 = 1e-6        # m
+                r1 = 1e-6        # m
+                num = 25
+                diffLength = 1e-6 # m
+                len = num * diffLength        # m
+                diffConst = 1e-12 # m^2/sec
+                motorConst = 1e-6 # m/sec
+                concA = 1 # millimolar
 
-		model = moose.Neutral( 'model' )
-		compartment = moose.CylMesh( '/model/compartment' )
-		compartment.r0 = r0
-		compartment.r1 = r1
-		compartment.x0 = 0
-		compartment.x1 = len
-		compartment.diffLength = diffLength
-		
-		assert( compartment.numDiffCompts == num )
+                model = moose.Neutral( 'model' )
+                compartment = moose.CylMesh( '/model/compartment' )
+                compartment.r0 = r0
+                compartment.r1 = r1
+                compartment.x0 = 0
+                compartment.x1 = len
+                compartment.diffLength = diffLength
+                
+                assert( compartment.numDiffCompts == num )
 
-		# create molecules and reactions
-		a = moose.Pool( '/model/compartment/a' )
-		b = moose.Pool( '/model/compartment/b' )
-		c = moose.Pool( '/model/compartment/c' )
-		d = moose.Pool( '/model/compartment/d' )
+                # create molecules and reactions
+                a = moose.Pool( '/model/compartment/a' )
+                b = moose.Pool( '/model/compartment/b' )
+                c = moose.Pool( '/model/compartment/c' )
+                d = moose.Pool( '/model/compartment/d' )
                 """
                 r1 = moose.Reac( '/model/compartment/r1' )
                 moose.connect( r1, 'sub', b, 'reac' )
@@ -69,39 +69,39 @@ def makeModel():
                 r1.Kb = 0.01 # 1/sec
                 """
 
-		# Assign parameters
-		a.diffConst = 0.0;
-		b.diffConst = 0.0;
-		#b.motorRate = motorRate
-		c.diffConst = 0.0;
-		d.diffConst = 0.0;
-		#d.diffConst = diffConst;
-		os.kill( PID, signal.SIGUSR1 )
+                # Assign parameters
+                a.diffConst = 0.0;
+                b.diffConst = 0.0;
+                #b.motorRate = motorRate
+                c.diffConst = 0.0;
+                d.diffConst = 0.0;
+                #d.diffConst = diffConst;
+                os.kill( PID, signal.SIGUSR1 )
                 a.motorConst = motorConst
                 b.motorConst = motorConst
                 c.motorConst = -motorConst
                 d.motorConst = -motorConst
 
 
-		# Make solvers
-		ksolve = moose.Ksolve( '/model/compartment/ksolve' )
-		dsolve = moose.Dsolve( '/model/compartment/dsolve' )
-		stoich = moose.Stoich( '/model/compartment/stoich' )
-		stoich.compartment = compartment
-		stoich.ksolve = ksolve
-		stoich.dsolve = dsolve
-		stoich.path = "/model/compartment/##"
+                # Make solvers
+                ksolve = moose.Ksolve( '/model/compartment/ksolve' )
+                dsolve = moose.Dsolve( '/model/compartment/dsolve' )
+                stoich = moose.Stoich( '/model/compartment/stoich' )
+                stoich.compartment = compartment
+                stoich.ksolve = ksolve
+                stoich.dsolve = dsolve
+                stoich.path = "/model/compartment/##"
                 assert( dsolve.numPools == 4 )
-		a.vec[0].concInit = concA * 1
-		b.vec[num-1].concInit = concA * 2
-		c.vec[0].concInit = concA * 3
-		d.vec[num-1].concInit = concA * 4
+                a.vec[0].concInit = concA * 1
+                b.vec[num-1].concInit = concA * 2
+                c.vec[0].concInit = concA * 3
+                d.vec[num-1].concInit = concA * 4
 
 def displayPlots():
-		a = moose.element( '/model/compartment/a' )
-		b = moose.element( '/model/compartment/b' )
-		c = moose.element( '/model/compartment/c' )
-		d = moose.element( '/model/compartment/d' )
+                a = moose.element( '/model/compartment/a' )
+                b = moose.element( '/model/compartment/b' )
+                c = moose.element( '/model/compartment/c' )
+                d = moose.element( '/model/compartment/d' )
                 pos = numpy.arange( 0, a.vec.conc.size, 1 )
                 pylab.plot( pos, a.vec.conc, label='a' )
                 pylab.plot( pos, b.vec.conc, label='b' )
@@ -111,44 +111,44 @@ def displayPlots():
                 pylab.show()
 
 def main():
-		dt4 = 0.01
-		dt5 = 0.01
+                dt4 = 0.01
+                dt5 = 0.01
                 runtime = 10.0 # seconds
                 # Set up clocks. The dsolver to know before assigning stoich
-		moose.setClock( 4, dt4 )
-		moose.setClock( 5, dt5 )
+                moose.setClock( 4, dt4 )
+                moose.setClock( 5, dt5 )
 
-		makeModel()
-		moose.useClock( 4, '/model/compartment/dsolve', 'process' )
+                makeModel()
+                moose.useClock( 4, '/model/compartment/dsolve', 'process' )
                 # Ksolve must be scheduled after dsolve.
-		moose.useClock( 5, '/model/compartment/ksolve', 'process' )
+                moose.useClock( 5, '/model/compartment/ksolve', 'process' )
 
-		moose.reinit()
-		moose.start( runtime ) # Run the model
+                moose.reinit()
+                moose.start( runtime ) # Run the model
 
-		a = moose.element( '/model/compartment/a' )
-		b = moose.element( '/model/compartment/b' )
-		c = moose.element( '/model/compartment/c' )
-		d = moose.element( '/model/compartment/d' )
+                a = moose.element( '/model/compartment/a' )
+                b = moose.element( '/model/compartment/b' )
+                c = moose.element( '/model/compartment/c' )
+                d = moose.element( '/model/compartment/d' )
 
                 atot = sum( a.vec.conc )
                 btot = sum( b.vec.conc )
                 ctot = sum( c.vec.conc )
                 dtot = sum( d.vec.conc )
 
-                print 'tot = ', atot, btot, ctot, dtot, ' (b+c)=', btot+ctot
+                print(('tot = ', atot, btot, ctot, dtot, ' (b+c)=', btot+ctot))
                 displayPlots()
-		moose.start( runtime ) # Run the model
+                moose.start( runtime ) # Run the model
                 atot = sum( a.vec.conc )
                 btot = sum( b.vec.conc )
                 ctot = sum( c.vec.conc )
                 dtot = sum( d.vec.conc )
 
-                print 'tot = ', atot, btot, ctot, dtot, ' (b+c)=', btot+ctot
+                print(('tot = ', atot, btot, ctot, dtot, ' (b+c)=', btot+ctot))
 
-		quit()
+                quit()
 
 
 # Run the 'main' if this script is executed standalone.
 if __name__ == '__main__':
-	main()
+        main()

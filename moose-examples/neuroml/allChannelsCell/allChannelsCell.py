@@ -32,9 +32,9 @@ def loadGran98NeuroML_L123(filename):
     somaIKCa = setupTable('somaIKCa',moose.HHChannel(soma_path+'/Gran_KCa_98'),'Gk')
     #KDrX = setupTable('ChanX',moose.HHChannel(soma_path+'/Gran_KDr_98'),'X')
     soma = moose.Compartment(soma_path)
-    print "Reinit MOOSE ... "
+    print("Reinit MOOSE ... ")
     resetSim(['/elec','/cells'],simdt,plotdt) # from moose.utils
-    print "Running ... "
+    print("Running ... ")
     moose.start(runtime)
     tvec = arange(0.0,runtime,simdt)
     plot(tvec,somaVm.vector[1:])
@@ -56,7 +56,7 @@ def loadGran98NeuroML_L123(filename):
     title('KC current (A)')
     xlabel('time (s)')
     ylabel('')
-    print "Showing plots ..."
+    print("Showing plots ...")
     show()
 
 filename = "allChannelsCell.net.xml"

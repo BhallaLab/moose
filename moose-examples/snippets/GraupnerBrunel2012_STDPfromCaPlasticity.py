@@ -208,7 +208,7 @@ t_extent = 100e-3       # s  # STDP kernel extent,
                         # t_extent > t_between_pairs/2 inverts pre-post pairing!
 # dt = tpost - tpre
 # negative dt corresponds to post before pre
-print '-----------------------------------------------'
+print('-----------------------------------------------')
 for deltat in arange(t_extent,0.0,-ddt):
     reset_settle()
     for i in range(numpairs):
@@ -220,9 +220,9 @@ for deltat in arange(t_extent,0.0,-ddt):
         moose.start(t_between_pairs)  # weight changes after pre-spike+delayD
                                       # must run for at least delayD after pre-spike
     dw = ( syn.synapse[0].weight - weight ) / weight
-    print 'post before pre, dt = %1.3f s, dw/w = %1.3f'%(-deltat,dw)
+    print(('post before pre, dt = %1.3f s, dw/w = %1.3f'%(-deltat,dw)))
     dwlist_neg.append(dw)
-print '-----------------------------------------------'
+print('-----------------------------------------------')
 # positive dt corresponds to pre before post
 dwlist_pos = []
 for deltat in arange(ddt,t_extent+ddt,ddt):
@@ -235,24 +235,24 @@ for deltat in arange(ddt,t_extent+ddt,ddt):
         make_neuron_spike(1)
         moose.start(t_between_pairs)
     dw = ( syn.synapse[0].weight - weight ) / weight
-    print 'pre before post, dt = %1.3f s, dw/w = %1.3f'%(deltat,dw)
+    print(('pre before post, dt = %1.3f s, dw/w = %1.3f'%(deltat,dw)))
     dwlist_pos.append(dw)
-print '-----------------------------------------------'
-print 'Each of the above pre-post pairs was repeated',\
-        numpairs,'times, with',t_between_pairs,'s between pairs.'
-print 
-print 'Due to event based updates, Ca decays suddenly at events:'
-print 'pre-spike, pre-spike + delayD, and post-spike;'
-print 'apart from the usual CaPre and CaPost jumps at'
-print 'pre-spike + delayD and post-spike respectively.'
-print 'Because of the event based update, multiple pre-post pairs are used.'
-print 
-print 'If you reduce the t_between_pairs,'
-print ' you\'ll see potentiation for the LTD part without using any triplet rule!'
-print
-print "If you turn on noise, the weights fluctuate too much,"
-print " not sure if there's a bug in my noise implementation."
-print '-----------------------------------------------'
+print('-----------------------------------------------')
+print(('Each of the above pre-post pairs was repeated',\
+        numpairs,'times, with',t_between_pairs,'s between pairs.'))
+print() 
+print('Due to event based updates, Ca decays suddenly at events:')
+print('pre-spike, pre-spike + delayD, and post-spike;')
+print('apart from the usual CaPre and CaPost jumps at')
+print('pre-spike + delayD and post-spike respectively.')
+print('Because of the event based update, multiple pre-post pairs are used.')
+print() 
+print('If you reduce the t_between_pairs,')
+print(' you\'ll see potentiation for the LTD part without using any triplet rule!')
+print()
+print("If you turn on noise, the weights fluctuate too much,")
+print(" not sure if there's a bug in my noise implementation.")
+print('-----------------------------------------------')
 
 # ###########################################
 # Plot the simulated Vm-s and STDP curve

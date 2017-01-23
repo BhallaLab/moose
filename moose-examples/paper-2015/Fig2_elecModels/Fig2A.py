@@ -224,15 +224,15 @@ class ExcInhNetBase:
         t1 = time.time()
         print('reinit MOOSE -- takes a while ~20s.')
         moose.reinit()
-        print('reinit time t = ', time.time() - t1)
+        print(('reinit time t = ', time.time() - t1))
         t1 = time.time()
         print('starting')
         simadvance = self.simtime / 50.0
         for i in range( 50 ):
             moose.start( simadvance )
-            print('at t = ', i * simadvance, 'realtime = ', time.time() - t1)
+            print(('at t = ', i * simadvance, 'realtime = ', time.time() - t1))
         #moose.start(self.simtime)
-        print('runtime for ', self.simtime, 'sec, is t = ', time.time() - t1)
+        print(('runtime for ', self.simtime, 'sec, is t = ', time.time() - t1))
 
         if plotif:
             self._plot()

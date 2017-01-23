@@ -16,7 +16,7 @@ injectI = 2.5e-12 # Amperes
 
 ## moose imports
 import moose
-print( '[DBEUG] Using moose from %s' % moose.__file__ )
+print(( '[DBEUG] Using moose from %s' % moose.__file__ ))
 
 from moose.neuroml import *
 from moose.utils import * # has setupTable(), resetSim() etc
@@ -59,7 +59,7 @@ if __name__ == '__main__':
     moose.connect(spikeGen,'event',IF1spikesTable,'input')
 
     run_LIF()
-    print("Spiketimes :",IF1spikesTable.vector)
+    print(("Spiketimes :",IF1spikesTable.vector))
     ## plot the membrane potential of the neuron
     timevec = arange(0.0,RUNTIME+PLOTDT/2.0,PLOTDT)
     figure(facecolor='w')

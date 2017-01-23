@@ -71,7 +71,7 @@ t1 = time.time()
 for t in range( 0, runtime-1, updateDt ):
     moose.start( updateDt )
     plt = pylab.plot( x, c.vec.n, label='t = '+str(t + updateDt) )
-print "Time = ", time.time() - t1
+print(("Time = ", time.time() - t1))
 
 pylab.ylim( 0, 1.05 )
 pylab.legend()

@@ -15,14 +15,14 @@ import numpy
 import moose
 
 def makeModel():
-		# create container for model
-		model = moose.Neutral( 'model' )
-		compt0 = moose.CubeMesh( '/model/compt0' )
-		compt0.volume = 1e-18
-		compt1 = moose.CubeMesh( '/model/compt1' )
-		compt1.volume = 1e-19
-		compt2 = moose.CubeMesh( '/model/compt2' )
-		compt2.volume = 1e-20
+                # create container for model
+                model = moose.Neutral( 'model' )
+                compt0 = moose.CubeMesh( '/model/compt0' )
+                compt0.volume = 1e-18
+                compt1 = moose.CubeMesh( '/model/compt1' )
+                compt1.volume = 1e-19
+                compt2 = moose.CubeMesh( '/model/compt2' )
+                compt2.volume = 1e-20
 
                 # Position containers so that they abut each other, with
                 # compt1 in the middle.
@@ -31,40 +31,40 @@ def makeModel():
                 compt0.y0 += side
                 compt2.x1 += side
                 compt2.x0 += side
-                print('Volumes = ', compt0.volume, compt1.volume, compt2.volume)
+                print(('Volumes = ', compt0.volume, compt1.volume, compt2.volume))
 
-		# create molecules and reactions
-		a = moose.Pool( '/model/compt0/a' )
-		b = moose.Pool( '/model/compt1/b' )
-		c = moose.Pool( '/model/compt2/c' )
-		reac0 = moose.Reac( '/model/compt1/reac0' )
-		reac1 = moose.Reac( '/model/compt1/reac1' )
+                # create molecules and reactions
+                a = moose.Pool( '/model/compt0/a' )
+                b = moose.Pool( '/model/compt1/b' )
+                c = moose.Pool( '/model/compt2/c' )
+                reac0 = moose.Reac( '/model/compt1/reac0' )
+                reac1 = moose.Reac( '/model/compt1/reac1' )
 
-		# connect them up for reactions
-		moose.connect( reac0, 'sub', a, 'reac' )
-		moose.connect( reac0, 'prd', b, 'reac' )
-		moose.connect( reac1, 'sub', b, 'reac' )
-		moose.connect( reac1, 'prd', c, 'reac' )
+                # connect them up for reactions
+                moose.connect( reac0, 'sub', a, 'reac' )
+                moose.connect( reac0, 'prd', b, 'reac' )
+                moose.connect( reac1, 'sub', b, 'reac' )
+                moose.connect( reac1, 'prd', c, 'reac' )
 
-		# Assign parameters
-		a.concInit = 1
-		b.concInit = 12.1
-		c.concInit = 1
-		reac0.Kf = 0.1
-		reac0.Kb = 0.1
-		reac1.Kf = 0.1
-		reac1.Kb = 0.1
+                # Assign parameters
+                a.concInit = 1
+                b.concInit = 12.1
+                c.concInit = 1
+                reac0.Kf = 0.1
+                reac0.Kb = 0.1
+                reac1.Kf = 0.1
+                reac1.Kb = 0.1
 
-		# Create the output tables
-		graphs = moose.Neutral( '/model/graphs' )
-		outputA = moose.Table2 ( '/model/graphs/concA' )
-		outputB = moose.Table2 ( '/model/graphs/concB' )
-		outputC = moose.Table2 ( '/model/graphs/concC' )
+                # Create the output tables
+                graphs = moose.Neutral( '/model/graphs' )
+                outputA = moose.Table2 ( '/model/graphs/concA' )
+                outputB = moose.Table2 ( '/model/graphs/concB' )
+                outputC = moose.Table2 ( '/model/graphs/concC' )
 
-		# connect up the tables
-		moose.connect( outputA, 'requestOut', a, 'getConc' );
-		moose.connect( outputB, 'requestOut', b, 'getConc' );
-		moose.connect( outputC, 'requestOut', c, 'getConc' );
+                # connect up the tables
+                moose.connect( outputA, 'requestOut', a, 'getConc' );
+                moose.connect( outputB, 'requestOut', b, 'getConc' );
+                moose.connect( outputC, 'requestOut', c, 'getConc' );
 
                 # Build the solvers. No need for diffusion in this version.
                 ksolve0 = moose.Gsolve( '/model/compt0/ksolve0' )
@@ -138,7 +138,7 @@ def main():
     moose.start( runtime ) # Run the model for 100 seconds.
     print("All concs should converge to 2.0 even though vols differ:")
     for x in moose.wildcardFind( '/model/compt#/#[ISA=PoolBase]' ):
-        print(x.name, x.conc)
+        print((x.name, x.conc))
 
     # Iterate through all plots, dump their contents to data.plot.
     for x in moose.wildcardFind( '/model/graphs/conc#' ):
@@ -150,4 +150,4 @@ def main():
 
 # Run the 'main' if this script is executed standalone.
 if __name__ == '__main__':
-	main()
+        main()

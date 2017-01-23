@@ -57,11 +57,11 @@ def makeModel():
     The concentrations of all molecules are displayed in an animation.
     """
     # create container for model
-    r0 = 2e-6	# m
-    r1 = 1e-6	# m
+    r0 = 2e-6        # m
+    r1 = 1e-6        # m
     num = 100
     diffLength = 1e-6 # m
-    len = num * diffLength	# m
+    len = num * diffLength        # m
     diffConst = 10e-12 # m^2/sec
     motorRate = 10e-6 # m/sec
     concA = 1 # millimolar
@@ -106,7 +106,7 @@ def makeModel():
     os.kill( PID, signal.SIGUSR1 )
     stoich.path = "/model/compartment/##"
 
-    print dsolve.numPools
+    print((dsolve.numPools))
     assert( dsolve.numPools == 3 )
     a.vec[0].concInit = concA
     b.vec[0].concInit = concA
@@ -180,15 +180,15 @@ def main():
     ctot2 = sum( c.vec.n )
     dtot2 = sum( d.vec.n )
 
-    print 'Ratio of initial to final total numbers of of a, b, c, d = '
-    print atot2/atot, btot2/btot, ctot2/ctot, dtot2/dtot
-    print 'Initial to final (b+c)=', (btot2 + ctot2) / (btot + ctot )
-    print "\nHit 'enter' to exit"
-    raw_input()
+    print('Ratio of initial to final total numbers of of a, b, c, d = ')
+    print((atot2/atot, btot2/btot, ctot2/ctot, dtot2/dtot))
+    print(('Initial to final (b+c)=', (btot2 + ctot2) / (btot + ctot )))
+    print("\nHit 'enter' to exit")
+    eval(input())
 
     quit()
 
 
 # Run the 'main' if this script is executed standalone.
 if __name__ == '__main__':
-	main()
+        main()

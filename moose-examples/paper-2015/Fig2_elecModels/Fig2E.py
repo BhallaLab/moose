@@ -59,7 +59,7 @@ def create_vm_viewer(rdes, somaVm):
                                                                   0.9)])
     mapper = moogli.utilities.mapper(colormap, normalizer)
 
-    vms = [moose.element(x).Vm for x in network.shapes.keys()]
+    vms = [moose.element(x).Vm for x in list(network.shapes.keys())]
     network.set("color", vms, mapper)
 
     def prelude(view):
@@ -67,7 +67,7 @@ def create_vm_viewer(rdes, somaVm):
 
     def interlude(view):
         moose.start(frameRunTime)
-        vms = [moose.element(x).Vm for x in network.shapes.keys()]
+        vms = [moose.element(x).Vm for x in list(network.shapes.keys())]
         network.set("color", vms, mapper)
         view.yaw(0.01)
         currTime = moose.element('/clock').currentTime
@@ -84,7 +84,7 @@ def create_vm_viewer(rdes, somaVm):
         pylab.show()
 
     viewer = moogli.Viewer("vm-viewer")
-    viewer.attach_shapes(network.shapes.values())
+    viewer.attach_shapes(list(network.shapes.values()))
     view = moogli.View("vm-view",
                        prelude=prelude,
                        interlude=interlude,
@@ -114,7 +114,7 @@ def main():
     compts = moose.wildcardFind( "/model/elec/#[ISA=CompartmentBase]" )
     compts[0].inject = inject
 
-    print "Setting Up 3D Display"
+    print("Setting Up 3D Display")
     app = QtGui.QApplication(sys.argv)
     vm_viewer = create_vm_viewer(rdes, somaVm)
     vm_viewer.show()

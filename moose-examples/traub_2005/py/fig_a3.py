@@ -105,7 +105,7 @@ def main():
                    np.vstack((t, inject, vm)).transpose())
         msg = 'Saved data for %g A current pulse in %s' % (a, fname)
         config.logger.info(msg)
-        print( msg)
+        print(msg)
         pylab.subplot(3,1,ii+1)
         pylab.title('%g nA' % (a*1e9))
         pylab.plot(t, vm, label='soma-Vm (mV)')

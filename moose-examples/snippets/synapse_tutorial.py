@@ -108,7 +108,7 @@ net.vec.Vm = [thresh / 2.0] * size
 
 
 
-print net.vec[1].Vm
+print((net.vec[1].Vm))
 
 
 
@@ -116,7 +116,7 @@ print net.vec[1].Vm
 
 
 
-print len(synh.synapse)
+print((len(synh.synapse)))
 
 
 
@@ -125,12 +125,12 @@ print len(synh.synapse)
 
 
 synh.numSynapses = 3
-print len(synh.synapse)
+print((len(synh.synapse)))
 
 
 
 synh.synapse.num = 4
-print len(synh.synapse)
+print((len(synh.synapse)))
 
 
 
@@ -138,9 +138,9 @@ print len(synh.synapse)
 
 
 
-print 'Before:', synh.synapse[0].delay
+print(('Before:', synh.synapse[0].delay))
 synh.synapse[0].delay = 1.0
-print 'After:', synh.synapse[0].delay
+print(('After:', synh.synapse[0].delay))
 
 
 
@@ -149,7 +149,7 @@ print 'After:', synh.synapse[0].delay
 
 
 synh.synapse.weight = [0.2] * len(synh.synapse)
-print synh.synapse.weight
+print((synh.synapse.weight))
 
 
 
@@ -177,8 +177,8 @@ for syn in synh.vec:
 
 
 for syn in synh.vec[:5]:
-    print 'Delays for synapses on ', syn.path, ':', syn.synapse.delay
-    print 'Weights for synapses on ', syn.path, ':', syn.synapse.weight
+    print(('Delays for synapses on ', syn.path, ':', syn.synapse.delay))
+    print(('Weights for synapses on ', syn.path, ':', syn.synapse.weight))
 
 
 

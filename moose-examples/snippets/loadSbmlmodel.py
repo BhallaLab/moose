@@ -35,22 +35,22 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
 # 
+import sys
+import os.path
+
+import numpy as np
+import pylab
 
 import moose
-import matplotlib
-import numpy as np
-import matplotlib.pyplot as plt
-import sys
-import pylab
 from moose.SBML import *
-import os.path
+from moose.chemUtil.add_Delete_ChemicalSolver import *
 
 def main():
     """ This example illustrates loading, running of an SBML model defined in XML format.\n
-	The model 00001-sbml-l3v1.xml is taken from l3v1 SBML testcase.\n
-	Plots are setup.\n
-	Model is run for 20sec.\n
-	As a general rule we created model under '/path/model' and plots under '/path/graphs'.\n
+        The model 00001-sbml-l3v1.xml is taken from l3v1 SBML testcase.\n
+        Plots are setup.\n
+        Model is run for 20sec.\n
+        As a general rule we created model under '/path/model' and plots under '/path/graphs'.\n
     """
 
     mfile = "../genesis/00001-sbml-l3v1.xml"
@@ -67,11 +67,14 @@ def main():
         runtime = 20.0
     else:
         runtime = float(sys.argv[2])
+        
+    # Loading the sbml file into MOOSE, models are loaded in path/model
+    sbmlId = moose.SBML.readSBML.mooseReadSBML(mfile,'sbml')
     
     # Loading the sbml file into MOOSE, models are loaded in path/model
     sbmlId = mooseReadSBML(mfile,'/sbml')
     if isinstance(sbmlId, (list, tuple)):
-	    print sbmlId
+            print(sbmlId)
     elif sbmlId.path != '/':
     
         s1 = moose.element('/sbml/model/compartment/S1')
@@ -86,7 +89,9 @@ def main():
         moose.connect( outputs1,'requestOut', s1, 'getConc' );
         moose.connect( outputs2,'requestOut', s2, 'getConc' );
 
-            
+        # gsl solver is added, default is ee
+        mooseaddChemSolver(sbmlId.path,"ee")
+        
         # Reset and Run
         moose.reinit()
         moose.start(runtime)
@@ -97,7 +102,7 @@ def displayPlots():
     # Display all plots.
     for x in moose.wildcardFind( '/sbml/graphs/#[TYPE=Table2]' ):
         t = np.arange( 0, x.vector.size, 1 ) #sec
-        plt.plot( t, x.vector, label=x.name )
+        pylab.plot( t, x.vector, label=x.name )
     
     pylab.legend()
     pylab.show()

@@ -26,8 +26,8 @@ filename = os.path.join( os.path.split(os.path.realpath(__file__))[0]
 popdict, projdict = moose.neuroml.loadNeuroML_L123(filename)
 
 # setting up hsolve object for each neuron
-for popinfo in popdict.values():
-    for cell in popinfo[1].values():
+for popinfo in list(popdict.values()):
+    for cell in list(popinfo[1].values()):
         solver = moose.HSolve(cell.path + "/hsolve")
         solver.target = cell.path
 
@@ -37,9 +37,7 @@ moose.reinit()
 SIMULATION_DELTA = 0.001
 SIMULATION_TIME  = 0.03
 
-ALL_COMPARTMENTS = map( lambda x : x.path
-                      , moose.wildcardFind("/cells[0]/##[ISA=CompartmentBase]")
-                      )
+ALL_COMPARTMENTS = [x.path for x in moose.wildcardFind("/cells[0]/##[ISA=CompartmentBase]")]
 BASE_VM_VALUE = -0.065
 PEAK_VM_VALUE = -0.060
 BASE_VM_COLOR = [1.0, 0.0, 0.0, 0.1]
@@ -69,9 +67,7 @@ morphology.create_group( "group-all"    # group name
 
 # set initial color of all compartments in accordance with their vm
 morphology.set_color( "group-all"
-                    , map( lambda x : moose.element(x).Vm
-                         , ALL_COMPARTMENTS
-                         )
+                    , [moose.element(x).Vm for x in ALL_COMPARTMENTS]
                     )
 
 # instantiate the visualizer with the morphology object created earlier
@@ -90,9 +86,7 @@ def callback(morphology, viewer):
     # a value higher than peak value will be clamped to peak value
     # a value lower than base value will be clamped to base value.
     morphology.set_color( "group-all"
-                        , map( lambda x : x.Vm
-                            , moose.wildcardFind("/cells[0]/##[ISA=CompartmentBase]")
-                            )
+                        , [x.Vm for x in moose.wildcardFind("/cells[0]/##[ISA=CompartmentBase]")]
                         )
     # if the callback returns true, it will be called again.
     # if it returns false it will not be called ever again.
