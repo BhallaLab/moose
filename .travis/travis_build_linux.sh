@@ -31,7 +31,7 @@ PYTHON3="/usr/bin/python3"
 (
     # Old makefile based flow.
     python2 -m compileall -q .
-    if type python3 -c 'import sys' > /dev/null; then python3 -m compileall -q . ; fi
+    if type $PYTHON3 > /dev/null; then python3 -m compileall -q . ; fi
     # Traditional make.
     make 
     ## CMAKE based flow
@@ -46,7 +46,7 @@ PYTHON3="/usr/bin/python3"
 
     # This is only applicable on linux build.
     echo "Python3 support. Removed python2-networkx and install python3" 
-    if type $PYTHON3 -c 'import os' > /dev/null; then 
+    if type $PYTHON3 > /dev/null; then 
         sudo apt-get remove -qq python-networkx 
         sudo apt-get install -qq python3-networkx
         mkdir -p _GSL_BUILD2 && cd _GSL_BUILD2 && \

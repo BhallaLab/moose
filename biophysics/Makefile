@@ -38,7 +38,10 @@ OBJ = \
 	NMDAChan.o	\
 	testBiophysics.o	\
 	IzhikevichNrn.o	\
+	DifShellBase.o \
 	DifShell.o	\
+	DifBufferBase.o	\
+	DifBuffer.o	\
 	Leakage.o	\
 	VectorTable.o	\
 	MarkovRateTable.o	\
@@ -50,6 +53,7 @@ OBJ = \
 	VClamp.o	\
 
 
+	# MMpump.o  \
 	# LeakyIaF.o	\
 	# GapJunction.o	\
 	# Nernst.o	\
@@ -94,7 +98,11 @@ ReadCell.o: CompartmentBase.h Compartment.h SymCompartment.h ReadCell.h ../shell
 SwcSegment.o: SwcSegment.h ../utility/Vec.h
 ReadSwc.o: CompartmentBase.h Compartment.h SymCompartment.h SwcSegment.h ReadSwc.h ../shell/Shell.h ../utility/Vec.h
 IzhikevichNrn.o: IzhikevichNrn.h
-DifShell.o: DifShell.h
+DifShellBase.o: DifShellBase.h
+DifShell.o: DifShellBase.h DifShell.h 
+DifBufferBase.o: DifBufferBase.h
+DifBuffer.o:  DifBufferBase.h DifBuffer.h
+MMPump.o: MMPump.h
 testBiophysics.o: IntFire.h CompartmentBase.h Compartment.h HHChannel.h HHGate.h 
 VectorTable.o : VectorTable.h
 MarkovGslSolver.o : MarkovGslSolver.h 

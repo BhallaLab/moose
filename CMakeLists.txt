@@ -219,6 +219,7 @@ if(HDF5_FOUND)
             )
         set(HDF5_LIBRARIES ${HDF5_CXX_LIBRARIES} ${HDF5_HL_LIBRARIES})
     endif()
+
     
     # Make sure, HDF5_HL_LIBRARIES are set. The COMPONENTS in find_package may
     # or may not work. See BhallaLab/moose-core#163. 
