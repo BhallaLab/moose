@@ -38,12 +38,12 @@ class MorphologyEditor(moogli.MorphologyViewer):
         self._timer = QtCore.QTimer(self)
 
     def start(self):
-        self._timer.timeout.connect(self.next)
+        self._timer.timeout.connect(self.__next__)
         self._timer.start(0)
 
     @QtCore.pyqtSlot()
     def show(self):
-        self._timer.timeout.connect(self.next)
+        self._timer.timeout.connect(self.__next__)
         super(MorphologyEditor, self).show()
         self._timer.start(0)
 
@@ -52,7 +52,7 @@ class MorphologyEditor(moogli.MorphologyViewer):
         self._timer.stop()
         super(MorphologyEditor, self).hide()
 
-    def next(self):
+    def __next__(self):
         self.frame()
         info_id = self.select_info.get_id()
         info_event = self.select_info.get_event_type()
@@ -175,7 +175,7 @@ class MoogliViewer(QWidget):
         self.morphology          =  self.createMorphology(self.geometry)
 
         self.morphology.set_compartment_order(
-            map(lambda x : x.path, self.compartmentOrder)
+            [x.path for x in self.compartmentOrder]
                                            )
 
         self.vms = np.empty(len(self.compartmentOrder), dtype=np.float, order='C')

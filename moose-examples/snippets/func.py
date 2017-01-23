@@ -62,17 +62,17 @@ def test_func_nosim():
     for ii in range(num-1):
         expr += 'x_%d, ' % (ii)
     expr += 'x_%d)' % (num-1)
-    print 'Expression:', expr    
+    print(('Expression:', expr))    
     func_0.expr = expr
     for ii in range(num):
         var = 'x_%d' % (ii)
-        print 'Setting:', var, '=', func_0.var[var]
+        print(('Setting:', var, '=', func_0.var[var]))
         func_0.var[var] = float(ii)
-    print 'Expression:', func_0.expr
-    print 'Variables after assignment:'
+    print(('Expression:', func_0.expr))
+    print('Variables after assignment:')
     for v in func_0.vars:
-        print '  %s = %g' % (v, func_0.var[v])
-    print 'value %g\n' % (func_0.value)
+        print(('  %s = %g' % (v, func_0.var[v])))
+    print(('value %g\n' % (func_0.value)))
 
 def test_func():
     """This function creates a Func object evaluating a function of a
@@ -106,7 +106,7 @@ def test_func():
     input.startTime = 0.0
     input.stepPosition = xarr[0]
     input.stopTime = xarr[-1] - xarr[0]
-    print input.startTime, input.stopTime
+    print((input.startTime, input.stopTime))
     
     moose.connect(input, 'output', func_1, 'xIn')
 
@@ -129,7 +129,7 @@ def test_func():
     moose.useClock(3, '%s/##' % (data.path), 'process')
     moose.reinit()
     t = xarr[-1] - xarr[0]
-    print 'Run for', t
+    print(('Run for', t))
     moose.start(t)
     y = np.asarray(y_tab.vector)
     yp = np.asarray(yprime_tab.vector)

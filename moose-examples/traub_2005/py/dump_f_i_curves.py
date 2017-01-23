@@ -46,7 +46,7 @@
 # Code:
 
 """Do a series of current steps on each celltype"""
-from __future__ import print_function
+
 import numpy as np
 import h5py as h5
 from collections import defaultdict
@@ -94,15 +94,15 @@ def run_current_pulse(amps, delay=100e-3, dur=100e-3, trail=100e-3, outfile='f_i
     print('Finished simulation')
     # Save data
     fd = h5.File(outfile, 'w')    
-    for ii, tabs in ddict.items():
+    for ii, tabs in list(ddict.items()):
         for tab in tabs:
-            print('Table', tab.name)
+            print(('Table', tab.name))
             node = fd.create_dataset(tab.name, data=tab.vector)
             node.attrs['current'] = amps[ii]
             node.attrs['delay'] = delay
             node.attrs['width'] = dur
     fd.close()
-    print('Finished saving data in file', outfile)
+    print(('Finished saving data in file', outfile))
 
 
 if __name__ == '__main__':

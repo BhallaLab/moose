@@ -49,7 +49,7 @@ def create_vm_viewer(rdes):
                                                                   0.0,
                                                                   0.9)])
     mapper = moogli.utilities.mapper(colormap, normalizer)
-    vms = [moose.element(x).Vm for x in network.shapes.keys()]
+    vms = [moose.element(x).Vm for x in list(network.shapes.keys())]
     network.set("color", vms, mapper)
 
     def interlude(view):
@@ -62,7 +62,7 @@ def create_vm_viewer(rdes):
             view.stop()
 
     viewer = moogli.Viewer("vm-viewer")
-    viewer.attach_shapes(network.shapes.values())
+    viewer.attach_shapes(list(network.shapes.values()))
     view = moogli.View("vm-view",
                        interlude=interlude)
     viewer.attach_view(view)
@@ -93,7 +93,7 @@ def main():
     compts[0].inject = inject
 
     ################## Now we set up the display ########################
-    print "Setting Up 3D Display"
+    print("Setting Up 3D Display")
     app = QtGui.QApplication(sys.argv)
     vm_viewer = create_vm_viewer(rdes)
     vm_viewer.showMaximized()

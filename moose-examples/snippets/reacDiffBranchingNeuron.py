@@ -99,8 +99,8 @@ def makeDisplay():
         return ( timeSeries, fig, line, timeLabel, yp )
 
 def updateDisplay( plotlist ):
-	a = moose.vec( '/model/chem/compt0/a' )
-	b = moose.vec( '/model/chem/compt0/b' )
+        a = moose.vec( '/model/chem/compt0/a' )
+        b = moose.vec( '/model/chem/compt0/b' )
         plotlist[2].set_ydata( a.conc * 10 + plotlist[4]  )
 
         plotlist[1].canvas.draw()
@@ -113,7 +113,7 @@ def finalizeDisplay( plotlist, cPlotDt ):
     plt.legend()
     plotlist[1].canvas.draw()
     print( "Hit 'enter' to exit" )
-    raw_input()
+    eval(input())
 
 def makeChemModel( compt ):
     """
@@ -232,4 +232,4 @@ def main():
 
 # Run the 'main' if this script is executed standalone.
 if __name__ == '__main__':
-	main()
+        main()

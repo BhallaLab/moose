@@ -164,7 +164,7 @@ pylab.plot(plotGate.vector)
 pylab.title('Free Running Gate')
 pylab.tight_layout()
 pylab.show()
-print "pulsegen.py: finished simulation"
+print("pulsegen.py: finished simulation")
 
 # 
 # pulsegen2.py ends here

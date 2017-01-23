@@ -404,8 +404,8 @@ def makeNeuroMeshModel():
     assert( pdc == 5 )
     #
     # We need to use the spine solver as the master for the purposes of
-	# these calculations. This will handle the diffusion calculations
-	# between head and dendrite, and between head and PSD.
+        # these calculations. This will handle the diffusion calculations
+        # between head and dendrite, and between head and PSD.
     smksolve.addJunction( nmksolve )
     #print "spine: nv=", smksolve.numLocalVoxels, ", nav=", smksolve.numAllVoxels, smksolve.numVarPools, smksolve.numAllPools
     smksolve.addJunction( pmksolve )
@@ -442,7 +442,7 @@ def makeNeuroMeshModel():
         elecR = moose.element( path )
         moose.connect( adaptGluR[i], 'outputSrc', elecR, 'setGbar', 'Single' )
     #moose.connect( chemR, 'nOut', adaptGluR, 'input', 'OneToOne' )
-	# Ksolve isn't sending nOut. Not good. So have to use requestOut.
+        # Ksolve isn't sending nOut. Not good. So have to use requestOut.
     moose.connect( adaptGluR, 'requestOut', chemR, 'getN', 'OneToOne' )
     adaptGluR.outputOffset = 1e-7    # pS
     adaptGluR.scale = 1e-6 / 100     # from n to pS

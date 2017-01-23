@@ -28,19 +28,24 @@
 # 
 
 # Code:
-from __future__ import print_function
+
 
 """
+
 Display/save the topology of one or all cells in traub_2005 demo.
 
 command line options (all are optional):
--c celltype    : display topology of cell type 'celltype'. If unspecified, all cell types are displayed
--p filename    : save output to fiel specified by 'filename'
--l             : show labels of the compartments
--h,--help      : show this help
+
+    -c celltype    : display topology of cell type 'celltype'. If unspecified, 
+                    all cell types are displayed
+    -p filename    : save output to fiel specified by 'filename'
+    -l             : show labels of the compartments
+    -h,--help      : show this help
+
 """
+from __future__ import print_function
+
 import sys
-sys.path.append('../../../python')
 import os
 import numpy as np
 import matplotlib.pyplot as plt
@@ -117,7 +122,7 @@ def plot_cell_topology(cell, label=False):
     nx.draw_networkx_edges(g, pos, width=10*weights/max(weights), edge_color='gray', alpha=0.8)
     nx.draw_networkx_nodes(g, pos, with_labels=False,
                            nnode_size=node_size * 500, 
-                           node_color=map(lambda x: 'k' if x in axon else 'gray', g.nodes()), 
+                           node_color=['k' if x in axon else 'gray' for x in g.nodes()], 
                            linewidths=[1 if n.endswith('comp_1') else 0 for n in g.nodes()], 
                            alpha=0.8)
     if label:
@@ -131,6 +136,7 @@ import sys
 from getopt import getopt
 
 if __name__ == '__main__':
+    print(sys.argv)
     optlist, args = getopt(sys.argv[1:], 'lhp:c:', ['help'])
     celltype = ''
     pdf = ''
@@ -151,6 +157,7 @@ if __name__ == '__main__':
             print('-p  filename (optional) save outputin a pdf file named "filename".')
             print('-h,--help print this help')
             sys.exit(0)
+    print('args', optlist, args)
     figures = []
     if len(celltype) > 0:
         try:
@@ -160,12 +167,13 @@ if __name__ == '__main__':
             # print 'Label', label
             plot_cell_topology(cell, label=label)
         except KeyError:
-            print( '%s: no such cell type. Available are:' % (celltype))
-            for ii in cells.init_prototypes().keys():
-                print( ii)
+            print('%s: no such cell type. Available are:' % (celltype))
+            for ii in list(cells.init_prototypes().keys()):
+                print(ii, end=' ')
+            print() 
             sys.exit(1)    
     else:
-        for cell, proto in cells.init_prototypes().items():
+        for cell, proto in list(cells.init_prototypes().items()):
             figures.append(plt.figure())
             plot_cell_topology(proto, label=label)
     plt.axis('off')

@@ -36,4 +36,4 @@ def main():
     pylab.show()
 
 if __name__ == '__main__':
-	main()
+        main()

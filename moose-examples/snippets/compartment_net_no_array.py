@@ -338,14 +338,14 @@ def assign_clocks(model_container_list, simdt, plotdt):
     global inited
     # `inited` is for avoiding double scheduling of the same object
     if not inited:
-        print 'SimDt=%g, PlotDt=%g' % (simdt, plotdt)
+        print(('SimDt=%g, PlotDt=%g' % (simdt, plotdt)))
         moose.setClock(0, simdt)
         moose.setClock(1, simdt)
         moose.setClock(2, simdt)
         moose.setClock(3, simdt)
         moose.setClock(4, plotdt)
         for path in model_container_list:
-            print 'Scheduling elements under:', path
+            print(('Scheduling elements under:', path))
             moose.useClock(0, '%s/##[TYPE=Compartment]' % (path), 'init')
             moose.useClock(1, '%s/##[TYPE=Compartment]' % (path), 'process')
             moose.useClock(2, '%s/##[TYPE=SynChan],%s/##[TYPE=HHChannel]' % (path, path), 'process')

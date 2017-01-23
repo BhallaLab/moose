@@ -10,7 +10,7 @@ TEMP=$PWD/__temp__
 rm -f $BLACKLISTED $SUCCEEDED $FAILED $TEMP TORUN
 $PWD/find_scripts_to_run.sh 
 
-PYC=`which python`
+PYC=`which python2`
 MATPLOTRC=$PWD/matplotlibrc
 if [ ! -f $MATPLOTRC ]; then
     echo "$MATPLOTRC not found"
