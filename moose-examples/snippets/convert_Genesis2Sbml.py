@@ -47,11 +47,13 @@
 
 import moose
 from moose.SBML import *
+
 def main():
 	"""This example illustrates loading a kinetic model defined in Genesis format
 	into Moose using loadModel function and using writeSBML function
 	one can save the model into SBML format. \n
 	libsbml should be installed 
+        """
         #This command loads the file into the path '/Kholodenko'
         moose.loadModel('../genesis/Kholodenko.g','/Kholodenko')
         
