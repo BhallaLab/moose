@@ -1,5 +1,4 @@
-from . import _moose as moose
-
+import moose
 
 def moosedeleteChemSolver(modelRoot):
     """Delete solvers from Chemical Compartment

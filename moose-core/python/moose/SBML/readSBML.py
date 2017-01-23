@@ -10,10 +10,10 @@
 ** This program is part of 'MOOSE', the
 ** Messaging Object Oriented Simulation Environment,
 ** also known as GENESIS 3 base code.
-**           copyright (C) 2003-2016 Upinder S. Bhalla. and NCBS
+**           copyright (C) 2003-2017 Upinder S. Bhalla. and NCBS
 Created : Thu May 12 10:19:00 2016(+0530)
 Version
-Last-Updated: Wed Sep 28
+Last-Updated: Wed Jan 11 2017
           By:
 **********************************************************************/
 
@@ -23,7 +23,7 @@ import sys
 import os.path
 import collections
 import moose
-
+from validation import validateModel
 
 '''
    TODO in
@@ -57,7 +57,6 @@ try:
 except ImportError:
     pass
 
-
 def mooseReadSBML(filepath, loadpath, solver="ee"):
     global foundLibSBML_
     if not foundLibSBML_:
@@ -74,12 +73,9 @@ def mooseReadSBML(filepath, loadpath, solver="ee"):
     with open(filepath, "r") as filep:
         filep = open(filepath, "r")
         document = libsbml.readSBML(filepath)
-        num_errors = document.getNumErrors()
-        if (num_errors > 0):
-            print("Encountered the following SBML errors:")
-            document.printErrors()
-            return moose.element('/')
-        else:
+        tobecontinue = False
+        tobecontinue = validateModel(document)
+        if tobecontinue:
             level = document.getLevel()
             version = document.getVersion()
             print(("\n" + "File: " + filepath + " (Level " +
@@ -129,8 +125,10 @@ def mooseReadSBML(filepath, loadpath, solver="ee"):
                     global comptSbmlidMooseIdMap
                     global warning
                     warning = " "
+                    global msg
+                    msg = " "
                     comptSbmlidMooseIdMap = {}
-                    print(("modelPath:" + basePath.path))
+                    #print(("modelPath:" + basePath.path))
                     globparameterIdValue = {}
                     modelAnnotaInfo = {}
                     mapParameter(model, globparameterIdValue)
@@ -138,8 +136,9 @@ def mooseReadSBML(filepath, loadpath, solver="ee"):
                         basePath, model, comptSbmlidMooseIdMap)
                     if errorFlag:
                         specInfoMap = {}
-                        errorFlag = createSpecies(
+                        errorFlag,warning = createSpecies(
                             basePath, model, comptSbmlidMooseIdMap, specInfoMap, modelAnnotaInfo)
+                        #print(errorFlag,warning)
                         if errorFlag:
                             errorFlag = createRules(
                                 model, specInfoMap, globparameterIdValue)
@@ -148,7 +147,6 @@ def mooseReadSBML(filepath, loadpath, solver="ee"):
                                     model, specInfoMap, modelAnnotaInfo, globparameterIdValue)
                         getModelAnnotation(
                             model, baseId, basePath)
-
                     if not errorFlag:
                         print(msg)
                         # Any time in the middle if SBML does not read then I
@@ -157,7 +155,11 @@ def mooseReadSBML(filepath, loadpath, solver="ee"):
                         # built which is not correct print "Deleted rest of the
                         # model"
                         moose.delete(basePath)
-            return baseId
+                        basePath = moose.Shell('/')
+            return basePath
+        else:
+            print("Validation failed while reading the model.")
+            return moose.element('/')
 
 
 def setupEnzymaticReaction(enz, groupName, enzName,
@@ -509,9 +511,7 @@ def createReaction(model, specInfoMap, modelAnnotaInfo, globparameterIdValue):
             nummodifiers = reac.getNumModifiers()
 
             if not (numRcts and numPdts):
-                print(
-                    rName,
-                    " : Substrate and Product is missing, we will be skiping creating this reaction in MOOSE")
+                print("Warning: %s" %(rName)," : Substrate or Product is missing, we will be skiping creating this reaction in MOOSE")
                 reactionCreated = False
             elif (reac.getNumModifiers() > 0):
                 reactionCreated, reaction_ = setupMMEnzymeReaction(
@@ -805,9 +805,8 @@ def createSpecies(basePath, model, comptSbmlidMooseIdMap,
     # - Need to add group name if exist in pool
     # - Notes
     # print "species "
-
     if not (model.getNumSpecies()):
-        return False
+        return (False,"number of species is zero")
     else:
         for sindex in range(0, model.getNumSpecies()):
             spe = model.getSpecies(sindex)
@@ -876,8 +875,7 @@ def createSpecies(basePath, model, comptSbmlidMooseIdMap,
                     initvalue = initvalue * unitfactor
                 elif spe.isSetInitialConcentration():
                     initvalue = spe.getInitialConcentration()
-                    print(
-                        " Since hasonlySubUnit is true and concentration is set units are not checked")
+                    print(" Since hasonlySubUnit is true and concentration is set units are not checked")
                 poolId.nInit = initvalue
 
             elif hasonlySubUnit == False:
@@ -885,8 +883,7 @@ def createSpecies(basePath, model, comptSbmlidMooseIdMap,
                 if spe.isSetInitialAmount():
                     initvalue = spe.getInitialAmount()
                     # initAmount is set we need to convert to concentration
-                    initvalue = initvalue / \
-                        comptSbmlidMooseIdMap[comptId]["size"]
+                    initvalue = initvalue / comptSbmlidMooseIdMap[comptId]["size"]
 
                 elif spe.isSetInitialConcentration():
                     initvalue = spe.getInitialConcentration()
@@ -911,9 +908,9 @@ def createSpecies(basePath, model, comptSbmlidMooseIdMap,
                     print(
                         "Invalid SBML: Either initialConcentration or initialAmount must be set or it should be found in assignmentRule but non happening for ",
                         sName)
-                    return False
+                    return (False,"Invalid SBML: Either initialConcentration or initialAmount must be set or it should be found in assignmentRule but non happening for ",sName)
 
-    return True
+    return (True," ")
 
 
 def transformUnit(unitForObject, hasonlySubUnit=False):
@@ -995,7 +992,7 @@ def createCompartment(basePath, model, comptSbmlidMooseIdMap):
     # ToDoList : Check what should be done for the spaitialdimension is 2 or
     # 1, area or length
     if not(model.getNumCompartments()):
-        return False
+        return False,
     else:
         for c in range(0, model.getNumCompartments()):
             compt = model.getCompartment(c)
@@ -1115,19 +1112,25 @@ def findCompartment(element):
     return element
 
 if __name__ == "__main__":
-
-    filepath = sys.argv[1]
-    path = sys.argv[2]
-
-    f = open(filepath, 'r')
-
-    if path == '':
-        loadpath = filepath[filepath.rfind('/'):filepath.find('.')]
+    try:
+        sys.argv[1]
+    except IndexError:
+        print("Filename or path not given")
+        exit(0)
     else:
-        loadpath = path
-
-    read = mooseReadSBML(filepath, loadpath)
-    if read:
-        print(" Read to path", loadpath)
-    else:
-        print(" could not read  SBML to MOOSE")
+        filepath = sys.argv[1]
+        if not os.path.exists(filepath):
+            print("Filename or path does not exist",filepath)
+            
+        else:
+            try:
+                sys.argv[2]
+            except :
+                modelpath = filepath[filepath.rfind('/'):filepath.find('.')]
+            else:
+                modelpath = sys.argv[2]
+            read = mooseReadSBML(filepath, modelpath)
+            if read:
+                print(" Model read to moose path "+ modelpath)
+            else:
+                print(" could not read  SBML to MOOSE")
