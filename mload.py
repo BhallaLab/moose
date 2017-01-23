@@ -129,11 +129,11 @@ def loadFile(filename, target, solver="gsl", merge=True):
     if not istext:
         print 'Cannot handle any binary formats yet'
         return None
-    parent, child = posixpath.split(target)
-    p = moose.Neutral(parent)
-    if not merge and p.path != '/':
-        for ch in p.children:
-            moose.delete(ch)
+    # parent, child = posixpath.split(target)
+    # p = moose.Neutral(parent)
+    # if not merge and p.path != '/':
+    #     for ch in p.children:
+    #         moose.delete(ch)
     try:
         modeltype = mtypes.getType(filename)
         subtype = mtypes.getSubtype(filename, modeltype)

@@ -1,0 +1,22 @@
+notifications:
+    email:
+        recipients:
+            - dilawar.s.rajput@gmail.com
+            - upi.bhalla@gmail.com
+            - hrani@ncbs.res.in
+
+
+install:
+    - wget http://download.opensuse.org/repositories/home:moose/xUbuntu_12.04/Release.key
+    - sudo apt-key add - < Release.key  
+    - sudo sh -c "echo 'deb http://download.opensuse.org/repositories/home:/moose/xUbuntu_12.04/ /' >> /etc/apt/sources.list.d/moose.list"
+    - sudo apt-get -y update
+    - sudo apt-get install python3
+    - sudo apt-get -y install moose
+
+script:
+    - # Making sure no python incompatible file is added.
+    - python -m compileall -q .
+    - python -c 'import moose'
+    - python -c 'import moogli'
+    - # More tests here for gui.
