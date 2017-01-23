@@ -2,8 +2,9 @@ import sys
 from PyQt4 import QtGui, QtCore, Qt
 from default import *
 from moose import *
-from moose.genesis import write
+#from moose.genesis import write
 from moose import SBML
+from moose.genesis.writeKkit import mooseWriteKkit
 #sys.path.append('plugins')
 from mplugin import *
 from kkitUtil import *
@@ -113,7 +114,7 @@ class KkitPlugin(MoosePlugin):
                         v['y'] = -yprime
 
                 filename = filename
-                writeerror = write(self.modelRoot,str(filename),self.coOrdinates)
+                writeerror = mooseWriteKkit(self.modelRoot,str(filename),self.coOrdinates)
                 if writeerror == False:
                     QtGui.QMessageBox.information(None,'Could not save the Model','\nCheck the file')
                 else:
