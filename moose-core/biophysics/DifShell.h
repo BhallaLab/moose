@@ -1,156 +1,105 @@
 /**********************************************************************
-** This program is part of 'MOOSE', the
-** Multiscale Object Oriented Simulation Environment.
-**           copyright (C) 2003-2008
-**           Upinder S. Bhalla, Niraj Dudani and NCBS
-** It is made available under the terms of the
-** GNU Lesser General Public License version 2.1
-** See the file COPYING.LIB for the full notice.
-**********************************************************************/
+ ** This program is part of 'MOOSE', the
+ ** Multiscale Object Oriented Simulation Environment.
+ **           copyright (C) 2003-2008
+ **           Upinder S. Bhalla, Niraj Dudani and NCBS
+ ** It is made available under the terms of the
+ ** GNU Lesser General Public License version 2.1
+ ** See the file COPYING.LIB for the full notice.
+ **********************************************************************/
 
-#ifndef _DifShell_h
-#define _DifShell_h
+#ifndef _DIFSHELL_H
+#define _DIFSHELL_H
 
-class DifShell
-{
-	public:
-		DifShell();
-		
-		/////////////////////////////////////////////////////////////
-		// Field access functions
-		/////////////////////////////////////////////////////////////
-		double getC( ) const;
+class DifShell: public DifShellBase{
+ public:
+  DifShell();
 
-		void setCeq(double Ceq );
-		double getCeq() const;
+  /////////////////////////////////////////////////////////////
+  // Dest functions
+  /////////////////////////////////////////////////////////////
+  void vReinit( const Eref & e, ProcPtr p );
+  void vProcess(const Eref & e, ProcPtr p );
+  void vBuffer(const Eref& e, double kf, double kb, double bFree, double bBound );
+  void vFluxFromOut(const Eref& e, double outerC, double outerThickness );
+  void vFluxFromIn(const Eref& e, double innerC, double innerThickness );
+  void vInflux(const Eref& e, double I );
+  void vOutflux(const Eref& e, double I );
+  void vFInflux(const Eref& e, double I, double fraction );
+  void vFOutflux(const Eref& e, double I, double fraction );
+  void vStoreInflux(const Eref& e, double flux );
+  void vStoreOutflux(const Eref& e, double flux );
+  void vTauPump(const Eref& e, double kP, double Ceq );
+  void vEqTauPump(const Eref& e, double kP );
+  void vMMPump(const Eref& e, double vMax, double Kd );
+  void vHillPump(const Eref& e, double vMax, double Kd, unsigned int hill );
+  
+  /////////////////////////////////////////////////////////////
+  // Field access functions
+  /////////////////////////////////////////////////////////////
+  
+  void vSetC(const Eref& e,double C);
+  double vGetC( const Eref& e) const;
+  
+  void vSetCeq(const Eref& e,double Ceq );
+  double vGetCeq(const Eref& e) const;
 
-		void setD( double D );
-		double getD() const;
+  void vSetD(const Eref& e, double D );
+  double vGetD(const Eref& e) const;
 
-		void setValence( double valence );
-		double getValence() const;
+  void vSetValence(const Eref& e, double valence );
+  double vGetValence(const Eref& e) const;
 
-		void setLeak( double leak );
-		double getLeak() const;
+  void vSetLeak(const Eref& e, double leak );
+  double vGetLeak(const Eref& e) const;
 
-		void setShapeMode( unsigned int shapeMode );
-		unsigned int getShapeMode() const;
+  void vSetShapeMode(const Eref& e, unsigned int shapeMode );
+  unsigned int vGetShapeMode(const Eref& e) const;
 
-		void setLength( double length );
-		double getLength() const;
+  void vSetLength(const Eref& e, double length );
+  double vGetLength(const Eref& e) const;
 
-		void setDiameter( double diameter );
-		double getDiameter() const;
+  void vSetDiameter(const Eref& e, double diameter );
+  double vGetDiameter(const Eref& e) const;
 
-		void setThickness( double thickness );
-		double getThickness() const;
+  void vSetThickness(const Eref& e, double thickness );
+  double vGetThickness(const Eref& e) const;
 
-		void setVolume( double volume );
-		double getVolume() const;
+  void vSetVolume(const Eref& e, double volume );
+  double vGetVolume(const Eref& e) const;
 
-		void setOuterArea( double outerArea );
-		double getOuterArea() const;
+  void vSetOuterArea(const Eref& e, double outerArea );
+  double vGetOuterArea(const Eref& e) const;
 
-		void setInnerArea( double innerArea );
-		double getInnerArea() const;
-
-		/////////////////////////////////////////////////////////////
-		// Dest functions
-		/////////////////////////////////////////////////////////////
-		void reinit_0( const Eref & e, ProcPtr p );
-
-		void process_0(const Eref & e, ProcPtr p );
-
-                void process_1(const Eref & e, ProcPtr p );
-
-                void reinit_1(const Eref & e, ProcPtr p ); // dummyFunc
+  void vSetInnerArea(const Eref& e, double innerArea );
+  double vGetInnerArea(const Eref& e) const;
+  static const Cinfo * initCinfo();
+  
                 
-		void buffer(
-		 double kf,
-		 double kb,
-		 double bFree,
-		 double bBound );
+ private:
 
-		void fluxFromOut(
-		 double outerC,
-		 double outerThickness );
+  double integrate( double state, double dt, double A, double B );
+  
+  double dCbyDt_;
+  double Cmultiplier_;
+  double C_;
+  double Ceq_;
+  double prevC_;
+  double D_;
+  double valence_;
+  double leak_;
+  unsigned int shapeMode_;
+  double length_;
+  double diameter_;
+  double thickness_;
+  double volume_;
+  double outerArea_;
+  double innerArea_;
 
-		void fluxFromIn(
-		 double innerC,
-		 double innerThickness );
-
-		void influx(
-		 double I );
-
-		void outflux(
-		 double I );
-
-		void fInflux(
-		 double I,
-		 double fraction );
-
-		void fOutflux(
-		 double I,
-		 double fraction );
-
-		void storeInflux(
-		 double flux );
-
-		void storeOutflux(
-		 double flux );
-
-		void tauPump(
-		 double kP,
-		 double Ceq );
-
-		void eqTauPump(
-		 double kP );
-
-		void mmPump(
-		 double vMax,
-		 double Kd );
-
-		void hillPump(
-                    double vMax,
-                    double Kd,
-                    unsigned int hill );
-
-                static const Cinfo * initCinfo();
-                
-	private:
-		void localReinit_0(  const Eref & e, ProcPtr p );
-		void localProcess_0( const Eref & e, ProcPtr p );
-		void localProcess_1( const Eref & e, ProcPtr p );
-		void localBuffer( double kf, double kb, double bFree, double bBound );
-		void localFluxFromOut( double outerC, double outerThickness );
-		void localFluxFromIn( double innerC, double innerThickness );
-		void localInflux(	double I );
-		void localOutflux( double I );
-		void localFInflux( double I, double fraction );
-		void localFOutflux( double I, double fraction );
-		void localStoreInflux( double flux );
-		void localStoreOutflux( double flux );
-		void localTauPump( double kP, double Ceq );
-		void localEqTauPump( double kP );
-		void localMMPump( double vMax, double Kd );
-		void localHillPump( double vMax, double Kd, unsigned int hill );
-
-		double dCbyDt_;
-		double C_;
-		double Ceq_;
-		double D_;
-		double valence_;
-		double leak_;
-		unsigned int shapeMode_;
-		double length_;
-		double diameter_;
-		double thickness_;
-		double volume_;
-		double outerArea_;
-		double innerArea_;
-		
-		/// Faraday's constant (Coulomb / Mole)
-		static const double F_;
+  static const double EPSILON;
+  /// Faraday's constant (Coulomb / Mole)
+  static const double F;
+  
 };
 
-#endif // _DifShell_h
+#endif // _DIFSHELL_H
