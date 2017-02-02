@@ -30,8 +30,8 @@ PYTHON3="/usr/bin/python3"
 
 (
     # Old makefile based flow.
-    python2 -m compileall -q .
-    if type $PYTHON3 > /dev/null; then python3 -m compileall -q . ; fi
+    $PYTHON2 -m compileall -q .
+    if type $PYTHON3 > /dev/null; then $PYTHON3 -m compileall -q . ; fi
     # Traditional make.
     make 
     ## CMAKE based flow
