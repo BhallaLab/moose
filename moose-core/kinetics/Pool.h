@@ -53,6 +53,13 @@ class Pool: public PoolBase
 		void vSetSpecies( const Eref& e, SpeciesId v );
 		SpeciesId vGetSpecies( const Eref& e ) const;
 
+
+		/**
+		 * Functions to examine and change class between Pool and BufPool.
+		 */
+		void setIsBuffered( const Eref& e, bool v );
+		bool getIsBuffered( const Eref& e ) const;
+
 		//////////////////////////////////////////////////////////////////
 		// Dest funcs. These too override virtual funcs in the Pool base 
 		// class.

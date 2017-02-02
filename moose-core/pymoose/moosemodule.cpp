@@ -125,7 +125,7 @@ extern void mooseBenchmarks( unsigned int option );
  *  themselves. If seed is not set by user, it uses std::random_device to
  *  initialize itself.
  *-----------------------------------------------------------------------------*/
-void pymoose_mtseed_( unsigned int seed )
+void pymoose_mtseed_( long int seed )
 {
     moose::mtseed( seed );
 }

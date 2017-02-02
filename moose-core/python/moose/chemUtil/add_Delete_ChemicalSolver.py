@@ -24,11 +24,11 @@ def mooseaddChemSolver(modelRoot, solver):
         comptinfo = moose.Annotator(moose.element(compt[0]).path + '/info')
         previousSolver = comptinfo.solver
         currentSolver = previousSolver
-        if solver == "Gillespie":
+        if solver == "Gillespie" or solver == "gssa":
             currentSolver = "gssa"
-        elif solver == "Runge Kutta":
+        elif solver == "Runge Kutta" or solver == "gsl":
             currentSolver = "gsl"
-        elif solver == "Exponential Euler":
+        elif solver == "Exponential Euler" or solver == "ee":
             currentSolver = "ee"
 
         if previousSolver != currentSolver:
