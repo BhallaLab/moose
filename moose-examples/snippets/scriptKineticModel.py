@@ -18,7 +18,7 @@ def makeModel():
     compartment.volume = 1e-15
     # the mesh is created automatically by the compartment
     moose.le( '/model/compartment' )
-    mesh = moose.element( '/model/compartment/mesh' ) 
+    mesh = moose.element( '/model/compartment/mesh' )
 
     # create molecules and reactions
     a = moose.Pool( '/model/compartment/a' )
@@ -68,7 +68,7 @@ def makeModel():
     moose.connect( outputA, 'requestOut', a, 'getConc' );
     moose.connect( outputB, 'requestOut', b, 'getConc' );
 
-    # We need a finer timestep than the default 0.1 seconds, 
+    # We need a finer timestep than the default 0.1 seconds,
     # in order to get numerical accuracy.
     for i in range (11, 15 ):
         moose.setClock( i, 0.001 ) # for computational objects
@@ -82,7 +82,7 @@ def main():
     This example creates a bistable model having two enzymes and a reaction.
     One of the enzymes is autocatalytic.
     The model is set up to run using default Exponential Euler integration.
-    The snippet scriptKineticSolver.py uses the much better GSL 
+    The snippet scriptKineticSolver.py uses the much better GSL
     Runge-Kutta-Fehlberg integration scheme on this same model.
     """
     makeModel()

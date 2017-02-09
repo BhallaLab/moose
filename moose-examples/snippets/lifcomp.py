@@ -1,54 +1,49 @@
-# lifcomp.py --- 
-# 
+# lifcomp.py ---
+#
 # Filename: lifcomp.py
 # Description: Leaky Integrate and Fire using regular neuronal compartment
 # Author: Subhasis Ray
-# Maintainer: 
+# Maintainer:
 # Created: Fri Feb  7 16:26:05 2014 (+0530)
-# Version: 
-# Last-Updated: 
-#           By: 
+# Version:
+# Last-Updated:
+#           By:
 #     Update #: 0
-# URL: 
-# Keywords: 
-# Compatibility: 
-# 
-# 
+# URL:
+# Keywords:
+# Compatibility:
+#
+#
 
-# Commentary: 
-# 
-# 
-# 
-# 
+# Commentary:
+#
+#
+#
+#
 
 # Change log:
-# 
-# 
-# 
-# 
+#
+#
+#
+#
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
 # published by the Free Software Foundation; either version 3, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program; see the file COPYING.  If not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 # Floor, Boston, MA 02110-1301, USA.
-# 
-# 
+#
+#
 
 # Code:
-
-"""This is an example of how you can create a Leaky Integrate and Fire
-compartment using regular compartment and Func to check for thresold
-crossing and resetting the Vm."""
-
 
 import moose
 from moose import utils
@@ -59,7 +54,7 @@ stepsize = 100e-3 # Time step for pauses between runs
 simdt = 1e-4 # time step for numerical integration
 plotdt = 0.25e-3 # time step for plotting
 
-delayMax = 5e-3 # Maximum synaptic delay 
+delayMax = 5e-3 # Maximum synaptic delay
 
 class LIFComp(moose.Compartment):
     """Leaky integrate and fire neuron using regular compartments,
@@ -75,7 +70,7 @@ class LIFComp(moose.Compartment):
         self.Cm = 100e-9
         self.Em = 0 #-65e-3
         self.initVm = 0 #self.Em
-        
+
         # Note that the result is dependent on exact order of
         # execution of SpikeGen and Func. If Func gets executed first
         # SpikeGen will never cross threshold.
@@ -106,7 +101,8 @@ class LIFComp(moose.Compartment):
         self.spikegen.threshold = value
 
 def setup_two_cells():
-    """Create two cells with leaky integrate and fire compartments. Each
+    """
+    Create two cells with leaky integrate and fire compartments. Each
     cell is a single compartment a1 and b2. a1 is stimulated by a step
     current injection.
 
@@ -134,7 +130,7 @@ def setup_two_cells():
     moose.connect(b2, 'channel', syn, 'channel')
     ## Single message works most of the time but occassionally gives a
     ## core dump
-    
+
     # m = moose.connect(a1.spikegen, 'spikeOut',
     #                   syn.synapse.vec, 'addSpike')
 
@@ -149,7 +145,7 @@ def setup_two_cells():
     stim.level[0] = 11e-9
     moose.connect(stim, 'output', a1, 'injectMsg')
     tables = []
-    data = moose.Neutral('/data')    
+    data = moose.Neutral('/data')
     for c in moose.wildcardFind('/##[ISA=Compartment]'):
         tab = moose.Table('%s/%s_Vm' % (data.path, c.name))
         moose.connect(tab, 'requestOut', c, 'getVm')
@@ -161,9 +157,14 @@ def setup_two_cells():
     syn.Gbar = 1e-6
     return tables
 
-if __name__ == '__main__':
+def main():
+    """
+    This is an example of how you can create a Leaky Integrate and Fire
+    compartment using regular compartment and Func to check for thresold
+    crossing and resetting the Vm.
+    """
     tables = setup_two_cells()
-    
+
     utils.setDefaultDt(elecdt=simdt, plotdt2=plotdt)
     utils.assignDefaultTicks(modelRoot='/model', dataRoot='/data', solver='ee')
     moose.reinit()
@@ -178,11 +179,14 @@ if __name__ == '__main__':
         np.savetxt('lifcomp.csv', data.transpose(), delimiter='\t', header=' '.join([tab.name for tab in tables]))
     except TypeError as e:  # old numpy may not have header.
         np.savetxt('lifcomp.csv', data.transpose(), delimiter='\t' )
-
     #     subplot(len(tables), 1, ii+1)
     #     t = np.linspace(0, simtime, len(tab.vector))*1e3
     #     plot(t, tab.vector*1e3, label=tab.name)
     #     legend()
     # show()
-# 
+
+if __name__ == '__main__':
+    main()
+
+#
 # lifcomp.py ends here
