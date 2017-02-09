@@ -1,47 +1,47 @@
-# mgblock.py --- 
-# 
+# mgblock.py ---
+#
 # Filename: mgblock.py
-# Description: 
-# Author:Upi Bhalla 
-# Maintainer: 
+# Description:
+# Author:Upi Bhalla
+# Maintainer:
 # Created: Wed Jul  3 09:36:06 2013 (+0530)
-# Version: 
+# Version:
 # Last-Updated: Fri Sep 12 10:56:18 2014 (+0530)
 #           By: Upi
-#     Update #: 
-# URL: 
-# Keywords: 
-# Compatibility: 
-# 
-# 
+#     Update #:
+# URL:
+# Keywords:
+# Compatibility:
+#
+#
 
-# Commentary: 
-# 
-# 
-# 
-# 
+# Commentary:
+#
+#
+#
+#
 
 # Change log:
-# 
-# 
-# 
-# 
+#
+#
+#
+#
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
 # published by the Free Software Foundation; either version 3, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program; see the file COPYING.  If not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 # Floor, Boston, MA 02110-1301, USA.
-# 
-# 
+#
+#
 
 # Code:
 
@@ -54,20 +54,6 @@ simdt = 1e-6
 plotdt = 1e-4
 
 def test_mgblock():
-    """
-    Demonstrates the use of MgBlock.
-    Creates an NMDA channel with MgBlock and another without.
-    Connects them up to the compartment on one hand, and to a
-    SynHandler on the other, so as to receive synaptic input.
-    Delivers two pulses to each receptor, with a small delay in between.
-
-    Plots out the conductance change at each receptor and the reslting
-    membrane potential rise at the compartment.
-
-    Note that these NMDA channels do NOT separate out the contributions
-    due to calcium and other ions. To do this correctly one should use
-    the GHK object.
-    """
     model = moose.Neutral('/model')
     data = moose.Neutral('/data')
     soma = moose.Compartment('/model/soma')
@@ -91,13 +77,13 @@ def test_mgblock():
     moose.connect( synHandler, 'activationOut', nmda, 'activation' )
 
 
-    
+
     # MgBlock sits between original channel nmda and the
     # compartment. The origChannel receives the channel message from
     # the nmda SynChan.
     moose.connect(soma, 'VmOut', nmda, 'Vm' )
     moose.connect(nmda, 'channelOut', mgblock, 'origChannel')
-    moose.connect(mgblock, 'channel', soma, 'channel')    
+    moose.connect(mgblock, 'channel', soma, 'channel')
     # This is for comparing with MgBlock
     nmda_noMg = moose.copy(nmda, soma, 'nmda_noMg')
     moose.connect( nmda_noMg, 'channel', soma, 'channel')
@@ -144,10 +130,25 @@ def test_mgblock():
     #data = pylab.vstack((t, Gnmda.vector, Gnmda_noMg.vector)).transpose()
     #pylab.savetxt('mgblock.dat', data)
     pylab.show()
-    
 
-if __name__ == '__main__':
+def main():
+    """
+    Demonstrates the use of MgBlock.
+    Creates an NMDA channel with MgBlock and another without.
+    Connects them up to the compartment on one hand, and to a
+    SynHandler on the other, so as to receive synaptic input.
+    Delivers two pulses to each receptor, with a small delay in between.
+
+    Plots out the conductance change at each receptor and the reslting
+    membrane potential rise at the compartment.
+
+    Note that these NMDA channels do NOT separate out the contributions
+    due to calcium and other ions. To do this correctly one should use
+    the GHK object.
+    """
     test_mgblock()
 
-# 
+if __name__ == '__main__':
+    main()
+#
 # mgblock.py ends here

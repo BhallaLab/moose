@@ -1,15 +1,3 @@
-##################################################################
-## This program is part of 'MOOSE', the
-## Messaging Object Oriented Simulation Environment.
-##           Copyright (C) 2015 Upinder S. Bhalla. and NCBS
-## It is made available under the terms of the
-## GNU Lesser General Public License version 2.1
-## See the file COPYING.LIB for the full notice.
-##
-## testRdesigneur.py: Builds a spiny compartment and populates it with
-## a molecule that diffuses.
-##################################################################
-
 import math
 import pylab
 import numpy
@@ -59,7 +47,7 @@ def makeCellProto( name ):
 # This line is used so that rdesigneur knows about the cell proto function
 rd.makeCellProto = makeCellProto
 
-# This function is used to make the chem prototype. 
+# This function is used to make the chem prototype.
 def makeChemProto( name ):
     chem = moose.Neutral( '/library/' + name )
     for i in ( 'dend', 'spine', 'psd' ):
@@ -74,7 +62,7 @@ def makeChemProto( name ):
 def makeModel():
     moose.Neutral( '/library' )
     # Here we illustrate building the chem proto directly. This is not
-    # good practice as it takes the model definition away from the 
+    # good practice as it takes the model definition away from the
     # declaration of prototypes.
     makeChemProto( 'cProto' )
     rdes = rd.rdesigneur( useGssa = False, \
@@ -107,9 +95,9 @@ def addPlot( objpath, field, plot, tick ):
         obj = moose.element( objpath )
         moose.connect( tab, 'requestOut', obj, field )
         tab.tick = tick
-        return tab 
+        return tab
     else:
-        print(("failed in addPlot(", objpath, field, plot, tick, ")")) 
+        print(("failed in addPlot(", objpath, field, plot, tick, ")"))
         return 0
 
 def plotVm( plot, name ):
@@ -121,15 +109,16 @@ def plotVm( plot, name ):
         xpos.append( i.z0 )
     if len( wc ) > 0:
         plot.plot( xpos, Vm, label = name + 'Vm' )
-    
+
 
 def main():
     """
-    This illustrates the use of rdesigneur to build a simple dendrite with
-    spines, and to confirm that the chemical contents of the spines align
-    with the electrical. Just a single molecule Ca is involved.
-    It diffuses and we plot the distribution.
-    It causes 'inject' of the relevant compartment to rise.
+This illustrates the use of rdesigneur to build a simple dendrite with
+spines, and to confirm that the chemical contents of the spines align
+with the electrical. Just a single molecule Ca is involved.
+It diffuses and we plot the distribution.
+It causes 'inject' of the relevant compartment to rise.
+
     """
     makeModel()
 

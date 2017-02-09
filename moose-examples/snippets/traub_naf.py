@@ -1,53 +1,50 @@
-# traub_naf.py --- 
-# 
+# traub_naf.py ---
+#
 # Filename: traub_naf.py
-# Description: 
+# Description:
 # Author: Subhasis Ray
-# Maintainer: 
+# Maintainer:
 # Created: Mon Apr 29 21:07:30 2013 (+0530)
-# Version: 
+# Version:
 # Last-Updated: Mon May  6 18:50:14 2013 (+0530)
 #           By: subha
 #     Update #: 436
-# URL: 
-# Keywords: 
-# Compatibility: 
-# 
-# 
+# URL:
+# Keywords:
+# Compatibility:
+#
+#
 
-# Commentary: 
-# 
-# 
-# 
-# 
+# Commentary:
+#
+#
+#
+#
 
 # Change log:
-# 
-# 
-# 
-# 
+#
+#
+#
+#
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
 # published by the Free Software Foundation; either version 3, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program; see the file COPYING.  If not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 # Floor, Boston, MA 02110-1301, USA.
-# 
-# 
+#
+#
 
 # Code:
-
-"""This is an example showing pymoose implementation of the NaF
-channel in Traub et al 2005
-
+"""
 Author: Subhasis Ray
 
 """
@@ -68,7 +65,7 @@ def create_naf_proto():
     """Create an NaF channel prototype in /library. You can copy it later
     into any compartment or load a .p file with this channel using
     loadModel.
-    
+
     This channel has the conductance form:
 
     Gk(v) = Gbar * m^3 * h (V - Ek)
@@ -102,8 +99,8 @@ def create_naf_proto():
     hgate.tableA = inf_h / tau_h
     hgate.tableB = 1 / tau_h
     return channel
-    
-def create_compartment(parent_path, name):    
+
+def create_compartment(parent_path, name):
     """This shows how to use the prototype channel on a compartment."""
     comp = moose.Compartment('%s/%s' % (parent_path, name))
     comp.Rm = 5e6
@@ -142,12 +139,12 @@ def setup_electronics(model_container, data_container, compartment):
     # and the output of the amplifier to compartment.
     moose.connect(command, 'output', iclamp, 'plusIn')
     moose.connect(iclamp, 'output', compartment, 'injectMsg')
-    # Setup voltage clamp circuit: 
+    # Setup voltage clamp circuit:
     # 1. Connect command output (which is now command) to lowpass
     # filter.
-    # 2. Connect lowpass output to vclamp amplifier.     
-    # 3. Connect amplifier output to PID's command input.  
-    # 4. Connect Vm of compartment to PID's sensed input. 
+    # 2. Connect lowpass output to vclamp amplifier.
+    # 3. Connect amplifier output to PID's command input.
+    # 4. Connect Vm of compartment to PID's sensed input.
     # 5. Connect PID output to compartment's injectMsg.
     moose.connect(command, 'output', lowpass, 'injectIn')
     moose.connect(lowpass, 'output', vclamp, 'plusIn')
@@ -185,9 +182,9 @@ def setup_model():
     comp = create_compartment(model.path, 'soma')
     ret = setup_electronics(model, data, comp)
     vmtab = moose.Table('%s/Vm' % (data.path))
-    moose.connect(vmtab, 'requestOut', comp, 'getVm')    
+    moose.connect(vmtab, 'requestOut', comp, 'getVm')
     gktab = moose.Table('%s/Gk' % (data.path))
-    moose.connect(gktab, 'requestOut', moose.element(comp.path + '/NaF'), 'getGk')    
+    moose.connect(gktab, 'requestOut', moose.element(comp.path + '/NaF'), 'getGk')
     ret.update({'model': model, 'data': data, 'vm_tab': vmtab, 'gk_tab': gktab})
     return ret
 
@@ -196,13 +193,18 @@ def run_sim(model, data, simtime=100e-3, simdt=1e-6, plotdt=1e-4, solver='ee'):
     """Reset and run the simulation.
 
     model: model container element
+
     data: data container element
+
     simtime: simulation run time
+
     simdt: simulation timestep
+
     plotdt: plotting time step
+
     solver: neuronal solver to use.
-    
-    """    
+
+    """
     global inited
     if not inited:
         utils.resetSim([model.path, data.path], simdt, plotdt, simmethod=solver)
@@ -216,12 +218,17 @@ def run_clamp(model_dict, clamp, levels, holding=0.0, simtime=100e-3):
     with multiple levels of command input.
 
     model_dict: dictionary containing the model components -
-                `vlcamp` - the voltage clamp amplifier
-                `iclamp` - the current clamp amplifier
+
+                `vlcamp` - the voltage clamp amplifier\n
+                `iclamp` - the current clamp amplifier\n
                 `model` - the model container
+
                 `data` - the data container
-                `inject_tab` - table recording membrane 
+
+                `inject_tab` - table recording membrane
+
                 `command_tab` - table recording command input for voltage or current clamp
+
                 `vm_tab` - table recording membrane potential
 
     clamp: string specifying clamp mode, either `voltage` or `current`
@@ -238,7 +245,7 @@ def run_clamp(model_dict, clamp, levels, holding=0.0, simtime=100e-3):
     `inject` - list of of membrane current (includes injected current) time series
     `vm` - list of membrane voltage time series
     `t` - list of time points for all of the above
-    
+
     """
     if clamp == 'voltage':
         do_vclamp(model_dict['vclamp'], model_dict['iclamp'], model_dict['pid'])
@@ -267,10 +274,12 @@ def run_clamp(model_dict, clamp, levels, holding=0.0, simtime=100e-3):
             'gk': gvec,
             't': tvec}
 
-
-
-if __name__ == '__main__':
-    mdict = setup_model()    
+def main():
+    """
+    This is an example showing pymoose implementation of the NaF
+    channel in Traub et al 2005
+    """
+    mdict = setup_model()
     current_levels = (-0.3e-8, 0.1e-8, 0.3e-8, 0.5e-8)
     iclamp_data = run_clamp(mdict, 'current', current_levels)
     voltage_levels = (-30e-3, -10e-3, 10e-3, 30e-3)
@@ -287,7 +296,7 @@ if __name__ == '__main__':
     cax.set_title('Command')
     ivax = ifigure.add_subplot(2,2,4)
     for ii in range(len(current_levels)):
-        t = iclamp_data['t'][ii]        
+        t = iclamp_data['t'][ii]
         vax.plot(t, iclamp_data['vm'][ii], color=colors[ii % len(colors)])
         iax.plot(t, iclamp_data['inject'][ii], color=colors[ii % len(colors)])
         cax.plot(t, iclamp_data['command'][ii], color=colors[ii % len(colors)])
@@ -304,7 +313,7 @@ if __name__ == '__main__':
     ivax = vfigure.add_subplot(2,2,4)
     # iv = []
     for ii in range(len(voltage_levels)):
-        t = vclamp_data['t'][ii]        
+        t = vclamp_data['t'][ii]
         vax.plot(t, vclamp_data['vm'][ii], color=colors[ii % len(colors)])
         iax.plot(t, vclamp_data['inject'][ii], color=colors[ii % len(colors)])
         cax.plot(t, vclamp_data['command'][ii], color=colors[ii% len(colors)])
@@ -318,8 +327,10 @@ if __name__ == '__main__':
     #     iv.append((vclamp_data['inject'][ii][mididx], vclamp_data['vm'][ii][mididx]))
     # iv = np.array(iv)
     # ivax.plot(iv[:,0], iv[:,1], 'ko-')
-    
+
     plt.show()
-    
-# 
+
+if __name__ == '__main__':
+    main()
+#
 # traub_naf.py ends here

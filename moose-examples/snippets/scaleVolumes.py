@@ -18,7 +18,7 @@ def makeModel():
                 compartment = moose.CubeMesh( '/model/compartment' )
                 compartment.volume = 1e-20
                 # the mesh is created automatically by the compartment
-                mesh = moose.element( '/model/compartment/mesh' ) 
+                mesh = moose.element( '/model/compartment/mesh' )
 
                 # create molecules and reactions
                 a = moose.Pool( '/model/compartment/a' )
@@ -94,14 +94,14 @@ def main():
     else is set up correctly, then this change propagates through to all
     reactions molecules.
 
-    For a deterministic reaction one would not see any change in output 
+    For a deterministic reaction one would not see any change in output
     concentrations.
-    For a stochastic reaction illustrated here, one sees the level of 
-    'noise' 
+    For a stochastic reaction illustrated here, one sees the level of
+    'noise'
     changing, even though the concentrations are similar up to a point.
     This example creates a bistable model having two enzymes and a reaction.
     One of the enzymes is autocatalytic.
-    This model is set up within the script rather than using an external 
+    This model is set up within the script rather than using an external
     file.
     The model is set up to run using the GSSA (Gillespie Stocahstic systems
     algorithim) method in MOOSE.
@@ -149,8 +149,8 @@ def main():
         # Iterate through all plots, dump their contents to data.plot.
         displayPlots()
         pylab.show( block=False )
-        print(('vol = ', vol, 'hit enter to go to next plot'))
-        eval(input())
+        print(('vol = ', vol, 'hit 0 to go to next plot'))
+        eval(str(input()))
 
     quit()
 

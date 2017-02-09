@@ -1,20 +1,3 @@
-
-#/**********************************************************************
-#** This program is part of 'MOOSE', the
-#** Messaging Object Oriented Simulation Environment.
-#**           Copyright (C) 2003-2014 Upinder S. Bhalla. and NCBS
-#** It is made available under the terms of the
-#** GNU Lesser General Public License version 2.1
-#** See the file COPYING.LIB for the full notice.
-#**********************************************************************/
-
-'''
-Simulate a pseudo-STDP protocol and plot the STDP kernel
-that emerges from Ca plasticity of Graupner and Brunel 2012.
-
-Author: Aditya Gilra, NCBS, Bangalore, October, 2014.
-'''
-
 import moose
 from pylab import *
 
@@ -71,9 +54,9 @@ network.vec.initVm = Vrest
 #weight = 0.43           # initial synaptic weight
                         ## gammaP/(gammaP+gammaD) = eq weight w/o noise
                         ## see eqn (22), noiseSD also appears
-                        ## but doesn't work here, 
+                        ## but doesn't work here,
                         ## weights away from 0.4 - 0.5 screw up the STDP rule!!
-                        
+
 #bistable = True        # if bistable is True, use bistable potential for weights
 #noisy = False          # use noisy weight updates given by noiseSD
 #noiseSD = 3.3501        # if noisy, use noiseSD (3.3501 from Higgins et al 2014)
@@ -96,9 +79,9 @@ J = 5e-3 # V            # delta function synapse, adds to Vm
 weight = 0.5            # initial synaptic weight
                         # gammaP/(gammaP+gammaD) = eq weight w/o noise
                         # see eqn (22), noiseSD also appears
-                        # but doesn't work here, 
+                        # but doesn't work here,
                         # weights away from 0.4 - 0.5 screw up the STDP rule!!
-                        
+
 bistable = True        # if bistable is True, use bistable potential for weights
 noisy = False          # use noisy weight updates given by noiseSD
 noiseSD = 2.8284        # if noisy, use noiseSD (3.3501 in Higgins et al 2014)
@@ -149,9 +132,9 @@ moose.connect( network, 'VmOut', Vms, 'input', 'OneToOne')
 spikes = moose.Table( '/plotSpikes', 2 )
 moose.connect( network, 'spikeOut', spikes, 'input', 'OneToOne')
 CaTable = moose.Table( '/plotCa', 1 )
-moose.connect( CaTable, 'requestOut', syn, 'getCa')            
+moose.connect( CaTable, 'requestOut', syn, 'getCa')
 WtTable = moose.Table( '/plotWeight', 1 )
-moose.connect( WtTable, 'requestOut', syn.synapse[0], 'getWeight')            
+moose.connect( WtTable, 'requestOut', syn.synapse[0], 'getWeight')
 
 # ###########################################
 # Simulate the STDP curve with spaced pre-post spike pairs
@@ -174,9 +157,11 @@ moose.reinit()
 
 # function to make the aPlus and aMinus settle to equilibrium values
 settletime = 100e-3 # s
+
 def reset_settle():
-    """ Call this between every pre-post pair
-    to reset the neurons and make them settle to rest.
+    """
+Call this between every pre-post pair
+to reset the neurons and make them settle to rest.
     """
     syn.synapse[0].weight = weight
     syn.Ca = 0.0
@@ -190,125 +175,136 @@ def reset_settle():
 # function to inject a sharp current pulse to make neuron spike
 # immediately at a given time step
 def make_neuron_spike(nrnidx,I=1e-7,duration=1e-3):
-    """ Inject a brief current pulse to 
-    make a neuron spike
+    """
+Inject a brief current pulse to
+make a neuron spike
     """
     network.vec[nrnidx].inject = I
     moose.start(duration)
     network.vec[nrnidx].inject = 0.
 
-dwlist_neg = []
-ddt = 2e-3 # s
-# since CaPlasticitySynHandler is event based
-# multiple pairs are needed for Ca to be registered above threshold
-# Values from Fig 2, last line of legend
-numpairs = 60           # number of spike parts per deltat
-t_between_pairs = 1.0   # time between each spike pair
-t_extent = 100e-3       # s  # STDP kernel extent,
-                        # t_extent > t_between_pairs/2 inverts pre-post pairing!
-# dt = tpost - tpre
-# negative dt corresponds to post before pre
-print('-----------------------------------------------')
-for deltat in arange(t_extent,0.0,-ddt):
-    reset_settle()
-    for i in range(numpairs):
-        # post neuron spike
-        make_neuron_spike(1)
-        moose.start(deltat)
-        # pre neuron spike after deltat
-        make_neuron_spike(0)
-        moose.start(t_between_pairs)  # weight changes after pre-spike+delayD
-                                      # must run for at least delayD after pre-spike
-    dw = ( syn.synapse[0].weight - weight ) / weight
-    print(('post before pre, dt = %1.3f s, dw/w = %1.3f'%(-deltat,dw)))
-    dwlist_neg.append(dw)
-print('-----------------------------------------------')
-# positive dt corresponds to pre before post
-dwlist_pos = []
-for deltat in arange(ddt,t_extent+ddt,ddt):
-    reset_settle()
-    for i in range(numpairs):
-        # pre neuron spike
-        make_neuron_spike(0)
-        moose.start(deltat)
-        # post neuron spike after deltat
-        make_neuron_spike(1)
-        moose.start(t_between_pairs)
-    dw = ( syn.synapse[0].weight - weight ) / weight
-    print(('pre before post, dt = %1.3f s, dw/w = %1.3f'%(deltat,dw)))
-    dwlist_pos.append(dw)
-print('-----------------------------------------------')
-print(('Each of the above pre-post pairs was repeated',\
-        numpairs,'times, with',t_between_pairs,'s between pairs.'))
-print() 
-print('Due to event based updates, Ca decays suddenly at events:')
-print('pre-spike, pre-spike + delayD, and post-spike;')
-print('apart from the usual CaPre and CaPost jumps at')
-print('pre-spike + delayD and post-spike respectively.')
-print('Because of the event based update, multiple pre-post pairs are used.')
-print() 
-print('If you reduce the t_between_pairs,')
-print(' you\'ll see potentiation for the LTD part without using any triplet rule!')
-print()
-print("If you turn on noise, the weights fluctuate too much,")
-print(" not sure if there's a bug in my noise implementation.")
-print('-----------------------------------------------')
+def main():
+    """
+Simulate a pseudo-STDP protocol and plot the STDP kernel
+that emerges from Ca plasticity of Graupner and Brunel 2012.
+Author: Aditya Gilra, NCBS, Bangalore, October, 2014.
 
-# ###########################################
-# Plot the simulated Vm-s and STDP curve
-# ###########################################
+    """
+    dwlist_neg = []
+    ddt = 2e-3 # s
+    # since CaPlasticitySynHandler is event based
+    # multiple pairs are needed for Ca to be registered above threshold
+    # Values from Fig 2, last line of legend
+    numpairs = 60           # number of spike parts per deltat
+    t_between_pairs = 1.0   # time between each spike pair
+    t_extent = 100e-3       # s  # STDP kernel extent,
+                            # t_extent > t_between_pairs/2 inverts pre-post pairing!
+    # dt = tpost - tpre
+    # negative dt corresponds to post before pre
+    print('-----------------------------------------------')
+    for deltat in arange(t_extent,0.0,-ddt):
+        reset_settle()
+        for i in range(numpairs):
+            # post neuron spike
+            make_neuron_spike(1)
+            moose.start(deltat)
+            # pre neuron spike after deltat
+            make_neuron_spike(0)
+            moose.start(t_between_pairs)  # weight changes after pre-spike+delayD
+                                          # must run for at least delayD after pre-spike
+        dw = ( syn.synapse[0].weight - weight ) / weight
+        print(('post before pre, dt = %1.3f s, dw/w = %1.3f'%(-deltat,dw)))
+        dwlist_neg.append(dw)
+    print('-----------------------------------------------')
+    # positive dt corresponds to pre before post
+    dwlist_pos = []
+    for deltat in arange(ddt,t_extent+ddt,ddt):
+        reset_settle()
+        for i in range(numpairs):
+            # pre neuron spike
+            make_neuron_spike(0)
+            moose.start(deltat)
+            # post neuron spike after deltat
+            make_neuron_spike(1)
+            moose.start(t_between_pairs)
+        dw = ( syn.synapse[0].weight - weight ) / weight
+        print(('pre before post, dt = %1.3f s, dw/w = %1.3f'%(deltat,dw)))
+        dwlist_pos.append(dw)
+    print('-----------------------------------------------')
+    print(('Each of the above pre-post pairs was repeated',\
+            numpairs,'times, with',t_between_pairs,'s between pairs.'))
+    print()
+    print('Due to event based updates, Ca decays suddenly at events:')
+    print('pre-spike, pre-spike + delayD, and post-spike;')
+    print('apart from the usual CaPre and CaPost jumps at')
+    print('pre-spike + delayD and post-spike respectively.')
+    print('Because of the event based update, multiple pre-post pairs are used.')
+    print()
+    print('If you reduce the t_between_pairs,')
+    print(' you\'ll see potentiation for the LTD part without using any triplet rule!')
+    print()
+    print("If you turn on noise, the weights fluctuate too much,")
+    print(" not sure if there's a bug in my noise implementation.")
+    print('-----------------------------------------------')
 
-# insert spikes so that Vm reset doesn't look weird
-Vmseries0 = Vms.vec[0].vector
-numsteps = len(Vmseries0)
-for t in spikes.vec[0].vector:
-    Vmseries0[int(t/dt)-1] = 30e-3 # V
-Vmseries1 = Vms.vec[1].vector
-for t in spikes.vec[1].vector:
-    Vmseries1[int(t/dt)-1] = 30e-3 # V
+    # ###########################################
+    # Plot the simulated Vm-s and STDP curve
+    # ###########################################
 
-timeseries = linspace(0.,1000*numsteps*dt,numsteps)
-# Voltage plots
-figure(facecolor='w')
-plot(timeseries,Vmseries0,color='r') # pre neuron's vm
-plot(timeseries,Vmseries1,color='b') # post neuron's vm
-xlabel('time (ms)')
-ylabel('Vm (V)')
-title("pre (r) and post (b) neurons' Vm")
+    # insert spikes so that Vm reset doesn't look weird
+    Vmseries0 = Vms.vec[0].vector
+    numsteps = len(Vmseries0)
+    for t in spikes.vec[0].vector:
+        Vmseries0[int(t/dt)-1] = 30e-3 # V
+    Vmseries1 = Vms.vec[1].vector
+    for t in spikes.vec[1].vector:
+        Vmseries1[int(t/dt)-1] = 30e-3 # V
 
-# Ca plots for the synapse
-figure(facecolor='w')
-plot(timeseries,CaTable.vector[:len(timeseries)],color='r')
-plot((timeseries[0],timeseries[-1]),(thetaP,thetaP),color='k',\
-    linestyle='dashed',label='pot thresh')
-plot((timeseries[0],timeseries[-1]),(thetaD,thetaD),color='b',\
-    linestyle='dashed',label='dep thresh')
-legend()
-xlabel('time (ms)')
-ylabel('Ca (arb)')
-title("Ca conc in the synapse")
+    timeseries = linspace(0.,1000*numsteps*dt,numsteps)
+    # Voltage plots
+    figure(facecolor='w')
+    plot(timeseries,Vmseries0,color='r') # pre neuron's vm
+    plot(timeseries,Vmseries1,color='b') # post neuron's vm
+    xlabel('time (ms)')
+    ylabel('Vm (V)')
+    title("pre (r) and post (b) neurons' Vm")
 
-# Weight plots for the synapse
-figure(facecolor='w')
-plot(timeseries,WtTable.vector[:len(timeseries)],color='r')
-xlabel('time (ms)')
-ylabel('Efficacy')
-title("Efficacy of the synapse")
+    # Ca plots for the synapse
+    figure(facecolor='w')
+    plot(timeseries,CaTable.vector[:len(timeseries)],color='r')
+    plot((timeseries[0],timeseries[-1]),(thetaP,thetaP),color='k',\
+        linestyle='dashed',label='pot thresh')
+    plot((timeseries[0],timeseries[-1]),(thetaD,thetaD),color='b',\
+        linestyle='dashed',label='dep thresh')
+    legend()
+    xlabel('time (ms)')
+    ylabel('Ca (arb)')
+    title("Ca conc in the synapse")
 
-# STDP curve
-fig = figure(facecolor='w')
-ax = fig.add_subplot(111)
-ax.plot(arange(-t_extent,0,ddt)*1000,array(dwlist_neg),'.-r')
-ax.plot(arange(ddt,(t_extent+ddt),ddt)*1000,array(dwlist_pos),'.-b')
-xmin,xmax = ax.get_xlim()
-ymin,ymax = ax.get_ylim()
-ax.set_xticks([xmin,0,xmax])
-ax.set_yticks([ymin,0,ymax])
-ax.plot((0,0),(ymin,ymax),linestyle='dashed',color='k')
-ax.plot((xmin,xmax),(0,0),linestyle='dashed',color='k')
-ax.set_xlabel('$t_{post}-t_{pre}$ (ms)')
-ax.set_ylabel('$\Delta w / w$')
-fig.tight_layout()
-#fig.subplots_adjust(hspace=0.3,wspace=0.5) # use after tight_layout()
+    # Weight plots for the synapse
+    figure(facecolor='w')
+    plot(timeseries,WtTable.vector[:len(timeseries)],color='r')
+    xlabel('time (ms)')
+    ylabel('Efficacy')
+    title("Efficacy of the synapse")
 
-show()
+    # STDP curve
+    fig = figure(facecolor='w')
+    ax = fig.add_subplot(111)
+    ax.plot(arange(-t_extent,0,ddt)*1000,array(dwlist_neg),'.-r')
+    ax.plot(arange(ddt,(t_extent+ddt),ddt)*1000,array(dwlist_pos),'.-b')
+    xmin,xmax = ax.get_xlim()
+    ymin,ymax = ax.get_ylim()
+    ax.set_xticks([xmin,0,xmax])
+    ax.set_yticks([ymin,0,ymax])
+    ax.plot((0,0),(ymin,ymax),linestyle='dashed',color='k')
+    ax.plot((xmin,xmax),(0,0),linestyle='dashed',color='k')
+    ax.set_xlabel('$t_{post}-t_{pre}$ (ms)')
+    ax.set_ylabel('$\Delta w / w$')
+    fig.tight_layout()
+    #fig.subplots_adjust(hspace=0.3,wspace=0.5) # use after tight_layout()
+
+    show()
+
+if __name__ == '__main__':
+	main()
