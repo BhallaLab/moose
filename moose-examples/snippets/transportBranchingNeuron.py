@@ -22,7 +22,7 @@ plotScale = 20
 
 def findTwigs( compt ):
     pa = compt.parentVoxel
-    numkids = [ 0 ] * len( pa ) 
+    numkids = [ 0 ] * len( pa )
     for i in pa:
         if i >= 0 and i < len( pa ):
             numkids[i] += 1
@@ -55,7 +55,7 @@ def makeModel():
     compt0.diffLength = 1e-6 # This will be over 100 compartments.
     # This is the magic command that configures the diffusion compartments.
     compt0.subTreePath = "/model/cell/#"
-    #compt0.cell = cell 
+    #compt0.cell = cell
 
     # Build the solvers. No need for diffusion in this version.
     ksolve0 = moose.Ksolve( '/model/chem/compt0/ksolve' )
@@ -70,7 +70,7 @@ def makeModel():
     assert( stoich0.numVarPools == 2 )
     assert( stoich0.numProxyPools == 0 )
     assert( stoich0.numRates == 0 )
-    
+
     moose.element( '/model/chem/compt0/a[0]' ).concInit = aConcInit
     twigs = findTwigs( compt0 )
     print(('twigs = ', twigs))
@@ -139,11 +139,11 @@ def finalizeDisplay( plotlist, cPlotDt ):
         line1, = plotlist[0].plot( pos, x.vector, label=x.name )
     plt.legend()
     plotlist[1].canvas.draw()
-    print( "Hit 'enter' to exit" )
-    eval(input())
+    print( "Hit '0' to exit" )
+    eval(str(input()))
 
 def makeChemModel( compt ):
-    
+
     # create molecules and reactions
     a = moose.Pool( compt.path + '/a' )
     b = moose.Pool( compt.path + '/b' )
@@ -160,20 +160,20 @@ def makeChemModel( compt ):
 def main():
     """
     transportBranchingNeuron:
-    This example illustrates bidirectional transport 
-    embedded in the branching pseudo 1-dimensional geometry of a neuron. 
-    This means that diffusion and transport only happen along the axis of 
-    dendritic segments, not radially from inside to outside a dendrite, 
-    nor tangentially around the dendrite circumference. 
+    This example illustrates bidirectional transport
+    embedded in the branching pseudo 1-dimensional geometry of a neuron.
+    This means that diffusion and transport only happen along the axis of
+    dendritic segments, not radially from inside to outside a dendrite,
+    nor tangentially around the dendrite circumference.
     In this model there is a molecule **a** starting at the soma, which is
     transported out to the dendrites. There is another molecule, **b**,
     which is initially present at the dendrite tips, and is transported
     toward the soma.
-    This example uses an external model file to specify a binary branching 
-    neuron. This model does not have any spines. The electrical model is 
+    This example uses an external model file to specify a binary branching
+    neuron. This model does not have any spines. The electrical model is
     used here purely for the geometry and is not part of the computations.
     In this example we build trival chemical model just having
-    molecules **a** and **b** throughout the neuronal geometry, using 
+    molecules **a** and **b** throughout the neuronal geometry, using
     the makeChemModel function.
     The model is set up to run using the Ksolve for integration and the
     Dsolve for handling diffusion.
@@ -184,18 +184,18 @@ def main():
            represents a diffusive voxel and moves in the y-axis to show
            changes in concentration of molecule a.
         b. Similar animated pseudo-3D plot for molecule b.
-        c. Time-series plot that appears after the simulation has 
+        c. Time-series plot that appears after the simulation has
            ended. The plots are for the first and last diffusive voxel,
            that is, the soma and the tip of one of the apical dendrites.
 
     """
     plotdt = 1
     animationdt = 5
-    runtime = 600 
+    runtime = 600
 
     makeModel()
     plotlist = makeDisplay()
-    # Default Scheduling works fine for this model. 
+    # Default Scheduling works fine for this model.
     # Chemdt = 0.1, diffdt = 0.01, plotdt = 1
 
     moose.reinit()

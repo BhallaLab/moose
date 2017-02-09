@@ -7,14 +7,6 @@
 ## See the file COPYING.LIB for the full notice.
 #########################################################################
 
-# This example illustrates how to set up a kinetic solver and kinetic model
-# using the scripting interface. Normally this would be done using the
-# Shell::doLoadModel command, and normally would be coordinated by the
-# SimManager as the base of the entire model.
-# This example creates a bistable model having two enzymes and a reaction.
-# One of the enzymes is autocatalytic.
-# The model is set up to run using Exponential Euler integration.
-
 import math
 import pylab
 import numpy
@@ -26,7 +18,7 @@ def makeModel():
                 compartment = moose.CubeMesh( '/model/compartment' )
                 compartment.volume = 1e-20
                 # the mesh is created automatically by the compartment
-                mesh = moose.element( '/model/compartment/mesh' ) 
+                mesh = moose.element( '/model/compartment/mesh' )
 
                 # create molecules and reactions
                 a = moose.Pool( '/model/compartment/a' )
@@ -85,6 +77,16 @@ def displayPlots():
                 pylab.show()
 
 def main():
+                """
+This example illustrates how to set up a kinetic solver and kinetic model
+using the scripting interface. Normally this would be done using the
+Shell::doLoadModel command, and normally would be coordinated by the
+SimManager as the base of the entire model.
+This example creates a bistable model having two enzymes and a reaction.
+One of the enzymes is autocatalytic.
+The model is set up to run using Exponential Euler integration.
+
+                """
                 makeModel()
                 gsolve = moose.Gsolve( '/model/compartment/gsolve' )
                 stoich = moose.Stoich( '/model/compartment/stoich' )

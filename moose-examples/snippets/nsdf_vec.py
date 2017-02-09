@@ -1,71 +1,49 @@
-# nsdf_vec.py --- 
-# 
+# nsdf_vec.py ---
+#
 # Filename: nsdf_vec.py
-# Description: 
+# Description:
 # Author: subha
-# Maintainer: 
+# Maintainer:
 # Created: Sat Dec 19 22:27:27 2015 (-0500)
-# Version: 
+# Version:
 # Last-Updated: Thu Aug 11 11:09:33 2016 (-0400)
 #           By: Subhasis Ray
 #     Update #: 135
-# URL: 
-# Keywords: 
-# Compatibility: 
-# 
-# 
+# URL:
+# Keywords:
+# Compatibility:
+#
+#
 
-# Commentary: 
-# 
-# 
-# 
-# 
+# Commentary:
+#
+#
+#
+#
 
 # Change log:
-# 
-# 
-# 
-# 
+#
+#
+#
+#
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
 # published by the Free Software Foundation; either version 3, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program; see the file COPYING.  If not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 # Floor, Boston, MA 02110-1301, USA.
-# 
-# 
+#
+#
 
 # Code:
-"""Example code to dump data from multiple elements in a vector.
-
-In this demo we create a PulseGen vector where each element has a
-different set of pulse parameters. After saving the output vector
-directly using MOOSE NSDFWriter we open the NSDF file using h5py and
-plot the saved data.
-
-You need h5py module installed to run this simulation.
-
-References: 
-
-Ray, Chintaluri, Bhalla and Wojcik. NSDF: Neuroscience Simulation Data
-Format, Neuroinformatics, 2015.
-
-http://nsdf.readthedocs.org/en/latest/
-
-See also:
-
-nsdf.py
-
-"""
-
 
 import numpy as np
 from datetime import datetime
@@ -76,7 +54,8 @@ from matplotlib import pyplot as plt
 import moose
 
 def write_nsdf():
-    """Setup a dummy model with a PulseGen vec and dump the outputValue in
+    """
+    Setup a dummy model with a PulseGen vec and dump the outputValue in
     NSDF file
 
     """
@@ -122,7 +101,7 @@ def write_nsdf():
 this simulation we generate square pules from a PulseGen object and
 use a SpikeGen to detect the threshold crossing events of rising
 edges. We store the pulsegen output as Uniform data and the threshold
-crossing times as Event data. '''    
+crossing times as Event data. '''
     nsdf.stringAttr['creator'] = getpass.getuser()
     nsdf.stringVecAttr['software'] = ['python2.7', 'moose3' ]
     nsdf.stringVecAttr['method'] = ['']
@@ -130,7 +109,7 @@ crossing times as Event data. '''
     nsdf.stringAttr['license'] = 'CC-BY-NC'
     ####################################################
     ## !! Work in progress: concurrent write via h5py does not work !!
-    ####################################################    
+    ####################################################
     ## Now write some custom stuff via h5py
     print('Closing nsdf handle')
     nsdf.close() #explicitly close the file so we do not interfere with h5py
@@ -148,7 +127,7 @@ crossing times as Event data. '''
             pulse_info['level', ii] = pulsegen.vec[ii].level[0]
             map_pulse[ii] = pulsegen.vec[ii].path
         #TODO: connect this as a dimension scale on pulse_info
-        
+
     return nsdf.filename
 
 def read_nsdf(fname):
@@ -167,16 +146,36 @@ def read_nsdf(fname):
             source = pulse_src[ii]
             data = pulse_data[ii, :]
             dt = pulse_data.attrs['dt']
-            plt.figure(source)            
+            plt.figure(source)
             ts = np.arange(len(data)) * dt
             plt.plot(ts, data)
             plt.suptitle(source)
     plt.show()
-            
 
-if __name__ == '__main__':
+def main():
+    """
+    Example code to dump data from multiple elements in a vector.
+
+    In this demo we create a PulseGen vector where each element has a
+    different set of pulse parameters. After saving the output vector
+    directly using MOOSE NSDFWriter we open the NSDF file using h5py and
+    plot the saved data.
+
+    You need h5py module installed to run this simulation.
+
+    References:
+
+    Ray, Chintaluri, Bhalla and Wojcik. NSDF: Neuroscience Simulation Data
+    Format, Neuroinformatics, 2015.
+
+    http://nsdf.readthedocs.org/en/latest/
+
+    """
     fname = write_nsdf()
     read_nsdf(fname)
 
-# 
+if __name__ == '__main__':
+    main()
+
+#
 # nsdf_vec.py ends here
