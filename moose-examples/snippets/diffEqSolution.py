@@ -74,28 +74,28 @@ def makePlot( name, src, field, tick ):
 
 def main():
     """
-    This snippet illustrates the solution of an arbitrary set of 
-    differential equations using the **Func** class and the **Pool** 
+    This snippet illustrates the solution of an arbitrary set of
+    differential equations using the **Func** class and the **Pool**
     class. The equations solved here are::
 
         tauI.m' = Ca - Ca_tgt
         tauG.chan' = m - chan
 
     These equations are taken from: O'Leary et al *Neuron* 2014.
-    
+
     **Func** evaluates an arbitrary function each timestep.
     Here this function is the rate of change from the equations above.
-    The rate of change is passed to the *increment* message of the 
+    The rate of change is passed to the *increment* message of the
     **Pool**. The numerical integration method is the Exponential
     Euler method but this will work fine if the rates are slow compared to
     the simulation timestep.
-    
+
     Conceptually, the idea is that if Ca is greater than the target level,
     then more mRNA is made, which makes more channels.
-    Although the equations have no upper or lower bounds on **m** or 
+    Although the equations have no upper or lower bounds on **m** or
     **chan**, MOOSE is sensible about preventing the molecular pools from
-    having negative concentrations. This does mean that the solution method 
-    employed here won't work for the general solution of differential 
+    having negative concentrations. This does mean that the solution method
+    employed here won't work for the general solution of differential
     equations in non-chemical systems.
     """
     elecdt = 25e-6

@@ -1,27 +1,9 @@
-
-#/**********************************************************************
-#** This program is part of 'MOOSE', the
-#** Messaging Object Oriented Simulation Environment.
-#**           Copyright (C) 2003-2014 Upinder S. Bhalla. and NCBS
-#** It is made available under the terms of the
-#** GNU Lesser General Public License version 2.1
-#** See the file COPYING.LIB for the full notice.
-#**********************************************************************/
-
-##### Author: Aditya Gilra, NCBS, Bangalore, October, 2014.  
-##### Fixed numpy imports and global variables: Subhasis Ray, Fri Jul 10 19:34:53 IST 2015
-
-
-'''
-Connect two cells via a plastic synapse (STDPSynHandler).  
-Induce spikes spearated by varying intervals, in the pre and post synaptic cells.  
-Plot the synaptic weight change for different intervals between the spike-pairs.  
-This ia a pseudo-STDP protocol and we get the STDP rule.  
-'''
-
 import moose
 import matplotlib.pyplot as plt
 from numpy import arange, array
+
+##### Author: Aditya Gilra, NCBS, Bangalore, October, 2014.
+##### Fixed numpy imports and global variables: Subhasis Ray, Fri Jul 10 19:34:53 IST 2015
 
 # ###########################################
 # Neuron models
@@ -42,10 +24,11 @@ spikes = None
 dt = 1e-6
 
 def setupModel():
-    '''
-    Set up two LIF neurons and connect them by an STDPSynHandler.
-    Set up some tables, and reinit MOOSE before simulation.
-    '''
+    """
+Set up two LIF neurons and connect them by an STDPSynHandler.
+Set up some tables, and reinit MOOSE before simulation.
+
+    """
     global network, syn, Vms, weight, spikes, dt
     # ###########################################
     # Initialize neuron group
@@ -130,8 +113,10 @@ def setupModel():
 
 # function to make the aPlus and aMinus settle to equilibrium values
 def reset_settle():
-    """ Call this between every pre-post pair
-    to reset the neurons and make them settle to rest.
+    """
+Call this between every pre-post pair
+to reset the neurons and make them settle to rest.
+
     """
     settletime = 100e-3 # s
     syn.synapse[0].weight = weight # V
@@ -140,17 +125,23 @@ def reset_settle():
 # function to inject a sharp current pulse to make neuron spike
 # immediately at a given time step
 def make_neuron_spike(nrnidx,I=1e-7,duration=1e-3):
-    """ Inject a brief current pulse to 
-    make a neuron spike
+    """
+Inject a brief current pulse to
+make a neuron spike
+
     """
     network.vec[nrnidx].inject = I
     moose.start(duration)
     network.vec[nrnidx].inject = 0.
 
 def main():
-    '''
-    On the command-line, in moose-examples/snippets directory, run ``python STDP.py``
-    '''
+    """
+Connect two cells via a plastic synapse (STDPSynHandler).
+Induce spikes spearated by varying intervals, in the pre and post synaptic cells.
+Plot the synaptic weight change for different intervals between the spike-pairs.
+This ia a pseudo-STDP protocol and we get the STDP rule.
+
+    """
     setupModel()
     dwlist_neg = []
     ddt = 2e-3 # s

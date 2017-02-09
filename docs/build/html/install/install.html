@@ -1,0 +1,416 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Use pre-built packages &mdash; MOOSE ChamCham (3.1.1) documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="MOOSE ChamCham (3.1.1) documentation" href="../index.html"/>
+        <link rel="up" title="Installation" href="index_install.html"/>
+        <link rel="next" title="Quick Start" href="../user/py/quickstart/index_qs.html"/>
+        <link rel="prev" title="Installation" href="index_install.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> MOOSE
+          
+
+          
+            
+            <img src="../_static/moose_logo.png" class="logo" />
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index_install.html">Installation</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Use pre-built packages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#linux">Linux</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mac-osx">Mac OSX</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#windows-cygwin">Windows/Cygwin</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#building-moose">Building MOOSE</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#install-dependencies">Install dependencies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#now-use-cmake-to-build-moose">Now use <cite>cmake</cite> to build moose</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#graphical-user-interface-gui">Graphical User Interface (GUI)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#building-moogli">Building moogli</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../user/py/quickstart/index_qs.html">Quick Start</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user/py/cookbook/index_ckbk.html">Cook Book</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../user/py/graphics/index_graphics.html">Graphics</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../release_notes/index.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../changes/index.html">Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../known_issues/index.html">Known issues</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">MOOSE</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="index_install.html">Installation</a> &raquo;</li>
+      
+    <li>Use pre-built packages</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/install/install.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="use-pre-built-packages">
+<h1>Use pre-built packages<a class="headerlink" href="#use-pre-built-packages" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="linux">
+<h2>Linux<a class="headerlink" href="#linux" title="Permalink to this headline">¶</a></h2>
+<p>We recommend that you use our repositories hosted at <a class="reference external" href="http://build.opensuse.org">Open Build Service</a>.  We have packages for the following distributions</p>
+<ul class="simple">
+<li>Debian 7.0, 8.0</li>
+<li>Ubuntu 12.04, 14.04, 15.04, 15.10, 16.04</li>
+<li>CentOS 6, 7</li>
+<li>Fedora 20, 21, 22, 23</li>
+<li>OpenSUSE 13.1, 13.2, Factory ARM, Leap 42.1, Tumbleweed</li>
+<li>SLE 12, 12 SP1</li>
+<li>RHEL 7</li>
+<li>Scientific Linux 7</li>
+</ul>
+<p>Visit <a class="reference external" href="https://software.opensuse.org/download.html?project=home:moose&amp;package=moose">this page</a>
+to pick your distribution and follow instructions.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last"><code class="docutils literal"><span class="pre">moogli</span></code> (tool to visualize network activity) is not available for CentOS-6.</p>
+</div>
+</div>
+<div class="section" id="mac-osx">
+<h2>Mac OSX<a class="headerlink" href="#mac-osx" title="Permalink to this headline">¶</a></h2>
+<p>Download the <code class="docutils literal"><span class="pre">dmg</span></code> file from <a class="reference external" href="https://github.com/BhallaLab/moose/releases/download/ghevar_3.0.2/Moose_3.0.2_OSX.dmg">here</a>.</p>
+<p>Alternatively, you can use <code class="docutils literal"><span class="pre">homebrew</span></code> to install <code class="docutils literal"><span class="pre">moose</span></code></p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ brew install homebrew/science/moose
+</pre></div>
+</div>
+</div>
+<div class="section" id="windows-cygwin">
+<h2>Windows/Cygwin<a class="headerlink" href="#windows-cygwin" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+<div class="section" id="building-moose">
+<h1>Building MOOSE<a class="headerlink" href="#building-moose" title="Permalink to this headline">¶</a></h1>
+<p>In case your distribution is not listed on <a class="reference external" href="https://software.opensuse.org/download.html?project=home:moose&amp;package=moose">our repository page</a>
+, or if you want to build the lastest development code, read on.</p>
+<p>First, you need to get the source code. You can use <code class="docutils literal"><span class="pre">git</span></code> (clone the
+repository) or download snapshot of github repo by clicking on <a class="reference external" href="https://github.com/BhallaLab/moose/archive/master.zip">this link</a>.:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ git clone https://github.com/BhallaLab/moose
+</pre></div>
+</div>
+<p>Or,</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ wget https://github.com/BhallaLab/moose/archive/master.zip
+$ unzip master.zip
+</pre></div>
+</div>
+<p>If you don&#8217;t want lasest snapshot of <code class="docutils literal"><span class="pre">MOOSE</span></code>, you can download other released
+versions from here <cite>https://github.com/BhallaLab/moose/releases</cite>.</p>
+<div class="section" id="install-dependencies">
+<h2>Install dependencies<a class="headerlink" href="#install-dependencies" title="Permalink to this headline">¶</a></h2>
+<p>Next, you need to install required dependencies. Depending on your OS, names of
+following packages may vary.</p>
+<ul class="simple">
+<li>cmake (version 2.8 or higher)</li>
+<li>gsl-1.16 or higher <a class="reference external" href="ftp://ftp.gnu.org/gnu/gsl/">download</a>.</li>
+<li>libhdf5 development package e.g. <cite>libhdf5-serial-dev</cite> or <cite>libhdf5-devel</cite></li>
+<li>python development package e.g. <cite>python-dev</cite> or <cite>python-devel</cite></li>
+<li>numpy e.g. <cite>python-numpy</cite> or <cite>numpy</cite></li>
+</ul>
+<p>Most of the dependencies can be installed using package manager.</p>
+<p>On <code class="docutils literal"><span class="pre">Debian/Ubuntu</span></code></p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ sudo apt-get install libhdf5-dev cmake libgsl0-dev libpython-dev python-numpy
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Ubuntu 12.04 does not have required version of <code class="docutils literal"><span class="pre">gsl</span></code> (required 1.16 or
+higher, available 1.15). On Ubuntu 16.04, package name is <code class="docutils literal"><span class="pre">libgsl-dev</span></code>.</p>
+</div>
+<p>On <code class="docutils literal"><span class="pre">CentOS/Fedora/RHEL/Scientific</span> <span class="pre">Linux</span></code></p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ sudo yum install hdf5-devel cmake libgsl-dev python-devel python-numpy
+</pre></div>
+</div>
+<p>On <code class="docutils literal"><span class="pre">OpenSUSE</span></code></p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ sudo zypper install hdf5-devel cmake libgsl-dev python-devel python-numpy
+</pre></div>
+</div>
+</div>
+<div class="section" id="now-use-cmake-to-build-moose">
+<h2>Now use <cite>cmake</cite> to build moose<a class="headerlink" href="#now-use-cmake-to-build-moose" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>$ <span class="nb">cd</span> /to/moose/source/code
+$ mkdir _build
+$ <span class="nb">cd</span> _build
+$ cmake  ..
+$ make
+$ ctest --output-on-failure  <span class="c1"># optional</span>
+</pre></div>
+</div>
+<p>This will build pyMOOSE (MOOSE&#8217;s python extention), <cite>ctest</cite> will run few tests to
+check if build process was successful.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>To install MOOSE into non-standard directory, pass additional argument
+<cite>-DCMAKE_INSTALL_PREFIX=path/to/install/dir</cite> to cmake</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ cmake -DCMAKE_INSTALL_PREFIC=$HOME/.local ..
+</pre></div>
+</div>
+<p>To use different version of python</p>
+<div class="last highlight-default"><div class="highlight"><pre><span></span>$ cmake -DPYTHON_EXECUTABLE=/opt/python3/bin/python3 ..
+</pre></div>
+</div>
+</div>
+<p>After that installation is pretty easy</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ sudo make install
+</pre></div>
+</div>
+<p>If everything went fine, you should be able to import moose in python shell.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">moose</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="graphical-user-interface-gui">
+<h1>Graphical User Interface (GUI)<a class="headerlink" href="#graphical-user-interface-gui" title="Permalink to this headline">¶</a></h1>
+<p>You can get the source of <code class="docutils literal"><span class="pre">moose-gui</span></code> from <a class="reference external" href="https://github.com/BhallaLab/moose-gui">here</a>. You can download it either by
+clicking on <a class="reference external" href="https://github.com/BhallaLab/moose-gui/archive/master.zip">this link</a>
+or by using <code class="docutils literal"><span class="pre">git</span></code></p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ git clone https://github.com/BhallaLab/moose-gui
+</pre></div>
+</div>
+<p>To be able to launch <code class="docutils literal"><span class="pre">moose-gui</span></code>, you need to install some more packages</p>
+<ul class="simple">
+<li>matplotlib</li>
+<li>python-qt4</li>
+</ul>
+<p>On <code class="docutils literal"><span class="pre">Ubuntu/Debian</span></code>, these can be installed with</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ sudo apt-get install python-matplotlib python-qt4
+</pre></div>
+</div>
+<p>On <code class="docutils literal"><span class="pre">CentOS/Fedora/RHEL</span></code></p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ sudo yum install python-matplotlib python-qt4
+</pre></div>
+</div>
+<p>Now you can fire up the GUI</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ cd /to/moose-gui
+$ python mgui.py
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>If you have installed <code class="docutils literal"><span class="pre">moose</span></code> package, then GUI is launched by
+running following commnad:</p>
+<div class="last highlight-default"><div class="highlight"><pre><span></span>$ moose
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="building-moogli">
+<h1>Building moogli<a class="headerlink" href="#building-moogli" title="Permalink to this headline">¶</a></h1>
+<p><code class="docutils literal"><span class="pre">moogli</span></code> is subproject of <code class="docutils literal"><span class="pre">MOOSE</span></code> for visualizing models. More details can
+be found <a class="reference external" href="http://moose.ncbs.res.in/moogli">here</a>.</p>
+<p><cite>Moogli</cite> is part of <cite>moose</cite> package. Building moogli can be tricky because of
+multiple depednecies it has.</p>
+<p>To get the latest source code of <code class="docutils literal"><span class="pre">moogli</span></code>, click on <a class="reference external" href="https://github.com/BhallaLab/moogli/archive/master.zip">this link</a>.</p>
+<p>Moogli depends on <code class="docutils literal"><span class="pre">OpenSceneGraph</span></code> (version 3.2.0 or higher) which may not
+be easily available for your operating system.
+For this reason, we distribute required <code class="docutils literal"><span class="pre">OpenSceneGraph</span></code> with <code class="docutils literal"><span class="pre">moogli</span></code>
+source code.</p>
+<p>Depending on distribution of your operating system, you would need following
+packages to be installed.</p>
+<p>On <code class="docutils literal"><span class="pre">Ubuntu/Debian</span></code></p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ sudo apt-get install python-qt4-dev python-qt4-gl python-sip-dev libqt4-dev
+</pre></div>
+</div>
+<p>On <code class="docutils literal"><span class="pre">Fedora/CentOS/RHEL</span></code></p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ sudo yum install sip-devel PyQt4-devel qt4-devel libjpeg-devel PyQt4
+</pre></div>
+</div>
+<p>On <code class="docutils literal"><span class="pre">openSUSE</span></code></p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ sudo zypper install python-sip python-qt4-devel libqt4-devel python-qt4
+</pre></div>
+</div>
+<p>After this, building and installing <code class="docutils literal"><span class="pre">moogli</span></code> should be as simple as</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ cd /path/to/moogli
+$ mkdir _build
+$ cd _build
+$ cmake ..
+$ make
+$ sudo make install
+</pre></div>
+</div>
+<p>If you run into troubles, please report it on our <a class="reference external" href="https://github.com/BhallaLab/moose/issues">github repository</a>.</p>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../user/py/quickstart/index_qs.html" class="btn btn-neutral float-right" title="Quick Start" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index_install.html" class="btn btn-neutral" title="Installation" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Upinder S. Bhall, Subhasis Ray, Aditya Gilra, Dilawar Singh, Harsha Rani, Aviral Goel, Malav Shah.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'ChamCham (3.1.1)',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

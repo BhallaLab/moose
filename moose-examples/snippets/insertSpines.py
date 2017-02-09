@@ -1,14 +1,3 @@
-#########################################################################
-## This program is part of 'MOOSE', the
-## Messaging Object Oriented Simulation Environment.
-##           Copyright (C) 2015 Upinder S. Bhalla. and NCBS
-## It is made available under the terms of the
-## GNU Lesser General Public License version 2.1
-## See the file COPYING.LIB for the full notice.
-#########################################################################
-# This example illustrates loading a model from an SWC file, inserting
-# spines, and viewing it.
-
 import moogli
 import moose
 from matplotlib.cm import gnuplot
@@ -33,6 +22,11 @@ spineAngle = 0
 spineAngleDistrib = 2*PI
 
 def main():
+    """
+This example illustrates loading a model from an SWC file, inserting
+spines, and viewing it.
+
+    """
     app = QtGui.QApplication(sys.argv)
     filename = 'barrionuevo_cell1zr.CNG.swc'
     #filename = 'h10.CNG.swc'
@@ -59,7 +53,7 @@ def main():
     ecomptPath = [x.path for x in compts]
     morphology = moogli.read_morphology_from_moose(name = "", path = "/model/elec")
     #morphology.create_group( "group_all", ecomptPath, -0.08, 0.02, \
-    #        [0.0, 0.5, 1.0, 1.0], [1.0, 0.0, 0.0, 0.9] ) 
+    #        [0.0, 0.5, 1.0, 1.0], [1.0, 0.0, 0.0, 0.9] )
     morphology.create_group( "group_all", ecomptPath, -0.08, 0.02, \
             gnuplot )
 

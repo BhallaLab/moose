@@ -1,0 +1,1800 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Chemical Aspects &mdash; MOOSE ChamCham (3.1.1) documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="MOOSE ChamCham (3.1.1) documentation" href="../../../index.html"/>
+        <link rel="up" title="Cook Book" href="index_ckbk.html"/>
+        <link rel="next" title="Networking" href="network.html"/>
+        <link rel="prev" title="Single Neuron Electrical Aspects (BioPhysics)" href="elec.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> MOOSE
+          
+
+          
+            
+            <img src="../../../_static/moose_logo.png" class="logo" />
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                3.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../../install/index_install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../quickstart/index_qs.html">Quick Start</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index_ckbk.html">Cook Book</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="elec.html">Single Neuron Electrical Aspects (BioPhysics)</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Chemical Aspects</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#load-run-save-models">Load - Run - Save models</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#module-loadKineticModel">Load a Kinetic Model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-loadSbmlmodel">Load an SBML Model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-loadCspaceModel">Load a CSpace Model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-convert_Genesis2Sbml">Save a model into SBML format</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-savemodel">Save a model</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#simple-examples">Simple Examples</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#set-up-a-kinetic-solver-and-model">Set-up a kinetic solver and model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-scriptKineticSolver">Building a chemical Model from Parts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-crossComptSimpleReac">Cross-Compartment Reaction Systems</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-tweakingParameters">Tweaking Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#models-demonstration">Models&#8217; Demonstration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#reaction-diffusion-models">Reaction Diffusion Models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-TuringOneDim">A Turing Model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#a-spatial-bistable-model">A Spatial Bistable Model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-reacDiffConcGradient">Reaction Diffusion in Neurons</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#manipulating-chemical-models">Manipulating Chemical Models</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-transportBranchingNeuron">Transport in branching dendritic tree</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#interface-for-chemical-kinetic-models-in-moosegui">Interface for chemical kinetic models in MOOSEGUI</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#introduction">Introduction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#todo-what-are-chemical-kinetic-models">**TODO** What are chemical kinetic models?</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#levels-of-model">Levels of model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#numerical-methods">Numerical methods</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#using-kinetikit-12">Using Kinetikit 12</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#model-layout-and-icons">Model layout and icons</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#model-operations">Model operations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#model-building">Model building</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#rdesigneur">RDesigneur</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#tutorials">Tutorials</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#deterministic-simulation">Deterministic Simulation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#stochastic-simulation">Stochastic Simulation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-cspaceSteadyState">Finding Steady State (CSpace)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#building-simple-reaction-model">Building Simple Reaction Model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-scriptKineticModel">Define a kinetic model using the scripting</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#advanced-examples">Advanced Examples</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="network.html">Networking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="multiscale.html">MultiScale Modeling</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../graphics/index_graphics.html">Graphics</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../release_notes/index.html">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../changes/index.html">Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../known_issues/index.html">Known issues</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../index.html">MOOSE</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="index_ckbk.html">Cook Book</a> &raquo;</li>
+      
+    <li>Chemical Aspects</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../../../_sources/user/py/cookbook/chem.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="chemical-aspects">
+<h1>Chemical Aspects<a class="headerlink" href="#chemical-aspects" title="Permalink to this headline">¶</a></h1>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><a class="reference internal" href="#load-run-save-models" id="id5">Load - Run - Save models</a></li>
+<li><a class="reference internal" href="#simple-examples" id="id6">Simple Examples</a></li>
+<li><a class="reference internal" href="#interface-for-chemical-kinetic-models-in-moosegui" id="id7">Interface for chemical kinetic models in MOOSEGUI</a></li>
+<li><a class="reference internal" href="#rdesigneur" id="id8">RDesigneur</a></li>
+<li><a class="reference internal" href="#tutorials" id="id9">Tutorials</a></li>
+<li><a class="reference internal" href="#advanced-examples" id="id10">Advanced Examples</a></li>
+</ul>
+</div>
+<div class="section" id="load-run-save-models">
+<span id="ckbk-chem-load-run"></span><h2><a class="toc-backref" href="#id5">Load - Run - Save models</a><a class="headerlink" href="#load-run-save-models" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-loadKineticModel">
+<span id="load-a-kinetic-model"></span><h3>Load a Kinetic Model<a class="headerlink" href="#module-loadKineticModel" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="loadKineticModel.main">
+<code class="descclassname">loadKineticModel.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#loadKineticModel.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>This example illustrates loading, running, and saving a kinetic
+model defined in kkit format. It uses a default kkit model but
+you can specify another using the command line</p>
+<blockquote>
+<div><code class="docutils literal"><span class="pre">python</span> <span class="pre">filename</span> <span class="pre">runtime</span> <span class="pre">solver</span></code>.</div></blockquote>
+<p>We use the gsl solver here.
+The model already defines a couple of plots and sets the runtime 20 secs.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-loadSbmlmodel">
+<span id="load-an-sbml-model"></span><h3>Load an SBML Model<a class="headerlink" href="#module-loadSbmlmodel" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="loadSbmlmodel.main">
+<code class="descclassname">loadSbmlmodel.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#loadSbmlmodel.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>This example illustrates loading, running of an SBML model defined in XML format.
+The model 00001-sbml-l3v1.xml is taken from l3v1 SBML testcase.
+Plots are setup.
+Model is run for 20sec.
+As a general rule we created model under &#8216;/path/model&#8217; and plots under &#8216;/path/graphs&#8217;.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-loadCspaceModel">
+<span id="load-a-cspace-model"></span><h3>Load a CSpace Model<a class="headerlink" href="#module-loadCspaceModel" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="loadCspaceModel.main">
+<code class="descclassname">loadCspaceModel.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#loadCspaceModel.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>This example illustrates loading and running, a kinetic model
+defined in cspace format. We use the gsl solver here. The model already
+defines a couple of plots and sets the runtime to 3000 seconds.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-convert_Genesis2Sbml">
+<span id="save-a-model-into-sbml-format"></span><h3>Save a model into SBML format<a class="headerlink" href="#module-convert_Genesis2Sbml" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="convert_Genesis2Sbml.main">
+<code class="descclassname">convert_Genesis2Sbml.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#convert_Genesis2Sbml.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>This example illustrates loading a kinetic model defined in Genesis format
+into Moose using loadModel function and using writeSBML function
+one can save the model into SBML format.</p>
+<p>libsbml should be installed.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-savemodel">
+<span id="save-a-model"></span><h3>Save a model<a class="headerlink" href="#module-savemodel" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="savemodel.main">
+<code class="descclassname">savemodel.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#savemodel.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>This example illustrates loading a kinetic model defined in Genesis format
+into Moose using &#8220;loadModel&#8221; function and using &#8220;saveModel&#8221; function one can
+save the model back to Genesis format</p>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="simple-examples">
+<span id="ckbk-chem-snippets"></span><h2><a class="toc-backref" href="#id6">Simple Examples</a><a class="headerlink" href="#simple-examples" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="set-up-a-kinetic-solver-and-model">
+<h3>Set-up a kinetic solver and model<a class="headerlink" href="#set-up-a-kinetic-solver-and-model" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="module-scriptGssaSolver">
+<span id="with-scripting"></span><h4>with Scripting<a class="headerlink" href="#module-scriptGssaSolver" title="Permalink to this headline">¶</a></h4>
+<dl class="function">
+<dt id="scriptGssaSolver.main">
+<code class="descclassname">scriptGssaSolver.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scriptGssaSolver.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>This example illustrates how to set up a kinetic solver and kinetic model
+using the scripting interface. Normally this would be done using the
+Shell::doLoadModel command, and normally would be coordinated by the
+SimManager as the base of the entire model.
+This example creates a bistable model having two enzymes and a reaction.
+One of the enzymes is autocatalytic.
+The model is set up to run using Exponential Euler integration.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-changeFuncExpression">
+<span id="with-something-else"></span><h4>With something else<a class="headerlink" href="#module-changeFuncExpression" title="Permalink to this headline">¶</a></h4>
+<dl class="function">
+<dt id="changeFuncExpression.main">
+<code class="descclassname">changeFuncExpression.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#changeFuncExpression.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>This example illustrates how to set up a kinetic solver and kinetic model
+using the scripting interface. Normally this would be done using the
+Shell::doLoadModel command, and normally would be coordinated by the
+SimManager as the base of the entire model.
+This example creates a bistable model having two enzymes and a reaction.
+One of the enzymes is autocatalytic.
+The model is set up to run using Exponential Euler integration.</p>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="module-scriptKineticSolver">
+<span id="building-a-chemical-model-from-parts"></span><h3>Building a chemical Model from Parts<a class="headerlink" href="#module-scriptKineticSolver" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="scriptKineticSolver.main">
+<code class="descclassname">scriptKineticSolver.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scriptKineticSolver.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>This example illustrates how to set up a kinetic solver and kinetic model
+using the scripting interface. Normally this would be done using the
+Shell::doLoadModel command, and normally would be coordinated by the
+SimManager as the base of the entire model.
+This example creates a bistable model having two enzymes and a reaction.
+One of the enzymes is autocatalytic.
+The model is set up to run using Exponential Euler integration.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-crossComptSimpleReac">
+<span id="cross-compartment-reaction-systems"></span><h3>Cross-Compartment Reaction Systems<a class="headerlink" href="#module-crossComptSimpleReac" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="crossComptSimpleReac.main">
+<code class="descclassname">crossComptSimpleReac.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#crossComptSimpleReac.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>This example illustrates a simple cross compartment reaction:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">a</span> <span class="o">&lt;===&gt;</span> <span class="n">b</span> <span class="o">&lt;===&gt;</span> <span class="n">c</span>
+</pre></div>
+</div>
+<p>Here each molecule is in a different compartment.
+The initial conditions are such that the end conc on all compartments
+should be 2.0.
+The time course depends on which compartment the Reac object is
+embedded in.
+The cleanest thing numerically and also conceptually is to have both
+reactions in the same compartment, in this case the middle one
+(<strong>compt1</strong>).
+The initial conditions have a lot of <strong>B</strong>. The equilibrium with
+<strong>C</strong> is fast and so <strong>C</strong> shoots up and passes <strong>B</strong>, peaking at
+about (2.5,9). This is also just
+about the crossover point.
+<strong>A</strong> starts low and slowly climbs up to equilibrate.</p>
+<p>If we put <strong>reac0</strong> in <strong>compt0</strong> and <strong>reac1</strong> in <strong>compt1</strong>,
+it behaves the same
+qualitiatively but now the peak is at around (1, 5.2)</p>
+<p>This configuration of reactions makes sense from the viewpoint of
+having the
+reactions always in the compartment with the smaller volume, which is
+important if we need to have junctions where many small voxels talk to
+one big voxel in another compartment.</p>
+<p>Note that putting the reacs in other compartments doesn&#8217;t work and in
+some combinations (e.g., <strong>reac0</strong> in <strong>compt0</strong> and <strong>reac1</strong> in
+<strong>compt2</strong>) give
+numerical instability.</p>
+</dd></dl>
+
+<span class="target" id="module-crossComptOscillator"></span><dl class="function">
+<dt id="crossComptOscillator.main">
+<code class="descclassname">crossComptOscillator.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#crossComptOscillator.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>This example illustrates loading and running a reaction system that
+spans two volumes, that is, is in different compartments. It uses a
+kkit model file. You can tell if it is working if you see nice
+relaxation oscillations.</p>
+</dd></dl>
+
+<span class="target" id="module-crossComptNeuroMesh"></span><dl class="function">
+<dt id="crossComptNeuroMesh.main">
+<code class="descclassname">crossComptNeuroMesh.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#crossComptNeuroMesh.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>This example illustrates how to define a kinetic model embedded in
+a NeuroMesh, and undergoing cross-compartment reactions. It is
+completely self-contained and does not use any external model definition
+files.  Normally one uses standard model formats like
+SBML or kkit to concisely define kinetic and neuronal models.
+This example creates a simple reaction:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">a</span> <span class="o">&lt;==&gt;</span> <span class="n">b</span> <span class="o">&lt;==&gt;</span> <span class="n">c</span>
+</pre></div>
+</div>
+<p>in which</p>
+<p><strong>a, b</strong>, and <strong>c</strong> are in the dendrite, spine head, and PSD
+respectively.
+The model is set up to run using the Ksolve for integration. Although
+a diffusion solver is set up, the diff consts here are set to zero.
+The display has two parts:
+Above is a line plot of concentration against compartment#.
+Below is a time-series plot that appears after # the simulation has
+ended. The plot is for the last (rightmost) compartment.
+Concs of <strong>a</strong>, <strong>b</strong>, <strong>c</strong> are plotted for both graphs.</p>
+</dd></dl>
+
+<span class="target" id="module-crossComptSimpleReacGSSA"></span><dl class="function">
+<dt id="crossComptSimpleReacGSSA.main">
+<code class="descclassname">crossComptSimpleReacGSSA.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#crossComptSimpleReacGSSA.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>This example illustrates a simple cross compartment reaction:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">a</span> <span class="o">&lt;===&gt;</span> <span class="n">b</span> <span class="o">&lt;===&gt;</span> <span class="n">c</span>
+</pre></div>
+</div>
+<p>Here each molecule is in a different compartment.
+The initial conditions are such that the end conc on all compartments
+should be 2.0.
+The time course depends on which compartment the Reac object is
+embedded in.
+The cleanest thing numerically and also conceptually is to have both
+reactions in the same compartment, in this case the middle one
+(<strong>compt1</strong>).
+The initial conditions have a lot of <strong>B</strong>. The equilibrium with
+<strong>C</strong> is fast and so <strong>C</strong> shoots up and passes <strong>B</strong>, peaking at
+about (2.5,9). This is also just
+about the crossover point.
+<strong>A</strong> starts low and slowly climbs up to equilibrate.</p>
+<p>If we put <strong>reac0</strong> in <strong>compt0</strong> and <strong>reac1</strong> in <strong>compt1</strong>,
+it behaves the same
+qualitiatively but now the peak is at around (1, 5.2)</p>
+<p>This configuration of reactions makes sense from the viewpoint of
+having the
+reactions always in the compartment with the smaller volume, which is
+important if we need to have junctions where many small voxels talk to
+one big voxel in another compartment.</p>
+<p>Note that putting the reacs in other compartments doesn&#8217;t work and in
+some combinations (e.g., <strong>reac0</strong> in <strong>compt0</strong> and <strong>reac1</strong> in
+<strong>compt2</strong>) give
+numerical instability.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-tweakingParameters">
+<span id="tweaking-parameters"></span><h3>Tweaking Parameters<a class="headerlink" href="#module-tweakingParameters" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="tweakingParameters.main">
+<code class="descclassname">tweakingParameters.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#tweakingParameters.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>This example illustrates parameter tweaking. It uses a kinetic model
+for a relaxation oscillator, defined in kkit format.
+We use the gsl solver here.
+The model looks like this:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>        <span class="n">_________</span>
+        <span class="o">|</span>        <span class="o">|</span>
+        <span class="n">V</span>        <span class="o">|</span>
+<span class="n">M</span><span class="o">-----</span><span class="n">Enzyme</span><span class="o">----&gt;</span><span class="n">M</span><span class="o">*</span>           <span class="n">All</span> <span class="ow">in</span> <span class="n">compartment</span> <span class="n">A</span>
+<span class="o">|</span>\             <span class="o">/|</span> <span class="o">^</span>
+<span class="o">|</span> \<span class="n">___basal___</span><span class="o">/</span>   <span class="o">|</span>
+<span class="o">|</span>                 <span class="o">|</span>
+<span class="n">endo</span>              <span class="o">|</span>
+<span class="o">|</span>                 <span class="n">exo</span>
+<span class="o">|</span>       <span class="n">_______</span>   <span class="o">|</span>
+<span class="o">|</span>       <span class="o">|</span>      \  <span class="o">|</span>
+<span class="n">V</span>       <span class="n">V</span>       \ <span class="o">|</span>
+<span class="n">M</span><span class="o">-----</span><span class="n">Enzyme</span><span class="o">----&gt;</span><span class="n">M</span><span class="o">*</span>           <span class="n">All</span> <span class="ow">in</span> <span class="n">compartment</span> <span class="n">B</span>
+\             <span class="o">/|</span>
+\<span class="n">___basal___</span><span class="o">/</span>
+</pre></div>
+</div>
+<p>The way it works: We set the run off for a few seconds with the original
+model parameters. This version oscillates. Then we double the endo
+and exo forward rates and run it further to show that the period becomes
+nearly twice as fast. Then we restore endo and exo, and instead double
+the initial amounts of M. We run it further again to see what happens.
+This model takes several seconds to run.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="models-demonstration">
+<h3>Models&#8217; Demonstration<a class="headerlink" href="#models-demonstration" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="module-slowFbOsc">
+<span id="oscillation-model"></span><h4>Oscillation Model<a class="headerlink" href="#module-slowFbOsc" title="Permalink to this headline">¶</a></h4>
+<dl class="function">
+<dt id="slowFbOsc.main">
+<code class="descclassname">slowFbOsc.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#slowFbOsc.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>This example illustrates loading, and running a kinetic model 
+for a delayed -ve feedback oscillator, defined in kkit format. 
+The model is one by  Boris N. Kholodenko from 
+Eur J Biochem. (2000) 267(6):1583-8</p>
+<p>This model has a high-gain MAPK stage,
+whose effects are visible whem one looks at the traces from
+successive stages in the plots. The upstream pools have small
+early peaks, and the downstream pools have large delayed ones.
+The negative feedback step is mediated by a simple binding reaction
+of the end-product of oscillation with an upstream activator.</p>
+<p>We use the gsl solver here. The model already
+defines some plots and sets the runtime to 4000 seconds.
+The model does not really play nicely with the GSSA solver, since it
+involves some really tiny amounts of the MAPKKK.</p>
+<p>Things to do with the model:</p>
+<blockquote>
+<div><ul>
+<li><p class="first">Look at model once it is loaded in:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">moose</span><span class="o">.</span><span class="n">le</span><span class="p">(</span> <span class="s1">&#39;/model&#39;</span> <span class="p">)</span>
+<span class="n">moose</span><span class="o">.</span><span class="n">showfields</span><span class="p">(</span> <span class="s1">&#39;/model/kinetics/MAPK/MAPK&#39;</span> <span class="p">)</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Behold the amplification properties of the cascade.
+Could do this by blocking the feedback step and giving a 
+small pulse input.</p>
+</li>
+<li><p class="first">Suggest which parameters you would alter to change
+the period of the oscillator:</p>
+<blockquote>
+<div><ul>
+<li><p class="first">Concs of various molecules, for example:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ras_MAPKKKK</span> <span class="o">=</span> <span class="n">moose</span><span class="o">.</span><span class="n">element</span><span class="p">(</span> <span class="s1">&#39;/model/kinetics/MAPK/Ras_dash_MKKKK&#39;</span> <span class="p">)</span>
+<span class="n">moose</span><span class="o">.</span><span class="n">showfields</span><span class="p">(</span> <span class="n">ras_MAPKKKK</span> <span class="p">)</span>
+<span class="n">ras_MAPKKKK</span><span class="o">.</span><span class="n">concInit</span> <span class="o">=</span> <span class="mf">1e-5</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Feedback reaction rates</p>
+</li>
+<li><p class="first">Rates of all the enzymes:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">moose</span><span class="o">.</span><span class="n">wildcardFind</span><span class="p">(</span> <span class="s1">&#39;/##[ISA=EnzBase]&#39;</span><span class="p">):</span>
+     <span class="n">i</span><span class="o">.</span><span class="n">kcat</span> <span class="o">*=</span> <span class="mf">10.0</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</dd></dl>
+
+</div>
+<div class="section" id="bistability-models">
+<h4>Bistability Models<a class="headerlink" href="#bistability-models" title="Permalink to this headline">¶</a></h4>
+<div class="section" id="module-mapkFB">
+<span id="mapk-feedback-loop-model"></span><h5>MAPK feedback loop model<a class="headerlink" href="#module-mapkFB" title="Permalink to this headline">¶</a></h5>
+<dl class="function">
+<dt id="mapkFB.main">
+<code class="descclassname">mapkFB.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#mapkFB.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>This example illustrates loading, and running a kinetic model
+for a bistable positive feedback system, defined in kkit format.
+This is based on Bhalla, Ram and Iyengar, Science 2002.</p>
+<p>The core of this model is a positive feedback loop comprising of
+the MAPK cascade, PLA2, and PKC. It receives PDGF and Ca2+ as
+inputs.</p>
+<p>This model is quite a large one and due to some stiffness in its
+equations, it runs somewhat slowly.</p>
+<p>The simulation illustrated here shows how the model starts out in
+a state of low activity. It is induced to &#8216;turn on&#8217; when a
+a PDGF stimulus is given for 400 seconds.
+After it has settled to the new &#8216;on&#8217; state, model is made to
+&#8216;turn off&#8217;
+by setting the system calcium levels to zero for a while. This
+is a somewhat unphysiological manipulation!</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-scaleVolumes">
+<span id="simple-minimal-bistable-model"></span><h5>Simple minimal bistable model<a class="headerlink" href="#module-scaleVolumes" title="Permalink to this headline">¶</a></h5>
+<dl class="function">
+<dt id="scaleVolumes.main">
+<code class="descclassname">scaleVolumes.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scaleVolumes.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>This example illustrates how to run a model at different volumes.
+The key line is just to set the volume of the compartment:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">compt</span><span class="o">.</span><span class="n">volume</span> <span class="o">=</span> <span class="n">vol</span>
+</pre></div>
+</div>
+<p>If everything
+else is set up correctly, then this change propagates through to all
+reactions molecules.</p>
+<p>For a deterministic reaction one would not see any change in output
+concentrations.
+For a stochastic reaction illustrated here, one sees the level of
+&#8216;noise&#8217;
+changing, even though the concentrations are similar up to a point.
+This example creates a bistable model having two enzymes and a reaction.
+One of the enzymes is autocatalytic.
+This model is set up within the script rather than using an external
+file.
+The model is set up to run using the GSSA (Gillespie Stocahstic systems
+algorithim) method in MOOSE.</p>
+<p>To run the example, run the script</p>
+<blockquote>
+<div><code class="docutils literal"><span class="pre">python</span> <span class="pre">scaleVolumes.py</span></code></div></blockquote>
+<p>and hit <code class="docutils literal"><span class="pre">enter</span></code> every cycle to see the outcome of stochastic
+calculations at ever smaller volumes, keeping concentrations the same.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-strongBis">
+<span id="strongly-bistable-model"></span><h5>Strongly bistable Model<a class="headerlink" href="#module-strongBis" title="Permalink to this headline">¶</a></h5>
+<dl class="function">
+<dt id="strongBis.main">
+<code class="descclassname">strongBis.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#strongBis.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>This example illustrates loading, and running a kinetic model 
+for a bistable system, defined in kkit format. 
+Defaults to the deterministic gsl method, you can pick the 
+stochastic one by</p>
+<blockquote>
+<div><code class="docutils literal"><span class="pre">python</span> <span class="pre">filename</span> <span class="pre">gssa</span></code></div></blockquote>
+<p>The model starts out equally poised between sides <strong>b</strong> and <strong>c</strong>. 
+Then there is a small molecular &#8216;tap&#8217; to push it over to <strong>b</strong>.
+Then we apply a moderate push to show that it is now very stably in
+this state. it takes a strong push to take it over to <strong>c</strong>.
+Then it takes a strong push to take it back to <strong>b</strong>.
+This is a good model to use as the basis for running stochastically
+and examining how state stability is affected by changing volume.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="model-of-bidirectional-synaptic-plasticity">
+<h5>Model of bidirectional synaptic plasticity<a class="headerlink" href="#model-of-bidirectional-synaptic-plasticity" title="Permalink to this headline">¶</a></h5>
+<p>[showing bistable chemical switch]</p>
+<span class="target" id="module-bidirectionalPlasticity"></span><dl class="function">
+<dt id="bidirectionalPlasticity.main">
+<code class="descclassname">bidirectionalPlasticity.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#bidirectionalPlasticity.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>This is a toy model of synaptic bidirectional plasticity. The model has
+a small a bistable chemical switch, and a small set of reactions that
+decode calcium input. One can turn the switch on with short high
+calcium pulses (over 2 uM for about 10 sec). One can turn it back off
+again using a long, lower calcium pulse (0.2 uM, 2000 sec).</p>
+</dd></dl>
+
+</div>
+</div>
+</div>
+<div class="section" id="reaction-diffusion-models">
+<h3>Reaction Diffusion Models<a class="headerlink" href="#reaction-diffusion-models" title="Permalink to this headline">¶</a></h3>
+<p>[Reaction-diffusion + transport in a tapering cylinder]</p>
+<span class="target" id="module-cylinderDiffusion"></span><dl class="function">
+<dt id="cylinderDiffusion.main">
+<code class="descclassname">cylinderDiffusion.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cylinderDiffusion.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>This example illustrates how to set up a diffusion/transport model with
+a simple reaction-diffusion system in a tapering cylinder:</p>
+<div class="line-block">
+<div class="line">Molecule <strong>a</strong> diffuses with diffConst of 10e-12 m^2/s.</div>
+<div class="line">Molecule <strong>b</strong> diffuses with diffConst of 5e-12 m^2/s.</div>
+<div class="line">Molecule <strong>b</strong> also undergoes motor transport with a rate of 10e-6 m/s</div>
+<div class="line-block">
+<div class="line">Thus it &#8216;piles up&#8217; at the end of the cylinder.</div>
+</div>
+<div class="line">Molecule <strong>c</strong> does not move: diffConst = 0.0</div>
+<div class="line">Molecule <strong>d</strong> does not move: diffConst = 10.0e-12 but it is buffered.</div>
+<div class="line-block">
+<div class="line">Because it is buffered, it is treated as non-diffusing.</div>
+</div>
+</div>
+<p>All molecules other than <strong>d</strong> start out only in the leftmost (first)
+voxel, with a concentration of 1 mM. <strong>d</strong> is present throughout
+at 0.2 mM, except in the last voxel, where it is at 1.0 mM.</p>
+<p>The cylinder has a starting radius of 2 microns, and end radius of
+1 micron. So when the molecule undergoing motor transport gets to the
+narrower end, its concentration goes up.</p>
+<p>There is a little reaction in all compartments: <code class="docutils literal"><span class="pre">b</span> <span class="pre">+</span> <span class="pre">d</span> <span class="pre">&lt;===&gt;</span> <span class="pre">c</span></code></p>
+<p>As there is a high concentration of <strong>d</strong> in the last compartment,
+when the molecule <strong>b</strong> reaches the end of the cylinder, the reaction
+produces lots of <strong>c</strong>.</p>
+<p>Note that molecule <strong>a</strong> does not participate in this reaction.</p>
+<p>The concentrations of all molecules are displayed in an animation.</p>
+</dd></dl>
+
+<span class="target" id="module-cylinderMotor"></span><dl class="function">
+<dt id="cylinderMotor.main">
+<code class="descclassname">cylinderMotor.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cylinderMotor.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>This example illustrates how to set up a transport model with
+four non-reacting molecules in a cylinder.
+Molecule a and b have a positive motorConst so they are
+are transported from soma (voxel 0) to the end of the cylinder.
+Molecules c and d have a negative motorConst so they are transported
+from the end of the cylinder to the soma.
+Rate of all motors is 1e-6 microns/sec.
+Pools a and c start out with all molecules at the soma, b and d
+start with all molecules at the end of the cylinder.
+Net effect is that only molecules a and d actually move. B and c
+stay put as their motors are pushing further toward their respective
+ends, and I assume all cells have sealed ends.</p>
+</dd></dl>
+
+<span class="target" id="module-gssaCylinderDiffusion"></span><dl class="function">
+<dt id="gssaCylinderDiffusion.main">
+<code class="descclassname">gssaCylinderDiffusion.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gssaCylinderDiffusion.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>This example illustrates how to set up a diffusion/transport model with
+a simple reaction-diffusion system in a tapering cylinder:</p>
+<div class="line-block">
+<div class="line">Molecule <strong>a</strong> diffuses with diffConst of 10e-12 m^2/s.</div>
+<div class="line">Molecule <strong>b</strong> diffuses with diffConst of 5e-12 m^2/s.</div>
+<div class="line">Molecule <strong>b</strong> also undergoes motor transport with a rate of 10e-6 m/s</div>
+<div class="line-block">
+<div class="line">Thus it &#8216;piles up&#8217; at the end of the cylinder.</div>
+</div>
+<div class="line">Molecule <strong>c</strong> does not move: diffConst = 0.0</div>
+<div class="line">Molecule <strong>d</strong> does not move: diffConst = 10.0e-12 but it is buffered.</div>
+<div class="line-block">
+<div class="line">Because it is buffered, it is treated as non-diffusing.</div>
+</div>
+</div>
+<p>All molecules other than <strong>d</strong> start out only in the leftmost (first)
+voxel, with a concentration of 1 mM. <strong>d</strong> is present throughout
+at 0.2 mM, except in the last voxel, where it is at 1.0 mM.</p>
+<p>The cylinder has a starting radius of 2 microns, and end radius of
+1 micron. So when the molecule undergoing motor transport gets to the
+narrower end, its concentration goes up.</p>
+<p>There is a little reaction in all compartments: <code class="docutils literal"><span class="pre">b</span> <span class="pre">+</span> <span class="pre">d</span> <span class="pre">&lt;===&gt;</span> <span class="pre">c</span></code></p>
+<p>As there is a high concentration of <strong>d</strong> in the last compartment,
+when the molecule <strong>b</strong> reaches the end of the cylinder, the reaction
+produces lots of <strong>c</strong>.</p>
+<p>Note that molecule <strong>a</strong> does not participate in this reaction.</p>
+<p>The concentrations of all molecules are displayed in an animation.</p>
+</dd></dl>
+
+<div class="section" id="module-rxdFuncDiffusion">
+<span id="neuronal-diffusion-reaction"></span><h4>Neuronal Diffusion Reaction<a class="headerlink" href="#module-rxdFuncDiffusion" title="Permalink to this headline">¶</a></h4>
+<dl class="function">
+<dt id="rxdFuncDiffusion.main">
+<code class="descclassname">rxdFuncDiffusion.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#rxdFuncDiffusion.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>This example implements a reaction-diffusion like system which is
+bistable and propagates losslessly. It is based on the NEURON example
+rxdrun.py, but incorporates more compartments and runs for a longer time.
+The system is implemented in a function rather than as a proper system
+of chemical reactions. Please see rxdReacDiffusion.py for a variant that
+uses a reaction plus a function object to control its rates.</p>
+</dd></dl>
+
+<span class="target" id="module-rxdReacDiffusion"></span><dl class="function">
+<dt id="rxdReacDiffusion.main">
+<code class="descclassname">rxdReacDiffusion.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#rxdReacDiffusion.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>This example implements a reaction-diffusion like system which is
+bistable and propagates losslessly. It is based on the NEURON example
+rxdrun.py, but incorporates more compartments and runs for a longer time.
+The system is implemented as a hybrid of a reaction and a function which
+sets its rates. Please see rxdFuncDiffusion.py for a variant that uses
+just a function object to set up the system.</p>
+</dd></dl>
+
+<span class="target" id="module-rxdFuncDiffusionStoch"></span><dl class="function">
+<dt id="rxdFuncDiffusionStoch.main">
+<code class="descclassname">rxdFuncDiffusionStoch.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#rxdFuncDiffusionStoch.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>This example implements a reaction-diffusion like system which is
+bistable and propagates losslessly. It is based on the NEURON example
+rxdrun.py, but incorporates more compartments and runs for a longer time.
+The system is implemented in a function rather than as a proper system
+of chemical reactions. Please see rxdReacDiffusion.py for a variant that
+uses a reaction plus a function object to control its rates.</p>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="module-TuringOneDim">
+<span id="a-turing-model"></span><h3>A Turing Model<a class="headerlink" href="#module-TuringOneDim" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="TuringOneDim.makeModel">
+<code class="descclassname">TuringOneDim.</code><code class="descname">makeModel</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#TuringOneDim.makeModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>This example illustrates how to set up a oscillatory Turing pattern 
+in 1-D using reaction diffusion calculations.
+Reaction system is:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">s</span> <span class="o">---</span><span class="n">a</span><span class="o">---&gt;</span> <span class="n">a</span>  <span class="o">//</span> <span class="n">s</span> <span class="n">goes</span> <span class="n">to</span> <span class="n">a</span><span class="p">,</span> <span class="n">catalyzed</span> <span class="n">by</span> <span class="n">a</span><span class="o">.</span>
+<span class="n">s</span> <span class="o">---</span><span class="n">a</span><span class="o">---&gt;</span> <span class="n">b</span>  <span class="o">//</span> <span class="n">s</span> <span class="n">goes</span> <span class="n">to</span> <span class="n">b</span><span class="p">,</span> <span class="n">catalyzed</span> <span class="n">by</span> <span class="n">a</span><span class="o">.</span>
+<span class="n">a</span> <span class="o">---</span><span class="n">b</span><span class="o">---&gt;</span> <span class="n">s</span>  <span class="o">//</span> <span class="n">a</span> <span class="n">goes</span> <span class="n">to</span> <span class="n">s</span><span class="p">,</span> <span class="n">catalyzed</span> <span class="n">by</span> <span class="n">b</span><span class="o">.</span>
+<span class="n">b</span> <span class="o">-------&gt;</span> <span class="n">s</span>  <span class="o">//</span> <span class="n">b</span> <span class="ow">is</span> <span class="n">degraded</span> <span class="n">irreversibly</span> <span class="n">to</span> <span class="n">s</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>in sum, <strong>a</strong> has a positive feedback onto itself and also forms <strong>b</strong>.
+<strong>b</strong> has a negative feedback onto <strong>a</strong>.
+Finally, the diffusion constant for <strong>a</strong> is 1/10 that of <strong>b</strong>.</p>
+<p>This chemical system is present in a 1-dimensional (cylindrical) 
+compartment. The entire reaction-diffusion system is set up 
+within the script.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="a-spatial-bistable-model">
+<h3>A Spatial Bistable Model<a class="headerlink" href="#a-spatial-bistable-model" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="module-reacDiffConcGradient">
+<span id="reaction-diffusion-in-neurons"></span><h3>Reaction Diffusion in Neurons<a class="headerlink" href="#module-reacDiffConcGradient" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="reacDiffConcGradient.main">
+<code class="descclassname">reacDiffConcGradient.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#reacDiffConcGradient.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>This example shows how to maintain a conc gradient against diffusion</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">compt0</span>      <span class="n">compt1</span>      <span class="n">compt</span> <span class="mi">2</span>
+  <span class="n">a</span> <span class="o">.........</span> <span class="n">a</span> <span class="o">..........</span> <span class="n">a</span>           <span class="p">[</span><span class="n">Diffusion</span> <span class="n">between</span> <span class="n">compts</span><span class="p">]</span>
+  <span class="o">|</span>\          <span class="o">|</span>\           <span class="o">|</span>           <span class="o">|</span>           <span class="o">|</span>            <span class="o">|</span>           <span class="p">[</span><span class="n">Reacs</span> <span class="n">within</span> <span class="n">compts</span><span class="p">]</span>
+ \<span class="o">|</span>          \<span class="o">|</span>           \<span class="o">|</span>
+  <span class="n">b0</span> <span class="o">&lt;-------&gt;</span><span class="n">b1</span> <span class="o">&lt;--------</span><span class="n">b2</span>           <span class="p">[</span><span class="n">Reacs</span> <span class="n">between</span> <span class="n">compts</span><span class="p">]</span>
+
+ <span class="mi">4</span><span class="n">x</span>          <span class="mi">2</span><span class="n">x</span>           <span class="mi">1</span><span class="n">x</span>           <span class="p">[</span><span class="n">Ratios</span> <span class="n">of</span> <span class="n">vols</span> <span class="n">of</span> <span class="n">compts</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>If there is no diffusion then the ratio of concs should be 1:10:100
+If there is no x-compt reac, then clearly the concs should all be
+the same, in this case they should be 2.0.
+If both are happening then the final concs are 1.4, 2.5, 3.4.</p>
+</dd></dl>
+
+<span class="target" id="module-reacDiffBranchingNeuron"></span><dl class="function">
+<dt id="reacDiffBranchingNeuron.main">
+<code class="descclassname">reacDiffBranchingNeuron.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#reacDiffBranchingNeuron.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>This example illustrates how to define a kinetic model embedded in
+the branching pseudo 1-dimensional geometry of a neuron. This means
+that diffusion only happens along the axis of dendritic segments, not
+radially from inside to outside a dendrite, nor tangentially around
+the dendrite circumference. The model
+oscillates in space and time due to a Turing-like reaction-diffusion
+mechanism present in all compartments. For the sake of this demo,
+the initial conditions are set to be slightly different on one of the
+terminal dendrites, so as to break the symmetry and initiate
+oscillations.
+This example uses an external model file to specify a binary branching
+neuron. This model does not have any spines. The electrical model is
+used here purely for the geometry and is not part of the computations.
+In this example we build an identical chemical model throughout the
+neuronal geometry, using the makeChemModel function.
+The model is set up to run using the Ksolve for integration and the
+Dsolve for handling diffusion.</p>
+<p>The display has two parts:</p>
+<blockquote>
+<div><ol class="loweralpha simple">
+<li>Animated pseudo-3D plot of neuronal geometry, where each point
+represents a diffusive voxel and moves in the y-axis to show
+changes in concentration.</li>
+<li>Time-series plot that appears after the simulation has
+ended. The plots are for the first and last diffusive voxel,
+that is, the soma and the tip of one of the apical dendrites.</li>
+</ol>
+</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="reacDiffBranchingNeuron.makeChemModel">
+<code class="descclassname">reacDiffBranchingNeuron.</code><code class="descname">makeChemModel</code><span class="sig-paren">(</span><em>compt</em><span class="sig-paren">)</span><a class="headerlink" href="#reacDiffBranchingNeuron.makeChemModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function sets up a simple oscillatory chemical system within
+the script. The reaction system is:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">s</span> <span class="o">---</span><span class="n">a</span><span class="o">---&gt;</span> <span class="n">a</span>  <span class="o">//</span> <span class="n">s</span> <span class="n">goes</span> <span class="n">to</span> <span class="n">a</span><span class="p">,</span> <span class="n">catalyzed</span> <span class="n">by</span> <span class="n">a</span><span class="o">.</span>
+<span class="n">s</span> <span class="o">---</span><span class="n">a</span><span class="o">---&gt;</span> <span class="n">b</span>  <span class="o">//</span> <span class="n">s</span> <span class="n">goes</span> <span class="n">to</span> <span class="n">b</span><span class="p">,</span> <span class="n">catalyzed</span> <span class="n">by</span> <span class="n">a</span><span class="o">.</span>
+<span class="n">a</span> <span class="o">---</span><span class="n">b</span><span class="o">---&gt;</span> <span class="n">s</span>  <span class="o">//</span> <span class="n">a</span> <span class="n">goes</span> <span class="n">to</span> <span class="n">s</span><span class="p">,</span> <span class="n">catalyzed</span> <span class="n">by</span> <span class="n">b</span><span class="o">.</span>
+<span class="n">b</span> <span class="o">-------&gt;</span> <span class="n">s</span>  <span class="o">//</span> <span class="n">b</span> <span class="ow">is</span> <span class="n">degraded</span> <span class="n">irreversibly</span> <span class="n">to</span> <span class="n">s</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>in sum, <strong>a</strong> has a positive feedback onto itself and also forms <strong>b</strong>.
+<strong>b</strong> has a negative feedback onto <strong>a</strong>.
+Finally, the diffusion constant for <strong>a</strong> is 1/10 that of <strong>b</strong>.</p>
+</dd></dl>
+
+<span class="target" id="module-reacDiffSpinyNeuron"></span><dl class="function">
+<dt id="reacDiffSpinyNeuron.main">
+<code class="descclassname">reacDiffSpinyNeuron.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#reacDiffSpinyNeuron.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>This example illustrates how to define a kinetic model embedded in
+the branching pseudo-1-dimensional geometry of a neuron. The model
+oscillates in space and time due to a Turing-like reaction-diffusion
+mechanism present in all compartments. For the sake of this demo,
+the initial conditions are set up slightly different on the PSD
+compartments, so as to break the symmetry and initiate oscillations
+in the spines.
+This example uses an external electrical model file with basal
+dendrite and three branches on
+the apical dendrite. One of those branches has a dozen or so spines.
+In this example we build an identical model in each compartment, using
+the makeChemModel function. One could readily define a system with
+distinct reactions in each compartment.
+The model is set up to run using the Ksolve for integration and the
+Dsolve for handling diffusion.
+The display has four parts:</p>
+<blockquote>
+<div><ol class="loweralpha simple">
+<li>animated line plot of concentration against main compartment#.</li>
+<li>animated line plot of concentration against spine compartment#.</li>
+<li>animated line plot of concentration against psd compartment#.</li>
+<li>time-series plot that appears after the simulation has
+ended. The plot is for the last (rightmost) compartment.</li>
+</ol>
+</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="reacDiffSpinyNeuron.makeChemModel">
+<code class="descclassname">reacDiffSpinyNeuron.</code><code class="descname">makeChemModel</code><span class="sig-paren">(</span><em>compt</em><span class="sig-paren">)</span><a class="headerlink" href="#reacDiffSpinyNeuron.makeChemModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function setus up a simple oscillatory chemical system within
+the script. The reaction system is:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">s</span> <span class="o">---</span><span class="n">a</span><span class="o">---&gt;</span> <span class="n">a</span>  <span class="o">//</span> <span class="n">s</span> <span class="n">goes</span> <span class="n">to</span> <span class="n">a</span><span class="p">,</span> <span class="n">catalyzed</span> <span class="n">by</span> <span class="n">a</span><span class="o">.</span>
+<span class="n">s</span> <span class="o">---</span><span class="n">a</span><span class="o">---&gt;</span> <span class="n">b</span>  <span class="o">//</span> <span class="n">s</span> <span class="n">goes</span> <span class="n">to</span> <span class="n">b</span><span class="p">,</span> <span class="n">catalyzed</span> <span class="n">by</span> <span class="n">a</span><span class="o">.</span>
+<span class="n">a</span> <span class="o">---</span><span class="n">b</span><span class="o">---&gt;</span> <span class="n">s</span>  <span class="o">//</span> <span class="n">a</span> <span class="n">goes</span> <span class="n">to</span> <span class="n">s</span><span class="p">,</span> <span class="n">catalyzed</span> <span class="n">by</span> <span class="n">b</span><span class="o">.</span>
+<span class="n">b</span> <span class="o">-------&gt;</span> <span class="n">s</span>  <span class="o">//</span> <span class="n">b</span> <span class="ow">is</span> <span class="n">degraded</span> <span class="n">irreversibly</span> <span class="n">to</span> <span class="n">s</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>in sum, <strong>a</strong> has a positive feedback onto itself and also forms <strong>b</strong>.
+<strong>b</strong> has a negative feedback onto <strong>a</strong>.
+Finally, the diffusion constant for <strong>a</strong> is 1/10 that of <strong>b</strong>.</p>
+</dd></dl>
+
+<span class="target" id="module-diffSpinyNeuron"></span><dl class="function">
+<dt id="diffSpinyNeuron.main">
+<code class="descclassname">diffSpinyNeuron.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#diffSpinyNeuron.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>This example illustrates and tests diffusion embedded in
+the branching pseudo-1-dimensional geometry of a neuron.
+An input pattern of Ca stimulus is applied in a periodic manner both
+on the dendrite and on the PSDs of the 13 spines. The Ca levels in
+each of the dend, the spine head, and the spine PSD are monitored.
+Since the same molecule name is used for Ca in the three compartments,
+these are automagially connected up for diffusion. The simulation
+shows the outcome of this diffusion.
+This example uses an external electrical model file with basal
+dendrite and three branches on
+the apical dendrite. One of those branches has the 13 spines.
+The model is set up to run using the Ksolve for integration and the
+Dsolve for handling diffusion.
+The timesteps here are not the defaults. It turns out that the
+chem reactions and diffusion in this example are sufficiently fast
+that the chemDt has to be smaller than default. Note that this example
+uses rates quite close to those used in production models.
+The display has four parts:</p>
+<blockquote>
+<div><ol class="loweralpha simple">
+<li>animated line plot of concentration against main compartment#.</li>
+<li>animated line plot of concentration against spine compartment#.</li>
+<li>animated line plot of concentration against psd compartment#.</li>
+<li>time-series plot that appears after the simulation has
+ended.</li>
+</ol>
+</div></blockquote>
+</dd></dl>
+
+<dl class="function">
+<dt id="diffSpinyNeuron.makeChemModel">
+<code class="descclassname">diffSpinyNeuron.</code><code class="descname">makeChemModel</code><span class="sig-paren">(</span><em>compt</em>, <em>doInput</em><span class="sig-paren">)</span><a class="headerlink" href="#diffSpinyNeuron.makeChemModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function setus up a simple chemical system in which Ca input
+comes to the dend and to selected PSDs. There is diffusion between
+PSD and spine head, and between dend and spine head.</p>
+<p>:: Ca_input &#8212;&#8212;&gt; Ca  // in dend and spine head only.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="manipulating-chemical-models">
+<h3>Manipulating Chemical Models<a class="headerlink" href="#manipulating-chemical-models" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="module-switchKineticSolvers">
+<span id="running-with-different-numerical-methods"></span><h4>Running with different numerical methods<a class="headerlink" href="#module-switchKineticSolvers" title="Permalink to this headline">¶</a></h4>
+<dl class="function">
+<dt id="switchKineticSolvers.main">
+<code class="descclassname">switchKineticSolvers.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#switchKineticSolvers.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>At zero order, you can select the solver you want to use within the
+function moose.loadModel( filename, modelpath, solver ).
+Having loaded in the model, you can change the solver to use on it.
+This example illustrates how to assign and change solvers for a
+kinetic model. This process is necessary in two situations:</p>
+<ul class="simple">
+<li>If we want to change the numerical method employed, for example,
+from deterministic to stochastic.</li>
+<li>If we are already using a solver, and we have changed the reaction
+network by adding or removing molecules or reactions.</li>
+</ul>
+<p>Note that we do not have to change the solvers if the volume or
+reaction rates change.
+In this example the model is loaded in with a gsl solver. The
+sequence of solver calculations is:</p>
+<ol class="arabic simple">
+<li>gsl</li>
+<li>ee</li>
+<li>gsl</li>
+<li>gssa</li>
+<li>gsl</li>
+</ol>
+<p>If you&#8217;re removing the solvers, you just delete the stoichiometry
+object and the associated ksolve/gsolve. Should there be diffusion
+(a dsolve)then you should delete that too. If you&#8217;re
+building the solvers up again, then you must do the following
+steps in order:</p>
+<ol class="arabic simple">
+<li>build up the ksolve/gsolve and stoich (any order)</li>
+<li>Assign stoich.ksolve</li>
+<li>Assign stoich.path.</li>
+</ol>
+<p>See the Reaction-diffusion section should you want to do diffusion
+as well.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-scaleVolumes">
+<span id="changing-volumes"></span><h4>Changing volumes<a class="headerlink" href="#module-scaleVolumes" title="Permalink to this headline">¶</a></h4>
+<dl class="function">
+<dt>
+<code class="descclassname">scaleVolumes.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span></dt>
+<dd><p>This example illustrates how to run a model at different volumes.
+The key line is just to set the volume of the compartment:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">compt</span><span class="o">.</span><span class="n">volume</span> <span class="o">=</span> <span class="n">vol</span>
+</pre></div>
+</div>
+<p>If everything
+else is set up correctly, then this change propagates through to all
+reactions molecules.</p>
+<p>For a deterministic reaction one would not see any change in output
+concentrations.
+For a stochastic reaction illustrated here, one sees the level of
+&#8216;noise&#8217;
+changing, even though the concentrations are similar up to a point.
+This example creates a bistable model having two enzymes and a reaction.
+One of the enzymes is autocatalytic.
+This model is set up within the script rather than using an external
+file.
+The model is set up to run using the GSSA (Gillespie Stocahstic systems
+algorithim) method in MOOSE.</p>
+<p>To run the example, run the script</p>
+<blockquote>
+<div><code class="docutils literal"><span class="pre">python</span> <span class="pre">scaleVolumes.py</span></code></div></blockquote>
+<p>and hit <code class="docutils literal"><span class="pre">enter</span></code> every cycle to see the outcome of stochastic
+calculations at ever smaller volumes, keeping concentrations the same.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-analogStimTable">
+<span id="feeding-tabulated-input-to-a-model"></span><h4>Feeding tabulated input to a model<a class="headerlink" href="#module-analogStimTable" title="Permalink to this headline">¶</a></h4>
+<dl class="function">
+<dt id="analogStimTable.main">
+<code class="descclassname">analogStimTable.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#analogStimTable.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Example of using a StimulusTable as an analog signal source in
+a reaction system. It could be used similarly to give other
+analog inputs to a model, such as a current or voltage clamp signal.</p>
+<p>This demo creates a StimulusTable and assigns it half a sine wave.
+Then we assign the start time and period over which to emit the wave.
+The output of the StimTable is sent to a pool <strong>a</strong>, which participates
+in a trivial reaction:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">table</span> <span class="o">----&gt;</span> <span class="n">a</span> <span class="o">&lt;===&gt;</span> <span class="n">b</span>
+</pre></div>
+</div>
+<p>The output of <strong>a</strong> and <strong>b</strong> are recorded in a regular table
+for plotting.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-findChemSteadyState">
+<span id="finding-steady-states"></span><h4>Finding steady states<a class="headerlink" href="#module-findChemSteadyState" title="Permalink to this headline">¶</a></h4>
+<dl class="function">
+<dt id="findChemSteadyState.getState">
+<code class="descclassname">findChemSteadyState.</code><code class="descname">getState</code><span class="sig-paren">(</span><em>ksolve</em>, <em>state</em><span class="sig-paren">)</span><a class="headerlink" href="#findChemSteadyState.getState" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function finds a steady state starting from a random
+initial condition that is consistent with the stoichiometry rules
+and the original model concentrations.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="findChemSteadyState.main">
+<code class="descclassname">findChemSteadyState.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#findChemSteadyState.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>This example sets up the kinetic solver and steady-state finder, on
+a bistable model of a chemical system. The model is set up within the
+script.
+The algorithm calls the steady-state finder 50 times with different
+(randomized) initial conditions, as follows:</p>
+<ul class="simple">
+<li>Set up the random initial condition that fits the conservation laws</li>
+<li>Run for 2 seconds. This should not be mathematically necessary, but
+for obscure numerical reasons it makes it much more likely that the
+steady state solver will succeed in finding a state.</li>
+<li>Find the fixed point</li>
+<li>Print out the fixed point vector and various diagnostics.</li>
+<li>Run for 10 seconds. This is completely unnecessary, and is done here
+just so that the resultant graph will show what kind of state has
+been  found.</li>
+</ul>
+<p>After it does all this, the program runs for 100 more seconds on the
+last found fixed point (which turns out to be a saddle node), then
+is hard-switched in the script to the first attractor basin from which
+it runs for another 100 seconds till it settles there, and then
+is hard-switched yet again to the second attractor and runs for 400
+seconds.</p>
+<p>Looking at the output you will see many features of note:</p>
+<ul class="simple">
+<li>the first attractor (stable point) and the saddle point (unstable
+fixed point) are both found quite often. But the second
+attractor is found just once.
+It has a very small basin of attraction.</li>
+<li>The values found for each of the fixed points match well with the
+values found by running the system to steady-state at the end.</li>
+<li>There are a large number of failures to find a fixed point. These are
+found and reported in the diagnostics. They show up on the plot
+as cases where the 10-second runs are not flat.</li>
+</ul>
+<p>If you wanted to find fixed points in a production model, you would
+not need to do the 10-second runs, and you would need to eliminate the
+cases where the state-finder failed. Then you could identify the good
+points and keep track of how many of each were found.</p>
+<p>There is no way to guarantee that all fixed points have been found
+using this algorithm! If there are points in an obscure corner of state
+space (as for the singleton second attractor convergence in this
+example) you may have to iterate very many times to find them.</p>
+<p>You may wish to sample concentration space logarithmically rather than
+linearly.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="findChemSteadyState.makeModel">
+<code class="descclassname">findChemSteadyState.</code><code class="descname">makeModel</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#findChemSteadyState.makeModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function creates a bistable reaction system using explicit
+MOOSE calls rather than load from a file</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-chemDoseResponse">
+<span id="making-a-dose-response-curve"></span><h4>Making a dose-response curve<a class="headerlink" href="#module-chemDoseResponse" title="Permalink to this headline">¶</a></h4>
+<dl class="function">
+<dt id="chemDoseResponse.main">
+<code class="descclassname">chemDoseResponse.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#chemDoseResponse.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>This example builds a dose-response of a bistable model of a chemical
+system. It uses the kinetic solver <em>Ksolve</em> and the steady-state finder
+<em>SteadyState</em>.
+The model is set up within the script.</p>
+<p>The basic approach is to increment the control variable, <strong>a</strong> in this
+case, while monitoring <strong>b</strong>.
+The algorithm marches through a series of values of the buffered pool 
+<strong>a</strong> and measures resultant values of pool <strong>b</strong>. At each cycle
+the algorithm calls the steady-state finder. Since <strong>a</strong> is incremented
+only a small amount on each step, each new steady state is 
+(usually) quite close to the previous one. The exception is when there
+is a state transition.</p>
+<p>Here we plot three dose-response curves to illustrate the bistable
+nature of the system.</p>
+<p>On the upward going curve in blue, <strong>a</strong> starts low. Here, 
+<strong>b</strong> follows the low arm of the curve
+and then jumps up to the high value at roughly <em>log( [a] ) = -0.55</em>.</p>
+<p>On the downward going curve in green, <strong>b</strong> follows the high arm
+of the curve forming a nice hysteretic loop.
+Eventually <strong>b</strong> has to fall to the low state at about 
+<em>log( [a] ) = -0.83</em></p>
+<p>Through nasty concentration manipulations, we find the third arm 
+of the curve, which tracks the unstable fixed point. This is in red.
+We find this arm by
+setting an initial point close to the unstable fixed point, which
+the steady-state finder duly locates. We then follow a dose-response
+curve as with the other arms of the curve.</p>
+<p>Note that the steady-state solver doesn&#8217;t always succeed in finding a
+good solution, despite moving only in small steps. Nevertheless the
+resultant curves are smooth because it gives up pretty close to the
+correct value, simply because the successive points are close together.
+Overall, the system is pretty robust despite the core root-finder
+computations in GSL being temperamental.</p>
+<p>In doing a production dose-response series
+you may wish to sample concentration space logarithmically rather than
+linearly.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="chemDoseResponse.makeModel">
+<code class="descclassname">chemDoseResponse.</code><code class="descname">makeModel</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#chemDoseResponse.makeModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function creates a bistable reaction system using explicit
+MOOSE calls rather than load from a file.
+The reaction is:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">a</span> <span class="o">---</span><span class="n">b</span><span class="o">---&gt;</span> <span class="mi">2</span><span class="n">b</span>    <span class="c1"># b catalyzes a to form more of b.</span>
+<span class="mi">2</span><span class="n">b</span> <span class="o">---</span><span class="n">c</span><span class="o">---&gt;</span> <span class="n">a</span>    <span class="c1"># c catalyzes b to form a.</span>
+<span class="n">a</span> <span class="o">&lt;======&gt;</span> <span class="mi">2</span><span class="n">b</span>    <span class="c1"># a interconverts to b.</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="module-transportBranchingNeuron">
+<span id="transport-in-branching-dendritic-tree"></span><h3>Transport in branching dendritic tree<a class="headerlink" href="#module-transportBranchingNeuron" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="transportBranchingNeuron.main">
+<code class="descclassname">transportBranchingNeuron.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#transportBranchingNeuron.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>transportBranchingNeuron:
+This example illustrates bidirectional transport
+embedded in the branching pseudo 1-dimensional geometry of a neuron.
+This means that diffusion and transport only happen along the axis of
+dendritic segments, not radially from inside to outside a dendrite,
+nor tangentially around the dendrite circumference.
+In this model there is a molecule <strong>a</strong> starting at the soma, which is
+transported out to the dendrites. There is another molecule, <strong>b</strong>,
+which is initially present at the dendrite tips, and is transported
+toward the soma.
+This example uses an external model file to specify a binary branching
+neuron. This model does not have any spines. The electrical model is
+used here purely for the geometry and is not part of the computations.
+In this example we build trival chemical model just having
+molecules <strong>a</strong> and <strong>b</strong> throughout the neuronal geometry, using
+the makeChemModel function.
+The model is set up to run using the Ksolve for integration and the
+Dsolve for handling diffusion.</p>
+<p>The display has three parts:</p>
+<blockquote>
+<div><ol class="loweralpha simple">
+<li>Animated pseudo-3D plot of neuronal geometry, where each point
+represents a diffusive voxel and moves in the y-axis to show
+changes in concentration of molecule a.</li>
+<li>Similar animated pseudo-3D plot for molecule b.</li>
+<li>Time-series plot that appears after the simulation has
+ended. The plots are for the first and last diffusive voxel,
+that is, the soma and the tip of one of the apical dendrites.</li>
+</ol>
+</div></blockquote>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="interface-for-chemical-kinetic-models-in-moosegui">
+<span id="ckbk-chem-gui"></span><h2><a class="toc-backref" href="#id7">Interface for chemical kinetic models in MOOSEGUI</a><a class="headerlink" href="#interface-for-chemical-kinetic-models-in-moosegui" title="Permalink to this headline">¶</a></h2>
+<p>Upinder Bhalla, Harsha Rani</p>
+<p>Nov 8 2016.</p>
+<hr class="docutils" />
+<ul class="simple">
+<li><a class="reference external" href="#introduction">Introduction</a></li>
+<li><a class="reference external" href="#todo-what-are-chemical-kinetic-models">**TODO** What are chemical kinetic
+models?</a><ul>
+<li><a class="reference external" href="#levels-of-model">Levels of model</a></li>
+<li><a class="reference external" href="#numerical-methods">Numerical methods</a></li>
+</ul>
+</li>
+<li><a class="reference external" href="#using-kinetikit-12">Using Kinetikit 12</a><ul>
+<li><a class="reference external" href="#overview">Overview</a></li>
+<li><a class="reference external" href="#model-layout-and-icons">Model layout and icons</a><ul>
+<li><a class="reference external" href="#compartment">Compartment</a></li>
+<li><a class="reference external" href="#pool">Pool</a></li>
+<li><a class="reference external" href="#buffered-pools">Buffered pools</a></li>
+<li><a class="reference external" href="#reaction">Reaction</a></li>
+<li><a class="reference external" href="#mass-action-enzymes">Mass-action enzymes</a></li>
+<li><a class="reference external" href="#michaelis-menten-enzymes">Michaelis-Menten Enzymes</a></li>
+<li><a class="reference external" href="#summation">Summation</a></li>
+</ul>
+</li>
+<li><a class="reference external" href="#model-operations">Model operations</a></li>
+<li><a class="reference external" href="#model-building">Model Building</a></li>
+</ul>
+</li>
+</ul>
+<div class="section" id="introduction">
+<h3><a class="reference external" href="#TOC">Introduction</a><a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h3>
+<p>Kinetikit 12 is a graphical interface for doing chemical kinetic modeling in MOOSE. It is derived in part from Kinetikit, which was the
+graphical interface used in GENESIS for similar models. Kinetikit, also known as kkit, was at version 11 with GENESIS. Here we start with
+Kinetikit 12.</p>
+</div>
+<div class="section" id="todo-what-are-chemical-kinetic-models">
+<h3><a class="reference external" href="#TOC">**TODO** What are chemical kinetic models?</a><a class="headerlink" href="#todo-what-are-chemical-kinetic-models" title="Permalink to this headline">¶</a></h3>
+<p>Much of neuronal computation occurs through chemical signaling. For
+example, many forms of synaptic plasticity begin with calcium influx
+into the synapse, followed by calcium binding to calmodulin, and then
+calmodulin activation of numerous enzymes. These events can be
+represented in chemical terms:</p>
+<blockquote>
+<div>4 Ca2+ + CaM &lt;===&gt; Ca4.CaM</div></blockquote>
+<p>Such chemical equations can be modeled through standard Ordinary
+Differential Equations, if we ignore space:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>d[Ca]/dt = âˆ’4Kf âˆ— [Ca]4 âˆ— [CaM] + 4Kb âˆ— [Ca4.CaM] d[CaM]/dt = âˆ’Kf âˆ— [Ca]4 âˆ— [CaM] + Kb âˆ— [Ca4.CaM] d[Ca4.CaM]/dt = Kf âˆ— [Ca]4 âˆ— [CaM] âˆ’ Kb âˆ— [Ca4.CaM]
+</pre></div>
+</div>
+<p>MOOSE models these chemical systems. This help document describes how to do such modelling using the graphical interface, Kinetikit 12.</p>
+</div>
+<div class="section" id="levels-of-model">
+<h3><a class="reference external" href="#TOC">Levels of model</a><a class="headerlink" href="#levels-of-model" title="Permalink to this headline">¶</a></h3>
+<p>Chemical kinetic models can be simple well-stirred (or point) models, or
+they could have multiple interacting compartments, or they could include
+space explicitly using reaction-diffusion. In addition such models could
+be solved either deterministically, or using a stochastic formulation.
+At present Kinetikit handles compartmental models but does not compute
+diffusion within the compartments, though MOOSE itself can do this at
+the script level. Kkit12 will do deterministic as well as stochastic
+chemical calculations.</p>
+</div>
+<div class="section" id="numerical-methods">
+<h3><a class="reference external" href="#TOC">Numerical methods</a><a class="headerlink" href="#numerical-methods" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><strong>Deterministic</strong>: Adaptive timestep 5th order Runge-Kutta-Fehlberg from the GSL (GNU Scientific Library).</li>
+<li><strong>Stochastic</strong>: Optimized Gillespie Stochastic Systems Algorithm, custom implementation.</li>
+</ul>
+</div>
+<div class="section" id="using-kinetikit-12">
+<h3><a class="reference external" href="#TOC">Using Kinetikit 12</a><a class="headerlink" href="#using-kinetikit-12" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="overview">
+<h4><a class="reference external" href="#TOC">Overview</a><a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h4>
+<ul class="simple">
+<li>Load models using <strong>&#8216;File -&gt; Load model&#8217;</strong>.Â  A reaction schematic for the chemical system appears in the <strong>&#8216;Editor view&#8217;</strong> tab.</li>
+<li>From <strong>&#8216;Editor view&#8217;</strong> tab</li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li>View parameters by clicking on icons, and looking at entries in <strong>&#8216;Properties&#8217;</strong> table to the right.</li>
+<li>Edit parameters by changing their values in the <strong>&#8216;Properties&#8217;</strong> table.</li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li>From <strong>&#8216;Run View&#8217;</strong></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li>Pools can be plotted by clicking on their icons and dragging the icons onto the plot Window. Presently only concentration v/s time is plottable.</li>
+<li>Select simulation, diffusin dt&#8217;s along updateInterval for plot and Gui with numerical method using options under <strong>&#8216;Preferences&#8217;</strong> button in simulation control.</li>
+<li>Run model using <strong>&#8216;Run&#8217;</strong> button.</li>
+<li>Save plots image using the icons at the top of the <strong>&#8216;Plot Window&#8217;</strong> or right click on plot to Export to csv.</li>
+</ul>
+</div></blockquote>
+<p>Most of these operations are detailed in other sections, and are shared
+with other aspects of the MOOSE simulation interface. Here we focus on
+the Kinetikit-specific items.</p>
+</div>
+</div>
+<div class="section" id="model-layout-and-icons">
+<h3><a class="reference external" href="#TOC">Model layout and icons</a><a class="headerlink" href="#model-layout-and-icons" title="Permalink to this headline">¶</a></h3>
+<p>When you are in the <strong>&#8216;Editor View&#8217;</strong> tab you will see a collection of
+icons, arrows, and grey boxes surrounding these. This is a schematic of
+the reaction scheme being modeled. You can view and change parameters,
+and change the layout of the model.</p>
+<div class="figure">
+<img alt="" src="../../../_images/Moose1.png" />
+</div>
+<p>Resizing the model layout and icons:</p>
+<ul class="simple">
+<li><strong>Zoom</strong>:Â Â Comma and period keys. Alternatively, the mouse scroll wheel or vertical scroll line on the track pad will cause the display to zoom in and out.</li>
+<li><strong>Pan</strong>:Â Â The arrow keys move the display left, right, up, and down.</li>
+<li><strong>Entire Model View</strong>:Â Â Pressing the <strong>&#8216;a&#8217;</strong> key will fit the entire model into the entire field of view.</li>
+<li><strong>Resize Icons</strong>:Â Â Angle bracket keys, that is, <strong>&#8216;&lt;&#8217;</strong> and <strong>&#8216;&gt;&#8217;</strong> or <strong>&#8216;+&#8217;</strong> and <strong>&#8216;-&#8216;</strong>. This resizes the icons while leaving their positions on the screen layout more or less the same.</li>
+<li><strong>Original Model View</strong>:Â Â Pressing the <strong>&#8216;A&#8217;</strong> key (capital &#8216;A&#8217;) will revert to the original model view including the original icon scaling.</li>
+</ul>
+<div class="section" id="compartment">
+<h4><a class="reference external" href="#TOC">Compartment</a><a class="headerlink" href="#compartment" title="Permalink to this headline">¶</a></h4>
+<p>The <em>compartment</em> in moose is usually a contiguous domain in which a
+certain set of chemical reactions and molecular species occur. The
+definition is very closely related to that of a cell-biological
+compartment. Examples include the extracellular space, the cell
+membrane, the cytosol, and the nucleus. Compartments can be nested, but
+of course you cannot put a bigger compartment into a smaller one.</p>
+<ul class="simple">
+<li><strong>Icon</strong>: Grey boundary around a set of reactions.</li>
+<li><strong>Moving Compartments</strong>: Click and drag on the boundary.</li>
+<li><strong>Resizing Compartment boundary</strong>: Happens automatically when contents are repositioned, so that the boundary just contains contents.</li>
+<li><strong>Compartment editable parameters</strong>:</li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><strong>&#8216;name&#8217;</strong>: The name of the compartment.</li>
+<li><strong>&#8216;size&#8217;</strong>: This is the volume, surface area or length of the compartment, depending on its type.</li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><strong>Compartment fixed parameters</strong>:</li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><strong>&#8216;numDimensions&#8217;</strong>: This specifies whether the compartment is a volume, a 2-D surface, or if it is just being represented as a length.</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="pool">
+<h4><a class="reference external" href="#TOC">Pool</a><a class="headerlink" href="#pool" title="Permalink to this headline">¶</a></h4>
+<p>This is the set of molecules of a given species within a compartment.
+Different chemical states of the same molecule are in different pools.</p>
+<ul class="simple">
+<li><strong>Icon</strong>: <img alt="image0" src="../../../_images/Pool.png" /> Colored rectangle with pool name in it.</li>
+<li><strong>Moving pools</strong>: Click and drag.</li>
+<li><strong>Pool editable parameters</strong>:</li>
+</ul>
+<blockquote>
+<div><ul>
+<li><p class="first"><strong>name</strong>: Name of the pool</p>
+</li>
+<li><p class="first"><strong>n</strong>: Number of molecules in the pool</p>
+</li>
+<li><p class="first"><strong>nInit</strong>: Initial number of molecules in the pool. &#8216;n&#8217; gets set
+to this value when the &#8216;reinit&#8217; operation is done.</p>
+</li>
+<li><p class="first"><strong>conc</strong>: Concentration of the molecules in the pool.
+<code class="docutils literal"><span class="pre">conc</span> <span class="pre">=</span> <span class="pre">n</span> <span class="pre">*</span> <span class="pre">unit_scale_factor</span> <span class="pre">/</span> <span class="pre">(N&lt;sub&gt;A&lt;/sub&gt;</span> <span class="pre">*</span> <span class="pre">vol)</span></code></p>
+</li>
+<li><p class="first"><strong>concInit</strong>: Initial concentration of the molecules in the pool.
+&#8216;conc&#8217; is set to this value when the &#8216;reinit&#8217; operation is done.</p>
+<p><code class="docutils literal"><span class="pre">concInit</span> <span class="pre">=</span> <span class="pre">nInit</span> <span class="pre">*</span> <span class="pre">unit_scale_factor</span> <span class="pre">/</span> <span class="pre">(N&lt;sub&gt;A&lt;/sub&gt;</span> <span class="pre">*</span> <span class="pre">vol)</span></code></p>
+</li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><strong>Pool fixed parameters</strong></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><strong>size</strong>: Derived from the compartment that holds the pool.
+Specifies volume, surface area or length of the holding
+compartment.</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="buffered-pools">
+<h4><a class="reference external" href="#TOC">Buffered pools</a><a class="headerlink" href="#buffered-pools" title="Permalink to this headline">¶</a></h4>
+<p>Some pools are set to a fixed &#8216;n&#8217;, that is number of molecules, and
+therefore a fixed concentration, throughout a simulation. These are
+buffered pools.</p>
+<ul class="simple">
+<li><strong>Icon</strong>: <img alt="image1" src="../../../_images/BufPool.png" /> Colored rectangle with pool name in it.</li>
+<li><strong>Moving Buffered pools</strong>: Click and drag.</li>
+<li><strong>Buffered Pool editable parameters</strong></li>
+</ul>
+<blockquote>
+<div><ul>
+<li><p class="first"><strong>name</strong>: Name of the pool</p>
+</li>
+<li><p class="first"><strong>nInit</strong>: Fixed number of molecules in the pool. &#8216;n&#8217; gets set to
+this value throughout the run.</p>
+</li>
+<li><p class="first"><strong>concInit</strong>: Fixed concentration of the molecules in the pool.
+&#8216;conc&#8217; is set to this value throughout the run.</p>
+<p><code class="docutils literal"><span class="pre">concInit</span> <span class="pre">=</span> <span class="pre">nInit</span> <span class="pre">*</span> <span class="pre">unit_scale_factor</span> <span class="pre">/</span> <span class="pre">(N&lt;sub&gt;A&lt;/sub&gt;</span> <span class="pre">*</span> <span class="pre">vol)</span></code></p>
+</li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><strong>Pool fixed parameters</strong>:</li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><strong>n</strong>: Number of molecules in the pool. Derived from &#8216;nInit&#8217;.</li>
+<li><strong>conc</strong>: Concentration of molecules in the pool. Derived from
+&#8216;concInit&#8217;.</li>
+<li><strong>size</strong>: Derived from the compartment that holds the pool.
+Specifies volume, surface area or length of the holding
+compar&#8217;tment.</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="reaction">
+<h4><a class="reference external" href="#TOC">Reaction</a><a class="headerlink" href="#reaction" title="Permalink to this headline">¶</a></h4>
+<p>These are conversion reactions between sets of pools. They are
+reversible, but you can set either of the rates to zero to get
+irreversibility. In the illustration below, <strong>&#8216;D&#8217;</strong> and <strong>&#8216;A&#8217;</strong> are
+substrates, and <strong>&#8216;B&#8217;</strong> is the product of the reaction. This is
+indicated by the direction of the green arrow.</p>
+<div class="figure">
+<img alt="" src="../../../_images/KkitReaction.png" />
+</div>
+<ul class="simple">
+<li><strong>Icon</strong>: <img alt="image2" src="../../../_images/KkitReacIcon.png" /> Reversible reaction arrow.</li>
+<li><strong>Moving Reactions</strong>: Click and drag.</li>
+<li><strong>Reaction editable parameters</strong>:</li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><strong>Name</strong> : Name of reaction</li>
+<li><strong>K:sub:`f`</strong> : &#8216;Forward rate&#8217; of reaction, in
+&#8216;concentration/time&#8217; units. This is the normal way to express and
+manipulate the reaction rate.</li>
+<li><strong>k:sub:`f`</strong> : Forward rate of reaction, in &#8216;number/time&#8217;
+units. This is used internally for computations, but is
+volume-dependent and should not be used to manipulate the reaction
+rate unless you really know what you are doing.</li>
+<li><strong>K:sub:`b`</strong> : Backward rate&#8217; of reaction, in
+&#8216;concentration/time&#8217; units. This is the normal way to express and
+manipulate the reaction rate.</li>
+<li><strong>k:sub:`b`</strong> : Backward rate of reaction, in &#8216;number/time&#8217;
+units. This is used internally for computations, but is
+volume-dependent and should not be used to manipulate the reaction
+rate unless you really know what you are doing.</li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><strong>Reaction fixed parameters</strong>:</li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><strong>numSubstrates</strong>: Number of substrates molecules.</li>
+<li><strong>numProducts</strong>: Number of product molecules.</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="mass-action-enzymes">
+<h4><a class="reference external" href="#TOC">Mass-action enzymes</a><a class="headerlink" href="#mass-action-enzymes" title="Permalink to this headline">¶</a></h4>
+<p>These are enzymes that model the chemical equation&#8217;s</p>
+<blockquote>
+<div>E + S &lt;===&gt; E.S -&gt; E + P</div></blockquote>
+<p>Note that the second reaction is irreversible. Note also that
+mass-action enzymes include a pool to represent the <strong>&#8216;E.S&#8217;</strong>
+(enzyme-substrate) complex. In the example below, the enzyme pool is
+named <strong>&#8216;MassActionEnz&#8217;</strong>, the substrate is <strong>&#8216;C&#8217;</strong>, and the product is
+<strong>&#8216;E&#8217;</strong>. The direction of the enzyme reaction is indicated by the red
+arrows.</p>
+<div class="figure">
+<img alt="" src="../../../_images/MassActionEnzReac.png" />
+</div>
+<ul class="simple">
+<li><strong>Icon</strong>: <img alt="image3" src="../../../_images/MassActionEnzIcon.png" /> Colored ellipse atop a small square. The ellipse represents the enzyme. The small square represents <strong>&#8216;E.S&#8217;</strong>, the enzyme-substrate complex. The ellipse icon has the same color as the enzyme pool <strong>&#8216;E&#8217;</strong>. It is connected to the enzyme pool <strong>&#8216;E&#8217;</strong> with a straight line of the same color.</li>
+</ul>
+<blockquote>
+<div><p>The ellipse icon sits on a continuous, typically curved arrow in red,
+from the substrate to the product.</p>
+<p>A given enzyme pool can have any number of enzyme activities, since
+the same enzyme might catalyze many reactions.</p>
+</div></blockquote>
+<ul class="simple">
+<li><strong>Moving Enzymes</strong>: Click and drag on the ellipse.</li>
+<li><strong>Enzyme editable parameters</strong></li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><strong>name</strong> : Name of enzyme.</li>
+<li><strong>K:sub:`m`</strong> : Michaelis-Menten value for enzyme, in
+&#8216;concentration&#8217; units.</li>
+<li><strong>k:sub:`cat`</strong> : Production rate of enzyme, in &#8216;1/time&#8217; units.
+Equal to k<sub>3</sub>, the rate of the second, irreversible
+reaction.</li>
+<li><strong>k1</strong> : Forward rate of the <strong>E+S</strong> reaction, in number and
+&#8216;1/time&#8217; units. This is what is used in the internal calculations.</li>
+<li><strong>k2</strong> : Backward rate of the <strong>E+S</strong> reaction, in &#8216;1/time&#8217; units.
+Used in internal calculations.</li>
+<li><strong>k3</strong> : Forward rate of the <strong>E.S -&gt; E + P</strong> reaction, in
+&#8216;1/time&#8217; units. Equivalent to k<sub>cat</sub>. Used in internal
+calculations.</li>
+<li><strong>ratio</strong> : This is equal to k<sub>2</sub>/k:sub:<cite>3</cite>. Needed to
+define the internal rates in terms of K<sub>m</sub> and
+k<sub>cat</sub>. I usually use a value of 4.</li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><strong>Enzyme-substrate-complex editable parameters</strong>: These are identica&#8217;l to those of any other pool.</li>
+</ul>
+<blockquote>
+<div><ul>
+<li><p class="first"><strong>name</strong>: Name of the <strong>E.S</strong> complex. Defaults to **_cplx**.</p>
+</li>
+<li><p class="first"><strong>n</strong>: Number of molecules in the pool</p>
+</li>
+<li><p class="first"><strong>nInit</strong>: Initial number of molecules in the complex. &#8216;n&#8217; gets set to this value when the &#8216;reinit&#8217; operation is done.</p>
+</li>
+<li><p class="first"><strong>conc</strong>: Concentration of the molecules in the pool.</p>
+<p><code class="docutils literal"><span class="pre">conc</span> <span class="pre">=</span> <span class="pre">n</span> <span class="pre">*</span> <span class="pre">unit_scale_factor</span> <span class="pre">/</span> <span class="pre">(N&lt;sub&gt;A&lt;/sub&gt;</span> <span class="pre">*</span> <span class="pre">vol)</span></code></p>
+</li>
+<li><p class="first"><strong>concInit</strong>: Initial concentration of the molecules in the pool.
+&#8216;conc&#8217; is set to this value when the &#8216;reinit&#8217; operation is done.
+<code class="docutils literal"><span class="pre">concI'nit</span> <span class="pre">=</span> <span class="pre">nInit</span> <span class="pre">*</span> <span class="pre">unit_scale_factor</span> <span class="pre">/</span> <span class="pre">(N&lt;sub&gt;A&lt;/sub&gt;</span> <span class="pre">*</span> <span class="pre">vol)</span></code></p>
+</li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li><strong>Enzyme-substrate-complex fixed parameters</strong>:</li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li><strong>size</strong>: Derived from the compartment that holds the pool.
+Specifies volume, surface area or length of the holding
+compartment. Note that the Enzyme-substrate-complex is assumed to
+be in the same compartment as the enzyme molecule.</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="michaelis-menten-enzymes">
+<h4><a class="reference external" href="#TOC">Michaelis-Menten Enzymes</a><a class="headerlink" href="#michaelis-menten-enzymes" title="Permalink to this headline">¶</a></h4>
+<p>These are enzymes that obey the Michaelis-Menten equation</p>
+<p><code class="docutils literal"><span class="pre">V</span> <span class="pre">=</span> <span class="pre">V&lt;sub&gt;max&lt;/sub&gt;</span> <span class="pre">*</span> <span class="pre">[S]</span> <span class="pre">/</span> <span class="pre">(</span> <span class="pre">K&lt;sub&gt;m&lt;/sub&gt;</span> <span class="pre">+</span> <span class="pre">[S]</span> <span class="pre">)</span> <span class="pre">=</span> <span class="pre">k&lt;sub&gt;cat&lt;/sub&gt;</span> <span class="pre">*</span> <span class="pre">[Etot]</span> <span class="pre">*</span> <span class="pre">[S]</span> <span class="pre">/</span> <span class="pre">(</span> <span class="pre">K&lt;sub&gt;m&lt;/sub&gt;</span> <span class="pre">+</span> <span class="pre">[S]</span> <span class="pre">)</span></code>
+where
+-  V<sub>max</sub> is the maximum rate of the enzyme
+-  [Etot] is the total amount of the enzyme
+-  K<sub>m</sub> is the Michaelis-Menten constant
+-  S is the substrate.</p>
+<p>Nominally these enzymes model the same chemical equation as the mass-action enzyme&#8217;:</p>
+<p><code class="docutils literal"><span class="pre">E</span> <span class="pre">+</span> <span class="pre">S</span> <span class="pre">&lt;===&gt;</span> <span class="pre">E.S</span> <span class="pre">-&gt;</span> <span class="pre">E</span> <span class="pre">+</span> <span class="pre">P</span></code></p>
+<p>but they make the assumption that the <strong>E.S</strong> is in a quasi-steady-state
+with <strong>E</strong> and <strong>S</strong>, and they also ignore sequestration of the enzyme
+into the complex. So there is no representation of the <strong>E.S</strong> complex.
+In the example below, the enzyme pool is named <strong>MM_Enz</strong>, the
+substrate is <strong>E</strong>, and the product is <strong>P</strong>. The direction of the
+enzyme reaction is indicated by the red arrows.</p>
+<div class="figure">
+<img alt="" src="../../../_images/MM_EnzReac.png" />
+</div>
+<ul class="simple">
+<li><strong>Icon</strong>: <img alt="image4" src="../../../_images/MM_EnzIcon.png" /> Colored ellipse. The ellipse represents the enzyme</li>
+</ul>
+<blockquote>
+<div>The ellipse icon has the same color as the enzyme <strong>&#8216;MM_Enz&#8217;</strong>. It
+is connected to the enzyme pool <strong>&#8216;MM_Enz&#8217;</strong> with a straight line of
+the same color. The ellipse icon sits on a continuous, typically
+curved arrow in red, from the substrate to the product. A given
+enzyme pool can have any number of enzyme activities, since the same
+enzyme might catalyze many reactions.</div></blockquote>
+<ul class="simple">
+<li><strong>Moving Enzymes</strong>: Click and drag.</li>
+<li><strong>Enzyme editable parameters</strong>:<ul>
+<li><strong>name</strong>: Name of enzyme.</li>
+<li>K<sub>m</sub>: Michaelis-Menten value for enzyme, in &#8216;concentration&#8217;
+units.</li>
+<li>k<sub>cat</sub>: Production rate of enzyme, in &#8216;1/time&#8217; units. Equal to k<sub>3</sub>, the rate of the second, irreversible reaction.</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="summation">
+<h4><a class="reference external" href="#TOC">Summation</a><a class="headerlink" href="#summation" title="Permalink to this headline">¶</a></h4>
+<p>Summation object can be used to add specified variable values. The
+variables can be input from pool object.</p>
+<ul class="simple">
+<li><strong>Icon</strong>: This is <strong>Î£</strong> in the example image below. The input pools
+<strong>&#8216;A&#8217;</strong> and <strong>&#8216;B&#8217;</strong> connect to the <strong>Î£</strong> with blue arrows. The
+function ouput&#8217;s to BuffPool <img alt="image5" src="../../../_images/func.png" /></li>
+</ul>
+</div>
+</div>
+<div class="section" id="model-operations">
+<h3><a class="reference external" href="#TOC">Model operations</a><a class="headerlink" href="#model-operations" title="Permalink to this headline">¶</a></h3>
+<ul>
+<li><p class="first"><strong>Loading models</strong>: <strong>&#8216;File -&gt; Load Model -&gt; select from dialog&#8217;</strong>.
+This operation makes the previously loaded model disable and loads newly selected models in <strong>&#8216;Model View&#8217;&#8216;</strong></p>
+</li>
+<li><p class="first"><strong>New</strong>: <a href="#id1"><span class="problematic" id="id2">**</span></a>&#8216;File -&gt; New -&gt; Model name <a href="#id3"><span class="problematic" id="id4">**</span></a>. This opens a empty widget for model building</p>
+</li>
+<li><p class="first"><strong>Saving models</strong>: <strong>&#8216;File -&gt; Save Model -&gt; select from dialog&#8217;</strong>.</p>
+</li>
+<li><p class="first"><strong>Changing numerical methods</strong>: <strong>&#8216;Preference-&gt;Chemical tab&#8217;</strong> item from Simulation Control. Currently supports:
+-  Runge Kutta: This is the Runge-Kutta-Fehlberg implementation from the GNU Scientific Library (GSL). It is a fifth order variable timestep explicit method. Works well for most reaction systems except if they have very stiff reactions.
+-  Gillespie: Optimized Gillespie stochastic systems algorithm, custom implementation. This uses variable timesteps internally.</p>
+<blockquote>
+<div><p>Note that it slows down with increasing numbers of molecules in
+each pool. It also slows down, but not so badly, if the number of
+reactions goes up.</p>
+</div></blockquote>
+<ul class="simple">
+<li>Exponential Euler:This methods computes the solution of partial
+and ordinary differential equations.</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="model-building">
+<h3><a class="reference external" href="#TOC">Model building</a><a class="headerlink" href="#model-building" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>The <strong>Edit Widget</strong> includes various menu options and model icons on
+the top. Use the mouse buttton to click and drag icons from toolbar
+to Edit Widget, two things will happen, <strong>icon</strong> will appear in the
+editor widget and a <strong>object editor</strong> will pop up with lots of
+parameters with respect to moose object.</li>
+</ul>
+<div class="figure">
+<img alt="" src="../../../_images/chemical_CS.png" />
+</div>
+<p><strong>Rules</strong>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">*</span>   <span class="n">Compartment</span> <span class="n">has</span> <span class="n">to</span> <span class="n">be</span> <span class="n">created</span> <span class="n">firstly</span><span class="p">(</span><span class="n">At</span> <span class="n">present</span> <span class="n">only</span> <span class="n">single</span> <span class="n">compartment</span> <span class="n">model</span> <span class="ow">is</span> <span class="n">allowed</span><span class="p">)</span>
+<span class="o">*</span>   <span class="n">Enzyme</span> <span class="n">should</span> <span class="n">be</span> <span class="n">dropped</span> <span class="n">on</span> <span class="n">a</span> <span class="n">pool</span> <span class="k">as</span> <span class="n">parent</span>
+<span class="o">*</span>   <span class="n">function</span> <span class="n">should</span> <span class="n">be</span> <span class="n">dropped</span> <span class="n">on</span> <span class="n">buffPool</span> <span class="k">for</span> <span class="n">output</span>
+</pre></div>
+</div>
+<p><strong>Note</strong>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">*</span>   <span class="n">Drag</span> <span class="ow">in</span> <span class="n">pool</span><span class="s1">&#39;s and reaction on to the editor widget, now one can set up a reaction.</span>
+<span class="o">*</span>   <span class="n">Click</span> <span class="n">on</span> <span class="n">mooseObject</span> <span class="n">one</span> <span class="n">can</span> <span class="n">find</span> <span class="n">a</span> <span class="n">little</span> <span class="n">arrow</span> <span class="n">on</span> <span class="n">the</span> <span class="n">top</span> <span class="n">right</span> <span class="n">corner</span> <span class="n">of</span> <span class="n">the</span> <span class="nb">object</span><span class="p">,</span> <span class="n">drag</span> <span class="kn">from</span> <span class="nn">this</span> <span class="n">little</span> <span class="n">arrow</span> <span class="n">to</span> <span class="nb">any</span> <span class="nb">object</span> <span class="k">for</span> <span class="n">connection</span><span class="o">.</span> <span class="o">&lt;</span><span class="n">br</span><span class="o">&gt;</span><span class="n">E</span><span class="o">.</span><span class="n">g</span> <span class="n">pool</span> <span class="n">to</span> <span class="n">reaction</span> <span class="ow">and</span> <span class="n">reaction</span> <span class="n">to</span> <span class="n">pool</span><span class="o">.</span> <span class="n">Specific</span> <span class="n">connection</span> <span class="nb">type</span> <span class="n">gets</span> <span class="n">specific</span> <span class="n">colored</span> <span class="n">arrow</span><span class="o">.</span> <span class="n">E</span><span class="o">.</span><span class="n">g</span><span class="o">.</span> <span class="n">Green</span> <span class="n">color</span> <span class="n">arrow</span> <span class="k">for</span> <span class="n">specifying</span> <span class="n">connection</span> <span class="n">between</span> <span class="n">reactant</span> <span class="ow">and</span> <span class="n">product</span> <span class="k">for</span> <span class="n">reaction</span><span class="o">.</span>
+<span class="o">*</span>   <span class="n">Clicking</span> <span class="n">on</span> <span class="n">the</span> <span class="nb">object</span> <span class="n">one</span> <span class="n">can</span> <span class="n">rearrange</span> <span class="nb">object</span> <span class="k">for</span> <span class="n">clean</span> <span class="n">layout</span><span class="o">.</span>
+<span class="o">*</span>   <span class="n">Second</span> <span class="n">order</span> <span class="n">reaction</span> <span class="n">can</span> <span class="n">also</span> <span class="n">be</span> <span class="n">done</span> <span class="n">by</span> <span class="n">repeating</span> <span class="n">the</span> <span class="n">connection</span> <span class="n">over</span> <span class="n">again</span>
+<span class="o">*</span>   <span class="n">Each</span> <span class="n">connection</span> <span class="n">can</span> <span class="n">be</span> <span class="n">deleted</span> <span class="ow">and</span> <span class="n">using</span> <span class="n">rubberband</span> <span class="n">selection</span> <span class="n">each</span> <span class="n">moose</span> <span class="nb">object</span> <span class="n">can</span> <span class="n">be</span> <span class="n">deleted</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li>From <strong>run widget</strong>, pools are draggable to plot window for plotting.
+(Currently <strong>conc</strong> is plotted as default field) Plots are
+color-coded as per in model.</li>
+</ul>
+<div class="figure">
+<img alt="" src="../../../_images/Chemical_run.png" />
+</div>
+<ul class="simple">
+<li>Model can be run by clicking <strong>start</strong> button. One can stop button in
+mid-stream and start up again without affectiong the calculations.
+The reset button clears the simulation.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="rdesigneur">
+<span id="ckbk-chem-rde"></span><h2><a class="toc-backref" href="#id8">RDesigneur</a><a class="headerlink" href="#rdesigneur" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="tutorials">
+<span id="ckbk-chem-tut"></span><h2><a class="toc-backref" href="#id9">Tutorials</a><a class="headerlink" href="#tutorials" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="deterministic-simulation">
+<h3>Deterministic Simulation<a class="headerlink" href="#deterministic-simulation" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="stochastic-simulation">
+<h3>Stochastic Simulation<a class="headerlink" href="#stochastic-simulation" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="module-cspaceSteadyState">
+<span id="finding-steady-state-cspace"></span><h3>Finding Steady State (CSpace)<a class="headerlink" href="#module-cspaceSteadyState" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="cspaceSteadyState.main">
+<code class="descclassname">cspaceSteadyState.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#cspaceSteadyState.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>This example sets up the kinetic solver and steady-state finder, on
+a bistable model.
+It looks for the fixed points 100 times, as follows:
+- Set up the random initial condition that fits the conservation laws
+- Run for 2 seconds. This should not be mathematically necessary, but</p>
+<blockquote>
+<div>for obscure numerical reasons it makes it much more likely that the
+steady state solver will succeed in finding a state.</div></blockquote>
+<ul class="simple">
+<li>Find the fixed point</li>
+<li>Print out the fixed point vector and various diagnostics.</li>
+<li>Run for 10 seconds. This is completely unnecessary, and is done here
+just so that the resultant graph will show what kind of state has been
+found.</li>
+</ul>
+<p>After it does all this, the program runs for 100 more seconds on the last
+found fixed point (which turns out to be a saddle node), then
+is hard-switched in the script to the first attractor basin from which
+it runs for another 100 seconds till it settles there, and then
+is hard-switched yet again to the second attractor and runs for 100
+seconds.
+Looking at the output you will see many features of note:
+- the first attractor (stable point) and the saddle point</p>
+<blockquote>
+<div>(unstable fixed point) are both found quite often. But the second
+attractor is found just once. Has a very small basin of attraction.</div></blockquote>
+<ul class="simple">
+<li>The values found for each of the fixed points match well with the
+values found by running the system to steady-state at the end.</li>
+<li>There are a large number of failures to find a fixed point. These are
+found and reported in the diagnostics. They show up on the plot
+as cases where the 10-second runs are not flat.</li>
+</ul>
+<p>If you wanted to find fixed points in a production model, you would
+not need to do the 10-second runs, and you would need to eliminate the
+cases where the state-finder failed. Then you could identify the good
+points and keep track of how many of each were found.
+There is no way to guarantee that all fixed points have been found using
+this algorithm!
+You may wish to sample concentration space logarithmically rather than
+linearly.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="building-simple-reaction-model">
+<h3>Building Simple Reaction Model<a class="headerlink" href="#building-simple-reaction-model" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="module-scriptKineticModel">
+<span id="define-a-kinetic-model-using-the-scripting"></span><h3>Define a kinetic model using the scripting<a class="headerlink" href="#module-scriptKineticModel" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="scriptKineticModel.main">
+<code class="descclassname">scriptKineticModel.</code><code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scriptKineticModel.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>This example illustrates how to define a kinetic model using the
+scripting interface. Normally one uses standard model formats like
+SBML or kkit to concisely define kinetic models, but in some cases one
+would like to modify the model through the script.
+This example creates a bistable model having two enzymes and a reaction.
+One of the enzymes is autocatalytic.
+The model is set up to run using default Exponential Euler integration.
+The snippet scriptKineticSolver.py uses the much better GSL
+Runge-Kutta-Fehlberg integration scheme on this same model.</p>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="advanced-examples">
+<span id="ckbk-chem-adv"></span><h2><a class="toc-backref" href="#id10">Advanced Examples</a><a class="headerlink" href="#advanced-examples" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="network.html" class="btn btn-neutral float-right" title="Networking" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="elec.html" class="btn btn-neutral" title="Single Neuron Electrical Aspects (BioPhysics)" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Upinder S. Bhall, Subhasis Ray, Aditya Gilra, Dilawar Singh, Harsha Rani, Aviral Goel, Malav Shah.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'ChamCham (3.1.1)',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

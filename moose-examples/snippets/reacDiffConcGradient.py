@@ -127,7 +127,7 @@ def main():
           4x          2x           1x           [Ratios of vols of compts]
 
     If there is no diffusion then the ratio of concs should be 1:10:100
-    If there is no x-compt reac, then clearly the concs should all be 
+    If there is no x-compt reac, then clearly the concs should all be
     the same, in this case they should be 2.0.
     If both are happening then the final concs are 1.4, 2.5, 3.4.
     """

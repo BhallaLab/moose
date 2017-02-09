@@ -1,52 +1,51 @@
-# func.py --- 
-# 
+# func.py ---
+#
 # Filename: func.py
-# Description: 
+# Description:
 # Author: Subhasis Ray
 # Maintainer: Subhasis Ray
 # Created: Mon May 27 17:45:05 2013 (+0530)
-# Version: 
+# Version:
 # Last-Updated: Sat Jun  1 19:07:20 2013 (+0530)
 #           By: subha
 #     Update #: 253
-# URL: 
-# Keywords: 
-# Compatibility: 
-# 
-# 
+# URL:
+# Keywords:
+# Compatibility:
+#
+#
 
-# Commentary: 
-# 
-# 
-# 
-# 
+# Commentary:
+#
+#
+#
+#
 
 # Change log:
-# 
-# 
-# 
-# 
+#
+#
+#
+#
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
 # published by the Free Software Foundation; either version 3, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program; see the file COPYING.  If not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 # Floor, Boston, MA 02110-1301, USA.
-# 
-# 
+#
+#
 
 # Code:
-"""Demonstrate the use of Func class"""
 import numpy as np
-import pylab 
+import pylab
 
 import moose
 
@@ -62,7 +61,7 @@ def test_func_nosim():
     for ii in range(num-1):
         expr += 'x_%d, ' % (ii)
     expr += 'x_%d)' % (num-1)
-    print(('Expression:', expr))    
+    print(('Expression:', expr))
     func_0.expr = expr
     for ii in range(num):
         var = 'x_%d' % (ii)
@@ -99,7 +98,7 @@ def test_func():
     pylab.plot(xarr, values, 'g-', label='f(no-sim)')
     pylab.plot(xarr, np.array(deriv)/1000, 'k-.', label="1e-3 * f'(no-sim)")
 
-    
+
     simdt = xarr[1] - xarr[0]
     input = moose.StimulusTable('%s/xtab' % (model.path))
     input.vector = xarr
@@ -107,7 +106,7 @@ def test_func():
     input.stepPosition = xarr[0]
     input.stopTime = xarr[-1] - xarr[0]
     print((input.startTime, input.stopTime))
-    
+
     moose.connect(input, 'output', func_1, 'xIn')
 
     x_tab = moose.Table('/data/xtab')
@@ -125,7 +124,7 @@ def test_func():
     moose.setClock(3, simdt)
     moose.useClock(0, '%s/##[TYPE=StimulusTable]' % (model.path), 'process')
     moose.useClock(1, '%s/##[TYPE=Func]' % (model.path), 'process')
-    moose.useClock(2, '%s/##[TYPE=DiffAmp]' % (model.path), 'process')    
+    moose.useClock(2, '%s/##[TYPE=DiffAmp]' % (model.path), 'process')
     moose.useClock(3, '%s/##' % (data.path), 'process')
     moose.reinit()
     t = xarr[-1] - xarr[0]
@@ -138,10 +137,13 @@ def test_func():
     pylab.legend()
     pylab.show()
 
-if __name__ == '__main__':
+def main():
+    """Demonstrate the use of Func class"""
     test_func_nosim()
     test_func()
 
+if __name__ == '__main__':
+    main()
 
-# 
+#
 # func.py ends here
