@@ -55,15 +55,20 @@ class SeqSynHandler: public SynHandlerBase
  		double getSeqDt() const;
 		void setHistoryTime( double v );
  		double getHistoryTime() const;
-		void setResponseScale( double v );
- 		double getResponseScale() const;
+		void setBaseScale( double v );
+ 		double getBaseScale() const;
+		void setSequenceScale( double v );
+ 		double getSequenceScale() const;
  		double getSeqActivation() const; // summed activation of syn chan
-		void setWeightScale( double v );
- 		double getWeightScale() const;
+		void setPlasticityScale( double v );
+ 		double getPlasticityScale() const;
  		vector< double > getWeightScaleVec() const;
  		vector< double > getKernel() const;
  		vector< double > getHistory() const;
 
+		////////////////////////////////////////////////////////////////
+		// Utility func
+		int numHistory() const;
 		////////////////////////////////////////////////////////////////
 		static const Cinfo* initCinfo();
 	private:
@@ -84,13 +89,19 @@ class SeqSynHandler: public SynHandlerBase
 		string kernelEquation_;
 		unsigned int kernelWidth_; // Width in terms of number of synapses 
 
-		// Time to store history. KernelDt defines num of rows
+		/// Time to store history. KernelDt defines num of rows
 		double historyTime_;	
 		double seqDt_;	// Time step for successive entries in kernel
-		// Scaling factor for sustained activation of synapse from response
-		double responseScale_; 
-		// Scaling factor for weight changes in each synapse from response
-		double weightScale_;
+		/// Scaling factor for baseline synaptic responses.
+		double baseScale_; 
+		/// Scaling factor for sequence recognition responses.
+		double sequenceScale_; 
+
+		/**
+		 * Scaling factor for short-term plastic weight changes in each 
+		 * synapse arising from sequential input.
+		 */
+		double plasticityScale_;
 
 		///////////////////////////////////////////
 		// Some readonly fields

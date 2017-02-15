@@ -42,17 +42,22 @@ const Cinfo* SeqSynHandler::initCinfo()
 		    "kernel with the history[time][synapse#] matrix."
 			"\nThe local response can affect the synapse in three ways: " 
 			"1. It can sum the entire response vector, scale by the "
-			"*responseScale* term, and send to the synapse as a steady "
+			"*sequenceScale* term, and send to the synapse as a steady "
 			"activation. Consider this a cell-wide immediate response to "
 			"a sequence that it likes.\n"
 			"2. It do an instantaneous scaling of the weight of each "
 			"individual synapse by the corresponding entry in the response "
-			"vector. It uses the *weightScale* term to do this. Consider "
+			"vector. It uses the *plasticityScale* term to do this. "
+			"Consider "
 			"this a short-term plasticity effect on specific synapses. \n"
 			"3. It can do long-term plasticity of each individual synapse "
 			"using the matched local entries in the response vector and "
 			"individual synapse history as inputs to the learning rule. "
 			"This is not yet implemented.\n"
+			"In addition to all these, the SeqSynHandler can act just like "
+			"a regular synapse, where it responds to individual synaptic "
+			"input according to the weight of the synapse. The size of "
+			"this component of the output is scaled by *baseScale*\n"
 	};
 
 	static FieldElementFinfo< SynHandlerBase, Synapse > synFinfo( 
@@ -88,22 +93,28 @@ const Cinfo* SeqSynHandler::initCinfo()
 			&SeqSynHandler::setHistoryTime,
 			&SeqSynHandler::getHistoryTime
 	);
-	static ValueFinfo< SeqSynHandler, double > responseScale(
-			"responseScale",
+	static ValueFinfo< SeqSynHandler, double > baseScale(
+			"baseScale",
+			"Basal scaling factor for regular synaptic activation.",
+			&SeqSynHandler::setBaseScale,
+			&SeqSynHandler::getBaseScale
+	);
+	static ValueFinfo< SeqSynHandler, double > sequenceScale(
+			"sequenceScale",
 			"Scaling factor for sustained activation of synapse by seq",
-			&SeqSynHandler::setResponseScale,
-			&SeqSynHandler::getResponseScale
+			&SeqSynHandler::setSequenceScale,
+			&SeqSynHandler::getSequenceScale
 	);
 	static ReadOnlyValueFinfo< SeqSynHandler, double > seqActivation(
 			"seqActivation",
 			"Reports summed activation of synaptic channel by sequence",
 			&SeqSynHandler::getSeqActivation
 	);
-	static ValueFinfo< SeqSynHandler, double > weightScale(
-			"weightScale",
-			"Scaling factor for weight of each synapse by response vector",
-			&SeqSynHandler::setWeightScale,
-			&SeqSynHandler::getWeightScale
+	static ValueFinfo< SeqSynHandler, double > plasticityScale(
+			"plasticityScale",
+			"Scaling factor for doing plasticity by scaling each synapse by response vector",
+			&SeqSynHandler::setPlasticityScale,
+			&SeqSynHandler::getPlasticityScale
 	);
 	static ReadOnlyValueFinfo< SeqSynHandler, vector< double > > 
 			weightScaleVec(
@@ -128,9 +139,10 @@ const Cinfo* SeqSynHandler::initCinfo()
 		&kernelWidth,				// Field
 		&seqDt,						// Field
 		&historyTime,				// Field
-		&responseScale,				// Field
+		&sequenceScale,				// Field
+		&baseScale,					// Field
 		&seqActivation,				// Field
-		&weightScale,				// Field
+		&plasticityScale,			// Field
 		&weightScaleVec,			// Field
 		&kernel,					// ReadOnlyField
 		&history					// ReadOnlyField
@@ -160,12 +172,12 @@ SeqSynHandler::SeqSynHandler()
 		kernelWidth_( 5 ),
 		historyTime_( 2.0 ), 
 		seqDt_ ( 1.0 ), 
-		responseScale_( 1.0 ),
-		weightScale_( 0.0 ),
+		sequenceScale_( 1.0 ),
+		baseScale_( 0.0 ),
+		plasticityScale_( 0.0 ),
 		seqActivation_( 0.0 )
 { 
-	int numHistory = static_cast< int >( 1.0 + floor( historyTime_ * (1.0 - 1e-6 ) / seqDt_ ) );
-	history_.resize( numHistory, 0 );
+	history_.resize( numHistory(), 0 );
 }
 
 SeqSynHandler::~SeqSynHandler()
@@ -193,8 +205,7 @@ void SeqSynHandler::vSetNumSynapses( const unsigned int v )
 	for ( unsigned int i = prevSize; i < v; ++i )
 		synapses_[i].setHandler( this );
 
-	int numHistory = static_cast< int >( 1.0 + floor( historyTime_ * (1.0 - 1e-6 ) / seqDt_ ) );
-	history_.resize( numHistory, v );
+	history_.resize( numHistory(), v );
 	latestSpikes_.resize( v, 0.0 );
 	weightScaleVec_.resize( v, 0.0 );
 	updateKernel();
@@ -229,9 +240,9 @@ void SeqSynHandler::updateKernel()
 	p.DefineConst(_T("e"), (mu::value_type)M_E);
 	p.SetExpr( kernelEquation_ );
 	kernel_.clear();
-	int numHistory = static_cast< int >( 1.0 + floor( historyTime_ * (1.0 - 1e-6 ) / seqDt_ ) );
-	kernel_.resize( numHistory );
-	for ( int i = 0; i < numHistory; ++i ) {
+	int nh = numHistory();
+	kernel_.resize( nh );
+	for ( int i = 0; i < nh; ++i ) {
 		kernel_[i].resize( kernelWidth_ );
 		t = i * seqDt_;
 		for ( unsigned int j = 0; j < kernelWidth_; ++j ) {
@@ -268,8 +279,7 @@ void SeqSynHandler::setSeqDt( double v )
 {
 	seqDt_ = v;
 	updateKernel();
-	int numHistory = static_cast< int >( 1.0 + floor( historyTime_ * (1.0 - 1e-6 ) / seqDt_ ) );
-	history_.resize( numHistory, vGetNumSynapses() );
+	history_.resize( numHistory(), vGetNumSynapses() );
 }
 
 double SeqSynHandler::getSeqDt() const
@@ -280,8 +290,7 @@ double SeqSynHandler::getSeqDt() const
 void SeqSynHandler::setHistoryTime( double v )
 {
 	historyTime_ = v;
-	int numHistory = static_cast< int >( 1.0 + floor( historyTime_ * (1.0 - 1e-6 ) / seqDt_ ) );
-	history_.resize( numHistory, vGetNumSynapses() );
+	history_.resize( numHistory(), vGetNumSynapses() );
 	updateKernel();
 }
 
@@ -290,14 +299,24 @@ double SeqSynHandler::getHistoryTime() const
 	return historyTime_;
 }
 
-void SeqSynHandler::setResponseScale( double v )
+void SeqSynHandler::setBaseScale( double v )
 {
-	responseScale_ = v;
+	baseScale_ = v;
 }
 
-double SeqSynHandler::getResponseScale() const
+double SeqSynHandler::getBaseScale() const
 {
-	return responseScale_;
+	return baseScale_;
+}
+
+void SeqSynHandler::setSequenceScale( double v )
+{
+	sequenceScale_ = v;
+}
+
+double SeqSynHandler::getSequenceScale() const
+{
+	return sequenceScale_;
 }
 
 double SeqSynHandler::getSeqActivation() const
@@ -305,9 +324,14 @@ double SeqSynHandler::getSeqActivation() const
 	return seqActivation_;
 }
 
-double SeqSynHandler::getWeightScale() const
+double SeqSynHandler::getPlasticityScale() const
 {
-	return weightScale_;
+	return plasticityScale_;
+}
+
+void SeqSynHandler::setPlasticityScale( double v )
+{
+	plasticityScale_ = v;
 }
 
 vector< double >SeqSynHandler::getWeightScaleVec() const
@@ -315,16 +339,11 @@ vector< double >SeqSynHandler::getWeightScaleVec() const
 	return weightScaleVec_;
 }
 
-void SeqSynHandler::setWeightScale( double v )
-{
-	weightScale_ = v;
-}
-
 vector< double > SeqSynHandler::getKernel() const
 {
-	int numHistory = static_cast< int >( 1.0 + floor( historyTime_ * (1.0 - 1e-6 ) / seqDt_ ) );
+	int nh = numHistory();
 	vector< double > ret;
-	for ( int i = 0; i < numHistory; ++i ) {
+	for ( int i = 0; i < nh; ++i ) {
 		ret.insert( ret.end(), kernel_[i].begin(), kernel_[i].end() );
 	}
 	return ret;
@@ -332,11 +351,11 @@ vector< double > SeqSynHandler::getKernel() const
 
 vector< double > SeqSynHandler::getHistory() const
 {
-	int numHistory = static_cast< int >( 1.0 + floor( historyTime_ * (1.0 - 1e-6 ) / seqDt_ ) );
+	int nh = numHistory();
 	int numX = vGetNumSynapses();
-	vector< double > ret( numX * numHistory, 0.0 );
+	vector< double > ret( numX * nh, 0.0 );
 	vector< double >::iterator k = ret.begin();
-	for ( int i = 0; i < numHistory; ++i ) {
+	for ( int i = 0; i < nh; ++i ) {
 		for ( int j = 0; j < numX; ++j )
 			*k++ = history_.get( i, j );
 	}
@@ -375,10 +394,10 @@ void SeqSynHandler::dropSynapse( unsigned int msgLookup )
 void SeqSynHandler::vProcess( const Eref& e, ProcPtr p ) 
 {
 	// Here we look at the correlations and do something with them.
-	int numHistory = static_cast< int >( 1.0 + floor( historyTime_ * (1.0 - 1e-6 ) / seqDt_ ) );
+	int nh = numHistory();
 
 	// Check if we need to do correlations at all.
-	if ( numHistory > 0 && kernel_.size() > 0 ) {
+	if ( nh > 0 && kernel_.size() > 0 ) {
 		// Check if timestep rolls over a seqDt boundary
 		if ( static_cast< int >( p->currTime / seqDt_ ) > 
 				static_cast< int >( (p->currTime - p->dt) / seqDt_ ) ) {
@@ -388,22 +407,22 @@ void SeqSynHandler::vProcess( const Eref& e, ProcPtr p )
 	
 			// Build up the sum of correlations over time
 			vector< double > correlVec( vGetNumSynapses(), 0.0 );
-			for ( int i = 0; i < numHistory; ++i )
+			for ( int i = 0; i < nh; ++i )
 				history_.correl( correlVec, kernel_[i], i );
-			if ( responseScale_ > 0.0 ) { // Sum all responses, send to chan
+			if ( sequenceScale_ > 0.0 ) { // Sum all responses, send to chan
 				seqActivation_ = 0.0;
 				for ( vector< double >::iterator y = correlVec.begin(); 
 								y != correlVec.end(); ++y )
 					seqActivation_ += *y;
 	
 				// We'll use the seqActivation_ to send a special msg.
-				seqActivation_ *= responseScale_;
+				seqActivation_ *= sequenceScale_;
 			}
-			if ( weightScale_ > 0.0 ) { // Short term changes in individual wts
+			if ( plasticityScale_ > 0.0 ) { // Short term changes in individual wts
 				weightScaleVec_ = correlVec;
 				for ( vector< double >::iterator y=weightScaleVec_.begin(); 
 							y != weightScaleVec_.end(); ++y )
-					*y *= weightScale_;
+					*y *= plasticityScale_;
 			}
 		}
 	}
@@ -412,15 +431,15 @@ void SeqSynHandler::vProcess( const Eref& e, ProcPtr p )
 	// We can't leave it to the base class vProcess, because we need
 	// to scale the weights individually in some cases.
 	double activation = seqActivation_; // Start with seq activation
-	if ( weightScale_ > 0.0 ) {
+	if ( plasticityScale_ > 0.0 ) {
 		while( !events_.empty() && events_.top().time <= p->currTime ) {
-			activation += events_.top().weight * 
+			activation += events_.top().weight * baseScale_ * 
 					weightScaleVec_[ events_.top().synIndex ] / p->dt;
 			events_.pop();
 		}
 	} else {
 		while( !events_.empty() && events_.top().time <= p->currTime ) {
-			activation += events_.top().weight / p->dt;
+			activation += baseScale_ * events_.top().weight / p->dt;
 			events_.pop();
 		}
 	}
@@ -435,3 +454,7 @@ void SeqSynHandler::vReinit( const Eref& e, ProcPtr p )
 		events_.pop();
 }
 
+int SeqSynHandler::numHistory() const
+{
+	return static_cast< int >( 1.0 + floor( historyTime_ * (1.0 - 1e-6 ) / seqDt_ ) );
+}

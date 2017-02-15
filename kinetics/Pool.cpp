@@ -32,23 +32,8 @@ const Cinfo* Pool::initCinfo()
 		);
 
 		//////////////////////////////////////////////////////////////
-		// MsgDest Definitions: All but increment and decrement inherited
+		// MsgDest Definitions: All inherited
 		//////////////////////////////////////////////////////////////
-		static DestFinfo increment( "increment",
-			"Increments mol numbers by specified amount. Can be +ve or -ve",
-			new OpFunc1< Pool, double >( &Pool::increment )
-		);
-
-		static DestFinfo decrement( "decrement",
-			"Decrements mol numbers by specified amount. Can be +ve or -ve",
-			new OpFunc1< Pool, double >( &Pool::decrement )
-		);
-
-		static DestFinfo nIn( "nIn",
-			"Set the number of molecules by specified amount",
-			new OpFunc1< Pool, double >( &Pool::nIn )
-		);
-
 		//////////////////////////////////////////////////////////////
 		// SrcFinfo Definitions: All inherited.
 		//////////////////////////////////////////////////////////////
@@ -57,9 +42,6 @@ const Cinfo* Pool::initCinfo()
 		//////////////////////////////////////////////////////////////
 	static Finfo* poolFinfos[] = {
 		&isBuffered,		// ElementValueFinfo
-		&increment,			// DestFinfo
-		&decrement,			// DestFinfo
-        &nIn,				// DestFinfo
 	};
 
 	static Dinfo< Pool > dinfo;
@@ -125,14 +107,6 @@ void Pool::vProcess( const Eref& e, ProcPtr p )
 {
 	// double A = e.sumBuf( aSlot );
 	// double B = e.sumBuf( bSlot );
-		/*
-	if ( n_ < 0 )
-		cout << "nugh" << e.objId().path() << endl;
-	if ( B_ < 0 )
-		cout << "bugh" << e.objId().path() << endl;
-	if ( p->dt < 0 )
-		cout << "tugh" << e.objId().path() << endl;
-		*/
 
 	if ( n_ > EPSILON && B_ > EPSILON ) {
 		double C = exp( -B_ * p->dt / n_ );
@@ -162,7 +136,7 @@ void Pool::vReac( double A, double B )
 	B_ += B;
 }
 
-void Pool::increment( double val )
+void Pool::vIncrement( double val )
 {
 	if ( val > 0 )
 		A_ += val;
@@ -170,7 +144,7 @@ void Pool::increment( double val )
 		B_ -= val;
 }
 
-void Pool::decrement( double val )
+void Pool::vDecrement( double val )
 {
 	if ( val < 0 )
 		A_ -= val;
@@ -178,36 +152,12 @@ void Pool::decrement( double val )
 		B_ += val;
 }
 
-void Pool::nIn( double val)
+void Pool::vnIn( double val)
 {
     n_ = val;
     B_ = 0;
     A_ = 0;
 }
-
-/*
-void Pool::vRemesh( const Eref& e,
-	double oldvol,
-	unsigned int numTotalEntries, unsigned int startEntry, 
-	const vector< unsigned int >& localIndices, 
-	const vector< double >& vols )
-{
-	if ( e.dataIndex() != 0 )
-		return;
-	Neutral* n = reinterpret_cast< Neutral* >( e.data() );
-	assert( vols.size() > 0 );
-	double concInit = nInit_ / ( NA * oldvol );
-	if ( vols.size() != e.element()->dataHandler()->localEntries() )
-		n->setLastDimension( e, q, vols.size() );
-	// Note that at this point the Pool pointer may be invalid!
-	// But we need to update the concs anyway.
-	assert( e.element()->dataHandler()->localEntries() == vols.size() );
-	Pool* pooldata = reinterpret_cast< Pool* >( e.data() );
-	for ( unsigned int i = 0; i < vols.size(); ++i ) {
-		pooldata[i].nInit_ = pooldata[i].n_ = concInit * vols[i] * NA;
-	}
-}
-*/
 
 void Pool::vHandleMolWt( const Eref& e, double v )
 {

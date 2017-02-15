@@ -11,6 +11,7 @@
 using namespace std;
 #include "RollingMatrix.h"
 #include <cassert>
+// #include <iostream>
 
 RollingMatrix::RollingMatrix()
 		: nrows_(0), ncolumns_(0), currentStartRow_(0)
@@ -67,9 +68,21 @@ void RollingMatrix::sumIntoRow( const vector< double >& input, unsigned int row 
 double RollingMatrix::dotProduct( const vector< double >& input, 
 				unsigned int row, unsigned int startColumn ) const
 {
+	/// startColumn is the middle of the kernel.
 	unsigned int index = (row + currentStartRow_) % nrows_;
 	const SparseVector& sv = rows_[index];
+	unsigned int i2 = input.size()/2;
+	unsigned int istart = (startColumn <= i2) ? 0 : startColumn - i2;
+	unsigned int colstart = (startColumn <= i2) ? 0 : startColumn - i2;
+	unsigned int iend = (sv.size()-startColumn > i2 ) ? input.size() :
+			i2 - startColumn + sv.size();
 
+	// if ( iend >= istart ) cout << startColumn << i2 << istart << iend << colstart << "\n";
+	double ret = 0;
+	for (unsigned int i = istart, j = 0; i < iend; ++i, ++j )
+		ret += sv[j + colstart] * input[i];
+
+	/*
 	double ret = 0;
 	if ( input.size() + startColumn <= sv.size() ) {
 		for (unsigned int i = 0; i < input.size(); ++i )
@@ -79,6 +92,7 @@ double RollingMatrix::dotProduct( const vector< double >& input,
 		for (unsigned int i = 0; i < end; ++i )
 			ret += sv[i + startColumn] * input[i];
 	}
+	*/
 	return ret;
 }
 

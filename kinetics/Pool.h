@@ -69,13 +69,13 @@ class Pool: public PoolBase
 		void vProcess( const Eref& e, ProcPtr p );
 		void vReinit( const Eref& e, ProcPtr p );
 		void vReac( double A, double B );
+		void vIncrement( double val );
+		void vDecrement( double val );
+        void vnIn( double val );
 
 		//////////////////////////////////////////////////////////////////
 		// Novel Dest funcs not present in Pool base class.
 		//////////////////////////////////////////////////////////////////
-		void increment( double val );
-		void decrement( double val );
-                void nIn( double val );
 
 		//////////////////////////////////////////////////////////////////
 		static const Cinfo* initCinfo();
