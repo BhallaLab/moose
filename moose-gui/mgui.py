@@ -6,7 +6,7 @@
 # Maintainer:
 # Created: Mon Nov 12 09:38:09 2012 (+0530)
 # Version:
-# Last-Updated: Fri Oct 30 11:54:33 2015 (+0530)
+# Last-Updated: Tue Feb 14 15:20:33 2017 (+0530)
 #           By: Harsha
 #     Update #: 1338
 # URL:
@@ -564,7 +564,7 @@ class MWindow(QtGui.QMainWindow):
                 break
         if newSubWindow:
             subwin = self.mdiArea.addSubWindow(widget)
-            title = widget.modelRoot+'/model'
+            title = widget.modelRoot
             #subwin.setWindowTitle('%s: %s' % (view, widget.modelRoot))
             subwin.setWindowTitle('%s: %s' % (view, title))
             subwin.setSizePolicy(QtGui.QSizePolicy.Minimum |
@@ -1105,20 +1105,27 @@ class MWindow(QtGui.QMainWindow):
             ret = []
             ret,pluginName = self.checkPlugin(dialog)
             if pluginName == 'kkit':
-                compt = moose.wildcardFind(ret['model'].path+'/##[ISA=ChemCompt]')
-                if not len(compt):
-                    reply = QtGui.QMessageBox.question(self, "Model is empty","Model has no compartment, atleast one compartment should exist to display the widget\n Do you want another file",
-                                               QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
-                    if reply == QtGui.QMessageBox.Yes:
-                        dialog = LoaderDialog(self,self.tr('Load model from file'))
-                        if dialog.exec_():
-                            ret,pluginName = self.checkPlugin(dialog)
-                            ret,valid = self.dialog_check(ret)
-                    else:
-                        QtGui.QApplication.restoreOverrideCursor()        
+                if (ret['subtype'] == 'sbml' and ret['foundlib'] == False):
+                    reply = QtGui.QMessageBox.question(self, "python-libsbml is not found.","\n Read SBML is not possible.\n This can be installed using \n \n pip python-libsbml  or \n apt-get install python-libsbml",
+                                               QtGui.QMessageBox.Ok)
+                    if reply == QtGui.QMessageBox.Ok:
+                        QtGui.QApplication.restoreOverrideCursor()
                         return
                 else:
-                    valid = True
+                    compt = moose.wildcardFind(ret['model'].path+'/##[ISA=ChemCompt]')
+                    if not len(compt):
+                        reply = QtGui.QMessageBox.question(self, "Model is empty","Model has no compartment, atleast one compartment should exist to display the widget\n Do you want another file",
+                                                   QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
+                        if reply == QtGui.QMessageBox.Yes:
+                            dialog = LoaderDialog(self,self.tr('Load model from file'))
+                            if dialog.exec_():
+                                ret,pluginName = self.checkPlugin(dialog)
+                                ret,valid = self.dialog_check(ret)
+                        else:
+                            QtGui.QApplication.restoreOverrideCursor()        
+                            return
+                    else:
+                        valid = True
             if valid == True:
                 modelAnno = moose.Annotator(ret['model'].path+'/info')
                 if ret['subtype']:
@@ -1148,7 +1155,8 @@ class MWindow(QtGui.QMainWindow):
                 pluginName = subtype_plugin_map['%s/%s' % (ret['modeltype'], ret['subtype'])]
             except KeyError:
                 pluginName = 'default'
-            print 'Loaded model', ret['model'].path
+            if ret['foundlib']:
+                print 'Loaded model', ret['model'].path
             return ret,pluginName
 
     def dialog_check(self,ret):
