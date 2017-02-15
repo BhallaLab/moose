@@ -104,6 +104,24 @@ const Cinfo* PoolBase::initCinfo()
 			"Should only be used in SharedMsg with species.",
 			new EpFunc1< PoolBase, double >( &PoolBase::handleMolWt )
 		);
+		//////////////////////////////////////////////////////////////
+		// MsgDest Definitions: These three are used for non-reaction 
+		// calculations involving algebraically defined rate terms.
+		//////////////////////////////////////////////////////////////
+		static DestFinfo increment( "increment",
+			"Increments mol numbers by specified amount. Can be +ve or -ve",
+			new OpFunc1< PoolBase, double >( &PoolBase::increment )
+		);
+
+		static DestFinfo decrement( "decrement",
+			"Decrements mol numbers by specified amount. Can be +ve or -ve",
+			new OpFunc1< PoolBase, double >( &PoolBase::decrement )
+		);
+
+		static DestFinfo nIn( "nIn",
+			"Assigns the number of molecules in Pool to specified value",
+			new OpFunc1< PoolBase, double >( &PoolBase::nIn )
+		);
 
 		//////////////////////////////////////////////////////////////
 		// SrcFinfo Definitions
@@ -155,6 +173,9 @@ const Cinfo* PoolBase::initCinfo()
 		&concInit,	// Value
 		&volume,	// Readonly Value
 		&speciesId,	// Value
+		&increment,			// DestFinfo
+		&decrement,			// DestFinfo
+        &nIn,				// DestFinfo
 		&reac,				// SharedFinfo
 		&proc,				// SharedFinfo
 		&species,			// SharedFinfo
@@ -208,6 +229,21 @@ void PoolBase::reinit( const Eref& e, ProcPtr p )
 	vReinit( e, p );
 }
 
+void PoolBase::increment( double val )
+{
+	vIncrement(val);
+}
+
+void PoolBase::decrement( double val )
+{
+	vDecrement( val );
+}
+
+void PoolBase::nIn( double val)
+{
+	vnIn(val);
+}
+
 void PoolBase::reac( double A, double B )
 {
 	vReac( A, B );
@@ -232,6 +268,15 @@ void PoolBase::vReac( double A, double B )
 {;}
 
 void PoolBase::vHandleMolWt( const Eref& e, double v )
+{;}
+
+void PoolBase::vIncrement( double val )
+{;}
+
+void PoolBase::vDecrement( double val )
+{;}
+
+void PoolBase::vnIn( double val)
 {;}
 
 //////////////////////////////////////////////////////////////

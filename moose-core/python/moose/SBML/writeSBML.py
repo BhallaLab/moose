@@ -47,9 +47,10 @@ def mooseWriteSBML(modelpath, filename, sceneitems={}):
     if not foundLibSBML_:
         print('No python-libsbml found.' 
             '\nThis module can be installed by following command in terminal:'
-            '\n\t easy_install python-libsbml'
+            '\n\t easy_install python-libsbml or'
+            '\n\t apt-get install python-libsbml'
             )
-        return -1, msg
+        return -2, "Could not save the model in to SBML file. \nThis module can be installed by following command in terminal: \n\t easy_install python-libsbml or \n\t apt-get install python-libsbml",''
 
     sbmlDoc = SBMLDocument(3, 1)
     filepath, filenameExt = os.path.split(filename)
@@ -876,12 +877,12 @@ def writeSimulationAnnotation(modelpath):
                     graphSpefound = True
                 if graphSpefound:
                     if not plots:
-                        #plots = ori[ori.find(q.name)-1:len(ori)]
-                        plots = '/' + q.name + '/' + name
+                        plots = ori[ori.find(q.name)-1:len(ori)]
+                        #plots = '/' + q.name + '/' + name
 
                     else:
-                        #plots = plots + "; "+ori[ori.find(q.name)-1:len(ori)]
-                        plots = plots + "; /" + q.name + '/' + name
+                        plots = plots + "; "+ori[ori.find(q.name)-1:len(ori)]
+                        #plots = plots + "; /" + q.name + '/' + name
         if plots != " ":
             modelAnno = modelAnno + "<moose:plots> " + plots + "</moose:plots>\n"
         modelAnno = modelAnno + "</moose:ModelAnnotation>"

@@ -126,6 +126,9 @@ class PoolBase
 		void reinit( const Eref& e, ProcPtr p );
 		void reac( double A, double B );
 		void handleMolWt( const Eref& e, double v );
+		void increment( double val );
+		void decrement( double val );
+        void nIn( double val );
 
 		//////////////////////////////////////////////////////////////////
 		// Virtual Dest funcs. Most of these have a generic do-nothing
@@ -136,6 +139,9 @@ class PoolBase
 		virtual void vReinit( const Eref& e, ProcPtr p );
 		virtual void vReac( double A, double B );
 		virtual void vHandleMolWt( const Eref& e, double v);
+		virtual void vIncrement( double val );
+		virtual void vDecrement( double val );
+        virtual void vnIn( double val );
 
 		//////////////////////////////////////////////////////////////////
 		static const Cinfo* initCinfo();
