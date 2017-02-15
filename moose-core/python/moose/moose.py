@@ -17,24 +17,9 @@ from collections import defaultdict
 from . import _moose
 from ._moose import *
 import __main__ as main
-
-sbmlSupport_, genesisSupport_ = True, True
-try:
-    import SBML.readSBML
-    import SBML.writeSBML 
-except Exception as e:
-    print( 'MOOSE could not load SBML support due to %s' % e )
-    sbmlSupport_ = False
-
-try:
-    import genesis.writeKkit
-except Exception as e:
-    print('MOOSE could not load GENESIS support')
-    print('\tError was %s' % e)
-    genesisSupport_ = False
-
-from . import add_Delete_ChemicalSolver 
-
+import genesis.writeKkit
+import SBML.readSBML
+import SBML.writeSBML
 sequence_types = ['vector<double>',
                   'vector<int>',
                   'vector<long>',
@@ -71,17 +56,10 @@ def mooseReadSBML(filepath, loadpath, solver='ee'):
     solver   -- Solver to use (default 'ee' ) \n
 
     """
-    global sbmlSupport_
-    if not sbmlSupport_:
-        print('SBML support was not loaded')
-        return None
-    if not os.path.isfile(filepath):
-        raise UserWarning('File %s not found' % filepath)
-
     return SBML.readSBML.mooseReadSBML( filepath, loadpath, solver )
 
 
-def mooseWriteSBML(modelpath, filenpath, sceneitems={}):
+def mooseWriteSBML(modelpath, filepath, sceneitems={}):
     """Writes loaded model under modelpath to a file in SBML format.
 
     keyword arguments:\n
@@ -97,16 +75,10 @@ def mooseWriteSBML(modelpath, filenpath, sceneitems={}):
                             --- else, auto-coordinates is used for layout position and passed
 
     """
-
-    global sbmlSupport_
-    if not sbmlSupport_:
-        print('SBML support was not loaded')
-        return None
-
     return SBML.writeSBML.mooseWriteSBML(modelpath, filepath, sceneitems)
 
 
-def mooseWriteKkit(modelpath, filepath):
+def mooseWriteKkit(modelpath, filepath,sceneitems={}):
     """Writes  loded model under modelpath to a file in Kkit format.
 
     keyword arguments:\n
@@ -114,12 +86,7 @@ def mooseWriteKkit(modelpath, filepath):
     modelpath -- model path in moose \n
     filepath -- Path of output file.
     """
-    global genesisSupport_
-    if not genesisSupport_:
-        print('GENESIS(kkit) support was not loaded')
-        return None
-
-    return moose.genesis.writeKkit.mooseWiteKkit(modelpath, filepath)
+    return genesis.writeKkit.mooseWriteKkit(modelpath, filepath,sceneitems)
 
 
 def moosedeleteChemSolver(modelpath):
@@ -128,7 +95,7 @@ def moosedeleteChemSolver(modelpath):
         this should be followed by mooseaddChemSolver for add solvers on to compartment to simulate else
         default is Exponential Euler (ee)
     """
-    return add_Delete_ChemicalSolver.moosedeleteChemSolver(modelpath)
+    return chemUtil.add_Delete_ChemicalSolver.moosedeleteChemSolver(modelpath)
 
 
 def mooseaddChemSolver(modelpath, solver):
@@ -142,7 +109,7 @@ def mooseaddChemSolver(modelpath, solver):
               "Runge Kutta"       ("gsl")
 
     """
-    return add_Delete_ChemicalSolver.mooseaddChemSolver(modelpath, solver)
+    return chemUtil.add_Delete_ChemicalSolver.mooseaddChemSolver(modelpath, solver)
 
 ################################################################
 # Wrappers for global functions

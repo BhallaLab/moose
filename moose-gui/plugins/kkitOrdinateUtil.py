@@ -1,8 +1,18 @@
+__author__      =   "HarshaRani"
+__credits__     =   ["Upi Lab"]
+__license__     =   "GPL3"
+__version__     =   "1.0.0"
+__maintainer__  =   "HarshaRani"
+__email__       =   "hrani@ncbs.res.in"
+__status__      =   "Development"
+__updated__     =   "Feb 14 2017"
+
 from moose import *
 import numpy as np
-import networkx as nx
 from collections import Counter
-
+import networkx as nx
+from networkx.drawing.nx_agraph import graphviz_layout
+#import pygraphviz as pgv
 def xyPosition(objInfo,xory):
     try:
         return(float(element(objInfo).getField(xory)))
@@ -181,6 +191,8 @@ def autoCoordinates(meshEntry,srcdesConnection):
     ymin = 0.0
     ymax = 1.0
     G = nx.Graph()
+    #G = pgv.AGraph()
+    positionInfo = {}
     for cmpt,memb in meshEntry.items():
         for enzObj in find_index(memb,'enzyme'):
             #G.add_node(enzObj.path)
@@ -218,19 +230,10 @@ def autoCoordinates(meshEntry,srcdesConnection):
             else:
                 for items in (items for items in out ):
                     G.add_edge(element(items[0]).path,inn.path)
-    
-    #nx.draw(G,pos=nx.spring_layout(G))
-    #position = nx.spring_layout(G)
-    #import matplotlib.pyplot as plt
-    #plt.savefig('/home/harsha/Trash/Trash_SBML/test.png')
-    position = nx.graphviz_layout(G, prog = 'dot')
-    if int( nx.__version__.split( '.' )[-1] ) >= 11:
-        position = nx.spring_layout( G )
-    #agraph = nx.to_agraph(G)
-    #agraph.draw("test.png", format = 'png', prog = 'dot')
     xcord = []
     ycord = []
     
+    position = graphviz_layout(G)
     for item in position.items():
         xy = item[1]
         ann = moose.Annotator(item[0]+'/info')
@@ -239,6 +242,34 @@ def autoCoordinates(meshEntry,srcdesConnection):
         ann.y = xy[1]
         ycord.append(xy[1])
     
+    '''
+    if int( nx.__version__.split( '.' )[-1] ) >= 11:
+     	position = nx.spring_layout( G )
+    else:
+     	position = nx.graphviz_layout(G, prog = 'dot')
+    for item in position.items():
+        xy = item[1]
+        ann = moose.Annotator(item[0]+'/info')
+        ann.x = xy[0]
+        xcord.append(xy[0])
+        ann.y = xy[1]
+        ycord.append(xy[1])
+    '''
+    '''
+    #pygraphviz
+    G.layout()
+    for n in G.nodes():
+        print "inside 250 "
+        value = str(n.attr['pos'])
+        valuelist = (value.split(','))
+        positionInfo[(moose.element(n)).path] ={'x':float(valuelist[0]),'y':float(valuelist[1])}
+        ann = moose.Annotator(moose.element(n).path+'/info')
+        ann.x = float(valuelist[0])
+        ann.y = float(valuelist[1])
+        
+        xcord.append(float(valuelist[0]))
+        xcord.append(float(valuelist[1]))
+    '''
     if xcord and ycord:
         xmin = min(xcord)
         xmax = max(xcord)
