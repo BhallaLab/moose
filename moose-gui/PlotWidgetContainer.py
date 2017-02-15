@@ -9,10 +9,10 @@ __author__      =   "Aviral Goel"
 __credits__     =   ["Upi Lab"]
 __license__     =   "GPL3"
 __version__     =   "1.0.0"
-__maintainer__  =   "Aviral Goel"
+__maintainer__  =   "Aviral Goel,HarshaRani"
 __email__       =   "goel.aviral@gmail.com"
 __status__      =   "Development"
-
+__updated__     =   "Feb 14 2017"
 
 import sys
 import os
@@ -49,6 +49,8 @@ class PlotWidgetContainer(QWidget):
 
         self.model          = moose.element(self.modelRoot)
         if self.modelRoot != "/":
+            self.modelRoot = self.findModelPath(self.modelRoot)
+
             if moose.exists(modelRoot + "/data"):
                 self.data   = moose.element(self.modelRoot + "/data")
             else:
@@ -87,6 +89,18 @@ class PlotWidgetContainer(QWidget):
         if len(self.data.children) == 0:
             self.addPlotWidget()
 
+    def mooseIsInstance(self,element, classNames):
+        return moose.element(element).__class__.__name__ in classNames
+
+
+    def findModelPath(self,element):
+        child = element
+        while not self.mooseIsInstance(element, "Shell"):
+            child = moose.element(element).path
+            element = moose.element(element).parent
+
+        return child
+    
     def deleteWidget(self, graphWidget):
         # print("Deleted => ", graphWidget)
         self.graphWidgets.remove(graphWidget)
