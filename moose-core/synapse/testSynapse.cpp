@@ -20,6 +20,48 @@
 #include "../shell/Shell.h"
 #include "../randnum/randnum.h"
 
+double doCorrel( RollingMatrix& rm, vector< vector< double >> & kernel )
+{
+	int nr = kernel.size();
+	vector< double > correlVec( nr, 0.0 );
+	for ( int i = 0; i < nr; ++i )
+		rm.correl( correlVec, kernel[i], i );
+	double seqActivation = 0.0;
+	for ( int i = 0; i < nr; ++i )
+		seqActivation += correlVec[i];
+	return seqActivation;
+}
+
+void testRollingMatrix2()
+{
+	int nr = 5;
+	RollingMatrix rm;
+	rm.resize( nr, nr );
+	vector< vector< double > > kernel( nr );
+	for ( int i = 0; i < nr; ++i ) {
+		kernel[i].resize( nr, 0.0 );
+		rm.zeroOutRow( i );
+		for ( int j = 0; j < nr; ++j ) {
+			kernel[i][j] = 16 - (i-j)*(i-j); // symmetric, forward
+			rm.sumIntoEntry( (i==j), i, j );
+		}
+	}
+	double ret1 = doCorrel( rm, kernel );
+
+	for ( int i = 0; i < nr; ++i ) {
+		kernel[i].clear();
+		kernel[i].resize( nr, 0.0 );
+		rm.zeroOutRow( i );
+		for ( int j = 0; j < nr; ++j ) {
+			int k = nr-i-1;
+			kernel[i][j] = 16 - (k-j)*(k-j); // symmetric, backwards
+			rm.sumIntoEntry( (k==j), i, j );
+		}
+	}
+	double ret2 = doCorrel( rm, kernel );
+	assert( doubleEq( ret1, ret2 ) );
+}
+
 void testRollingMatrix()
 {
 	int nr = 5;
@@ -150,6 +192,7 @@ void testSynapse()
 {
 #ifdef DO_UNIT_TESTS
 	testRollingMatrix();
+	testRollingMatrix2();
 	testSeqSynapse();
 #endif // DO_UNIT_TESTS
 }
