@@ -7,13 +7,26 @@
 ## See the file COPYING.LIB for the full notice.
 #########################################################################
 
+# This example illustrates how to set up a transport model with 
+# four non-reacting molecules in a cylinder. 
+# Molecule a and b have a positive motorConst so they are 
+# are transported from soma (voxel 0) to the end of the cylinder.
+# Molecules c and d have a negative motorConst so they are transported 
+# from the end of the cylinder to the soma.
+# Rate of all motors is 1e-6 microns/sec.
+# Pools a and c start out with all molecules at the soma, b and d 
+# start with all molecules at the end of the cylinder.
+# Net effect is that only molecules a and d actually move. B and c
+# stay put as their motors are pushing further toward their respective
+# ends, and I assume all cells have sealed ends.
+
 import math
 import pylab
 import numpy
 import moose
 
 import os
-import signal
+import signal 
 PID = os.getpid()
 
 def doNothing( *args ):
@@ -39,7 +52,7 @@ def makeModel():
                 compartment.x0 = 0
                 compartment.x1 = len
                 compartment.diffLength = diffLength
-
+                
                 assert( compartment.numDiffCompts == num )
 
                 # create molecules and reactions
@@ -98,20 +111,6 @@ def displayPlots():
                 pylab.show()
 
 def main():
-                """
-This example illustrates how to set up a transport model with
-four non-reacting molecules in a cylinder.
-Molecule a and b have a positive motorConst so they are
-are transported from soma (voxel 0) to the end of the cylinder.
-Molecules c and d have a negative motorConst so they are transported
-from the end of the cylinder to the soma.
-Rate of all motors is 1e-6 microns/sec.
-Pools a and c start out with all molecules at the soma, b and d
-start with all molecules at the end of the cylinder.
-Net effect is that only molecules a and d actually move. B and c
-stay put as their motors are pushing further toward their respective
-ends, and I assume all cells have sealed ends.
-                """
                 dt4 = 0.01
                 dt5 = 0.01
                 runtime = 10.0 # seconds

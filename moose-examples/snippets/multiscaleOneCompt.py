@@ -1,5 +1,5 @@
 #########################################################################
-## multiscaleOneCompt.py ---
+## multiscaleOneCompt.py --- 
 ## This program is part of 'MOOSE', the
 ## Messaging Object Oriented Simulation Environment.
 ##           Copyright (C) 2014 Upinder S. Bhalla. and NCBS
@@ -35,9 +35,9 @@ def loadElec():
     for x in moose.wildcardFind( "/library/##" ):
         x.tick = -1
     model = moose.Neutral( '/model' )
-    cellId = moose.loadModel(
+    cellId = moose.loadModel( 
             os.path.join( scriptDir, 'soma.p')
-            , '/model/elec', "Neutral"
+            , '/model/elec', "Neutral" 
             )
     moose.setCwe( '/' )
     return cellId
@@ -46,7 +46,7 @@ def loadChem():
     chem = moose.Neutral( '/model/chem' )
     modelId = moose.loadModel(
             os.path.join( scriptDir, '..', 'genesis', 'chanPhosphByCaMKII.g' )
-                , '/model/chem', 'gsl'
+                , '/model/chem', 'gsl' 
                 )
     nmstoich = moose.element( '/model/chem/kinetics/stoich' )
 
@@ -59,15 +59,15 @@ def makeAdaptors():
     ##################################################################
     # set up adaptor for elec model Ca -> chem model Ca
     # Here it is easy because we don't have to deal with different
-    # sizes of electrical and chemical compartments.
+    # sizes of electrical and chemical compartments. 
     adaptCa = moose.Adaptor( '/model/chem/kinetics/adaptCa' )
     chemCa = moose.element( '/model/chem/kinetics/Ca' )
     elecCa = moose.element( '/model/elec/soma/Ca_conc' )
     moose.connect( elecCa, 'concOut', adaptCa, 'input' )
     moose.connect( adaptCa, 'output', chemCa, 'setConc' )
-    adaptCa.inputOffset = 0.0    #
+    adaptCa.inputOffset = 0.0    # 
     adaptCa.outputOffset = 0.00008    # 80 nM offset in chem.
-    adaptCa.scale = 0.0008
+    adaptCa.scale = 0.0008   
 
     # set up adaptor for chem model chan -> elec model chan.
     adaptChan = moose.Adaptor( '/model/chem/kinetics/adaptChan' )
@@ -77,7 +77,7 @@ def makeAdaptors():
     # since there isn't an output message to deliver this value.
     moose.connect( adaptChan, 'requestOut', chemChan, 'getConc' )
     moose.connect( adaptChan, 'output', elecChan, 'setGbar' )
-    adaptChan.inputOffset = 0.0    #
+    adaptChan.inputOffset = 0.0    # 
     adaptChan.outputOffset = 0.0
     adaptChan.scale = 1e-5    #
 
@@ -94,11 +94,11 @@ def addPlot( objpath, field, plot, tick ):
 
 def main():
     """
-    This example builds a simple multiscale model involving
+    This example builds a simple multiscale model involving 
     electrical and chemical signaling, but without spatial dimensions.
     The electrical cell model is in a single compartment and has
     voltage-gated channels, including a voltage-gated Ca channel for
-    Ca influx, and a K_A channel which is regulated by the chemical
+    Ca influx, and a K_A channel which is regulated by the chemical 
     pathways.
 
     The chemical model has calcium activating Calmodulin which activates
@@ -106,8 +106,8 @@ def main():
     it.
 
     The net effect of the multiscale activity is a positive feedback
-    loop where activity increases Ca, which activates the kinase,
-    which reduces K_A, leading to increased excitability of the cell.
+    loop where activity increases Ca, which activates the kinase, 
+    which reduces K_A, leading to increased excitability of the cell. 
 
     In this example this results
     in a bistable neuron. In the resting state the cell does not fire,
@@ -120,9 +120,9 @@ def main():
     to define different models. However, there
     are model-specific Adaptor objects needed to map activity between the
     models of the two kinds. The Adaptors connect specific model entities
-    between the two models. Here one Adaptor connects the electrical
+    between the two models. Here one Adaptor connects the electrical 
     Ca_conc object to the chemical Ca pool. The other Adaptor connects
-    the chemical pool representing the K_A channel to its conductance
+    the chemical pool representing the K_A channel to its conductance 
     term in the electrical model.
     """
 

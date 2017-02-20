@@ -6,7 +6,12 @@
 #** GNU Lesser General Public License version 2.1
 #** See the file COPYING.LIB for the full notice.
 #**********************************************************************/
-
+# This snippet sets up a recurrent network of IntFire objects, using
+# SimpleSynHandlers to deal with spiking events. 
+# It isn't very satisfactory as activity runs down after a while.
+# It is a good example for using the IntFire, setting up random
+# connectivity, and using SynHandlers.
+#
 import os
 import random
 import time
@@ -57,7 +62,7 @@ def make_network():
         for item in syns.vec:
                 sh = moose.element( item )
                 sh.synapse.delay = delayMin +  (delayMax - delayMin ) * nprand.rand( len( sh.synapse ) )
-                #sh.synapse.delay = [ (delayMin + random.random() * (delayMax - delayMin ) for r in range( len( sh.synapse ) ) ]
+                #sh.synapse.delay = [ (delayMin + random.random() * (delayMax - delayMin ) for r in range( len( sh.synapse ) ) ] 
                 sh.synapse.weight = nprand.rand( len( sh.synapse ) ) * weightMax
         print(('after setup, t = ', time.time() - t0))
 
@@ -102,16 +107,4 @@ def make_network():
         pylab.legend()
         pylab.show()
 
-def main():
-
-	"""
-	This snippet sets up a recurrent network of IntFire objects, using
-	SimpleSynHandlers to deal with spiking events.
-	It isn't very satisfactory as activity runs down after a while.
-	It is a good example for using the IntFire, setting up random
-	connectivity, and using SynHandlers.
-	"""
-	make_network()
-
-if __name__ == '__main__':
-	main()
+make_network()

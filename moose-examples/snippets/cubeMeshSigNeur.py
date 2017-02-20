@@ -1,18 +1,19 @@
-# HsolveInstability.py ---
+# HsolveInstability.py --- 
 
-# Commentary:
-#
-#
+# Commentary: 
+# 
+# A toy compartmental neuronal + chemical model in just a cubic volume
+# 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
 # published by the Free Software Foundation; either version 3, or
 # (at your option) any later version.
-#
+# 
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
-#
+# 
 # You should have received a copy of the GNU General Public License
 # along with this program; see the file COPYING.  If not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth
@@ -35,7 +36,7 @@ EREST_ACT = -70e-3
 # Gate equations have the form:
 #
 # y(x) = (A + B * x) / (C + exp((x + D) / F))
-#
+# 
 # where x is membrane voltage and y is the rate constant for gate
 # closing or opening
 
@@ -48,7 +49,7 @@ Na_m_params = [1e5 * (25e-3 + EREST_ACT),   # 'A_A':
                 0.0,                        # 'B_B':
                 0.0,                        # 'B_C':
                 0.0 - EREST_ACT,            # 'B_D':
-                18e-3                       # 'B_F':
+                18e-3                       # 'B_F':    
                ]
 Na_h_params = [ 70.0,                        # 'A_A':
                 0.0,                       # 'A_B':
@@ -59,8 +60,8 @@ Na_h_params = [ 70.0,                        # 'A_A':
                 0.0,                       # 'B_B':
                 1.0,                       # 'B_C':
                 -30e-3 - EREST_ACT,        # 'B_D':
-                -0.01                    # 'B_F':
-                ]
+                -0.01                    # 'B_F':       
+                ]        
 K_n_params = [ 1e4 * (10e-3 + EREST_ACT),   #  'A_A':
                -1e4,                      #  'A_B':
                -1.0,                       #  'A_C':
@@ -70,7 +71,7 @@ K_n_params = [ 1e4 * (10e-3 + EREST_ACT),   #  'A_A':
                0.0,                        #  'B_B':
                0.0,                        #  'B_C':
                0.0 - EREST_ACT,            #  'B_D':
-               80e-3                       #  'B_F':
+               80e-3                       #  'B_F':  
                ]
 VMIN = -30e-3 + EREST_ACT
 VMAX = 120e-3 + EREST_ACT
@@ -91,7 +92,7 @@ def createSquid():
     compt.diameter = 4e-6
     nachan = moose.HHChannel( '/n/elec/compt/Na' )
     nachan.Xpower = 3
-    xGate = moose.HHGate(nachan.path + '/gateX')
+    xGate = moose.HHGate(nachan.path + '/gateX')    
     xGate.setupAlpha(Na_m_params + [VDIVS, VMIN, VMAX])
     xGate.useInterpolation = 1
     nachan.Ypower = 1
@@ -104,7 +105,7 @@ def createSquid():
 
     kchan = moose.HHChannel( '/n/elec/compt/K' )
     kchan.Xpower = 4.0
-    xGate = moose.HHGate(kchan.path + '/gateX')
+    xGate = moose.HHGate(kchan.path + '/gateX')    
     xGate.setupAlpha(K_n_params + [VDIVS, VMIN, VMAX])
     xGate.useInterpolation = 1
     kchan.Gbar = 0.2836e-3
@@ -205,7 +206,7 @@ def makeModelInCubeMesh():
     # Make adaptors
     # Note that we can do this two ways: We can use an existing output
     # msg from the object, which will come whenever the object processes,
-    # or the adapator can request the object for the field, which happens
+    # or the adapator can request the object for the field, which happens 
     # whenever the adaptor processes. Here we illustrate both alternatives.
     adaptK = moose.Adaptor( '/n/chem/neuroMesh/adaptK' )
     chemK = moose.element( '/n/chem/neuroMesh/kChan' )
@@ -298,12 +299,6 @@ def testCubeMultiscale( useSolver ):
     displayPlots()
 
 def main():
-    """
-This snippet demonstrates how to model a neuronal compartment, with
-chemical model in just a cubic volume.
-The neuron is a squid neuron.
-
-    """
     testCubeMultiscale( 1 ) # change argument to 0 to run without solver.
 
 if __name__ == '__main__':

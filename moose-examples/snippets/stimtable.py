@@ -1,49 +1,63 @@
-# stimtable.py ---
-#
+# stimtable.py --- 
+# 
 # Filename: stimtable.py
-# Description:
+# Description: 
 # Author: Subhasis Ray
-# Maintainer:
+# Maintainer: 
 # Created: Wed May  8 18:51:07 2013 (+0530)
-# Version:
+# Version: 
 # Last-Updated: Mon May 27 21:15:36 2013 (+0530)
 #           By: subha
 #     Update #: 124
-# URL:
-# Keywords:
-# Compatibility:
-#
-#
+# URL: 
+# Keywords: 
+# Compatibility: 
+# 
+# 
 
-# Commentary:
-#
-#
-#
-#
+# Commentary: 
+# 
+# 
+# 
+# 
 
 # Change log:
-#
+# 
+# 
+# 
+# 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
 # published by the Free Software Foundation; either version 3, or
 # (at your option) any later version.
-#
+# 
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
-#
+# 
 # You should have received a copy of the GNU General Public License
 # along with this program; see the file COPYING.  If not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 # Floor, Boston, MA 02110-1301, USA.
+# 
+# 
+
+# Code:
+"""Example of StimulusTable using Poisson random numbers.
+
+Creates a StimulusTable and assigns it signal representing events in a
+Poisson process. The output of the StimTable is sent to a DiffAmp
+object for buffering and then recorded in a regular table.
+
+"""
 
 import numpy as np
 from matplotlib import pyplot as plt
 import moose
 from moose import utils
 
-def stimulus_table_demo():
+def stimulus_table_demo():    
     model = moose.Neutral('/model')
     data = moose.Neutral('/data')
     # This is the stimulus generator
@@ -71,7 +85,7 @@ def stimulus_table_demo():
     # consecutive entries to have same value to get correct
     # magnitude. And still we shall be off by at least one time step.
     indices = np.concatenate((stimidx-1, stimidx, stimidx+1))
-    stim[indices] = 1.0
+    stim[indices] = 1.0    
     stimtable.vector = stim
     stimtable.stepSize = 0 # This forces use of current time as x value for interpolation
     stimtable.stopTime = simtime
@@ -86,18 +100,9 @@ def stimulus_table_demo():
     plt.title('Exmaple of StimulusTable')
     plt.show()
 
-def main():
-	"""
-Example of StimulusTable using Poisson random numbers.
-
-Creates a StimulusTable and assigns it signal representing events in a
-Poisson process. The output of the StimTable is sent to a DiffAmp
-object for buffering and then recorded in a regular table.
-
-	"""
-	stimulus_table_demo()
-
 if __name__ == '__main__':
-	main()
+    stimulus_table_demo()
+    
 
+# 
 # stimtable.py ends here

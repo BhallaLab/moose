@@ -23,11 +23,11 @@ def main():
         """
         This example illustrates loading and running a reaction system that
         spans two volumes, that is, is in different compartments. It uses a
-        kkit model file. You can tell if it is working if you see nice
+        kkit model file. You can tell if it is working if you see nice 
         relaxation oscillations.
         """
         # the kkit reader doesn't know how to do multicompt solver setup.
-        solver = "ee"
+        solver = "ee"  
         mfile = '../genesis/OSC_diff_vols.g'
         runtime = 3000.0
         simDt = 1.0
@@ -74,7 +74,7 @@ def main():
         print(moose.element( '/model/compartment_1/exo' ))
         moose.le( '/model/compartment_1' )
         moose.reinit()
-        moose.start( runtime )
+        moose.start( runtime ) 
 
         # Display all plots.
         for x in moose.wildcardFind( '/model/#graphs/conc#/#' ):

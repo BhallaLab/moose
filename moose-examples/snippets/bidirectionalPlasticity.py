@@ -32,9 +32,9 @@ def displayPlots():
 
 def main():
     """
-    This is a toy model of synaptic bidirectional plasticity. The model has
+    This is a toy model of synaptic bidirectional plasticity. The model has 
     a small a bistable chemical switch, and a small set of reactions that
-    decode calcium input. One can turn the switch on with short high
+    decode calcium input. One can turn the switch on with short high 
     calcium pulses (over 2 uM for about 10 sec). One can turn it back off
     again using a long, lower calcium pulse (0.2 uM, 2000 sec).
     """

@@ -7,6 +7,43 @@
 ## See the file COPYING.LIB for the full notice.
 #########################################################################
 
+# This example sets up the kinetic solver and steady-state finder, on
+# a bistable model. 
+# It looks for the fixed points 100 times, as follows:
+# - Set up the random initial condition that fits the conservation laws
+# - Run for 2 seconds. This should not be mathematically necessary, but
+#        for obscure numerical reasons it makes it much more likely that the 
+#        steady state solver will succeed in finding a state.
+# - Find the fixed point
+# - Print out the fixed point vector and various diagnostics.
+# - Run for 10 seconds. This is completely unnecessary, and is done here
+#         just so that the resultant graph will show what kind of state has been
+#        found.
+# After it does all this, the program runs for 100 more seconds on the last
+# found fixed point (which turns out to be a saddle node), then
+# is hard-switched in the script to the first attractor basin from which
+# it runs for another 100 seconds till it settles there, and then 
+# is hard-switched yet again to the second attractor and runs for 100 
+# seconds.
+# Looking at the output you will see many features of note:
+# - the first attractor (stable point) and the saddle point 
+#        (unstable fixed point) are both found quite often. But the second
+#        attractor is found just once. Has a very small basin of attraction.
+# - The values found for each of the fixed points match well with the
+#        values found by running the system to steady-state at the end.
+# - There are a large number of failures to find a fixed point. These are
+#         found and reported in the diagnostics. They show up on the plot
+#         as cases where the 10-second runs are not flat.
+#
+# If you wanted to find fixed points in a production model, you would
+# not need to do the 10-second runs, and you would need to eliminate the
+# cases where the state-finder failed. Then you could identify the good
+# points and keep track of how many of each were found.
+# There is no way to guarantee that all fixed points have been found using
+# this algorithm! 
+# You may wish to sample concentration space logarithmically rather than
+# linearly.
+
 import math
 import pylab
 import numpy
@@ -34,44 +71,6 @@ def getState( ksolve, state ):
 
 
 def main():
-                """
-    This example sets up the kinetic solver and steady-state finder, on
-    a bistable model.
-    It looks for the fixed points 100 times, as follows:
-    - Set up the random initial condition that fits the conservation laws
-    - Run for 2 seconds. This should not be mathematically necessary, but
-      for obscure numerical reasons it makes it much more likely that the
-      steady state solver will succeed in finding a state.
-    - Find the fixed point
-    - Print out the fixed point vector and various diagnostics.
-    - Run for 10 seconds. This is completely unnecessary, and is done here
-      just so that the resultant graph will show what kind of state has been
-      found.
-    After it does all this, the program runs for 100 more seconds on the last
-    found fixed point (which turns out to be a saddle node), then
-    is hard-switched in the script to the first attractor basin from which
-    it runs for another 100 seconds till it settles there, and then
-    is hard-switched yet again to the second attractor and runs for 100
-    seconds.
-    Looking at the output you will see many features of note:
-    - the first attractor (stable point) and the saddle point
-      (unstable fixed point) are both found quite often. But the second
-      attractor is found just once. Has a very small basin of attraction.
-    - The values found for each of the fixed points match well with the
-      values found by running the system to steady-state at the end.
-    - There are a large number of failures to find a fixed point. These are
-      found and reported in the diagnostics. They show up on the plot
-      as cases where the 10-second runs are not flat.
-
-    If you wanted to find fixed points in a production model, you would
-    not need to do the 10-second runs, and you would need to eliminate the
-    cases where the state-finder failed. Then you could identify the good
-    points and keep track of how many of each were found.
-    There is no way to guarantee that all fixed points have been found using
-    this algorithm!
-    You may wish to sample concentration space logarithmically rather than
-    linearly.
-                """
                 # The wildcard uses # for single level, and ## for recursive.
                 #compartment = makeModel()
                 moose.loadModel( '../genesis/M1719.cspace', '/model', 'ee' )
@@ -97,7 +96,7 @@ def main():
 
                 for i in range( 0, 100 ):
                         getState( ksolve, state )
-
+                
                 moose.start( 100.0 ) # Run the model for 100 seconds.
 
                 b = moose.element( '/model/compartment/b' )

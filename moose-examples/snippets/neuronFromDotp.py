@@ -1,22 +1,26 @@
-# neuronFromDotp.py ---
+# neuronFromDotp.py --- 
 # Author: Upi Bhalla NCBS Bangalore 2014.
-# Commentary:
+# Commentary: 
 
+# Demonstrates how to load a simple neuronal model in GENESIS dotp format.
+# The model has branches and a few spines.
+# It is adorned just with classic HH squid channels.
+# 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
 # published by the Free Software Foundation; either version 3, or
 # (at your option) any later version.
-#
+# 
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
-#
+# 
 # You should have received a copy of the GNU General Public License
 # along with this program; see the file COPYING.  If not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 # Floor, Boston, MA 02110-1301, USA.
-#
+# 
 
 # Code:
 
@@ -32,7 +36,7 @@ EREST_ACT = -70e-3
 # Gate equations have the form:
 #
 # y(x) = (A + B * x) / (C + exp((x + D) / F))
-#
+# 
 # where x is membrane voltage and y is the rate constant for gate
 # closing or opening
 
@@ -45,7 +49,7 @@ Na_m_params = [1e5 * (25e-3 + EREST_ACT),   # 'A_A':
                 0.0,                        # 'B_B':
                 0.0,                        # 'B_C':
                 0.0 - EREST_ACT,            # 'B_D':
-                18e-3                       # 'B_F':
+                18e-3                       # 'B_F':    
                ]
 Na_h_params = [ 70.0,                        # 'A_A':
                 0.0,                       # 'A_B':
@@ -56,8 +60,8 @@ Na_h_params = [ 70.0,                        # 'A_A':
                 0.0,                       # 'B_B':
                 1.0,                       # 'B_C':
                 -30e-3 - EREST_ACT,        # 'B_D':
-                -0.01                    # 'B_F':
-                ]
+                -0.01                    # 'B_F':       
+                ]        
 K_n_params = [ 1e4 * (10e-3 + EREST_ACT),   #  'A_A':
                -1e4,                      #  'A_B':
                -1.0,                       #  'A_C':
@@ -67,7 +71,7 @@ K_n_params = [ 1e4 * (10e-3 + EREST_ACT),   #  'A_A':
                0.0,                        #  'B_B':
                0.0,                        #  'B_C':
                0.0 - EREST_ACT,            #  'B_D':
-               80e-3                       #  'B_F':
+               80e-3                       #  'B_F':  
                ]
 VMIN = -30e-3 + EREST_ACT
 VMAX = 120e-3 + EREST_ACT
@@ -86,7 +90,7 @@ def makeChannelPrototypes():
         compt.Ra = 7639.44e3
         nachan = moose.HHChannel( '/library/Na' )
         nachan.Xpower = 3
-        xGate = moose.HHGate(nachan.path + '/gateX')
+        xGate = moose.HHGate(nachan.path + '/gateX')        
         xGate.setupAlpha(Na_m_params + [VDIVS, VMIN, VMAX])
         xGate.useInterpolation = 1
         nachan.Ypower = 1
@@ -98,7 +102,7 @@ def makeChannelPrototypes():
 
         kchan = moose.HHChannel( '/library/K' )
         kchan.Xpower = 4.0
-        xGate = moose.HHGate(kchan.path + '/gateX')
+        xGate = moose.HHGate(kchan.path + '/gateX')        
         xGate.setupAlpha(K_n_params + [VDIVS, VMIN, VMAX])
         xGate.useInterpolation = 1
         kchan.Gbar = 0.2836e-3
@@ -144,16 +148,10 @@ def testModel( useSolver ):
         dumpPlots()
 
 def main():
-    """
-Demonstrates how to load a simple neuronal model in GENESIS dotp format.
-The model has branches and a few spines.
-It is adorned just with classic HH squid channels.
-
-    """
-    testModel( 1 )
+        testModel( 1 )
 
 if __name__ == '__main__':
         main()
 
-#
+# 
 # neuronFromDotp.py ends here

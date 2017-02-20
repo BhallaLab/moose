@@ -101,29 +101,29 @@ def main():
     Here each molecule is in a different compartment.
     The initial conditions are such that the end conc on all compartments
     should be 2.0.
-    The time course depends on which compartment the Reac object is
+    The time course depends on which compartment the Reac object is 
     embedded in.
-    The cleanest thing numerically and also conceptually is to have both
+    The cleanest thing numerically and also conceptually is to have both 
     reactions in the same compartment, in this case the middle one
     (**compt1**).
-    The initial conditions have a lot of **B**. The equilibrium with
-    **C** is fast and so **C** shoots up and passes **B**, peaking at
-    about (2.5,9). This is also just
+    The initial conditions have a lot of **B**. The equilibrium with 
+    **C** is fast and so **C** shoots up and passes **B**, peaking at 
+    about (2.5,9). This is also just 
     about the crossover point.
     **A** starts low and slowly climbs up to equilibrate.
 
-    If we put **reac0** in **compt0** and **reac1** in **compt1**,
+    If we put **reac0** in **compt0** and **reac1** in **compt1**, 
     it behaves the same
     qualitiatively but now the peak is at around (1, 5.2)
 
-    This configuration of reactions makes sense from the viewpoint of
+    This configuration of reactions makes sense from the viewpoint of 
     having the
     reactions always in the compartment with the smaller volume, which is
     important if we need to have junctions where many small voxels talk to
     one big voxel in another compartment.
 
     Note that putting the reacs in other compartments doesn't work and in
-    some combinations (e.g., **reac0** in **compt0** and **reac1** in
+    some combinations (e.g., **reac0** in **compt0** and **reac1** in 
     **compt2**) give
     numerical instability.
     """

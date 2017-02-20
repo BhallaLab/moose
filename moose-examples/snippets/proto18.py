@@ -1,30 +1,29 @@
-#FILE INFORMATION
-"""
-Based mostly on the traub91proto.g by Dave Beeman
-Main difference is addition of Glu and NMDA channels
-The 1991 Traub set of voltage and concentration dependent channels
-Implemented as tabchannels by : Dave Beeman
-  R.D.Traub, R. K. S. Wong, R. Miles, and H. Michelson
-    Journal of Neurophysiology, Vol. 66, p. 635 (1991)
+#/* FILE INFORMATION
+#** Based mostly on the traub91proto.g by Dave Beeman
+#** Main difference is addition of Glu and NMDA channels
+#** The 1991 Traub set of voltage and concentration dependent channels
+#** Implemented as tabchannels by : Dave Beeman
+#**      R.D.Traub, R. K. S. Wong, R. Miles, and H. Michelson
+#**        Journal of Neurophysiology, Vol. 66, p. 635 (1991)
+#**
+#** This file depends on functions and constants defined in defaults.g
+#** As it is also intended as an example of the use of the tabchannel
+#** object to implement concentration dependent channels, it has extensive
+#** comments.  Note that the original units used in the paper have been
+#** converted to SI (MKS) units.  Also, we define the ionic equilibrium 
+#** potentials relative to the resting potential, EREST_ACT.  In the
+#** paper, this was defined to be zero.  Here, we use -0.060 volts, the
+#** measured value relative to the outside of the cell.
+#*/
 
-This file depends on functions and constants defined in defaults.g
-As it is also intended as an example of the use of the tabchannel
-object to implement concentration dependent channels, it has extensive
-comments.  Note that the original units used in the paper have been
-converted to SI (MKS) units.  Also, we define the ionic equilibrium
-potentials relative to the resting potential, EREST_ACT.  In the
-paper, this was defined to be zero.  Here, we use -0.060 volts, the
-measured value relative to the outside of the cell.
-
-
-November 1999 update for GENESIS 2.2: Previous versions of this file used
-a combination of a table, tabgate, and vdep_channel to implement the
-Ca-dependent K Channel - K(C).  This new version uses the new tabchannel
-"instant" field, introduced in GENESIS 2.2, to implement an
-"instantaneous" gate for the multiplicative Ca-dependent factor in the
-conductance.   This allows these channels to be used with the fast
-hsolve chanmodes > 1.
-"""
+#/* November 1999 update for GENESIS 2.2: Previous versions of this file used
+#   a combination of a table, tabgate, and vdep_channel to implement the
+#   Ca-dependent K Channel - K(C).  This new version uses the new tabchannel
+#   "instant" field, introduced in GENESIS 2.2, to implement an
+#   "instantaneous" gate for the multiplicative Ca-dependent factor in the
+#   conductance.   This allows these channels to be used with the fast
+#   hsolve chanmodes > 1.
+#*/
 
 # Apr 2012 update for pymoose. Converted to equivalent MOOSE funcs.
 
@@ -314,9 +313,9 @@ def make_Na():
 
         xgate = moose.element( 'Na/gateX' )
         xA = numpy.array( [ 320e3 * (0.0131 + EREST_ACT),
-                -320e3, -1.0, -1.0 * (0.0131 + EREST_ACT), -0.004,
-                -280e3 * (0.0401 + EREST_ACT), 280e3, -1.0,
-                -1.0 * (0.0401 + EREST_ACT), 5.0e-3,
+                -320e3, -1.0, -1.0 * (0.0131 + EREST_ACT), -0.004, 
+                -280e3 * (0.0401 + EREST_ACT), 280e3, -1.0, 
+                -1.0 * (0.0401 + EREST_ACT), 5.0e-3, 
                 3000, -0.1, 0.05 ] )
         xgate.alphaParms = xA
 
@@ -326,7 +325,7 @@ def make_Na():
 
         ygate = moose.element( 'Na/gateY' )
         yA = numpy.array( [ 128.0, 0.0, 0.0, -1.0 * (0.017 + EREST_ACT), 0.018,
-                4.0e3, 0.0, 1.0, -1.0 * (0.040 + EREST_ACT), -5.0e-3,
+                4.0e3, 0.0, 1.0, -1.0 * (0.040 + EREST_ACT), -5.0e-3, 
                 3000, -0.1, 0.05 ] )
         ygate.alphaParms = yA
 
@@ -348,7 +347,7 @@ def make_K_DR():
         K_DR.Zpower = 0
 
         xgate = moose.element( 'K_DR/gateX' )
-        xA = numpy.array( [ 16e3 * (0.0351 + EREST_ACT),
+        xA = numpy.array( [ 16e3 * (0.0351 + EREST_ACT), 
                 -16e3, -1.0, -1.0 * (0.0351 + EREST_ACT), -0.005,
                 250, 0.0, 0.0, -1.0 * (0.02 + EREST_ACT), 0.04,
                 3000, -0.1, 0.05 ] )
@@ -371,9 +370,9 @@ def make_K_A():
         K_A.Zpower = 0
 
         xgate = moose.element( 'K_A/gateX' )
-        xA = numpy.array( [ 20e3 * (0.0131 + EREST_ACT),
+        xA = numpy.array( [ 20e3 * (0.0131 + EREST_ACT), 
                 -20e3, -1.0, -1.0 * (0.0131 + EREST_ACT), -0.01,
-                -17.5e3 * (0.0401 + EREST_ACT),
+                -17.5e3 * (0.0401 + EREST_ACT), 
                 17.5e3, -1.0, -1.0 * (0.0401 + EREST_ACT), 0.01,
                 3000, -0.1, 0.05 ] )
         xgate.alphaParms = xA
@@ -508,3 +507,4 @@ def make_axon():
         axon = moose.SpikeGen( 'axon' )
         axon.threshold = -40e-3                         #        V
         axon.abs_refract = 10e-3                        #         sec
+

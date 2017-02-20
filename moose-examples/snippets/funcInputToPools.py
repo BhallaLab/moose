@@ -7,6 +7,31 @@
 ## See the file COPYING.LIB for the full notice.
 #########################################################################
 
+"""
+This example describes the special (and discouraged) use case where 
+functions provide input to a reaction system. Here we have two functions of
+time which control the pool # and pool rate of change, respectively:
+
+    number of molecules of a = 1 + sin(t)
+    rate of change of number of molecules of b = 10 * cos(t)
+
+In the stochastic case one must set a special flag *useClockedUpdate* 
+in order to achieve clock-triggered updates from the functions. This is
+needed because the functions do not have reaction events to trigger them,
+and even if there were reaction events they might not be frequent enough to
+track the periodic updates. The use of this flag slows down the calculations,
+so try to use a table to control a pool instead.
+
+To run in stochastic mode: 
+
+    python funcInputToPools
+
+To run in deterministic mode: 
+
+    python funcInputToPools false
+
+"""
+
 import math
 import pylab
 import numpy
@@ -24,7 +49,7 @@ def makeModel():
                 compartment.volume = 1e-22
                 # the mesh is created automatically by the compartment
                 moose.le( '/model/compartment' )
-                mesh = moose.element( '/model/compartment/mesh' )
+                mesh = moose.element( '/model/compartment/mesh' ) 
 
                 # create molecules and reactions
                 a = moose.Pool( '/model/compartment/a' )
@@ -68,55 +93,30 @@ def makeModel():
                 '''
                 '''
 
-                # We need a finer timestep than the default 0.1 seconds,
+                # We need a finer timestep than the default 0.1 seconds, 
                 # in order to get numerical accuracy.
                 for i in range (10, 19 ):
                     moose.setClock( i, 0.1 ) # for computational objects
 
 def main():
-    """
-This example describes the special (and discouraged) use case where
-functions provide input to a reaction system. Here we have two functions of
-time which control the pool # and pool rate of change, respectively::
+                makeModel()
+                moose.seed()
 
-number of molecules of a = 1 + sin(t)
-rate of change of number of molecules of b = 10 * cos(t)
+                moose.reinit()
+                moose.start( 50.0 ) # Run the model for 100 seconds.
 
-In the stochastic case one must set a special flag *useClockedUpdate*
-in order to achieve clock-triggered updates from the functions. This is
-needed because the functions do not have reaction events to trigger them,
-and even if there were reaction events they might not be frequent enough to
-track the periodic updates. The use of this flag slows down the calculations,
-so try to use a table to control a pool instead.
+                a = moose.element( '/model/compartment/a' )
+                b = moose.element( '/model/compartment/b' )
 
-To run in stochastic mode::
+                # Iterate through all plots, dump their contents to data.plot.
+                for x in moose.wildcardFind( '/model/graphs/n#' ):
+                                #x.xplot( 'scriptKineticModel.plot', x.name )
+                                t = numpy.arange( 0, x.vector.size, 1 ) * x.dt # sec
+                                pylab.plot( t, x.vector, label=x.name )
+                pylab.legend()
+                pylab.show()
 
-	''python funcInputToPools''
-
-To run in deterministic mode::
-
-	''python funcInputToPools false''
-
-    """
-
-    makeModel()
-    moose.seed()
-
-    moose.reinit()
-    moose.start( 50.0 ) # Run the model for 50 seconds.
-
-    a = moose.element( '/model/compartment/a' )
-    b = moose.element( '/model/compartment/b' )
-
-    # Iterate through all plots, dump their contents to data.plot.
-    for x in moose.wildcardFind( '/model/graphs/n#' ):
-    	#x.xplot( 'scriptKineticModel.plot', x.name )
-        t = numpy.arange( 0, x.vector.size, 1 ) * x.dt # sec
-        pylab.plot( t, x.vector, label=x.name )
-	pylab.legend()
-	pylab.show()
-
-    quit()
+                quit()
 
 # Run the 'main' if this script is executed standalone.
 if __name__ == '__main__':

@@ -1,5 +1,13 @@
-##svm,a jr  vmnhjg 
-##avarbv adfba
+#########################################################################
+## This program is part of 'MOOSE', the
+## Messaging Object Oriented Simulation Environment.
+##           Copyright (C) 2015 Upinder S. Bhalla. and NCBS
+## It is made available under the terms of the
+## GNU Lesser General Public License version 2.1
+## See the file COPYING.LIB for the full notice.
+#########################################################################
+# This example illustrates loading a model from an SWC file, inserting
+# spines, and viewing it.
 
 import moogli
 import moose
@@ -53,11 +61,9 @@ def makeSpineProto():
 
 def main():
     """
-This snippet illustrates how the Neuron class does the spine
-specification, without the rdesigneur intermediate.
-
+    This snippet illustrates how the Neuron class does the spine
+    specification, without the rdesigneur intermediate.
     """
-
     app = QtGui.QApplication(sys.argv)
     moose.Neutral( '/library' )
     makeSpineProto()
@@ -81,7 +87,7 @@ specification, without the rdesigneur intermediate.
     ecomptPath = [x.path for x in compts]
     morphology = moogli.read_morphology_from_moose(name = "", path = "/model")
     morphology.create_group( "group_all", ecomptPath, -0.08, 0.02, \
-            [0.0, 0.5, 1.0, 1.0], [1.0, 0.0, 0.0, 0.9] )
+            [0.0, 0.5, 1.0, 1.0], [1.0, 0.0, 0.0, 0.9] ) 
 
     viewer = moogli.DynamicMorphologyViewerWidget(morphology)
     def callback( morphology, viewer ):
