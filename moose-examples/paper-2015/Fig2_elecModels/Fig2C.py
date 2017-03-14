@@ -121,6 +121,7 @@ def buildRdesigneur():
             ["glu", "#dend#,#apical#", "Gbar", "200*H(p-200e-6)" ], \
             ["NMDA", "#dend#,#apical#", "Gbar", "2*H(p-200e-6)" ] \
         ]
+    '''
     spineDistrib = [ \
             ["spine", '#apical#', "spineSpacing", "20e-6", \
                 "spineSpacingDistrib", "2e-6", \
@@ -129,7 +130,15 @@ def buildRdesigneur():
                 "size", "1", \
                 "sizeDistrib", "0.5" ] \
         ]
+    '''
+    spineDistrib = [
+            ["spine", '#apical#', 
+                "20e-6", "2e-6",
+                "1", "0.5",
+                "0", str( 2*PI ) ]
+        ]
     chemDistrib = []
+    spineProto = [['makeActiveSpine()', 'spine']]
 
     ######################################################################
     # Here we define the mappings across scales. Format:
@@ -145,19 +154,20 @@ def buildRdesigneur():
     # with creating the model.
     ######################################################################
     
-    rd.addSpineProto() # This adds a version with an LCa channel by default.
+    #rd.addSpineProto() # This adds a version with an LCa channel by default.
 
     rdes = rd.rdesigneur(
-        useGssa = useGssa, \
-        combineSegments = combineSegments, \
-        stealCellFromLibrary = True, \
-        passiveDistrib = passiveDistrib, \
-        spineDistrib = spineDistrib, \
-        chanDistrib = chanDistrib, \
-        chemDistrib = chemDistrib, \
-        cellProto = cellProto, \
-        chanProto = chanProto, \
-        chemProto = chemProto, \
+        useGssa = useGssa,
+        combineSegments = combineSegments,
+        stealCellFromLibrary = True,
+        passiveDistrib = passiveDistrib,
+        spineDistrib = spineDistrib,
+        chanDistrib = chanDistrib,
+        chemDistrib = chemDistrib,
+        cellProto = cellProto,
+        chanProto = chanProto,
+        chemProto = chemProto,
+        spineProto = spineProto,
         adaptorList = adaptorList
     )
     #spineProto = spineProto, \
@@ -182,10 +192,10 @@ def displayPlots():
     pylab.figure(2, figsize= (8,10))
     ax = pylab.subplot( 1,1,1 )
     neuron = moose.element( '/model/elec' )
-    comptDistance = dict( list(zip( neuron.compartments, neuron.pathDistanceFromSoma )) )
+    comptDistance = dict( list(zip( neuron.compartments, neuron.pathDistanceFromSoma ) ))
     for i in moose.wildcardFind( '/library/#[ISA=ChanBase]' ):
         chans = moose.wildcardFind( '/model/elec/#/' + i.name )
-        print((i.name, len( chans )))
+        print (i.name, len( chans ))
         p = [ 1e6*comptDistance.get( j.parent, 0) for j in chans ]
         Gbar = [ j.Gbar/(j.parent.length * j.parent.diameter * PI) for j in chans ]
         if len( p ) > 2:
@@ -294,7 +304,7 @@ def create_ca_viewer(rdes):
     return viewer
 
 def build3dDisplay(rdes):
-    print("building 3d Display")
+    print ("building 3d Display")
     app = QtGui.QApplication(sys.argv)
 
     vm_viewer = create_vm_viewer(rdes)
@@ -325,7 +335,7 @@ def deliverStim( currTime ):
         step = int (currTime / frameRunTime )
         probeStep = int( probeInterval / frameRunTime )
         if step % probeStep == 0:
-            print(("Doing probe Stim at ", currTime))
+            print ("Doing probe Stim at ", currTime)
             for i in synSpineList:
                 i.activation( probeAmplitude )
 
@@ -341,7 +351,7 @@ def main():
     temp = set( moose.wildcardFind( "/model/elec/#/glu,/model/elec/#/NMDA" ) )
 
     synDendList = list( temp - set( synSpineList ) )
-    print(("num spine, dend syns = ", len( synSpineList ), len( synDendList )))
+    print ("num spine, dend syns = ", len( synSpineList ), len( synDendList ))
     moose.reinit()
     #for i in moose.wildcardFind( '/model/elec/#apical#/#[ISA=CaConcBase]' ):
         #print i.path, i.length, i.diameter, i.parent.length, i.parent.diameter
@@ -350,7 +360,7 @@ def main():
     # Run for baseline, tetanus, and post-tetanic settling time 
     t1 = time.time()
     build3dDisplay(rdes)
-    print(('real time = ', time.time() - t1))
+    print ('real time = ', time.time() - t1)
 
 if __name__ == '__main__':
     main()
