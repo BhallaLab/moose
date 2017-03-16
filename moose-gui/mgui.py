@@ -204,7 +204,6 @@ class MWindow(QtGui.QMainWindow):
                                       ("Fig4B",             "../moose-examples/paper-2015/Fig4_ReacDiff/Fig4B.py"  ),
                                       ("Fig5A (20s)",       "../moose-examples/paper-2015/Fig5_CellMultiscale/Fig5A.py"),
                                       ("Fig6A (60s)",       "../moose-examples/paper-2015/Fig6_NetMultiscale/Fig6A.py" ),
-                                      ("ReducedModel (200s)",   "../moose-examples/paper-2015/Fig6_NetMultiscale/ReducedModel.py"),
                                       ("Squid" ,            "../moose-examples/squid/squid_demo.py")
                                      ])
         layout.setContentsMargins(QtCore.QMargins(20,20,20,20))
@@ -240,8 +239,6 @@ class MWindow(QtGui.QMainWindow):
                 button.setToolTip("<span style=\"color:black;\">Illustrates building a panel of multiscale models to test neuronal plasticity in different contexts</span>")
             elif k[0] == "Fig6A (60s)":
                 button.setToolTip("<span style=\"color:black;\">This LIF network with Ca plasticity is based on: Memory Maintenance in Synapses with Calcium-Based Plasticity in the Presence of Background Activity PLOS Computational Biology, 2014</span>")
-            elif k[0] == "ReducedModel (200s)":
-                button.setToolTip("<span style=\"color:black;\">This is the Reduced version of LIF network with Ca plasticity model based on: Memory Maintenance in Synapses with Calcium-Based Plasticity in the Presence of Background Activity PLOS Computational Biology, 2014</span>")
             elif k[0] == "Squid":
                 button.setToolTip("<span style=\"color:black;\">squid Demo</span>")
             if k[0] in ["Fig2E","Fig2D (35s)","Fig2C"]:
@@ -250,10 +247,8 @@ class MWindow(QtGui.QMainWindow):
                 layout3.addWidget(button)
             elif k[0] in ["Fig4B","Fig5A (20s)"]:
                 layout4.addWidget(button)
-            elif k[0] in ["Fig6A (60s)","ReducedModel (200s)"]:
+            elif k[0] in ["Fig6A (60s)","Squid"]:
                 layout5.addWidget(button)
-            elif k[0] in ["Squid"]:
-                layout6.addWidget(button)
 
             if k[0] == "Fig3C_Gsl":
                 button.clicked.connect(lambda x, script = k[1]: self.run_genesis_script(script,"gsl"))
@@ -267,7 +262,6 @@ class MWindow(QtGui.QMainWindow):
         layout.addLayout(layout3,2,0)
         layout.addLayout(layout4,3,0)
         layout.addLayout(layout5,4,0)
-        layout.addLayout(layout6,5,0)
         dialog.setStyleSheet("border:1px solid rgb(0, 0, 0); ")
         dialog.setLayout(layout)
 
@@ -630,7 +624,6 @@ class MWindow(QtGui.QMainWindow):
                                         ("Fig4B (10s)",     "../moose-examples/paper-2015/Fig4_ReacDiff/Fig4B.py"  ),
                                         ("Fig5A (20s)",     "../moose-examples/paper-2015/Fig5_CellMultiscale/Fig5A.py"),
                                         ("Fig6A (60s)",     "../moose-examples/paper-2015/Fig6_NetMultiscale/Fig6A.py" ),
-                                        ("ReducedModel (200s)", "../moose-examples/paper-2015/Fig6_NetMultiscale/ReducedModel.py"),
                                         ("Squid" ,          "../moose-examples/squid/squid_demo.py")
                                      ])
             
@@ -673,10 +666,6 @@ class MWindow(QtGui.QMainWindow):
                     self.Fig6Aaction = QtGui.QAction('Fig6A (60s)', self)
                     self.Fig6Aaction.triggered.connect(lambda :self.run_python_script('../moose-examples/paper-2015/Fig6_NetMultiscale/Fig6A.py'))
                     self.subMenu.addAction(self.Fig6Aaction)
-                elif k[0] == "ReducedModel (200s)":
-                    self.ReducedModelaction = QtGui.QAction('ReducedModel (200s)', self)
-                    self.ReducedModelaction.triggered.connect(lambda :self.run_python_script('../moose-examples/paper-2015/Fig6_NetMultiscale/ReducedModel.py'))
-                    self.subMenu.addAction(self.ReducedModelaction)
                 else:
                     self.Squidaction = QtGui.QAction('Squid', self)
                     self.Squidaction.triggered.connect(lambda :self.run_python_script('../moose-examples/squid/squid_demo.py'))
