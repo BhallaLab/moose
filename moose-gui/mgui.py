@@ -202,9 +202,7 @@ class MWindow(QtGui.QMainWindow):
                                       ("Fig3C_Gsl",         "../moose-examples/paper-2015/Fig3_chemModels/Fig3ABC.g"),
                                       ("Fig3D",             "../moose-examples/paper-2015/Fig3_chemModels/Fig3D.py"),
                                       ("Fig4B",             "../moose-examples/paper-2015/Fig4_ReacDiff/Fig4B.py"  ),
-                                      ("Fig4K",             "../moose-examples/paper-2015/Fig4_ReacDiff/rxdSpineSize.py"),
                                       ("Fig5A (20s)",       "../moose-examples/paper-2015/Fig5_CellMultiscale/Fig5A.py"),
-                                      ("Fig5BCD (240s)" ,   "../moose-examples/paper-2015/Fig5_CellMultiscale/Fig5BCD.py"),
                                       ("Fig6A (60s)",       "../moose-examples/paper-2015/Fig6_NetMultiscale/Fig6A.py" ),
                                       ("ReducedModel (200s)",   "../moose-examples/paper-2015/Fig6_NetMultiscale/ReducedModel.py"),
                                       ("Squid" ,            "../moose-examples/squid/squid_demo.py")
@@ -238,11 +236,7 @@ class MWindow(QtGui.QMainWindow):
                 button.setToolTip("<span style=\"color:black;\">This example implements a reaction-diffusion like system which is bistable and propagates losslessly</span>")
             elif k[0] == "Fig4B":
                 button.setToolTip("<span style=\"color:black;\">This program builds a multiscale model with a few spines inserted into a simplified cellular morphology. Each spine has a signaling model in it too. The program doesn't run the model, it just displays it in 3D</span>")
-            elif k[0] == "Fig4K":
-                button.setToolTip("<span style=\"color:black;\">Builds a cell with spines and a propagating reaction wave</span>")
             elif k[0] == "Fig5A (20s)":
-                button.setToolTip("<span style=\"color:black;\">Illustrates building a panel of multiscale models to test neuronal plasticity in different contexts</span>")
-            elif k[0] == "Fig5BCD (240s)":
                 button.setToolTip("<span style=\"color:black;\">Illustrates building a panel of multiscale models to test neuronal plasticity in different contexts</span>")
             elif k[0] == "Fig6A (60s)":
                 button.setToolTip("<span style=\"color:black;\">This LIF network with Ca plasticity is based on: Memory Maintenance in Synapses with Calcium-Based Plasticity in the Presence of Background Activity PLOS Computational Biology, 2014</span>")
@@ -254,14 +248,12 @@ class MWindow(QtGui.QMainWindow):
                 layout2.addWidget(button)
             elif k[0] in ["Fig3B_Gssa","Fig3C_Gsl","Fig3D"]:
                 layout3.addWidget(button)
-            elif k[0] in ["Fig4B","Fig4K"]:
+            elif k[0] in ["Fig4B","Fig5A (20s)"]:
                 layout4.addWidget(button)
-            elif k[0] in ["Fig5A (20s)","Fig5BCD (240s)"]:
-                layout5.addWidget(button)
             elif k[0] in ["Fig6A (60s)","ReducedModel (200s)"]:
-                layout6.addWidget(button)
+                layout5.addWidget(button)
             elif k[0] in ["Squid"]:
-                layout7.addWidget(button)
+                layout6.addWidget(button)
 
             if k[0] == "Fig3C_Gsl":
                 button.clicked.connect(lambda x, script = k[1]: self.run_genesis_script(script,"gsl"))
@@ -276,7 +268,6 @@ class MWindow(QtGui.QMainWindow):
         layout.addLayout(layout4,3,0)
         layout.addLayout(layout5,4,0)
         layout.addLayout(layout6,5,0)
-        layout.addLayout(layout7,6,0)
         dialog.setStyleSheet("border:1px solid rgb(0, 0, 0); ")
         dialog.setLayout(layout)
 
@@ -637,9 +628,7 @@ class MWindow(QtGui.QMainWindow):
                                         ("Fig3C_Gsl (2s)",  "../moose-examples/paper-2015/Fig3_chemModels/Fig3ABC.g"),
                                         ("Fig3D (1s)",      "../moose-examples/paper-2015/Fig3_chemModels/Fig3D.py"),
                                         ("Fig4B (10s)",     "../moose-examples/paper-2015/Fig4_ReacDiff/Fig4B.py"  ),
-                                        ("Fig4K",           "../moose-examples/paper-2015/Fig4_ReacDiff/rxdSpineSize.py"),
                                         ("Fig5A (20s)",     "../moose-examples/paper-2015/Fig5_CellMultiscale/Fig5A.py"),
-                                        ("Fig5BCD (240s)" , "../moose-examples/paper-2015/Fig5_CellMultiscale/Fig5BCD.py"),
                                         ("Fig6A (60s)",     "../moose-examples/paper-2015/Fig6_NetMultiscale/Fig6A.py" ),
                                         ("ReducedModel (200s)", "../moose-examples/paper-2015/Fig6_NetMultiscale/ReducedModel.py"),
                                         ("Squid" ,          "../moose-examples/squid/squid_demo.py")
@@ -676,18 +665,10 @@ class MWindow(QtGui.QMainWindow):
                     self.Fig4Baction = QtGui.QAction('Fig4B (10s)', self)
                     self.Fig4Baction.triggered.connect(lambda :self.run_python_script('../moose-examples/paper-2015/Fig4_ReacDiff/Fig4B.py'))
                     self.subMenu.addAction(self.Fig4Baction)
-                elif k[0] == "Fig4K":
-                    self.Fig4Kaction = QtGui.QAction('Fig4K', self)
-                    self.Fig4Kaction.triggered.connect(lambda :self.run_python_script('../moose-examples/paper-2015/Fig4_ReacDiff/rxdSpineSize.py'))
-                    self.subMenu.addAction(self.Fig4Kaction)
                 elif k[0] == "Fig5A (20s)":
                     self.Fig5Aaction = QtGui.QAction('Fig5A (20s)', self)
                     self.Fig5Aaction.triggered.connect(lambda :self.run_python_script('../moose-examples/paper-2015/Fig5_CellMultiscale/Fig5A.py'))
                     self.subMenu.addAction(self.Fig5Aaction)
-                elif k[0] == "Fig5BCD (240s)":
-                    self.Fig5BCDaction = QtGui.QAction('Fig5BCD (240s)', self)
-                    self.Fig5BCDaction.triggered.connect(lambda :self.run_python_script('../moose-examples/paper-2015/Fig5_CellMultiscale/Fig5BCD.py'))
-                    self.subMenu.addAction(self.Fig5BCDaction)
                 elif k[0] == "Fig6A (60s)":
                     self.Fig6Aaction = QtGui.QAction('Fig6A (60s)', self)
                     self.Fig6Aaction.triggered.connect(lambda :self.run_python_script('../moose-examples/paper-2015/Fig6_NetMultiscale/Fig6A.py'))
