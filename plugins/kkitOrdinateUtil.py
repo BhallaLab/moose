@@ -223,7 +223,11 @@ def autoCoordinates(meshEntry,srcdesConnection):
     #position = nx.spring_layout(G)
     #import matplotlib.pyplot as plt
     #plt.savefig('/home/harsha/Trash/Trash_SBML/test.png')
-    position = nx.graphviz_layout(G, prog = 'dot')
+    if int( nx.__version__.split('.') ) >= 11:
+        position = nx.graphviz_layout( G )
+    else:
+        position = nx.graphviz_layout(G, prog = 'dot')
+
     #agraph = nx.to_agraph(G)
     #agraph.draw("test.png", format = 'png', prog = 'dot')
     xcord = []

@@ -137,6 +137,7 @@ def calculateChildBoundingRect(compt):
     ypos = []
     xpos = []
     for l in compt.childItems():
+
         ''' All the children including pool,reac,enz,polygon(arrow),table '''
         if not isinstance(l,QtSvg.QGraphicsSvgItem):
             if (not isinstance(l,QtGui.QGraphicsPolygonItem)):
@@ -159,4 +160,5 @@ def calculateChildBoundingRect(compt):
         calculateRectcompt = QtCore.QRectF(min(xpos),min(ypos),(max(xpos)-min(xpos)),(max(ypos)-min(ypos)))
     else:
         calculateRectcompt = compt.rect()
+        
     return calculateRectcompt
