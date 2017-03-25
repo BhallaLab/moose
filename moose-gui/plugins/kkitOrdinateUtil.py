@@ -230,6 +230,18 @@ def autoCoordinates(meshEntry,srcdesConnection):
             else:
                 for items in (items for items in out ):
                     G.add_edge(element(items[0]).path,inn.path)
+    
+    #nx.draw(G,pos=nx.spring_layout(G))
+    #position = nx.spring_layout(G)
+    #import matplotlib.pyplot as plt
+    #plt.savefig('/home/harsha/Trash/Trash_SBML/test.png')
+    if int( nx.__version__.split('.') ) >= 11:
+        position = nx.graphviz_layout( G )
+    else:
+        position = nx.graphviz_layout(G, prog = 'dot')
+
+    #agraph = nx.to_agraph(G)
+    #agraph.draw("test.png", format = 'png', prog = 'dot')
     xcord = []
     ycord = []
     
