@@ -84,6 +84,18 @@ const Cinfo* PoolBase::initCinfo()
 			&PoolBase::getSpecies
 		);
 
+		static ElementValueFinfo< PoolBase, bool > isBuffered(
+			"isBuffered",
+			"Flag: True if Pool is buffered. "
+			"In the case of Pool and BufPool the field can be assigned, to "
+			"change the type of the Pool object to BufPool, or vice versa. "
+			"None of the messages are affected. "
+			"This object class flip can only be done in the non-zombified "
+			"form of the Pool/BufPool. In Zombies it is read-only.",
+			&PoolBase::setIsBuffered,
+			&PoolBase::getIsBuffered
+		);
+
 		//////////////////////////////////////////////////////////////
 		// MsgDest Definitions
 		//////////////////////////////////////////////////////////////
@@ -173,6 +185,7 @@ const Cinfo* PoolBase::initCinfo()
 		&concInit,	// Value
 		&volume,	// Readonly Value
 		&speciesId,	// Value
+		&isBuffered,	// Value
 		&increment,			// DestFinfo
 		&decrement,			// DestFinfo
         &nIn,				// DestFinfo
@@ -373,6 +386,19 @@ unsigned int PoolBase::getSpecies( const Eref& e ) const
 	return vGetSpecies( e );
 }
 
+/**
+ * setIsBuffered is active only for Pool and BufPool. Otherwise ignored.
+ */
+void PoolBase::setIsBuffered( const Eref& e, bool v )
+{
+	vSetIsBuffered( e, v );
+}
+
+bool PoolBase::getIsBuffered( const Eref& e ) const
+{
+	return vGetIsBuffered( e );
+}
+
 //////////////////////////////////////////////////////////////
 // Virtual Field Definitions
 //////////////////////////////////////////////////////////////
@@ -385,6 +411,10 @@ double PoolBase::vGetMotorConst(const Eref& e ) const
 {
 	return 0.0;
 }
+
+/// Dummy default function for most pool subclasses.
+void PoolBase::vSetIsBuffered( const Eref& e, bool v )
+{;}
 
 //////////////////////////////////////////////////////////////
 // Zombie conversion routine: Converts Pool subclasses. There

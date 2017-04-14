@@ -164,21 +164,6 @@ void makeVecUnique( vector< unsigned int >& v )
 	v.resize( pos - v.begin() );
 }
 
-vector< int > KinSparseMatrix::matrixEntry() const 
-{
-	return N_;
-}
-
-vector< unsigned int > KinSparseMatrix::colIndex() const
-{
-	return colIndex_;
-}
-
-vector< unsigned int > KinSparseMatrix::rowStart() const
-{
-	return rowStart_;
-}
-
 
 #ifdef DO_UNIT_TESTS
 #include "header.h"

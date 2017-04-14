@@ -72,3 +72,7 @@ void ZombieBufPool::vSetConcInit( const Eref& e, double conc )
 	vSetConc( e, conc );
 }
 
+bool ZombieBufPool::vGetIsBuffered( const Eref& e ) const
+{
+	return true;
+}

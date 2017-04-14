@@ -423,6 +423,19 @@ public:
                           colIndexArg.begin(), colIndexArg.end() );
         rowStart_[rowNum + 1] = N_.size();
     }
+	/// Here we expose the sparse matrix for MOOSE use.
+	const vector< T >& matrixEntry() const
+	{
+		return N_;
+	}
+	const vector< unsigned int >& colIndex() const
+	{
+		return colIndex_;
+	}
+	const vector< unsigned int >& rowStart() const
+	{
+		return rowStart_;
+	}
     //////////////////////////////////////////////////////////////////
     // Operations on entire matrix.
     //////////////////////////////////////////////////////////////////

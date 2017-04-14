@@ -21,7 +21,7 @@ set -o nounset                              # Treat unset variables as an error
 set -e
 
 PYTHON2="/usr/bin/python2"
-PYTHON3="/usr/bin/python3"
+PYTHON3=`which python3`
 #MAKEFLAGS="-j 4"
 
 # Bug: `which python` returns /opt/bin/python* etc on travis. For which numpy

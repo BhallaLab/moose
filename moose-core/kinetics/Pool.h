@@ -57,8 +57,8 @@ class Pool: public PoolBase
 		/**
 		 * Functions to examine and change class between Pool and BufPool.
 		 */
-		void setIsBuffered( const Eref& e, bool v );
-		bool getIsBuffered( const Eref& e ) const;
+		void vSetIsBuffered( const Eref& e, bool v );
+		bool vGetIsBuffered( const Eref& e) const;
 
 		//////////////////////////////////////////////////////////////////
 		// Dest funcs. These too override virtual funcs in the Pool base 

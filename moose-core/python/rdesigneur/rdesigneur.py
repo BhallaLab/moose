@@ -454,6 +454,7 @@ class rdesigneur:
                     "buildChemDistrib: No elec compartments found in path: '" \
                         + pair + "'" )
             self.spineComptElist = self.elecid.spinesFromExpression[ pair ]
+            #print( 'LEN SPINECOMPTELIST =' + str( pair ) + ", " str( len( self.spineComptElist ) ) )
             '''
             if len( self.spineComptElist ) == 0:
                 raise BuildError( \
@@ -1276,8 +1277,8 @@ class rdesigneur:
             else:
                 ePath = i[0].path + '/' + elecRelPath
                 if not( moose.exists( ePath ) ):
-                    raise BuildError( \
-                        "Error: buildAdaptor: no elec obj in " + ePath )
+                    continue
+                    #raise BuildError( "Error: buildAdaptor: no elec obj in " + ePath )
                 elObj = moose.element( i[0].path + '/' + elecRelPath )
             if ( isElecToChem ):
                 elecFieldSrc = 'get' + capField
