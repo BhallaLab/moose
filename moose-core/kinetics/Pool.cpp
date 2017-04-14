@@ -20,17 +20,6 @@ const Cinfo* Pool::initCinfo()
 		//////////////////////////////////////////////////////////////
 		// Field Definitions: All inherited from PoolBase.
 		//////////////////////////////////////////////////////////////
-		static ElementValueFinfo< Pool, bool > isBuffered(
-			"isBuffered",
-			"Flag: True if Pool is buffered. This field changes the "
-			"type of the Pool object to BufPool, or vice versa. "
-			"None of the messages are affected. "
-			"This object class flip can only be done in the non-zombified "
-			"form of the Pool.",
-			&Pool::setIsBuffered,
-			&Pool::getIsBuffered
-		);
-
 		//////////////////////////////////////////////////////////////
 		// MsgDest Definitions: All inherited
 		//////////////////////////////////////////////////////////////
@@ -40,16 +29,12 @@ const Cinfo* Pool::initCinfo()
 		//////////////////////////////////////////////////////////////
 		// SharedMsg Definitions: All inherited.
 		//////////////////////////////////////////////////////////////
-	static Finfo* poolFinfos[] = {
-		&isBuffered,		// ElementValueFinfo
-	};
-
 	static Dinfo< Pool > dinfo;
 	static Cinfo poolCinfo (
 		"Pool",
 		PoolBase::initCinfo(),
-		poolFinfos,
-		sizeof( poolFinfos ) / sizeof ( Finfo* ),
+		0,
+		0,
 		&dinfo
 	);
 
@@ -80,10 +65,10 @@ Pool::~Pool()
  * It uses a low-level replaceCinfo call to just change the 
  * identity of the Cinfo used, leaving everything else as is.
  */
-void Pool::setIsBuffered( const Eref& e, bool v )
+void Pool::vSetIsBuffered( const Eref& e, bool v )
 {
 	static const Cinfo* bufPoolCinfo = Cinfo::find( "BufPool" );
-	if (getIsBuffered( e ) == v)
+	if (vGetIsBuffered( e ) == v)
 		return;
 	if (v) {
 		e.element()->replaceCinfo( bufPoolCinfo );
@@ -92,8 +77,11 @@ void Pool::setIsBuffered( const Eref& e, bool v )
 	}
 }
 
-bool Pool::getIsBuffered( const Eref& e ) const
+bool Pool::vGetIsBuffered( const Eref& e ) const
 {
+	/// We need this explicit check because when the moose class is
+	/// flipped, the internal C++ class isn't.
+	/// Inherited by BufPool.
 	return e.element()->cinfo()->name() == "BufPool";
 }
 

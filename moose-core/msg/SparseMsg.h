@@ -87,11 +87,15 @@ class SparseMsg: public Msg
 
 		void unsetEntry( unsigned int row, unsigned int column );
 
-		// Still need to implement array field gets.
-
 		unsigned int getNumRows() const;
 		unsigned int getNumColumns() const;
 		unsigned int getNumEntries() const;
+		/// Return array entries in sparse matrix form
+		vector< unsigned int > getMatrixEntry() const;
+		/// Return column index for each array entry
+		vector< unsigned int > getColIndex() const;
+		/// row start number for each array entry
+		vector< unsigned int > getRowStart() const;
 		void clear();
 		void transpose();
 
