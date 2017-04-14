@@ -41,6 +41,29 @@ const Cinfo* SparseMsg::initCinfo()
 		"Number of Entries in matrix.",
 		&SparseMsg::getNumEntries
 	);
+    /// Connection matrix entries to manipulate in Python.
+    static ReadOnlyValueFinfo< SparseMsg, vector< unsigned int > >
+    matrixEntry(
+        "matrixEntry",
+        "The non-zero matrix entries in the sparse matrix. Their"
+        "column indices are in a separate vector and the row"
+        "informatino in a third",
+        &SparseMsg::getMatrixEntry
+    );
+    /// connection matrix column indices to manipulate in Python.
+    static ReadOnlyValueFinfo< SparseMsg, vector< unsigned int > >
+    columnIndex(
+        "columnIndex",
+        "Column Index of each matrix entry",
+        &SparseMsg::getColIndex
+    );
+    /// connection matrix rowStart to manipulate in Python.
+    static ReadOnlyValueFinfo< SparseMsg, vector< unsigned int > >
+    rowStart(
+        "rowStart",
+        "Row start for each block of entries and column indices",
+        &SparseMsg::getRowStart
+    );
 
 	static ValueFinfo< SparseMsg, double > probability(
 		"probability",
@@ -109,6 +132,9 @@ const Cinfo* SparseMsg::initCinfo()
 		&numRows,			// readonly value
 		&numColumns,		// readonly value
 		&numEntries,		// readonly value
+        &matrixEntry,		// ReadOnlyValue
+        &columnIndex,		// ReadOnlyValue
+        &rowStart,			// ReadOnlyValue
 		&probability,		// value
 		&seed,				// value
 		&setRandomConnectivity,	// dest
@@ -174,6 +200,21 @@ unsigned int SparseMsg::getNumColumns() const
 unsigned int SparseMsg::getNumEntries() const
 {
 	return matrix_.nEntries();
+}
+
+vector< unsigned int > SparseMsg::getMatrixEntry() const
+{
+    return matrix_.matrixEntry();
+}
+
+vector< unsigned int > SparseMsg::getColIndex() const
+{
+    return matrix_.colIndex();
+}
+
+vector< unsigned int > SparseMsg::getRowStart() const
+{
+    return matrix_.rowStart();
 }
 
 //////////////////////////////////////////////////////////////////

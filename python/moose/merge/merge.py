@@ -11,15 +11,31 @@
 #**           copyright (C) 2003-2017 Upinder S. Bhalla. and NCBS
 #Created : Friday Dec 16 23:19:00 2016(+0530)
 #Version 
-#Last-Updated: Thursday Jan 12 17:30:33 2017(+0530)
+#Last-Updated: Tuesday Feb 28 15:05:33 2017(+0530)
 #         By: Harsha
 #**********************************************************************/
 
-# This program is used to merge models
-# -- Model B is merged to modelA
-#Rules are
-#--In this models are mergered at group level (if exists)
-
+# This program is used to merge models from src to destination 
+#Rules are :
+#   -- If Compartment from the src model doesn't exist in destination model, 
+#       then entire compartment and its children are copied over including groups
+#   -- Models are mergered at group level (if exists) 
+#       (Group is Neutral object in moose, which may represent pathway in network model)
+#   -- Pool's are copied from source to destination if it doesn't exist, if exist nothing is done
+#   -- Reaction (Reac), Enzyme (Enz) are copied 
+#       --- if any danglling Reac or Enz exist then that is not copied
+#    
+#       --- if Reac Name's is different for a given path (group level) 
+#            then copy the entire Reac along with substrate/product
+#       --- if same Reac Name and same sub and prd then nothing is copied
+#       --- if same Reac Name but sub or prd is different then duplicated and copied
+#
+#       --- if Enz Name's is different for a given parent pool path 
+#            then copy the entire Enz along with substrate/product
+#       --- if same Enz Name and same sub and prd then nothing is copied
+#       --- if same Enz Name but sub or prd is different then duplicated and copied       
+#   -- Function are copied only if destination pool to which its suppose to connect doesn't exist with function of its own
+#      
 
 
 import sys
@@ -31,8 +47,11 @@ import mtypes
 from moose.chemUtil.chemConnectUtil import *
 from moose.chemUtil.graphUtils import *
 
-def mergeChemModel(A,B):
+def mergeChemModel(src,des):
+
     """ Merges two model or the path """
+    A = src
+    B = des
     loadedA = False
     loadedB = False
 
@@ -103,21 +122,22 @@ def mergeChemModel(A,B):
             
             poolListinb = updatePoolList(dictComptB)
             E_Duplicated,E_Notcopiedyet,E_Daggling = enzymeMerge(dictComptB,dictComptA,key,poolListinb)
-        
-        print("\n Model is merged to %s" %modelB)
+        path, sfile = os.path.split(src)
+        path, dfile = os.path.split(des)
+        print("\n %s (src) model is merged to %s (des)" %(sfile, dfile))
         if funcExist:
-            print( "\nPool already connected to a function, this function is not to connect to same pool, since no two function are allowed to connect to same pool:")
+            print( "\nIn model \"%s\" pool already has connection from a function, these function from model \"%s\" is not allowed to connect to same pool,\n since no two function are allowed to connect to same pool:"%(dfile, sfile))
             for fl in list(funcExist):
                 print("\t [Pool]:  %s [Function]:  %s \n" %(str(fl.parent.name), str(fl.path)))
         if funcNotallowed:
-            print( "\nThis function is not to copied, since pool connected to function input are from different compartment:")
+            print( "\nThese functions is not to copied, since pool connected to function input are from different compartment:")
             for fl in list(funcNotallowed):
                 print("\t [Pool]:  %s [Function]:  %s \n" %(str(fl.parent.name), str(fl.path)))
         if R_Duplicated or E_Duplicated:
-            print ("Reaction / Enzyme are Duplicate"
-                    "\n 1. The once whoes substrate / product names are different for a give reaction name "
-                    "\n 2. its compartment to which it belongs to may be is different"
-                    "\n Models have to decide to keep or delete these reaction/enzyme")
+            print ("These Reaction / Enzyme are \"Duplicated\" into destination file \"%s\", due to "
+                    "\n 1. If substrate / product name's are different for a give reaction/Enzyme name "
+                    "\n 2. If product belongs to different compartment "
+                    "\n Models have to decide to keep or delete these reaction/enzyme in %s" %(dfile, dfile))
             if E_Duplicated:
                 print("Reaction: ")
             for rd in list(R_Duplicated):
@@ -141,7 +161,7 @@ def mergeChemModel(A,B):
                     print ("%s " %str(ed.name))
                 
         if R_Daggling or E_Daggling:
-            print ("\n Daggling reaction/enzyme are not not allowed in moose, these are not merged")
+            print ("\n Daggling reaction/enzyme are not allowed in moose, these are not merged to %s from %s" %(dfile, sfile))
             if R_Daggling:
                 print("Reaction: ")
                 for rd in list(R_Daggling):
@@ -596,7 +616,24 @@ def mooseIsInstance(element, classNames):
 
 
 if __name__ == "__main__":
-
-    modelA = 'acc50.g'
-    modelB = 'acc92.g'
-    mergered = mergeChemModel(modelA,modelB)
+    try:
+        sys.argv[1]
+    except IndexError:
+        print("Source filename or path not given")
+        exit(0)
+    else:
+        src = sys.argv[1]
+        if not os.path.exists(src):
+            print("Filename or path does not exist",src)
+        else:
+            try:
+                sys.argv[2]
+            except IndexError:
+                print("Destination filename or path not given")
+                exit(0)
+            else:
+                des = sys.argv[2]
+                if not os.path.exists(src):
+                    print("Filename or path does not exist",des)
+                    exit(0)
+                mergered = mergeChemModel(src,des)
