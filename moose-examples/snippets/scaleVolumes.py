@@ -12,6 +12,12 @@ import pylab
 import numpy
 import moose
 
+# Ugly python hack to make input behave the same on python2 and python3.
+try:
+    input = raw_input
+except NameError as e:
+        pass
+
 def makeModel():
                 # create container for model
                 model = moose.Neutral( 'model' )
@@ -149,11 +155,16 @@ def main():
         # Iterate through all plots, dump their contents to data.plot.
         displayPlots()
         pylab.show( block=False )
+<<<<<<< HEAD
         print(('vol = ', vol, 'hit 0 to go to next plot'))
         eval(str(input()))
 
+=======
+        print( 'vol = %f ' % vol )
+        response = input( "Press enter to go to next plot... " ) 
+>>>>>>> 0e491aa41584cf7a66c0e242374d8ee61660eb7b
     quit()
 
 # Run the 'main' if this script is executed standalone.
 if __name__ == '__main__':
-        main()
+        main( )

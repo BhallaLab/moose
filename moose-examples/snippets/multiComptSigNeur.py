@@ -26,7 +26,8 @@ import os
 import math
 
 import moose
-
+import numpy
+import matplotlib.pyplot as plt
 EREST_ACT = -70e-3
 
 # Gate equations have the form:
@@ -215,12 +216,16 @@ def makeElecPlots():
     #addPlot( '/n/head0/gluR', 'getGk', 'elec/head0Gk' )
     #addPlot( '/n/head2/gluR', 'getGk', 'elec/head2Gk' )
 
-def dumpPlots( fname ):
+def dumpPlots( fname,runtime ):
     if ( os.path.exists( fname ) ):
         os.remove( fname )
     for x in moose.wildcardFind( '/graphs/##[ISA=Table]' ):
         x.xplot( fname, x.name )
-
+        t = numpy.linspace( 0, runtime, x.vector.size ) # sec
+	plt.plot( t, x.vector, label=x.name )
+	plt.legend()
+	plt.show()
+    quit()
 def makeSpinyCompt():
     comptLength = 30e-6
     comptDia = 6e-6
@@ -494,7 +499,8 @@ def testCubeMultiscale( useSolver ):
         makeSolvers( elecDt )
     moose.reinit()
     moose.start( 1.0 )
-    dumpPlots( plotName )
+    runtime = 1.0
+    dumpPlots( plotName,runtime )
 
 def main():
 	"""
