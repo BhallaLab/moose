@@ -25,16 +25,16 @@ def checkCreate(scene,view,modelpath,mobj,string,ret_string,num,event_pos,layout
     #     modelRoot = modelpath[0:modelpath.find('/',1)]
     # else:
     #     modelRoot = modelpath
-    print "28 ",modelpath
+    #print "28 ",modelpath
     if moose.exists(modelpath+'/info'):
         mType = moose.Annotator((moose.element(modelpath+'/info'))).modeltype
-    print " 1 event_pos ",event_pos
+    #print " 1 event_pos ",event_pos
     itemAtView = view.sceneContainerPt.itemAt(view.mapToScene(event_pos))
-    print "2 ",itemAtView
+    #print "2 ",itemAtView
     pos = view.mapToScene(event_pos)
-    print " 3 ",pos
+    #print " 3 ",pos
     modelpath = moose.element(modelpath)
-    print " model path @34 ",modelpath
+    #print " model path @34 ",modelpath
     if num:
         string_num = ret_string+str(num)
     else:
