@@ -1,3 +1,13 @@
+
+__author__      =   "HarshaRani"
+__credits__     =   ["Upi Lab"]
+__license__     =   "GPL3"
+__version__     =   "1.0.0"
+__maintainer__  =   "HarshaRani"
+__email__       =   "hrani@ncbs.res.in"
+__status__      =   "Development"
+__updated__     =   "Mar 7 2017"
+
 #import sys
 #sys.path.insert(0, '/home/harsha/trunk/gui')
 import config
@@ -75,11 +85,12 @@ class FuncItem(KineticsDisplayItem):
         
     def setDisplayProperties(self,x,y,textcolor,bgcolor):
         """Set the display properties of this item."""
-        #With Respect to BuffPool (as parent which is in old genesis) then function are placed at 0,30 (which is below the BuffPool)
+        #With Respect to BufPool (as parent which is in old genesis) then function are placed at 0,30 (which is below the BufPool)
         #else if droped from the GUI then placed wrt position
         #self.setGeometry(0, 30,self.gobj.boundingRect().width(),self.gobj.boundingRect().height())
         #self.setGeometry(x,y)
-        if self.gobj.mobj.parent.className == "ZombieBufPool" or self.gobj.mobj.parent.className == "BufPool":
+        poolt = ["ZombieBufPool","BufPool","ZombiePool","Pool"]
+        if self.gobj.mobj.parent.className in poolt:
             self.setGeometry(0, 30,self.gobj.boundingRect().width(),self.gobj.boundingRect().height())
         else:
             self.setGeometry(x,y,self.gobj.boundingRect().width(),self.gobj.boundingRect().height())
