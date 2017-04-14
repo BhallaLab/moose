@@ -115,7 +115,6 @@ if __name__ == '__main__':
     dend.initVm = Vm_0
     dend.diameter = dend_diameter
     dend.length = dend_length
-
     pulse.delay[0] = 8.
     pulse.width[0] = 500e-3
     pulse.level[0] = inject
