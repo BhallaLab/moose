@@ -22,6 +22,7 @@ import moogli
 import moogli.extensions.moose
 import matplotlib
 
+doMoo = True
 PI = 3.141592653
 ScalingForTesting = 10
 RM = 1.0 / ScalingForTesting
@@ -45,8 +46,8 @@ spineAngleDistrib = 0.0
 def makeCellProto( name ):
     elec = moose.Neuron( '/library/' + name )
     ecompt = []
-    soma = rd.buildCompt( elec, 'soma', somaDia, somaDia, -somaDia, RM, RA, CM )
-    dend = rd.buildCompt( elec, 'dend', dendLen, dendDia, 0, RM, RA, CM )
+    soma = rd.buildCompt( elec, 'soma', dx=somaDia, dia=somaDia, x=-somaDia, RM=RM, RA=RA, CM=CM )
+    dend = rd.buildCompt( elec, 'dend', dx=dendLen, dia=dendDia, x=0, RM=RM, RA=RA, CM=CM )
     moose.connect( soma, 'axial', dend, 'raxial' )
     elec.buildSegmentTree()
 
@@ -57,12 +58,7 @@ def makeChemProto( name ):
         print(('making ', i))
         compt = moose.CubeMesh( chem.path + '/' + i[0] )
         compt.volume = i[1]
-        #x = moose.Pool( compt.path + '/x' )
-        #y = moose.BufPool( compt.path + '/y' )
         z = moose.Pool( compt.path + '/z' )
-        #x.concInit = 0.0
-        #x.diffConst = diffConst
-        #y.concInit = concInit
         z.concInit = 0.0
         z.diffConst = diffConst
     nInit = comptVol * 6e23 * concInit
@@ -83,41 +79,33 @@ def makeChemProto( name ):
     moose.connect( reac, 'sub', x, 'reac' )
     moose.connect( reac, 'prd', z, 'reac' )
 
-def makeSpineProto2( name ):
-    spine = moose.Neutral( '/library/' + name )
-    shaft = rd.buildCompt( spine, 'shaft', 0.5e-6, 0.4e-6, 0, RM, RA, CM )
-    head = rd.buildCompt( spine, 'head', 0.5e-6, 0.5e-6, 0.5e-6, RM, RA, CM )
-    moose.connect( shaft, 'axial', head, 'raxial' )
-
 def makeModel():
     moose.Neutral( '/library' )
     makeCellProto( 'cellProto' )
     makeChemProto( 'cProto' )
-    makeSpineProto2( 'spine' )
-    rdes = rd.rdesigneur( useGssa = False, \
-            combineSegments = False, \
-            stealCellFromLibrary = True, \
-            meshLambda = 1e-6, \
-            cellProto = [['cellProto', 'elec' ]] ,\
-            spineProto = [['spineProto', 'spine' ]] ,\
-            chemProto = [['cProto', 'chem' ]] ,\
-            spineDistrib = [ \
-                ['spine', '#', \
-                'spacing', str( spineSpacing ), \
-                'spacingDistrib', str( spineSpacingDistrib ), \
-                'angle', str( spineAngle ), \
-                'angleDistrib', str( spineAngleDistrib ), \
-                'size', str( spineSize ), \
-                'sizeDistrib', str( spineSizeDistrib ) ] \
-            ], \
-            chemDistrib = [ \
-                [ "chem", "dend", "install", "1" ] \
+    rdes = rd.rdesigneur( useGssa = False,
+            turnOffElec = True,
+            combineSegments = False,
+            stealCellFromLibrary = True,
+            diffusionLength = 1e-6,
+            cellProto = [['cellProto', 'elec' ]] ,
+            spineProto = [['makePassiveSpine()', 'spine' ]] ,
+            chemProto = [['cProto', 'chem' ]] ,
+            spineDistrib = [
+                ['spine', '#',
+                str( spineSpacing ), str( spineSpacingDistrib ),
+                str( spineSize ), str( spineSizeDistrib ),
+                str( spineAngle ), str( spineAngleDistrib )
+                ] 
             ],
-            adaptorList = [ \
-                [ 'psd/z', 'n', 'spine', 'psdArea', 10.0e-15, 300e-15 ], \
-                ] \
+            chemDistrib = [[ "chem", "#dend#,#psd#", "install", "1" ]],
+            adaptorList = [
+                [ 'psd/z', 'n', 'spine', 'psdArea', 50.0e-15, 500e-15 ],
+                ]
         )
+    moose.seed(1234)
     rdes.buildModel( '/model' )
+    print (('built model'))
     x = moose.vec( '/model/chem/dend/x' )
     x.concInit = 0.0
     for i in range( 0,20 ):
@@ -177,12 +165,12 @@ def main():
     pylab.legend()
     pylab.show()
 
-    app = QtGui.QApplication(sys.argv)
-    #widget = mv.MoogliViewer( '/model' )
-    morphology = moogli.read_morphology_from_moose( name="", path = '/model/elec' )
-    widget = moogli.MorphologyViewerWidget( morphology )
-    widget.show()
-    return app.exec_()
+    if doMoo:
+        app = QtGui.QApplication(sys.argv)
+        morphology = moogli.read_morphology_from_moose( name="", path = '/model/elec' )
+        widget = moogli.MorphologyViewerWidget( morphology )
+        widget.show()
+        return app.exec_()
     quit()
 
 # Run the 'main' if this script is executed standalone.
@@ -202,24 +190,18 @@ def showVisualization():
     makePlot( 'head_z', moose.vec( '/model/chem/spine/z' ), 'getN' )
     psdZ = makePlot( 'psd_z', moose.vec( '/model/chem/psd/z' ), 'getN' )
     diaTab = makePlot( 'headDia', eHead, 'getDiameter' )
-    # print diaTab[0].vector[-1]
-    # return
     dendrite = moose.element("/model/elec/dend")
     dendrites = [dendrite.path + "/" + str(i) for i in range(len(dendZ))]
-    # print dendrites
     moose.reinit()
 
     spineHeads = moose.wildcardFind( '/model/elec/#head#')
-    # print moose.wildcardFind( '/model/elec/##')
 
-    # print "dendZ", readValues(dendZ)
-    # print dendrite
-
-    app = QtGui.QApplication(sys.argv)
-    viewer = create_viewer("/model/elec", dendrite, dendZ, diaTab, psdZ)
-    viewer.showMaximized()
-    viewer.start()
-    return app.exec_()
+    if doMoo:
+        app = QtGui.QApplication(sys.argv)
+        viewer = create_viewer("/model/elec", dendrite, dendZ, diaTab, psdZ)
+        viewer.showMaximized()
+        viewer.start()
+        return app.exec_()
 
 
 def create_viewer(path, moose_dendrite, dendZ, diaTab, psdZ):
@@ -290,4 +272,7 @@ def create_viewer(path, moose_dendrite, dendZ, diaTab, psdZ):
 
 
 if __name__ == '__main__':
-    showVisualization()
+    if doMoo:
+        showVisualization()
+    else:
+        main()

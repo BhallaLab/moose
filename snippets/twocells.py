@@ -1,53 +1,49 @@
-# twocells.py --- 
-# 
+# twocells.py ---
+#
 # Filename: twocells.py
-# Description: 
-# Author:Subhasis Ray 
-# Maintainer: 
+# Description:
+# Author:Subhasis Ray
+# Maintainer:
 # Created: Sat Aug 11 14:30:21 2012 (+0530)
-# Version: 
+# Version:
 # Last-Updated: Sun Aug 12 15:45:38 2012 (+0530)
 #           By: subha
 #     Update #: 521
-# URL: 
-# Keywords: 
-# Compatibility: 
-# 
-# 
+# URL:
+# Keywords:
+# Compatibility:
+#
+#
 
-# Commentary: 
-# 
-# A demo to create a network of single compartmental neurons connected
-# via alpha synapses.
-# 
-# 
+# Commentary:
+#
+#
+#
 
 # Change log:
-# 
-# 
-# 
-# 
+#
+#
+#
+#
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
 # published by the Free Software Foundation; either version 3, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program; see the file COPYING.  If not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 # Floor, Boston, MA 02110-1301, USA.
-# 
-# 
+#
+#
 
 # Code:
-"""This script demonstrates the use of SynChan class to setup synaptic
-connection between two single-compartmental Hodgkin-Huxley type
-neurons."""
+
 import sys
 sys.path.append('../../python')
 import os
@@ -58,22 +54,23 @@ import moose
 from ionchannel import create_1comp_neuron
 
 def create_model():
-    """Create two single compartmental neurons, neuron_A is the
-    presynaptic neuron and neuron_B is the postsynaptic neuron.
+    """
+Create two single compartmental neurons, neuron_A is the
+presynaptic neuron and neuron_B is the postsynaptic neuron.
 
-        1. The presynaptic cell's Vm is monitored by a SpikeGen
-        object. Whenever the Vm crosses the threshold of the spikegen, it
-        sends out a spike event message.
-    
-        2. This is event message is received by a SynHandler, which
-        passes the event as activation parameter to a SynChan object.
+    1. The presynaptic cell's Vm is monitored by a SpikeGen
+    object. Whenever the Vm crosses the threshold of the spikegen, it
+    sends out a spike event message.
 
-        3. The SynChan, which is connected to the postsynaptic neuron
-        as a channel, updates its conductance based on the activation
-        parameter.
+    2. This is event message is received by a SynHandler, which
+    passes the event as activation parameter to a SynChan object.
 
-        4. The change in conductance due to a spike may evoke an
-        action potential in the post synaptic neuron.
+    3. The SynChan, which is connected to the postsynaptic neuron
+    as a channel, updates its conductance based on the activation
+    parameter.
+
+    4. The change in conductance due to a spike may evoke an
+    action potential in the post synaptic neuron.
 
     """
     model = moose.Neutral('/model')
@@ -102,8 +99,9 @@ def create_model():
             spikegen, 'synchan': synchan, 'synhandler': synhandler}
 
 def setup_experiment(presynaptic, postsynaptic, synchan):
-    """Setup step current stimulation of presynaptic neuron. Also setup
-    recording of pre and postsynaptic Vm, Gk of synchan.
+    """
+Setup step current stimulation of presynaptic neuron. Also setup
+recording of pre and postsynaptic Vm, Gk of synchan.
 
     """
     pulse = moose.PulseGen('/model/pulse')
@@ -126,8 +124,15 @@ def setup_experiment(presynaptic, postsynaptic, synchan):
             'Vm_post': vm_b,
             'Gk_syn': gksyn_b
         }
-    
-if __name__ == '__main__':
+
+def main():
+    """
+A demo to create a network of single compartmental neurons connected
+via alpha synapses. Here SynChan class is used to setup synaptic
+connection between two single-compartmental Hodgkin-Huxley type
+neurons.
+
+    """
     simtime = 0.1
     simdt = 0.25e-5
     plotdt = 0.25e-3
@@ -153,7 +158,9 @@ if __name__ == '__main__':
     plt.legend()
     plt.tight_layout()
     plt.show()
-    
 
-# 
+if __name__ == '__main__':
+    main()
+
+#
 # twocells.py ends here
