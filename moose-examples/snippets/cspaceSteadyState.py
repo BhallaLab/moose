@@ -40,6 +40,7 @@ def main():
     It looks for the fixed points 100 times, as follows:
     - Set up the random initial condition that fits the conservation laws
     - Run for 2 seconds. This should not be mathematically necessary, but
+<<<<<<< HEAD
       for obscure numerical reasons it makes it much more likely that the
       steady state solver will succeed in finding a state.
     - Find the fixed point
@@ -47,6 +48,15 @@ def main():
     - Run for 10 seconds. This is completely unnecessary, and is done here
       just so that the resultant graph will show what kind of state has been
       found.
+=======
+           for obscure numerical reasons it makes it much more likely that the
+           steady state solver will succeed in finding a state.
+    - Find the fixed point
+    - Print out the fixed point vector and various diagnostics.
+    - Run for 10 seconds. This is completely unnecessary, and is done here
+            just so that the resultant graph will show what kind of state has been
+           found.
+>>>>>>> 0e491aa41584cf7a66c0e242374d8ee61660eb7b
     After it does all this, the program runs for 100 more seconds on the last
     found fixed point (which turns out to be a saddle node), then
     is hard-switched in the script to the first attractor basin from which
@@ -55,6 +65,7 @@ def main():
     seconds.
     Looking at the output you will see many features of note:
     - the first attractor (stable point) and the saddle point
+<<<<<<< HEAD
       (unstable fixed point) are both found quite often. But the second
       attractor is found just once. Has a very small basin of attraction.
     - The values found for each of the fixed points match well with the
@@ -62,6 +73,15 @@ def main():
     - There are a large number of failures to find a fixed point. These are
       found and reported in the diagnostics. They show up on the plot
       as cases where the 10-second runs are not flat.
+=======
+           (unstable fixed point) are both found quite often. But the second
+           attractor is found just once. Has a very small basin of attraction.
+    - The values found for each of the fixed points match well with the
+           values found by running the system to steady-state at the end.
+    - There are a large number of failures to find a fixed point. These are
+            found and reported in the diagnostics. They show up on the plot
+            as cases where the 10-second runs are not flat.
+>>>>>>> 0e491aa41584cf7a66c0e242374d8ee61660eb7b
 
     If you wanted to find fixed points in a production model, you would
     not need to do the 10-second runs, and you would need to eliminate the

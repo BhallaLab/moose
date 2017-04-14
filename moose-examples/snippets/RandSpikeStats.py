@@ -67,6 +67,7 @@ def make_model():
     moose.connect( plotf, 'requestOut', fire, 'getVm' )
 
 def main():
+<<<<<<< HEAD
 	"""
 	This snippet shows the use of several objects.
 	This snippet sets up a StimulusTable to control a RandSpike which
@@ -92,6 +93,44 @@ def main():
         pylab.show()
 
 	'''
+    moose.useClock( 0, '/stim', 'process' )
+    moose.useClock( 1, '/spike', 'process' )
+    moose.useClock( 2, '/syn', 'process' )
+    moose.useClock( 3, '/fire', 'process' )
+    moose.useClock( 4, '/stats#', 'process' )
+    moose.useClock( 8, '/plot#', 'process' )
+    for i in range (10):
+        moose.setClock( i, dt )
+    moose.useClock( 8, '/plot#', 'process' )
+    '''
+
+=======
+    """
+    This snippet shows the use of several objects.
+    This snippet sets up a StimulusTable to control a RandSpike which
+    sends its outputs to two places: to a SimpleSynHandler on an IntFire,
+    which is used to monitor spike arrival, and to various Stats objects.
+    Each of these are recorded and plotted.
+    The StimulusTable has a sine-wave waveform.
+    """
+    make_model()
+
+    moose.reinit()
+    moose.start( runtime )
+    plots = moose.element( '/plots' )
+    plot1 = moose.element( '/plot1' )
+    plot2 = moose.element( '/plot2' )
+    plotf = moose.element( '/plotf' )
+    t = [i * dt for i in range( plot1.vector.size )]
+    pylab.plot( t, plots.vector, label='stimulus' )
+    pylab.plot( t, plot1.vector, label='spike rate mean' )
+    pylab.plot( t, plot2.vector, label='Vm mean' )
+    pylab.plot( t, plotf.vector, label='Vm' )
+    pylab.legend()
+    pylab.show()
+>>>>>>> 0e491aa41584cf7a66c0e242374d8ee61660eb7b
+
+    '''
     moose.useClock( 0, '/stim', 'process' )
     moose.useClock( 1, '/spike', 'process' )
     moose.useClock( 2, '/syn', 'process' )
