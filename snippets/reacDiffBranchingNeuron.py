@@ -120,12 +120,21 @@ def makeChemModel( compt ):
     """
 This function sets up a simple oscillatory chemical system within
 the script. The reaction system is::
+<<<<<<< HEAD
 
     s ---a---> a  // s goes to a, catalyzed by a.
     s ---a---> b  // s goes to b, catalyzed by a.
     a ---b---> s  // a goes to s, catalyzed by b.
     b -------> s  // b is degraded irreversibly to s.
 
+=======
+
+    s ---a---> a  // s goes to a, catalyzed by a.
+    s ---a---> b  // s goes to b, catalyzed by a.
+    a ---b---> s  // a goes to s, catalyzed by b.
+    b -------> s  // b is degraded irreversibly to s.
+
+>>>>>>> 0e491aa41584cf7a66c0e242374d8ee61660eb7b
 in sum, **a** has a positive feedback onto itself and also forms **b**.
 **b** has a negative feedback onto **a**.
 Finally, the diffusion constant for **a** is 1/10 that of **b**.

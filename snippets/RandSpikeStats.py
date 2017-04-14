@@ -102,8 +102,6 @@ def main():
         moose.setClock( i, dt )
     moose.useClock( 8, '/plot#', 'process' )
     '''
-
-
 # Run the 'main' if this script is executed standalone.
 if __name__ == '__main__':
         main()

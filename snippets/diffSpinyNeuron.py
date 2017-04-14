@@ -267,8 +267,6 @@ def main():
         moose.setClock( i, chemdt ) # for the chem objects
     moose.setClock( 10, diffdt ) # for the diffusion
     moose.setClock( 18, plotdt ) # for the output tables.
-    '''
-    '''
     moose.reinit()
     for i in numpy.arange( 0, runtime, animationdt ):
         moose.start( animationdt )
