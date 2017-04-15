@@ -1,5 +1,5 @@
-name: moose # you probably want to 'snapcraft register <name>'
-version: '3.1.2' # just for humans, typically '1.2+git' or '1.3.2'
+name: moose 
+version: '3.1+git'
 summary: Neuronal modeling software spanning molecules, electrophysiology and networks
 description: |
     MOOSE is the Multiscale Object-Oriented Simulation Environment. It is designed
@@ -9,24 +9,29 @@ description: |
     synapses triggers biochemical reaction-diffusion events, which in turn modulate
     ion channels to give rise to synaptic plasticity.
 
-grade: devel # must be 'stable' to release into candidate/stable channels
-confinement: devmode # use 'strict' once you have the right plugs and slots
+grade: edge
+confinement: devmode 
 
 apps:
     moose :
         command : moose 
 
-
 parts:
   desktop:
       plugin: cmake
-      configflags: [ "-DCMAKE_INSTALL_PREFIX=/usr", "-DMOOSE_VERSION=3.1.2" ]
+      configflags: [ "-DCMAKE_INSTALL_PREFIX=/usr" ]
       source : .
       build-packages:
           - cmake
           - g++
           - libgsl-dev
           - libhdf5-serial-dev
+          - python-numpy
+
       stage-packages:
           - libgsl2
           - libhdf5-10
+          - python-networkx
+          - python-matplotlib 
+          - python-numpy
+          - python-libqt4
