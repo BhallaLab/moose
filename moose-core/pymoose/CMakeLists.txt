@@ -21,7 +21,11 @@ except Exception: pass'"
 message( STATUS "Python so extension ${PYTHON_SO_EXTENSION}" )
 
 find_package(NumPy REQUIRED)
-include_directories(${NUMPY_INCLUDE_DIRS})
+find_package(PythonLibs REQUIRED)
+
+include_directories( ${NUMPY_INCLUDE_DIRS} )
+include_directories( ${PYTHON_INCLUDE_DIRS} )
+
 add_definitions(-DUSE_NUMPY)
 
 add_definitions(-DNPY_NO_DEPRECATED_API=NPY_1_7_API_VERSION)
