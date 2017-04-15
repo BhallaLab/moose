@@ -85,7 +85,9 @@ install(DIRECTORY ${MOOSE_EXAMPLE_DIR}/
     PATTERN "*.pyc" EXCLUDE
     )
 
-configure_file( ${CMAKE_SOURCE_DIR}/cmake/moose.in ${CMAKE_BINARY_DIR}/moose )
+# Copy the command to launch moose.
+file(COPY ${CMAKE_SOURCE_DIR}/moose DESTINATION ${CMAKE_BINARY_DIR})
+
 install(PROGRAMS ${CMAKE_BINARY_DIR}/moose DESTINATION bin)
 
 ## UNINSTALL
