@@ -222,9 +222,9 @@ def dumpPlots( fname,runtime ):
     for x in moose.wildcardFind( '/graphs/##[ISA=Table]' ):
         x.xplot( fname, x.name )
         t = numpy.linspace( 0, runtime, x.vector.size ) # sec
-	plt.plot( t, x.vector, label=x.name )
-	plt.legend()
-	plt.show()
+        plt.plot( t, x.vector, label=x.name )
+    plt.legend()
+    plt.show()
     quit()
 def makeSpinyCompt():
     comptLength = 30e-6

@@ -54,7 +54,13 @@ def main():
     This example illustrates loading, running, and saving a kinetic
     model defined in kkit format. It uses a default kkit model but
     you can specify another using the command line
+<<<<<<< HEAD
+    
 	    ``python filename runtime solver``.
+
+=======
+        ``python filename runtime solver``.
+>>>>>>> 0e491aa41584cf7a66c0e242374d8ee61660eb7b
     We use the gsl solver here.
     The model already defines a couple of plots and sets the runtime 20 secs.
 
