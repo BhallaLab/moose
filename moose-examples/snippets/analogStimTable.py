@@ -72,29 +72,24 @@ def analogStimTable():
 
 def main():
     """
-Example of using a StimulusTable as an analog signal source in
-a reaction system. It could be used similarly to give other
-analog inputs to a model, such as a current or voltage clamp signal.
+    Example of using a StimulusTable as an analog signal source in
+    a reaction system. It could be used similarly to give other
+    analog inputs to a model, such as a current or voltage clamp signal.
 
-This demo creates a StimulusTable and assigns it half a sine wave.
-Then we assign the start time and period over which to emit the wave.
-The output of the StimTable is sent to a pool **a**, which participates
-in a trivial reaction::
+    This demo creates a StimulusTable and assigns it half a sine wave.
+    Then we assign the start time and period over which to emit the wave.
+    The output of the StimTable is sent to a pool **a**, which participates
+    in a trivial reaction::
 
-    table ----> a <===> b
+        table ----> a <===> b
 
-The output of **a** and **b** are recorded in a regular table
-for plotting.
+    The output of **a** and **b** are recorded in a regular table
+    for plotting.
     """
     analogStimTable()
 
 if __name__ == '__main__':
-<<<<<<< HEAD
-    main
-=======
     main()
->>>>>>> 0e491aa41584cf7a66c0e242374d8ee61660eb7b
-
 
 
 #
