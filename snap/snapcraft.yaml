@@ -20,7 +20,7 @@ parts:
   desktop:
       plugin: cmake
       configflags: [ "-DCMAKE_INSTALL_PREFIX=/usr" ]
-      source : https://github.com/BhallaLab/moose.git
+      source : . # https://github.com/BhallaLab/moose.git
       build-packages:
           - cmake
           - g++
