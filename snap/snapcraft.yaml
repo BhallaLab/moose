@@ -9,7 +9,7 @@ description: |
     synapses triggers biochemical reaction-diffusion events, which in turn modulate
     ion channels to give rise to synaptic plasticity.
 
-grade: edge
+grade: devel
 confinement: devmode 
 
 apps:
@@ -20,12 +20,13 @@ parts:
   desktop:
       plugin: cmake
       configflags: [ "-DCMAKE_INSTALL_PREFIX=/usr" ]
-      source : .
+      source : https://github.com/BhallaLab/moose.git
       build-packages:
           - cmake
           - g++
           - libgsl-dev
           - libhdf5-serial-dev
+          - python-dev
           - python-numpy
 
       stage-packages:
@@ -34,4 +35,5 @@ parts:
           - python-networkx
           - python-matplotlib 
           - python-numpy
-          - python-libqt4
+          - python-qt4
+          - python
