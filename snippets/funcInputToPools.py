@@ -13,6 +13,7 @@ import numpy
 import moose
 import sys
 
+
 def makeModel():
     if len( sys.argv ) == 1:
             useGsolve = True
@@ -65,6 +66,9 @@ def makeModel():
     stoich.compartment = compartment
     stoich.ksolve = gsolve
     stoich.path = '/model/compartment/##'
+    '''
+    '''
+
     # We need a finer timestep than the default 0.1 seconds,
     # in order to get numerical accuracy.
     for i in range (10, 19 ):
@@ -88,11 +92,11 @@ so try to use a table to control a pool instead.
 
 To run in stochastic mode::
 
-    ''python funcInputToPools''
+	''python funcInputToPools''
 
 To run in deterministic mode::
 
-    ''python funcInputToPools false''
+	''python funcInputToPools false''
 
     """
 
@@ -100,6 +104,7 @@ To run in deterministic mode::
     moose.seed()
 
     moose.reinit()
+
     moose.start( 50.0 ) # Run the model for 100 seconds.
 
     a = moose.element( '/model/compartment/a' )
@@ -107,12 +112,11 @@ To run in deterministic mode::
 
     # Iterate through all plots, dump their contents to data.plot.
     for x in moose.wildcardFind( '/model/graphs/n#' ):
-        #x.xplot( 'scriptKineticModel.plot', x.name )
+    	#x.xplot( 'scriptKineticModel.plot', x.name )
         t = numpy.arange( 0, x.vector.size, 1 ) * x.dt # sec
         pylab.plot( t, x.vector, label=x.name )
     pylab.legend()
     pylab.show()
-
     quit()
 
 # Run the 'main' if this script is executed standalone.

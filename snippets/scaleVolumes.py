@@ -155,14 +155,9 @@ def main():
         # Iterate through all plots, dump their contents to data.plot.
         displayPlots()
         pylab.show( block=False )
-<<<<<<< HEAD
-        print(('vol = ', vol, 'hit 0 to go to next plot'))
-        eval(str(input()))
-
-=======
         print( 'vol = %f ' % vol )
         response = input( "Press enter to go to next plot... " ) 
->>>>>>> 0e491aa41584cf7a66c0e242374d8ee61660eb7b
+
     quit()
 
 # Run the 'main' if this script is executed standalone.

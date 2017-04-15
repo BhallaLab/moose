@@ -67,13 +67,14 @@ def make_model():
     moose.connect( plotf, 'requestOut', fire, 'getVm' )
 
 def main():
+
     """
-    This snippet shows the use of several objects.
-    This snippet sets up a StimulusTable to control a RandSpike which
-    sends its outputs to two places: to a SimpleSynHandler on an IntFire,
-    which is used to monitor spike arrival, and to various Stats objects.
-    Each of these are recorded and plotted.
-    The StimulusTable has a sine-wave waveform.
+        This snippet shows the use of several objects.
+        This snippet sets up a StimulusTable to control a RandSpike which
+        sends its outputs to two places: to a SimpleSynHandler on an IntFire,
+        which is used to monitor spike arrival, and to various Stats objects.
+        Each of these are recorded and plotted.
+        The StimulusTable has a sine-wave waveform.
     """
     make_model()
 
@@ -90,6 +91,7 @@ def main():
     pylab.plot( t, plotf.vector, label='Vm' )
     pylab.legend()
     pylab.show()
+
 
     '''
     moose.useClock( 0, '/stim', 'process' )

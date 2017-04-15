@@ -43,7 +43,7 @@ import pylab
 
 import moose
 from moose.SBML import *
-#from moose.chemUtil.add_Delete_ChemicalSolver import *
+from moose.chemUtil.add_Delete_ChemicalSolver import *
 
 def main():
     """
