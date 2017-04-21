@@ -1,6 +1,6 @@
 from PyQt4.QtGui import QPolygonF
 from PyQt4.QtCore import QLineF,QPointF
-import math
+from math import sin,cos,atan2,radians
 from kkitQGraphics import PoolItem #, ReacItem,EnzItem,CplxItem,ComptItem
 
 ''' One to need to pass the source, destination,endtype and order for drawing the arrow between 2 object \
@@ -46,9 +46,9 @@ def calcArrow(srcdes_list,itemignoreZooming,iconScale):
         dy = desRect.center().y()- srcRect.center().y()
         dx0 = dy
         dy0 = -dx
-        tetha1 = (math.atan2(dy0,dx0))
-        a0 = 4 *(math.cos(tetha1))
-        b0 = 4 *(math.sin(tetha1))
+        tetha1 = (atan2(dy0,dx0))
+        a0 = 4 *(cos(tetha1))
+        b0 = 4 *(sin(tetha1))
         ''' Higher order ( > 4) connectivity will not be done'''
         if ((order == 3) or (order == 4)):
             a0 = a0*2
@@ -154,9 +154,9 @@ def calcLineRectIntersection(rect, centerLine):
 def arrowHead(srcAngle,degree,lineSpoint,iconScale):
     '''  arrow head is calculated '''
     r = 8*iconScale
-    delta = math.radians(srcAngle) + math.radians(degree)
-    width = math.sin(delta)*r
-    height = math.cos(delta)*r
+    delta = radians(srcAngle) + radians(degree)
+    width = sin(delta)*r
+    height = cos(delta)*r
     srcXArr = (lineSpoint.x() + width)
     srcYArr = (lineSpoint.y() + height)
     return srcXArr,srcYArr
