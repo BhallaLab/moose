@@ -135,7 +135,7 @@ def plotTables(tables, outfile=None, **kwargs):
     subplot = kwargs.get('subplot', True)
     for i, tname in enumerate(tables):
         if subplot:
-            plt.subplot(len(tables), 1, i)
+            plt.subplot(len(tables), 1, i+1)
         yvec = tables[tname].vector 
         xvec = np.linspace(0, moose.Clock('/clock').currentTime, len(yvec))
         plt.plot(xvec, yvec, label=tname)
@@ -165,7 +165,7 @@ def plotVector(vec, xvec = None, **options):
     :param vec: Given vector.
     :param **kwargs: Optional to pass to maplotlib.
     """
-
+    ax = options[ 'ax' ]
     assert type(vec) == np.ndarray, "Expected type %s" % type(vec)
     legend = options.get('legend', True)
 
@@ -176,28 +176,29 @@ def plotVector(vec, xvec = None, **options):
         xx = xvec[:]
 
     assert len(xx) == len(vec), "Expecting %s got %s" % (len(vec), len(xvec))
+    ax.plot(xx, vec, label=options.get('label', ''))
 
-    plt.plot(xx, vec, label=options.get('label', ''))
     if legend:
         # This may not be available on older version of matplotlib.
         try:
-            plt.legend(loc='best', framealpha=0.4)
+            ax.legend(loc='best', framealpha=0.4)
         except:
-            plt.legend(loc='best')
+            ax.legend(loc='best')
 
     if xvec is None:
-        plt.xlabel('Time (sec)')
+        ax.set_xlabel('Time (sec)')
     else:
-        plt.xlabel(options.get('xlabel', ''))
+        ax.set_xlabel(options.get('xlabel', ''))
     
-    plt.ylabel = options.get('ylabel', '')
-    plt.title(options.get('title', ''))
+    ax.set_ylabel = options.get('ylabel', '')
+    ax.set_title(options.get('title', ''))
 
     if(options.get('legend', True)):
         try:
-            plt.legend(loc='best', framealpha=0.4, prop={'size' : 9})
+            ax.legend(loc='best', framealpha=0.4, prop={'size' : 9})
         except:
-            plt.legend(loc='best', prop={'size' : 9})
+            ax.legend(loc='best', prop={'size' : 9})
+    return ax
 
 
 def saveRecords(records, xvec = None, **kwargs):
@@ -267,7 +268,7 @@ def plotRecords(records, xvec = None, **kwargs):
                 yvec = dataDict[k].vector
                 plotVector(yvec, xvec, label=k, **kwargs)
             else:
-                plt.subplot(len(dataDict), 1, i)
+                kwargs[ 'ax' ] = plt.subplot(len(dataDict), 1, i)
                 yvec = dataDict[k].vector
                 plotVector(yvec, xvec, label=k, **kwargs)
 
@@ -286,9 +287,13 @@ def plotRecords(records, xvec = None, **kwargs):
     else:
         plt.show()
 
+def plot_records( data_dict, xvec = None, **kwargs ):
+    """Renamed (deprecated)
+    """
+    return plot_tables( data_dict, xvec, **kwargs )
 
-def plot_records(data_dict, xvec = None, **kwargs):
-    """plot_records Plot given dictionary.
+def plot_tables(data_dict, xvec = None, **kwargs):
+    """plot_tables plots moose.Table stored in a dictionary.
 
     :param data_dict:
     :param xvec: If None, use moose.Clock to generate xvec.
@@ -300,7 +305,12 @@ def plot_records(data_dict, xvec = None, **kwargs):
     subplot = kwargs.get('subplot', False)
     filters = [ x.lower() for x in kwargs.get('filter', [])]
 
-    plt.figure(figsize=(10, 1.5*len(data_dict)))
+    ax = kwargs.get( 'ax', None )
+    if ax is None:
+        plt.figure(figsize=(10, 1.5*len(data_dict)))
+        if not subplot:
+            ax = plt.subplot( 1, 1, 1 )
+
     for i, k in enumerate(data_dict):
         pu.info("+ Plotting for %s" % k)
         plotThis = False
@@ -312,10 +322,10 @@ def plot_records(data_dict, xvec = None, **kwargs):
                 
         if plotThis:
             if not subplot: 
-                yvec = data_dict[k]
+                yvec = data_dict[k].vector
                 plotVector(yvec, xvec, label=k, **kwargs)
             else:
-                plt.subplot(len(data_dict), 1, i)
+                ax = plt.subplot(len(data_dict), 1, i)
                 yvec = data_dict[k]
                 plotVector(yvec, xvec, label=k, **kwargs)
     if subplot:

@@ -72,7 +72,7 @@ double RollingMatrix::dotProduct( const vector< double >& input,
 	unsigned int index = (row + currentStartRow_) % nrows_;
 	const SparseVector& sv = rows_[index];
 	unsigned int i2 = input.size()/2;
-	unsigned int istart = (startColumn <= i2) ? 0 : startColumn - i2;
+	unsigned int istart = (startColumn >= i2) ? 0 : i2-startColumn;
 	unsigned int colstart = (startColumn <= i2) ? 0 : startColumn - i2;
 	unsigned int iend = (sv.size()-startColumn > i2 ) ? input.size() :
 			i2 - startColumn + sv.size();

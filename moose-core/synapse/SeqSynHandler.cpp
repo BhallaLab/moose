@@ -8,6 +8,7 @@
 **********************************************************************/
 
 #include <queue>
+#include "global.h"
 #include "header.h"
 #include "Synapse.h"
 #include "SynEvent.h"
@@ -105,6 +106,29 @@ const Cinfo* SeqSynHandler::initCinfo()
 			&SeqSynHandler::setSequenceScale,
 			&SeqSynHandler::getSequenceScale
 	);
+	static ValueFinfo< SeqSynHandler, vector< unsigned int > > synapseOrder(
+			"synapseOrder",
+			"Mapping of synapse input order to spatial order on syn array."
+			"Entries in this vector are indices which must remain smaller "
+			"than numSynapses. The system will fix up if you mess up. "
+			"It does not insist on unique mappings, but these are "
+			"desirable as outcome is undefined for repeated entries.",
+			&SeqSynHandler::setSynapseOrder,
+			&SeqSynHandler::getSynapseOrder
+	);
+	static ValueFinfo< SeqSynHandler, int > synapseOrderOption(
+			"synapseOrderOption",
+			"How to do the synapse order remapping. This rule stays in "
+			"place and guarantees safe mappings even if the number of "
+			"synapses is altered. Options:\n"
+		    "-2: User ordering.\n"
+		    "-1: Sequential ordering, 0 to numSynapses-1.\n"
+		    "0: Random ordering using existing system seed.\n"
+		    ">0: Random ordering using seed specified by this number\n"
+			"Default is -1, sequential ordering.",
+			&SeqSynHandler::setSynapseOrderOption,
+			&SeqSynHandler::getSynapseOrderOption
+	);
 	static ReadOnlyValueFinfo< SeqSynHandler, double > seqActivation(
 			"seqActivation",
 			"Reports summed activation of synaptic channel by sequence",
@@ -141,9 +165,11 @@ const Cinfo* SeqSynHandler::initCinfo()
 		&historyTime,				// Field
 		&sequenceScale,				// Field
 		&baseScale,					// Field
-		&seqActivation,				// Field
+		&synapseOrder,				// Field
+		&synapseOrderOption,		// Field
+		&seqActivation,				// ReadOnlyField
 		&plasticityScale,			// Field
-		&weightScaleVec,			// Field
+		&weightScaleVec,			// ReadOnlyField
 		&kernel,					// ReadOnlyField
 		&history					// ReadOnlyField
 	};
@@ -172,10 +198,11 @@ SeqSynHandler::SeqSynHandler()
 		kernelWidth_( 5 ),
 		historyTime_( 2.0 ), 
 		seqDt_ ( 1.0 ), 
-		sequenceScale_( 1.0 ),
 		baseScale_( 0.0 ),
+		sequenceScale_( 1.0 ),
 		plasticityScale_( 0.0 ),
-		seqActivation_( 0.0 )
+		seqActivation_( 0.0 ),
+		synapseOrderOption_( -1 ) // sequential ordering
 { 
 	history_.resize( numHistory(), 0 );
 }
@@ -208,6 +235,7 @@ void SeqSynHandler::vSetNumSynapses( const unsigned int v )
 	history_.resize( numHistory(), v );
 	latestSpikes_.resize( v, 0.0 );
 	weightScaleVec_.resize( v, 0.0 );
+	refillSynapseOrder( v );
 	updateKernel();
 }
 
@@ -227,6 +255,65 @@ Synapse* SeqSynHandler::vGetSynapse( unsigned int i )
 }
 
 //////////////////////////////////////////////////////////////////////
+
+// Checks for numbers bigger than the size. Replaces with
+// values within the range that have not yet been used.
+void SeqSynHandler::fixSynapseOrder() 
+{
+	unsigned int sz = synapseOrder_.size();
+	vector< unsigned int > availableEntries( sz );
+	iota( availableEntries.begin(), availableEntries.end(), 0 );
+	for( unsigned int i = 0; i < sz; ++i ) {
+		if ( synapseOrder_[i] < sz )
+			availableEntries[ synapseOrder_[i] ] = sz;
+	}
+	vector< unsigned int > ae;
+	for( unsigned int i = 0; i < sz; ++i )
+		if ( availableEntries[i] < sz )
+			ae.push_back( availableEntries[i] );
+
+	auto jj = ae.begin();
+	for( unsigned int i = 0; i < sz; ++i ) {
+		if ( synapseOrder_[i] >= sz )
+			synapseOrder_[i] = *jj++;
+	}
+}
+
+// Beautiful snippet from Lukasz Wiklendt on StackOverflow. Returns order
+// of entries in a vector.
+template <typename T> vector<size_t> sort_indexes(const vector<T> &v) {
+	// initialize original index locations
+	vector<size_t> idx(v.size());
+	iota(idx.begin(), idx.end(), 0);
+	// sort indexes based on comparing values in v
+	sort(idx.begin(), idx.end(),
+		[&v](size_t i1, size_t i2) {return v[i1] < v[i2];});
+	return idx;
+}
+
+void SeqSynHandler::refillSynapseOrder( unsigned int newSize )
+{
+	if ( synapseOrderOption_ <= -2 ) { // User order
+		synapseOrder_.resize( newSize, newSize );
+		fixSynapseOrder();
+	} else if ( synapseOrderOption_ == -1 ) { // Ordered
+		synapseOrder_.resize( newSize );
+		for ( unsigned int i = 0 ; i < newSize; ++i )
+			synapseOrder_[i] = i;
+	} else {
+		synapseOrder_.resize( newSize );
+		if ( synapseOrderOption_ > 0 ) { // Specify seed explicitly
+                    moose::mtseed( synapseOrderOption_ );
+		}
+		vector< double > x;
+		for ( unsigned int i = 0; i < newSize; ++i )
+			x.push_back( moose::mtrand() );
+		auto idx = sort_indexes< double >( x );
+		for ( unsigned int i = 0; i < newSize; ++i )
+			synapseOrder_[i] = idx[i];
+	}
+}
+
 void SeqSynHandler::updateKernel()
 {
 	if ( kernelEquation_ == "" || seqDt_ < 1e-9 || historyTime_ < 1e-9 )
@@ -362,6 +449,29 @@ vector< double > SeqSynHandler::getHistory() const
 	return ret;
 }
 
+void SeqSynHandler::setSynapseOrder( vector< unsigned int > v )
+{
+	synapseOrder_ = v;
+	fixSynapseOrder();
+	synapseOrderOption_ = -2; // Set the flag to say it is User defined.
+}
+
+vector< unsigned int > SeqSynHandler::getSynapseOrder() const
+{
+	return synapseOrder_;
+}
+
+void SeqSynHandler::setSynapseOrderOption( int v )
+{
+	synapseOrderOption_ = v;
+	refillSynapseOrder( synapseOrder_.size() );
+}
+
+int SeqSynHandler::getSynapseOrderOption() const
+{
+	return synapseOrderOption_;
+}
+
 /////////////////////////////////////////////////////////////////////
 
 void SeqSynHandler::addSpike(unsigned int index, double time, double weight)
@@ -373,7 +483,9 @@ void SeqSynHandler::addSpike(unsigned int index, double time, double weight)
 	// slice. For now, to get it going for LIF neurons, this will do.
 	// Even in the general case we will probably have a very wide window
 	// for the latestSpikes slice.
-	latestSpikes_[index] += weight;
+	//
+	// Here we reorder the entries in latestSpikes by the synapse order.
+	latestSpikes_[ synapseOrder_[index] ] += weight;
 }
 
 unsigned int SeqSynHandler::addSynapse()
