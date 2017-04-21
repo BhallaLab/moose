@@ -87,7 +87,7 @@ namespace moose {
      *
      * @param x 
      */
-    void mtseed( unsigned int x )
+    void mtseed( int x )
     {
         moose::__rng_seed__ = x;
         moose::rng.setSeed( x );

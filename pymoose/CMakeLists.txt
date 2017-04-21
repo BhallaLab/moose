@@ -1,6 +1,8 @@
 add_definitions(-DPYMOOSE)
 include_directories(../basecode ../msg)
 
+find_package( PythonInterp REQUIRED )
+
 set(PYMOOSE_SRCS 
     moosemodule.cpp
     vec.cpp
@@ -18,10 +20,18 @@ EXEC_PROGRAM(${PYTHON_EXECUTABLE}
 except Exception: pass'"
     OUTPUT_VARIABLE PYTHON_SO_EXTENSION
     )
+
+message( STATUS "Python path ${PYTHON_EXECUTABLE}" )
 message( STATUS "Python so extension ${PYTHON_SO_EXTENSION}" )
 
 find_package(NumPy REQUIRED)
-include_directories(${NUMPY_INCLUDE_DIRS})
+find_package(PythonLibs REQUIRED)
+
+include_directories( ${NUMPY_INCLUDE_DIRS} )
+include_directories( ${PYTHON_INCLUDE_DIRS} )
+
+message( STATUS "Python include dir : ${PYTHON_INCLUDE_DIRS} " )
+
 add_definitions(-DUSE_NUMPY)
 
 add_definitions(-DNPY_NO_DEPRECATED_API=NPY_1_7_API_VERSION)
@@ -34,7 +44,12 @@ execute_process( COMMAND ${PYTHON_EXECUTABLE}-config --libs
     OUTPUT_VARIABLE PYTHON_LIBRARIES
     OUTPUT_STRIP_TRAILING_WHITESPACE
     )
+
+if( NOT PYTHON_INCLUDE_FLAGS )
+    set( PYTHON_INCLUDE_FLAGS "-I ${PYTHON_INCLUDE_DIRS} " )
+endif( )
 message( STATUS "Python include flags: ${PYTHON_INCLUDE_FLAGS}" )
+
 set_target_properties(_moose PROPERTIES 
     COMPILE_DEFINITIONS "PYMOOSE"
     COMPILE_FLAGS "${PYTHON_INCLUDE_FLAGS}"
@@ -42,11 +57,6 @@ set_target_properties(_moose PROPERTIES
     PREFIX ""
     SUFFIX ".so"
     )
-
-#if(NOT(PYTHON_SO_EXTENSION STREQUAL ""))
-#    set_target_properties(_moose PROPERTIES
-#    SUFFIX ${PYTHON_SO_EXTENSION})
-#endif()
 
 # see issue #80
 if(HDF5_LIBRARY_DIRS)

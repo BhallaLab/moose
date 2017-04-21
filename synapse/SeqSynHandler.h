@@ -59,6 +59,10 @@ class SeqSynHandler: public SynHandlerBase
  		double getBaseScale() const;
 		void setSequenceScale( double v );
  		double getSequenceScale() const;
+		void setSynapseOrder( vector< unsigned int> v );
+ 		vector< unsigned int> getSynapseOrder() const;
+		void setSynapseOrderOption( int v );
+ 		int getSynapseOrderOption() const;
  		double getSeqActivation() const; // summed activation of syn chan
 		void setPlasticityScale( double v );
  		double getPlasticityScale() const;
@@ -69,6 +73,8 @@ class SeqSynHandler: public SynHandlerBase
 		////////////////////////////////////////////////////////////////
 		// Utility func
 		int numHistory() const;
+		void refillSynapseOrder( unsigned int newSize );
+		void fixSynapseOrder();
 		////////////////////////////////////////////////////////////////
 		static const Cinfo* initCinfo();
 	private:
@@ -116,8 +122,23 @@ class SeqSynHandler: public SynHandlerBase
 		vector< double > latestSpikes_; 
 
 		///////////////////////////////////////////
-		vector< vector<  double > > kernel_;	//Kernel for seq selectivity
-		RollingMatrix history_;	// Rows = time; cols = synInputs
+		vector< vector<  double > > kernel_; ///Kernel for seq selectivity
+		RollingMatrix history_;	/// Rows = time; cols = synInputs
+		/**
+		 * Remaps synapse order to avoid correlations based on presynaptic 
+		 * object Id order, or on connection building order. This 
+		 * undesirable ordering occurs even when random synaptic
+		 * projections are used. User can alter as preferred. This is 
+		 * simply a look up table so that the incoming synapse index is
+		 * remapped: index_on_Handler = synapseOrder_[original_syn_index]
+		 * This must only have numbers from zero to numSynapses, and should
+		 * normally have all the numbers.
+		 */
+		vector< unsigned int > synapseOrder_; 
+
+		/// Options: -2: User. -1: ordered. 0: random by system seed. 
+		/// > 0: Random by seed specified by this number
+		int synapseOrderOption_;
 
 		vector< Synapse > synapses_;
 		priority_queue< PreSynEvent, vector< PreSynEvent >, CompareSynEvent > events_;
