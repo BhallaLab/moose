@@ -1,59 +1,48 @@
-# pyrun.py --- 
-# 
+# pyrun.py ---
+#
 # Filename: pyrun.py
-# Description: 
+# Description:
 # Author: Subhasis Ray
-# Maintainer: 
+# Maintainer:
 # Created: Wed Oct 15 10:14:15 2014 (+0530)
-# Version: 
-# Last-Updated: 
-#           By: 
+# Version:
+# Last-Updated:
+#           By:
 #     Update #: 0
-# URL: 
-# Keywords: 
-# Compatibility: 
-# 
-# 
+# URL:
+# Keywords:
+# Compatibility:
+#
 
-# Commentary: 
-# 
-# 
-# 
-# 
+# Commentary:
+#
 
 # Change log:
-# 
-# 
-# 
-# 
+#
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
 # published by the Free Software Foundation; either version 3, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program; see the file COPYING.  If not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 # Floor, Boston, MA 02110-1301, USA.
-# 
-# 
+#
+#
 
-# Code:
-"""You can use the PyRun class to run Python statements from MOOSE at
-runtime. This opens up many possibilities of interleaving computing in
-Python and MOOSE. You can also use this for debugging simulations.
-"""
 import numpy as np
 from matplotlib import pyplot as plt
 import moose
 
 def run_sequence():
-    """In this example we demonstrate the use of PyRun objects to execute
+    """
+    In this example we demonstrate the use of PyRun objects to execute
     Python statements from MOOSE. Here is a couple of fun things to
     indicate the power of MOOSE-Python integration.
 
@@ -72,14 +61,14 @@ def run_sequence():
     In the `runString` we put a couple of print statements to indicate
     the name fof the object which is running and the current
     count. Then we increase the count directly.
-    
+
     When we call ``moose.start()``, the `runString` gets executed at
     each time step.
 
     The other PyRun object we create, is `/World`. In its `initString`
     apart from ordinary print statements and initialization, we define
     a Python function called ``incr_count``. This silly little
-    function just increments the global `world_count` by 1. 
+    function just increments the global `world_count` by 1.
 
     The `runString` for `World` simply calls this function to
     increment the count and print it.
@@ -119,14 +108,15 @@ incr_count()
 """
     world_runner.run('from datetime import datetime')
     world_runner.run('print "World: current time:", datetime.now().isoformat()')
-    
+
     moose.useClock(0, world_runner.path, 'process')
     moose.reinit()
     moose.start(0.001)
 
-    
+
 def input_output():
-    """The PyRun class can take a double input through `trigger`
+    """
+    The PyRun class can take a double input through `trigger`
     field. Whenever another object sends an input to this field, the
     `runString` is executed.
 
@@ -158,15 +148,15 @@ def input_output():
     one of the above. We set ``mode = 2`` to disable the `process`
     method. Note that this could also have been done by setting its
     ``tick = -1``.
-    
+
     ``mode = 1`` will disable `trigger` message and ``mode = 0``, the
     default, enables both.
-    """    
+    """
     model = moose.Neutral('/model')
     input_pulse = moose.PulseGen('/model/pulse')
     #: set the baseline output 0
     input_pulse.baseLevel = 0.0
-    #: We make it generate three pulses 
+    #: We make it generate three pulses
     input_pulse.count = 3
     input_pulse.level[0] = 1.0
     input_pulse.level[1] = 2.0
@@ -198,22 +188,29 @@ print 'output =', output
     moose.useClock(0, input_pulse.path, 'process')
     #: this is unnecessary because the mode=2 ensures that `process`
     #: does nothing
-    moose.useClock(1, pyrun.path, 'process') 
+    moose.useClock(1, pyrun.path, 'process')
     moose.useClock(2, '/model/#[ISA=Table]', 'process')
     moose.reinit()
     moose.start(10.0)
-    #ts = 
+    #ts =
     plt.plot(input_table.vector, label='input')
     plt.plot(output_table.vector, label='output')
     plt.legend()
     plt.show()
 
+def main():
+	"""
+You can use the PyRun class to run Python statements from MOOSE at
+runtime. This opens up many possibilities of interleaving computing in
+Python and MOOSE. You can also use this for debugging simulations.
+	"""
+	run_sequence()
+	moose.delete('/model')
+	input_output()
+
 if __name__ == '__main__':
-    run_sequence()
-    moose.delete('/model')
-    input_output()
-    
+	main()
 
 
-# 
+#
 # pyrun.py ends here

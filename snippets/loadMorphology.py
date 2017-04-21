@@ -30,7 +30,7 @@ def main():
     ecomptPath = [x.path for x in compts]
     morphology = moogli.read_morphology_from_moose(name = "", path = "/model/testSwc")
     morphology.create_group( "group_all", ecomptPath, -0.08, 0.02, \
-            [0.0, 0.5, 1.0, 1.0], [1.0, 0.0, 0.0, 0.9] ) 
+            [0.0, 0.5, 1.0, 1.0], [1.0, 0.0, 0.0, 0.9] )
 
     viewer = moogli.DynamicMorphologyViewerWidget(morphology)
     def callback( morphology, viewer ):

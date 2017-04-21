@@ -12,6 +12,12 @@ import pylab
 import numpy
 import moose
 
+# Hack to make sure input works with both python2 and python3.
+try:
+    input = raw_input
+except Exception as e:
+    pass
+
 def makeModel():
 		# create container for model
 		model = moose.Neutral( 'model' )
@@ -148,7 +154,7 @@ def main():
         displayPlots()
         pylab.show( block=False )
         print(('vol = ', vol, 'hit enter to go to next plot'))
-        eval(input())
+        input()
 
     quit()
 

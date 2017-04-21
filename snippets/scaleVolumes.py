@@ -12,13 +12,19 @@ import pylab
 import numpy
 import moose
 
+# Ugly python hack to make input behave the same on python2 and python3.
+try:
+    input = raw_input
+except NameError as e:
+        pass
+
 def makeModel():
                 # create container for model
                 model = moose.Neutral( 'model' )
                 compartment = moose.CubeMesh( '/model/compartment' )
                 compartment.volume = 1e-20
                 # the mesh is created automatically by the compartment
-                mesh = moose.element( '/model/compartment/mesh' ) 
+                mesh = moose.element( '/model/compartment/mesh' )
 
                 # create molecules and reactions
                 a = moose.Pool( '/model/compartment/a' )
@@ -94,14 +100,14 @@ def main():
     else is set up correctly, then this change propagates through to all
     reactions molecules.
 
-    For a deterministic reaction one would not see any change in output 
+    For a deterministic reaction one would not see any change in output
     concentrations.
-    For a stochastic reaction illustrated here, one sees the level of 
-    'noise' 
+    For a stochastic reaction illustrated here, one sees the level of
+    'noise'
     changing, even though the concentrations are similar up to a point.
     This example creates a bistable model having two enzymes and a reaction.
     One of the enzymes is autocatalytic.
-    This model is set up within the script rather than using an external 
+    This model is set up within the script rather than using an external
     file.
     The model is set up to run using the GSSA (Gillespie Stocahstic systems
     algorithim) method in MOOSE.
@@ -149,11 +155,10 @@ def main():
         # Iterate through all plots, dump their contents to data.plot.
         displayPlots()
         pylab.show( block=False )
-        print(('vol = ', vol, 'hit enter to go to next plot'))
-        eval(input())
-
+        print( 'vol = %f ' % vol )
+        response = input( "Press enter to go to next plot... " ) 
     quit()
 
 # Run the 'main' if this script is executed standalone.
 if __name__ == '__main__':
-        main()
+        main( )
