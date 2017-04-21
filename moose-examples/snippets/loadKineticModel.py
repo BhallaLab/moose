@@ -6,7 +6,7 @@
 # Maintainer:
 # Created: Sat Oct 04 12:14:15 2014 (+0530)
 # Version:
-# Last-Updated:
+# Last-Updated: Tue Apr 18 17:40:00 2017(+0530)
 #           By:
 #     Update #: 0
 # URL:
@@ -48,53 +48,65 @@ import moose
 import pylab
 import numpy
 import sys
-
+import os
 def main():
-        """
+    """
     This example illustrates loading, running, and saving a kinetic
     model defined in kkit format. It uses a default kkit model but
     you can specify another using the command line
-<<<<<<< HEAD
-    
-	    ``python filename runtime solver``.
-
-=======
-        ``python filename runtime solver``.
->>>>>>> 0e491aa41584cf7a66c0e242374d8ee61660eb7b
-    We use the gsl solver here.
+    ``python loadKineticModel.py filepath runtime solver``.
+    We use default solver as gsl.
     The model already defines a couple of plots and sets the runtime 20 secs.
+    """
+    
+    defaultsolver = "gsl"  # Pick any of gsl, gssa, ee..
+    defaultfile = '../genesis/kkit_objects_example.g'
+    defaultruntime = 20.0
+    
+    try:
+        sys.argv[1]
+    except IndexError:
+        filepath = defaultfile
+    else:
+        filepath = sys.argv[1]
+    if not os.path.exists(filepath):
+        print ("Filename or path does not exist \"%s\" loading default file \"%s\" " %(filepath ,defaultfile))
+        filepath = defaultfile
+    
+    try:
+        sys.argv[2]
+    except :
+        runtime = defaultruntime
+    else:
+        runtime = float(sys.argv[2])
 
-        """
-        solver = "gsl"  # Pick any of gsl, gssa, ee..
-        mfile = '../genesis/kkit_objects_example.g'
-        runtime = 20.0
-        if ( len( sys.argv ) >= 3 ):
-            if sys.argv[1][0] == '/':
-                mfile = sys.argv[1]
-            else:
-                mfile = '../genesis/' + sys.argv[1]
-                runtime = float( sys.argv[2] )
-        if ( len( sys.argv ) == 4 ):
-                solver = sys.argv[3]
-        modelId = moose.loadModel( mfile, 'model', solver )
-        # Increase volume so that the stochastic solver gssa
-        # gives an interesting output
-        #compt = moose.element( '/model/kinetics' )
-        #compt.volume = 1e-19
+    try:
+        sys.argv[3]
+    except :
+        solver = defaultsolver
+    else:
+        solver = sys.argv[3]
+    
+    modelId = moose.loadModel( filepath, 'model', solver )
+    
+    # Increase volume so that the stochastic solver gssa
+    # gives an interesting output
+    #compt = moose.element( '/model/kinetics' )
+    #compt.volume = 1e-19
 
-        moose.reinit()
-        moose.start( runtime )
+    moose.reinit()
+    moose.start( runtime )
 
 
-        # Display all plots.
-        for x in moose.wildcardFind( '/model/#graphs/conc#/#' ):
-            t = numpy.arange( 0, x.vector.size, 1 ) * x.dt
-            pylab.plot( t, x.vector, label=x.name )
-        pylab.legend()
-        pylab.show()
+    # Display all plots.
+    for x in moose.wildcardFind( '/model/#graphs/conc#/#' ):
+        t = numpy.arange( 0, x.vector.size, 1 ) * x.dt
+        pylab.plot( t, x.vector, label=x.name )
+    pylab.legend()
+    pylab.show()
 
-        quit()
+    quit()
 
 # Run the 'main' if this script is executed standalone.
 if __name__ == '__main__':
-        main()
+    main()
