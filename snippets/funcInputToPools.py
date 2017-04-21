@@ -16,9 +16,9 @@ import sys
 
 def makeModel():
     if len( sys.argv ) == 1:
-            useGsolve = True
+        useGsolve = True
     else:
-            useGsolve = ( sys.argv[1] == 'True' )
+        useGsolve = ( sys.argv[1] == 'True' )
     # create container for model
     model = moose.Neutral( 'model' )
     compartment = moose.CubeMesh( '/model/compartment' )
@@ -92,11 +92,11 @@ so try to use a table to control a pool instead.
 
 To run in stochastic mode::
 
-	''python funcInputToPools''
+    ''python funcInputToPools''
 
 To run in deterministic mode::
 
-	''python funcInputToPools false''
+    ''python funcInputToPools false''
 
     """
 
@@ -104,15 +104,14 @@ To run in deterministic mode::
     moose.seed()
 
     moose.reinit()
-
-    moose.start( 50.0 ) # Run the model for 100 seconds.
+    moose.start( 50.0 ) # Run the model for 50 seconds.
 
     a = moose.element( '/model/compartment/a' )
     b = moose.element( '/model/compartment/b' )
 
     # Iterate through all plots, dump their contents to data.plot.
     for x in moose.wildcardFind( '/model/graphs/n#' ):
-    	#x.xplot( 'scriptKineticModel.plot', x.name )
+        #x.xplot( 'scriptKineticModel.plot', x.name )
         t = numpy.arange( 0, x.vector.size, 1 ) * x.dt # sec
         pylab.plot( t, x.vector, label=x.name )
     pylab.legend()

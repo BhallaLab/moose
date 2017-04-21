@@ -48,35 +48,40 @@ from moose.chemUtil.add_Delete_ChemicalSolver import *
 def main():
     """
 This example illustrates loading, running of an SBML model defined in XML format.
-The model 00001-sbml-l3v1.xml is taken from l3v1 SBML testcase.
+Default this  file load's 00001-sbml-l3v1.xml which is taken from l3v1 SBML testcase.
 Plots are setup.
 Model is run for 20sec.
 As a general rule we created model under '/path/model' and plots under '/path/graphs'.
-
+If someone wants to load anyother file then 
+    `python loadSbmlmodel filepath runtime`
     """
 
-    mfile = "../genesis/00001-sbml-l3v1.xml"
+    dfilepath = "../genesis/00001-sbml-l3v1.xml"
+    druntime = 20.0
+    msg = ""
     try:
         sys.argv[1]
-    except:
-        pass
+    except IndexError:
+        filepath = dfilepath
+        
     else:
-        mfile = sys.argv[1]
-
+        filepath = sys.argv[1]
+    if not os.path.exists(filepath):
+        msg = "Filename or path does not exist",filepath,"loading default file",dfilepath
+        filepath = dfilepath
+        
     try:
         sys.argv[2]
-    except:
-        runtime = 20.0
+    except :
+        runtime = druntime
     else:
         runtime = float(sys.argv[2])
-
+    sbmlId = moose.element('/')
     # Loading the sbml file into MOOSE, models are loaded in path/model
-    sbmlId = moose.SBML.readSBML.mooseReadSBML(mfile,'sbml')
-
-    # Loading the sbml file into MOOSE, models are loaded in path/model
-    sbmlId = mooseReadSBML(mfile,'/sbml')
+    sbmlId = mooseReadSBML(filepath,'/sbml')
     if isinstance(sbmlId, (list, tuple)):
-            print(sbmlId)
+        print(sbmlId)
+
     elif sbmlId.path != '/':
 
         s1 = moose.element('/sbml/model/compartment/S1')
@@ -97,8 +102,8 @@ As a general rule we created model under '/path/model' and plots under '/path/gr
         # Reset and Run
         moose.reinit()
         moose.start(runtime)
-        return sbmlId,True
-    return sbmlId,False
+        return sbmlId,True,msg
+    return sbmlId,False,msg 
 
 def displayPlots():
     # Display all plots.
@@ -112,6 +117,13 @@ def displayPlots():
     quit()
 
 if __name__=='__main__':
-    modelPath, modelpathexist = main()
+    modelPath = moose.element('/')
+    modelpathexist = False
+    msg = "" 
+    modelPath, modelpathexist,msg = main()
+    if msg:
+        print (msg)
     if modelpathexist == True:
         displayPlots()
+
+    

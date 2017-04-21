@@ -13,6 +13,7 @@ import moose
 
 dt = 0.01
 runtime = 100
+
 def make_model():
     sinePeriod = 50
     maxFiringRate = 10
