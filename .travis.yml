@@ -11,13 +11,13 @@ matrix:
 branches:
     only:
         - master
+        - chamcham
 notifications:
     email:
         recipients:
             - dilawar.s.rajput@gmail.com
             - bhalla@ncbs.res.in
             - hrani@ncbs.res.in
-            - ray.subhasis@gmail.com
 
         on_success: change
         on_failure: always
