@@ -27,10 +27,15 @@ if( (NOT MOOSE_VERSION) AND GIT_EXEC)
         OUTPUT_VARIABLE MOOSE_VERSION
         OUTPUT_STRIP_TRAILING_WHITESPACE
         )
+    message(STATUS "+ Writing ${MOOSE_VERSION} to ${VERSION_FILE}" )
+    file(WRITE ${VERSION_FILE} ${MOOSE_VERSION})
+elseif( (NOT MOOSE_VERSION) AND (NOT GIT_EXEC) )
+    message(STATUS "+ Reading ${VERSION_FILE}" )
+    file(READ ${VERSION_FILE} GIT_VERSION_OUTPUT )
 elseif(MOOSE_VERSION)
     message(STATUS "+ Using user specified VERSION = ${MOOSE_VERSION}" )
     file(WRITE ${VERSION_FILE} ${MOOSE_VERSION})
-else( )
+else()
     message(FATAL_ERROR "Could not determine MOOSE_VERSION" )
 endif( )
 
@@ -214,6 +219,7 @@ if(HDF5_FOUND)
             )
         set(HDF5_LIBRARIES ${HDF5_CXX_LIBRARIES} ${HDF5_HL_LIBRARIES})
     endif()
+
     
     # Make sure, HDF5_HL_LIBRARIES are set. The COMPONENTS in find_package may
     # or may not work. See BhallaLab/moose-core#163. 
@@ -299,15 +305,9 @@ if(WITH_MPI)
     endif()
 endif(WITH_MPI)
 
-pkg_check_modules(MUPARSER muparser)
-if(MUPARSER_FOUND)
-    message(STATUS "Using system muparser ${MUPARSER_VERSION}")
-    list(APPEND SYSTEM_SHARED_LIBS ${MUPARSER_LIBRARIES})
-else()
-    message(STATUS "Using private muparser")
-    add_subdirectory(external/muparser)
-    list(APPEND MOOSE_LIBRARIES muparser)
-endif()
+# Always use private version of muparser. We have some custom edits.
+add_subdirectory(external/muparser)
+list(APPEND MOOSE_LIBRARIES muparser)
 
 # Add subdirectroeis
 add_subdirectory(basecode)
