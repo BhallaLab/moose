@@ -195,7 +195,7 @@ def displayPlots():
     comptDistance = dict( list(zip( neuron.compartments, neuron.pathDistanceFromSoma ) ))
     for i in moose.wildcardFind( '/library/#[ISA=ChanBase]' ):
         chans = moose.wildcardFind( '/model/elec/#/' + i.name )
-        print (i.name, len( chans ))
+        print ( i.name, len( chans ) )
         p = [ 1e6*comptDistance.get( j.parent, 0) for j in chans ]
         Gbar = [ j.Gbar/(j.parent.length * j.parent.diameter * PI) for j in chans ]
         if len( p ) > 2:

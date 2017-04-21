@@ -1,52 +1,44 @@
-# compartment_net.py --- 
-# 
+# compartment_net.py ---
+#
 # Filename: compartment_net.py
-# Description: 
-# Author:Subhasis Ray 
-# Maintainer: 
+# Description:
+# Author:Subhasis Ray
+# Maintainer:
 # Created: Sat Aug 11 14:30:21 2012 (+0530)
-# Version: 
+# Version:
 # Last-Updated: Sun Aug 12 15:45:38 2012 (+0530)
 #           By: subha
 #     Update #: 521
-# URL: 
-# Keywords: 
-# Compatibility: 
-# 
-# 
-
-# Commentary: 
-# 
-# A demo to create a network of single compartmental neurons connected
-# via alpha synapses.
-# 
-# 
+# URL:
+# Keywords:
+# Compatibility:
+#
+#
 
 # Change log:
-# 
-# 
-# 
-# 
+#
+#
+#
+#
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
 # published by the Free Software Foundation; either version 3, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program; see the file COPYING.  If not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 # Floor, Boston, MA 02110-1301, USA.
-# 
-# 
+#
+#
 
 # Code:
-"""This script demonstrates the use of SynChan class to create a
-network of single-compartment neurons connected by synapse."""
+
 import sys
 sys.path.append('../../python')
 import os
@@ -56,7 +48,7 @@ import matplotlib.pyplot as plt
 
 import moose
 from ionchannel import create_1comp_neuron
-    
+
 def create_population(container, size):
     """Create a population of `size` single compartmental neurons with Na+
     and K+ channels. Also create SpikeGen objects and SynChan objects
@@ -95,13 +87,13 @@ def make_synapses(spikegen, synhandler, connprob=1.0, delay=5e-3):
 
     synhandler : vec of SynHandler elements
         Handles presynaptic spike event inputs to synchans.
-    
+
     connprob: float in range (0, 1]
         connection probability between any two neurons
 
     delay: float
         mean delay of synaptic transmission. Individual delays are
-        normally distributed with sd=0.1*mean.  
+        normally distributed with sd=0.1*mean.
     """
     for sh in synhandler:
         scount = len(spikegen)
@@ -110,10 +102,12 @@ def make_synapses(spikegen, synhandler, connprob=1.0, delay=5e-3):
         for ii, syn in enumerate(sh.synapse):
             msg = moose.connect(spikegen[ii], 'spikeOut', syn, 'addSpike')
             print(('Connected', spikegen[ii].path, 'to', syn.path, 'on', sh.path))
-            
+
 def create_network(size=2):
-    """Create a network containing two neuronal populations, pop_A and
-    pop_B and connect them up"""
+    """
+    Create a network containing two neuronal populations, pop_A and
+    pop_B and connect them up.
+    """
     net = moose.Neutral('network')
     pop_a = create_population(moose.Neutral('/network/pop_A'), size)
     print(pop_a)
@@ -141,7 +135,12 @@ def create_network(size=2):
             'Gsyn_B': gksyn_b
         }
 
-if __name__ == '__main__':
+def main():
+    """
+    This example illustrates how to create a network of single compartmental neurons
+    connected via alpha synapses. It also shows the use of SynChan class to create a
+    network of single-compartment neurons connected by synapse.
+    """
     simtime = 0.1
     simdt = 0.25e-5
     plotdt = 0.25e-3
@@ -168,7 +167,10 @@ if __name__ == '__main__':
         plt.plot(oid.vector, label=oid.path)
     plt.legend()
     plt.show()
-    
 
-# 
+
+if __name__ == '__main__':
+    main()
+
+#
 # compartment_net.py ends here

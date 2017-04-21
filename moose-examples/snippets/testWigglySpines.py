@@ -1,15 +1,3 @@
-##################################################################
-## This program is part of 'MOOSE', the
-## Messaging Object Oriented Simulation Environment.
-##           Copyright (C) 2015 Upinder S. Bhalla. and NCBS
-## It is made available under the terms of the
-## GNU Lesser General Public License version 2.1
-## See the file COPYING.LIB for the full notice.
-##
-## testRdesigneur.py: Builds a spiny compartment and populates it with
-## a molecule that diffuses.
-##################################################################
-
 from __future__ import print_function
 
 import math
@@ -108,10 +96,11 @@ def assertEq( a, b ):
 
 def main():
     """
-    This illustrates the use of rdesigneur to build a simple dendrite with
-    spines, and then to resize them using spine fields. These are the 
-    fields that would be changed dynamically in a simulation with reactions
-    that affect spine geometry.
+This illustrates the use of rdesigneur to build a simple dendrite with
+spines, and then to resize them using spine fields. These are the
+fields that would be changed dynamically in a simulation with reactions
+that affect spine geometry.
+
     """
     makeModel()
     elec = moose.element( '/model/elec' )
