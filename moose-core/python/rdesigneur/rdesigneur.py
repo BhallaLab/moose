@@ -80,6 +80,7 @@ class rdesigneur:
             useGssa = True,
             combineSegments = True,
             stealCellFromLibrary = False,
+            verbose = True,
             diffusionLength= 2e-6,
             meshLambda = -1.0,    #This is a backward compatibility hack
             temperature = 32,
@@ -111,6 +112,7 @@ class rdesigneur:
         self.useGssa = useGssa
         self.combineSegments = combineSegments
         self.stealCellFromLibrary = stealCellFromLibrary
+        self.verbose = verbose
         self.diffusionLength= diffusionLength
         if meshLambda > 0.0:
             print("Warning: meshLambda argument is deprecated. Please use 'diffusionLength' instead.\nFor now rdesigneur will accept this argument.")
@@ -201,7 +203,8 @@ class rdesigneur:
             self._buildMoogli()
             self._buildStims()
             self._configureClocks()
-            self._printModelStats()
+            if self.verbose:
+                self._printModelStats()
             self._savePlots()
 
         except BuildError as msg:
@@ -315,7 +318,8 @@ class rdesigneur:
                 return True
             if moose.exists( '/library/' + protoVec[0] ):
                 #moose.copy('/library/' + protoVec[0], '/library/', protoVec[1])
-                print('renaming /library/' + protoVec[0] + ' to ' + protoVec[1])
+                if self.verbose:
+                    print('renaming /library/' + protoVec[0] + ' to ' + protoVec[1])
                 moose.element( '/library/' + protoVec[0]).name = protoVec[1]
                 #moose.le( '/library' )
                 return True
@@ -596,6 +600,7 @@ class rdesigneur:
     def _buildMoogli( self ):
         knownFields = {
             'Vm':('CompartmentBase', 'getVm', 1000, 'Memb. Potential (mV)', -80.0, 40.0 ),
+            'initVm':('CompartmentBase', 'getInitVm', 1000, 'Init. Memb. Potl (mV)', -80.0, 40.0 ),
             'Im':('CompartmentBase', 'getIm', 1e9, 'Memb. current (nA)', -10.0, 10.0 ),
             'inject':('CompartmentBase', 'getInject', 1e9, 'inject current (nA)', -10.0, 10.0 ),
             'Gbar':('ChanBase', 'getGbar', 1e9, 'chan max conductance (nS)', 0.0, 1.0 ),

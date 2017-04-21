@@ -66,11 +66,12 @@ def mooseReadSBML(filepath, loadpath, solver="ee"):
             '\n\t easy_install python-libsbml'
             '\n\t apt-get install python-libsbml'
             )
-        return None
+        return moose.element('/')
 
     if not os.path.isfile(filepath):
         print('%s is not found ' % filepath)
-        return None
+        return moose.element('/')
+
 
     with open(filepath, "r") as filep:
         filep = open(filepath, "r")

@@ -23,6 +23,7 @@ static const double MinRadius = 0.04;
 
 ReadSwc::ReadSwc( const string& fname )
 {
+	bool verbose = false;
 	ifstream fin( fname.c_str() );
 	if ( !fin ) {
 		cerr << "ReadSwc:: could not open file " << fname << endl;
@@ -52,12 +53,13 @@ ReadSwc::ReadSwc( const string& fname )
 		cleanZeroLength();
 		parseBranches();
 	}
-	cout << "ReadSwc: " << fname << "	: NumSegs = " << segs_.size() << 
+	cout << "ReadSwc: " << fname << "	: " << (valid ? "OK" : "FAILED" )<<
+			", # Branches = " << branches_.size() << 
+			". # Segs = " << segs_.size() << 
 			", bad = " << badSegs <<
-			", Validated = " << valid << 
-			", numBranches = " << branches_.size() << 
 			endl;
-	diagnostics();
+	if ( verbose )
+		diagnostics();
 }
 
 bool ReadSwc::validate() const
