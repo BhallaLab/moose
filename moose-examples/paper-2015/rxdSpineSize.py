@@ -3,8 +3,10 @@ import pylab
 import numpy
 import matplotlib.pyplot as plt
 import moose
+
 import sys
 sys.path.append( '../util' )
+
 import rdesigneur as rd
 from PyQt4 import QtGui
 import moogli
@@ -117,13 +119,14 @@ def displayPlots():
 
 def main():
     """
-This illustrates the use of rdesigneur to build a simple dendrite with
-spines, and then to resize them using spine fields. These are the
-fields that would be changed dynamically in a simulation with reactions
-that affect spine geometry.
-In this simulation there is a propagating reaction wave using a
-highly abstracted equation, whose product diffuses into the spines and
-makes them bigger.
+    This illustrates the use of rdesigneur to build a simple dendrite with
+    spines, and then to resize them using spine fields. These are the
+    fields that would be changed dynamically in a simulation with reactions
+    that affect spine geometry.
+    In this simulation there is a propagating reaction wave using a
+    highly abstracted equation, whose product diffuses into the spines and
+    makes them bigger.
+    """
 
     eHead = moose.wildcardFind( '/model/elec/#head#' )
     oldDia = [ i.diameter for i in eHead ]
