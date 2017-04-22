@@ -2,9 +2,11 @@ language: cpp
 compiler:
     - gcc
     - clang
+
 os:
     - linux
     - osx
+
 matrix:
     allow_failures:
         - os: osx
@@ -12,6 +14,7 @@ branches:
     only:
         - master
         - chamcham
+
 notifications:
     email:
         recipients:
@@ -24,6 +27,7 @@ notifications:
 
 env:
     - CTEST_MODEL=Nightly
+
 cache: apt
 before_script:
     - sudo apt-get update -qq
