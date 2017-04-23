@@ -1,5 +1,6 @@
-moose (3.2.git) unstable; urgency=low
+moose (3.1.2) unstable; urgency=low
 
-  * This is for testing on travis.
+  * Bugfixes over 3.1.1
+  * Enhanced rdesigneur interface.
 
  -- Dilawar <dilawars@ncbs.res.in>  Sat, 22 Apr 2017 13:41:58 +0530
