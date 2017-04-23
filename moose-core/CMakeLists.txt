@@ -28,24 +28,20 @@ if( (NOT MOOSE_VERSION) AND GIT_EXEC)
         OUTPUT_STRIP_TRAILING_WHITESPACE
         )
     message(STATUS "+ Writing ${MOOSE_VERSION} to ${VERSION_FILE}" )
-    file(WRITE ${VERSION_FILE} ${MOOSE_VERSION})
 elseif( (NOT MOOSE_VERSION) AND (NOT GIT_EXEC) )
     message(STATUS "+ Reading ${VERSION_FILE}" )
-    if(EXISTS ${VERSION_FILE} )
-        file(READ ${VERSION_FILE} MOOSE_VERSION )
-    else()
-        string(TIMESTAMP MOOSE_VERSION "nightly-%Y%m%d" )
-        set(GIT_VERSION_OUTPUT "nightly" )
-    endif( )
+    string(TIMESTAMP MOOSE_VERSION "nightly-%Y%m%d" )
+    set(GIT_VERSION_OUTPUT "nightly" )
 elseif(MOOSE_VERSION)
     message(STATUS "+ Using user specified VERSION = ${MOOSE_VERSION}" )
-    file(WRITE ${VERSION_FILE} ${MOOSE_VERSION})
 else()
     message(FATAL_ERROR "Could not determine MOOSE_VERSION" )
 endif( )
-
 add_definitions( -DMOOSE_VERSION="${MOOSE_VERSION}")
 message( STATUS "MOOSE Version ${MOOSE_VERSION}" )
+
+# Write VERSION to a file VERSION so that setup.py can use it.
+file(WRITE ${VERSION_FILE} ${MOOSE_VERSION} )
 
 # This snippet is from LLVM project.
 # Sanity check our source directory to make sure that we are not trying to
