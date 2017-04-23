@@ -86,7 +86,7 @@ install(DIRECTORY ${MOOSE_EXAMPLE_DIR}/
     )
 
 # Copy the command to launch moose.
-file(COPY ${CMAKE_SOURCE_DIR}/moose DESTINATION ${CMAKE_BINARY_DIR})
+configure_file(${CMAKE_SOURCE_DIR}/cmake/moose.in ${CMAKE_BINARY_DIR}/moose)
 
 install(PROGRAMS ${CMAKE_BINARY_DIR}/moose DESTINATION bin)
 
