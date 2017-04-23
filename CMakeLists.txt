@@ -1,7 +1,7 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
 PROJECT(MOOSE)
-set(MOOSE_VERSION "3.1.2")
+set(MOOSE_VERSION "3.1.1")
 
 # Options to pass down to moose-core
 option(WITH_DOC "Build documentation" OFF)
@@ -32,7 +32,7 @@ file(MAKE_DIRECTORY ${PYMOOSE_BUILD_DIR})
 # different platform.
 set(OUTPUT_MOOSEBIN ${PYMOOSE_BUILD_DIR}/moose.bin)
 
-configure_file( ${CMAKE_SOURCE_DIR}/build_moose-core.sh.in 
+configure_file( ${CMAKE_SOURCE_DIR}/cmake/build_moose-core.sh.in 
     ${CMAKE_BINARY_DIR}/build_moose-core.sh )
 
 # Build pymoose module.
@@ -85,7 +85,9 @@ install(DIRECTORY ${MOOSE_EXAMPLE_DIR}/
     PATTERN "*.pyc" EXCLUDE
     )
 
-configure_file( ${CMAKE_SOURCE_DIR}/cmake/moose.in ${CMAKE_BINARY_DIR}/moose )
+# Copy the command to launch moose.
+file(COPY ${CMAKE_SOURCE_DIR}/moose DESTINATION ${CMAKE_BINARY_DIR})
+
 install(PROGRAMS ${CMAKE_BINARY_DIR}/moose DESTINATION bin)
 
 ## UNINSTALL
