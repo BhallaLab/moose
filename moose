@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-SCRIPT_DIR="$(dirname "${BASH_SOURCE[0]}")"
-(
-    # Get the current path of script.
-    cd $SCRIPT_DIR/../lib/moose/gui && python mgui.py & 
-)

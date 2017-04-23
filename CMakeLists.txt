@@ -83,6 +83,8 @@ install(DIRECTORY ${MOOSE_EXAMPLE_DIR}/
     PATTERN "_travis*" EXCLUDE
     PATTERN ".travis*" EXCLUDE
     PATTERN "*.pyc" EXCLUDE
+    PATTERN "*.png" EXCLUDE
+    PATTERN "docs*" EXCLUDE
     )
 
 # Copy the command to launch moose.
