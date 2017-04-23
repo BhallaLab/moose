@@ -1,7 +1,7 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
 PROJECT(MOOSE)
-set(MOOSE_VERSION "3.1.1")
+set(MOOSE_VERSION "3.1.2")
 
 # Options to pass down to moose-core
 option(WITH_DOC "Build documentation" OFF)
