@@ -11,9 +11,11 @@ endif(COMMAND cmake_policy)
 
 project(MOOSE)
 
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules")
 include(CheckCXXCompiler.cmake)
 include(CheckIncludeFileCXX)
 include(FindPkgConfig)
+include(GetRevision)
 
 # If from command line, version info is not passed, use the git to generate a
 # version file. If GIT fails, use the previous known version.
@@ -27,16 +29,18 @@ if( (NOT MOOSE_VERSION) AND GIT_EXEC)
         OUTPUT_VARIABLE MOOSE_VERSION
         OUTPUT_STRIP_TRAILING_WHITESPACE
         )
-    message(STATUS "+ Writing ${MOOSE_VERSION} to ${VERSION_FILE}" )
-elseif( (NOT MOOSE_VERSION) AND (NOT GIT_EXEC) )
-    message(STATUS "+ Reading ${VERSION_FILE}" )
-    string(TIMESTAMP MOOSE_VERSION "nightly-%Y%m%d" )
-    set(GIT_VERSION_OUTPUT "nightly" )
+endif( )
+
+# Default to current date.
+if( (NOT MOOSE_VERSION)  )
+    NOW(TIMESTAMP)
+    set(MOOSE_VERSION "nightly-${TIMESTAMP}" )
 elseif(MOOSE_VERSION)
     message(STATUS "+ Using user specified VERSION = ${MOOSE_VERSION}" )
 else()
     message(FATAL_ERROR "Could not determine MOOSE_VERSION" )
 endif( )
+
 add_definitions( -DMOOSE_VERSION="${MOOSE_VERSION}")
 message( STATUS "MOOSE Version ${MOOSE_VERSION}" )
 
@@ -99,9 +103,6 @@ option(WITH_MPI  "Enable Openmpi support" OFF)
 option(WITH_BOOST "Use boost library instead of GSL" OFF)
 option(WITH_GSL  "Use gsl-library. Alternative is WITH_BOOST" ON)
 
-################################# CMKAE MACROS #################################
-
-set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules")
 
 ############################ BUILD CONFIGURATION #################################
 
