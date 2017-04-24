@@ -1,5 +1,5 @@
 set(CMAKE_LEGACY_CYGWIN_WIN32 0)
-cmake_minimum_required(VERSION 2.6.0 FATAL_ERROR)
+cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 
 if(COMMAND cmake_policy)
     cmake_policy(SET CMP0003 NEW)
@@ -27,11 +27,9 @@ if( (NOT MOOSE_VERSION) AND GIT_EXEC)
         OUTPUT_VARIABLE MOOSE_VERSION
         OUTPUT_STRIP_TRAILING_WHITESPACE
         )
-    message(STATUS "+ Writing ${MOOSE_VERSION} to ${VERSION_FILE}" )
 elseif( (NOT MOOSE_VERSION) AND (NOT GIT_EXEC) )
-    message(STATUS "+ Reading ${VERSION_FILE}" )
-    string(TIMESTAMP MOOSE_VERSION "nightly-%Y%m%d" )
-    set(GIT_VERSION_OUTPUT "nightly" )
+    NOW(TIMESTAMP)
+    set(MOOSE_VERSION "nightly-${TIMESTAMP}" )
 elseif(MOOSE_VERSION)
     message(STATUS "+ Using user specified VERSION = ${MOOSE_VERSION}" )
 else()
@@ -41,6 +39,7 @@ add_definitions( -DMOOSE_VERSION="${MOOSE_VERSION}")
 message( STATUS "MOOSE Version ${MOOSE_VERSION}" )
 
 # Write VERSION to a file VERSION so that setup.py can use it.
+message(STATUS "+ Writing ${MOOSE_VERSION} to ${VERSION_FILE}" )
 file(WRITE ${VERSION_FILE} ${MOOSE_VERSION} )
 
 # This snippet is from LLVM project.
