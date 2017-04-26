@@ -1,5 +1,7 @@
 from __future__ import print_function
 
+from __future__ import print_function
+
 import math
 import pylab
 import numpy
