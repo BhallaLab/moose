@@ -179,11 +179,6 @@ double ZombiePool::vGetVolume( const Eref& e ) const
 	return lookupVolumeFromMesh( e );
 }
 
-bool ZombiePool::vGetIsBuffered( const Eref& e ) const
-{
-	return false;
-}
-
 //////////////////////////////////////////////////////////////
 // Zombie conversion functions.
 //////////////////////////////////////////////////////////////

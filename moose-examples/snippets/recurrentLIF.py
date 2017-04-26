@@ -67,10 +67,11 @@ def make_network():
         stats.vec.windowLength = 1 # timesteps to put together.
         plots = moose.Table( '/plot', numStats )
         convergence = size / numStats
-        for i in range( numStats ):
-            for j in range( size/numStats ):
-                k = i * convergence + j
+        for i in range( int(numStats) ):
+            for j in range( int(size/numStats) ):
+                k = int(i * convergence + j)
                 moose.connect( network.vec[k], 'spikeOut', stats.vec[i], 'addSpike' )
+
         moose.connect( plots, 'requestOut', stats, 'getMean', 'OneToOne' )
 
         #moose.useClock( 0, '/network/syns,/network', 'process' )

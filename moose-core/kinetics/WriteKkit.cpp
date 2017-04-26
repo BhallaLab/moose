@@ -25,13 +25,13 @@
 #include <set>
 
 
-void writeHeader( ofstream& fout, 
+void writeHeader( ofstream& fout,
 		double simdt, double plotdt, double maxtime, double defaultVol)
 {
 	time_t rawtime;
 	time( &rawtime );
 
-	fout << 
+	fout <<
 	"//genesis\n"
 	"// kkit Version 11 flat dumpfile\n\n";
 	fout << "// Saved on " << ctime( &rawtime ) << endl;
@@ -48,7 +48,7 @@ void writeHeader( ofstream& fout,
 	"setfield /file/modpath value ~/scripts/modules\n"
 	"kparms\n\n";
 
-	fout << 
+	fout <<
 	"initdump -version 3 -ignoreorphans 1\n"
 	"simobjdump table input output alloced step_mode stepsize x y z\n"
 	"simobjdump xtree path script namemode sizescale\n"
@@ -77,7 +77,7 @@ void writeHeader( ofstream& fout,
 }
 
 string trimPath(Id id, Id  comptid)
-{	
+{
 	string msgpath = Field <string> :: get(id,"path");
 	ObjId compartment(msgpath);
 	string path1;
@@ -95,7 +95,7 @@ string trimPath(Id id, Id  comptid)
 		else
 			{
 				path1 = msgpath;
-				
+
 			}
 	}
 	else
@@ -130,9 +130,9 @@ void writeEnz( ofstream& fout, Id id,
 			 	double x, double y, Id comptid )
 {
 	string path = id.path();
-	string comptname = Field < string > :: get(comptid,"name"); 
+	string comptname = Field < string > :: get(comptid,"name");
 	string poolpath = trimPath(id,comptid);
-	
+
 
 	double k1 = 0;
 	double k2 = 0;
@@ -143,7 +143,7 @@ void writeEnz( ofstream& fout, Id id,
 	double conc = 0;
 	Id enzMol = getEnzMol( id );
 	assert( enzMol != Id() );
-	double vol = Field< double >::get( enzMol, "volume" ) * NA * 1e-3; 
+	double vol = Field< double >::get( enzMol, "volume" ) * NA * 1e-3;
 	unsigned int isMichaelisMenten = 0;
 	string enzClass = Field < string > :: get(id,"className");
 	if (enzClass == "ZombieMMenz" or enzClass == "MMenz")
@@ -164,9 +164,9 @@ void writeEnz( ofstream& fout, Id id,
 		concInit = Field< double >::get( cplx, "concInit" );
 		conc = Field< double >::get( cplx, "conc" );
 	}
-	fout << "simundump kenz /kinetics" << poolpath << " 0 " << 
+	fout << "simundump kenz /kinetics" << poolpath << " 0 " <<
 			concInit << " " <<
-			conc << " " << 
+			conc << " " <<
 			nInit << " " <<
 			n << " " <<
 			vol << " " <<
@@ -175,8 +175,8 @@ void writeEnz( ofstream& fout, Id id,
 			k3 << " " <<
 			0 << " " <<
 			isMichaelisMenten << " " <<
-			"\"\"" << " " << 
-			colour << " " << textcolour << " \"\"" << 
+			"\"\"" << " " <<
+			colour << " " << textcolour << " \"\"" <<
 			" " << x << " " << y << " 0\n";
 }
 
@@ -188,21 +188,21 @@ void writeReac( ofstream& fout, Id id,
 	string reacname = Field<string> :: get(id, "name");
 	double kf = Field< double >::get( id, "numKf" );
 	double kb = Field< double >::get( id, "numKb" );
-	
-	unsigned int numSub = 
+
+	unsigned int numSub =
 			Field< unsigned int >::get( id, "numSubstrates" );
-	unsigned int numPrd = 
+	unsigned int numPrd =
 			Field< unsigned int >::get( id, "numProducts" );
-	fout << "simundump kreac /kinetics" << trimPath(id,comptid) << " 0 " << 
-			kf << " " << kb << " \"\" " << 
+	fout << "simundump kreac /kinetics" << trimPath(id,comptid) << " 0 " <<
+			kf << " " << kb << " \"\" " <<
 			colour << " " << textcolour << " " << x << " " << y << " 0\n";
 }
 
 unsigned int getSlaveEnable( Id id )
 {
-	static const Finfo* setNinitFinfo = 
+	static const Finfo* setNinitFinfo =
 			PoolBase::initCinfo()->findFinfo( "set_nInit" );
-	static const Finfo* setConcInitFinfo = 
+	static const Finfo* setConcInitFinfo =
 			PoolBase::initCinfo()->findFinfo( "set_concInit" );
 	unsigned int ret = 0;
 	vector< Id > src;
@@ -219,7 +219,7 @@ unsigned int getSlaveEnable( Id id )
 			return 4; // Just simple buffered molecule
 	if ( src[0].element()->cinfo()->isA( "StimulusTable" ) )
 			return ret; // Following a table, this is fine.
-	
+
 	// Fallback: I have no idea what sent it the input, assume it is legit.
 	return ret;
 }
@@ -243,7 +243,7 @@ void writePool( ofstream& fout, Id id,
 	{	vector< Id > children = Field< vector< Id > >::get( id, "children" );
 		if (children.size() == 0)
 			slave_enable = 4;
-		for ( vector< Id >::iterator i = children.begin(); i != children.end(); ++i ) 
+		for ( vector< Id >::iterator i = children.begin(); i != children.end(); ++i )
 		{	string funcpath = Field <string> :: get(*i,"path");
 		  	string clsname = Field <string> :: get(*i,"className");
 		  	if (clsname == "Function" or clsname == "ZombieFunction")
@@ -252,13 +252,13 @@ void writePool( ofstream& fout, Id id,
 		  		slave_enable = 4;
 
 		}
-	}	
+	}
 	if (comptIndex > 0)
 		geometryTemp << "/geometry[" << comptIndex <<"]";
 	else
 		geometryTemp << "/geometry";
 
-	// simobjdump kpool DiffConst CoInit Co n nInit mwt nMin vol slave_enable 
+	// simobjdump kpool DiffConst CoInit Co n nInit mwt nMin vol slave_enable
 
 	fout << "simundump kpool /kinetics" << trimPath(id,comptid) << " 0 " <<
 			diffConst << " " <<
@@ -270,21 +270,21 @@ void writePool( ofstream& fout, Id id,
 			volume * NA * 1e-3 << " " << // volscale
 			slave_enable << //GENESIS FIELD HERE.
 			" /kinetics"<< geometryTemp.str() << " " <<
-			colour << " " << textcolour << " " << x << " " << y << " 0\n"; 
+			colour << " " << textcolour << " " << x << " " << y << " 0\n";
 }
 void writePlot( ofstream& fout, Id id,
 				string colour, string textcolour,
 			 	double x, double y )
-{	
+{
 	string path = id.path();
 	size_t pos = path.find( "/graphs" );
-	if ( pos == string::npos ) 
+	if ( pos == string::npos )
 		pos = path.find( "/moregraphs" );
-		if ( pos == string::npos ) 
+		if ( pos == string::npos )
 			return;
 	path = path.substr( pos );
-	fout << "simundump xplot " << path << " 3 524288 \\\n" << 
-	"\"delete_plot.w <s> <d>; edit_plot.D <w>\" " << textcolour << " 0 0 1\n";	
+	fout << "simundump xplot " << path << " 3 524288 \\\n" <<
+	"\"delete_plot.w <s> <d>; edit_plot.D <w>\" " << textcolour << " 0 0 1\n";
 }
 
 void writeGui( ofstream& fout )
@@ -313,7 +313,7 @@ void storeMMenzMsgs( Id enz, vector< string >& msgs, Id comptid )
 
 	vector < Id > srct = LookupField <string,vector < Id> >::get(enz, "neighbors","sub");
 	for (vector <Id> :: iterator rsub = srct.begin();rsub != srct.end();rsub++)
-	{	
+	{
 		string s = "addmsg /kinetics" + trimPath(*rsub, comptid) + " /kinetics" + trimPath(enz, comptid) + " SUBSTRATE n";
 		msgs.push_back( s );
 		s = "addmsg /kinetics" + trimPath(enz, comptid) + " /kinetics" + trimPath( *rsub, comptid ) + 	" REAC sA B";
@@ -340,7 +340,7 @@ void storeCplxEnzMsgs( Id enz, vector< string >& msgs, Id comptid )
 
 	vector < Id > srct = LookupField <string,vector < Id> >::get(enz, "neighbors","sub");
 	for (vector <Id> :: iterator rsub = srct.begin();rsub != srct.end();rsub++)
-	{	
+	{
 		string s = "addmsg /kinetics" + trimPath(*rsub, comptid) + " /kinetics" + trimPath(enz, comptid) + " SUBSTRATE n";
 		msgs.push_back( s );
 		s = "addmsg /kinetics" + trimPath(enz, comptid) + " /kinetics" + trimPath( *rsub, comptid ) + 	" REAC sA B";
@@ -372,7 +372,7 @@ void storeEnzMsgs( Id enz, vector< string >& msgs, Id comptid )
 }
 
 void storeReacMsgs( Id reac, vector< string >& msgs, Id comptid )
-{	
+{
 	vector < Id > srct = LookupField <string,vector < Id> >::get(reac, "neighbors","sub");
 	for (vector <Id> :: iterator rsub = srct.begin();rsub != srct.end();rsub++)
 	{	string s = "addmsg /kinetics" + trimPath(*rsub, comptid) + " /kinetics" + trimPath(reac, comptid) + " SUBSTRATE n";
@@ -401,7 +401,7 @@ void storeFunctionMsgs( Id func, vector< string >& msgs,map < double, pair<Id, i
 	string poolParent = Field <string> :: get(compt_vol[poolvol].first,"name");
 	Id xi(func.value()+1);
 	vector < Id > func_input = LookupField <string,vector < Id> >::get(xi, "neighbors","input");
-	
+
 	for (vector <Id> :: iterator funcIp = func_input.begin();funcIp != func_input.end();funcIp++)
 	{	string funcIp_path = Field < string > :: get(*funcIp,"path");
 		double vol = Field < double > :: get(*funcIp,"Volume");
@@ -419,17 +419,17 @@ void storePlotMsgs( Id tab, vector< string >& msgs, Id pool, string bg, Id compt
 	string poolName = Field <string> :: get(pool,"name");
 
 	size_t pos = tabPath.find( "/graphs" );
-	if ( pos == string::npos ) 
+	if ( pos == string::npos )
 		pos = tabPath.find( "/moregraphs" );
 		assert( pos != string::npos );
 	tabPath = tabPath.substr( pos );
-	string s = "addmsg /kinetics" + trimPath( poolPath, comptid) + " " + tabPath + 
+	string s = "addmsg /kinetics" + trimPath( poolPath, comptid) + " " + tabPath +
 	 			" PLOT Co *" + poolName + " *" + bg;
 	msgs.push_back( s );
 }
 
 /**
- * A bunch of heuristics to find good SimTimes to use for kkit. 
+ * A bunch of heuristics to find good SimTimes to use for kkit.
  * Returns runTime.
  */
 double estimateSimTimes( double& simDt, double& plotDt )
@@ -437,9 +437,9 @@ double estimateSimTimes( double& simDt, double& plotDt )
 		double runTime = Field< double >::get( Id( 1 ), "runTime" );
 		if ( runTime <= 0 )
 				runTime = 100.0;
-		vector< double > dts = 
+		vector< double > dts =
 				Field< vector< double> >::get( Id( 1 ), "dts" );
-		
+
 		simDt = dts[11];
 		plotDt = dts[18];
 		cout <<  "estimatesimtimes" << simDt << plotDt;
@@ -456,18 +456,18 @@ double estimateSimTimes( double& simDt, double& plotDt )
 /// Returns an estimate of the default volume used in the model.
 double estimateDefaultVol( Id model )
 {
-		vector< Id > children = 
+		vector< Id > children =
 				Field< vector< Id > >::get( model, "children" );
 		vector< double > vols;
 		double maxVol = 0;
-		for ( vector< Id >::iterator i = children.begin(); 
+		for ( vector< Id >::iterator i = children.begin();
 						i != children.end(); ++i ) {
 				if ( i->element()->cinfo()->isA( "ChemCompt" ) ) {
 						double v = Field< double >::get( *i, "volume" );
 						if ( i->element()->getName() == "kinetics" )
 								return v;
 						vols.push_back( v );
-						if ( maxVol < v ) 
+						if ( maxVol < v )
 								maxVol = v;
 				}
 		}
@@ -482,19 +482,19 @@ void writeMsgs( ofstream& fout, const vector< string >& msgs )
 			fout << *i << endl;
 }
 void writeGroup(ofstream& fout,Id model)
-{ 	
+{
     vector < ObjId> group;
     int x = 10;
     int y = 20;
     int num = wildcardFind( model.path() + "/##[TYPE=Neutral]", group );
     for ( vector< ObjId >::iterator itr = group.begin(); itr != group.end();itr++)
-    {	
+    {
         string path = Field<string>::get(*itr,"path");
         size_t pos = path.find( "/kinetics" );
         if (pos != std::string::npos)
         {
             path = path.substr( pos );
-            fout << "simundump group " << path << " 0 " << 
+            fout << "simundump group " << path << " 0 " <<
                 "blue" << " " << "green"	 << " x 0 0 \"\" defaultfile \\\n";
             fout << "  defaultfile.g 0 0 0 " << x << " " << y << " 0\n";
         }
@@ -514,17 +514,17 @@ void writeKkit( Id model, const string& fname )
 		string fg = "black";
 		double x = 0;
 		double y = 0;
-			
+
 		map < double, pair<Id, int> > compt_vol;
-		
+
 		unsigned int num = wildcardFind( model.path() + "/##[ISA=ChemCompt]", chemCompt );
 		if ( num == 0 ) {
-			cout << "Warning: writeKkit:: No model found on " << model << 
+			cout << "Warning: writeKkit:: No model found on " << model <<
 					endl;
 			return;
 		}
 		for ( vector< ObjId >::iterator itr = chemCompt.begin(); itr != chemCompt.end();itr++)
-		{	
+		{
 			vector < unsigned int>dims;
       		unsigned int dims_size;
       		dims_size = 1;
@@ -533,7 +533,7 @@ void writeKkit( Id model, const string& fname )
       		string comptname = Field<string>::get(*itr,"name");
       		if (comptname != "kinetics")
       		{
-      			fout << "simundump group /kinetics/" << comptname << " 0 " << 
+      			fout << "simundump group /kinetics/" << comptname << " 0 " <<
 			"blue" << " " << "green"	 << " x 0 0 \"\" defaultfile \\\n";
 				fout << "  defaultfile.g 0 0 0 " << rand() % 10 + 1 << " " << rand() % 10 + 1 << " 0\n";
       		}
@@ -544,8 +544,8 @@ void writeKkit( Id model, const string& fname )
       		if (vecIndex > 0)
 		   		geometry << "simundump geometry /kinetics" <<  "/geometry[" << vecIndex <<"] 0 " << size << " " << ndim << " sphere " <<" \"\" white black 0 0 0\n";
 		   	else
-		  		geometry << "simundump geometry /kinetics"  <<  "/geometry 0 " << size << " " << ndim << " sphere " <<" \"\" white black 0 0 0\n"; 		
-			fout << geometry.str();	
+		  		geometry << "simundump geometry /kinetics"  <<  "/geometry 0 " << size << " " << ndim << " sphere " <<" \"\" white black 0 0 0\n";
+			fout << geometry.str();
 			compt_vol.insert(make_pair(size,make_pair(*itr,vecIndex)));
 		} // compartmentclose
 		writeGroup(fout, model);
@@ -553,7 +553,7 @@ void writeKkit( Id model, const string& fname )
        	for (compt = compt_vol.begin(); compt != compt_vol.end(); compt++)
        	{
         	string comptPath = Field<string>::get(compt->second.first,"path");
-			//  Species 
+			//  Species
 			vector< ObjId > Compt_spe;
 		  	wildcardFind(comptPath+"/##[ISA=PoolBase]",Compt_spe);
 		  	int species_size = 1;
@@ -578,11 +578,11 @@ void writeKkit( Id model, const string& fname )
 			for (vector <ObjId> :: iterator itrF= Compt_Func.begin();itrF != Compt_Func.end();itrF++)
 			{	storeFunctionMsgs( *itrF, msgs,compt_vol);
 			}
-	  		// Reaction 
+	  		// Reaction
 			vector< ObjId > Compt_Reac;
 			wildcardFind(comptPath+"/##[ISA=ReacBase]",Compt_Reac);
 			for (vector <ObjId> :: iterator itrR= Compt_Reac.begin();itrR != Compt_Reac.end();itrR++)
-			{ 	
+			{
 				string path = Field<string> :: get(*itrR,"path");
 				Id annotaId( path+"/info");
 			    string noteClass = Field<string> :: get(annotaId,"className");
@@ -608,7 +608,7 @@ void writeKkit( Id model, const string& fname )
 			    writeEnz( fout, *itrE, bg, fg, x, y, compt->second.first);
 			    storeEnzMsgs( *itrE, msgs, compt->second.first);
 			}// reaction
-			
+
 		} //compatment loop
 	writeGui ( fout);
 
@@ -623,7 +623,7 @@ void writeKkit( Id model, const string& fname )
 		{ 	string path = Field <string> :: get(*tabItem,"path");
 			double vol = Field < double> :: get (*tabItem,"Volume");
 			//Trying to find the compartment name via volume
-			//otherwise if we go via parent, sometimes it might 
+			//otherwise if we go via parent, sometimes it might
 			// get groupname so maped compartment Id and volume
 
 			Id parentId = compt_vol[vol].first;

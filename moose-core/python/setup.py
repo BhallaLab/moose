@@ -33,7 +33,7 @@ from distutils.core import setup
 
 script_dir = os.path.dirname( os.path.abspath( __file__ ) )
 
-version = '3.2.git'
+version = '3.1'
 try:
     with open( os.path.join( script_dir, '..', 'VERSION'), 'r' ) as f:
         version = f.read( )

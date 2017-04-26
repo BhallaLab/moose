@@ -11,7 +11,7 @@ import moogli
 import moogli.extensions.moose
 import matplotlib
 
-PI = 3.141592653
+PI = numpy.pi
 ScalingForTesting = 10
 RM = 1.0 / ScalingForTesting
 RA = 1.0 * ScalingForTesting
@@ -28,7 +28,7 @@ spineSpacing = 10e-6
 spineSpacingDistrib = 1e-6
 spineSize = 1.0
 spineSizeDistrib = 0.5
-spineAngle= numpy.pi / 2.0
+spineAngle= PI / 2.0
 spineAngleDistrib = 0.0
 
 def makeCellProto( name ):

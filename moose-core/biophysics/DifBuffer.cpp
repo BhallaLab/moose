@@ -1,47 +1,47 @@
 // DifBuffer.cpp --- 
-// 
+//
 // Filename: DifBuffer.cpp
-// Description: 
+// Description:
 // Author: Subhasis Ray
-// Maintainer: 
+// Maintainer:
 // Created: Mon Feb 16 12:02:11 2015 (-0500)
-// Version: 
+// Version:
 // Package-Requires: ()
 // Last-Updated: Mon Feb 23 13:07:56 2015 (-0500)
 //           By: Subhasis Ray
 //     Update #: 130
-// URL: 
-// Doc URL: 
-// Keywords: 
-// Compatibility: 
-// 
-// 
+// URL:
+// Doc URL:
+// Keywords:
+// Compatibility:
+//
+//
 
-// Commentary: 
-// 
-// 
-// 
-// 
+// Commentary:
+//
+//
+//
+//
 
 // Change Log:
 // 5/25/16 Completing DifBuffer -- Asia J-Szmek (GMU)
 // 9/21/16 rewrote DifBuffer to account for DifBufferBase (AJS)
-// 
-// 
+//
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or (at
 // your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful, but
 // WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with GNU Emacs.  If not, see <http://www.gnu.org/licenses/>.
-// 
-// 
+//
+//
 
 // Code:
 
@@ -141,7 +141,7 @@ void DifBuffer::vSetBFree(const Eref& e,double value)
   bBound_ = bTot_ - bFree_;
   prevFree_= bFree_;
   prevBound_ = bBound_;
-  
+
 }
 
 double DifBuffer::vGetBBound(const Eref& e) const
@@ -219,7 +219,7 @@ double DifBuffer::vGetD(const Eref& e) const
 
 void DifBuffer::vSetD(const Eref& e,double value)
 {
-  
+
   if ( value  < 0.0 ) {
     cerr << " Error: DifBuffer: Diffusion constant, D, cannot be negative!\n";
     return;
@@ -248,7 +248,7 @@ void DifBuffer::vSetLength(const Eref& e, double length )
     cerr << "Error: DifBuffer: length cannot be negative!\n";
     return;
   }
-	
+
   length_ = length;
 }
 
@@ -263,7 +263,7 @@ void DifBuffer::vSetDiameter(const Eref& e, double diameter )
     cerr << "Error: DifBuffer: diameter cannot be negative!\n";
     return;
   }
-	
+
   diameter_ = diameter;
 }
 
@@ -278,7 +278,7 @@ void DifBuffer::vSetThickness( const Eref& e, double thickness )
     cerr << "Error: DifBuffer: thickness cannot be negative!\n";
     return;
   }
-	
+
   thickness_ = thickness;
 }
 
@@ -291,12 +291,12 @@ void DifBuffer::vSetVolume(const Eref& e, double volume )
 {
   if ( shapeMode_ != 3 )
     cerr << "Warning: DifBuffer: Trying to set volume, when shapeMode is not USER-DEFINED\n";
-	
+
   if ( volume < 0.0 ) {
     cerr << "Error: DifBuffer: volume cannot be negative!\n";
     return;
   }
-	
+
   volume_ = volume;
 }
 
@@ -309,12 +309,12 @@ void DifBuffer::vSetOuterArea(const Eref& e, double outerArea )
 {
   if (shapeMode_ != 3 )
     cerr << "Warning: DifBuffer: Trying to set outerArea, when shapeMode is not USER-DEFINED\n";
-	
+
   if ( outerArea < 0.0 ) {
     cerr << "Error: DifBuffer: outerArea cannot be negative!\n";
     return;
   }
-	
+
   outerArea_ = outerArea;
 }
 
@@ -327,12 +327,12 @@ void DifBuffer::vSetInnerArea(const Eref& e, double innerArea )
 {
   if ( shapeMode_ != 3 )
     cerr << "Warning: DifBuffer: Trying to set innerArea, when shapeMode is not USER-DEFINED\n";
-    
+
   if ( innerArea < 0.0 ) {
     cerr << "Error: DifBuffer: innerArea cannot be negative!\n";
     return;
   }
-    
+
   innerArea_ = innerArea;
 }
 
@@ -369,16 +369,16 @@ void DifBuffer::vProcess( const Eref & e, ProcPtr p )
    * then compute their incoming fluxes.
    */
 
-  
-  
+
+
   Af_ += kb_ * bBound_;
   Bf_ += kf_ * activation_;
-  
+
   bFree_ = integrate(bFree_,p->dt,Af_,Bf_);
   bBound_ = bTot_ - bFree_;
   prevFree_ = bFree_;
   prevBound_ = bBound_;
- 
+
   /**
    * Send ion concentration to ion buffers. They will send back information on
    * the reaction (forward / backward rates ; free / bound buffer concentration)
@@ -395,11 +395,11 @@ void DifBuffer::vProcess( const Eref & e, ProcPtr p )
 
 void DifBuffer::vReinit( const Eref& e, ProcPtr p )
 {
-	
+
   Af_ = 0;
   Bf_= 0;
   double rOut = diameter_/2.;
-  
+
   double rIn = rOut - thickness_;
 
   if (rIn<0)
@@ -419,9 +419,9 @@ void DifBuffer::vReinit( const Eref& e, ProcPtr p )
 	outerArea_ = 2*M_PI * rOut * length_;
 	innerArea_ = 2*M_PI * rIn * length_;
       }
-		
+
       break;
-	
+
       /*
        * Cylindrical Slice
        */
@@ -430,7 +430,7 @@ void DifBuffer::vReinit( const Eref& e, ProcPtr p )
       outerArea_ = M_PI * diameter_ * diameter_ / 4.0;
       innerArea_ = outerArea_;
       break;
-	
+
       /*
        * User defined
        */
@@ -438,18 +438,18 @@ void DifBuffer::vReinit( const Eref& e, ProcPtr p )
       // Nothing to be done here. Volume and inner-, outer areas specified by
       // user.
       break;
-	
+
     default:
       assert( 0 );
     }
-  
+
   bFree_ = bTot_/(1+activation_*kf_/kb_);
   prevFree_ = bFree_;
   bBound_ = bTot_ - bFree_;
   prevBound_ = bBound_;
   innerDifSourceOut()->send( e, prevFree_, thickness_ );
   outerDifSourceOut()->send( e, prevFree_, thickness_ );
-  
+
 }
 
 void DifBuffer::vFluxFromIn(const Eref& e,double innerC, double innerThickness)

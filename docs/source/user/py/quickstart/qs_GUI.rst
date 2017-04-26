@@ -96,6 +96,7 @@ View menu option provides the following sub options -
 -  `Editor View <#editor-view>`_ - Switch to the editor view for editing models.
 -  `Run View <#run-view>`_ - Switch to run view for running models.
 -  `Dock Widgets <#dock-widgets>`_ - Following dock widgets are provided
+
   -  `Python <#dock-widget-python>`_ - Brings up a full fledged python
      interpreter integrated with MOOSE GUI. You can interact with
      loaded models and load new models through the PyMoose API. The
@@ -105,8 +106,8 @@ View menu option provides the following sub options -
      editing the fields of a selected object such as a pool, enzyme,
      function or compartment. Editable field values can be changed by
      clicking on them and overwriting the new values. Please be sure to
-     press enter once the editing is complete, in order to save your
-     changes.
+     press enter once the editing is complete, in order to save your changes.
+
 -  `SubWindows <#subwindows>`_ - This allows you to tile or tabify the run and editor views.
 
 Help
@@ -120,7 +121,8 @@ Editor View
 ~~~~~~~~~~~
 
 The editor view provides two windows -
--  `Model Editor <#model-editor>`_ - The model editor is a workspace to
+
+- `Model Editor <#model-editor>`_ - The model editor is a workspace to
   edit and create models. Using click-and-drag from the icons in the
   menu bar, you can create model entities such as chemical pools,
   reactions, and so on. A click on any object brings its property
@@ -137,7 +139,8 @@ The editor view provides two windows -
   :alt: Chemical Signalling Model Editor
 
   Chemical Signalling Model Editor
--  `Property Editor <#property-editor>`_ - The property editor provides a way of viewing and editing the properties of objects selected in the model editor.
+
+- `Property Editor <#property-editor>`_ - The property editor provides a way of viewing and editing the properties of objects selected in the model editor.
 
 .. figure:: ../../../images/PropertyEditor.png
   :align: center

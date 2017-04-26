@@ -12,8 +12,8 @@
 #include "IntFire.h"
 
 static SrcFinfo1< double > *spikeOut() {
-	static SrcFinfo1< double > spikeOut( 
-			"spikeOut", 
+	static SrcFinfo1< double > spikeOut(
+			"spikeOut",
 			"Sends out spike events. The argument is the timestamp of "
 			"the spike. "
 			);
@@ -101,7 +101,7 @@ const Cinfo* IntFire::initCinfo()
 static const Cinfo* intFireCinfo = IntFire::initCinfo();
 
 IntFire::IntFire()
-	: Vm_( 0.0 ), thresh_( 0.0 ), tau_( 1.0 ), 
+	: Vm_( 0.0 ), thresh_( 0.0 ), tau_( 1.0 ),
 		refractoryPeriod_( 0.1 ), lastSpike_( -0.1 ),
 		activation_( 0.0 )
 {

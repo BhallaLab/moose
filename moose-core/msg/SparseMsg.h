@@ -82,23 +82,16 @@ class SparseMsg: public Msg
 		long getSeed() const;
 		void setSeed( long value );
 
-		vector< unsigned int > getEntryPairs() const;
-		void setEntryPairs( vector< unsigned int > entries );
-
 		void setEntry( unsigned int row, unsigned int column, 
 			unsigned int value );
 
 		void unsetEntry( unsigned int row, unsigned int column );
 
+		// Still need to implement array field gets.
+
 		unsigned int getNumRows() const;
 		unsigned int getNumColumns() const;
 		unsigned int getNumEntries() const;
-		/// Return array entries in sparse matrix form
-		vector< unsigned int > getMatrixEntry() const;
-		/// Return column index for each array entry
-		vector< unsigned int > getColIndex() const;
-		/// row start number for each array entry
-		vector< unsigned int > getRowStart() const;
 		void clear();
 		void transpose();
 
@@ -116,14 +109,6 @@ class SparseMsg: public Msg
 		void tripletFill( vector< unsigned int > src, 
 					vector< unsigned int> dest,
 					vector< unsigned int > field );
-
-		/**
-		 * Fills up the entire message based on triplets of 
-		 * src,destDataIndex,destFieldIndex, but catenates them all into
-		 * a single long vector since PyMoose doesn't know how to handle
-		 * multiple vectors.
-		 */
-		void tripletFill1( vector< unsigned int > entries ); 
 		
 		/**
 		 * Utility function to update all sorts of values after we've

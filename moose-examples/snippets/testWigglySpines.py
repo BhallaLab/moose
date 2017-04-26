@@ -1,7 +1,5 @@
 from __future__ import print_function
 
-from __future__ import print_function
-
 import math
 import pylab
 import numpy
@@ -16,7 +14,7 @@ import os
 scriptDir = os.path.dirname( os.path.realpath( __file__ ) )
 sys.path.append( os.path.join( scriptDir, '../util' ) )
 
-PI = 3.141592653
+PI = numpy.pi
 ScalingForTesting = 10
 RM = 1.0 / ScalingForTesting
 RA = 1.0 * ScalingForTesting
@@ -28,7 +26,7 @@ spineSpacing = 1.5e-6
 spineSpacingDistrib = 1e-10
 spineSize = 1.0
 spineSizeDistrib = 0
-spineAngle= numpy.pi / 2.0
+spineAngle= PI / 2.0
 spineAngleDistrib = 0.0
 
 

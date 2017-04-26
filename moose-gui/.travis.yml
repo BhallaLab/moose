@@ -7,14 +7,12 @@ notifications:
 
 
 install:
-    - sudo apt-get clean
-    - sudo apt-get update
     - wget http://download.opensuse.org/repositories/home:moose/xUbuntu_12.04/Release.key
     - sudo apt-key add - < Release.key  
     - sudo sh -c "echo 'deb http://download.opensuse.org/repositories/home:/moose/xUbuntu_12.04/ /' >> /etc/apt/sources.list.d/moose.list"
     - sudo apt-get -y update
-    - sudo apt-get -y --force-yes install python3
-    - sudo apt-get  -y --force-yes install moose
+    - sudo apt-get install python3
+    - sudo apt-get -y install moose
 
 script:
     - # Making sure no python incompatible file is added.

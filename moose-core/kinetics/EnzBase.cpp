@@ -15,16 +15,16 @@
 #define EPSILON 1e-15
 
 static SrcFinfo2< double, double > *subOut() {
-	static SrcFinfo2< double, double > subOut( 
-			"subOut", 
+	static SrcFinfo2< double, double > subOut(
+			"subOut",
 			"Sends out increment of molecules on product each timestep"
 			);
 	return &subOut;
 }
 
 static SrcFinfo2< double, double > *prdOut() {
-	static SrcFinfo2< double, double > prdOut( 
-			"prdOut", 
+	static SrcFinfo2< double, double > prdOut(
+			"prdOut",
 			"Sends out increment of molecules on product each timestep"
 			);
 	return &prdOut;
@@ -132,7 +132,7 @@ const Cinfo* EnzBase::initCinfo()
 		&remesh,			// Destfinfo
 	};
 
-	static string doc[] = 
+	static string doc[] =
 	{
 		"Name", "EnzBase",
 		"Author", "Upi Bhalla",
@@ -253,7 +253,7 @@ double EnzBase::getKcat( const Eref& e ) const
 
 unsigned int EnzBase::getNumSub( const Eref& e ) const
 {
-	const vector< MsgFuncBinding >* mfb = 
+	const vector< MsgFuncBinding >* mfb =
 		e.element()->getMsgAndFunc( subOut()->getBindIndex() );
 	assert( mfb );
 	return ( mfb->size() );
@@ -285,7 +285,7 @@ void EnzBase::zombify( Element* orig, const Cinfo* zClass, Id solver )
 	vector< double > kcat( num, 0.0 );
 	for ( unsigned int i = 0; i < num; ++i ) {
 		Eref er( orig, i + start );
-		const EnzBase* eb = 
+		const EnzBase* eb =
 			reinterpret_cast< const EnzBase* >( er.data() );
 		kcat[ i ] = eb->getKcat( er );
 		Km[ i ] = eb->getKm( er );
@@ -305,4 +305,3 @@ void EnzBase::setSolver( Id solver, Id orig )
 {
 	;
 }
-

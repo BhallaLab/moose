@@ -54,18 +54,18 @@ static const Cinfo* compartmentCinfo = Compartment::initCinfo();
 
 
 /*
-const SrcFinfo1< double >* VmOut = 
-	dynamic_cast< const SrcFinfo1< double >* >( 
-			compartmentCinfo->findFinfo( "VmOut" ) ); 
+const SrcFinfo1< double >* VmOut =
+	dynamic_cast< const SrcFinfo1< double >* >(
+			compartmentCinfo->findFinfo( "VmOut" ) );
 			*/
 
-const SrcFinfo1< double >* axialOut = 
+const SrcFinfo1< double >* axialOut =
 	dynamic_cast< const SrcFinfo1< double >* > (
-			compartmentCinfo->findFinfo( "axialOut" ) ); 
+			compartmentCinfo->findFinfo( "axialOut" ) );
 
-const SrcFinfo2< double, double >* raxialOut = 
+const SrcFinfo2< double, double >* raxialOut =
 	dynamic_cast< const SrcFinfo2< double, double >* > (
-			compartmentCinfo->findFinfo( "raxialOut" ) ); 
+			compartmentCinfo->findFinfo( "raxialOut" ) );
 
 //////////////////////////////////////////////////////////////////
 // Here we put the Compartment class functions.
@@ -181,7 +181,7 @@ double Compartment::vGetInitVm( const Eref& e ) const
 void Compartment::vProcess( const Eref& e, ProcPtr p )
 {
         //cout << "Compartment " << e.id().path() << ":: process: A = " << A_ << ", B = " << B_ << endl;
-	A_ += inject_ + sumInject_ + Em_ * invRm_; 
+	A_ += inject_ + sumInject_ + Em_ * invRm_;
 	if ( B_ > EPSILON ) {
 		double x = exp( -B_ * p->dt / Cm_ );
 		Vm_ = Vm_ * x + ( A_ / B_ )  * ( 1.0 - x );
@@ -208,7 +208,7 @@ void Compartment::vReinit(  const Eref& e, ProcPtr p )
         lastIm_ = 0.0;
 	sumInject_ = 0.0;
 	dt_ = p->dt;
-	
+
 	// Send out the resting Vm to channels, SpikeGens, etc.
 	VmOut()->send( e, Vm_ );
 }
@@ -293,7 +293,7 @@ void testCompartment()
 	double Vm = 0.0;
 	double tau = 1.0;
 	double Vmax = 1.0;
-	for ( p.currTime = 0.0; p.currTime < 2.0; p.currTime += p.dt ) 
+	for ( p.currTime = 0.0; p.currTime < 2.0; p.currTime += p.dt )
 	{
 		Vm = c->getVm( compter );
 		double x = Vmax - Vmax * exp( -p.currTime / tau );
@@ -336,7 +336,7 @@ void testCompartmentProcess()
 	assert( ret );
 	Field< double >::setRepeat( cid, "inject", 0 );
 	// Only apply current injection in first compartment
-	Field< double >::set( ObjId( cid, 0 ), "inject", 1.0 ); 
+	Field< double >::set( ObjId( cid, 0 ), "inject", 1.0 );
 	Field< double >::setRepeat( cid, "Rm", Rm );
 	Field< double >::setRepeat( cid, "Ra", Ra );
 	Field< double >::setRepeat( cid, "Cm", Cm );
@@ -363,7 +363,7 @@ void testCompartmentProcess()
 	shell->doSetClock( 0, dt );
 	shell->doSetClock( 1, dt );
 	// Ensure that the inter_compt msgs go between nodes once every dt.
-	shell->doSetClock( 9, dt ); 
+	shell->doSetClock( 9, dt );
 
 	shell->doUseClock( "/compt", "init", 0 );
 	shell->doUseClock( "/compt", "process", 1 );
@@ -374,7 +374,7 @@ void testCompartmentProcess()
 	double Vmax = Field< double >::get( ObjId( cid, 0 ), "Vm" );
 
 	double delta = 0.0;
-	// We measure only the first 50 compartments as later we 
+	// We measure only the first 50 compartments as later we
 	// run into end effects because it is not an infinite cable
 	for ( unsigned int i = 0; i < size; i++ ) {
 		double Vm = Field< double >::get( ObjId( cid, i ), "Vm" );

@@ -9,6 +9,7 @@ from PyQt4 import QtGui
 import rdesigneur as rd
 import moogli
 
+PI = numpy.pi
 RM = 1.0
 RA = 1.0
 CM = 0.01
@@ -22,8 +23,7 @@ spineSpacingDistrib = 0.0
 spineSize = 1.0
 spineSizeDistrib = 0.2
 spineAngle= 0.0
-spineAngleDistrib = 2*numpy.pi
-
+spineAngleDistrib = 2*PI
 
 # Here we define a function that is used to make a cell prototype. Normally
 # it would load in a model from a file.

@@ -118,8 +118,6 @@ def loadFile(filename, target, solver="gsl", merge=True):
     modelroot: root element of the model, None if could not be located - as is the case with Python scripts
     """
     num = 1
-    libsfound = True
-    model = '/'
     newTarget = target
     while moose.exists(newTarget):
         newTarget = target + "-" + str(num)
@@ -186,21 +184,13 @@ def loadFile(filename, target, solver="gsl", merge=True):
 
             # moose.move("cells/", cell.path)
         elif subtype == 'sbml':
-            foundLibSBML_ = False
-            try:
-                import libsbml
-                foundLibSBML_ = True
-            except ImportError:
-                pass
-            if foundLibSBML_:
-                if target != '/':
-                    if moose.exists(target):
-                        moose.delete(target)
-                model = mooseReadSBML(filename,target)
-                if moose.exists(moose.element(model).path):
-                    moose.Annotator(moose.element(model).path+'/info').modeltype = "sbml"
-                addSolver(target,'gsl')
-            libsfound = foundLibSBML_
+            if target != '/':
+                if moose.exists(target):
+                    moose.delete(target)
+            model = mooseReadSBML(filename,target)
+            if moose.exists(moose.element(model).path):
+                moose.Annotator(moose.element(model).path+'/info').modeltype = "sbml"
+            addSolver(target,'gsl')
     else:
         raise FileLoadError('Do not know how to handle this filetype: %s' % (filename))
     moose.setCwe(pwe) # The MOOSE loadModel changes the current working element to newly loaded model. We revert that behaviour
@@ -210,8 +200,7 @@ def loadFile(filename, target, solver="gsl", merge=True):
     # app.restoreOverrideCursor()
     return {'modeltype': modeltype,
             'subtype': subtype,
-            'model': model,
-            'foundlib' :libsfound}
+            'model': model}
 
 
 

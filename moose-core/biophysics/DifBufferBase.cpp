@@ -12,7 +12,7 @@ SrcFinfo4< double, double, double, double >* DifBufferBase::reactionOut()
 								 " (free-buffer and bound-buffer molecules).");
   return &reactionOut;
 }
-                                                                 
+
 
 SrcFinfo2< double, double >* DifBufferBase::innerDifSourceOut(){
   static SrcFinfo2< double, double > sourceOut("innerDifSourceOut",
@@ -34,20 +34,20 @@ const Cinfo * DifBufferBase::initCinfo()
   static DestFinfo reinit( "reinit",
                            "Reinit happens only in stage 0",
                            new ProcOpFunc< DifBufferBase >( &DifBufferBase::reinit));
-    
+
   static Finfo* processShared[] = {
     &process,
     &reinit
   };
 
   static SharedFinfo proc(
-			  "proc", 
+			  "proc",
 			  "Here we create 2 shared finfos to attach with the Ticks. This is because we want to perform DifBufferBase "
 			  "computations in 2 stages, much as in the Compartment object. "
 			  "In the first stage we send out the concentration value to other DifBufferBases and Buffer elements. We also",
 			  processShared,
 			  sizeof( processShared ) / sizeof( Finfo* ));
-  
+
   static DestFinfo concentration("concentration",
                                  "Receives concentration (from DifShell).",
                                  new EpFunc1<DifBufferBase, double>(&DifBufferBase::buffer));
@@ -72,13 +72,13 @@ const Cinfo * DifBufferBase::initCinfo()
   static DestFinfo fluxFromOut( "fluxFromOut",
                                 "Destination message",
                                 new EpFunc2< DifBufferBase, double, double > ( &DifBufferBase::fluxFromOut ));
-    
+
   static Finfo* innerDifShared[] = {
     &fluxFromOut,
     DifBufferBase::innerDifSourceOut()
-    
+
   };
-    
+
   static SharedFinfo innerDif( "innerDif",
                                "This shared message (and the next) is between DifBufferBases: adjoining shells exchange information to "
                                "find out the flux between them. "
@@ -88,9 +88,9 @@ const Cinfo * DifBufferBase::initCinfo()
 
   static DestFinfo fluxFromIn( "fluxFromIn", "",
                                new EpFunc2< DifBufferBase, double, double> ( &DifBufferBase::fluxFromIn) );
-  
+
   static Finfo* outerDifShared[] = {
-    &fluxFromIn,  
+    &fluxFromIn,
     DifBufferBase::outerDifSourceOut(),
 
   };
@@ -99,7 +99,7 @@ const Cinfo * DifBufferBase::initCinfo()
                                 "Using this message, an outer shell sends to, and receives from its inner shell." ,
                                 outerDifShared,
                                 sizeof( outerDifShared ) / sizeof( Finfo* ));
-  
+
   ////////////////////////////
   // Field defs
   ////////////////////////////
@@ -130,7 +130,7 @@ const Cinfo * DifBufferBase::initCinfo()
   static ElementValueFinfo<DifBufferBase, double> bTot("bTot",
 						       "Total buffer concentration.",
 						       &DifBufferBase::setBTot,
-						       &DifBufferBase::getBTot);  
+						       &DifBufferBase::getBTot);
   static ElementValueFinfo<DifBufferBase, double> length("length",
 							 "Length of shell",
 							 &DifBufferBase::setLength,
@@ -143,12 +143,12 @@ const Cinfo * DifBufferBase::initCinfo()
 								  "shape of the shell: SHELL=0, SLICE=SLAB=1, USERDEF=3",
 								  &DifBufferBase::setShapeMode,
 								  &DifBufferBase::getShapeMode);
-  
+
   static ElementValueFinfo<DifBufferBase, double> thickness("thickness",
 							    "Thickness of shell",
 							    &DifBufferBase::setThickness,
 							    &DifBufferBase::getThickness);
- 
+
   static ElementValueFinfo<DifBufferBase, double> innerArea("innerArea",
 							    "Inner area of shell",
 							    &DifBufferBase::setInnerArea,
@@ -160,7 +160,7 @@ const Cinfo * DifBufferBase::initCinfo()
   static ElementValueFinfo< DifBufferBase, double> volume( "volume", "",
 							   &DifBufferBase::setVolume,
 							   &DifBufferBase::getVolume );
-  
+
   ////
   // DestFinfo
   ////
@@ -168,7 +168,7 @@ const Cinfo * DifBufferBase::initCinfo()
     //////////////////////////////////////////////////////////////////
     // Field definitions
     //////////////////////////////////////////////////////////////////
-    
+
     &activation,
     &D,
     &bFree,
@@ -199,7 +199,7 @@ const Cinfo * DifBufferBase::initCinfo()
     //////////////////////////////////////////////////////////////////
     // DestFinfo definitions
     //////////////////////////////////////////////////////////////////
-    &concentration,    
+    &concentration,
   };
 
   static string doc[] = {
@@ -379,7 +379,7 @@ void DifBufferBase::buffer(const Eref& e,double C)
 {
   vBuffer(e,C);
 }
-  
+
 void DifBufferBase::reinit( const Eref& e, ProcPtr p )
 {
   vReinit( e, p );
@@ -400,7 +400,7 @@ void DifBufferBase:: fluxFromIn(const Eref& e,double innerC, double innerThickne
 void DifBufferBase::vSetSolver( const Eref& e, Id hsolve )
 {;}
 
-void DifBufferBase::zombify( Element* orig, const Cinfo* zClass, 
+void DifBufferBase::zombify( Element* orig, const Cinfo* zClass,
 			     Id hsolve )
 {
   if ( orig->cinfo() == zClass )
@@ -413,10 +413,10 @@ void DifBufferBase::zombify( Element* orig, const Cinfo* zClass,
   vector< double > data( num * len );
 
   unsigned int j = 0;
-	
+
   for ( unsigned int i = 0; i < num; ++i ) {
     Eref er( orig, i + start );
-    const DifBufferBase* ds = 
+    const DifBufferBase* ds =
       reinterpret_cast< const DifBufferBase* >( er.data() );
     data[j + 0] = ds->getActivation( er );
     data[j + 1] = ds->getBFree( er );
@@ -438,7 +438,7 @@ void DifBufferBase::zombify( Element* orig, const Cinfo* zClass,
   j = 0;
   for ( unsigned int i = 0; i < num; ++i ) {
     Eref er( orig, i + start );
-    DifBufferBase* ds = 
+    DifBufferBase* ds =
       reinterpret_cast< DifBufferBase* >( er.data() );
     ds->vSetSolver(er,hsolve);
     ds->setActivation(er, data[j+0]);
@@ -457,5 +457,5 @@ void DifBufferBase::zombify( Element* orig, const Cinfo* zClass,
     ds->setInnerArea(er, data[j + 13]);
     j += len; //??
   }
-	
+
 }

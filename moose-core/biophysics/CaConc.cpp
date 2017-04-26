@@ -17,13 +17,13 @@ const Cinfo* CaConc::initCinfo()
 {
 	static string doc[] =
 	{
-		"Name", "CaConc",
-		"Author", "Upinder S. Bhalla, 2014, NCBS",
-		"Description", "CaConc: Calcium concentration pool. Takes current from a "
-				"channel and keeps track of calcium buildup and depletion by a "
-				"single exponential process. ",
+		"Name", "CaConc \n",
+		"Author", "Upinder S. Bhalla, 2014, NCBS \n",
+		"Description", "CaConc: Calcium concentration pool. Takes current from a \n"
+				"channel and keeps track of calcium buildup and depletion by a \n"
+				"single exponential process. \n",
 	};
-        
+
         static Dinfo< CaConc > dinfo;
 
 	static Cinfo CaConcCinfo(
@@ -177,16 +177,16 @@ void testCaConc()
 	cc.setB( 5.2e-6 / 1e-15 );
 	// Faraday constant = 96485.3415 s A / mol
 	// Use a 1 pA input current. This should give (0.5e-12/F) moles/sec
-	// influx, because Ca has valence of 2. 
+	// influx, because Ca has valence of 2.
 	// So we get 5.2e-18 moles/sec coming in.
 	// Our volume is 1e-15 m^3
 	// So our buildup should be at 5.2e-3 moles/m^3/sec = 5.2 uM/sec
 	double curr = 1e-12;
 	// This will settle when efflux = influx
 	// dC/dt = B*Ik - C/tau = 0.
-	// so Ca = CaBasal + tau * B * Ik = 
+	// so Ca = CaBasal + tau * B * Ik =
 	// 0.0001 + 0.1 * 5.2e-6 * 1e3 = 0.000626
-	
+
 	ProcInfo p;
 	p.dt = 0.001;
 	p.currTime = 0.0;
@@ -214,4 +214,4 @@ void testCaConc()
 	cout << "." << flush;
     */
 }
-#endif 
+#endif

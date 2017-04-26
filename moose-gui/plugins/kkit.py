@@ -1,13 +1,3 @@
-
-__author__      =   "HarshaRani"
-__credits__     =   ["Upi Lab"]
-__license__     =   "GPL3"
-__version__     =   "1.0.0"
-__maintainer__  =   "HarshaRani"
-__email__       =   "hrani@ncbs.res.in"
-__status__      =   "Development"
-__updated__     =   "Mar 7 2017"
-
 import sys
 from PyQt4 import QtGui, QtCore, Qt
 from default import *
@@ -33,7 +23,6 @@ from setsolver import *
 
 class KkitPlugin(MoosePlugin):
     """Default plugin for MOOSE GUI"""
-    #objectSolverChanged = pyqtSignal()
     def __init__(self, *args):
         #print args
         MoosePlugin.__init__(self, *args)
@@ -89,7 +78,7 @@ class KkitPlugin(MoosePlugin):
                 writeerror,consistencyMessages,writtentofile = moose.SBML.mooseWriteSBML(self.modelRoot,str(filename),self.coOrdinates)
                 if writeerror == -2:
                     #QtGui.QMessageBox.warning(None,'Could not save the Model','\n WriteSBML :  This copy of MOOSE has not been compiled with SBML writing support.')
-                    QtGui.QMessageBox.warning(None,'python-libsbml is not found',consistencyMessages)
+                    QtGui.QMessageBox.warning(None,'Could not save the Model',consistencyMessages)
                 elif writeerror == -1:
                     QtGui.QMessageBox.warning(None,'Could not save the Model','\n This model is not valid SBML Model, failed in the consistency check')
                 elif writeerror == 1:
@@ -251,7 +240,6 @@ class AnotherKkitRunView(RunView):
             reinit = addSolver(modelRoot,solver)
             if reinit:
                 self.getSchedulingDockWidget().widget().resetSimulation()
-                #self.plugin.objectSolverChanged.emit()
 
             #self.kkitRunView.getCentralWidget().addSolver(solver)
 
@@ -554,15 +542,12 @@ class  KineticsWidget(EditorWidgetBase):
 
             for funcObj in find_index(memb,'function'):
                 funcinfo = moose.element(funcObj).path+'/info'
-                poolt = ["ZombieBufPool","BufPool","ZombiePool","Pool"]
-                if funcObj.parent.className in poolt:
+                if funcObj.parent.className == "ZombieBufPool" or funcObj.parent.className == "BufPool":
                     funcinfo = moose.element(funcObj).path+'/info'
                     Af = Annotator(funcinfo)
                     funcParent =self.mooseId_GObj[element(funcObj.parent)]
-
                 elif funcObj.parent.className == "CubeMesh" or funcObj.parent.className == "CylMesh":
                     funcParent = self.qGraCompt[cmpt]
-
                 funcItem = FuncItem(funcObj,funcParent)
                 self.mooseId_GObj[element(funcObj.getId())] = funcItem
                 self.setupDisplay(funcinfo,funcItem,"Function")
@@ -602,14 +587,12 @@ class  KineticsWidget(EditorWidgetBase):
             if bgcolor.name() == "#ffffff" or bgcolor == "white":
                 bgcolor = getRandColor()
                 Annoinfo.color = str(bgcolor.name())
-
         if isinstance(self,kineticEditorWidget):
             funct = ["Function","ZombieFunction"]
             comptt = ["CubeMesh","CylMesh"]
 
             if objClass in funct:
-                poolt = ["ZombieBufPool","BufPool","ZombiePool","Pool"]
-
+                poolt = ["ZombieBufPool","BufPool"]
                 if graphicalObj.mobj.parent.className in poolt:
                     xpos = 0
                     ypos = 30
@@ -617,7 +600,7 @@ class  KineticsWidget(EditorWidgetBase):
                     xpos,ypos = self.positioninfo(info)
             else:
                 xpos,ypos = self.positioninfo(info)
-            
+
             self.xylist = [xpos,ypos]
             self.xyCord[moose.element(info).parent] = [xpos,ypos]
 
@@ -626,7 +609,6 @@ class  KineticsWidget(EditorWidgetBase):
             editorItem = self.editormooseId_GObj[moose.element(info).parent]
             xpos = editorItem.scenePos().x()
             ypos = editorItem.scenePos().y()
-
             #Annoinfo.x = xpos
             #Annoinfo.y = -ypos 
         graphicalObj.setDisplayProperties(xpos,ypos,textcolor,bgcolor)
@@ -670,13 +652,13 @@ class  KineticsWidget(EditorWidgetBase):
             if isinstance(out,tuple):
                 src = self.mooseId_GObj[inn]
                 if len(out[0])== 0:
-                    print (inn.className + ' : ' +inn.name+ " doesn't output message")
+                    print inn.className + ' : ' +inn.name+ " doesn't output message"
                 else:
                     for items in (items for items in out[0] ):
                         des = self.mooseId_GObj[element(items[0])]
                         self.lineCord(src,des,items,itemignoreZooming)
                 if len(out[1]) == 0:
-                    print (inn.className + ' : ' +inn.name+ " doesn't output message")
+                    print inn.className + ' : ' +inn.name+ " doesn't output message"
                 else:
                     for items in (items for items in out[1] ):
                         des = self.mooseId_GObj[element(items[0])]
@@ -684,9 +666,9 @@ class  KineticsWidget(EditorWidgetBase):
             elif isinstance(out,list):
                 if len(out) == 0:
                     if inn.className == "StimulusTable":
-                        print( inn.name +" doesn't have output")
+                        print inn.name +" doesn't have output"
                     elif inn.className == "ZombieFunction" or inn.className == "Function":
-                        print (inn.name + " doesn't have sumtotal ")
+                        print inn.name + " doesn't have sumtotal "
                 else:
                     src = self.mooseId_GObj[inn]
                     for items in (items for items in out ):
@@ -697,7 +679,7 @@ class  KineticsWidget(EditorWidgetBase):
         endtype = type_no[1]
         line = 0
         if (src == "") and (des == ""):
-            print ("Source or destination is missing or incorrect")
+            print "Source or destination is missing or incorrect"
             return
         srcdes_list = [src,des,endtype,line]
         arrow = calcArrow(srcdes_list,itemignoreZooming,self.iconScale)
@@ -710,7 +692,7 @@ class  KineticsWidget(EditorWidgetBase):
             line = line +1
 
         if type_no[2] > 5:
-            print ("Higher order reaction will not be displayed")
+            print "Higher order reaction will not be displayed"
 
     def drawLine(self,srcdes_list,arrow):
         src = srcdes_list[0]
@@ -1045,7 +1027,7 @@ if __name__ == "__main__":
     try:
         filepath = '../../Demos/Genesis_files/'+modelPath+'.g'
         filepath = '/home/harsha/genesis_files/gfile/'+modelPath+'.g'
-        print( "%s" %(filepath))
+        print filepath
         f = open(filepath, "r")
         loadModel(filepath,'/'+modelPath)
 
@@ -1061,6 +1043,6 @@ if __name__ == "__main__":
 
     except  IOError, what:
       (errno, strerror) = what
-      print ("Error number",errno,"(%s)" %(strerror))
+      print "Error number",errno,"(%s)" %strerror
       sys.exit(0)
     sys.exit(app.exec_())

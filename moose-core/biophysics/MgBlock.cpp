@@ -22,19 +22,19 @@ const Cinfo* MgBlock::initCinfo()
 	///////////////////////////////////////////////////////
 	// Dest definitions
 	///////////////////////////////////////////////////////
-	static DestFinfo origChannel( "origChannel", 
+	static DestFinfo origChannel( "origChannel",
 		"",
 		new EpFunc2< MgBlock, double, double > (&MgBlock::origChannel )
 	);
 	///////////////////////////////////////////////////////
 	// Field definitions
 	///////////////////////////////////////////////////////
-	static ValueFinfo< MgBlock, double > KMg_A( "KMg_A", 
+	static ValueFinfo< MgBlock, double > KMg_A( "KMg_A",
 			"1/eta",
 			&MgBlock::setKMg_A,
 			&MgBlock::getKMg_A
 		);
-	static ValueFinfo< MgBlock, double > KMg_B( "KMg_B", 
+	static ValueFinfo< MgBlock, double > KMg_B( "KMg_B",
 			"1/gamma",
 			&MgBlock::setKMg_B,
 			&MgBlock::getKMg_B
@@ -66,7 +66,7 @@ const Cinfo* MgBlock::initCinfo()
 		"Description", "MgBlock: Hodgkin-Huxley type voltage-gated Ion channel. Something "
 				"like the old tabchannel from GENESIS, but also presents "
 				"a similar interface as hhchan from GENESIS. ",
-	};	
+	};
 	static Dinfo< MgBlock > dinfo;
 	static Cinfo MgBlockCinfo(
 		"MgBlock",
@@ -87,7 +87,7 @@ static const Cinfo* MgBlockCinfo = MgBlock::initCinfo();
 // Constructor
 ///////////////////////////////////////////////////
 MgBlock::MgBlock()
-	:	Zk_( 0.0 ), 
+	:	Zk_( 0.0 ),
 		KMg_A_( 1.0 ), // These are NOT the same as the A, B state
 		KMg_B_( 1.0 ), // variables used for Exp Euler integration.
 		CMg_( 1.0 ), 	// Conc of Mg in mM
@@ -185,4 +185,3 @@ void MgBlock::origChannel( const Eref& e, double Gk, double Ek )
 ///////////////////////////////////////////////////
 // Unit tests
 ///////////////////////////////////////////////////
-

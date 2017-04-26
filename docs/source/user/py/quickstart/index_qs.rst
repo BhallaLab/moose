@@ -11,3 +11,5 @@ Quick Start
 
    qs_GUI
    moose_quickstart
+   demos
+   classes_demos

@@ -45,7 +45,7 @@ const Cinfo* HHChannelBase::initCinfo()
 			&HHChannelBase::setInstant,
 			&HHChannelBase::getInstant
 		);
-		static ElementValueFinfo< HHChannelBase, double > X( "X", 
+		static ElementValueFinfo< HHChannelBase, double > X( "X",
 			"State variable for X gate",
 			&HHChannelBase::setX,
 			&HHChannelBase::getX
@@ -60,7 +60,7 @@ const Cinfo* HHChannelBase::initCinfo()
 			&HHChannelBase::setZ,
 			&HHChannelBase::getZ
 		);
-		static ElementValueFinfo< HHChannelBase, int > useConcentration( 
+		static ElementValueFinfo< HHChannelBase, int > useConcentration(
 			"useConcentration",
 			"Flag: when true, use concentration message rather than Vm to"
 			"control Z gate",
@@ -76,7 +76,7 @@ const Cinfo* HHChannelBase::initCinfo()
 ///////////////////////////////////////////////////////
 // MsgDest definitions
 ///////////////////////////////////////////////////////
-		static DestFinfo concen( "concen", 
+		static DestFinfo concen( "concen",
 			"Incoming message from Concen object to specific conc to use"
 			"in the Z gate calculations",
 			new EpFunc1< HHChannelBase, double >( &HHChannelBase::handleConc )
@@ -88,7 +88,7 @@ const Cinfo* HHChannelBase::initCinfo()
 		);
 ///////////////////////////////////////////////////////
 // FieldElementFinfo definition for HHGates. Note that these are made
-// with the deferCreate flag off, so that the HHGates are created 
+// with the deferCreate flag off, so that the HHGates are created
 // right away even if they are empty.
 // Assume only a single entry allocated in each gate.
 ///////////////////////////////////////////////////////
@@ -116,7 +116,7 @@ const Cinfo* HHChannelBase::initCinfo()
 			&HHChannelBase::getNumZgates
 			// 1
 		);
-	
+
 ///////////////////////////////////////////////////////
 	static Finfo* HHChannelBaseFinfos[] =
 	{
@@ -134,7 +134,7 @@ const Cinfo* HHChannelBase::initCinfo()
 		&gateY,				// FieldElement
 		&gateZ				// FieldElement
 	};
-	
+
 	static string doc[] =
 	{
 		"Name", "HHChannelBase",
@@ -144,9 +144,9 @@ const Cinfo* HHChannelBase::initCinfo()
 		"like the old tabchannel from GENESIS, but also presents "
 		"a similar interface as hhchan from GENESIS. ",
 	};
-        
+
     static  ZeroSizeDinfo< int > dinfo;
-        
+
 	static Cinfo HHChannelBaseCinfo(
 		"HHChannelBase",
 		ChanBase::initCinfo(),
@@ -168,9 +168,9 @@ static const Cinfo* hhChannelCinfo = HHChannelBase::initCinfo();
 // Constructor
 ///////////////////////////////////////////////////
 HHChannelBase::HHChannelBase()
-	: 
-			Xpower_( 0.0 ), 
-			Ypower_( 0.0 ), 
+	:
+			Xpower_( 0.0 ),
+			Ypower_( 0.0 ),
 			Zpower_( 0.0 ),
 			useConcentration_( 0 ),
 			modulation_( 1.0 )
@@ -321,7 +321,7 @@ HHGate* HHChannelBase::getZgate( unsigned int i )
 	return vGetZgate( i );
 }
 
-void HHChannelBase::setNumGates( unsigned int num ) 
+void HHChannelBase::setNumGates( unsigned int num )
 { ; }
 
 unsigned int  HHChannelBase::getNumXgates() const
@@ -384,7 +384,7 @@ void HHChannelBase::zombify( Element* orig, const Cinfo* zClass, Id hsolve )
 
 	for ( unsigned int i = 0; i < num; ++i ) {
 		Eref er( orig, i + start );
-		const HHChannelBase* hb = 
+		const HHChannelBase* hb =
 			reinterpret_cast< const HHChannelBase* >( er.data() );
 		*j = hb->vGetGbar( er );
 		*(j+1) = hb->vGetEk( er);
@@ -406,9 +406,8 @@ void HHChannelBase::zombify( Element* orig, const Cinfo* zClass, Id hsolve )
 		hb->vSetYpower( er, *(j+3) );
 		hb->vSetZpower( er, *(j+4) );
 		// hb->vSetUseConcentration( er, *(j+5) > 0.5 );
-		// Disable this assignment because the Solver already reads the 
+		// Disable this assignment because the Solver already reads the
 		// value, and it triggers an error msg.
 		j+= 6;
 	}
 }
-

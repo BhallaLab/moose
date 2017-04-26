@@ -99,7 +99,7 @@ print 'Hello count =', hello_count
 hello_count += 1
 """
     hello_runner.run('from datetime import datetime')
-    hello_runner.run('print "Hello: current time:", datetime.now().isoformat()')
+    hello_runner.run('print("Hello: current time:", datetime.now().isoformat())')
     moose.useClock(0, hello_runner.path, 'process')
     world_runner = moose.PyRun('World')
     world_runner.initString = """
@@ -115,7 +115,7 @@ print 'World count =', world_count
 incr_count()
 """
     world_runner.run('from datetime import datetime')
-    world_runner.run('print "World: current time:", datetime.now().isoformat()')
+    world_runner.run('print("World: current time:", datetime.now().isoformat())')
 
     moose.useClock(0, world_runner.path, 'process')
     moose.reinit()

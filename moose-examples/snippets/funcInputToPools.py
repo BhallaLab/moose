@@ -80,8 +80,8 @@ This example describes the special (and discouraged) use case where
 functions provide input to a reaction system. Here we have two functions of
 time which control the pool # and pool rate of change, respectively::
 
-number of molecules of a = 1 + sin(t)
-rate of change of number of molecules of b = 10 * cos(t)
+    number of molecules of a = 1 + sin(t)
+    rate of change of number of molecules of b = 10 * cos(t)
 
 In the stochastic case one must set a special flag *useClockedUpdate*
 in order to achieve clock-triggered updates from the functions. This is

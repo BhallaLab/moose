@@ -6,7 +6,7 @@
 # Maintainer:
 # Created: Wed Jun 30 11:18:34 2010 (+0530)
 # Version:
-# Last-Updated: Tue Mar 7 12:45:59 2017 (+0530)
+# Last-Updated: Wed Aug 3 15:55:59 2016 (+0530)
 #           By: Harsha
 #     Update #: 
 # URL:
@@ -188,7 +188,7 @@ class ObjectEditModel(QtCore.QAbstractTableModel):
     def setData(self, index, value, role=QtCore.Qt.EditRole):
         if not index.isValid() or index.row () >= len(self.fields) or index.column() != 1:
             return False
-        
+        print(value)
         field = self.fields[index.row()]
         if (role == QtCore.Qt.CheckStateRole):
             if (index.column() == 1):
@@ -231,18 +231,8 @@ class ObjectEditModel(QtCore.QAbstractTableModel):
             
             else:
                 oldValue = self.mooseObject.getField(field)
-                if field != "isBuffered":
-                    value = type(oldValue)(value)
-                    self.mooseObject.setField(field, value)
-                else:
-                    if self.mooseObject.className == "ZombiePool" or self.mooseObject.className =="ZombieBufPool":
-                        QtGui.QMessageBox.warning(None,'Solver is set, Could not set the value','\n Unset the solver by clicking \n run widget -> Preferences -> Exponential Euler->Apply')
-                    else:
-                        if value.lower() in ("yes", "true", "t", "1"):
-                            self.mooseObject.setField(field, True)
-                        else:
-                            self.mooseObject.setField(field, False)
-
+                value = type(oldValue)(value)
+                tt = self.mooseObject.setField(field, value)
                 self.undoStack.append((index, oldValue))
             if field == 'name':
                 self.emit(QtCore.SIGNAL('objectNameChanged(PyQt_PyObject)'), self.mooseObject)
@@ -252,7 +242,7 @@ class ObjectEditModel(QtCore.QAbstractTableModel):
         return True
 
     def undo(self):
-        print ('Undo')
+        print 'Undo'
         if len(self.undoStack) == 0:
             raise Info('No more undo information')
         index, oldvalue, = self.undoStack.pop()
@@ -411,7 +401,7 @@ class ObjectEditView(QtGui.QTableView):
             self.setColor(getColor(self.model().mooseObject.path+'/info')[1])
         except:
             pass
-        print ('Created view with %s' %(mobject))
+        print 'Created view with', mobject
 
     def setColor(self, color):
         self.colorButton.setStyleSheet(
@@ -456,8 +446,6 @@ class ObjectEditDockWidget(QtGui.QDockWidget):
         # self.view.colorDialog.colorSelected.connect(self.colorChangedEmit)
 
 
-    # def clearDict(self):
-    #     self.view_dict.clear()
 
     def setObject(self, mobj):
         element = moose.element(mobj)

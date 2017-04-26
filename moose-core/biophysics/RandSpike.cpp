@@ -15,7 +15,7 @@
 	// MsgSrc definitions
 	///////////////////////////////////////////////////////
 static SrcFinfo1< double > *spikeOut() {
-	static SrcFinfo1< double > spikeOut( "spikeOut", 
+	static SrcFinfo1< double > spikeOut( "spikeOut",
 			"Sends out a trigger for an event.");
 	return &spikeOut;
 }
@@ -25,10 +25,10 @@ const Cinfo* RandSpike::initCinfo()
 	///////////////////////////////////////////////////////
 	// Shared message definitions
 	///////////////////////////////////////////////////////
-	static DestFinfo process( "process", 
+	static DestFinfo process( "process",
 		"Handles process call",
 		new ProcOpFunc< RandSpike >( &RandSpike::process ) );
-	static DestFinfo reinit( "reinit", 
+	static DestFinfo reinit( "reinit",
 		"Handles reinit call",
 		new ProcOpFunc< RandSpike >( &RandSpike::reinit ) );
 
@@ -37,10 +37,10 @@ const Cinfo* RandSpike::initCinfo()
 		&process, &reinit
 	};
 
-	static SharedFinfo proc( "proc", 
+	static SharedFinfo proc( "proc",
 		"Shared message to receive Process message from scheduler",
 		processShared, sizeof( processShared ) / sizeof( Finfo* ) );
-		
+
 	//////////////////////////////////////////////////////////////////
 	// Dest Finfos.
 	//////////////////////////////////////////////////////////////////
@@ -48,7 +48,7 @@ const Cinfo* RandSpike::initCinfo()
 	//////////////////////////////////////////////////////////////////
 	// Value Finfos.
 	//////////////////////////////////////////////////////////////////
-	
+
 	static ValueFinfo< RandSpike, double > rate( "rate",
 		"Specifies rate for random spike train. Note that this is"
 		"probabilistic, so the instantaneous rate may differ. "
@@ -72,7 +72,7 @@ const Cinfo* RandSpike::initCinfo()
 		&RandSpike::getFired
 	);
 
-	static Finfo* spikeGenFinfos[] = 
+	static Finfo* spikeGenFinfos[] =
 	{
 		spikeOut(),	// SrcFinfo
 		&proc,		// Shared
@@ -96,7 +96,7 @@ const Cinfo* RandSpike::initCinfo()
 		spikeGenFinfos, sizeof( spikeGenFinfos ) / sizeof( Finfo* ),
 		&dinfo,
                 doc,
-                sizeof(doc)/sizeof(string)                
+                sizeof(doc)/sizeof(string)
 	);
 
 	return &spikeGenCinfo;
@@ -105,7 +105,7 @@ const Cinfo* RandSpike::initCinfo()
 static const Cinfo* spikeGenCinfo = RandSpike::initCinfo();
 
 RandSpike::RandSpike()
-	: 
+	:
 	  rate_( 0.0 ),
 	  realRate_( 0.0 ),
       refractT_(0.0),
@@ -159,11 +159,11 @@ void RandSpike::process( const Eref& e, ProcPtr p )
 	if ( refractT_ > p->currTime - lastEvent_ )
 		return;
 	double prob = realRate_ * p->dt;
-	if ( prob >= 1.0 || prob >= mtrand() ) 
+	if ( prob >= 1.0 || prob >= mtrand() )
 	{
 		lastEvent_ = p->currTime;
 		spikeOut()->send( e, p->currTime );
-		fired_ = true;                    
+		fired_ = true;
 	} else {
         fired_ = false;
 	}

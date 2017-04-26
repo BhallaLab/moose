@@ -5,7 +5,7 @@ Getting started with python scripting for MOOSE
 .. contents::
    :local:
    :depth: 1
-   
+
 .. _quickstart-intro:
 
 Introduction
@@ -20,7 +20,7 @@ simulate existing models in one of the supported formats, you can fire
 the MOOSE GUI and locate the model file using the ``File`` menu and
 load it. The GUI is described in separate document. If you
 are looking for recipes for specific tasks, take a look at
-:doc:`moose_cookbook`. The example code in the boxes can be entered in
+`cookbook`. The example code in the boxes can be entered in
 a Python shell.
 
 .. _quickstart-importing:
@@ -644,7 +644,7 @@ Moving on
 
 Now you know the basics of pymoose and how to access the help
 system. You can figure out how to do specific things by looking at the
-:doc:`moose_cookbook`.  In addition, the ``moose-examples/snippets`` directory
+'cookbook`.  In addition, the ``moose-examples/snippets`` directory
 in your MOOSE installation has small executable python scripts that
 show usage of specific classes or functionalities. Beyond that you can
 browse the code in the ``moose-examples`` directory to see some more complex
@@ -680,190 +680,3 @@ help you get started.
    scheduling following the MOOSE API. So you have to consult the class'
    documentation for any nonstandard methods that can be scheduled this
    way.
-
-Demonstration of basic functionalities
-======================================
-
-.. _quickstart-load-run:
-
-Load and Run a Model
---------------------
-
-.. automodule:: helloMoose
-  :members:
-
-.. _quickstart-timing:
-
-Start, Stop, and setting clocks
--------------------------------
-
-.. automodule:: startstop
-  :members:
-
-.. automodule:: stimtable
-  :members:
-
-.. _quickstart-python_from_moose:
-
-Run Python from MOOSE
----------------------
-
-.. automodule:: pyrun
-  :members:
-
-.. automodule:: pyrun1
-  :members:
-
-.. _quickstart-classes:
-
-MOOSE Classes
--------------
-
-Messages
-^^^^^^^^
-
-One-to-one message
-""""""""""""""""""
-
-.. automodule:: onetoonemsg
-	:members:
-
-Show the message
-""""""""""""""""
-
-.. automodule:: showmsg
-  :members:
-
-Single Message Cross
-""""""""""""""""""""
-
-.. automodule:: singlemsgcross
-  :members:
-
-Time
-^^^^
-
-Clocks
-""""""
-
-.. automodule:: showclocks
-  :members:
-
-Generating Time Data Table
-""""""""""""""""""""""""""
-
-.. automodule:: timetable
-  :members:
-
-Vectors
-^^^^^^^
-
-.. automodule:: vectors
-  :members:
-
-Data Entries
-^^^^^^^^^^^^
-
-.. automodule:: wildcard
-  :members:
-
-Interpolation
-^^^^^^^^^^^^^
-
-1-dimentional Interpolation
-"""""""""""""""""""""""""""
-
-.. automodule:: interpol
-  :members:
-
-2-dimentional interpolation
-"""""""""""""""""""""""""""
-
-.. automodule:: interpol2d
-  :members:
-
-Function
-^^^^^^^^
-
-.. automodule:: func
-  :members:
-
-SymCompartment
-^^^^^^^^^^^^^^
-
-.. automodule:: symcompartment
-  :members:
-
-Tables
-^^^^^^
-
-.. automodule:: tabledemo
-  :members:
-
-Data Types
-^^^^^^^^^^
-
-HDF DataType
-""""""""""""
-
-.. automodule:: hdfdemo
-  :members:
-
-NSDF DataType
-"""""""""""""
-
-.. automodule:: nsdf
-  :members:
-
-.. automodule:: nsdf_vec
-  :members:
-
-Threading
-^^^^^^^^^
-
-.. automodule:: threading_demo
-  :members:
-
-PyMoose
-^^^^^^^
-
-.. automodule:: traub_naf
-  :members:
-
-.. _quickstart-maths:
-
-Mathematics with MOOSE
-^^^^^^^^^^^^^^^^^^^^^^
-
-Computing an arbitrary function
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. automodule:: function
-  :members:
-
-Differential Equation Solving
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. automodule:: diffEqSolution
-  :members:
-
-Harmonic Oscillatory Function
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. automodule:: funcRateHarmonicOsc
-  :members:
-
-Lotka-Voltera Model
-^^^^^^^^^^^^^^^^^^^
-
-.. automodule:: funcReacLotkaVolterra
-  :members:
-
-.. automodule:: stochasticLotkaVolterra
-  :members:
-
-Vary Concentration with mathematical function
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. automodule:: funcInputToPools
-  :members:

@@ -83,13 +83,9 @@ install(DIRECTORY ${MOOSE_EXAMPLE_DIR}/
     PATTERN "_travis*" EXCLUDE
     PATTERN ".travis*" EXCLUDE
     PATTERN "*.pyc" EXCLUDE
-    PATTERN "*.png" EXCLUDE
-    PATTERN "docs*" EXCLUDE
     )
 
-# Copy the command to launch moose.
-configure_file(${CMAKE_SOURCE_DIR}/cmake/moose.in ${CMAKE_BINARY_DIR}/moose)
-
+configure_file( ${CMAKE_SOURCE_DIR}/cmake/moose.in ${CMAKE_BINARY_DIR}/moose )
 install(PROGRAMS ${CMAKE_BINARY_DIR}/moose DESTINATION bin)
 
 ## UNINSTALL

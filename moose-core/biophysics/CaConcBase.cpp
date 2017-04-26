@@ -17,13 +17,13 @@
 ///////////////////////////////////////////////////////
 /*
  * This Finfo is used to send out Ca concentration to channels.
- * 
+ *
  * It is exposed here so that HSolve can also use it to send out
  * Ca concentration to the recipients.
  */
 // Static function.
 SrcFinfo1< double >* CaConcBase::concOut() {
-  static SrcFinfo1< double > concOut( "concOut", 
+  static SrcFinfo1< double > concOut( "concOut",
 				      "Concentration of Ca in pool" );
   return &concOut;
 }
@@ -33,10 +33,10 @@ const Cinfo* CaConcBase::initCinfo()
   ///////////////////////////////////////////////////////
   // Shared message definitions
   ///////////////////////////////////////////////////////
-  static DestFinfo process( "process", 
+  static DestFinfo process( "process",
 			    "Handles process call",
 			    new ProcOpFunc< CaConcBase >( &CaConcBase::process ) );
-  static DestFinfo reinit( "reinit", 
+  static DestFinfo reinit( "reinit",
 			   "Handles reinit call",
 			   new ProcOpFunc< CaConcBase >( &CaConcBase::reinit ) );
 
@@ -45,10 +45,10 @@ const Cinfo* CaConcBase::initCinfo()
       &process, &reinit
     };
 
-  static SharedFinfo proc( "proc", 
+  static SharedFinfo proc( "proc",
 			   "Shared message to receive Process message from scheduler",
 			   processShared, sizeof( processShared ) / sizeof( Finfo* ) );
-		
+
   ///////////////////////////////////////////////////////
   // Field definitions
   ///////////////////////////////////////////////////////
@@ -82,10 +82,9 @@ const Cinfo* CaConcBase::initCinfo()
 						    &CaConcBase::getB
 						    );
   static ElementValueFinfo< CaConcBase, double > thick( "thick",
-							"Thickness of Ca shell, assumed cylindrical. Legal range is "
-							"between zero and the radius. If outside this range it is "
-							"taken as the radius. Default zero, ie, the shell is the entire "
-							"thickness of the cylinder", 	
+							"Thickness of Ca shell, assumed cylindrical. Legal range is between 0 \n"
+							"and the radius. If outside this range it is taken as the radius. \n"
+							" Default zero, ie, the shell is the entire thickness of the cylinder \n",
 							&CaConcBase::setThickness,
 							&CaConcBase::getThickness
 							);
@@ -100,7 +99,8 @@ const Cinfo* CaConcBase::initCinfo()
 							   &CaConcBase::getDiameter
 							   );
   static ElementValueFinfo< CaConcBase, double > ceiling( "ceiling",
-							  "Ceiling value for Ca concentration. If Ca > ceiling, Ca = ceiling. If ceiling <= 0.0, there is no upper limit on Ca concentration value.",
+							  "Ceiling value for Ca concentration. If Ca > ceiling, Ca = ceiling. \n"
+                "If ceiling <= 0.0, there is no upper limit on Ca concentration value.",
 							  &CaConcBase::setCeiling,
 							  &CaConcBase::getCeiling
 							  );
@@ -114,34 +114,34 @@ const Cinfo* CaConcBase::initCinfo()
   // MsgDest definitions
   ///////////////////////////////////////////////////////
 
-  static DestFinfo current( "current", 
+  static DestFinfo current( "current",
 			    "Calcium Ion current, due to be converted to conc.",
 			    new EpFunc1< CaConcBase, double >( &CaConcBase::current )
 			    );
 
-  static DestFinfo currentFraction( "currentFraction", 
+  static DestFinfo currentFraction( "currentFraction",
 				    "Fraction of total Ion current, that is carried by Ca2+.",
 				    new EpFunc2< CaConcBase, double, double >( &CaConcBase::currentFraction )
 				    );
 
-  static DestFinfo increase( "increase", 
+  static DestFinfo increase( "increase",
 			     "Any input current that increases the concentration.",
 			     new EpFunc1< CaConcBase, double >( &CaConcBase::increase )
 			     );
 
-  static DestFinfo decrease( "decrease", 
+  static DestFinfo decrease( "decrease",
 			     "Any input current that decreases the concentration.",
 			     new EpFunc1< CaConcBase, double >( &CaConcBase::decrease )
 			     );
 
-  static DestFinfo basal( "basal", 
+  static DestFinfo basal( "basal",
 			  "Synonym for assignment of basal conc.",
 			  new EpFunc1< CaConcBase, double >( &CaConcBase::setCaBasal )
 			  );
 
   static Finfo* CaConcBaseFinfos[] =
     {
-      &proc,		// Shared 
+      &proc,		// Shared
       concOut(),	// Src
       &Ca,		// Value
       &CaBasal,	// Value
@@ -167,13 +167,12 @@ const Cinfo* CaConcBase::initCinfo()
     {
       "Name", "CaConcBase",
       "Author", "Upinder S. Bhalla, 2014, NCBS",
-      "Description", 
-      "CaConcBase: Base class for Calcium concentration "
-      "pool. Takes current from a channel and keeps track of "
-      "calcium buildup and depletion by a "
-      "single exponential process. ",
+      "Description",
+      "CaConcBase: Base class for Calcium concentration pool. \n"
+      "Takes current from a channel and keeps track of calcium buildup and \n"
+      " depletion by a single exponential process. ",
     };
-        
+
   static ZeroSizeDinfo< int > dinfo;
 
   static Cinfo CaConcBaseCinfo(
@@ -341,7 +340,7 @@ void CaConcBase::vSetSolver( const Eref& e, Id hsolve )
 {;}
 
 // static func
-void CaConcBase::zombify( Element* orig, const Cinfo* zClass, 
+void CaConcBase::zombify( Element* orig, const Cinfo* zClass,
 			  Id hsolve )
 {
   if ( orig->cinfo() == zClass )
@@ -355,7 +354,7 @@ void CaConcBase::zombify( Element* orig, const Cinfo* zClass,
   unsigned int j = 0;
   for ( unsigned int i = 0; i < num; ++i ) {
     Eref er( orig, i + start );
-    const CaConcBase* cb = 
+    const CaConcBase* cb =
       reinterpret_cast< const CaConcBase* >( er.data() );
     data[j + 0] = cb->getCa( er );
     data[j + 1] = cb->getCaBasal( er );
@@ -386,4 +385,3 @@ void CaConcBase::zombify( Element* orig, const Cinfo* zClass,
     j += 9; //was 7?
   }
 }
-

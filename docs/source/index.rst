@@ -30,6 +30,7 @@ MOOSE is a simulation environment, not just a numerical engine: It provides data
    /user/py/cookbook/index_ckbk
    /user/py/graphics/index_graphics
    /user/py/references/index_ref
+   /doxygen/doxy
 
 .. toctree::
    :maxdepth: 1

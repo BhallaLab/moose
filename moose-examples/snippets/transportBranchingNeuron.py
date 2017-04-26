@@ -106,7 +106,7 @@ def makeDisplay():
         pos = compt.voxelMidpoint
         i = len( pos ) / 3
         r2 = numpy.sqrt( 0.5 )
-        yp = [ -r2 * pos[j] * 1e6 for j in range( i ) ]
+        yp = [ -r2 * pos[j] * 1e6 for j in range( int(i) ) ]
         xp = pos[i:2*i] * 1e6 - yp
         aline, = aConc.plot( xp, yp, 'b.' )
 

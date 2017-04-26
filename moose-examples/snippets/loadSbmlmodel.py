@@ -47,13 +47,15 @@ from moose.chemUtil.add_Delete_ChemicalSolver import *
 
 def main():
     """
-This example illustrates loading, running of an SBML model defined in XML format.
-Default this  file load's 00001-sbml-l3v1.xml which is taken from l3v1 SBML testcase.
-Plots are setup.
-Model is run for 20sec.
-As a general rule we created model under '/path/model' and plots under '/path/graphs'.
-If someone wants to load anyother file then 
+    This example illustrates loading, running of an SBML model defined in XML format.
+    Default this  file load's 00001-sbml-l3v1.xml which is taken from l3v1 SBML testcase.
+    Plots are setup.
+    Model is run for 20sec.
+    As a general rule we created model under '/path/model' and plots under '/path/graphs'.
+    If someone wants to load anyother file then
+
     `python loadSbmlmodel filepath runtime`
+
     """
 
     dfilepath = "../genesis/00001-sbml-l3v1.xml"
@@ -63,13 +65,13 @@ If someone wants to load anyother file then
         sys.argv[1]
     except IndexError:
         filepath = dfilepath
-        
+
     else:
         filepath = sys.argv[1]
     if not os.path.exists(filepath):
         msg = "Filename or path does not exist",filepath,"loading default file",dfilepath
         filepath = dfilepath
-        
+
     try:
         sys.argv[2]
     except :
@@ -103,7 +105,7 @@ If someone wants to load anyother file then
         moose.reinit()
         moose.start(runtime)
         return sbmlId,True,msg
-    return sbmlId,False,msg 
+    return sbmlId,False,msg
 
 def displayPlots():
     # Display all plots.
@@ -119,11 +121,9 @@ def displayPlots():
 if __name__=='__main__':
     modelPath = moose.element('/')
     modelpathexist = False
-    msg = "" 
+    msg = ""
     modelPath, modelpathexist,msg = main()
     if msg:
         print (msg)
     if modelpathexist == True:
         displayPlots()
-
-    

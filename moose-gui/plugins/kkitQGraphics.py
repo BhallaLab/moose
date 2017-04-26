@@ -1,13 +1,3 @@
-
-__author__      =   "HarshaRani"
-__credits__     =   ["Upi Lab"]
-__license__     =   "GPL3"
-__version__     =   "1.0.0"
-__maintainer__  =   "HarshaRani"
-__email__       =   "hrani@ncbs.res.in"
-__status__      =   "Development"
-__updated__     =   "Mar 7 2017"
-
 #import sys
 #sys.path.insert(0, '/home/harsha/trunk/gui')
 import config
@@ -15,7 +5,6 @@ from PyQt4 import QtGui, QtCore, Qt
 from moose import *
 from PyQt4.QtGui import QPixmap, QImage, QGraphicsPixmapItem
 from constants import *
-from os import path
 
 class KineticsDisplayItem(QtGui.QGraphicsWidget):
     """Base class for display elemenets in kinetics layout"""
@@ -72,9 +61,7 @@ class FuncItem(KineticsDisplayItem):
     def __init__(self, mobj, parent):
         super(FuncItem, self).__init__(mobj, parent)
         self.setFlag(QtGui.QGraphicsItem.ItemIsMovable, True)
-        #self.funcImage = QImage('icons/classIcon/Function.png').scaled(15,33)
-        iconmap_file = (path.join(config.settings[config.KEY_ICON_DIR], 'classIcon/Function.png'))
-        self.funcImage = QImage(iconmap_file).scaled(15,33)
+        self.funcImage = QImage('icons/classIcon/Function.png').scaled(15,33)
         self.bg = QtGui.QGraphicsRectItem(self)
         self.bg.setAcceptHoverEvents(True)
         self.gobj = QtGui.QGraphicsPixmapItem(QtGui.QPixmap.fromImage(self.funcImage),self.bg)
@@ -88,12 +75,11 @@ class FuncItem(KineticsDisplayItem):
         
     def setDisplayProperties(self,x,y,textcolor,bgcolor):
         """Set the display properties of this item."""
-        #With Respect to BufPool (as parent which is in old genesis) then function are placed at 0,30 (which is below the BufPool)
+        #With Respect to BuffPool (as parent which is in old genesis) then function are placed at 0,30 (which is below the BuffPool)
         #else if droped from the GUI then placed wrt position
         #self.setGeometry(0, 30,self.gobj.boundingRect().width(),self.gobj.boundingRect().height())
         #self.setGeometry(x,y)
-        poolt = ["ZombieBufPool","BufPool","ZombiePool","Pool"]
-        if self.gobj.mobj.parent.className in poolt:
+        if self.gobj.mobj.parent.className == "ZombieBufPool" or self.gobj.mobj.parent.className == "BufPool":
             self.setGeometry(0, 30,self.gobj.boundingRect().width(),self.gobj.boundingRect().height())
         else:
             self.setGeometry(x,y,self.gobj.boundingRect().width(),self.gobj.boundingRect().height())
@@ -198,9 +184,6 @@ class PoolItem(KineticsDisplayItem):
         #This func will adjust the background color with respect to text size
         self.gobj.setText(self.mobj.name)
         self.bg.setRect(0, 0, self.gobj.boundingRect().width()+PoolItem.fontMetrics.width('  '), self.gobj.boundingRect().height())
-        self.setGeometry(self.pos().x(),self.pos().y(),self.gobj.boundingRect().width()
-                        +PoolItem.fontMetrics.width(''), 
-                        self.gobj.boundingRect().height())
     
     def updateColor(self,bgcolor):
         self.bg.setBrush(QtGui.QBrush(QtGui.QColor(bgcolor)))
@@ -496,9 +479,7 @@ class ComptItem(QtGui.QGraphicsRectItem):
 
         self.setFlag(QtGui.QGraphicsItem.ItemIsMovable, True);
         self.setFlag(QtGui.QGraphicsItem.ItemIsSelectable)
-        #self.setFlag(QtGui.QGraphicsItem.ItemSendsGeometryChanges, 1)
-        QT_VERSION = str(QtCore.QT_VERSION_STR).split('.')
-        QT_MINOR_VERSION = int(QT_VERSION[1])
+        #self.setFlag(QtGui.QGraphicsItem.ItemSendsGeometryChanges, 1) 
         if config.QT_MINOR_VERSION >= 6:
             self.setFlag(QtGui.QGraphicsItem.ItemSendsGeometryChanges, 1) 
     '''
