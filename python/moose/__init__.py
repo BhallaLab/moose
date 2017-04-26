@@ -13,6 +13,7 @@ import pydoc
 import os
 from io import StringIO
 from collections import defaultdict
+import textwrap
 
 import moose
 from moose._moose import *
@@ -308,6 +309,45 @@ def showmsg(el):
             msg.e2.path,
             msg.destFieldsOnE2)
 
+def getfielddoc_(tokens, infoType=''):
+    indent=''
+    classname = tokens[0]
+    # print( classname )
+    while True:
+        try:
+            classelement = _moose.element('/classes/' + classname)
+            # print( classelement )
+            x = ''
+            for finfo in classelement.children:
+                # print (str(finfo)[33:-1])
+                # trial = 'path=/classes[0]/' + classname + '[0]/' + infoType
+                # print (trial)
+                # print (str(finfo)[33:-1] == trial)
+                for fieldelement in finfo:
+                    fieldname = fieldelement.fieldName
+                    if (str(fieldname).startswith('get')) or (str(fieldname).startswith('set')):
+                        continue
+                    baseinfo = ''
+                    finfotype = fieldelement.name
+                    if(infoType == 'destFinfo'):
+                        say = 'Destination Message Field'
+                    elif(infoType == 'valueFinfo'):
+                        say = 'Value Field'
+                    elif(infoType == 'srcFinfo'):
+                        say = 'Source Message Field'
+                    elif(infoType == 'lookupFinfo'):
+                        say = 'Lookup Field'
+                    elif(infoType == 'sharedFinfo'):
+                        say = 'Shared Message Field'
+
+                    # finfotype={finfotype}{baseinfo}
+                    if (str(finfotype) == infoType):
+                        x = x + '{indent}{classname}.{fieldname}:   type= {type}   finfotype= {say}{baseinfo}\n\t{docs}\n\n'.format(indent=indent, classname=tokens[0], fieldname = fieldname, type=fieldelement.type, say=say, baseinfo=baseinfo, docs=fieldelement.docs)
+
+            return x
+            # classname = classelement.baseClass
+        except ValueError:
+            raise NameError('`%s` has no field called `%s`'% (tokens[0], tokens[1]))
 
 def getfielddoc(tokens, indent=''):
     """Return the documentation for field specified by `tokens`.
@@ -340,6 +380,7 @@ def getfielddoc(tokens, indent=''):
         try:
             classelement = _moose.element('/classes/' + classname)
             for finfo in classelement.children:
+                x = ''
                 for fieldelement in finfo:
                     baseinfo = ''
                     if classname != tokens[0]:
@@ -348,18 +389,11 @@ def getfielddoc(tokens, indent=''):
                         # The field elements are
                         # /classes/{ParentClass}[0]/{fieldElementType}[N].
                         finfotype = fieldelement.name
-                        return '{indent}{classname}.{fieldname}: type={type}, finfotype={finfotype}{baseinfo}\n\t{docs}\n'.format(
-                            indent=indent, classname=tokens[0],
-                            fieldname=fieldname,
-                            type=fieldelement.type,
-                            finfotype=finfotype,
-                            baseinfo=baseinfo,
-                            docs=fieldelement.docs)
+                        x = x + '{indent}{classname}.{fieldname}: type={type}, finfotype={finfotype}{baseinfo}\n\t{docs}\n'.format(indent=indent, classname=tokens[0], fieldname=fieldname, type=fieldelement.type, finfotype=finfotype, baseinfo=baseinfo, docs=fieldelement.docs)
+                        return x
             classname = classelement.baseClass
         except ValueError:
-            raise NameError('`%s` has no field called `%s`'
-                            % (tokens[0], tokens[1]))
-
+            raise NameError('`%s` has no field called `%s`'% (tokens[0], tokens[1]))
 
 def toUnicode(v, encoding='utf8'):
     # if isinstance(v, str):
@@ -407,20 +441,98 @@ def getmoosedoc(tokens, inherited=False):
         if len(tokens) > 1:
             docstring.write(toUnicode(getfielddoc(tokens)))
         else:
-            docstring.write(toUnicode('%s\n' % (class_element.docs)))
-            append_finfodocs(tokens[0], docstring, indent)
+            doc_text = class_element.docs
+            textArray = textwrap.wrap(doc_text, width = 70, replace_whitespace = False, drop_whitespace = False)
+            text = "\n".join(textArray)
+            # print(text)
+            docstring.write(toUnicode('%s\n' % (text)))
+
+            info = '\t Functions and message destinations \n\t------------------------------------\n\t All \'destFinfo\' can be used as destination Field for moose.connect function.\n'
+            docstring.write(toUnicode('%s\n') % (info))
+            docstring.write(toUnicode(getfielddoc_(tokens, 'destFinfo')))
+            # append_finfodocs(tokens[0], docstring, indent)
             if inherited:
                 mro = eval('_moose.%s' % (tokens[0])).mro()
                 for class_ in mro[1:]:
                     if class_ == _moose.melement:
                         break
-                    docstring.write(toUnicode(
-                        '\n\n#Inherited from %s#\n' % (class_.__name__)))
-                    append_finfodocs(class_.__name__, docstring, indent)
+                    docstring.write(toUnicode('\n#Inherited from %s#\n' % (class_.__name__)))
+                    temp = []
+                    temp.append(str(class_.__name__))
+                    docstring.write(toUnicode(getfielddoc_(temp, 'destFinfo')))
+                    # append_finfodocs(class_.__name__, docstring, indent)
                     if class_ == _moose.Neutral:    # Neutral is the toplevel moose class
                         break
-        return docstring.getvalue()
 
+            info = '\t Class attributes \n\t -------------------- \n\t All \'valueFinfo\' are attributes of the class, and can be read and written using \n\t standard get and set Functions (unless explicitely mentioned otherwise). \n\t for example, getVm() and setVm() for access to Vm.\n\t All \'sharedFinfo\'...'
+            docstring.write(toUnicode('%s\n') % (info))
+            docstring.write(toUnicode(getfielddoc_(tokens, 'valueFinfo')))
+            # append_finfodocs(tokens[0], docstring, indent)
+            if inherited:
+                mro = eval('_moose.%s' % (tokens[0])).mro()
+                for class_ in mro[1:]:
+                    if class_ == _moose.melement:
+                        break
+                    docstring.write(toUnicode('\n#Inherited from %s#\n' % (class_.__name__)))
+                    temp = []
+                    temp.append(str(class_.__name__))
+                    docstring.write(toUnicode(getfielddoc_(temp, 'valueFinfo')))
+                    # append_finfodocs(class_.__name__, docstring, indent)
+                    if class_ == _moose.Neutral:    # Neutral is the toplevel moose class
+                        break
+
+            info = '\t Source Messages \n\t ----------------------- \n\t All \'srcFinfo\' can be used as sourceField for moose.connect function.'
+            docstring.write(toUnicode('%s\n') % (info))
+            docstring.write(toUnicode(getfielddoc_(tokens, 'srcFinfo')))
+            # append_finfodocs(tokens[0], docstring, indent)
+            if inherited:
+                mro = eval('_moose.%s' % (tokens[0])).mro()
+                for class_ in mro[1:]:
+                    if class_ == _moose.melement:
+                        break
+                    docstring.write(toUnicode('\n#Inherited from %s#\n' % (class_.__name__)))
+                    temp = []
+                    temp.append(str(class_.__name__))
+                    docstring.write(toUnicode(getfielddoc_(temp, 'srcFinfo')))
+                    # append_finfodocs(class_.__name__, docstring, indent)
+                    if class_ == _moose.Neutral:    # Neutral is the toplevel moose class
+                        break
+
+            info = '\t LookUp Fields \n\t ---------------- \n\t All \'lookupFinfo\' are ..................................\n'
+            docstring.write(toUnicode('%s\n') % (info))
+            docstring.write(toUnicode(getfielddoc_(tokens, 'lookupFinfo')))
+            # append_finfodocs(tokens[0], docstring, indent)
+            if inherited:
+                mro = eval('_moose.%s' % (tokens[0])).mro()
+                for class_ in mro[1:]:
+                    if class_ == _moose.melement:
+                        break
+                    docstring.write(toUnicode('\n#Inherited from %s#\n' % (class_.__name__)))
+                    temp = []
+                    temp.append(str(class_.__name__))
+                    docstring.write(toUnicode(getfielddoc_(temp, 'lookupFinfo')))
+                    # append_finfodocs(class_.__name__, docstring, indent)
+                    if class_ == _moose.Neutral:    # Neutral is the toplevel moose class
+                        break
+
+            info = '\t shared fields \n\t ---------------- \n\t All \'sharedFinfo\' are ..................................\n'
+            docstring.write(toUnicode('%s\n') % (info))
+            docstring.write(toUnicode(getfielddoc_(tokens, 'sharedFinfo')))
+            # append_finfodocs(tokens[0], docstring, indent)
+            if inherited:
+                mro = eval('_moose.%s' % (tokens[0])).mro()
+                for class_ in mro[1:]:
+                    if class_ == _moose.melement:
+                        break
+                    docstring.write(toUnicode('\n#Inherited from %s#\n' % (class_.__name__)))
+                    temp = []
+                    temp.append(str(class_.__name__))
+                    docstring.write(toUnicode(getfielddoc_(temp, 'sharedFinfo')))
+                    # append_finfodocs(class_.__name__, docstring, indent)
+                    if class_ == _moose.Neutral:    # Neutral is the toplevel moose class
+                        break
+
+        return docstring.getvalue()
 
 def append_finfodocs(classname, docstring, indent):
     """Append list of finfos in class name to docstring"""
@@ -437,7 +549,6 @@ def append_finfodocs(classname, docstring, indent):
                     '%s%s: %s\n' % (indent, field.fieldName, field.type)))
         except ValueError:
             docstring.write(toUnicode('%sNone\n' % (indent)))
-
 
 # the global pager is set from pydoc even if the user asks for paged
 # help once. this is to strike a balance between GENESIS user's
@@ -502,5 +613,4 @@ def doc(arg, inherited=True, paged=True):
     if pager:
         pager(text)
     else:
-        print(text)
-
+        print(text, width=80)

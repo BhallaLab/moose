@@ -41,6 +41,17 @@ const Cinfo* SparseMsg::initCinfo()
 		"Number of Entries in matrix.",
 		&SparseMsg::getNumEntries
 	);
+
+	static ValueFinfo< SparseMsg, vector< unsigned int > > connectionList(
+		"connectionList",
+		"Pairwise specification of connection matrix where each x,y value "
+		"represents a connection from src[x] to dest[y]. "
+		"The (x,y) entries are ordered in a single vector as \n"
+		"(x0, x1,... x_n-1, y0, y1,... y_n-1)\n",
+		&SparseMsg::setEntryPairs,
+		&SparseMsg::getEntryPairs
+	);
+
     /// Connection matrix entries to manipulate in Python.
     static ReadOnlyValueFinfo< SparseMsg, vector< unsigned int > >
     matrixEntry(
@@ -124,6 +135,13 @@ const Cinfo* SparseMsg::initCinfo()
 			vector< unsigned int >	>( 
 		&SparseMsg::tripletFill ) );
 
+	static DestFinfo tripletFill1( "tripletFill1",
+		"Single contiguous array to fill entire connection matrix using "
+		"triplets of (x,y, fieldindex) ordered as \n"
+		"(x0, x1,... xn-1, y0, y1,... yn-1, fi0, fi1,... fi_n-1)\n",
+		new OpFunc1< SparseMsg, vector< unsigned int > >( 
+		&SparseMsg::tripletFill1 ) );
+
 ////////////////////////////////////////////////////////////////////////
 // Assemble it all.
 ////////////////////////////////////////////////////////////////////////
@@ -132,6 +150,7 @@ const Cinfo* SparseMsg::initCinfo()
 		&numRows,			// readonly value
 		&numColumns,		// readonly value
 		&numEntries,		// readonly value
+		&connectionList,	// value
         &matrixEntry,		// ReadOnlyValue
         &columnIndex,		// ReadOnlyValue
         &rowStart,			// ReadOnlyValue
@@ -144,6 +163,7 @@ const Cinfo* SparseMsg::initCinfo()
 		&transpose,			//dest
 		&pairFill,			//dest
 		&tripletFill,		//dest
+		&tripletFill1,		//dest
 	};
 
 	static Dinfo< short > dinfo;
@@ -217,6 +237,28 @@ vector< unsigned int > SparseMsg::getRowStart() const
     return matrix_.rowStart();
 }
 
+void SparseMsg::setEntryPairs( vector< unsigned int > v )
+{
+	vector< unsigned int > src( v.begin(), v.begin() + v.size()/2 );
+	vector< unsigned int > dest( v.begin() + v.size()/2, v.end() );
+	pairFill( src, dest );
+}
+
+vector< unsigned int > SparseMsg::getEntryPairs() const
+{
+	vector< unsigned int > cols = matrix_.colIndex();
+	vector< unsigned int > y;
+	for ( unsigned int row = 0; row < matrix_.nRows(); ++row ) {
+		unsigned int begin = matrix_.rowStart()[row];
+		unsigned int end = matrix_.rowStart()[row+1];
+		for ( unsigned int j = begin; j < end; ++j )
+			y.push_back( row );
+	}
+	assert( cols.size() == y.size() );
+	y.insert( y.end(), cols.begin(), cols.end() );
+	return y;
+}
+
 //////////////////////////////////////////////////////////////////
 //    DestFields
 //////////////////////////////////////////////////////////////////
@@ -256,21 +298,57 @@ void SparseMsg::updateAfterFill()
 {
 	unsigned int startData = e2_->localDataStart();
 	unsigned int endData = startData + e2_->numLocalData();
-	for ( unsigned int i = 0; i < matrix_.nRows(); ++ i ) {
+	SparseMatrix< unsigned int > temp( matrix_);
+	temp.transpose();
+	for ( unsigned int i = 0; i < temp.nRows(); ++ i ) {
 		const unsigned int* colIndex;
 		const unsigned int* entry;
-		unsigned int num = matrix_.getRow( i, &entry, &colIndex );
+		unsigned int num = temp.getRow( i, &entry, &colIndex );
 		if ( i >= startData && i < endData ) {
-			e2_->resizeField( i - startData, num );
+			// Inefficient. Better to do it in one pass after getting 
+			// the max num
+			e2_->resizeField( i - startData, num + 1 );
 		}
 	}
 	e1()->markRewired();
 	e2()->markRewired();
 }
+
 void SparseMsg::pairFill( vector< unsigned int > src,
 			vector< unsigned int> dest )
 {
-	matrix_.pairFill( src, dest, 0 );
+	// Sanity check
+	vector< unsigned int >::const_iterator i;
+	for ( i = src.begin(); i != src.end(); ++i ) {
+		if (*i >= e1()->numData() ) {
+			cout << "Warning: SparseMsg::pairFill: Src index " << *i <<
+				   " exceeds Src array size " << e1()->numData() << 
+				   ". Aborting\n";
+			return;
+		}
+	}
+	for ( i = dest.begin(); i != dest.end(); ++i ) {
+		if (*i >= e2()->numData() ) {
+			cout << "Warning: SparseMsg::pairFill: Dest index " << *i <<
+				   " exceeds Dest array size " << e2()->numData() << 
+				   ". Aborting\n";
+			return;
+		}
+	}
+	
+	vector< unsigned int > numAtDest( dest.size(), 0 );
+	vector< unsigned int > fieldIndex( dest.size(), 0 );
+	for ( unsigned int i = 0; i < dest.size(); ++i ) {
+		fieldIndex[i] = numAtDest[ dest[i] ]; 
+		// Could do on previous line, but clarity
+		++numAtDest[ dest[i] ];
+	}
+
+	/**
+	 * We set retainSize flag to true since the # of src/dest objects
+	 * doesn't change. We can explicitly assign it elsewhere if needed.
+	 */
+	matrix_.tripletFill( src, dest, fieldIndex, true );
 	updateAfterFill();
 }
 
@@ -278,8 +356,18 @@ void SparseMsg::tripletFill( vector< unsigned int > src,
 			vector< unsigned int> destDataIndex,
 			vector< unsigned int> destFieldIndex )
 {
-	matrix_.tripletFill( src, destDataIndex, destFieldIndex );
+	// We set retainSize flag to true
+	matrix_.tripletFill( src, destDataIndex, destFieldIndex, true );
 	updateAfterFill();
+}
+
+void SparseMsg::tripletFill1( vector< unsigned int > v )
+{
+	unsigned int s3 = v.size() / 3;
+	vector< unsigned int > src( v.begin(), v.begin() + s3 );
+	vector< unsigned int > dest( v.begin() + s3, v.begin() + 2 * s3 );
+	vector< unsigned int > fieldIndex( v.begin() + 2 * s3, v.end() );
+	tripletFill( src, dest, fieldIndex );
 }
 
 //////////////////////////////////////////////////////////////////
@@ -289,7 +377,10 @@ void SparseMsg::tripletFill( vector< unsigned int > src,
 
 SparseMsg::SparseMsg( Element* e1, Element* e2, unsigned int msgIndex )
 	: Msg( ObjId( managerId_, (msgIndex != 0) ? msgIndex: msg_.size() ),
-					e1, e2 )
+					e1, e2 ), 
+				numThreads_( 1 ), 
+				nrows_( 0 ),
+				p_( 0.0 ), seed_( 0 )
 {
 	unsigned int nrows = 0;
 	unsigned int ncolumns = 0;
