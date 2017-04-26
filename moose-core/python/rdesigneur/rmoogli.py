@@ -91,8 +91,8 @@ def makeMoogli( rd, mooObj, moogliEntry, fieldInfo ):
     #print len( network.groups["soma"].shapes )
     #soma = network.groups["soma"].shapes[ '/model/elec/soma']
     #print network.groups["soma"].shapes
-
-    soma = network.groups["soma"].shapes[ rd.elecid.path + '/soma[0]']
+    soma_path=moose.wildcardFind(rd.elecid.path+'/soma#')[0].path
+    soma = network.groups["soma"].shapes[soma_path]
     if ( mooField == 'n' or mooField == 'conc' ):
         updateGroup = soma.subdivide( numMoogli )
         displayObj = mooObj
