@@ -25,21 +25,12 @@ to pick your distribution and follow instructions.
 
 .. todo:: Packages for gentoo, Arch Linux
 
-Mac OSX
-^^^^^^^
 
-Download the ``dmg`` file from `here <https://github.com/BhallaLab/moose/releases/download/ghevar_3.0.2/Moose_3.0.2_OSX.dmg>`_.
-
-Alternatively, you can use ``homebrew`` to install ``moose``
+MacOSX support is not complete yet. Python-scripting interface can be installed on MaxOSX using ``homebrew``
 ::
 
     $ brew install homebrew/science/moose
 
-
-Windows/Cygwin
-^^^^^^^^^^^^^^
-
-Coming soon...!
 
 Building MOOSE
 --------------
@@ -125,20 +116,6 @@ On ``OpenSUSE``
 build moose
 ^^^^^^^^^^^
 
-Method 1: Using Makefile
-""""""""""""""""""""""""
-
-.. code-block:: bash
-
-    $ cd moose-core
-    $ make
-    $ export PYTHONPATH="/homedir/moose-core/python"
-               or
-    $ ./build-moose-core #builds moose and sets the pythonpath in local_site_package_directory
-
-Method 2: Using cmake
-"""""""""""""""""""""
-
 .. code-block:: bash
 
    $ cd /to/moose/source/code
@@ -147,6 +124,7 @@ Method 2: Using cmake
    $ cmake  ..
    $ make
    $ ctest --output-on-failure  # optional
+   $ sudo make install 
 
 This will build pyMOOSE (MOOSE's python extention), `ctest` will run few tests to
 check if build process was successful.
