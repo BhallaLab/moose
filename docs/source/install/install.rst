@@ -5,7 +5,7 @@ Linux
 ^^^^^^
 
 We recommend that you use our repositories hosted at `Open Build Service
-<http://build.opensuse.org>`_.  We have packages for the following distributions
+<https://build.opensuse.org/package/show/home:moose/moose>`_.  We have packages for the following distributions
 
 - Debian 7.0, 8.0
 - Ubuntu 12.04, 14.04, 15.04, 15.10, 16.04
