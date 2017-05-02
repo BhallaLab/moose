@@ -137,16 +137,6 @@ html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 # of the sidebar.
 html_logo = 'images/moose_logo.png'
 
-# The name of an image file (within the static path) to use as favicon of the
-# docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
-# pixels large.
-#html_favicon = None
-
-# Add any paths that contain custom static files (such as style sheets) here,
-# relative to this directory. They are copied after the builtin static files,
-# so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
-
 # If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
 # using the given strftime format.
 #html_last_updated_fmt = '%b %d, %Y'
@@ -270,7 +260,15 @@ texinfo_domain_indices = True
 numpydoc_show_class_members = False
 
 # autodoc options to mock MOOSE module
-autodoc_mock_imports = [ 'numpy' , 'moose.sbml' , 'moose.genesis' , 'moose.LIF' , 'moogli.extensions.moose' , 'extensions.moose', 'moose' , 'moose.SBML' , 'pylab' , 'moose.genesis' , 'datetime' , 'getpass' , 'h5py' , 'matplotlib' , 'squid' , 'PyQt4' , 'moogli' , 'moose.utils' , 'math' , 'SquidAxon' , '_moogli' , 'XRRRates' , 'neuroml.NeuroML' ,'neuroml' , 'rdesigneur' , 'pyplot' , 'gnuplot' , 'cm' , 'matplotlib.pyplot' , 'matplotlib.image' , 'matplotlib.cm' , 'shapes' , 'chemUtil.add_Delete_ChemicalSolver' ]
+autodoc_mock_imports = [ 'numpy' , 'moose.sbml' , 'moose.genesis' , 'moose.LIF'
+        , 'moogli.extensions.moose' , 'extensions.moose', 'moose' , 'moose.SBML' 
+        , 'pylab' , 'moose.genesis' , 'datetime' , 'getpass' , 'h5py' 
+        , 'matplotlib' , 'squid' , 'PyQt4' , 'moogli' , 'moose.utils' 
+        , 'math' , 'SquidAxon' , '_moogli' , 'XRRRates' , 'neuroml.NeuroML' 
+        ,'neuroml' , 'rdesigneur' , 'pyplot' , 'gnuplot' , 'cm'
+        , 'matplotlib.pyplot' , 'matplotlib.image' , 'matplotlib.cm' , 'shapes' 
+        , 'chemUtil.add_Delete_ChemicalSolver' 
+        ]
 
 #include reference files
 exclude_patterns = ['/docs/source/user/py/references/*.rst']

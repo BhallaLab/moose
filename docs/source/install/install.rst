@@ -5,7 +5,7 @@ Linux
 ^^^^^^
 
 We recommend that you use our repositories hosted at `Open Build Service
-<http://build.opensuse.org>`_.  We have packages for the following distributions
+<https://build.opensuse.org/package/show/home:moose/moose>`_.  We have packages for the following distributions
 
 - Debian 7.0, 8.0
 - Ubuntu 12.04, 14.04, 15.04, 15.10, 16.04
@@ -25,21 +25,12 @@ to pick your distribution and follow instructions.
 
 .. todo:: Packages for gentoo, Arch Linux
 
-Mac OSX
-^^^^^^^
 
-Download the ``dmg`` file from `here <https://github.com/BhallaLab/moose/releases/download/ghevar_3.0.2/Moose_3.0.2_OSX.dmg>`_.
-
-Alternatively, you can use ``homebrew`` to install ``moose``
+MacOSX support is not complete yet. Python-scripting interface can be installed on MaxOSX using ``homebrew``
 ::
 
     $ brew install homebrew/science/moose
 
-
-Windows/Cygwin
-^^^^^^^^^^^^^^
-
-Coming soon...!
 
 Building MOOSE
 --------------
@@ -63,13 +54,6 @@ Or,
 
 If you don't want lasest snapshot of ``MOOSE``, you can download other released
 versions from `here <`https://github.com/BhallaLab/moose/releases>`_.
-
-Once you have downloaded the repository, ::
-
-    $ cd moose
-    $ git submodule update --init; git pull
-                      or
-    $ sudo -E ./update-repository     # This script updates the repository and its subrepositories recursively, located in moose folder
 
 Install dependencies
 ^^^^^^^^^^^^^^^^^^^^
@@ -125,20 +109,6 @@ On ``OpenSUSE``
 build moose
 ^^^^^^^^^^^
 
-Method 1: Using Makefile
-""""""""""""""""""""""""
-
-.. code-block:: bash
-
-    $ cd moose-core
-    $ make
-    $ export PYTHONPATH="/homedir/moose-core/python"
-               or
-    $ ./build-moose-core #builds moose and sets the pythonpath in local_site_package_directory
-
-Method 2: Using cmake
-"""""""""""""""""""""
-
 .. code-block:: bash
 
    $ cd /to/moose/source/code
@@ -147,6 +117,7 @@ Method 2: Using cmake
    $ cmake  ..
    $ make
    $ ctest --output-on-failure  # optional
+   $ sudo make install 
 
 This will build pyMOOSE (MOOSE's python extention), `ctest` will run few tests to
 check if build process was successful.
