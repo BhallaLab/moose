@@ -44,7 +44,7 @@ install:
     - sudo ldconfig /usr/lib64
 
 script:
-    - git buildpackage  --git-ignore-new -uc -us
+    - gbp buildpackage  --git-ignore-new -uc -us
     - sudo dpkg -i ../moose*.deb
 
 after_success:
