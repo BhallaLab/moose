@@ -1,3 +1,9 @@
+moose (3.1.2ubuntu1) UNRELEASED; urgency=medium
+
+  * Nightly build of chamcham (3.1.x) series. 
+
+ -- Dilawar Singh <dilawars@Gulgula>  Mon, 08 May 2017 13:40:08 +0530
+
 moose (3.0.2) unstable; urgency=low
 
   * Initial release 
@@ -6,4 +12,4 @@ moose (3.0.2) unstable; urgency=low
   * 3.0.2 relase.
   * Just packed with SBML and GSL-1.6 support.
 
- -- Dilawar <dilawars@ncbs.res.in>  Sun, 05 July 2015 13:41:58 +0530
+ -- Dilawar Singh <dilawars@ncbs.res.in>  Sun, 05 Jul 2015 13:41:58 +0530
