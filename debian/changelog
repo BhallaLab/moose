@@ -1,3 +1,9 @@
+moose (3.1.2) unstable; urgency=medium
+
+  * Chamcham release (3.1.x) series.
+
+ -- Dilawar Singh <dilawars@Gulgula>  Mon, 08 May 2017 13:43:42 +0530
+
 moose (3.1.2) unstable; urgency=low
 
   * Bugfixes over 3.1.1
