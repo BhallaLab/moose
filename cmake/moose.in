@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
 (
-    cd @CMAKE_INSTALL_PREFIX@/lib/moose && python mgui.py & 
+    cd @CMAKE_INSTALL_PREFIX@/lib/moose/gui/ && python mgui.py & 
 )
