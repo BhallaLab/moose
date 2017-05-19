@@ -62,6 +62,7 @@ setup(
             , 'moose.SBML'
             , 'moose.neuroml'
             , 'moose.genesis'
+            , 'moose.chemUtil'
             ],
         package_dir = { 
             'moose' : 'moose' 
