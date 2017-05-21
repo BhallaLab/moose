@@ -12,34 +12,19 @@
 # You should have received a copy of the GNU General Public License
 # along with MOOSE.  If not, see <http://www.gnu.org/licenses/>.
 
-
-"""setup.py: 
-
-    Script to install python targets.
-
-"""
-    
 __author__           = "Dilawar Singh"
-__copyright__        = "Copyright 2013, Dilawar Singh and NCBS Bangalore"
+__copyright__        = "Copyright 2013-17, Dilawar Singh"
 __credits__          = ["NCBS Bangalore"]
-__license__          = "GNU GPL"
-__version__          = "1.0.0"
+__license__          = "GNU GPLv3"
 __maintainer__       = "Dilawar Singh"
 __email__            = "dilawars@ncbs.res.in"
-__status__           = "Development"
 
 import os
 from distutils.core import setup
 
 script_dir = os.path.dirname( os.path.abspath( __file__ ) )
 
-version = '3.1'
-try:
-    with open( os.path.join( script_dir, '..', 'VERSION'), 'r' ) as f:
-        version = f.read( )
-except Exception as e:
-    print( 'Failed to read VERSION %s' % e )
-    print( 'Using default 3.1' )
+version = '3.1.2'
 
 try:
     import importlib.machinery
@@ -51,7 +36,7 @@ setup(
         name='moose',
         version=version,
         description='MOOSE python scripting module.',
-        author='MOOSERes',
+        author='See AUTHORS file',
         author_email='bhalla@ncbs.res.in',
         maintainer='Dilawar Singh',
         maintainer_email='dilawars@ncbs.res.in',
@@ -62,6 +47,7 @@ setup(
             , 'moose.SBML'
             , 'moose.neuroml'
             , 'moose.genesis'
+            , 'moose.chemUtil'
             ],
         package_dir = { 
             'moose' : 'moose' 

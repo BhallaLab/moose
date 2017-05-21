@@ -9,26 +9,28 @@
 ** This program is part of 'MOOSE', the
 ** Messaging Object Oriented Simulation Environment,
 ** also known as GENESIS 3 base code.
-**           copyright (C) 2003-2016 Upinder S. Bhalla. and NCBS
+**           copyright (C) 2003-2017 Upinder S. Bhalla. and NCBS
 Created : Friday May 27 12:19:00 2016(+0530)
 Version
-Last-Updated: Thursday Oct 27 11:20:00 2016(+0530)
-		  By:
+Last-Updated: Wed Jan 11 15:20:00 2017(+0530)
+          By:
 **********************************************************************/
 /****************************
 
 '''
-
-import moose
+import sys
 import re
 from collections import Counter
-import networkx as nx
-import matplotlib.pyplot as plt
-import sys
+
+import moose
+from validation import validateModel
+from moose.chemUtil.chemConnectUtil import *
+from moose.chemUtil.graphUtils import *
+
 
 # ToDo:
-#	Table should be written
-#	Group's should be added
+#   Table should be written
+#   Group's should be added
 # boundary condition for buffer pool having assignment statment constant
 # shd be false
 
@@ -41,12 +43,14 @@ except Exception as e:
 
 def mooseWriteSBML(modelpath, filename, sceneitems={}):
     global foundLibSBML_ 
+    msg = " "
     if not foundLibSBML_:
         print('No python-libsbml found.' 
             '\nThis module can be installed by following command in terminal:'
-            '\n\t easy_install python-libsbl'
+            '\n\t easy_install python-libsbml or'
+            '\n\t apt-get install python-libsbml'
             )
-        return -1, msg
+        return -2, "Could not save the model in to SBML file. \nThis module can be installed by following command in terminal: \n\t easy_install python-libsbml or \n\t apt-get install python-libsbml",''
 
     sbmlDoc = SBMLDocument(3, 1)
     filepath, filenameExt = os.path.split(filename)
@@ -57,12 +61,11 @@ def mooseWriteSBML(modelpath, filename, sceneitems={}):
 
     # validatemodel
     sbmlOk = False
-    global spe_constTrue, cmin, cmax
+    global spe_constTrue
     spe_constTrue = []
     global nameList_
     nameList_ = []
-
-    autoCoordinateslayout = False
+    positionInfoexist = False
     xmlns = XMLNamespaces()
     xmlns.add("http://www.sbml.org/sbml/level3/version1")
     xmlns.add("http://www.moose.ncbs.res.in", "moose")
@@ -74,55 +77,57 @@ def mooseWriteSBML(modelpath, filename, sceneitems={}):
     cremodel_.setExtentUnits("substance")
     cremodel_.setSubstanceUnits("substance")
     neutralNotes = ""
+
     specieslist = moose.wildcardFind(modelpath + '/##[ISA=PoolBase]')
-    neutralPath = getGroupinfo(specieslist[0])
-    if moose.exists(neutralPath.path + '/info'):
-        neutralInfo = moose.element(neutralPath.path + '/info')
-        neutralNotes = neutralInfo.notes
-    if neutralNotes != "":
-        cleanNotes = convertNotesSpecialChar(neutralNotes)
-        notesString = "<body xmlns=\"http://www.w3.org/1999/xhtml\">\n \t \t" + \
-            neutralNotes + "\n\t </body>"
-        cremodel_.setNotes(notesString)
+    if specieslist:
+        neutralPath = getGroupinfo(specieslist[0])
+        if moose.exists(neutralPath.path + '/info'):
+            neutralInfo = moose.element(neutralPath.path + '/info')
+            neutralNotes = neutralInfo.notes
+        if neutralNotes != "":
+            cleanNotes = convertNotesSpecialChar(neutralNotes)
+            notesString = "<body xmlns=\"http://www.w3.org/1999/xhtml\">\n \t \t" + \
+                neutralNotes + "\n\t </body>"
+            cremodel_.setNotes(notesString)
+
     srcdesConnection = {}
-    cmin, cmax = 0, 1
-
     if not bool(sceneitems):
-        autoCoordinateslayout = True
-        srcdesConnection = setupItem(modelpath)
-        meshEntry = setupMeshObj(modelpath)
-        cmin, cmax, sceneitems = autoCoordinates(
-            meshEntry, srcdesConnection)
-
+        meshEntry,xmin,xmax,ymin,ymax,positionInfoexist,sitem = setupMeshObj(modelpath)
+        #moose.coordinateUtil.setupItem(modelpath,srcdesConnection)
+        setupItem(modelpath,srcdesConnection)
+        if not positionInfoexist:
+            autoCoordinates(meshEntry,srcdesConnection)
+    
     writeUnits(cremodel_)
     modelAnno = writeSimulationAnnotation(modelpath)
     if modelAnno:
         cremodel_.setAnnotation(modelAnno)
+
     compartexist = writeCompt(modelpath, cremodel_)
-    species = writeSpecies(
-        modelpath,
-        cremodel_,
-        sbmlDoc,
-        sceneitems,
-        autoCoordinateslayout)
-    if species:
-        writeFunc(modelpath, cremodel_)
-    writeReac(modelpath, cremodel_, sceneitems, autoCoordinateslayout)
-    writeEnz(modelpath, cremodel_, sceneitems, autoCoordinateslayout)
+    if compartexist == True:
+        species = writeSpecies( modelpath,cremodel_,sbmlDoc,sceneitems)
+        if species:
+            writeFunc(modelpath, cremodel_)
+        writeReac(modelpath, cremodel_, sceneitems)
+        writeEnz(modelpath, cremodel_, sceneitems)
+        consistencyMessages = ""
+        SBMLok = validateModel(sbmlDoc)
+        if (SBMLok):
+            writeTofile = filepath + "/" + filename + '.xml'
+            writeSBMLToFile(sbmlDoc, writeTofile)
+            return True, consistencyMessages, writeTofile
 
-    consistencyMessages = ""
-    SBMLok = validateModel(sbmlDoc)
-    if (SBMLok):
-        writeTofile = filepath + "/" + filename + '.xml'
-        writeSBMLToFile(sbmlDoc, writeTofile)
-        return True, consistencyMessages, writeTofile
+        if (not SBMLok):
+            cerr << "Errors encountered " << endl
+            return -1, consistencyMessages
+    else:
+        return False, "Atleast one compartment should exist to write SBML"
 
-    if (not SBMLok):
-        cerr << "Errors encountered " << endl
-        return -1, consistencyMessages
+def calPrime(x):
+    prime = int((20 * (float(x - cmin) / float(cmax - cmin))) - 10)
+    return prime
 
-
-def writeEnz(modelpath, cremodel_, sceneitems, autoCoordinateslayout):
+def writeEnz(modelpath, cremodel_, sceneitems):
     for enz in moose.wildcardFind(modelpath + '/##[ISA=EnzBase]'):
         enzannoexist = False
         enzGpnCorCol = " "
@@ -135,25 +140,26 @@ def writeEnz(modelpath, cremodel_, sceneitems, autoCoordinateslayout):
             notesE = Anno.notes
             element = moose.element(enz)
             ele = getGroupinfo(element)
-            if ele.className == "Neutral" or sceneitems[
-                    element] or Anno.color or Anno.textColor:
-                enzannoexist = True
-
+            if element.className == "Neutral" or sceneitems or Anno.x or Anno.y:
+                    enzannoexist = True
             if enzannoexist:
+                enzAnno = "<moose:ModelAnnotation>\n"
                 if ele.className == "Neutral":
-                    enzGpnCorCol = "<moose:Group> " + ele.name + " </moose:Group>\n"
-                if sceneitems[element]:
-                    v = sceneitems[element]
-                    if autoCoordinateslayout == False:
-                        enzGpnCorCol = enzGpnCorCol + "<moose:xCord>" + \
-                            str(v['x']) + "</moose:xCord>\n" + \
-                            "<moose:yCord>" + str(v['y']) + "</moose:yCord>\n"
-                    elif autoCoordinateslayout == True:
-                        x = calPrime(v['x'])
-                        y = calPrime(v['y'])
-                        enzGpnCorCol = enzGpnCorCol + "<moose:xCord>" + \
-                            str(x) + "</moose:xCord>\n" + \
-                            "<moose:yCord>" + str(y) + "</moose:yCord>\n"
+                    enzGpnCorCol =  "<moose:Group>" + ele.name + "</moose:Group>\n"
+                if sceneitems:
+                    #Saved from GUI, then scene co-ordinates are passed
+                    enzGpnCorCol = enzGpnCorCol + "<moose:xCord>" + \
+                            str(sceneitems[enz]['x']) + "</moose:xCord>\n" + \
+                            "<moose:yCord>" + \
+                            str(sceneitems[enz]['y'])+ "</moose:yCord>\n"
+                else:
+                    #Saved from cmdline,genesis coordinates are kept as its
+                    # SBML, cspace, python, then auto-coordinates are done
+                    #and coordinates are updated in moose Annotation field
+                    enzGpnCorCol = enzGpnCorCol + "<moose:xCord>" + \
+                            str(Anno.x) + "</moose:xCord>\n" + \
+                            "<moose:yCord>" + \
+                            str(Anno.y)+ "</moose:yCord>\n"
                 if Anno.color:
                     enzGpnCorCol = enzGpnCorCol + "<moose:bgColor>" + Anno.color + "</moose:bgColor>\n"
                 if Anno.textColor:
@@ -501,7 +507,7 @@ def listofname(reacSub, mobjEnz):
             nameList_.append(clean_name)
 
 
-def writeReac(modelpath, cremodel_, sceneitems, autoCoordinateslayout):
+def writeReac(modelpath, cremodel_, sceneitems):
     for reac in moose.wildcardFind(modelpath + '/##[ISA=ReacBase]'):
         reacSub = reac.neighbors["sub"]
         reacPrd = reac.neighbors["prd"]
@@ -537,34 +543,34 @@ def writeReac(modelpath, cremodel_, sceneitems, autoCoordinateslayout):
                     reaction.setNotes(notesStringR)
                 element = moose.element(reac)
                 ele = getGroupinfo(element)
-                if ele.className == "Neutral" or sceneitems[
-                        element] or Anno.color or Anno.textColor:
+                if element.className == "Neutral" or sceneitems or Anno.x or Anno.y:
                     reacannoexist = True
                 if reacannoexist:
                     reacAnno = "<moose:ModelAnnotation>\n"
                     if ele.className == "Neutral":
                         reacAnno = reacAnno + "<moose:Group>" + ele.name + "</moose:Group>\n"
-                    if sceneitems[element]:
-                        v = sceneitems[element]
-                        if autoCoordinateslayout == False:
-                            reacAnno = reacAnno + "<moose:xCord>" + \
-                                str(v['x']) + "</moose:xCord>\n" + \
+                    if sceneitems:
+                        #Saved from GUI, then scene co-ordinates are passed
+                        reacAnno = reacAnno + "<moose:xCord>" + \
+                                str(sceneitems[reac]['x']) + "</moose:xCord>\n" + \
                                 "<moose:yCord>" + \
-                                str(v['y']) + "</moose:yCord>\n"
-                        elif autoCoordinateslayout == True:
-                            x = calPrime(v['x'])
-                            y = calPrime(v['y'])
-                            reacAnno = reacAnno + "<moose:xCord>" + \
-                                str(x) + "</moose:xCord>\n" + \
-                                "<moose:yCord>" + str(y) + "</moose:yCord>\n"
+                                str(sceneitems[reac]['y'])+ "</moose:yCord>\n"
+                    else:
+                        #Saved from cmdline,genesis coordinates are kept as its
+                        # SBML, cspace, python, then auto-coordinates are done
+                        #and coordinates are updated in moose Annotation field
+                        reacAnno = reacAnno + "<moose:xCord>" + \
+                                str(Anno.x) + "</moose:xCord>\n" + \
+                                "<moose:yCord>" + \
+                                str(Anno.y)+ "</moose:yCord>\n"
                     if Anno.color:
                         reacAnno = reacAnno + "<moose:bgColor>" + Anno.color + "</moose:bgColor>\n"
                     if Anno.textColor:
                         reacAnno = reacAnno + "<moose:textColor>" + \
                             Anno.textColor + "</moose:textColor>\n"
                     reacAnno = reacAnno + "</moose:ModelAnnotation>"
-                    # s1.appendAnnotation(XMLNode.convertStringToXMLNode(speciAnno))
                     reaction.setAnnotation(reacAnno)
+
             kl_s, sRL, pRL, compt = "", "", "", ""
 
             if not reacSub and not reacPrd:
@@ -712,8 +718,7 @@ def convertSpecialChar(str1):
     return str1
 
 
-def writeSpecies(modelpath, cremodel_, sbmlDoc,
-                 sceneitems, autoCoordinateslayout):
+def writeSpecies(modelpath, cremodel_, sbmlDoc, sceneitems):
     # getting all the species
     for spe in moose.wildcardFind(modelpath + '/##[ISA=PoolBase]'):
         sName = convertSpecialChar(spe.name)
@@ -785,28 +790,29 @@ def writeSpecies(modelpath, cremodel_, sbmlDoc,
                         cleanNotesS + "\n\t </body>"
                     s1.setNotes(notesStringS)
 
+
                 element = moose.element(spe)
                 ele = getGroupinfo(element)
-                if ele.className == "Neutral" or sceneitems[
-                        element] or Anno.color or Anno.textColor:
+                if element.className == "Neutral" or Anno.color or Anno.textColor or sceneitems or Anno.x or Anno.y:
                     speciannoexist = True
                 if speciannoexist:
                     speciAnno = "<moose:ModelAnnotation>\n"
                     if ele.className == "Neutral":
                         speciAnno = speciAnno + "<moose:Group>" + ele.name + "</moose:Group>\n"
-                    if sceneitems[element]:
-                        v = sceneitems[element]
-                        if autoCoordinateslayout == False:
-                            speciAnno = speciAnno + "<moose:xCord>" + \
-                                str(v['x']) + "</moose:xCord>\n" + \
+                    if sceneitems:
+                        #Saved from GUI, then scene co-ordinates are passed
+                        speciAnno = speciAnno + "<moose:xCord>" + \
+                                str(sceneitems[spe]['x']) + "</moose:xCord>\n" + \
                                 "<moose:yCord>" + \
-                                str(v['y']) + "</moose:yCord>\n"
-                        elif autoCoordinateslayout == True:
-                            x = calPrime(v['x'])
-                            y = calPrime(v['y'])
-                            speciAnno = speciAnno + "<moose:xCord>" + \
-                                str(x) + "</moose:xCord>\n" + \
-                                "<moose:yCord>" + str(y) + "</moose:yCord>\n"
+                                str(sceneitems[spe]['y'])+ "</moose:yCord>\n"
+                    else:
+                        #Saved from cmdline,genesis coordinates are kept as its
+                        # SBML, cspace, python, then auto-coordinates are done
+                        #and coordinates are updated in moose Annotation field
+                        speciAnno = speciAnno + "<moose:xCord>" + \
+                                str(Anno.x) + "</moose:xCord>\n" + \
+                                "<moose:yCord>" + \
+                                str(Anno.y)+ "</moose:yCord>\n"
                     if Anno.color:
                         speciAnno = speciAnno + "<moose:bgColor>" + Anno.color + "</moose:bgColor>\n"
                     if Anno.textColor:
@@ -819,7 +825,8 @@ def writeSpecies(modelpath, cremodel_, sbmlDoc,
 
 def writeCompt(modelpath, cremodel_):
     # getting all the compartments
-    for compt in moose.wildcardFind(modelpath + '/##[ISA=ChemCompt]'):
+    compts = moose.wildcardFind(modelpath + '/##[ISA=ChemCompt]')
+    for compt in compts:
         comptName = convertSpecialChar(compt.name)
         # converting m3 to litre
         size = compt.volume * pow(10, 3)
@@ -836,7 +843,10 @@ def writeCompt(modelpath, cremodel_):
         c1.setSize(size)
         c1.setSpatialDimensions(ndim)
         c1.setUnits('volume')
-
+    if compts:
+        return True
+    else:
+        return False
 # write Simulation runtime,simdt,plotdt
 def writeSimulationAnnotation(modelpath):
     modelAnno = ""
@@ -867,17 +877,16 @@ def writeSimulationAnnotation(modelpath):
                     graphSpefound = True
                 if graphSpefound:
                     if not plots:
-                        #plots = ori[ori.find(q.name)-1:len(ori)]
-                        plots = '/' + q.name + '/' + name
+                        plots = ori[ori.find(q.name)-1:len(ori)]
+                        #plots = '/' + q.name + '/' + name
 
                     else:
-                        #plots = plots + "; "+ori[ori.find(q.name)-1:len(ori)]
-                        plots = plots + "; /" + q.name + '/' + name
+                        plots = plots + "; "+ori[ori.find(q.name)-1:len(ori)]
+                        #plots = plots + "; /" + q.name + '/' + name
         if plots != " ":
             modelAnno = modelAnno + "<moose:plots> " + plots + "</moose:plots>\n"
         modelAnno = modelAnno + "</moose:ModelAnnotation>"
     return modelAnno
-
 
 def writeUnits(cremodel_):
     unitVol = cremodel_.createUnitDefinition()
@@ -896,357 +905,28 @@ def writeUnits(cremodel_):
     unit.setExponent(1.0)
     unit.setScale(-3)
 
-
-def validateModel(sbmlDoc):
-    # print " sbmlDoc ",sbmlDoc.toSBML()
-    if (not sbmlDoc):
-        print("validateModel: given a null SBML Document")
-        return False
-    consistencyMessages = ""
-    validationMessages = ""
-    noProblems = True
-    numCheckFailures = 0
-    numConsistencyErrors = 0
-    numConsistencyWarnings = 0
-    numValidationErrors = 0
-    numValidationWarnings = 0
-    # Once the whole model is done and before it gets written out,
-    # it's important to check that the whole model is in fact complete,
-    # consistent and valid.
-    numCheckFailures = sbmlDoc.checkInternalConsistency()
-    if (numCheckFailures > 0):
-        noProblems = False
-        for i in range(0, numCheckFailures):
-            sbmlErr = sbmlDoc.getError(i)
-            if (sbmlErr.isFatal() or sbmlErr.isError()):
-                numConsistencyErrors += 1
-            else:
-                numConsistencyWarnings += 1
-        constStr = sbmlDoc.printErrors()
-        consistencyMessages = constStr
-
-    # If the internal checks fail, it makes little sense to attempt
-    # further validation, because the model may be too compromised to
-    # be properly interpreted.
-    if (numConsistencyErrors > 0):
-        consistencyMessages += "Further validation aborted."
-    else:
-        numCheckFailures = sbmlDoc.checkConsistency()
-        #numCheckFailures = sbmlDoc.checkL3v1Compatibility()
-        if (numCheckFailures > 0):
-            noProblems = False
-            for i in range(0, (numCheckFailures)):
-                consistencyMessages = sbmlDoc.getErrorLog().toString()
-                sbmlErr = sbmlDoc.getError(i)
-                if (sbmlErr.isFatal() or sbmlErr.isError()):
-                    numValidationErrors += 1
-                else:
-                    numValidationWarnings += 1
-        warning = sbmlDoc.getErrorLog().toString()
-        oss = sbmlDoc.printErrors()
-        validationMessages = oss
-    if (noProblems):
-        return True
-    else:
-        if consistencyMessages is None:
-            consistencyMessages = ""
-        if consistencyMessages != "":
-            print(" consistency Warning: " + consistencyMessages)
-
-        if (numConsistencyErrors > 0):
-            if numConsistencyErrors == 1:
-                t = ""
-            else:
-                t = "s"
-            print(
-                "ERROR: encountered " +
-                numConsistencyErrors +
-                " consistency error" +
-                t +
-                " in model '" +
-                sbmlDoc.getModel().getId() +
-                "'.")
-    if (numConsistencyWarnings > 0):
-        if numConsistencyWarnings == 1:
-            t1 = ""
-        else:
-            t1 = "s"
-        print(
-            "Notice: encountered " +
-            numConsistencyWarnings +
-            " consistency warning" +
-            t +
-            " in model '" +
-            sbmlDoc.getModel().getId() +
-            "'.")
-
-    if (numValidationErrors > 0):
-        if numValidationErrors == 1:
-            t2 = ""
-        else:
-            t2 = "s"
-        print(
-            "ERROR: encountered " +
-            numValidationErrors +
-            " validation error" +
-            t2 +
-            " in model '" +
-            sbmlDoc.getModel().getId() +
-            "'.")
-        if (numValidationWarnings > 0):
-            if numValidationWarnings == 1:
-                t3 = ""
-            else:
-                t3 = "s"
-
-            print(
-                "Notice: encountered " +
-                numValidationWarnings +
-                " validation warning" +
-                t3 +
-                " in model '" +
-                sbmlDoc.getModel().getId() +
-                "'.")
-
-        print(validationMessages)
-    return (numConsistencyErrors == 0 and numValidationErrors == 0)
-    # return ( numConsistencyErrors == 0 and numValidationErrors == 0,
-    # consistencyMessages)
-
-
-def setupItem(modelPath):
-    '''This function collects information of what is connected to what. \
-    eg. substrate and product connectivity to reaction's and enzyme's \
-    sumtotal connectivity to its pool are collected '''
-    # print " setupItem"
-    sublist = []
-    prdlist = []
-    cntDict = {}
-    zombieType = ['ReacBase', 'EnzBase', 'Function', 'StimulusTable']
-    for baseObj in zombieType:
-        path = '/##[ISA=' + baseObj + ']'
-        if modelPath != '/':
-            path = modelPath + path
-        if ((baseObj == 'ReacBase') or (baseObj == 'EnzBase')):
-            for items in moose.wildcardFind(path):
-                sublist = []
-                prdlist = []
-                uniqItem, countuniqItem = countitems(items, 'subOut')
-                subNo = uniqItem
-                for sub in uniqItem:
-                    sublist.append((moose.element(sub), 's', countuniqItem[sub]))
-
-                uniqItem, countuniqItem = countitems(items, 'prd')
-                prdNo = uniqItem
-                if (len(subNo) == 0 or len(prdNo) == 0):
-                    print("Substrate Product is empty ", " ", items)
-                for prd in uniqItem:
-                    prdlist.append((moose.element(prd), 'p', countuniqItem[prd]))
-
-                if (baseObj == 'CplxEnzBase'):
-                    uniqItem, countuniqItem = countitems(items, 'toEnz')
-                    for enzpar in uniqItem:
-                        sublist.append(
-                            (moose.element(enzpar), 't', countuniqItem[enzpar]))
-
-                    uniqItem, countuniqItem = countitems(items, 'cplxDest')
-                    for cplx in uniqItem:
-                        prdlist.append(
-                            (moose.element(cplx), 'cplx', countuniqItem[cplx]))
-
-                if (baseObj == 'EnzBase'):
-                    uniqItem, countuniqItem = countitems(items, 'enzDest')
-                    for enzpar in uniqItem:
-                        sublist.append(
-                            (moose.element(enzpar), 't', countuniqItem[enzpar]))
-                cntDict[items] = sublist, prdlist
-        elif baseObj == 'Function':
-            for items in moose.wildcardFind(path):
-                sublist = []
-                prdlist = []
-                item = items.path + '/x[0]'
-                uniqItem, countuniqItem = countitems(item, 'input')
-                for funcpar in uniqItem:
-                    sublist.append(
-                        (moose.element(funcpar), 'sts', countuniqItem[funcpar]))
-
-                uniqItem, countuniqItem = countitems(items, 'valueOut')
-                for funcpar in uniqItem:
-                    prdlist.append(
-                        (moose.element(funcpar), 'stp', countuniqItem[funcpar]))
-                cntDict[items] = sublist, prdlist
-        else:
-            for tab in moose.wildcardFind(path):
-                tablist = []
-                uniqItem, countuniqItem = countitems(tab, 'output')
-                for tabconnect in uniqItem:
-                    tablist.append(
-                        (moose.element(tabconnect), 'tab', countuniqItem[tabconnect]))
-                cntDict[tab] = tablist
-    return cntDict
-
-
-def countitems(mitems, objtype):
-    items = []
-    # print "mitems in countitems ",mitems,objtype
-    items = moose.element(mitems).neighbors[objtype]
-    uniqItems = set(items)
-    countuniqItems = Counter(items)
-    return(uniqItems, countuniqItems)
-
-
-def setupMeshObj(modelRoot):
-    ''' Setup compartment and its members pool,reaction,enz cplx under self.meshEntry dictionaries \
-    self.meshEntry with "key" as compartment,
-    value is key2:list where key2 represents moose object type,list of objects of a perticular type
-    e.g self.meshEntry[meshEnt] = { 'reaction': reaction_list,'enzyme':enzyme_list,'pool':poollist,'cplx': cplxlist }
-    '''
-    meshEntry = {}
-    if meshEntry:
-        meshEntry.clear()
-    else:
-        meshEntry = {}
-    meshEntryWildcard = '/##[ISA=ChemCompt]'
-    if modelRoot != '/':
-        meshEntryWildcard = modelRoot + meshEntryWildcard
-    for meshEnt in moose.wildcardFind(meshEntryWildcard):
-        mollist = []
-        cplxlist = []
-        mol_cpl = moose.wildcardFind(meshEnt.path + '/##[ISA=PoolBase]')
-        funclist = moose.wildcardFind(meshEnt.path + '/##[ISA=Function]')
-        enzlist = moose.wildcardFind(meshEnt.path + '/##[ISA=EnzBase]')
-        realist = moose.wildcardFind(meshEnt.path + '/##[ISA=ReacBase]')
-        tablist = moose.wildcardFind(meshEnt.path + '/##[ISA=StimulusTable]')
-        if mol_cpl or funclist or enzlist or realist or tablist:
-            for m in mol_cpl:
-                if isinstance(moose.element(m.parent), moose.CplxEnzBase):
-                    cplxlist.append(m)
-                elif isinstance(moose.element(m), moose.PoolBase):
-                    mollist.append(m)
-
-            meshEntry[meshEnt] = {'enzyme': enzlist,
-                                  'reaction': realist,
-                                  'pool': mollist,
-                                  'cplx': cplxlist,
-                                  'table': tablist,
-                                  'function': funclist
-                                  }
-    return(meshEntry)
-
-
-def autoCoordinates(meshEntry, srcdesConnection):
-    G = nx.Graph()
-    for cmpt, memb in list(meshEntry.items()):
-        for enzObj in find_index(memb, 'enzyme'):
-            G.add_node(
-                enzObj.path,
-                label='',
-                shape='ellipse',
-                color='',
-                style='filled',
-                fontname='Helvetica',
-                fontsize=12,
-                fontcolor='blue')
-    for cmpt, memb in list(meshEntry.items()):
-        for poolObj in find_index(memb, 'pool'):
-            #poolinfo = moose.element(poolObj.path+'/info')
-            G.add_node(
-                poolObj.path,
-                label=poolObj.name,
-                shape='box',
-                color='',
-                style='filled',
-                fontname='Helvetica',
-                fontsize=12,
-                fontcolor='blue')
-        for cplxObj in find_index(memb, 'cplx'):
-            pass
-        for reaObj in find_index(memb, 'reaction'):
-            G.add_node(reaObj.path, label='', shape='record', color='')
-
-    for inn, out in list(srcdesConnection.items()):
-        if (inn.className == 'ZombieReac'):
-            arrowcolor = 'green'
-        elif(inn.className == 'ZombieEnz'):
-            arrowcolor = 'red'
-        else:
-            arrowcolor = 'blue'
-        if isinstance(out, tuple):
-            if len(out[0]) == 0:
-                print(
-                    inn.className +
-                    ':' +
-                    inn.name +
-                    "  doesn't have input message")
-            else:
-                for items in (items for items in out[0]):
-                    G.add_edge(moose.element(items[0]).path, inn.path)
-
-            if len(out[1]) == 0:
-                print(
-                    inn.className +
-                    ':' +
-                    inn.name +
-                    "doesn't have output mssg")
-            else:
-                for items in (items for items in out[1]):
-                    G.add_edge(inn.path, moose.element(items[0]).path)
-
-        elif isinstance(out, list):
-            if len(out) == 0:
-                print("Func pool doesn't have sumtotal")
-            else:
-                for items in (items for items in out):
-                    G.add_edge(moose.element(items[0]).path, inn.path)
-    #from networkx.drawing.nx_agraph import graphviz_layout
-    #position = graphviz_layout(G,prog='dot')
-
-    position = nx.pygraphviz_layout(G, prog='dot')
-    position = nx.spring_layout(G)
-    #agraph = nx.to_agraph(G)
-    #agraph.draw("~/out.png", format = 'png', prog = 'dot')
-
-    sceneitems = {}
-    xycord = []
-    cmin = 0
-    cmax = 0
-    for key, value in list(position.items()):
-        xycord.append(value[0])
-        xycord.append(value[1])
-        sceneitems[moose.element(key)] = {'x': value[0], 'y': value[1]}
-    if len(xycord) > 0:
-        cmin = min(xycord)
-        cmax = max(xycord)
-    return cmin, cmax, sceneitems
-
-
-def calPrime(x):
-    prime = int((20 * (float(x - cmin) / float(cmax - cmin))) - 10)
-    return prime
-
-
-def find_index(value, key):
-    """ Value.get(key) to avoid expection which would raise if empty value in dictionary for a given key """
-    if value.get(key) is not None:
-        return value.get(key)
-    else:
-        raise ValueError('no dict with the key found')
 if __name__ == "__main__":
-
-    filepath = sys.argv[1]
-    path = sys.argv[2]
-
-    f = open(filepath, 'r')
-
-    if path == '':
-        loadpath = filepath[filepath.rfind('/'):filepath.find('.')]
+    try:
+        sys.argv[1]
+    except IndexError:
+        print("Filename or path not given")
+        exit(0)
     else:
-        loadpath = path
+        filepath = sys.argv[1]
+        if not os.path.exists(filepath):
+            print("Filename or path does not exist",filepath)
+        else:
+            try:
+                sys.argv[2]
+            except :
+                modelpath = filepath[filepath.rfind('/'):filepath.find('.')]
+            else:
+                modelpath = sys.argv[2]
+    
+            moose.loadModel(filepath, modelpath, "gsl")
 
-    moose.loadModel(filepath, loadpath, "gsl")
-
-    written, c, writtentofile = mooseWriteSBML(loadpath, filepath)
-    if written:
-        print(" File written to ", writtentofile)
-    else:
-        print(" could not write model to SBML file")
+            written, c, writtentofile = mooseWriteSBML(modelpath, filepath)
+            if written:
+                print(" File written to ", writtentofile)
+            else:
+                print(" could not write model to SBML file")
