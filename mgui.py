@@ -6,7 +6,7 @@
 # Maintainer:
 # Created: Mon Nov 12 09:38:09 2012 (+0530)
 # Version:
-# Last-Updated: Fri Oct 30 11:54:33 2015 (+0530)
+# Last-Updated: Tue Feb 14 15:20:33 2017 (+0530)
 #           By: Harsha
 #     Update #: 1338
 # URL:
@@ -202,11 +202,9 @@ class MWindow(QtGui.QMainWindow):
                                       ("Fig3C_Gsl",         "../moose-examples/paper-2015/Fig3_chemModels/Fig3ABC.g"),
                                       ("Fig3D",             "../moose-examples/paper-2015/Fig3_chemModels/Fig3D.py"),
                                       ("Fig4B",             "../moose-examples/paper-2015/Fig4_ReacDiff/Fig4B.py"  ),
-                                      ("Fig4K",             "../moose-examples/paper-2015/Fig4_ReacDiff/rxdSpineSize.py"),
                                       ("Fig5A (20s)",       "../moose-examples/paper-2015/Fig5_CellMultiscale/Fig5A.py"),
-                                      ("Fig5BCD (240s)" ,   "../moose-examples/paper-2015/Fig5_CellMultiscale/Fig5BCD.py"),
                                       ("Fig6A (60s)",       "../moose-examples/paper-2015/Fig6_NetMultiscale/Fig6A.py" ),
-                                      ("Reduced6 (200s)",   "../moose-examples/paper-2015/Fig6_NetMultiscale/ReducedModel.py"),
+                                      ("ReducedModel (200s)",   "../moose-examples/paper-2015/Fig6_NetMultiscale/ReducedModel.py"),
                                       ("Squid" ,            "../moose-examples/squid/squid_demo.py")
                                      ])
         layout.setContentsMargins(QtCore.QMargins(20,20,20,20))
@@ -238,15 +236,11 @@ class MWindow(QtGui.QMainWindow):
                 button.setToolTip("<span style=\"color:black;\">This example implements a reaction-diffusion like system which is bistable and propagates losslessly</span>")
             elif k[0] == "Fig4B":
                 button.setToolTip("<span style=\"color:black;\">This program builds a multiscale model with a few spines inserted into a simplified cellular morphology. Each spine has a signaling model in it too. The program doesn't run the model, it just displays it in 3D</span>")
-            elif k[0] == "Fig4K":
-                button.setToolTip("<span style=\"color:black;\">Builds a cell with spines and a propagating reaction wave</span>")
             elif k[0] == "Fig5A (20s)":
-                button.setToolTip("<span style=\"color:black;\">Illustrates building a panel of multiscale models to test neuronal plasticity in different contexts</span>")
-            elif k[0] == "Fig5BCD (240s)":
                 button.setToolTip("<span style=\"color:black;\">Illustrates building a panel of multiscale models to test neuronal plasticity in different contexts</span>")
             elif k[0] == "Fig6A (60s)":
                 button.setToolTip("<span style=\"color:black;\">This LIF network with Ca plasticity is based on: Memory Maintenance in Synapses with Calcium-Based Plasticity in the Presence of Background Activity PLOS Computational Biology, 2014</span>")
-            elif k[0] == "Reduced6 (200s)":
+            elif k[0] == "ReducedModel (200s)":
                 button.setToolTip("<span style=\"color:black;\">This is the Reduced version of LIF network with Ca plasticity model based on: Memory Maintenance in Synapses with Calcium-Based Plasticity in the Presence of Background Activity PLOS Computational Biology, 2014</span>")
             elif k[0] == "Squid":
                 button.setToolTip("<span style=\"color:black;\">squid Demo</span>")
@@ -254,14 +248,12 @@ class MWindow(QtGui.QMainWindow):
                 layout2.addWidget(button)
             elif k[0] in ["Fig3B_Gssa","Fig3C_Gsl","Fig3D"]:
                 layout3.addWidget(button)
-            elif k[0] in ["Fig4B","Fig4K"]:
+            elif k[0] in ["Fig4B","Fig5A (20s)"]:
                 layout4.addWidget(button)
-            elif k[0] in ["Fig5A (20s)","Fig5BCD (240s)"]:
+            elif k[0] in ["Fig6A (60s)","ReducedModel (200s)"]:
                 layout5.addWidget(button)
-            elif k[0] in ["Fig6A (60s)","Reduced6 (200s)"]:
-                layout6.addWidget(button)
             elif k[0] in ["Squid"]:
-                layout7.addWidget(button)
+                layout6.addWidget(button)
 
             if k[0] == "Fig3C_Gsl":
                 button.clicked.connect(lambda x, script = k[1]: self.run_genesis_script(script,"gsl"))
@@ -276,7 +268,6 @@ class MWindow(QtGui.QMainWindow):
         layout.addLayout(layout4,3,0)
         layout.addLayout(layout5,4,0)
         layout.addLayout(layout6,5,0)
-        layout.addLayout(layout7,6,0)
         dialog.setStyleSheet("border:1px solid rgb(0, 0, 0); ")
         dialog.setLayout(layout)
 
@@ -564,7 +555,7 @@ class MWindow(QtGui.QMainWindow):
                 break
         if newSubWindow:
             subwin = self.mdiArea.addSubWindow(widget)
-            title = widget.modelRoot+'/model'
+            title = widget.modelRoot
             #subwin.setWindowTitle('%s: %s' % (view, widget.modelRoot))
             subwin.setWindowTitle('%s: %s' % (view, title))
             subwin.setSizePolicy(QtGui.QSizePolicy.Minimum |
@@ -637,28 +628,61 @@ class MWindow(QtGui.QMainWindow):
                                         ("Fig3C_Gsl (2s)",  "../moose-examples/paper-2015/Fig3_chemModels/Fig3ABC.g"),
                                         ("Fig3D (1s)",      "../moose-examples/paper-2015/Fig3_chemModels/Fig3D.py"),
                                         ("Fig4B (10s)",     "../moose-examples/paper-2015/Fig4_ReacDiff/Fig4B.py"  ),
-                                        ("Fig4K",           "../moose-examples/paper-2015/Fig4_ReacDiff/rxdSpineSize.py"),
                                         ("Fig5A (20s)",     "../moose-examples/paper-2015/Fig5_CellMultiscale/Fig5A.py"),
-                                        ("Fig5BCD (240s)" , "../moose-examples/paper-2015/Fig5_CellMultiscale/Fig5BCD.py"),
                                         ("Fig6A (60s)",     "../moose-examples/paper-2015/Fig6_NetMultiscale/Fig6A.py" ),
-                                        ("Reduced6 (200s)", "../moose-examples/paper-2015/Fig6_NetMultiscale/ReducedModel.py"),
+                                        ("ReducedModel (200s)", "../moose-examples/paper-2015/Fig6_NetMultiscale/ReducedModel.py"),
                                         ("Squid" ,          "../moose-examples/squid/squid_demo.py")
                                      ])
-            self.subMenu = QtGui.QMenu('Paper_2015_Demos')
+            
+            self.subMenu = QtGui.QMenu('Demos')
             for i in range(0,len(self.menuitems)):
                 k = self.menuitems.popitem(0)
-                t = "self."+k[0]+"Action"
-                t = QtGui.QAction(k[0],self)
-                self.subMenu.addAction(t)
-                if k[0] == "Fig3C_Gsl (2s)":
-                    t.connect(t,QtCore.SIGNAL('triggered()'),lambda script = k[1]: self.run_genesis_script(script,"gsl"))
+                if k[0] == "Fig2C (6s)":
+                    self.Fig2Caction = QtGui.QAction('Fig2C (6s)', self)
+                    self.Fig2Caction.triggered.connect(lambda :self.run_python_script('../moose-examples/paper-2015/Fig2_elecModels/Fig2C.py'))
+                    self.subMenu.addAction(self.Fig2Caction)
+                elif k[0] == "Fig2D (35s)":
+                    self.Fig2Daction = QtGui.QAction('Fig2D (35s)', self)
+                    self.Fig2Daction.triggered.connect(lambda :self.run_python_script('../moose-examples/paper-2015/Fig2_elecModels/Fig2D.py'))
+                    self.subMenu.addAction(self.Fig2Daction)
+                elif k[0] == "Fig2E (5s)":
+                    self.Fig2Eaction = QtGui.QAction('Fig2E (5s)', self)
+                    self.Fig2Eaction.triggered.connect(lambda :self.run_python_script('../moose-examples/paper-2015/Fig2_elecModels/Fig2E.py'))
+                    self.subMenu.addAction(self.Fig2Eaction)
                 elif k[0] == "Fig3B_Gssa (2s)":
-                    t.connect(t,QtCore.SIGNAL('triggered()'),lambda script = k[1]: self.run_genesis_script(script,"gssa"))
+                    self.Fig3B_Gssaaction = QtGui.QAction('Fig3B_Gssa (2s)', self)
+                    self.Fig3B_Gssaaction.triggered.connect(lambda :self.run_genesis_script('../moose-examples/paper-2015/Fig3_chemModels/Fig3ABC.g',"gssa"))
+                    self.subMenu.addAction(self.Fig3B_Gssaaction)
+                elif k[0] == "Fig3C_Gsl (2s)":
+                    self.Fig3C_Gslaction = QtGui.QAction('Fig3C_Gsl (2s)', self)
+                    self.Fig3C_Gslaction.triggered.connect(lambda :self.run_genesis_script('../moose-examples/paper-2015/Fig3_chemModels/Fig3ABC.g',"gsl"))
+                    self.subMenu.addAction(self.Fig3C_Gslaction)
+                elif k[0] == "Fig3D (1s)":
+                    self.Fig3Daction = QtGui.QAction('Fig3D (1s)', self)
+                    self.Fig3Daction.triggered.connect(lambda :self.run_python_script('../moose-examples/paper-2015/Fig3_chemModels/Fig3D.py'))
+                    self.subMenu.addAction(self.Fig3Daction)
+                elif k[0] == "Fig4B (10s)":
+                    self.Fig4Baction = QtGui.QAction('Fig4B (10s)', self)
+                    self.Fig4Baction.triggered.connect(lambda :self.run_python_script('../moose-examples/paper-2015/Fig4_ReacDiff/Fig4B.py'))
+                    self.subMenu.addAction(self.Fig4Baction)
+                elif k[0] == "Fig5A (20s)":
+                    self.Fig5Aaction = QtGui.QAction('Fig5A (20s)', self)
+                    self.Fig5Aaction.triggered.connect(lambda :self.run_python_script('../moose-examples/paper-2015/Fig5_CellMultiscale/Fig5A.py'))
+                    self.subMenu.addAction(self.Fig5Aaction)
+                elif k[0] == "Fig6A (60s)":
+                    self.Fig6Aaction = QtGui.QAction('Fig6A (60s)', self)
+                    self.Fig6Aaction.triggered.connect(lambda :self.run_python_script('../moose-examples/paper-2015/Fig6_NetMultiscale/Fig6A.py'))
+                    self.subMenu.addAction(self.Fig6Aaction)
+                elif k[0] == "ReducedModel (200s)":
+                    self.ReducedModelaction = QtGui.QAction('ReducedModel (200s)', self)
+                    self.ReducedModelaction.triggered.connect(lambda :self.run_python_script('../moose-examples/paper-2015/Fig6_NetMultiscale/ReducedModel.py'))
+                    self.subMenu.addAction(self.ReducedModelaction)
                 else:
-                    t.connect(t,QtCore.SIGNAL('triggered()'),lambda : self.run_python_script(k[1]))
-                self.subMenu.addAction(t)    
+                    self.Squidaction = QtGui.QAction('Squid', self)
+                    self.Squidaction.triggered.connect(lambda :self.run_python_script('../moose-examples/squid/squid_demo.py'))
+                    self.subMenu.addAction(self.Squidaction)
+                
             self.fileMenu.addMenu(self.subMenu)
-
         if not hasattr(self,'loadedModels'):
             self.loadedModelAction = QtGui.QAction('Recently Loaded Models',self)
             self.loadedModelAction.setCheckable(False)
@@ -1105,20 +1129,27 @@ class MWindow(QtGui.QMainWindow):
             ret = []
             ret,pluginName = self.checkPlugin(dialog)
             if pluginName == 'kkit':
-                compt = moose.wildcardFind(ret['model'].path+'/##[ISA=ChemCompt]')
-                if not len(compt):
-                    reply = QtGui.QMessageBox.question(self, "Model is empty","Model has no compartment, atleast one compartment should exist to display the widget\n Do you want another file",
-                                               QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
-                    if reply == QtGui.QMessageBox.Yes:
-                        dialog = LoaderDialog(self,self.tr('Load model from file'))
-                        if dialog.exec_():
-                            ret,pluginName = self.checkPlugin(dialog)
-                            ret,valid = self.dialog_check(ret)
-                    else:
-                        QtGui.QApplication.restoreOverrideCursor()        
+                if (ret['subtype'] == 'sbml' and ret['foundlib'] == False):
+                    reply = QtGui.QMessageBox.question(self, "python-libsbml is not found.","\n Read SBML is not possible.\n This can be installed using \n \n pip python-libsbml  or \n apt-get install python-libsbml",
+                                               QtGui.QMessageBox.Ok)
+                    if reply == QtGui.QMessageBox.Ok:
+                        QtGui.QApplication.restoreOverrideCursor()
                         return
                 else:
-                    valid = True
+                    compt = moose.wildcardFind(ret['model'].path+'/##[ISA=ChemCompt]')
+                    if not len(compt):
+                        reply = QtGui.QMessageBox.question(self, "Model is empty","Model has no compartment, atleast one compartment should exist to display the widget\n Do you want another file",
+                                                   QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
+                        if reply == QtGui.QMessageBox.Yes:
+                            dialog = LoaderDialog(self,self.tr('Load model from file'))
+                            if dialog.exec_():
+                                ret,pluginName = self.checkPlugin(dialog)
+                                ret,valid = self.dialog_check(ret)
+                        else:
+                            QtGui.QApplication.restoreOverrideCursor()        
+                            return
+                    else:
+                        valid = True
             if valid == True:
                 modelAnno = moose.Annotator(ret['model'].path+'/info')
                 if ret['subtype']:
@@ -1148,7 +1179,8 @@ class MWindow(QtGui.QMainWindow):
                 pluginName = subtype_plugin_map['%s/%s' % (ret['modeltype'], ret['subtype'])]
             except KeyError:
                 pluginName = 'default'
-            print 'Loaded model', ret['model'].path
+            if ret['foundlib']:
+                print 'Loaded model', ret['model'].path
             return ret,pluginName
 
     def dialog_check(self,ret):

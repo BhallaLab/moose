@@ -1,9 +1,20 @@
+
+__author__      =   "HarshaRani"
+__credits__     =   ["Upi Lab"]
+__license__     =   "GPL3"
+__version__     =   "1.0.0"
+__maintainer__  =   "HarshaRani"
+__email__       =   "hrani@ncbs.res.in"
+__status__      =   "Development"
+__updated__     =   "Feb 14 2017"
+
 import sys
 from PyQt4 import QtGui, QtCore, Qt
 from default import *
 from moose import *
-from moose.genesis import write
+#from moose.genesis import write
 from moose import SBML
+from moose.genesis.writeKkit import mooseWriteKkit
 #sys.path.append('plugins')
 from mplugin import *
 from kkitUtil import *
@@ -77,7 +88,7 @@ class KkitPlugin(MoosePlugin):
                 writeerror,consistencyMessages,writtentofile = moose.SBML.mooseWriteSBML(self.modelRoot,str(filename),self.coOrdinates)
                 if writeerror == -2:
                     #QtGui.QMessageBox.warning(None,'Could not save the Model','\n WriteSBML :  This copy of MOOSE has not been compiled with SBML writing support.')
-                    QtGui.QMessageBox.warning(None,'Could not save the Model',consistencyMessages)
+                    QtGui.QMessageBox.warning(None,'python-libsbml is not found',consistencyMessages)
                 elif writeerror == -1:
                     QtGui.QMessageBox.warning(None,'Could not save the Model','\n This model is not valid SBML Model, failed in the consistency check')
                 elif writeerror == 1:
@@ -113,7 +124,7 @@ class KkitPlugin(MoosePlugin):
                         v['y'] = -yprime
 
                 filename = filename
-                writeerror = write(self.modelRoot,str(filename),self.coOrdinates)
+                writeerror = mooseWriteKkit(self.modelRoot,str(filename),self.coOrdinates)
                 if writeerror == False:
                     QtGui.QMessageBox.information(None,'Could not save the Model','\nCheck the file')
                 else:
@@ -591,7 +602,7 @@ class  KineticsWidget(EditorWidgetBase):
             comptt = ["CubeMesh","CylMesh"]
 
             if objClass in funct:
-                poolt = ["ZombieBufPool","BufPool"]
+                poolt = ["ZombieBufPool","BufPool","ZombiePool","Pool"]
                 if graphicalObj.mobj.parent.className in poolt:
                     xpos = 0
                     ypos = 30
