@@ -88,9 +88,9 @@ install(DIRECTORY ${MOOSE_EXAMPLE_DIR}/
     )
 
 # Copy the command to launch moose.
-configure_file(${CMAKE_SOURCE_DIR}/cmake/moose.in ${CMAKE_BINARY_DIR}/moose)
+configure_file(${CMAKE_SOURCE_DIR}/cmake/moose.in ${CMAKE_BINARY_DIR}/moosegui)
 
-install(PROGRAMS ${CMAKE_BINARY_DIR}/moose DESTINATION bin)
+install(PROGRAMS ${CMAKE_BINARY_DIR}/moosegui DESTINATION bin)
 
 ## UNINSTALL
 add_custom_target(uninstall 
