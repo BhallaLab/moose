@@ -1,21 +1,12 @@
-##################################################################
-## This program is part of 'MOOSE', the
-## Messaging Object Oriented Simulation Environment.
-##           Copyright (C) 2015 Upinder S. Bhalla. and NCBS
-## It is made available under the terms of the
-## GNU Lesser General Public License version 2.1
-## See the file COPYING.LIB for the full notice.
-##
-## rxdSpineSize.py: Builds a cell with spines and a propagating reaction
-## wave. Products diffuse into the spine and cause it to get bigger.
-##################################################################
 import math
 import pylab
 import numpy
 import matplotlib.pyplot as plt
 import moose
+
 import sys
 sys.path.append( '../util' )
+
 import rdesigneur as rd
 from PyQt4 import QtGui
 import moogli
@@ -136,9 +127,6 @@ def main():
     highly abstracted equation, whose product diffuses into the spines and
     makes them bigger.
     """
-    makeModel()
-    elec = moose.element( '/model/elec' )
-    elec.setSpineAndPsdMesh( moose.element('/model/chem/spine'), moose.element('/model/chem/psd') )
 
     eHead = moose.wildcardFind( '/model/elec/#head#' )
     oldDia = [ i.diameter for i in eHead ]
@@ -175,7 +163,6 @@ def main():
 
 # Run the 'main' if this script is executed standalone.
 
-def showVisualization():
     makeModel()
     elec = moose.element( '/model/elec' )
     elec.setSpineAndPsdMesh( moose.element('/model/chem/spine'), moose.element('/model/chem/psd') )

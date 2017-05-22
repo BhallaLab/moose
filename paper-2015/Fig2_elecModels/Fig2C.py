@@ -304,7 +304,7 @@ def create_ca_viewer(rdes):
     return viewer
 
 def build3dDisplay(rdes):
-    print (("building 3d Display"))
+    print ("building 3d Display")
     app = QtGui.QApplication(sys.argv)
 
     vm_viewer = create_vm_viewer(rdes)
@@ -335,7 +335,7 @@ def deliverStim( currTime ):
         step = int (currTime / frameRunTime )
         probeStep = int( probeInterval / frameRunTime )
         if step % probeStep == 0:
-            print (("Doing probe Stim at ", currTime))
+            print ("Doing probe Stim at ", currTime)
             for i in synSpineList:
                 i.activation( probeAmplitude )
 
@@ -351,7 +351,7 @@ def main():
     temp = set( moose.wildcardFind( "/model/elec/#/glu,/model/elec/#/NMDA" ) )
 
     synDendList = list( temp - set( synSpineList ) )
-    print (("num spine, dend syns = ", len( synSpineList ), len( synDendList )))
+    print ("num spine, dend syns = ", len( synSpineList ), len( synDendList ))
     moose.reinit()
     #for i in moose.wildcardFind( '/model/elec/#apical#/#[ISA=CaConcBase]' ):
         #print i.path, i.length, i.diameter, i.parent.length, i.parent.diameter
@@ -360,7 +360,7 @@ def main():
     # Run for baseline, tetanus, and post-tetanic settling time 
     t1 = time.time()
     build3dDisplay(rdes)
-    print (('real time = ', time.time() - t1))
+    print ('real time = ', time.time() - t1)
 
 if __name__ == '__main__':
     main()

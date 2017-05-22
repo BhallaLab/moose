@@ -1,4 +1,6 @@
-#/**********************************************************************
+from __future__ import print_function
+
+#**********************************************************************
 #** This program is part of 'MOOSE', the
 #** Messaging Object Oriented Simulation Environment.
 #**           Copyright (C) 2003-2014 Upinder S. Bhalla. and NCBS
