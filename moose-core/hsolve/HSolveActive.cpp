@@ -18,6 +18,7 @@
 #include "../biophysics/CompartmentBase.h"
 #include "../biophysics/Compartment.h"
 #include "../biophysics/CaConcBase.h"
+#include "../biophysics/ChanBase.h"
 #include "ZombieCaConc.h"
 using namespace moose;
 //~ #include "ZombieCompartment.h"
@@ -227,9 +228,12 @@ void HSolveActive::advanceChannels( double dt )
     vector< LookupColumn >::iterator icolumn = column_.begin();
     vector< LookupRow >::iterator icarowcompt;
     vector< LookupRow* >::iterator icarow = caRow_.begin();
-
+    vector< double >::iterator iextca = externalCalcium_.begin();
+    
     LookupRow vRow;
+    LookupRow dRow;
     double C1, C2;
+
     for ( iv = V_.begin(); iv != V_.end(); ++iv )
     {
         vTable_.row( *iv, vRow );
@@ -238,6 +242,7 @@ void HSolveActive::advanceChannels( double dt )
         for ( ; ica < caBoundary; ++ica )
         {
             caTable_.row( *ica, *icarowcompt );
+	 
             ++icarowcompt;
         }
 
@@ -252,6 +257,9 @@ void HSolveActive::advanceChannels( double dt )
         chanBoundary = ichan + *ichannelcount;
         for ( ; ichan < chanBoundary; ++ichan )
         {
+	 
+	  caTable_.row( *iextca, dRow );
+	  
             if ( ichan->Xpower_ > 0.0 )
             {
                 vTable_.lookup( *icolumn, vRow, C1, C2 );
@@ -279,21 +287,29 @@ void HSolveActive::advanceChannels( double dt )
                 {
                     double temp = 1.0 + dt / 2.0 * C2;
                     *istate = ( *istate * ( 2.0 - temp ) + dt * C1 ) / temp;
-                }
-
+                
+}
                 ++icolumn, ++istate;
             }
 
             if ( ichan->Zpower_ > 0.0 )
             {
                 LookupRow* caRow = *icarow;
+		
                 if ( caRow )
                 {
                     caTable_.lookup( *icolumn, *caRow, C1, C2 );
+		   
                 }
-                else
+                 else if (*iextca >0)
+		   
+		   {
+		     caTable_.lookup( *icolumn, dRow, C1, C2 );
+		   }
+		else
                 {
-                    vTable_.lookup( *icolumn, vRow, C1, C2 );
+		  vTable_.lookup( *icolumn, vRow, C1, C2 );
+		 
                 }
 
                 //~ *istate = *istate * C1 + C2;
@@ -307,7 +323,9 @@ void HSolveActive::advanceChannels( double dt )
                 }
 
                 ++icolumn, ++istate, ++icarow;
+	
             }
+	    ++iextca;
         }
 
         ++ichannelcount, ++icacount;
@@ -339,11 +357,23 @@ void HSolveActive::sendValues( ProcPtr info )
     vector< unsigned int >::iterator i;
 
     for ( i = outVm_.begin(); i != outVm_.end(); ++i )
-        moose::Compartment::VmOut()->send(
+        Compartment::VmOut()->send(
             //~ ZombieCompartment::VmOut()->send(
             compartmentId_[ *i ].eref(),
             V_[ *i ]
         );
+
+
+    for ( i = outIk_.begin(); i != outIk_.end(); ++i ){
+ 
+        unsigned int comptIndex = chan2compt_[ *i ];
+
+        assert( comptIndex < V_.size() );
+
+        ChanBase::IkOut()->send(channelId_[*i].eref(),
+				(current_[ *i ].Ek - V_[ comptIndex ]) * current_[ *i ].Gk);
+
+    }
 
     for ( i = outCa_.begin(); i != outCa_.end(); ++i )
         //~ CaConc::concOut()->send(

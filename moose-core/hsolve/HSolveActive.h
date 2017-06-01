@@ -119,6 +119,7 @@ protected:
     vector< double >          externalCurrent_; ///< External currents from
     ///< channels that HSolve
     ///< cannot internalize.
+    vector< double >          externalCalcium_; /// calcium from difshells
     vector< Id >              caConcId_;		///< Used for localIndex-ing.
     vector< Id >              channelId_;		///< Used for localIndex-ing.
     vector< Id >              gateId_;			///< Used for localIndex-ing.
@@ -131,6 +132,7 @@ protected:
 		*   Tells you which compartments have external calcium-dependent
 		*   channels so that you can send out Calcium concentrations in only
 		*   those compartments. */
+     vector< unsigned int >    outIk_;	
 
 private:
     /**

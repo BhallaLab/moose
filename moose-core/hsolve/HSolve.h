@@ -87,7 +87,7 @@ public:
 	//~ const vector< Id >& getCompartments() const;
 	
 	void addGkEk( Id id, double v1, double v2 );
-	
+	void addConc( Id id, double conc );
 	/// Interface to channels
 	//~ const vector< Id >& getHHChannels() const;
 	void setPowers(
