@@ -5,8 +5,8 @@ Neuronal simulations in MOOSEGUI
 Neuronal models in various formats can be loaded and simulated in the
 **MOOSE Graphical User Interface**. The GUI displays the neurons in 3D,
 and allows visual selection and editing of neuronal properties. Plotting
-and visualization of activity proceeds concurrently with the simulation.
-Support for creating and editing channels, morphology and networks is
+and visualization of activity proceed concurrently with the simulation.
+Support for creating and editing channels, morphology, and networks is
 planned for the future. MOOSEGUI uses SI units throughout.
 
 moose-examples

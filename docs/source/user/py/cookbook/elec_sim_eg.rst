@@ -18,7 +18,7 @@ Voltage Clamping
 ----------------
 
 .. automodule:: vclamp
-  :members:
+   :members:
 
 Generate Pulse
 ----------------
@@ -33,7 +33,7 @@ Synapse
 -------
 
 .. automodule:: synapse
-  :members:
+   :members:
 
 Message transmission via synapse
 --------------------------------

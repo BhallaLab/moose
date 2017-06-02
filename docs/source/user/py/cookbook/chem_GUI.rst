@@ -49,7 +49,7 @@ into the synapse, followed by calcium binding to calmodulin, and then
 calmodulin activation of numerous enzymes. These events can be
 represented in chemical terms:
 
-   4 Ca2+ + CaM <===> Ca4.CaM
+   4 Ca\ :sup:`2+`\ + CaM <===> Ca\ :sub:`4`\.CaM
 
 Such chemical equations can be modeled through standard Ordinary
 Differential Equations, if we ignore space::
@@ -82,7 +82,7 @@ chemical calculations.
 `Overview <#TOC>`__
 ^^^^^^^^^^^^^^^^^^^
 
--  Load models using **'File -> Load model'**.Â  A reaction schematic for the chemical system appears in the **'Editor view'** tab.
+-  Load models using **'File -> Load model'**. A reaction schematic for the chemical system appears in the **'Editor view'** tab.
 -  From **'Editor view'** tab
 
   -  View parameters by clicking on icons, and looking at entries in **'Properties'** table to the right.
@@ -91,7 +91,7 @@ chemical calculations.
 -  From **'Run View'**
 
   -  Pools can be plotted by clicking on their icons and dragging the icons onto the plot Window. Presently only concentration v/s time is plottable.
-  -  Select simulation, diffusin dt's along updateInterval for plot and Gui with numerical method using options under **'Preferences'** button in simulation control.
+  -  Select simulation, diffusion dt's along updateInterval for plot and Gui with numerical method using options under **'Preferences'** button in simulation control.
   -  Run model using **'Run'** button.
   -  Save plots image using the icons at the top of the **'Plot Window'** or right click on plot to Export to csv.
 
@@ -112,11 +112,11 @@ and change the layout of the model.
 
 Resizing the model layout and icons:
 
--  **Zoom**:Â Â Comma and period keys. Alternatively, the mouse scroll wheel or vertical scroll line on the track pad will cause the display to zoom in and out.
--  **Pan**:Â Â The arrow keys move the display left, right, up, and down.
--  **Entire Model View**:Â Â Pressing the **'a'** key will fit the entire model into the entire field of view.
--  **Resize Icons**:Â Â Angle bracket keys, that is, **'<'** and **'>'** or **'+'** and **'-'**. This resizes the icons while leaving their positions on the screen layout more or less the same.
--  **Original Model View**:Â Â Pressing the **'A'** key (capital 'A') will revert to the original model view including the original icon scaling.
+-  **Zoom**: Comma and period keys. Alternatively, the mouse scroll wheel or vertical scroll line on the track pad will cause the display to zoom in and out.
+-  **Pan**: The arrow keys move the display left, right, up, and down.
+-  **Entire Model View**: Pressing the **'a'** key will fit the entire model into the entire field of view.
+-  **Resize Icons**: Angle bracket keys, that is, **'<'** and **'>'** or **'+'** and **'-'**. This resizes the icons while leaving their positions on the screen layout more or less the same.
+-  **Original Model View**: Pressing the **'A'** key (capital 'A') will revert to the original model view including the original icon scaling.
 
 `Compartment <#TOC>`__
 ^^^^^^^^^^^^^^^^^^^^^^
@@ -155,11 +155,11 @@ Different chemical states of the same molecule are in different pools.
   -  **nInit**: Initial number of molecules in the pool. 'n' gets set
      to this value when the 'reinit' operation is done.
   -  **conc**: Concentration of the molecules in the pool.
-     ``conc = n * unit_scale_factor / (N<sub>A</sub> * vol)``
+     ``conc = n * unit_scale_factor / (N_A * vol)``
   -  **concInit**: Initial concentration of the molecules in the pool.
      'conc' is set to this value when the 'reinit' operation is done.
 
-     ``concInit = nInit * unit_scale_factor / (N<sub>A</sub> * vol)``
+     ``concInit = nInit * unit_scale_factor / (N_A * vol)``
 
 -  **Pool fixed parameters**
 
@@ -184,7 +184,7 @@ buffered pools.
   -  **concInit**: Fixed concentration of the molecules in the pool.
      'conc' is set to this value throughout the run.
 
-     ``concInit = nInit * unit_scale_factor / (N<sub>A</sub> * vol)``
+     ``concInit = nInit * unit_scale_factor / (N_A * vol)``
 
 -  **Pool fixed parameters**:
 
@@ -212,17 +212,17 @@ indicated by the direction of the green arrow.
 -  **Reaction editable parameters**:
 
   -  **Name** : Name of reaction
-  -  **K\ :sub:`f`** : 'Forward rate' of reaction, in
+  -  **K**\ :sub:`f`\ : 'Forward rate' of reaction, in
      'concentration/time' units. This is the normal way to express and
      manipulate the reaction rate.
-  -  **k\ :sub:`f`** : Forward rate of reaction, in 'number/time'
+  -  **k**\ :sub:`f`\ : Forward rate of reaction, in 'number/time'
      units. This is used internally for computations, but is
      volume-dependent and should not be used to manipulate the reaction
      rate unless you really know what you are doing.
-  -  **K\ :sub:`b`** : Backward rate' of reaction, in
+  -  **K**\ :sub:`b`\ : Backward rate' of reaction, in
      'concentration/time' units. This is the normal way to express and
      manipulate the reaction rate.
-  -  **k\ :sub:`b`** : Backward rate of reaction, in 'number/time'
+  -  **k**\ :sub:`b`\ : Backward rate of reaction, in 'number/time'
      units. This is used internally for computations, but is
      volume-dependent and should not be used to manipulate the reaction
      rate unless you really know what you are doing.
@@ -261,21 +261,21 @@ arrows.
 -  **Enzyme editable parameters**
 
   -  **name** : Name of enzyme.
-  -  **K\ :sub:`m`** : Michaelis-Menten value for enzyme, in
+  -  **K**\ :sub:`m` \ : Michaelis-Menten value for enzyme, in
      'concentration' units.
-  -  **k\ :sub:`cat`** : Production rate of enzyme, in '1/time' units.
-     Equal to k\ :sub:`3`, the rate of the second, irreversible
+  -  **k**\ :sub:`cat` \ : Production rate of enzyme, in '1/time' units.
+     Equal to k\ :sub:`3`\, the rate of the second, irreversible
      reaction.
-  -  **k1** : Forward rate of the **E+S** reaction, in number and
+  -  **k**\ :sub:`1` \ : Forward rate of the **E+S** reaction, in number and
      '1/time' units. This is what is used in the internal calculations.
-  -  **k2** : Backward rate of the **E+S** reaction, in '1/time' units.
+  -  **k**\ :sub:`2` \ : Backward rate of the **E+S** reaction, in '1/time' units.
      Used in internal calculations.
-  -  **k3** : Forward rate of the **E.S -> E + P** reaction, in
-     '1/time' units. Equivalent to k\ :sub:`cat`. Used in internal
+  -  **k**\ :sub:`3` \ : Forward rate of the **E.S -> E + P** reaction, in
+     '1/time' units. Equivalent to k\ :sub:`cat`\. Used in internal
      calculations.
-  -  **ratio** : This is equal to k\ :sub:`2`/k:sub:`3`. Needed to
+  -  **ratio** : This is equal to k\ :sub:`2`\/k\ :sub:`3`\. Needed to
      define the internal rates in terms of K\ :sub:`m` and
-     k\ :sub:`cat`. I usually use a value of 4.
+     k\ :sub:`cat`\. I usually use a value of 4.
 
 -  **Enzyme-substrate-complex editable parameters**: These are identica'l to those of any other pool.
 
@@ -284,10 +284,10 @@ arrows.
   -  **nInit**: Initial number of molecules in the complex. 'n' gets set to this value when the 'reinit' operation is done.
   -  **conc**: Concentration of the molecules in the pool.
 
-     ``conc = n * unit_scale_factor / (N<sub>A</sub> * vol)``
+     ``conc = n * unit_scale_factor / (N_A * vol)``
   -  **concInit**: Initial concentration of the molecules in the pool.
      'conc' is set to this value when the 'reinit' operation is done.
-     ``concI'nit = nInit * unit_scale_factor / (N<sub>A</sub> * vol)``
+     ``concI'nit = nInit * unit_scale_factor / (N_A * vol)``
 
 -  **Enzyme-substrate-complex fixed parameters**:
 
@@ -301,7 +301,7 @@ arrows.
 
 These are enzymes that obey the Michaelis-Menten equation
 
-``V = V<sub>max</sub> * [S] / ( K<sub>m</sub> + [S] ) = k<sub>cat</sub> * [Etot] * [S] / ( K<sub>m</sub> + [S] )``
+``V = V_max * [S] / ( K_m + [S] ) = k_cat * [Etot] * [S] / ( K_m + [S] )``
 where
 -  V\ :sub:`max` is the maximum rate of the enzyme
 -  [Etot] is the total amount of the enzyme
@@ -333,9 +333,9 @@ enzyme reaction is indicated by the red arrows.
 - **Enzyme editable parameters**:
 
   -  **name**: Name of enzyme.
-  -  K\ :sub:`m`: Michaelis-Menten value for enzyme, in 'concentration'
+  -  **K**\ :sub:`m`\: Michaelis-Menten value for enzyme, in 'concentration'
      units.
-  -  k\ :sub:`cat`: Production rate of enzyme, in '1/time' units. Equal to k\ :sub:`3`, the rate of the second, irreversible reaction.
+  -  **k**\ :sub:`cat`\: Production rate of enzyme, in '1/time' units. Equal to k\ :sub:`3`, the rate of the second, irreversible reaction.
 
 `Summation <#TOC>`__
 ^^^^^^^^^^^^^^^^^^^^
@@ -355,13 +355,9 @@ variables can be input from pool object.
 - **New**: **File -> New -> Model name**. This opens a empty widget for model building
 - **Saving models**: **File -> Save Model -> select from dialog**.
 - **Changing numerical methods**: **Preference->Chemical tab** item from Simulation Control. Currently supports:
--  Runge Kutta: This is the Runge-Kutta-Fehlberg implementation from the GNU Scientific Library (GSL). It is a fifth order variable timestep explicit method. Works well for most reaction systems except if they have very stiff reactions.
--  Gillespie: Optimized Gillespie stochastic systems algorithm, custom implementation. This uses variable timesteps internally.
-     Note that it slows down with increasing numbers of molecules in
-     each pool. It also slows down, but not so badly, if the number of
-     reactions goes up.
--  Exponential Euler:This methods computes the solution of partial
-     and ordinary differential equations.
+  -  Runge Kutta: This is the Runge-Kutta-Fehlberg implementation from the GNU Scientific Library (GSL). It is a fifth order variable timestep explicit method. Works well for most reaction systems except if they have very stiff reactions.
+  -  Gillespie: Optimized Gillespie stochastic systems algorithm, custom implementation. This uses variable timesteps internally. Note that it slows down with increasing numbers of molecules in each pool. It also slows down, but not so badly, if the number of reactions goes up.
+  -  Exponential Euler:This methods computes the solution of partial and ordinary differential equations.
 
 `Model building <#TOC>`__
 -------------------------
@@ -369,7 +365,7 @@ variables can be input from pool object.
 - The **Edit Widget** includes various menu options and model icons on
   the top. Use the mouse buttton to click and drag icons from toolbar
   to Edit Widget, two things will happen, **icon** will appear in the
-  editor widget and a **object editor** will pop up with lots of
+  editor widget and an **object editor** will pop up with lots of
   parameters with respect to moose object.
 
 .. figure:: ../../../images/chemical_CS.png
@@ -385,7 +381,7 @@ variables can be input from pool object.
 **Note**:
 ::
 
-   *   Drag in pool's and reaction on to the editor widget, now one can set up a reaction.
+   *   Drag in pool and reaction on to the editor widget, now one can set up a reaction.
    *   Click on mooseObject one can find a little arrow on the top right corner of the object, drag from this little arrow to any object for connection. e.g pool to reaction and reaction to pool. Specific connection type gets specific colored arrow. e.g. Green color arrow for specifying connection between reactant and product for reaction.
    *   Clicking on the object one can rearrange object for clean layout.
    *   Second order reaction can also be done by repeating the connection over again

@@ -55,8 +55,8 @@ Introduction
 ------------
 
 The Moose GUI currently allow you work on
-`chemical <Kkit12Documentation.html>`_ models using a interface. This
-document describes the salient features of the GUI
+:doc:`chemical <../cookbook/chem_GUI>` and :doc:`electrical <../cookbook/elec_GUI>` models using a interface. This
+document describes the salient features of the GUI.
 
 Interface
 ---------

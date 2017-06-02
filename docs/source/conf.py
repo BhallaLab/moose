@@ -15,17 +15,18 @@ import subprocess
 import os
 import sys
 import sphinx_rtd_theme
+import mock
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.insert(0, os.path.abspath('../python'))
-sys.path.append(os.path.abspath('../../moose-examples/snippets'))
-sys.path.append(os.path.abspath('../../moose-examples/tutorials/ChemicalOscillators'))
-sys.path.append(os.path.abspath('../../moose-examples/tutorials/ChemicalBistables'))
-sys.path.append(os.path.abspath('../../moose-examples/tutorials/ExcInhNet'))
-sys.path.append(os.path.abspath('../../moose-examples/neuroml/lobster_pyloric'))
-sys.path.append(os.path.abspath('../../moose-examples/tutorials/ExcInhNetCaPlasticity'))
+sys.path.append(os.path.abspath('../../../moose-examples/snippets'))
+sys.path.append(os.path.abspath('../../../moose-examples/tutorials/ChemicalOscillators'))
+sys.path.append(os.path.abspath('../../../moose-examples/tutorials/ChemicalBistables'))
+sys.path.append(os.path.abspath('../../../moose-examples/tutorials/ExcInhNet'))
+sys.path.append(os.path.abspath('../../../moose-examples/neuroml/lobster_pyloric'))
+sys.path.append(os.path.abspath('../../../moose-examples/tutorials/ExcInhNetCaPlasticity'))
 
 # -- General configuration -----------------------------------------------------
 
@@ -261,13 +262,13 @@ numpydoc_show_class_members = False
 
 # autodoc options to mock MOOSE module
 autodoc_mock_imports = [ 'numpy' , 'moose.sbml' , 'moose.genesis' , 'moose.LIF'
-        , 'moogli.extensions.moose' , 'extensions.moose', 'moose' , 'moose.SBML' 
-        , 'pylab' , 'moose.genesis' , 'datetime' , 'getpass' , 'h5py' 
-        , 'matplotlib' , 'squid' , 'PyQt4' , 'moogli' , 'moose.utils' 
-        , 'math' , 'SquidAxon' , '_moogli' , 'XRRRates' , 'neuroml.NeuroML' 
+        , 'moogli.extensions.moose' , 'extensions.moose', 'moose' , 'moose.SBML'
+        , 'pylab' , 'moose.genesis' , 'datetime' , 'getpass' , 'h5py'
+        , 'matplotlib' , 'squid' , 'PyQt4' , 'moogli' , 'moose.utils'
+        , 'math' , 'SquidAxon' , '_moogli' , 'XRRRates' , 'neuroml.NeuroML'
         ,'neuroml' , 'rdesigneur' , 'pyplot' , 'gnuplot' , 'cm'
-        , 'matplotlib.pyplot' , 'matplotlib.image' , 'matplotlib.cm' , 'shapes' 
-        , 'chemUtil.add_Delete_ChemicalSolver' 
+        , 'matplotlib.pyplot' , 'matplotlib.image' , 'matplotlib.cm' , 'shapes'
+        , 'chemUtil.add_Delete_ChemicalSolver'
         ]
 
 #include reference files

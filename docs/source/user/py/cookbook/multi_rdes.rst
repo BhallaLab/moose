@@ -2,8 +2,8 @@
 RDesigneur
 **********
 
-Building Chemical-Electrical Signalling Models using Rdesigneur
----------------------------------------------------------------
+Building Chemical-Electrical Signalling Models
+----------------------------------------------
 
 Building a compartment
 ^^^^^^^^^^^^^^^^^^^^^^

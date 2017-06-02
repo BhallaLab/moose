@@ -54,7 +54,7 @@ MOOSE has built-in documentation in the C++-source-code independent of
 Python. The ``moose`` module has a separate ``doc`` function to extract
 this documentation. ::
 
-        >>> moose.doc(moose.Compartment)
+        >>> moose.doc('moose.Compartment')
 
 The class level documentation will show whatever the author/maintainer
 of the class wrote for documentation followed by a list of various kinds
@@ -332,7 +332,7 @@ the pulse generator output to the soma input ::
 
 ``connect(source, source_field, dest, dest_field)`` creates a
 ``message`` from ``source`` element's ``source_field`` field to ``dest``
-elements ``dest_field`` field and returns that message. Messages are
+element's ``dest_field`` field and returns that message. Messages are
 also elements. You can print them to see their identity ::
 
         >>> print m
