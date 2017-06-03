@@ -14,9 +14,6 @@ Multi compartment Single Neuron Model
 .. automodule:: multiComptSigNeur
    :members:
 
-Multi-compartment multiscale model
-----------------------------------
-
 Modeling chemical reactions in neurons
 --------------------------------------
 

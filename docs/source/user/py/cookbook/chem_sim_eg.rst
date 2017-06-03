@@ -51,11 +51,11 @@ typically:
           into voxels.
         * **Pool** s have one key parameter, the initial
           concentration **concInit**.
-        * **Reac** tions have two parameters: **Kf** and **Kb**.
-        * **Enz** ymes have two primary parameters **kcat** and **Km**.
+        * **Reac** tions have two parameters: **K**\ :sub:`f`\  and **K**\ :sub:`b`\.
+        * **Enz** ymes have two primary parameters **k**\ :sub:`cat`\  and **K**\ :sub:`m`\.
           That is enough for **MMenz** ymes. Regular **Enz** ymes have
-          an additional parameter **k2** which by default is set to 4.0
-          times **kcat**, but you may also wish to explicitly assign it
+          an additional parameter **k**\ :sub:`2`\  which by default is set to 4.0
+          times **k**\ :sub:`cat`\, but you may also wish to explicitly assign it
           if you know its value.
 
     #. Connect up the reaction system using moose messaging.

@@ -52,14 +52,14 @@ format which is mostly supported across simulators. Channels, neuronal
 morphology (compartments), and networks can be specified using various
 levels of NeuroML, namely ChannelML, MorphML and NetworkML. Importing of
 cell models in the `GENESIS <http://www.genesis-sim.org/GENESIS>`_
-.p format is supported for backwards compatibitility.
+.p format is supported for backward compatibitility.
 
 Modeling details
 ================
 
 Some salient properties of neuronal building blocks in MOOSE are
 described below. Variables that are updated at every simulation time
-step are are listed **dynamical**. Rest are parameters.
+step are listed **dynamically**. Rest are parameters.
 
 -  **Compartment**
    When you select a compartment, you can view and edit its properties
