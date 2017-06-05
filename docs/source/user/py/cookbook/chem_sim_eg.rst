@@ -215,9 +215,6 @@ A Turing Model
 .. automodule:: TuringOneDim
    :members:
 
-A Spatial Bistable Model
-------------------------
-
 Reaction Diffusion in Neurons
 -----------------------------
 
