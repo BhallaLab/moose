@@ -44,15 +44,13 @@
 #
 
 # Code:
-"""Example of Interpol object in 2 dimensions."""
-
 import numpy as np
 import sys
 sys.path.append('../../python')
 import moose
 
-
 def interpolation_demo():
+    """Example of Interpol object in 2 dimensions."""
     interpol = moose.Interpol2D('/interpol2D')
     interpol.xmin = 0.0
     interpol.xmax = 1.0

@@ -19,7 +19,7 @@ refrT = 2e-3 # s
 
 ## two neurons: index 0 will be presynaptic, 1 will be postsynaptic
 network = moose.LIF( 'network', 2 );
-moose.le( '/network' )
+moose.le( network )
 network.vec.Em = Vrest
 network.vec.thresh = Vt_base
 network.vec.refractoryPeriod = refrT
