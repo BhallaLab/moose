@@ -12,36 +12,37 @@ If no inactivation, just send in empty Yparam array.
 from __future__ import print_function, division
 import moose
 import numpy as np
-from util import NamedList
+from collections import namedtuple
 
-SSTauChannelParams = NamedList('SSTauChannelParams', '''
-                                Arate
-                                A_B
-                                A_C
-                                Avhalf
-                                Avslope
-                                taumin
-                                tauVdep
-                                tauPow
-                                tauVhalf
-                                tauVslope''')
+ChannelSettings = namedtuple('''ChannelSettings''', '''
+Xpow
+Ypow
+Zpow
+Erev
+name''')
+ZChannelParams = namedtuple('''ZChannelParams''',
+                           '''Kd
+                           power
+                           tau''')
 
-AlphaBetaChannelParams = NamedList('AlphaBetaChannelParams', '''
-                                A_rate
-                                A_B
-                                A_C
-                                Avhalf
-                                A_vslope
-                                B_rate
-                                B_B
-                                B_C
-                                Bvhalf
-                                B_vslope''')
+ChannelParams = namedtuple('''ChannelParams''', '''channel
+X
+Y
+Z
+''')
 
-ZChannelParams = NamedList('ZChannelParams', 'Kd power tau')
+GateParams = namedtuple('''GateParams''', '''
+A_rate
+A_B
+A_C
+Avhalf
+A_vslope
+B_rate
+B_B
+B_C
+Bvhalf
+B_vslope''')
 
-
-ChannelSettings = NamedList('ChannelSettings', 'Xpow Ypow Zpow Erev name')
 
 def interpolate_values_in_table(tabA,V_0,l=40):
     import param_chan
@@ -92,13 +93,13 @@ def chan_proto(chanpath, params):
     chan.Xpower = params.channel.Xpow
     if params.channel.Xpow > 0:
         xGate = moose.HHGate(chan.path + '/gateX')
-        xGate.setupAlpha(params.X + [param_chan.VDIVS, param_chan.VMIN, param_chan.VMAX])
+        xGate.setupAlpha(params.X + (param_chan.VDIVS, param_chan.VMIN, param_chan.VMAX))
         xGate = fix_singularities(params.X, xGate)
 
     chan.Ypower = params.channel.Ypow
     if params.channel.Ypow > 0:
         yGate = moose.HHGate(chan.path + '/gateY')
-        yGate.setupAlpha(params.Y + [param_chan.VDIVS, param_chan.VMIN, param_chan.VMAX])
+        yGate.setupAlpha(params.Y + (param_chan.VDIVS, param_chan.VMIN, param_chan.VMAX))
         yGate = fix_singularities(params.Y, yGate)
     if params.channel.Zpow > 0:
         chan.Zpower = params.channel.Zpow
@@ -116,25 +117,3 @@ def chan_proto(chanpath, params):
     return chan
 
 
-TypicalOneDalpha = NamedList('TypicalOneDalpha',
-                             '''channel X Y Z=[] calciumPermeable=False calciumPermeable2=False''')
-
-_FUNCTIONS = {
-    TypicalOneDalpha: chan_proto,
-
-}
-
-#*params... passes the set of values not as a list but as individuals
-def make_channel(chanpath, params):
-    func = _FUNCTIONS[params.__class__]
-    return func(chanpath, params)
-
-def chanlib():
-    import param_chan
-    if not moose.exists('/library'):
-        moose.Neutral('/library')
-    #Adding all the channels to the library. *list removes list elements from the list,
-    #so they can be used as function arguments
-    chan = [make_channel('/library/'+key, value) for key, value in param_chan.ChanDict.items()]
-  
-    return chan
