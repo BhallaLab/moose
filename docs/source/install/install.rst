@@ -23,7 +23,6 @@ to pick your distribution and follow instructions.
 .. note::
     ``moogli`` (tool to visualize network activity) is not available for CentOS-6.
 
-.. todo:: Packages for gentoo, Arch Linux
 
 MacOSX
 ^^^^^^
