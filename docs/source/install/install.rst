@@ -5,17 +5,8 @@ Linux
 ^^^^^^
 
 We recommend that you use our repositories hosted at `Open Build Service
-<https://build.opensuse.org/package/show/home:moose/moose>`_.  We have packages for the following distributions
-
-- Debian 7.0, 8.0
-- Ubuntu 12.04, 14.04, 15.04, 15.10, 16.04
-- CentOS 6, 7
-- Fedora 20, 21, 22, 23
-- OpenSUSE 13.1, 13.2, Factory ARM, Leap 42.1, Tumbleweed
-- SLE 12, 12 SP1
-- RHEL 7
-- Scientific Linux 7
-
+<https://build.opensuse.org/package/show/home:moose/moose>`_.  We have build
+packages for most linux distributions.
 Visit `this page
 <https://software.opensuse.org/download.html?project=home:moose&package=moose>`_
 to pick your distribution and follow instructions.
@@ -49,19 +40,18 @@ repository) or download snapshot of github repo by clicking on `this link
 
     $ git clone https://github.com/BhallaLab/moose --depth 100
 
-(This will create folder called "moose" with source code.)
-Or,
+This will create folder called "moose" with source code. Or,
 ::
 
     $ wget https://github.com/BhallaLab/moose/archive/master.zip
     $ unzip master.zip
 
-If you don't want lasest snapshot of ``MOOSE``, you can download other released
-versions from `here <`https://github.com/BhallaLab/moose/releases>`_.
+You can download other released versions from `here
+<`https://github.com/BhallaLab/moose/releases>`_.
 
 Install dependencies
 ^^^^^^^^^^^^^^^^^^^^
-Depending on your OS, names of following packages may vary.
+Depending on your operating system, names of following packages may vary.
 
 Python interface for core MOOSE API (pymoose)
 """""""""""""""""""""""""""""""""""""""""""""
@@ -92,7 +82,7 @@ On ``CentOS/Fedora/RHEL/Scientific Linux``
 
     $ sudo yum install hdf5-devel cmake libgsl-dev python-devel python-numpy
 
-On ``OpenSUSE``
+On ``SUSE/OpenSUSE``
 ::
 
   $ sudo zypper install hdf5-devel cmake libgsl-dev python-devel python-numpy

@@ -18,8 +18,10 @@ from . import _moose
 from ._moose import *
 import __main__ as main
 import genesis.writeKkit
+
 import SBML.readSBML
 import SBML.writeSBML
+
 sequence_types = ['vector<double>',
                   'vector<int>',
                   'vector<long>',
