@@ -17,9 +17,8 @@ from collections import defaultdict
 from . import _moose
 from ._moose import *
 import __main__ as main
-import genesis.writeKkit
-import SBML.readSBML
-import SBML.writeSBML
+from .genesis import writeKkit
+from . import SBML
 sequence_types = ['vector<double>',
                   'vector<int>',
                   'vector<long>',
@@ -86,7 +85,7 @@ def mooseWriteKkit(modelpath, filepath,sceneitems={}):
     modelpath -- model path in moose \n
     filepath -- Path of output file.
     """
-    return genesis.writeKkit.mooseWriteKkit(modelpath, filepath,sceneitems)
+    return writeKkit.mooseWriteKkit(modelpath, filepath,sceneitems)
 
 
 def moosedeleteChemSolver(modelpath):

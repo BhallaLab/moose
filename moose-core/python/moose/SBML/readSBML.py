@@ -23,7 +23,7 @@ import sys
 import os.path
 import collections
 import moose
-from validation import validateModel
+from .validation import validateModel
 
 '''
    TODO in
