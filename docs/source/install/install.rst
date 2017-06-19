@@ -48,9 +48,9 @@ First, you need to get the source code. You can use ``git`` (clone the
 repository) or download snapshot of github repo by clicking on `this link
 <https://github.com/BhallaLab/moose/archive/master.zip>`_.::
 
-    $ git clone https://github.com/BhallaLab/moose
+    $ git clone https://github.com/BhallaLab/moose --depth 100
 
-(This will create folder called "moose")
+(This will create folder called "moose" with source code.)
 Or,
 ::
 
@@ -60,41 +60,21 @@ Or,
 If you don't want lasest snapshot of ``MOOSE``, you can download other released
 versions from `here <`https://github.com/BhallaLab/moose/releases>`_.
 
-Once you have downloaded the repository, ::
-
-    $ cd moose
-    $ git submodule update --init; git pull
-                      or
-    $ sudo -E ./update-repository     # This script updates the repository and its subrepositories recursively, located in moose folder
-
 Install dependencies
 ^^^^^^^^^^^^^^^^^^^^
-
-Next, you need to install required dependencies. Depending on your OS, names of
-following packages may vary.
-
-Core MOOSE
-""""""""""
-- Required:
-    - cmake (version 2.8 or higher)
-    - g++ (>= 4.6.x) For building the C++ MOOSE core.
-    - gsl-1.16 or higher.
-
-- Optional
-    - HDF5 (>=1.8.x) For reading and writing data into HDF5 based formats
+Depending on your OS, names of following packages may vary.
 
 Python interface for core MOOSE API (pymoose)
 """""""""""""""""""""""""""""""""""""""""""""
 - Required
-    - Python2 ( >= 2.7.x) For building the MOOSE Python bindings
-    - Python-dev ( >= 2.7.x) Python development headers and libraries, e.g. `python-dev` or `python-devel`
+    - Python For building the MOOSE Python bindings
+    - Python development headers and libraries, e.g. `python-dev` or `python-devel`
     - NumPy ( >= 1.6.x) For array interface, e.g. `python-numpy` or `numpy`
 
 - Optional
-    - NetworkX (1.x) For automatical layout
-    - pygraphviz For automatic layout for chemical models
+    - NetworkX (1.x). Layout is of chemical models is computed using networkx.
     - Matplotlib (>=1.1.x) For plotting simulation results
-    - python-libsbml For reading and writing chemical models from and into SBML format
+    - python-libsbml For reading and writing chemical models in SBML format.
 
 Most of the dependencies can be installed using package manager.
 
@@ -127,12 +107,11 @@ build moose
    $ mkdir _build
    $ cd _build
    $ cmake  ..
-   $ make
+   $ make -j2    # using 2 core to build MOOSE
    $ ctest --output-on-failure  # optional
    $ sudo make install 
 
-This will build pyMOOSE (MOOSE's python extention), `ctest` will run few tests to
-check if build process was successful.
+This will build MOOSE's python extention, `ctest` will run few tests to check if build process was successful.
 
 .. note::
 
@@ -161,45 +140,32 @@ If everything went fine, you should be able to import moose in python shell.
 Graphical User Interface (GUI)
 ------------------------------
 
-You can get the source of ``moose-gui`` from `here
-<https://github.com/BhallaLab/moose-gui>`_. You can download it either by
-clicking on `this link <https://github.com/BhallaLab/moose-gui/archive/master.zip>`_
-or by using ``git`` ::
-
-    $ git clone https://github.com/BhallaLab/moose-gui
-
-Below are packages which you may want to install to use MOOSE Graphical User Interface.
+MOOSE-gui can be launched by running the following command
+::
+  
+  $ moosegui 
+   
+Below are packages which you may need to install to be able to launch MOOSE Graphical User Interface.
 
 - Required:
-    - PyQt4 (4.8.x) For Python GUI
-    - Matplotlib ( >= 1.1.x) For plotting simulation results
-    - NetworkX (1.x) For automatical layout
-    - suds/suds-jurko (0.4) For accessing models hosted on biomodels database.
-- Optional:
-    - python-libsbml For reading and writing signalling models from and into SBML format
-
+    - PyQt4 (4.8.x)
+    
 On ``Ubuntu/Debian``, these can be installed with
 ::
 
-    $ sudo apt-get install python-matplotlib python-qt4
+    $ sudo apt-get install python-qt4
 
 On ``CentOS/Fedora/RHEL``
 ::
 
-    $ sudo yum install python-matplotlib python-qt4
-
-Now you can fire up the GUI
-::
-
-    $ cd /to/moose-gui
-    $ python mgui.py
+    $ sudo yum install python-qt4
 
 .. note::
 
     If you have installed ``moose`` package, then GUI is launched by
     running following commnad::
 
-    $ moose
+    $ moosegui
 
 Building moogli
 ---------------
