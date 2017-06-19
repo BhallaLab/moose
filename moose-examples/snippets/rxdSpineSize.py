@@ -28,8 +28,6 @@ spineSpacing = 10e-6
 spineSpacingDistrib = 1e-6
 spineSize = 1.0
 spineSizeDistrib = 0.5
-spineAngle= PI / 2.0
-spineAngleDistrib = 0.0
 
 def makeCellProto( name ):
     elec = moose.Neuron( '/library/' + name )
@@ -79,6 +77,9 @@ def makeSpineProto2( name ):
     moose.connect( shaft, 'axial', head, 'raxial' )
 
 def makeModel():
+    spineAngle= PI / 2.0
+    spineAngleDistrib = 0.0
+
     moose.Neutral( '/library' )
     makeCellProto( 'cellProto' )
     makeChemProto( 'cProto' )

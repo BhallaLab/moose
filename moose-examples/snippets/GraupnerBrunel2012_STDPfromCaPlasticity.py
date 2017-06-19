@@ -1,3 +1,10 @@
+"""
+Simulate a pseudo-STDP protocol and plot the STDP kernel
+that emerges from Ca plasticity of Graupner and Brunel 2012.
+Author: Aditya Gilra, NCBS, Bangalore, October, 2014.
+
+"""
+
 import moose
 from pylab import *
 
@@ -19,7 +26,7 @@ refrT = 2e-3 # s
 
 ## two neurons: index 0 will be presynaptic, 1 will be postsynaptic
 network = moose.LIF( 'network', 2 );
-moose.le( '/network' )
+moose.le( network )
 network.vec.Em = Vrest
 network.vec.thresh = Vt_base
 network.vec.refractoryPeriod = refrT
@@ -184,12 +191,6 @@ make a neuron spike
     network.vec[nrnidx].inject = 0.
 
 def main():
-    """
-Simulate a pseudo-STDP protocol and plot the STDP kernel
-that emerges from Ca plasticity of Graupner and Brunel 2012.
-Author: Aditya Gilra, NCBS, Bangalore, October, 2014.
-
-    """
     dwlist_neg = []
     ddt = 2e-3 # s
     # since CaPlasticitySynHandler is event based
