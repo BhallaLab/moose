@@ -127,9 +127,7 @@ class DifShellBase
   virtual double vGetInnerArea(const Eref& e) const = 0;
 
   
-  virtual void vSetSolver( const Eref& e, Id hsolve );
-  static void zombify( Element* orig, const Cinfo* zClass, 
-		       Id hsolve );
+  
   static SrcFinfo1< double >* concentrationOut();
   static SrcFinfo2< double, double >* innerDifSourceOut();
   static SrcFinfo2< double, double >* outerDifSourceOut();

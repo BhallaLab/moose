@@ -177,7 +177,9 @@ void ZombieHHChannel::vReinit( const Eref& er, ProcPtr info )
 
 void ZombieHHChannel::vHandleConc( const Eref& e, double conc )
 {
-	;// cout << "Warning: ZombieHHChannel::vHandleConc\n";
+
+  	hsolve_->addConc(e.id(),conc);
+
 }
 
 void ZombieHHChannel::vCreateGate(const Eref& e, string name)

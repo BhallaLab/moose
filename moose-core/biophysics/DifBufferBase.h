@@ -119,9 +119,7 @@ public:
   static SrcFinfo2< double, double >* innerDifSourceOut();
   static SrcFinfo2< double, double >* outerDifSourceOut();
   static const Cinfo * initCinfo();
-  virtual void vSetSolver( const Eref& e, Id hsolve );
-  static void zombify( Element* orig, const Cinfo* zClass, 
-		Id hsolve );
+ 
 private:
   
  
