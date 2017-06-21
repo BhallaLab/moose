@@ -8,10 +8,7 @@ The soma name below is hard coded for gran98, else any other file can be used by
 """
 
 import os
-os.environ['NUMPTHREADS'] = '1'
 import sys
-sys.path.append('../../../python')
-
 import moose
 from moose.utils import *
 from moose.neuroml.NeuroML import NeuroML
@@ -32,7 +29,7 @@ def loadGran98NeuroML_L123(filename):
     somaCa = setupTable('somaCa',moose.CaConc(soma_path+'/Gran_CaPool_98'),'Ca')
     somaIKCa = setupTable('somaIKCa',moose.element(soma_path+'/Gran_KCa_98'),'Gk')
     ## Am not able to plot KDr gating variable X when running under hsolve
-    #KDrX = setupTable('ChanX',moose.HHChannel(soma_path+'/Gran_KDr_98'),'X')
+    #KDrX = setupTable('ChanX',moose.element(soma_path+'/Gran_KDr_98'),'X')
 
     print("Reinit MOOSE ... ")
     resetSim(['/elec',cells_path], simdt, plotdt, simmethod='hsolve')
