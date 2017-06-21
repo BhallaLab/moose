@@ -1186,7 +1186,24 @@ class MWindow(QtGui.QMainWindow):
                 self.setPlugin(pluginName, ret['model'].path)
                 if pluginName == 'kkit':
                     QtCore.QCoreApplication.sendEvent(self.plugin.getEditorView().getCentralWidget().view, QtGui.QKeyEvent(QtCore.QEvent.KeyPress, Qt.Qt.Key_A, Qt.Qt.NoModifier))
+                    
+                    noOfCompt = len(moose.wildcardFind(ret['model'].path+'/##[ISA=ChemCompt]'))
+                    grp = 0
+                    for c in moose.wildcardFind(ret['model'].path+'/##[ISA=ChemCompt]'):
+                        noOfGrp   = moose.wildcardFind(moose.element(c).path+'/#[TYPE=Neutral]')
+                        grp = grp+len(noOfGrp)
 
+                    noOfPool  = len(moose.wildcardFind(ret['model'].path+'/##[ISA=PoolBase]'))
+                    noOfFunc  = len(moose.wildcardFind(ret['model'].path+'/##[ISA=Function]'))
+                    noOfReac  = len(moose.wildcardFind(ret['model'].path+'/##[ISA=ReacBase]'))
+                    noOfEnz   = len(moose.wildcardFind(ret['model'].path+'/##[ISA=EnzBase]'))
+                    noOfStimtab  = len(moose.wildcardFind(ret['model'].path+'/##[ISA=StimulusTable]'))
+                    
+                    reply = QtGui.QMessageBox.information(self,"Model Info","Model has : \n %s Compartment \t \n %s Group \t \n %s Pool  \t \n %s Function \t \n %s reaction \t \n %s Enzyme \t \n %s StimulusTable" %(noOfCompt, grp, noOfPool, noOfFunc, noOfReac, noOfEnz, noOfStimtab))
+                    if reply == QtGui.QMessageBox.Ok:
+                        QtGui.QApplication.restoreOverrideCursor()
+                        return
+                    
     def checkPlugin(self,dialog):
         fileNames = dialog.selectedFiles()
         for fileName in fileNames:

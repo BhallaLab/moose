@@ -55,6 +55,7 @@ from os.path import splitext
 from PyQt4 import QtGui, QtCore, Qt
 from plugins.setsolver import *
 from moose.SBML import *
+from plugins.kkitOrdinateUtil import *
 
 def loadGenCsp(target,filename,solver="gsl"):
     target = target.replace(" ", "")
@@ -148,7 +149,26 @@ def loadFile(filename, target, solver="gsl", merge=True):
     if modeltype == 'genesis':
         if subtype == 'kkit' or subtype == 'prototype':
             model,modelpath = loadGenCsp(target,filename,solver)
+            xcord,ycord = [],[]
             if moose.exists(moose.element(modelpath).path):
+                mObj = moose.wildcardFind(moose.element(modelpath).path+'/##[ISA=PoolBase]'+','+
+                                          moose.element(modelpath).path+'/##[ISA=ReacBase]'+','+
+                                          moose.element(modelpath).path+'/##[ISA=EnzBase]'+','+
+                                          moose.element(modelpath).path+'/##[ISA=StimulusTable]')
+                for p in mObj:
+                    if not isinstance(moose.element(p.parent),moose.CplxEnzBase):
+                        xcord.append(moose.element(p.path+'/info').x)
+                        ycord.append(moose.element(p.path+'/info').y)
+                recalculatecoordinatesforKkit(mObj,xcord,ycord)
+
+                for ememb in moose.wildcardFind(moose.element(modelpath).path+'/##[ISA=EnzBase]'):
+                    objInfo = ememb.path+'/info'
+                    #Enzyme's textcolor (from kkit) will be bgcolor (in moose)
+                    if moose.exists(objInfo):
+                        bgcolor = moose.element(objInfo).color
+                        moose.element(objInfo).color = moose.element(objInfo).textColor
+                        moose.element(objInfo).textColor = bgcolor
+                        
                 moose.Annotator(moose.element(modelpath).path+'/info').modeltype = "kkit"
             else:
                 print " path doesn't exists"
@@ -158,6 +178,7 @@ def loadFile(filename, target, solver="gsl", merge=True):
     
     elif modeltype == 'cspace':
             model,modelpath = loadGenCsp(target,filename)
+            
             if moose.exists(modelpath):
                 moose.Annotator((moose.element(modelpath).path+'/info')).modeltype = "cspace"
             addSolver(modelpath,'gsl')
@@ -186,7 +207,7 @@ def loadFile(filename, target, solver="gsl", merge=True):
 
             # moose.move("cells/", cell.path)
         elif subtype == 'sbml':
-            foundLibSBML_ = False
+            foundLibtaSBML_ = False
             try:
                 import libsbml
                 foundLibSBML_ = True
@@ -212,7 +233,6 @@ def loadFile(filename, target, solver="gsl", merge=True):
             'subtype': subtype,
             'model': model,
             'foundlib' :libsfound}
-
 
 
 #

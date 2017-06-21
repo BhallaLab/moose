@@ -10,6 +10,7 @@ PLOT_FIELDS={
     }
 FIELD_UNITS={
     'volume':'m3',
+    'Kd' : 'mM',
     'Km':'mM',
     'kcat':'s-1',
     'k1' :'1/# s',

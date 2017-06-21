@@ -6,7 +6,7 @@
 # Maintainer:
 # Created: Wed Jun 30 11:18:34 2010 (+0530)
 # Version:
-# Last-Updated: Tue Mar 7 12:45:59 2017 (+0530)
+# Last-Updated: Friday May 17 23:45:59 2017 (+0530)
 #           By: Harsha
 #     Update #: 
 # URL:
@@ -38,8 +38,10 @@
 #
 # Fri Apr 19 15:05:53 IST 2013 - Subhasis added undo redo
 # feature. Create ObjectEditModel as part of ObjectEditView.
-#
-
+# Tue Mar 7 16:10:54 IST 2017 - Harsha now Pool or BufPool can be interchangable
+# by setting/unsetting isbuffered field
+# Fri May 17 23:45:59 2017 (+0530) - Harsha added, notes header,
+# Kd is calculated for the second order reaction and value is displayed
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -172,11 +174,14 @@ class ObjectEditModel(QtCore.QAbstractTableModel):
         #harsha: For signalling models will be pulling out notes field from Annotator
         #        can updates if exist for other types also
         if ( isinstance(self.mooseObject, moose.PoolBase)
-           #or isinstance(self.mooseObject,moose.ReacBase)
            or isinstance(self.mooseObject,moose.EnzBase) ) :
             self.fields.append("Color")
-            # self.fields.append("Notes")
         flag = QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEditable
+        self.fieldFlags[fieldName] = flag
+
+        if ( isinstance(self.mooseObject, moose.ReacBase) ) :
+            self.fields.append("Kd")
+        flag = QtCore.Qt.ItemIsEnabled 
         self.fieldFlags[fieldName] = flag
 
     def rowCount(self, parent):
@@ -330,7 +335,18 @@ class ObjectEditModel(QtCore.QAbstractTableModel):
                 try:
                     if (str(field) =="Color" ):
                         return QtGui.QPushButton("Press Me!")
-                    if ( (str(field) != "Notes") and (str(field) != "className")):
+                    if (str(field) =="Kd" ):
+                        #ret = self.mooseObject.getField(str(field))
+                        Kd = 0
+                        
+                        if self.mooseObject.className == "ZombieReac" or self.mooseObject.className == "Reac":
+                            if self.mooseObject.numSubstrates > 1 or self.mooseObject.numProducts > 1:
+                                if self.mooseObject.Kf != 0:
+                                    Kd = self.mooseObject.Kb/self.mooseObject.Kf
+
+                            #Kd = QtCore.QVariant(QtCore.QString(str(ret)))
+                        ret = QtCore.QVariant(QtCore.QString(str(Kd)))
+                    if ( (str(field) != "Notes") and (str(field) != "className") and (str(field) != "Kd")):
                         ret = self.mooseObject.getField(str(field))
                         ret = QtCore.QVariant(QtCore.QString(str(ret)))
                     elif(str(field) == "className"):
@@ -477,7 +493,10 @@ class ObjectEditDockWidget(QtGui.QDockWidget):
         base.setOrientation(PyQt4.QtCore.Qt.Vertical)
         layout = QVBoxLayout()
         layout.addWidget(view)#, 0, 0)
-
+        lineedit = QtGui.QLineEdit("Notes:")
+        lineedit.setReadOnly(True)
+        layout.addWidget(lineedit)
+        
         if ( isinstance(mobj, moose.PoolBase)
            or isinstance(mobj,moose.ReacBase)
            or isinstance(mobj,moose.EnzBase)

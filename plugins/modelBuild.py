@@ -28,13 +28,9 @@ def checkCreate(scene,view,modelpath,mobj,string,ret_string,num,event_pos,layout
     #print "28 ",modelpath
     if moose.exists(modelpath+'/info'):
         mType = moose.Annotator((moose.element(modelpath+'/info'))).modeltype
-    #print " 1 event_pos ",event_pos
     itemAtView = view.sceneContainerPt.itemAt(view.mapToScene(event_pos))
-    #print "2 ",itemAtView
     pos = view.mapToScene(event_pos)
-    #print " 3 ",pos
     modelpath = moose.element(modelpath)
-    #print " model path @34 ",modelpath
     if num:
         string_num = ret_string+str(num)
     else:
@@ -73,15 +69,12 @@ def checkCreate(scene,view,modelpath,mobj,string,ret_string,num,event_pos,layout
         bgcolor = getRandColor()
         qGItem.setDisplayProperties(posWrtComp.x(),posWrtComp.y(),QtGui.QColor('green'),bgcolor)
         poolinfo.color = str(bgcolor.getRgb())
-        #if mType == "new_kkit":
-        poolinfo.x = posWrtComp.x()
-        poolinfo.y = posWrtComp.y()
         view.emit(QtCore.SIGNAL("dropped"),poolObj)
         setupItem(modelpath.path,layoutPt.srcdesConnection)
         layoutPt.drawLine_arrow(False)
-        poolinfo.x = posWrtComp.x()
-        poolinfo.y = posWrtComp.y()
-        
+        x,y = roundoff(qGItem.scenePos(),layoutPt)
+        poolinfo.x = x
+        poolinfo.y = y
         #Dropping is on compartment then update Compart size
         if isinstance(mobj,moose.ChemCompt):
             compt = layoutPt.qGraCompt[moose.element(mobj)]
@@ -94,8 +87,8 @@ def checkCreate(scene,view,modelpath,mobj,string,ret_string,num,event_pos,layout
         qGItem = ReacItem(reacObj,itemAtView)
         qGItem.setDisplayProperties(posWrtComp.x(),posWrtComp.y(),"white", "white")
         #if mType == "new_kkit":
-        reacinfo.x = posWrtComp.x()
-        reacinfo.y = posWrtComp.y()
+        # reacinfo.x = posWrtComp.x()
+        # reacinfo.y = posWrtComp.y()
         layoutPt.mooseId_GObj[reacObj] = qGItem
         view.emit(QtCore.SIGNAL("dropped"),reacObj)
         setupItem(modelpath.path,layoutPt.srcdesConnection)
@@ -104,6 +97,9 @@ def checkCreate(scene,view,modelpath,mobj,string,ret_string,num,event_pos,layout
         if isinstance(mobj,moose.ChemCompt):
             compt = layoutPt.qGraCompt[moose.element(mobj)]
             updateCompartmentSize(compt)
+        x,y = roundoff(qGItem.scenePos(),layoutPt)
+        reacinfo.x = x
+        reacinfo.y = y
 
     elif  string == "StimulusTable":
         posWrtComp = (itemAtView.mapFromScene(pos)).toPoint()
@@ -112,8 +108,8 @@ def checkCreate(scene,view,modelpath,mobj,string,ret_string,num,event_pos,layout
         qGItem = TableItem(tabObj,itemAtView)
         qGItem.setDisplayProperties(posWrtComp.x(),posWrtComp.y(),QtGui.QColor('white'),QtGui.QColor('white'))
         #if mType == "new_kkit":
-        tabinfo.x = posWrtComp.x()
-        tabinfo.y = posWrtComp.y()
+        #tabinfo.x = posWrtComp.x()
+        #tabinfo.y = posWrtComp.y()
         layoutPt.mooseId_GObj[tabObj] = qGItem
         view.emit(QtCore.SIGNAL("dropped"),tabObj)
         setupItem(modelpath.path,layoutPt.srcdesConnection)
@@ -122,6 +118,10 @@ def checkCreate(scene,view,modelpath,mobj,string,ret_string,num,event_pos,layout
         if isinstance(mobj,moose.ChemCompt):
             compt = layoutPt.qGraCompt[moose.element(mobj)]
             updateCompartmentSize(compt)
+        x,y = roundoff(qGItem.scenePos(),layoutPt)
+        tabinfo.x = x
+        tabinfo.y = y
+
     elif string == "Function":
         posWrtComp = (itemAtView.mapFromScene(pos)).toPoint()
         funcObj = moose.Function(mobj.path+'/'+string_num)
@@ -140,8 +140,8 @@ def checkCreate(scene,view,modelpath,mobj,string,ret_string,num,event_pos,layout
         qGItem.setDisplayProperties(posWrtComp.x(),posWrtComp.y(),QtGui.QColor('red'),QtGui.QColor('green'))
         layoutPt.mooseId_GObj[funcObj] = qGItem
         #if mType == "new_kkit":
-        funcinfo.x = posWrtComp.x()
-        funcinfo.y = posWrtComp.y()
+        #funcinfo.x = posWrtComp.x()
+        #funcinfo.y = posWrtComp.y()
         view.emit(QtCore.SIGNAL("dropped"),funcObj)
         setupItem(modelpath.path,layoutPt.srcdesConnection)
         layoutPt.drawLine_arrow(False)
@@ -150,6 +150,9 @@ def checkCreate(scene,view,modelpath,mobj,string,ret_string,num,event_pos,layout
         if isinstance(mooseCmpt,moose.ChemCompt):
             compt = layoutPt.qGraCompt[moose.element(mooseCmpt)]
             updateCompartmentSize(compt)
+        x,y = roundoff(qGItem.scenePos(),layoutPt)
+        funcinfo.x = x
+        funcinfo.y = y
 
     elif  string == "Enz" or string == "MMenz":
         #If 2 enz has same pool parent, then pos of the 2nd enz shd be displaced by some position, need to check how to deal with it
@@ -170,11 +173,16 @@ def checkCreate(scene,view,modelpath,mobj,string,ret_string,num,event_pos,layout
             posWrtComp = pos
             bgcolor = getRandColor()
             qGItem.setDisplayProperties(posWrtComp.x(),posWrtComp.y()-40,QtGui.QColor('green'),bgcolor)
-            #if mType == "new_kkit":
-            enzinfo.x = posWrtComp.x()
-            enzinfo.y = posWrtComp.y()
-        
+            x,y = roundoff(qGItem.scenePos(),layoutPt)
+            enzinfo.x = x
+            enzinfo.y = y
             enzinfo.color = str(bgcolor.name())
+            enzinfo.textColor = str(QtGui.QColor('green').name())
+            #if mType == "new_kkit":
+            #enzinfo.x = posWrtComp.x()
+            #enzinfo.y = posWrtComp.y()
+        
+            #enzinfo.color = str(bgcolor.name())
             e = moose.Annotator(enzinfo)
             #e.x = posWrtComp.x()
             #e.y = posWrtComp.y()
@@ -187,8 +195,8 @@ def checkCreate(scene,view,modelpath,mobj,string,ret_string,num,event_pos,layout
             enzboundingRect = qGEnz.boundingRect()
             moose.connect( enzObj, 'cplx', cplxItem, 'reac' )
             qGItem.setDisplayProperties(enzboundingRect.height()/2,enzboundingRect.height()-40,QtGui.QColor('white'),QtGui.QColor('white'))
-            cplxinfo.x = enzboundingRect.height()/2
-            cplxinfo.y = enzboundingRect.height()-60
+            #cplxinfo.x = enzboundingRect.height()/2
+            #cplxinfo.y = enzboundingRect.height()-60
             view.emit(QtCore.SIGNAL("dropped"),enzObj)
 
         else:
@@ -199,13 +207,17 @@ def checkCreate(scene,view,modelpath,mobj,string,ret_string,num,event_pos,layout
             posWrtComp = pos
             bgcolor = getRandColor()
             qGItem.setDisplayProperties(posWrtComp.x(),posWrtComp.y()-30,QtGui.QColor('green'),bgcolor)
-            enzinfo.x = posWrtComp.x()
-            enzinfo.y = posWrtComp.y()
+            #enzinfo.x = posWrtComp.x()
+            #enzinfo.y = posWrtComp.y()
             enzinfo.color = str(bgcolor.name())
             layoutPt.mooseId_GObj[enzObj] = qGItem
             view.emit(QtCore.SIGNAL("dropped"),enzObj)
+            x,y = roundoff(qGItem.scenePos(),layoutPt)
+            enzinfo.x = x
+            enzinfo.y = y
         setupItem(modelpath.path,layoutPt.srcdesConnection)
         layoutPt.drawLine_arrow(False)
+
         #Dropping is on compartment then update Compart size
         if isinstance(enzparent,moose.ChemCompt):
             updateCompartmentSize(parentcompt)
@@ -279,6 +291,15 @@ def createObj(scene,view,modelpath,string,pos,layoutPt):
     
     if ret_string != " ":
         checkCreate(scene,view,modelpath,mobj,string,ret_string,num,event_pos,layoutPt)
+
+def roundoff(scenePos,layoutPt):
+    xtest = scenePos.x()/layoutPt.defaultScenewidth
+    xroundoff = round(xtest,1)
+
+    ytest = scenePos.y()/layoutPt.defaultSceneheight
+    yroundoff = round(ytest,1)
+    
+    return(xroundoff,yroundoff)
 
 def findUniqId(mobj,string,num):
     if num == 0:
