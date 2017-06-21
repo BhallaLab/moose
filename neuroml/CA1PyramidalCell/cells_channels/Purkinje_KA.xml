@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<channelml xmlns="http://morphml.org/channelml/schema" 
+	       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	       xmlns:meta="http://morphml.org/metadata/schema" 
+	       xsi:schemaLocation="http://morphml.org/channelml/schema  ../../Schemata/v1.6/Level2/ChannelML_v1.6.xsd" 
+	       units="Physiological Units">
+
+    <meta:notes>ChannelML file containing a single Channel from De Schutter and Bower 1998</meta:notes>
+
+    <ion name="k" charge="1" default_erev="-85"/>                
+
+
+    <channel_type name="Purkinje_KA" density="yes">
+      
+        <status value="stable">
+            <meta:comment>Verified equivalence of NEURON and GENESIS mapping to orig NEURON mod impl at 0.02ms dt with current pulse (but 0.002 is better)</meta:comment>
+            <meta:comment>Needs a large value of table_divisions for equivalence with orig NEURON mod impl</meta:comment>
+            <meta:contributor>
+                <meta:name>Padraig Gleeson</meta:name>
+            </meta:contributor>
+        </status>
+
+        <meta:notes>A type K current. Based on Roth et al's reimplementation of original GENESIS model in NEURON</meta:notes>
+
+        <meta:authorList>
+            <meta:modelAuthor>
+                <meta:name>De Schutter, E.</meta:name>
+            </meta:modelAuthor>
+            <meta:modelAuthor>
+                <meta:name>Bower, J.</meta:name>
+            </meta:modelAuthor>
+            <meta:modelTranslator>
+                <meta:name>Padraig Gleeson</meta:name>
+                <meta:institution>UCL</meta:institution>
+                <meta:email>p.gleeson - at - ucl.ac.uk</meta:email>
+            </meta:modelTranslator>
+            <meta:modelTranslator>
+                <meta:name>Jenny Davie</meta:name>
+                <meta:institution>UCL</meta:institution>
+                <meta:comment>Conversion of GENESIS model to NEURON</meta:comment>
+            </meta:modelTranslator>
+            <meta:modelTranslator>
+                <meta:name>Arnd Roth</meta:name>
+                <meta:institution>UCL</meta:institution>
+                <meta:comment>Conversion of GENESIS model to NEURON</meta:comment>
+            </meta:modelTranslator>
+            <meta:modelTranslator>
+                <meta:name>Volker Steuber</meta:name>
+                <meta:institution>UCL</meta:institution>
+                <meta:comment>Conversion of GENESIS model to NEURON</meta:comment>
+            </meta:modelTranslator>
+            <meta:modelTranslator>
+                <meta:name>Michael Hausser</meta:name>
+                <meta:institution>UCL</meta:institution>
+                <meta:comment>Conversion of GENESIS model to NEURON</meta:comment>
+            </meta:modelTranslator>
+        </meta:authorList>
+
+        <meta:publication>
+            <meta:fullTitle>De Schutter, E., and Bower, J. M. (1994). An active membrane model of the cerebellar Purkinje cell. I. Simulation of current clamps in slice. J Neurophysiol 71, 375-400.</meta:fullTitle>
+            <meta:pubmedRef>http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?db=pubmed&amp;cmd=Retrieve&amp;dopt=AbstractPlus&amp;list_uids=7512629</meta:pubmedRef>
+        </meta:publication>
+
+        <meta:neuronDBref>
+            <meta:modelName>K channels</meta:modelName>
+            <meta:uri>http://senselab.med.yale.edu/senselab/NeuronDB/channelGene2.htm#table3</meta:uri>
+        </meta:neuronDBref>
+
+
+        <current_voltage_relation>
+            <ohmic ion="k">
+                <conductance default_gmax="15">                     <!-- phys units: mS/cm2 -->
+
+                    <rate_adjustments>
+                        <q10_settings q10_factor="3" experimental_temp="37"/>
+                    </rate_adjustments>
+
+                    <gate power="4">
+                        <state name="m" fraction="1"/>
+                    </gate>
+                    <gate power="1">
+                        <state name="h" fraction="1"/>
+                    </gate>
+
+                </conductance>
+            </ohmic>
+        </current_voltage_relation>
+
+
+        <hh_gate state="m">
+            <transition>
+                <voltage_gate>
+                    <alpha>
+                        <parameterised_hh type="sigmoid">      <!--  A/(1 + exp(k*(v-d))) -->
+                            <parameter name="A" value="1.4"/>
+                            <parameter name="k" value="-0.08333333"/>
+                            <parameter name="d" value="-27"/>
+                        </parameterised_hh>
+                    </alpha>
+                    <beta>
+                        <parameterised_hh type="sigmoid">      <!--  A/(1 + exp(k*(v-d))) -->
+                            <parameter name="A" value="0.49"/>
+                            <parameter name="k" value="0.25"/>
+                            <parameter name="d" value="-30"/>
+                        </parameterised_hh>
+                    </beta>
+                </voltage_gate>
+            </transition>
+        </hh_gate>
+
+
+        <hh_gate state="h">
+            <transition>
+                <voltage_gate>
+                    <alpha>
+                        <parameterised_hh type="sigmoid">      <!--  A/(1 + exp(k*(v-d))) -->
+                            <parameter name="A" value="0.0175"/>
+                            <parameter name="k" value="0.125"/>
+                            <parameter name="d" value="-50"/>
+                        </parameterised_hh>
+                    </alpha>
+                    <beta>
+                        <parameterised_hh type="sigmoid">      <!--  A/(1 + exp(k*(v-d))) -->
+                            <parameter name="A" value="1.3"/>
+                            <parameter name="k" value="-0.1"/>
+                            <parameter name="d" value="-13"/>
+                        </parameterised_hh>
+                    </beta>
+                </voltage_gate>
+            </transition>
+        </hh_gate>
+
+
+        <impl_prefs>
+          <comment>Settings from the original mod file</comment>
+            <table_settings max_v="100" min_v="-100" table_divisions="200"/>
+        </impl_prefs>
+
+
+    </channel_type>
+</channelml>

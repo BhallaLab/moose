@@ -1,0 +1,14 @@
+CA1.morph.original.xml is the original file exported from neuroConstruct.
+It does not work with MOOSE as it has inhomogeneous_value tags,
+ and negative conductances for hd channel (!),
+ and channels whose parameters change in the morphml after loading in the channelml.
+
+CA1.morph.bad.xml is the CA1 cell morphology with channels from the cerebellar granule cell!
+It shows spikes that are a few tens of microsecond wide using 10microsec time step in ee,
+ but hsolve just oscillates for 10microsec, with 1 microsec time step, hsolve works.
+
+CA1.morph.xml is the original file from neuroConstruct, but the inhomogeneous_value tags have been removed,
+ and hd channels with negative conductances have been removed,
+ and some new channels with the parameter changes hard coded have been used.
+This works in MOOSE, but fires uniformly spontaneously at a low rate.
+

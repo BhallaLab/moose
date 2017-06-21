@@ -1,0 +1,9 @@
+This is the directory for the NeuroML files used by Aditya Gilra in his rodent olfactory bulb model.
+
+Fire up moose GUI. File->Load Model or Ctrl+L. Navigate to this directory. Load any of these models:
+OBpassive_numgloms3_seed750.0.xml : 3 glomeruli (2 mitral cells in each) with lots of granule and PG cells.
+OBpassive_slice_numgloms2_seed100.0_fewcells.xml : 2 glomeruli with very few granule and PG cells (good for testing).
+OBpassive_slice_numgloms2_seed100.0.xml : 2 glomeruli with granules and PGs present only in a slice of 300 microns thickness.
+
+Presently all cells have only passive properties, no active channels, and no synapses and connections,
+ as not all channels have been converted to ChannelML, and it saves loading time.

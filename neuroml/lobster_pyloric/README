@@ -1,0 +1,30 @@
+Stomatogastric ganglion Central Pattern Generator:
+ generates pyloric rhythm of the lobster
+
+Network model translated from:
+Prinz, Bucher, Marder, Nature Neuroscience, 2004;
+STG neuron models translated from:
+Prinz, Billimoria, Marder, J.Neurophys., 2003.
+
+Translated into MOOSE by Aditya Gilra, Bangalore, 2013, revised 2014.
+
+On a terminal, cd to the lobster_pyloric path and then execute:
+python STG_net.py
+
+You can switch between graded (default) versus spiking synapses by setting the graded_syn variable inside STG_net.py.
+
+The model is fully specified in NeuroML 1.8.1 except the graded synapses which are in pyMOOSE as NeuroML 1.8.1 doesn't support graded synapses.
+
+You can change the model by setting filename in STG_net.py to one of:
+Generated.net.xml (default)
+Generated.net.reverse.xml (reverse pyloric rhythm)
+Generated.net.halfcenter.xml (2 neurons half-center oscillator)
+Generated.net.3syn.xml (3 synapses version of pyloric rhythm)
+
+Currently the default network model Generated.net.xml file with default graded synapses (as in the lobster and in the Prinz et al 2004 paper) gives the correct pyloric rhythm.
+With default network with spiking synapses (graded_syn=False, un-lobster-like), one of the cells doesn't spike.
+For the reversed network: Generated.net.reverse.xml, both the graded and the spiking synapses give the reverse sequence of spiking.
+
+However, one of the synaptic parameters (LP to PY) had to be changed from the original Fig 3e of the Prinz et al 2004 paper.
+I think basal Ca and resting potential (to confirm, it's been a while since I coded this) are not specified in the original paper, so that could be the reason of the discrepancy, or could be a bug in my implementation.
+

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<channelml xmlns="http://morphml.org/channelml/schema" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:meta="http://morphml.org/metadata/schema"
+    xsi:schemaLocation="http://morphml.org/channelml/schema  http://www.neuroml.org/NeuroMLValidator/NeuroMLFiles/Schemata/v1.8.0/Level2/ChannelML_v1.8.0.xsd"
+    units="Physiological Units">
+
+    <meta:notes>ChannelML file containing a single Channel description</meta:notes>
+
+    <channel_type name="kad" density="yes">
+
+        <status value="stable">
+            <meta:comment>Agreement of generated NEURON and GENESIS to original NEURON mod. Compared voltage and n traces on single comp with current pulse</meta:comment>
+            <meta:contributor>
+                <meta:name>Padraig Gleeson</meta:name>
+            </meta:contributor>
+        </status>
+
+        <meta:notes>A type K channel for distal dendrites. Comment from original mod: K-A channel from Klee Ficker and Heinemann, modified to account for Dax A Current, M.Migliore Jun 1997</meta:notes>
+
+        <meta:authorList>
+            <meta:modelAuthor>
+                <meta:name>Michele Migliore</meta:name>
+                <meta:comment>Cited implementer according to ModelDB</meta:comment>
+            </meta:modelAuthor>
+            <meta:modelTranslator>
+                <meta:name>Padraig Gleeson</meta:name>
+                <meta:institution>UCL</meta:institution>
+                <meta:email>p.gleeson - at - ucl.ac.uk</meta:email>
+            </meta:modelTranslator>
+        </meta:authorList>
+
+        <meta:publication>
+            <meta:fullTitle>Migliore M, Ferrante M, Ascoli GA (2005) Signal propagation in oblique dendrites of CA1 pyramidal cells. J Neurophysiol 94:4145-4155</meta:fullTitle>
+            <meta:pubmedRef>http://www.ncbi.nlm.nih.gov/pubmed/16293591</meta:pubmedRef>
+        </meta:publication>
+
+        <meta:neuronDBref>
+            <meta:modelName>K channels</meta:modelName>
+            <meta:uri>http://senselab.med.yale.edu/senselab/NeuronDB/channelGene2.htm#table3</meta:uri>
+        </meta:neuronDBref>
+
+        <meta:modelDBref>
+            <meta:modelName>CA1 pyramidal neuron: signal propagation in oblique dendrites (Migliore et al 2005)</meta:modelName>
+            <meta:uri>http://senselab.med.yale.edu/ModelDB/ShowModel.asp?model=55035</meta:uri>
+        </meta:modelDBref>
+
+
+        <current_voltage_relation cond_law="ohmic" ion="k" default_gmax="60" default_erev="-90">
+
+            <q10_settings gate="n" q10_factor="5" experimental_temp="24"/>
+            <q10_settings gate="l" fixed_q10="1" experimental_temp="35"/> <!-- temperature value from Migliore et al simulation-->
+
+            <gate name="n" instances="1">
+                <closed_state id="n0"/>
+                <open_state id="n" fraction="1"/>
+
+                <transition name="alpha" from="n0" to="n" expr_form="generic" expr="(exp ( (1e-3 * (-1.8 + (-1)/(1 + (exp ((v-(-40))/5)))) * (v - (-1)) * 9.648e4) / (8.315*(273.16 + (celsius) )) ))" />
+                <transition name="beta" from="n" to="n0" expr_form="generic"  expr="(exp ( (1e-3 * (-1.8 + (-1)/(1 + (exp ((v-(-40))/5)))) * 0.39 * (v - (-1)) * 9.648e4) / (8.315*(273.16 + (celsius) )) ))" />
+
+                <time_course name="tau" from="n0" to="n" expr_form="generic" expr="beta/(0.1 * (1 + alpha) * temp_adj_n) &lt; 0.2 ? (0.2 * temp_adj_n) : beta/(0.1 * (1 + alpha)) " />
+                <steady_state name="inf" from="n0" to="n" expr_form="generic" expr="1/(1 + alpha)" />
+
+            </gate>
+
+            <gate name="l" instances="1">
+                <closed_state id="l0"/>
+                <open_state id="l" fraction="1"/>
+
+                <time_course name="tau" from="l0" to="l" expr_form="generic" expr="0.26*(v + 50) &lt; 2 ? 2 : 0.26*(v + 50)" />
+                <steady_state name="inf" from="l0" to="l" expr_form="generic" expr="1/(1 + (exp ( (1e-3 * (3) * (v - (-56)) * 9.648e4) / (8.315*(273.16 + (celsius) )) )))" />
+
+            </gate>
+        </current_voltage_relation>
+
+        
+        <impl_prefs>
+            <comment>Suggesting using a large table of precomputed rate equation values since original mod didn't use any table, i.e. used continuous values</comment>
+            <table_settings max_v="100" min_v="-100" table_divisions="2000"/>
+        </impl_prefs>
+
+
+    </channel_type>
+</channelml>

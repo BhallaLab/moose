@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<neuroml xmlns="http://morphml.org/neuroml/schema"
+    xmlns:mml="http://morphml.org/morphml/schema"
+    xmlns:nml="http://morphml.org/networkml/schema"
+    xmlns:meta="http://morphml.org/metadata/schema"
+    xmlns:bio="http://morphml.org/biophysics/schema"
+    xmlns:cml="http://morphml.org/channelml/schema"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://morphml.org/neuroml/schema http://www.neuroml.org/NeuroMLValidator/NeuroMLFiles/Schemata/v1.8.0/Level3/NeuroML_Level3_v1.8.0.xsd"
+    name = "NeuroML Cell Level 1, 2, 3 file written by Aditya Gilra"
+    lengthUnits="micron">
+
+<meta:notes>author: Aditya Gilra adapted from Migliore and Shepherd 2008.</meta:notes>
+
+<cells>
+  <cell name="granule">
+    <meta:notes>Cell: granule morphml written by hand by Aditya.</meta:notes>
+    <segments  xmlns="http://morphml.org/morphml/schema"> <!-- Changing the namespace from neuroml to morphml-->
+      <!-- Section: soma -->
+      <segment id="0" name = "soma" cable = "0"> <!-- soma is somagc of gc.hoc of Migliore and Shepherd 2008. -->
+        <proximal x="0" y="0" z="0" diameter="8"/>
+        <distal x="0" y="0" z="8" diameter="8"/>
+      </segment>
+      <!-- Section: periphery -->
+      <segment id="1" name = "periphery" parent="0" cable = "1"> <!-- periphery is priden of gc.hoc of Migliore and Shepherd 2008. -->
+        <proximal x="0" y="0" z="8" diameter="0.5"/>
+        <distal x="0" y="0" z="258" diameter="0.5"/>
+      </segment>
+      <!-- I have left out all the other dendrites priden2[] of 100 micron length in Migliore and Shepherd.
+        So, I increased the priden i.e. periphery length to 250 microns instead of 150microns. -->
+      <!-- Sub-linear summation perhaps because of same dendrite -->
+    </segments>
+    <cables  xmlns="http://morphml.org/morphml/schema"> <!-- Changing namespace from neuroml to morphml-->
+      <cable id = "0" name = "soma" fract_along_parent = "0"/>
+      <cable id = "1" name = "periphery" fract_along_parent = "1"/>
+      <cablegroup name="all">
+        <cable id = "0"/>
+        <cable id = "1"/>
+      </cablegroup>
+      <cablegroup name="soma"> 
+        <cable id = "0"/>
+      </cablegroup>
+      <cablegroup name="periphery"> 
+        <cable id = "1"/>
+      </cablegroup>
+    </cables>
+    <biophysics units='Physiological Units'>
+      <!-- Note: values of cond dens are different in NEURON and phy units-->
+      <bio:mechanism xmlns:bio='http://morphml.org/biophysics/schema' passive_conductance='true' type='Channel Mechanism' name='pas'>
+        <!-- Both Migliore and Shepherd 2008 and Egger et al 2003 say taum = 30ms, Rin=1GOhm. So set RM and CM for it.
+        See however, Carleton et al 2003 who have taum=14ms in mice,
+        and Cang&Isaacson2003 have much sharper mit->gran EPSPs than obtained by taum=30ms. -->
+        <bio:parameter name='gmax' value='0.13333'> <!-- RM = 30e-3/CM = 0.75 Ohm-m^2. Thus GM = 1/0.75 = 1.3333 S/m^2 = 0.13333 mS/cm^2 -->
+          <bio:group>all</bio:group>
+        </bio:parameter>
+        <bio:parameter name='e' value='-65'>
+          <bio:group>all</bio:group>
+        </bio:parameter>
+      </bio:mechanism>
+      <bio:spec_capacitance xmlns:bio='http://morphml.org/biophysics/schema'>
+        <bio:parameter value='4'> <!-- CM = 0.04 F/m^2 = 4 microF/cm^2 : Seems too high compared to usual 0.01 F?m^2! -->
+          <bio:group>all</bio:group>
+        </bio:parameter>
+      </bio:spec_capacitance>
+      <bio:spec_axial_resistance xmlns:bio='http://morphml.org/biophysics/schema'>
+        <bio:parameter value='0.08'> <!-- 0.8 Ohm-m = 0.08 KOhm-cm -->
+          <bio:group>all</bio:group>
+        </bio:parameter>
+      </bio:spec_axial_resistance>
+      <bio:init_memb_potential>
+        <bio:parameter value="-65">  
+          <bio:group>all</bio:group>
+        </bio:parameter>
+      </bio:init_memb_potential>
+    </biophysics>
+    <connectivity>
+      <!-- These synapse_types do not correspond to actual synapses in /library.
+      Rather, they must be used by network generators to map these synapse_types into say AMPA/NMDA etc.
+      In any case, these only represent potential locations and not actually realized ones. -->
+      <nml:potential_syn_loc synapse_type="mitral_granule" synapse_direction="post">
+        <nml:group>periphery</nml:group> <!-- periphery compartments -->
+      </nml:potential_syn_loc>
+      <nml:potential_syn_loc synapse_type="granule_mitral" synapse_direction="pre">
+        <nml:group>periphery</nml:group> <!-- periphery compartments -->
+      </nml:potential_syn_loc>
+    </connectivity>
+  </cell>
+</cells>
+</neuroml>

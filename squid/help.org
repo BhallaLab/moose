@@ -1,0 +1,242 @@
+Simulation of squid axon with Hodgkin-Huxley ion channels
+
+#+AUTHOR: Subhasis Ray
+
+* Navigation: navigation toolbar is located at bottom of the plots
+  This uses the built-in navigation toolbar of [[http://matplotlib.org/users/navigation_toolbar.html][matplotlib]] [click to
+  open in your default web-browser].  
+
+#+CAPTION: Navigation toolbar for plots
+#+LABEL: fignavigationtoolbar
+[[./images/navigationtoolbar.jpg]]
+
+  You can hover the mouse cursor on any icon on this toolbar to get a
+  brief tool-tip. To summarize:
+
+** Zoom
+   1. Zoom-in:
+      1) Zoom-in both X and Y axes:	 
+	 - click on the subplot you want to zoom and scroll mouse
+           wheel down, or
+	 - click magnifier icon and press left mouse button on the
+           subplot and drag. This will zoom the subplot to the
+           rectangle you cover by this.
+	 - click compass icon and press right mouse button on the plot
+           and drag towards top-right.
+      2) Zoom-in along X-axis: 
+         - click compass icon and press right mouse button on the plot
+           and drag towards right.
+      3) Zoom-in along  Y-axis:
+         - click compass icon and press right mouse button on the plot
+           and drag upwards.
+   2. Zoom-out:
+      1) Zoom-out both X and Y axes:
+	 - click on the subplot you want to zoom and scroll mouse wheel up, or
+	 - click magnifier icon and press right mouse button on the
+           plot and drag. The whole visible axis area will fit into
+           the rectangle you cover by this.
+	 - click compass icon and press right mouse button on the plot
+           and drag towards bottom-left.
+      2) Zoom-out whole plot window along X-axis: 
+	 - click compass icon and press right mouse button on the plot
+           and drag towards left.
+      3) Zoom-out Y-axis: 
+	 - click compass icon and press right mouse button on the plot
+           and drag downwards.
+   3. Go forward/backward in zoom stack: 
+      click right/left arrow icon.
+** Pan:
+   click compass-icon and left click-and-drag
+** Reset to initial plot state: 
+   click home icon.
+** Change spacing and position of subplots: 
+   click button with four green arrow-heads pointing (this is called
+   the Subplot-Configuration button).
+** Configure axes: 
+   click green tick-mark. In the pop-up dialog select the axis you want
+   to modify and click OK. In the next dialog you can set the range of
+   X and Y values for the axes and modify several other properties.
+** Save plot: 
+   click floppy-disk icon.
+
+* Rearranging the frames on small screens
+  The default layout of the squid demo may exceed available screen
+  size on your system. But you can always undock the control panels
+  and put them one over the other to save screen space. To undock all
+  panels in one go, click the "Undock all" button in the tool bar.
+
+  To move or float a single panel, click the left mouse button on its
+  title bar (in the same horizontal line with the expand buttons) of
+  any of the panels and drag. You can choose to leave it floating or
+  drop it somewhere (top, left, bottom or right of the plot window) in
+  the main window to reposition it. You can drop multiple panels in
+  the same location. Then they will be put as multiple tabs over one
+  another.
+
+  An undocked panel will be always on top of the main window. If this
+  is a problem, you can close it by clicking the close button. You can
+  make it visible again by clicking "Show all" button on the tool bar.
+
+* The SQUID tutorial  
+  The following is adapted from the GENESIS squid demo notes with
+  modifications for MOOSE by Subhasis Ray, September 2012.
+  
+  The original header was:
+
+  -----------------------------------------------------------------------------
+
+  SQUID
+  
+  An Introductory Tutorial for GENESIS, XODUS, and the HODGKIN-HUXLEY model
+
+  By M. Nelson, Caltech, April 1989 - Modified by D. Beeman, June 1991, Dec 1994
+                                  \- Modified by E. Vigmond, September 1993
+
+  -----------------------------------------------------------------------------
+
+  In the process of working through this tutorial, you will learn
+  something about the Hodgkin-Huxley model.  This program may serve as
+  a good starting point for those of you who plan to work on
+  single-cell models for a course project.
+
+** The Model
+   For the time being, we are going to simulate a single axon
+   compartment with active Na and K conductances, as described by Hodgkin
+   and Huxley for the squid giant axon.  In other tutorials we will link
+   compartments together to form a simple model of an entire neuron with
+   a soma and dendrites (the Neuron tutorial), model a cable with many
+   compartments (the cable tutorial), and build neural circuits with
+   connected neurons (MultiCell and tritonia).  For now, we confine
+   ourselves to a single axon compartment.
+
+** Running the Simulation
+   The model has already been initialized with some reasonable
+   parameter values, so all you have to do to run the simulation is:
+
+   click on the ``Run`` button in the toolbar.
+
+   The simulation which you just observed was for a constant current
+   pulse, which is shown in the lower left graph panel.  The upper left
+   graph shows the membrane potential.  You can see that 3 action
+   potentials were generated during this 50 msec simulation.  Now let's
+   change the injection current and see what happens.
+   
+   At the bottom of the left panel is a widget labeled "Electronics"
+   and inside it there are two tabs labeled ``Current clamp`` and
+   ``Voltage clamp``. Select the ``Current clamp`` tab and you will
+   see a series of labeled text boxes with default values. In order
+   to change the injection current:
+
+   position the cursor to the right of the last digit in the "First
+   Pulse Current" field and click in the text box with the left mouse
+   button.
+
+   Let's change the peak injection current from 0.1 to 1.0.
+
+   type <BACKSPACE> to delete the 0.1 and then type 1.0
+
+   The value in the dialog field should now be 1.0. 
+
+   Now we'll run the simulation again.
+
+   click the "Run" button on the toolbar again.
+
+   There should be a dramatic change in the time-course of the
+   membrane potential at this higher current injection level.
+   Experiment with the injection level to see what happens to the
+   axon at higher injection currents.  Also try decreasing the
+   injection level until an action potential is no longer elicited by
+   the stimulus.  What is the threshold for producing an action
+   potential in this compartment?
+
+   You may also experiment with trains of short pulses.  Set the
+   "First Pulse Width" dialog field to 1 msec and click on the
+   "Single Pulse" drop down box and select "Pulse Train".  Now vary
+   "First Onset Delay".  What is the minimum interval between action
+   potentials that you can achieve?
+
+** Voltage Clamping
+   You can also perform voltage clamp experiments in this simulation.
+
+   click on the "Voltage clamp" tab header at the bottom of the
+   control form under "Electronics".
+
+   Again, reasonable default values have been selected , so all you
+   have to do to run the voltage clamp simulation is:
+
+   click the "Run" button on the control form
+
+** Changing Extracellular Concentrations
+   You can alter the extracellular concentrations of the ions through
+   the "Channels" panel.  Any changes in concentration will cause the
+   reversal potentials to be recalculated.  To reset the values back
+   to the initial ones, just click on the "Restore defaults" button
+   in the top tool bar.
+
+** Controlling Graphs
+   The graph of the clamp current (lower left panel) has gone off
+   scale.  In order to rescale the graph:
+
+   click on the button with green tick mark in the navigation toolbar
+   at the bottom of the plots.
+
+   A dialog containing drop-down to select the subplot should appear.
+   Select the "Injection current" and click OK. Another dialog box
+   will appear with text boxes for `Min` and `Max` values for X-Axis
+   and Y-Axis. Adjust for Y axis to bring the graph into range and
+   press "Apply".
+
+
+   The top toolbar has an "Overlay plots" button.  When it is
+   checked, any existing plots in the graph will be held and new
+   simulation results will be overlayed. Try this now.
+
+   Click "Overlay plots" and run the simulation at several values of
+   the clamp voltage. Do the first run with "Overlay plots" button
+   unchecked so that all previous graphs are cleared at this
+   run. Then click this button to checked state and do the subsequent
+   runs.
+
+** State Plots
+   One can learn a great deal by studying plots in which one of the
+   Hodgkin-Huxley channel activation parameters (the K activation
+   "n", the Na activation "m", or the Na inactivation "h") is plotted
+   as a function of the membrane potential, V.  (See, for example,
+   Chapter 5 of "Methods in Neuronal Modeling", by Koch and Segev.)
+
+   In order to view such a plot, click the left mouse button on the
+   button labeled "State plot" in the top toolbar. The label will
+   change to "State Plot Visible", and a state plot graph will
+   appear. Clicking the button again will hide the graph.  The
+   default plot is to show the K channel "n" parameter on the y-axis
+   and the membrane potential on the x-axis.  The drop-down menus at
+   the top of the window allow you to change these defaults.
+
+** Channel Blocking
+   In order to explore the effects of blocking one of the channels,
+   you may click on one of the check boxes in the "Channels" panel
+   for blocking and unblocking a channel.  When a channel is blocked,
+   its conductance is set to zero.  Activation parameters for a
+   blocked channel are still calculated and may be plotted, but are
+   relatively meaningless because they will have no effect on the
+   membrane potential.
+
+** Saving Graphs
+   You can save a graph to file by clicking the save button in the
+   navigation toolbar. In the file dialog you can select from several
+   formats including PDF, JPEG, PNG and SVG.
+
+** Units used in the simulation
+   Units: 
+   | quantity                      | unit         |
+   |-------------------------------+--------------|
+   | time                          | msec         |
+   | length                        | um (microns) |
+   | potential                     | mV           |
+   | conductance                   | mS (mmho)    |
+   | resistance                    | kohm         |
+   | capacitance                   | uF           |
+   | specific axial resistance     | kohm-cm      |
+   | specific membrane conductance | mS/cm^2      |
+   | specific membrane capacitance | uF/cm^2      |
+   
