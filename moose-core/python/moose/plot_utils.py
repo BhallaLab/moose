@@ -300,13 +300,7 @@ def plot_records(data_dict, xvec = None, **kwargs):
     subplot = kwargs.get('subplot', False)
     filters = [ x.lower() for x in kwargs.get('filter', [])]
 
-    ax = kwargs.get( 'ax', None )
-    if ax is None:
-        plt.figure(figsize=(10, 1.5*len(data_dict)))
-        if not subplot:
-            ax = plt.subplot( 1, 1, 1 )
-            kwargs[ 'ax' ] = ax
-
+    plt.figure(figsize=(10, 1.5*len(data_dict)))
     for i, k in enumerate(data_dict):
         pu.info("+ Plotting for %s" % k)
         plotThis = False
@@ -321,9 +315,8 @@ def plot_records(data_dict, xvec = None, **kwargs):
                 yvec = data_dict[k]
                 plotVector(yvec, xvec, label=k, **kwargs)
             else:
-                ax = plt.subplot(len(data_dict), 1, i+1)
-                kwargs[ 'ax' ] = ax
-                yvec = data_dict[k].vector
+                plt.subplot(len(data_dict), 1, i)
+                yvec = data_dict[k]
                 plotVector(yvec, xvec, label=k, **kwargs)
     if subplot:
         try:
