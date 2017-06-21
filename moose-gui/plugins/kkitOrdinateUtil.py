@@ -196,25 +196,9 @@ def autoCoordinates(meshEntry,srcdesConnection):
             else:
                 for items in (items for items in out ):
                     G.add_edge(element(items[0]).path,inn.path)
-<<<<<<< HEAD
-    position = nx.spring_layout(G)
-    #nx.draw(G,pos=nx.spring_layout(G))
-    #position = nx.spring_layout(G)
-    #import matplotlib.pyplot as plt
-    #plt.savefig('/home/harsha/Trash/Trash_SBML/test.png')
-    position = nx.graphviz_layout(G, prog = 'dot')
-    if int( nx.__version__.split( '.' )[-1] ) >= 11:
-        position = nx.spring_layout( G )
-    #agraph = nx.to_agraph(G)
-    #agraph.draw("test.png", format = 'png', prog = 'dot')
-    xcord = []
-    ycord = []
-    
-=======
     
     position = graphviz_layout(G)
     xcord, ycord = [],[]
->>>>>>> 320e525a5a34fbd3f1cb572b6de38eca0c0876f0
     for item in position.items():
         xy = item[1]
         xroundoff = round(xy[0],0)
@@ -222,14 +206,6 @@ def autoCoordinates(meshEntry,srcdesConnection):
         xcord.append(xroundoff)
         ycord.append(yroundoff)
     
-<<<<<<< HEAD
-    if xcord and ycord:
-        xmin = min(xcord)
-        xmax = max(xcord)
-        ymin = min(ycord)
-        ymax = max(ycord)    	    
-    return(xmin,xmax,ymin,ymax,position)
-=======
     xmin = min(xcord)
     xmax = max(xcord)
     ymin = min(ycord)
@@ -241,7 +217,6 @@ def autoCoordinates(meshEntry,srcdesConnection):
         Ay = (xy[1]-ymin)/(ymax-ymin)
         anno.x = round(Ax,1)
         anno.y = round(Ay,1)
->>>>>>> 320e525a5a34fbd3f1cb572b6de38eca0c0876f0
 
 def find_index(value, key):
     """ Value.get(key) to avoid expection which would raise if empty value in dictionary for a given key """
