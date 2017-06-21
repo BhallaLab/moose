@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<channelml xmlns="http://morphml.org/channelml/schema" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:meta="http://morphml.org/metadata/schema" 
+    xsi:schemaLocation="http://morphml.org/channelml/schema   ../../Schemata/v1.7.2/Level2/ChannelML_v1.7.2.xsd" 
+    units="SI Units">
+
+	<meta:notes>Ca pool.  </meta:notes>
+    
+    <ion name="ca" charge="2" role="SignallingSubstance">  
+        <meta:notes>Signifies that the ion is involved in a process which alters its concentration</meta:notes>
+    </ion>
+    
+    <ion_concentration name="Ca_conc">
+        
+        <status value="stable">
+        </status>
+    
+        <meta:notes>An expontially decaying pool of calcium</meta:notes>
+        
+        <ion_species name="ca"/>
+        
+        <decaying_pool_model resting_conc ="0.0" decay_constant="1.333e-2">
+            
+            <pool_volume_info shell_thickness = "1e-7"/>
+            
+        </decaying_pool_model>
+        
+        
+    </ion_concentration>
+</channelml>

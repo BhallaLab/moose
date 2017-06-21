@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<networkml xmlns="http://morphml.org/networkml/schema" xmlns:meta="http://morphml.org/metadata/schema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://morphml.org/networkml/schema  http://www.neuroml.org/NeuroMLValidator/NeuroMLFiles/Schemata/v1.8.1/Level3/NetworkML_v1.8.1.xsd" lengthUnits="micrometer">
+
+<meta:notes>
+
+Network structure (NeuroML 1.x) for project: CA1PyramidalCell
+
+</meta:notes>
+
+<meta:properties>
+    <meta:property tag="neuroConstruct_random_seed" value="-1533157804"/>
+
+    <meta:property tag="neuroConstruct_sim_config" value="Default Simulation Configuration"/>
+</meta:properties>
+
+        <populations>
+    <!-- change cell_type to CA1 or CA1soma to switch between full / single compartment cell -->
+    <population name="CA1group" cell_type="CA1inhomog">
+        <meta:properties>
+            <meta:property tag="color" value="0.69921875 0.5703125 0.96484375"/>
+        </meta:properties>
+        <instances size="1">
+            <instance id="0">
+                <location x="0.0" y="0.0" z="0.0"/>
+            </instance>
+        </instances>
+    </population>
+</populations>
+
+
+
+            <!--There are no synaptic connections present in the network-->
+
+
+        <inputs units="Physiological Units">
+    <input name="CA1_10pA">
+        <!--<pulse_input delay="0.0" duration="500.0" amplitude="3.0E-4"/>-->
+        <!-- injecting directly into soma.inject in the cell's MorphML -->
+        <pulse_input delay="0.0" duration="500.0" amplitude="0.0"/>
+        <target population="CA1group">
+            <sites size="1">
+                <site cell_id="0" segment_id="0" fraction_along="0.5"/>
+            </sites>
+        </target>
+    </input>
+</inputs>
+
+</networkml>
