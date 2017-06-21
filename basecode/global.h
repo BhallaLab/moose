@@ -109,7 +109,7 @@ namespace moose
      *
      * @param seed
      */
-    void mtseed( int seed );
+    void mtseed( unsigned int seed );
 
     /**
      * @brief Generate a random double between 0 and 1

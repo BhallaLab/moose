@@ -29,4 +29,3 @@ apt-get install -qq libboost-all-dev
 apt-get install -qq libgsl0-dev
 apt-get install -qq python-pip python3-pip
 apt-get install -qq libgraphviz-dev
-pip3 install numpy

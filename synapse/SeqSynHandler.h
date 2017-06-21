@@ -55,14 +55,8 @@ class SeqSynHandler: public SynHandlerBase
  		double getSeqDt() const;
 		void setHistoryTime( double v );
  		double getHistoryTime() const;
-		void setBaseScale( double v );
- 		double getBaseScale() const;
-		void setSequenceScale( double v );
- 		double getSequenceScale() const;
-		void setSynapseOrder( vector< unsigned int> v );
- 		vector< unsigned int> getSynapseOrder() const;
-		void setSynapseOrderOption( int v );
- 		int getSynapseOrderOption() const;
+		void setResponseScale( double v );
+ 		double getResponseScale() const;
  		double getSeqActivation() const; // summed activation of syn chan
 		void setPlasticityScale( double v );
  		double getPlasticityScale() const;
@@ -72,11 +66,6 @@ class SeqSynHandler: public SynHandlerBase
  		vector< double > getKernel() const;
  		vector< double > getHistory() const;
 
-		////////////////////////////////////////////////////////////////
-		// Utility func
-		int numHistory() const;
-		void refillSynapseOrder( unsigned int newSize );
-		void fixSynapseOrder();
 		////////////////////////////////////////////////////////////////
 		static const Cinfo* initCinfo();
 	private:
@@ -97,19 +86,13 @@ class SeqSynHandler: public SynHandlerBase
 		string kernelEquation_;
 		unsigned int kernelWidth_; // Width in terms of number of synapses 
 
-		/// Time to store history. KernelDt defines num of rows
+		// Time to store history. KernelDt defines num of rows
 		double historyTime_;	
 		double seqDt_;	// Time step for successive entries in kernel
-		/// Scaling factor for baseline synaptic responses.
-		double baseScale_; 
-		/// Scaling factor for sequence recognition responses.
-		double sequenceScale_; 
-
-		/**
-		 * Scaling factor for short-term plastic weight changes in each 
-		 * synapse arising from sequential input.
-		 */
-		double plasticityScale_;
+		// Scaling factor for sustained activation of synapse from response
+		double responseScale_; 
+		// Scaling factor for weight changes in each synapse from response
+		double weightScale_;
 
 		/**
 		 * Exponent to use for the outcome of the sequential calculations.
@@ -133,23 +116,8 @@ class SeqSynHandler: public SynHandlerBase
 		vector< double > latestSpikes_; 
 
 		///////////////////////////////////////////
-		vector< vector<  double > > kernel_; ///Kernel for seq selectivity
-		RollingMatrix history_;	/// Rows = time; cols = synInputs
-		/**
-		 * Remaps synapse order to avoid correlations based on presynaptic 
-		 * object Id order, or on connection building order. This 
-		 * undesirable ordering occurs even when random synaptic
-		 * projections are used. User can alter as preferred. This is 
-		 * simply a look up table so that the incoming synapse index is
-		 * remapped: index_on_Handler = synapseOrder_[original_syn_index]
-		 * This must only have numbers from zero to numSynapses, and should
-		 * normally have all the numbers.
-		 */
-		vector< unsigned int > synapseOrder_; 
-
-		/// Options: -2: User. -1: ordered. 0: random by system seed. 
-		/// > 0: Random by seed specified by this number
-		int synapseOrderOption_;
+		vector< vector<  double > > kernel_;	//Kernel for seq selectivity
+		RollingMatrix history_;	// Rows = time; cols = synInputs
 
 		vector< Synapse > synapses_;
 		priority_queue< PreSynEvent, vector< PreSynEvent >, CompareSynEvent > events_;

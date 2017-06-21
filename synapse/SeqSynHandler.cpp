@@ -8,7 +8,6 @@
 **********************************************************************/
 
 #include <queue>
-#include "global.h"
 #include "header.h"
 #include "Synapse.h"
 #include "SynEvent.h"
@@ -43,22 +42,17 @@ const Cinfo* SeqSynHandler::initCinfo()
 		    "kernel with the history[time][synapse#] matrix."
 			"\nThe local response can affect the synapse in three ways: " 
 			"1. It can sum the entire response vector, scale by the "
-			"*sequenceScale* term, and send to the synapse as a steady "
+			"*responseScale* term, and send to the synapse as a steady "
 			"activation. Consider this a cell-wide immediate response to "
 			"a sequence that it likes.\n"
 			"2. It do an instantaneous scaling of the weight of each "
 			"individual synapse by the corresponding entry in the response "
-			"vector. It uses the *plasticityScale* term to do this. "
-			"Consider "
+			"vector. It uses the *weightScale* term to do this. Consider "
 			"this a short-term plasticity effect on specific synapses. \n"
 			"3. It can do long-term plasticity of each individual synapse "
 			"using the matched local entries in the response vector and "
 			"individual synapse history as inputs to the learning rule. "
 			"This is not yet implemented.\n"
-			"In addition to all these, the SeqSynHandler can act just like "
-			"a regular synapse, where it responds to individual synaptic "
-			"input according to the weight of the synapse. The size of "
-			"this component of the output is scaled by *baseScale*\n"
 	};
 
 	static FieldElementFinfo< SynHandlerBase, Synapse > synFinfo( 
@@ -94,51 +88,22 @@ const Cinfo* SeqSynHandler::initCinfo()
 			&SeqSynHandler::setHistoryTime,
 			&SeqSynHandler::getHistoryTime
 	);
-	static ValueFinfo< SeqSynHandler, double > baseScale(
-			"baseScale",
-			"Basal scaling factor for regular synaptic activation.",
-			&SeqSynHandler::setBaseScale,
-			&SeqSynHandler::getBaseScale
-	);
-	static ValueFinfo< SeqSynHandler, double > sequenceScale(
-			"sequenceScale",
+	static ValueFinfo< SeqSynHandler, double > responseScale(
+			"responseScale",
 			"Scaling factor for sustained activation of synapse by seq",
-			&SeqSynHandler::setSequenceScale,
-			&SeqSynHandler::getSequenceScale
-	);
-	static ValueFinfo< SeqSynHandler, vector< unsigned int > > synapseOrder(
-			"synapseOrder",
-			"Mapping of synapse input order to spatial order on syn array."
-			"Entries in this vector are indices which must remain smaller "
-			"than numSynapses. The system will fix up if you mess up. "
-			"It does not insist on unique mappings, but these are "
-			"desirable as outcome is undefined for repeated entries.",
-			&SeqSynHandler::setSynapseOrder,
-			&SeqSynHandler::getSynapseOrder
-	);
-	static ValueFinfo< SeqSynHandler, int > synapseOrderOption(
-			"synapseOrderOption",
-			"How to do the synapse order remapping. This rule stays in "
-			"place and guarantees safe mappings even if the number of "
-			"synapses is altered. Options:\n"
-		    "-2: User ordering.\n"
-		    "-1: Sequential ordering, 0 to numSynapses-1.\n"
-		    "0: Random ordering using existing system seed.\n"
-		    ">0: Random ordering using seed specified by this number\n"
-			"Default is -1, sequential ordering.",
-			&SeqSynHandler::setSynapseOrderOption,
-			&SeqSynHandler::getSynapseOrderOption
+			&SeqSynHandler::setResponseScale,
+			&SeqSynHandler::getResponseScale
 	);
 	static ReadOnlyValueFinfo< SeqSynHandler, double > seqActivation(
 			"seqActivation",
 			"Reports summed activation of synaptic channel by sequence",
 			&SeqSynHandler::getSeqActivation
 	);
-	static ValueFinfo< SeqSynHandler, double > plasticityScale(
-			"plasticityScale",
-			"Scaling factor for doing plasticity by scaling each synapse by response vector",
-			&SeqSynHandler::setPlasticityScale,
-			&SeqSynHandler::getPlasticityScale
+	static ValueFinfo< SeqSynHandler, double > weightScale(
+			"weightScale",
+			"Scaling factor for weight of each synapse by response vector",
+			&SeqSynHandler::setWeightScale,
+			&SeqSynHandler::getWeightScale
 	);
 
 	static ValueFinfo< SeqSynHandler, double > sequencePower(
@@ -219,7 +184,8 @@ SeqSynHandler::SeqSynHandler()
 		seqActivation_( 0.0 ),
 		synapseOrderOption_( -1 ) // sequential ordering
 { 
-	history_.resize( numHistory(), 0 );
+	int numHistory = static_cast< int >( 1.0 + floor( historyTime_ * (1.0 - 1e-6 ) / seqDt_ ) );
+	history_.resize( numHistory, 0 );
 }
 
 SeqSynHandler::~SeqSynHandler()
@@ -247,10 +213,10 @@ void SeqSynHandler::vSetNumSynapses( const unsigned int v )
 	for ( unsigned int i = prevSize; i < v; ++i )
 		synapses_[i].setHandler( this );
 
-	history_.resize( numHistory(), v );
+	int numHistory = static_cast< int >( 1.0 + floor( historyTime_ * (1.0 - 1e-6 ) / seqDt_ ) );
+	history_.resize( numHistory, v );
 	latestSpikes_.resize( v, 0.0 );
 	weightScaleVec_.resize( v, 0.0 );
-	refillSynapseOrder( v );
 	updateKernel();
 }
 
@@ -270,65 +236,6 @@ Synapse* SeqSynHandler::vGetSynapse( unsigned int i )
 }
 
 //////////////////////////////////////////////////////////////////////
-
-// Checks for numbers bigger than the size. Replaces with
-// values within the range that have not yet been used.
-void SeqSynHandler::fixSynapseOrder() 
-{
-	unsigned int sz = synapseOrder_.size();
-	vector< unsigned int > availableEntries( sz );
-	iota( availableEntries.begin(), availableEntries.end(), 0 );
-	for( unsigned int i = 0; i < sz; ++i ) {
-		if ( synapseOrder_[i] < sz )
-			availableEntries[ synapseOrder_[i] ] = sz;
-	}
-	vector< unsigned int > ae;
-	for( unsigned int i = 0; i < sz; ++i )
-		if ( availableEntries[i] < sz )
-			ae.push_back( availableEntries[i] );
-
-	auto jj = ae.begin();
-	for( unsigned int i = 0; i < sz; ++i ) {
-		if ( synapseOrder_[i] >= sz )
-			synapseOrder_[i] = *jj++;
-	}
-}
-
-// Beautiful snippet from Lukasz Wiklendt on StackOverflow. Returns order
-// of entries in a vector.
-template <typename T> vector<size_t> sort_indexes(const vector<T> &v) {
-	// initialize original index locations
-	vector<size_t> idx(v.size());
-	iota(idx.begin(), idx.end(), 0);
-	// sort indexes based on comparing values in v
-	sort(idx.begin(), idx.end(),
-		[&v](size_t i1, size_t i2) {return v[i1] < v[i2];});
-	return idx;
-}
-
-void SeqSynHandler::refillSynapseOrder( unsigned int newSize )
-{
-	if ( synapseOrderOption_ <= -2 ) { // User order
-		synapseOrder_.resize( newSize, newSize );
-		fixSynapseOrder();
-	} else if ( synapseOrderOption_ == -1 ) { // Ordered
-		synapseOrder_.resize( newSize );
-		for ( unsigned int i = 0 ; i < newSize; ++i )
-			synapseOrder_[i] = i;
-	} else {
-		synapseOrder_.resize( newSize );
-		if ( synapseOrderOption_ > 0 ) { // Specify seed explicitly
-                    moose::mtseed( synapseOrderOption_ );
-		}
-		vector< double > x;
-		for ( unsigned int i = 0; i < newSize; ++i )
-			x.push_back( moose::mtrand() );
-		auto idx = sort_indexes< double >( x );
-		for ( unsigned int i = 0; i < newSize; ++i )
-			synapseOrder_[i] = idx[i];
-	}
-}
-
 void SeqSynHandler::updateKernel()
 {
 	if ( kernelEquation_ == "" || seqDt_ < 1e-9 || historyTime_ < 1e-9 )
@@ -342,9 +249,9 @@ void SeqSynHandler::updateKernel()
 	p.DefineConst(_T("e"), (mu::value_type)M_E);
 	p.SetExpr( kernelEquation_ );
 	kernel_.clear();
-	int nh = numHistory();
-	kernel_.resize( nh );
-	for ( int i = 0; i < nh; ++i ) {
+	int numHistory = static_cast< int >( 1.0 + floor( historyTime_ * (1.0 - 1e-6 ) / seqDt_ ) );
+	kernel_.resize( numHistory );
+	for ( int i = 0; i < numHistory; ++i ) {
 		kernel_[i].resize( kernelWidth_ );
 		t = i * seqDt_;
 		for ( unsigned int j = 0; j < kernelWidth_; ++j ) {
@@ -381,7 +288,8 @@ void SeqSynHandler::setSeqDt( double v )
 {
 	seqDt_ = v;
 	updateKernel();
-	history_.resize( numHistory(), vGetNumSynapses() );
+	int numHistory = static_cast< int >( 1.0 + floor( historyTime_ * (1.0 - 1e-6 ) / seqDt_ ) );
+	history_.resize( numHistory, vGetNumSynapses() );
 }
 
 double SeqSynHandler::getSeqDt() const
@@ -392,7 +300,8 @@ double SeqSynHandler::getSeqDt() const
 void SeqSynHandler::setHistoryTime( double v )
 {
 	historyTime_ = v;
-	history_.resize( numHistory(), vGetNumSynapses() );
+	int numHistory = static_cast< int >( 1.0 + floor( historyTime_ * (1.0 - 1e-6 ) / seqDt_ ) );
+	history_.resize( numHistory, vGetNumSynapses() );
 	updateKernel();
 }
 
@@ -401,24 +310,14 @@ double SeqSynHandler::getHistoryTime() const
 	return historyTime_;
 }
 
-void SeqSynHandler::setBaseScale( double v )
+void SeqSynHandler::setResponseScale( double v )
 {
-	baseScale_ = v;
+	responseScale_ = v;
 }
 
-double SeqSynHandler::getBaseScale() const
+double SeqSynHandler::getResponseScale() const
 {
-	return baseScale_;
-}
-
-void SeqSynHandler::setSequenceScale( double v )
-{
-	sequenceScale_ = v;
-}
-
-double SeqSynHandler::getSequenceScale() const
-{
-	return sequenceScale_;
+	return responseScale_;
 }
 
 double SeqSynHandler::getSeqActivation() const
@@ -426,14 +325,14 @@ double SeqSynHandler::getSeqActivation() const
 	return seqActivation_;
 }
 
-double SeqSynHandler::getPlasticityScale() const
+double SeqSynHandler::getWeightScale() const
 {
-	return plasticityScale_;
+	return weightScale_;
 }
 
-void SeqSynHandler::setPlasticityScale( double v )
+vector< double >SeqSynHandler::getWeightScaleVec() const
 {
-	plasticityScale_ = v;
+	return weightScaleVec_;
 }
 
 double SeqSynHandler::getSequencePower() const
@@ -448,14 +347,14 @@ void SeqSynHandler::setSequencePower( double v )
 
 vector< double >SeqSynHandler::getWeightScaleVec() const
 {
-	return weightScaleVec_;
+	weightScale_ = v;
 }
 
 vector< double > SeqSynHandler::getKernel() const
 {
-	int nh = numHistory();
+	int numHistory = static_cast< int >( 1.0 + floor( historyTime_ * (1.0 - 1e-6 ) / seqDt_ ) );
 	vector< double > ret;
-	for ( int i = 0; i < nh; ++i ) {
+	for ( int i = 0; i < numHistory; ++i ) {
 		ret.insert( ret.end(), kernel_[i].begin(), kernel_[i].end() );
 	}
 	return ret;
@@ -463,38 +362,15 @@ vector< double > SeqSynHandler::getKernel() const
 
 vector< double > SeqSynHandler::getHistory() const
 {
-	int nh = numHistory();
+	int numHistory = static_cast< int >( 1.0 + floor( historyTime_ * (1.0 - 1e-6 ) / seqDt_ ) );
 	int numX = vGetNumSynapses();
-	vector< double > ret( numX * nh, 0.0 );
+	vector< double > ret( numX * numHistory, 0.0 );
 	vector< double >::iterator k = ret.begin();
-	for ( int i = 0; i < nh; ++i ) {
+	for ( int i = 0; i < numHistory; ++i ) {
 		for ( int j = 0; j < numX; ++j )
 			*k++ = history_.get( i, j );
 	}
 	return ret;
-}
-
-void SeqSynHandler::setSynapseOrder( vector< unsigned int > v )
-{
-	synapseOrder_ = v;
-	fixSynapseOrder();
-	synapseOrderOption_ = -2; // Set the flag to say it is User defined.
-}
-
-vector< unsigned int > SeqSynHandler::getSynapseOrder() const
-{
-	return synapseOrder_;
-}
-
-void SeqSynHandler::setSynapseOrderOption( int v )
-{
-	synapseOrderOption_ = v;
-	refillSynapseOrder( synapseOrder_.size() );
-}
-
-int SeqSynHandler::getSynapseOrderOption() const
-{
-	return synapseOrderOption_;
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -508,9 +384,7 @@ void SeqSynHandler::addSpike(unsigned int index, double time, double weight)
 	// slice. For now, to get it going for LIF neurons, this will do.
 	// Even in the general case we will probably have a very wide window
 	// for the latestSpikes slice.
-	//
-	// Here we reorder the entries in latestSpikes by the synapse order.
-	latestSpikes_[ synapseOrder_[index] ] += weight;
+	latestSpikes_[index] += weight;
 }
 
 unsigned int SeqSynHandler::addSynapse()
@@ -531,10 +405,10 @@ void SeqSynHandler::dropSynapse( unsigned int msgLookup )
 void SeqSynHandler::vProcess( const Eref& e, ProcPtr p ) 
 {
 	// Here we look at the correlations and do something with them.
-	int nh = numHistory();
+	int numHistory = static_cast< int >( 1.0 + floor( historyTime_ * (1.0 - 1e-6 ) / seqDt_ ) );
 
 	// Check if we need to do correlations at all.
-	if ( nh > 0 && kernel_.size() > 0 ) {
+	if ( numHistory > 0 && kernel_.size() > 0 ) {
 		// Check if timestep rolls over a seqDt boundary
 		if ( static_cast< int >( p->currTime / seqDt_ ) > 
 				static_cast< int >( (p->currTime - p->dt) / seqDt_ ) ) {
@@ -544,22 +418,22 @@ void SeqSynHandler::vProcess( const Eref& e, ProcPtr p )
 	
 			// Build up the sum of correlations over time
 			vector< double > correlVec( vGetNumSynapses(), 0.0 );
-			for ( int i = 0; i < nh; ++i )
+			for ( int i = 0; i < numHistory; ++i )
 				history_.correl( correlVec, kernel_[i], i );
-			if ( sequenceScale_ > 0.0 ) { // Sum all responses, send to chan
+			if ( responseScale_ > 0.0 ) { // Sum all responses, send to chan
 				seqActivation_ = 0.0;
 				for ( vector< double >::iterator y = correlVec.begin(); 
 								y != correlVec.end(); ++y )
 					seqActivation_ += pow( *y, sequencePower_ );
 	
 				// We'll use the seqActivation_ to send a special msg.
-				seqActivation_ *= sequenceScale_;
+				seqActivation_ *= responseScale_;
 			}
-			if ( plasticityScale_ > 0.0 ) { // Short term changes in individual wts
+			if ( weightScale_ > 0.0 ) { // Short term changes in individual wts
 				weightScaleVec_ = correlVec;
 				for ( vector< double >::iterator y=weightScaleVec_.begin(); 
 							y != weightScaleVec_.end(); ++y )
-					*y *= plasticityScale_;
+					*y *= weightScale_;
 			}
 		}
 	}
@@ -568,15 +442,15 @@ void SeqSynHandler::vProcess( const Eref& e, ProcPtr p )
 	// We can't leave it to the base class vProcess, because we need
 	// to scale the weights individually in some cases.
 	double activation = seqActivation_; // Start with seq activation
-	if ( plasticityScale_ > 0.0 ) {
+	if ( weightScale_ > 0.0 ) {
 		while( !events_.empty() && events_.top().time <= p->currTime ) {
-			activation += events_.top().weight * baseScale_ * 
+			activation += events_.top().weight * 
 					weightScaleVec_[ events_.top().synIndex ] / p->dt;
 			events_.pop();
 		}
 	} else {
 		while( !events_.empty() && events_.top().time <= p->currTime ) {
-			activation += baseScale_ * events_.top().weight / p->dt;
+			activation += events_.top().weight / p->dt;
 			events_.pop();
 		}
 	}
@@ -589,9 +463,4 @@ void SeqSynHandler::vReinit( const Eref& e, ProcPtr p )
 	// For no apparent reason, priority queues don't have a clear operation.
 	while( !events_.empty() )
 		events_.pop();
-}
-
-int SeqSynHandler::numHistory() const
-{
-	return static_cast< int >( 1.0 + floor( historyTime_ * (1.0 - 1e-6 ) / seqDt_ ) );
 }

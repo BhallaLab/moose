@@ -63,33 +63,27 @@ ELSE(WIN32)
         SET(GSL_CBLAS_LIB_NAMES gslcblas)
     ENDIF( )
 
-    if(GSL_ROOT_DIR)
-        message("  Debug: Searching in user given path " )
-        FIND_LIBRARY(GSL_LIB 
-            NAMES ${GSL_LIB_NAMES} 
-            PATHS ${GSL_ROOT_DIR}/lib ${GSL_ROOT_DIR}/lib64
-            NO_DEFAULT_PATH
-            )
+    FIND_LIBRARY(GSL_LIB 
+        NAMES ${GSL_LIB_NAMES} 
+        PATHS 
+            ${GSL_ROOT_DIR}/lib ${GSL_ROOT_DIR}/lib64
+            /opt/lib /opt/lib64
+        )
 
-        FIND_LIBRARY(GSLCBLAS_LIB 
-            NAMES ${GSL_CBLAS_LIB_NAMES}
-            PATHS ${GSL_ROOT_DIR}/lib ${GSL_ROOT_DIR}/lib64
-            NO_DEFAULT_PATH
-            )
-
-        FIND_PATH(GSL_INCLUDE_DIRS NAMES gsl/gsl_blas.h
-            PATHS ${GSL_ROOT_DIR}/include 
-            NO_DEFAULT_PATH
-            )
-    else( )
-        FIND_LIBRARY(GSL_LIB NAMES ${GSL_LIB_NAMES} )
-        FIND_LIBRARY(GSLCBLAS_LIB NAMES ${GSL_CBLAS_LIB_NAMES})
-        FIND_PATH(GSL_INCLUDE_DIRS NAMES gsl/gsl_blas.h )
-    endif()
-
+    FIND_LIBRARY(GSLCBLAS_LIB 
+        NAMES ${GSL_CBLAS_LIB_NAMES}
+        PATHS 
+            ${GSL_ROOT_DIR}/lib ${GSL_ROOT_DIR}/lib64
+            /opt/lib /opt/lib64
+        )
     IF (GSL_LIB AND GSLCBLAS_LIB)
         SET (GSL_LIBRARIES ${GSL_LIB} ${GSLCBLAS_LIB})
     ENDIF (GSL_LIB AND GSLCBLAS_LIB)
+
+    FIND_PATH(GSL_INCLUDE_DIRS NAMES gsl/gsl_blas.h
+        PATHS ${GSL_ROOT_DIR}/include /opt/include 
+        )
+
 
 ENDIF(WIN32)
 
@@ -106,7 +100,7 @@ endif(GSL_INCLUDE_DIRS)
 
 IF(GSL_LIBRARIES AND GSL_VERSION)
     IF(GSL_INCLUDE_DIRS)
-        MESSAGE(STATUS "Found GSL: ${GSL_INCLUDE_DIRS}, ${GSL_LIBRARIES}")
+        MESSAGE(STATUS "Found GSL ${GSL_LIBRARIES}")
         SET(GSL_FOUND 1)
     ENDIF(GSL_INCLUDE_DIRS)
 ENDIF()

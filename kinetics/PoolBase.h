@@ -68,11 +68,6 @@ class PoolBase
 
 		void setSpecies( const Eref& e, SpeciesId v );
 		SpeciesId getSpecies( const Eref& e ) const;
-		/**
-		 * Functions to examine and change class between Pool and BufPool.
-		 */
-		void setIsBuffered( const Eref& e, bool v );
-		bool getIsBuffered( const Eref& e ) const;
 		
 		//////////////////////////////////////////////////////////////////
 		// Here are the inner virtual funcs for fields. 
@@ -96,9 +91,6 @@ class PoolBase
 		virtual void vSetVolume( const Eref& e, double v ) = 0;
 		virtual void vSetSpecies( const Eref& e, SpeciesId v ) = 0;
 		virtual SpeciesId vGetSpecies( const Eref& e ) const = 0;
-		/// I put in a default empty function for vSetIsBuffered.
-		virtual void vSetIsBuffered( const Eref& e, bool v );
-		virtual bool vGetIsBuffered( const Eref& e) const = 0;
 		/**
 		 * Assign whatever info is needed by the zombie based on the
 		 * solver Element. Encapsulates some unpleasant field extraction,
@@ -134,9 +126,6 @@ class PoolBase
 		void reinit( const Eref& e, ProcPtr p );
 		void reac( double A, double B );
 		void handleMolWt( const Eref& e, double v );
-		void increment( double val );
-		void decrement( double val );
-        void nIn( double val );
 
 		//////////////////////////////////////////////////////////////////
 		// Virtual Dest funcs. Most of these have a generic do-nothing
@@ -147,9 +136,6 @@ class PoolBase
 		virtual void vReinit( const Eref& e, ProcPtr p );
 		virtual void vReac( double A, double B );
 		virtual void vHandleMolWt( const Eref& e, double v);
-		virtual void vIncrement( double val );
-		virtual void vDecrement( double val );
-        virtual void vnIn( double val );
 
 		//////////////////////////////////////////////////////////////////
 		static const Cinfo* initCinfo();

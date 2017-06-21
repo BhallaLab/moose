@@ -20,22 +20,20 @@
 set -o nounset                              # Treat unset variables as an error
 set -e
 
+PYTHON2="/usr/bin/python2"
+PYTHON3="/usr/bin/python3"
 #MAKEFLAGS="-j 4"
 
-PYTHON2="/usr/bin/python2"
 # Bug: `which python` returns /opt/bin/python* etc on travis. For which numpy
 # many not be available. Therefore, it is neccessary to use fixed path for
 # python executable.
-PYTHON3="/usr/bin/python3"
 
 (
     # Old makefile based flow.
     $PYTHON2 -m compileall -q .
     if type $PYTHON3 > /dev/null; then $PYTHON3 -m compileall -q . ; fi
-    ## DEPRECATED: No longer testing make file.
-
-    ## Traditional make.
-    #make 
+    # Traditional make.
+    make 
     ## CMAKE based flow
     mkdir -p _GSL_BUILD && cd _GSL_BUILD && \
         cmake -DDEBUG=ON -DPYTHON_EXECUTABLE="$PYTHON2" ..

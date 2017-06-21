@@ -12,7 +12,7 @@
 **           copyright (C) 2003-2017 Upinder S. Bhalla. and NCBS
 Created : Friday May 27 12:19:00 2016(+0530)
 Version
-Last-Updated: Tue Apr 4 14:20:00 2017(+0530)
+Last-Updated: Wed Jan 11 15:20:00 2017(+0530)
           By:
 **********************************************************************/
 /****************************
@@ -22,13 +22,14 @@ import sys
 import re
 #from collections import Counter
 import moose
-from moose.SBML.validation import validateModel
+from .validation import validateModel
 from moose.chemUtil.chemConnectUtil import *
 from moose.chemUtil.graphUtils import *
 
 
 # ToDo:
 #   Table should be written
+#   Group's should be added
 # boundary condition for buffer pool having assignment statment constant
 # shd be false
 
@@ -45,12 +46,11 @@ def mooseWriteSBML(modelpath, filename, sceneitems={}):
     if not foundLibSBML_:
         print('No python-libsbml found.' 
             '\nThis module can be installed by following command in terminal:'
-            '\n\t easy_install python-libsbml or'
-            '\n\t apt-get install python-libsbml'
+            '\n\t easy_install python-libsbml'
             )
-        return -2, "Could not save the model in to SBML file. \nThis module can be installed by following command in terminal: \n\t easy_install python-libsbml or \n\t apt-get install python-libsbml",''
+        return -1, msg
 
-    #sbmlDoc = SBMLDocument(3, 1)
+    sbmlDoc = SBMLDocument(3, 1)
     filepath, filenameExt = os.path.split(filename)
     if filenameExt.find('.') != -1:
         filename = filenameExt[:filenameExt.find('.')]
@@ -64,22 +64,16 @@ def mooseWriteSBML(modelpath, filename, sceneitems={}):
     global nameList_
     nameList_ = []
     positionInfoexist = False
-    
-    xmlns = SBMLNamespaces(3, 1)
-    xmlns.addNamespace("http://www.w3.org/1999/xhtml", "xhtml")
-    xmlns.addNamespace("http://www.moose.ncbs.res.in", "moose")
-    xmlns.addNamespace("http://www.sbml.org/sbml/level3/version1/groups/version1", "groups")
-    sbmlDoc = SBMLDocument(xmlns)
-    sbmlDoc.setPackageRequired("groups",bool(0))
-    
+    xmlns = XMLNamespaces()
+    xmlns.add("http://www.sbml.org/sbml/level3/version1")
+    xmlns.add("http://www.moose.ncbs.res.in", "moose")
+    xmlns.add("http://www.w3.org/1999/xhtml", "xhtml")
+    sbmlDoc.setNamespaces(xmlns)
     cremodel_ = sbmlDoc.createModel()
     cremodel_.setId(filename)
-    cremodel_.setTimeUnits("time")
+    cremodel_.setTimeUnits("second")
     cremodel_.setExtentUnits("substance")
     cremodel_.setSubstanceUnits("substance")
-    cremodel_.setVolumeUnits("volume")
-    cremodel_.setAreaUnits("area")
-    cremodel_.setLengthUnits("length")
     neutralNotes = ""
 
     specieslist = moose.wildcardFind(modelpath + '/##[ISA=PoolBase]')
@@ -106,36 +100,14 @@ def mooseWriteSBML(modelpath, filename, sceneitems={}):
     modelAnno = writeSimulationAnnotation(modelpath)
     if modelAnno:
         cremodel_.setAnnotation(modelAnno)
-    groupInfo = {}
-    compartexist, groupInfo = writeCompt(modelpath, cremodel_)
-    
+
+    compartexist = writeCompt(modelpath, cremodel_)
     if compartexist == True:
-        species = writeSpecies( modelpath,cremodel_,sbmlDoc,sceneitems,groupInfo)
+        species = writeSpecies( modelpath,cremodel_,sbmlDoc,sceneitems)
         if species:
             writeFunc(modelpath, cremodel_)
-        reacGroup = {}
-        writeReac(modelpath, cremodel_, sceneitems,groupInfo)
-        writeEnz(modelpath, cremodel_, sceneitems,groupInfo)
-        if groupInfo:
-            for key,value in groupInfo.items():
-                mplugin = cremodel_.getPlugin("groups")
-                group = mplugin.createGroup()
-                name = moose.element(key).name
-                group.setId(name)
-                group.setKind("collection")
-                ginfo = moose.element(key.path+'/info')
-                groupCompartment = findCompartment(key)
-                if ginfo.color != '':
-                    grpAnno = "<moose:GroupAnnotation>"
-                    grpAnno = grpAnno + "<moose:Compartment>" + groupCompartment.name + "</moose:Compartment>\n"
-                    if ginfo.color:
-                        grpAnno = grpAnno + "<moose:bgColor>" + ginfo.color + "</moose:bgColor>\n"
-                    grpAnno = grpAnno + "</moose:GroupAnnotation>"
-                    group.setAnnotation(grpAnno)
-
-                for values in value:
-                    member = group.createMember()
-                    member.setIdRef(values)
+        writeReac(modelpath, cremodel_, sceneitems)
+        writeEnz(modelpath, cremodel_, sceneitems)
         consistencyMessages = ""
         SBMLok = validateModel(sbmlDoc)
         if (SBMLok):
@@ -153,7 +125,7 @@ def calPrime(x):
     prime = int((20 * (float(x - cmin) / float(cmax - cmin))) - 10)
     return prime
 
-def writeEnz(modelpath, cremodel_, sceneitems,groupInfo):
+def writeEnz(modelpath, cremodel_, sceneitems):
     for enz in moose.wildcardFind(modelpath + '/##[ISA=EnzBase]'):
         enzannoexist = False
         enzGpnCorCol = " "
@@ -161,25 +133,17 @@ def writeEnz(modelpath, cremodel_, sceneitems,groupInfo):
         enzSubt = ()
         compt = ""
         notesE = ""
-        
         if moose.exists(enz.path + '/info'):
-            groupName = moose.element("/")
             Anno = moose.Annotator(enz.path + '/info')
             notesE = Anno.notes
             element = moose.element(enz)
             ele = getGroupinfo(element)
-            ele = findGroup_compt(element)
-            if ele.className == "Neutral" or sceneitems or Anno.x or Anno.y:
+            if element.className == "Neutral" or sceneitems or Anno.x or Anno.y:
                     enzannoexist = True
             if enzannoexist:
                 enzAnno = "<moose:ModelAnnotation>\n"
                 if ele.className == "Neutral":
-                    groupName = ele
-                    #enzGpnCorCol =  "<moose:Group>" + ele.name + "</moose:Group>\n"
-                    # if ele.name not in groupInfo:
-                    #         groupInfo[ele.name]=[setId]
-                    #     else:
-                    #         groupInfo[ele.name].append(setId)
+                    enzGpnCorCol =  "<moose:Group>" + ele.name + "</moose:Group>\n"
                 if sceneitems:
                     #Saved from GUI, then scene co-ordinates are passed
                     enzGpnCorCol = enzGpnCorCol + "<moose:xCord>" + \
@@ -199,6 +163,7 @@ def writeEnz(modelpath, cremodel_, sceneitems,groupInfo):
                 if Anno.textColor:
                     enzGpnCorCol = enzGpnCorCol + "<moose:textColor>" + \
                         Anno.textColor + "</moose:textColor>\n"
+
         if (enz.className == "Enz" or enz.className == "ZombieEnz"):
             enzyme = cremodel_.createReaction()
             if notesE != "":
@@ -213,20 +178,14 @@ def writeEnz(modelpath, cremodel_, sceneitems,groupInfo):
                 compt = comptVec.name + "_" + \
                     str(comptVec.getId().value) + "_" + \
                     str(comptVec.getDataIndex()) + "_"
-            enzsetId = str(idBeginWith(cleanEnzname +
+
+            enzyme.setId(str(idBeginWith(cleanEnzname +
                                          "_" +
                                          str(enz.getId().value) +
                                          "_" +
                                          str(enz.getDataIndex()) +
                                          "_" +
-                                         "Complex_formation_"))
-            enzyme.setId(enzsetId)
-            
-            if groupName != moose.element('/'):
-                if groupName not in groupInfo:
-                    groupInfo[groupName]=[enzsetId]
-                else:
-                    groupInfo[groupName].append(enzsetId)
+                                         "Complex_formation_")))
             enzyme.setName(cleanEnzname)
             enzyme.setFast(False)
             enzyme.setReversible(True)
@@ -267,7 +226,7 @@ def writeEnz(modelpath, cremodel_, sceneitems,groupInfo):
                 noofSub, sRateLaw = getSubprd(cremodel_, True, "sub", enzSubt)
                 #rec_order = rec_order + noofSub
                 rec_order = noofSub
-                rate_law = compt + " * ( " + rate_law + " * " + sRateLaw
+                rate_law = compt + " * " + rate_law + "*" + sRateLaw
 
             enzPrd = enz.neighbors["cplxDest"]
             if not enzPrd:
@@ -277,7 +236,7 @@ def writeEnz(modelpath, cremodel_, sceneitems,groupInfo):
                 for i in range(0, len(nameList_)):
                     enzAnno = enzAnno + "<moose:product>" + \
                         nameList_[i] + "</moose:product>\n"
-                rate_law = rate_law + " - " + " k2 " + ' * ' + sRateLaw +" )"
+                rate_law = rate_law + " - " + compt + "* k2" + '*' + sRateLaw
 
             prd_order = noofPrd
             enzAnno = enzAnno + "<moose:groupName>" + cleanEnzname + "_" + \
@@ -300,21 +259,14 @@ def writeEnz(modelpath, cremodel_, sceneitems,groupInfo):
             unit = parmUnit(rec_order - 1, cremodel_)
             printParameters(kl, "k1", k1, unit)
             enzyme = cremodel_.createReaction()
-            enzsetIdP = str(idBeginWith(cleanEnzname +
+            enzyme.setId(str(idBeginWith(cleanEnzname +
                                          "_" +
                                          str(enz.getId().value) +
                                          "_" +
                                          str(enz.getDataIndex()) +
                                          "_" +
-                                         "Product_formation_"))
-            enzyme.setId(enzsetIdP)
+                                         "Product_formation_")))
             enzyme.setName(cleanEnzname)
-            if groupName != moose.element('/'):
-                if groupName not in groupInfo:
-                    groupInfo[groupName]=[enzsetIdP]
-                else:
-                    groupInfo[groupName].append(enzsetIdP)
-
             enzyme.setFast(False)
             enzyme.setReversible(False)
             enzAnno2 = "<moose:EnzymaticReaction>"
@@ -364,7 +316,6 @@ def writeEnz(modelpath, cremodel_, sceneitems,groupInfo):
             printParameters(kl, "k3", k3, unit)
 
         elif(enz.className == "MMenz" or enz.className == "ZombieMMenz"):
-
             enzSub = enz.neighbors["sub"]
             enzPrd = enz.neighbors["prd"]
             if (len(enzSub) != 0 and len(enzPrd) != 0):
@@ -382,18 +333,12 @@ def writeEnz(modelpath, cremodel_, sceneitems,groupInfo):
                     notesStringE = "<body xmlns=\"http://www.w3.org/1999/xhtml\">\n \t \t" + \
                         cleanNotesE + "\n\t </body>"
                     enzyme.setNotes(notesStringE)
-                mmenzsetId = str(idBeginWith(cleanEnzname +
+                enzyme.setId(str(idBeginWith(cleanEnzname +
                                              "_" +
                                              str(enz.getId().value) +
                                              "_" +
                                              str(enz.getDataIndex()) +
-                                             "_"))
-                enzyme.setId(mmenzsetId)
-                if groupName != moose.element('/'):
-                    if groupName not in groupInfo:
-                        groupInfo[groupName]=[mmenzsetId]
-                    else:
-                        groupInfo[groupName].append(mmenzsetId)
+                                             "_")))
                 enzyme.setName(cleanEnzname)
                 enzyme.setFast(False)
                 enzyme.setReversible(True)
@@ -413,15 +358,14 @@ def writeEnz(modelpath, cremodel_, sceneitems,groupInfo):
                 enzPrd = enz.neighbors["prd"]
                 noofPrd, sRateLawP = getSubprd(cremodel_, False, "prd", enzPrd)
                 kl = enzyme.createKineticLaw()
-                fRate_law = compt + " * ( kcat * " + sRateLawS + " * " + sRateLawM + \
-                    " / ( Km" + " + " + sRateLawS + "))"
+                fRate_law = "kcat *" + sRateLawS + "*" + sRateLawM + \
+                    "/(" + compt + " * (" + "Km" + "+" + sRateLawS + "))"
                 kl.setFormula(fRate_law)
                 kl.setNotes(
                     "<body xmlns=\"http://www.w3.org/1999/xhtml\">\n\t\t" +
                     fRate_law +
                     "\n \t </body>")
-                KmUnit(cremodel_)
-                printParameters(kl, "Km", Km, "mmole_per_litre")
+                printParameters(kl, "Km", Km, "substance")
                 kcatUnit = parmUnit(0, cremodel_)
                 printParameters(kl, "kcat", kcat, kcatUnit)
 
@@ -432,29 +376,6 @@ def printParameters(kl, k, kvalue, unit):
     para.setValue(kvalue)
     para.setUnits(unit)
 
-def KmUnit(cremodel_):
-    unit_stream = "mmole_per_litre"
-    lud = cremodel_.getListOfUnitDefinitions()
-    flag = False
-    for i in range(0, len(lud)):
-        ud = lud.get(i)
-        if (ud.getId() == unit_stream):
-            flag = True
-            break
-    if (not flag):
-        unitdef = cremodel_.createUnitDefinition()
-        unitdef.setId(unit_stream)
-        unit = unitdef.createUnit()
-        unit.setKind(UNIT_KIND_LITRE)
-        unit.setExponent(-1)
-        unit.setMultiplier(1)
-        unit.setScale(0)
-        unit = unitdef.createUnit()
-        unit.setKind(UNIT_KIND_MOLE)
-        unit.setExponent(1)
-        unit.setMultiplier(1)
-        unit.setScale(-3)
-    return unit_stream
 
 def parmUnit(rct_order, cremodel_):
     order = rct_order
@@ -463,7 +384,7 @@ def parmUnit(rct_order, cremodel_):
     elif order == 1:
         unit_stream = "litre_per_mmole_per_second"
     elif order == 2:
-        unit_stream = "sq_litre_per_mmole_sq_per_second"
+        unit_stream = "litre_per_mmole_sq_per_second"
     else:
         unit_stream = "litre_per_mmole_" + str(rct_order) + "_per_second"
 
@@ -482,7 +403,7 @@ def parmUnit(rct_order, cremodel_):
         if order != 0:
             unit = unitdef.createUnit()
             unit.setKind(UNIT_KIND_LITRE)
-            unit.setExponent(order)
+            unit.setExponent(1)
             unit.setMultiplier(1)
             unit.setScale(0)
             unit = unitdef.createUnit()
@@ -586,7 +507,7 @@ def listofname(reacSub, mobjEnz):
             nameList_.append(clean_name)
 
 
-def writeReac(modelpath, cremodel_, sceneitems,reacGroup):
+def writeReac(modelpath, cremodel_, sceneitems):
     for reac in moose.wildcardFind(modelpath + '/##[ISA=ReacBase]'):
         reacSub = reac.neighbors["sub"]
         reacPrd = reac.neighbors["prd"]
@@ -596,13 +517,12 @@ def writeReac(modelpath, cremodel_, sceneitems,reacGroup):
             reacannoexist = False
             reacGpname = " "
             cleanReacname = convertSpecialChar(reac.name)
-            setId = str(idBeginWith(cleanReacname +
+            reaction.setId(str(idBeginWith(cleanReacname +
                                            "_" +
                                            str(reac.getId().value) +
                                            "_" +
                                            str(reac.getDataIndex()) +
-                                           "_"))
-            reaction.setId(setId)
+                                           "_")))
             reaction.setName(cleanReacname)
             #Kf = reac.numKf
             #Kb = reac.numKb
@@ -628,11 +548,7 @@ def writeReac(modelpath, cremodel_, sceneitems,reacGroup):
                 if reacannoexist:
                     reacAnno = "<moose:ModelAnnotation>\n"
                     if ele.className == "Neutral":
-                        #reacAnno = reacAnno + "<moose:Group>" + ele.name + "</moose:Group>\n"
-                        if ele not in reacGroup:
-                            reacGroup[ele]=[setId]
-                        else:
-                            reacGroup[ele].append(setId)
+                        reacAnno = reacAnno + "<moose:Group>" + ele.name + "</moose:Group>\n"
                     if sceneitems:
                         #Saved from GUI, then scene co-ordinates are passed
                         reacAnno = reacAnno + "<moose:xCord>" + \
@@ -713,7 +629,6 @@ def writeReac(modelpath, cremodel_, sceneitems,reacGroup):
                 kl_s +
                 "\n \t </body>")
             kfl.setFormula(kl_s)
-
         else:
             print(" Reaction ", reac.name, "missing substrate and product")
 
@@ -752,6 +667,7 @@ def writeFunc(modelpath, cremodel_):
             rule.setVariable(fName)
             rule.setFormula(expr)
 
+
 def convertNotesSpecialChar(str1):
     d = {"&": "_and", "<": "_lessthan_", ">": "_greaterthan_", "BEL": "&#176"}
     for i, j in d.items():
@@ -759,6 +675,7 @@ def convertNotesSpecialChar(str1):
     # stripping \t \n \r and space from begining and end of string
     str1 = str1.strip(' \t\n\r')
     return str1
+
 
 def getGroupinfo(element):
     #   Note: At this time I am assuming that if group exist (incase of Genesis)
@@ -768,7 +685,8 @@ def getGroupinfo(element):
     #   if /modelpath/Compartment/Group/Group1/Pool, then I check and get Group1
     #   And /modelpath is also a NeutralObject,I stop till I find Compartment
 
-    while not mooseIsInstance(element, ["Neutral", "CubeMesh", "CyclMesh"]):
+    while not mooseIsInstance(element, ["Neutral"]) and not mooseIsInstance(
+            element, ["CubeMesh", "CyclMesh"]):
         element = element.parent
     return element
 
@@ -789,10 +707,6 @@ def idBeginWith(name):
         changedName = "_" + name
     return changedName
 
-def findGroup_compt(melement):
-    while not (mooseIsInstance(melement, ["Neutral","CubeMesh", "CyclMesh"])):
-        melement = melement.parent
-    return melement
 
 def convertSpecialChar(str1):
     d = {"&": "_and", "<": "_lessthan_", ">": "_greaterthan_", "BEL": "&#176", "-": "_minus_", "'": "_prime_",
@@ -804,7 +718,7 @@ def convertSpecialChar(str1):
     return str1
 
 
-def writeSpecies(modelpath, cremodel_, sbmlDoc, sceneitems,speGroup):
+def writeSpecies(modelpath, cremodel_, sbmlDoc, sceneitems):
     # getting all the species
     for spe in moose.wildcardFind(modelpath + '/##[ISA=PoolBase]'):
         sName = convertSpecialChar(spe.name)
@@ -884,13 +798,7 @@ def writeSpecies(modelpath, cremodel_, sbmlDoc, sceneitems,speGroup):
                 if speciannoexist:
                     speciAnno = "<moose:ModelAnnotation>\n"
                     if ele.className == "Neutral":
-                        #speciAnno = speciAnno + "<moose:Group>" + ele.name + "</moose:Group>\n"
-                        if ele not in speGroup:
-                            speGroup[ele]=[spename]
-                        else:
-                            speGroup[ele].append(spename)
-                        
-                        
+                        speciAnno = speciAnno + "<moose:Group>" + ele.name + "</moose:Group>\n"
                     if sceneitems:
                         #Saved from GUI, then scene co-ordinates are passed
                         speciAnno = speciAnno + "<moose:xCord>" + \
@@ -918,7 +826,6 @@ def writeSpecies(modelpath, cremodel_, sbmlDoc, sceneitems,speGroup):
 def writeCompt(modelpath, cremodel_):
     # getting all the compartments
     compts = moose.wildcardFind(modelpath + '/##[ISA=ChemCompt]')
-    groupInfo = {}
     for compt in compts:
         comptName = convertSpecialChar(compt.name)
         # converting m3 to litre
@@ -936,20 +843,10 @@ def writeCompt(modelpath, cremodel_):
         c1.setSize(size)
         c1.setSpatialDimensions(ndim)
         c1.setUnits('volume')
-        #For each compartment get groups information along
-        for grp in moose.wildcardFind(compt.path+'/##[TYPE=Neutral]'): 
-            grp_cmpt = findGroup_compt(grp.parent)        
-            try:
-                value = groupInfo[moose.element(grp)]
-            except KeyError:
-                # Grp is not present
-                groupInfo[moose.element(grp)] = []
-            
-
     if compts:
-        return True,groupInfo
+        return True
     else:
-        return False,groupInfo
+        return False
 # write Simulation runtime,simdt,plotdt
 def writeSimulationAnnotation(modelpath):
     modelAnno = ""
@@ -980,12 +877,12 @@ def writeSimulationAnnotation(modelpath):
                     graphSpefound = True
                 if graphSpefound:
                     if not plots:
-                        plots = ori[ori.find(q.name)-1:len(ori)]
-                        #plots = '/' + q.name + '/' + name
+                        #plots = ori[ori.find(q.name)-1:len(ori)]
+                        plots = '/' + q.name + '/' + name
 
                     else:
-                        plots = plots + "; "+ori[ori.find(q.name)-1:len(ori)]
-                        #plots = plots + "; /" + q.name + '/' + name
+                        #plots = plots + "; "+ori[ori.find(q.name)-1:len(ori)]
+                        plots = plots + "; /" + q.name + '/' + name
         if plots != " ":
             modelAnno = modelAnno + "<moose:plots> " + plots + "</moose:plots>\n"
         modelAnno = modelAnno + "</moose:ModelAnnotation>"
@@ -1007,30 +904,6 @@ def writeUnits(cremodel_):
     unit.setMultiplier(1)
     unit.setExponent(1.0)
     unit.setScale(-3)
-
-    unitLen = cremodel_.createUnitDefinition()
-    unitLen.setId("length")
-    unit = unitLen.createUnit()
-    unit.setKind(UNIT_KIND_METRE)
-    unit.setMultiplier(1.0)
-    unit.setExponent(1.0)
-    unit.setScale(0)
-
-    unitArea = cremodel_.createUnitDefinition()
-    unitArea.setId("area")
-    unit = unitArea.createUnit()
-    unit.setKind(UNIT_KIND_METRE)
-    unit.setMultiplier(1.0)
-    unit.setExponent(2.0)
-    unit.setScale(0)
-    
-    unitTime = cremodel_.createUnitDefinition()
-    unitTime.setId("time")
-    unit = unitTime.createUnit()
-    unit.setKind(UNIT_KIND_SECOND)
-    unit.setExponent(1)
-    unit.setMultiplier(1)
-    unit.setScale(0)
 
 if __name__ == "__main__":
     try:

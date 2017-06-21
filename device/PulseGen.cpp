@@ -1,31 +1,31 @@
-// PulseGen.cpp --- 
-// 
+// PulseGen.cpp ---
+//
 // Filename: PulseGen.cpp
-// Description: 
+// Description:
 // Author: Subhasis Ray
-// Maintainer: 
+// Maintainer:
 // Created: Mon Feb 20 01:41:12 2012 (+0530)
-// Version: 
+// Version:
 // Last-Updated: Mon May 27 11:49:31 2013 (+0530)
 //           By: subha
 //     Update #: 170
-// URL: 
-// Keywords: 
-// Compatibility: 
-// 
-// 
+// URL:
+// Keywords:
+// Compatibility:
+//
+//
 
-// Commentary: 
-// 
-// 
-// 
-// 
+// Commentary:
+//
+//
+//
+//
 
 // Change log:
-// 
+//
 // 2012-02-20 01:41:16 (+0530) - Subha - started porting from old
 // moose.
-// 
+//
 
 // Code:
 
@@ -62,7 +62,7 @@ const Cinfo* PulseGen::initCinfo()
     static ValueFinfo< PulseGen, double > firstDelay("firstDelay",
                                                      "Delay to start of the first pulse in a sequence",
                                                      &PulseGen::setFirstDelay,
-                                                     &PulseGen::getFirstDelay); 
+                                                     &PulseGen::getFirstDelay);
     static ValueFinfo< PulseGen, double > secondLevel("secondLevel",
                                                      "Amplitude of the second pulse in a sequence",
                                                      &PulseGen::setSecondLevel,
@@ -112,7 +112,7 @@ const Cinfo* PulseGen::initCinfo()
     static DestFinfo delayIn("delayIn",
                              "Handle delay value coming from other objects",
                              new OpFunc2< PulseGen, unsigned int, double >(&PulseGen::setDelay));
-    
+
     static DestFinfo input("input",
                            "Handle incoming input that determines gating/triggering onset. "
                            "Note that although this is a double field, the underlying field is"
@@ -131,7 +131,7 @@ const Cinfo* PulseGen::initCinfo()
             {
 		&process, &reinit
             };
-    
+
     static SharedFinfo proc( "proc",
                              "This is a shared message to receive Process messages "
                              "from the scheduler objects."
@@ -169,7 +169,7 @@ const Cinfo* PulseGen::initCinfo()
         "Name", "PulseGen",
         "Author", "Subhasis Ray",
         "Description", "PulseGen: general purpose pulse generator. This can generate any "
-        "number of pulses with specified level and duration.",        
+        "number of pulses with specified level and duration.",
     };
     static Dinfo<PulseGen> dinfo;
     static Cinfo pulseGenCinfo("PulseGen",
@@ -179,8 +179,8 @@ const Cinfo* PulseGen::initCinfo()
                                &dinfo,
                                doc,
                                sizeof(doc)/sizeof(string));
-    return & pulseGenCinfo;    
-    
+    return & pulseGenCinfo;
+
 }
 
 static const Cinfo* pulseGenCinfo = PulseGen::initCinfo();
@@ -211,32 +211,32 @@ PulseGen::~PulseGen()
 
 void PulseGen::setFirstLevel( double level)
 {
-    level_[0] = level;    
+    level_[0] = level;
 }
 
 double PulseGen::getFirstLevel() const
 {
     return level_[0];
 }
-    
+
 void PulseGen::setFirstWidth(double width)
 {
-    width_[0] = width;    
+    width_[0] = width;
 }
 
 double PulseGen::getFirstWidth() const
 {
-    return width_[0];    
+    return width_[0];
 }
 void PulseGen::setFirstDelay( double delay)
 {
-    delay_[0] = delay;    
+    delay_[0] = delay;
 }
 double PulseGen::getFirstDelay() const
 {
     return delay_[0];
 }
-    
+
 void PulseGen::setSecondLevel( double level)
 {
     if (level_.size() >= 2){
@@ -284,15 +284,15 @@ double PulseGen::getSecondDelay() const
 
 void PulseGen::setBaseLevel( double level)
 {
-    baseLevel_ = level;    
+    baseLevel_ = level;
 }
 double PulseGen::getBaseLevel() const
 {
-    return baseLevel_;    
+    return baseLevel_;
 }
 void PulseGen::setTrigMode(unsigned int mode)
 {
-    trigMode_ = mode;    
+    trigMode_ = mode;
 }
 unsigned int PulseGen::getTrigMode() const
 {
@@ -326,7 +326,7 @@ void PulseGen::setCount(unsigned int count)
 
 unsigned int PulseGen::getCount() const
 {
-    return level_.size();        
+    return level_.size();
 }
 
 double PulseGen::getLevel(unsigned int index) const
@@ -338,7 +338,7 @@ double PulseGen::getLevel(unsigned int index) const
         return 0.0;
     }
 }
-    
+
 void PulseGen::setLevel( unsigned int index, double level)
 {
     if (index < level_.size()){
@@ -413,7 +413,7 @@ void PulseGen::process(const Eref& e, ProcPtr p )
         case PulseGen::EXT_TRIG:
             if (input_ == 0){
                 if (trigTime_ < 0){
-                    phase = period;                
+                    phase = period;
                 }else{
                     phase = currentTime - trigTime_;
                 }
@@ -423,7 +423,7 @@ void PulseGen::process(const Eref& e, ProcPtr p )
                 }
                 phase = currentTime - trigTime_;
             }
-            prevInput_ = input_;            
+            prevInput_ = input_;
             break;
         case PulseGen::EXT_GATE:
             if(input_ == 0)
@@ -431,7 +431,7 @@ void PulseGen::process(const Eref& e, ProcPtr p )
                 phase = period;		/* output = baselevel */
             }
             else
-            {				/* gate high */ 
+            {				/* gate high */
                 if(prevInput_ == 0)
                 {	/* low -> high */
                     trigTime_ = currentTime;
@@ -443,7 +443,7 @@ void PulseGen::process(const Eref& e, ProcPtr p )
         default:
             cerr << "ERROR: PulseGen::newProcessFunc( const Conn* , ProcInfo ) - invalid triggerMode - " << trigMode_ << endl;
     }
-    if (phase >= period){ // we have crossed all pulses 
+    if (phase >= period){ // we have crossed all pulses
         output_ = baseLevel_;
         return;
     }
@@ -468,9 +468,9 @@ void PulseGen::reinit(const Eref& e, ProcPtr p)
     trigTime_ = -1;
     prevInput_ = 0;
     output_ = baseLevel_;
-    input_ = 0;    
+    input_ = 0;
     outputOut()->send(e, output_);
 }
 
-// 
+//
 // PulseGen.cpp ends here

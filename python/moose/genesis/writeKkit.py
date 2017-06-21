@@ -8,20 +8,14 @@ __version__          = "1.0.0"
 __maintainer__       = "Harsha Rani"
 __email__            = "hrani@ncbs.res.in"
 __status__           = "Development"
-__updated__          = "Feb 13 2017"
+
 import sys
 import random
 import re
+import matplotlib
 import moose
 from moose.chemUtil.chemConnectUtil import *
 from moose.chemUtil.graphUtils import *
-
-foundmatplotlib_ = False
-try:
-    import matplotlib
-    foundmatplotlib_ = True
-except Exception as e:
-    pass
 
 GENESIS_COLOR_SEQUENCE = ((248, 0, 255), (240, 0, 255), (232, 0, 255), (224, 0, 255), (216, 0, 255), (208, 0, 255),
  (200, 0, 255), (192, 0, 255), (184, 0, 255), (176, 0, 255), (168, 0, 255), (160, 0, 255), (152, 0, 255), (144, 0, 255),
@@ -44,12 +38,8 @@ GENESIS_COLOR_SEQUENCE = ((248, 0, 255), (240, 0, 255), (232, 0, 255), (224, 0, 
 #               --StimulusTable
 
 def mooseWriteKkit( modelpath, filename, sceneitems={}):
-    global foundmatplotlib_ 
-    if not foundmatplotlib_:
-        print('No maplotlib found.' 
-            '\nThis module can be installed by following command in terminal:'
-            '\n\t sudo apt install python-maplotlib', "")
-        return False
+    if filename.rfind('.') != -1:
+        filename = filename[:filename.rfind('.')]
     else:
         error = " "
         ignoreColor= ["mistyrose","antiquewhite","aliceblue","azure","bisque","black","blanchedalmond","blue","cornsilk","darkolivegreen","darkslategray","dimgray","floralwhite","gainsboro","ghostwhite","honeydew","ivory","lavender","lavenderblush","lemonchiffon","lightcyan","lightgoldenrodyellow","lightgray","lightyellow","linen","mediumblue","mintcream","navy","oldlace","papayawhip","saddlebrown","seashell","snow","wheat","white","whitesmoke","aquamarine","lightsalmon","moccasin","limegreen","snow","sienna","beige","dimgrey","lightsage"]
@@ -535,6 +525,11 @@ def getColorCheck(color,GENESIS_COLOR_SEQUENCE):
     else:
         raise Exception("Invalid Color Value!")
 
+ignoreColor= ["mistyrose","antiquewhite","aliceblue","azure","bisque","black","blanchedalmond","blue","cornsilk","darkolivegreen","darkslategray","dimgray","floralwhite","gainsboro","ghostwhite","honeydew","ivory","lavender","lavenderblush","lemonchiffon","lightcyan","lightgoldenrodyellow","lightgray","lightyellow","linen","mediumblue","mintcream","navy","oldlace","papayawhip","saddlebrown","seashell","snow","wheat","white","whitesmoke","aquamarine","lightsalmon","moccasin","limegreen","snow","sienna","beige","dimgrey","lightsage"]
+matplotcolor = {}
+for name,hexno in matplotlib.colors.cnames.items():
+    matplotcolor[name]=hexno
+
 def getRandColor():
     k = random.choice(list(matplotcolor.keys()))
     if k in ignoreColor:
@@ -663,18 +658,12 @@ def writeFooter2(f):
 
 if __name__ == "__main__":
     import sys
-    import os
-    filename = sys.argv[1]
-    filepath, filenameWithext = os.path.split(filename)
-    if filenameWithext.find('.') != -1:
-        modelpath = filenameWithext[:filenameWithext.find('.')]
-    else:
-        modelpath = filenameWithext
 
+    filename = sys.argv[1]
+    modelpath = filename[0:filename.find('.')]
     moose.loadModel(filename,'/'+modelpath,"gsl")
     output = modelpath+"_.g"
-    written = mooseWriteKkit('/'+modelpath,output)
-    
+    written = write('/'+modelpath,output)
     if written:
             print((" file written to ",output))
     else:

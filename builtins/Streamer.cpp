@@ -136,7 +136,7 @@ static const Cinfo* tableStreamCinfo = Streamer::initCinfo();
 
 // Class function definitions
 
-Streamer::Streamer() 
+Streamer::Streamer()
 {
     // Not all compilers allow initialization during the declaration of class
     // methods.
@@ -176,7 +176,7 @@ void Streamer::reinit(const Eref& e, ProcPtr p)
     }
 
     Clock* clk = reinterpret_cast<Clock*>( Id(1).eref().data() );
-    for (size_t i = 0; i < tableIds_.size(); i++) 
+    for (size_t i = 0; i < tableIds_.size(); i++)
     {
         int tickNum = tableIds_[i].element()->getTick();
         double tick = clk->getTickDt( tickNum );
@@ -206,14 +206,14 @@ void Streamer::reinit(const Eref& e, ProcPtr p)
 
     // Make sure all tables have same dt_ else disable the streamer.
     vector<unsigned int> invalidTables;
-    for (size_t i = 1; i < tableTick_.size(); i++) 
+    for (size_t i = 1; i < tableTick_.size(); i++)
     {
         if( tableTick_[i] != tableTick_[0] )
         {
             LOG( moose::warning
                     , "Table " << tableIds_[i].path()
                     << " has tick (dt) which is different than the first table."
-                    << endl 
+                    << endl
                     << " Got " << tableTick_[i] << " expected " << tableTick_[0]
                     << endl << " Disabling this table."
                     );
@@ -221,7 +221,7 @@ void Streamer::reinit(const Eref& e, ProcPtr p)
         }
     }
 
-    for (size_t i = 0; i < invalidTables.size(); i++) 
+    for (size_t i = 0; i < invalidTables.size(); i++)
     {
         tables_.erase( tables_.begin() + i );
         tableDt_.erase( tableDt_.begin() + i );
@@ -320,7 +320,7 @@ void Streamer::addTables( vector<Id> tables )
 void Streamer::removeTable( Id table )
 {
     int matchIndex = -1;
-    for (size_t i = 0; i < tableIds_.size(); i++) 
+    for (size_t i = 0; i < tableIds_.size(); i++)
         if( table.path() == tableIds_[i].path() )
         {
             matchIndex = i;
@@ -383,7 +383,7 @@ void Streamer::setFormat( string fmt )
 }
 
 /*  Get the format of all tables. */
-string Streamer::getFormat( void ) const 
+string Streamer::getFormat( void ) const
 {
     return format_;
 }
@@ -407,7 +407,7 @@ void Streamer::zipWithTime( )
         {
 #if 0
             LOG( moose::debug
-                    , "Table " << tables_[i]->getName( ) << " is not functional. Filling with zero " 
+                    , "Table " << tables_[i]->getName( ) << " is not functional. Filling with zero "
                     );
 #endif
             tVec.resize( numEntriesInEachTable, 0 );

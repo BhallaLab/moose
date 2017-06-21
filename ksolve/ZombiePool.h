@@ -46,7 +46,6 @@ class ZombiePool: public PoolBase
 
 		void vSetMotorConst( const Eref& e, double v );
 		double vGetMotorConst( const Eref& e ) const;
-		bool vGetIsBuffered( const Eref& e ) const;
 		//////////////////////////////////////////////////////////////////
 		// Dest funcs
 		//////////////////////////////////////////////////////////////////

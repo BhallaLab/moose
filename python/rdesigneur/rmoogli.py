@@ -17,7 +17,6 @@ import os
 # Check if DISPLAY environment variable is properly set. If not, warn the user
 # and continue.
 hasDisplay = True
-hasMoogli = False
 display = os.environ.get('DISPLAY',  '' )
 if not display:
     hasDisplay = False
@@ -26,6 +25,7 @@ if not display:
             "Anyway, MOOSE will continue without graphics.\n"
             )
 
+hasMoogli = True
 
 if hasDisplay:
     try: 
@@ -33,10 +33,10 @@ if hasDisplay:
         import moogli
         import moogli.extensions.moose
         app = QtGui.QApplication(sys.argv)
-        hasMoogli = True
     except Exception as e:
         print( 'Warning: Moogli not found. All moogli calls will use dummy functions' )
         hasMoogli = False
+
 
 runtime = 0.0
 moogliDt = 1.0

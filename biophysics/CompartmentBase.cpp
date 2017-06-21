@@ -19,13 +19,13 @@ using namespace moose;
 
 /*
  * This Finfo is used to send out Vm to channels, spikegens, etc.
- * 
+ *
  * It is exposed here so that HSolve can also use it to send out
  * the Vm to the recipients.
  */
 // Static function.
 SrcFinfo1< double >* CompartmentBase::VmOut() {
-	static SrcFinfo1< double > VmOut( "VmOut", 
+	static SrcFinfo1< double > VmOut( "VmOut",
 		"Sends out Vm value of compartment on each timestep" );
 	return &VmOut;
 }
@@ -35,7 +35,7 @@ SrcFinfo1< double >* CompartmentBase::VmOut() {
 // are still only Vm.
 
 static SrcFinfo1< double >* axialOut() {
-	static SrcFinfo1< double > axialOut( "axialOut", 
+	static SrcFinfo1< double > axialOut( "axialOut",
 		"Sends out Vm value of compartment to adjacent compartments,"
 		"on each timestep" );
 	return &axialOut;
@@ -43,7 +43,7 @@ static SrcFinfo1< double >* axialOut() {
 
 static SrcFinfo2< double, double >* raxialOut()
 {
-	static SrcFinfo2< double, double > raxialOut( "raxialOut", 
+	static SrcFinfo2< double, double > raxialOut( "raxialOut",
 		"Sends out Raxial information on each timestep, "
 		"fields are Ra and Vm" );
 	return &raxialOut;
@@ -62,38 +62,38 @@ const Cinfo* CompartmentBase::initCinfo()
 	///////////////////////////////////////////////////////////////////
 	// Shared messages
 	///////////////////////////////////////////////////////////////////
-	static DestFinfo process( "process", 
+	static DestFinfo process( "process",
 		"Handles 'process' call",
 		new ProcOpFunc< CompartmentBase >( &CompartmentBase::process ) );
 
-	static DestFinfo reinit( "reinit", 
+	static DestFinfo reinit( "reinit",
 		"Handles 'reinit' call",
 		new ProcOpFunc< CompartmentBase >( &CompartmentBase::reinit ) );
-	
+
 	static Finfo* processShared[] =
 	{
 		&process, &reinit
 	};
 
 	static SharedFinfo proc( "proc",
-		"This is a shared message to receive Process messages "
-		"from the scheduler objects. The Process should be called "
-		"_second_ in each clock tick, after the Init message."
+		"This is a shared message to receive Process messages from the scheduler"
+		"objects. The Process should be called _second_ in each clock tick, after the Init message."
 		"The first entry in the shared msg is a MsgDest "
 		"for the Process operation. It has a single argument, "
 		"ProcInfo, which holds lots of information about current "
 		"time, thread, dt and so on. The second entry is a MsgDest "
-		"for the Reinit operation. It also uses ProcInfo. ",
+		"for the Reinit operation. It also uses ProcInfo. "
+		"- Handles 'reinit' and 'process' calls.",
 		processShared, sizeof( processShared ) / sizeof( Finfo* )
 	);
 	///////////////////////////////////////////////////////////////////
-	
-	static DestFinfo initProc( "initProc", 
+
+	static DestFinfo initProc( "initProc",
 		"Handles Process call for the 'init' phase of the CompartmentBase "
 		"calculations. These occur as a separate Tick cycle from the "
 		"regular proc cycle, and should be called before the proc msg.",
 		new ProcOpFunc< CompartmentBase >( &CompartmentBase::initProc ) );
-	static DestFinfo initReinit( "initReinit", 
+	static DestFinfo initReinit( "initReinit",
 		"Handles Reinit call for the 'init' phase of the CompartmentBase "
 		"calculations.",
 		new ProcOpFunc< CompartmentBase >( &CompartmentBase::initReinit ) );
@@ -102,7 +102,7 @@ const Cinfo* CompartmentBase::initCinfo()
 		&initProc, &initReinit
 	};
 
-	static SharedFinfo init( "init", 
+	static SharedFinfo init( "init",
 			"This is a shared message to receive Init messages from "
 			"the scheduler objects. Its job is to separate the "
 			"compartmental calculations from the message passing. "
@@ -113,13 +113,14 @@ const Cinfo* CompartmentBase::initCinfo()
 			"single argument, ProcInfo, which holds lots of "
 			"information about current time, thread, dt and so on. "
 			"The second entry is a dummy MsgDest for the Reinit "
-			"operation. It also uses ProcInfo. ",
+			"operation. It also uses ProcInfo. "
+			"- Handles 'initProc' and 'initReinit' calls.",
 		initShared, sizeof( initShared ) / sizeof( Finfo* )
 	);
 
 	///////////////////////////////////////////////////////////////////
 
-	static DestFinfo handleChannel( "handleChannel", 
+	static DestFinfo handleChannel( "handleChannel",
 		"Handles conductance and Reversal potential arguments from Channel",
 		new EpFunc2< CompartmentBase, double, double >( &CompartmentBase::handleChannel ) );
 	// VmOut is declared above as it needs to be in scope for later funcs.
@@ -128,18 +129,19 @@ const Cinfo* CompartmentBase::initCinfo()
 	{
 		&handleChannel, CompartmentBase::VmOut()
 	};
-	static SharedFinfo channel( "channel", 
+	static SharedFinfo channel( "channel",
 			"This is a shared message from a compartment to channels. "
 			"The first entry is a MsgDest for the info coming from "
 			"the channel. It expects Gk and Ek from the channel "
-			"as args. The second entry is a MsgSrc sending Vm ",
+			"as args. The second entry is a MsgSrc sending Vm "
+			"- Handles 'handleChannel' and 'VmOut' calls.",
 		channelShared, sizeof( channelShared ) / sizeof( Finfo* )
 	);
 	///////////////////////////////////////////////////////////////////
 	// axialOut declared above as it is needed in file scope
-	static DestFinfo handleRaxial( "handleRaxial", 
+	static DestFinfo handleRaxial( "handleRaxial",
 		"Handles Raxial info: arguments are Ra and Vm.",
-		new OpFunc2< CompartmentBase, double, double >( 
+		new OpFunc2< CompartmentBase, double, double >(
 			&CompartmentBase::handleRaxial )
 	);
 
@@ -147,7 +149,7 @@ const Cinfo* CompartmentBase::initCinfo()
 	{
 		axialOut(), &handleRaxial
 	};
-	static SharedFinfo axial( "axial", 
+	static SharedFinfo axial( "axial",
 			"This is a shared message between asymmetric compartments. "
 			"axial messages (this kind) connect up to raxial "
 			"messages (defined below). The soma should use raxial "
@@ -161,12 +163,13 @@ const Cinfo* CompartmentBase::initCinfo()
 			"of the target compartment. The second entry is a MsgDest "
 			"for the info coming from the other compt. It expects "
 			"Ra and Vm from the other compt as args. Note that the "
-			"message is named after the source type. ",
+			"message is named after the source type. "
+			"- Handles 'axialOut' and 'handleRaxial' calls.",
 		axialShared, sizeof( axialShared ) / sizeof( Finfo* )
 	);
 
 	///////////////////////////////////////////////////////////////////
-	static DestFinfo handleAxial( "handleAxial", 
+	static DestFinfo handleAxial( "handleAxial",
 		"Handles Axial information. Argument is just Vm.",
 		new OpFunc1< CompartmentBase, double >( &CompartmentBase::handleAxial ) );
 	// rxialOut declared above as it is needed in file scope
@@ -174,78 +177,78 @@ const Cinfo* CompartmentBase::initCinfo()
 	{
 		&handleAxial, raxialOut()
 	};
-	static SharedFinfo raxial( "raxial", 
-			"This is a raxial shared message between asymmetric "
-			"compartments. The first entry is a MsgDest for the info "
-			"coming from the other compt. It expects Vm from the "
-			"other compt as an arg. The second is a MsgSrc sending "
-			"Ra and Vm to the raxialFunc of the target compartment. ",
+	static SharedFinfo raxial( "raxial",
+			"This is a raxial shared message between asymmetric compartments. The \n"
+			"first entry is a MsgDest for the info coming from the other compt. It \n"
+			"expects Vm from the other compt as an arg. The second is a MsgSrc sending \n"
+			"Ra and Vm to the raxialFunc of the target compartment. \n"
+			"- Handles 'handleAxial' and 'raxialOut' calls.",
 			raxialShared, sizeof( raxialShared ) / sizeof( Finfo* )
 	);
 	///////////////////////////////////////////////////////////////////
 	// Value Finfos.
 	///////////////////////////////////////////////////////////////////
 
-		static ElementValueFinfo< CompartmentBase, double > Vm( "Vm", 
+		static ElementValueFinfo< CompartmentBase, double > Vm( "Vm",
 			"membrane potential",
 			&CompartmentBase::setVm,
 			&CompartmentBase::getVm
 		);
-		static ElementValueFinfo< CompartmentBase, double > Cm( "Cm", 
+		static ElementValueFinfo< CompartmentBase, double > Cm( "Cm",
 			"Membrane capacitance",
 			 &CompartmentBase::setCm,
 			&CompartmentBase::getCm
 		);
-		static ElementValueFinfo< CompartmentBase, double > Em( "Em", 
+		static ElementValueFinfo< CompartmentBase, double > Em( "Em",
 			"Resting membrane potential",
 			 &CompartmentBase::setEm,
 			&CompartmentBase::getEm
 		);
-		static ReadOnlyElementValueFinfo< CompartmentBase, double > Im( "Im", 
+		static ReadOnlyElementValueFinfo< CompartmentBase, double > Im( "Im",
 			"Current going through membrane",
 			&CompartmentBase::getIm
 		);
-		static ElementValueFinfo< CompartmentBase, double > inject( "inject", 
+		static ElementValueFinfo< CompartmentBase, double > inject( "inject",
 			"Current injection to deliver into compartment",
 			&CompartmentBase::setInject,
 			&CompartmentBase::getInject
 		);
-		static ElementValueFinfo< CompartmentBase, double > initVm( "initVm", 
+		static ElementValueFinfo< CompartmentBase, double > initVm( "initVm",
 			"Initial value for membrane potential",
 			&CompartmentBase::setInitVm,
 			&CompartmentBase::getInitVm
 		);
-		static ElementValueFinfo< CompartmentBase, double > Rm( "Rm", 
+		static ElementValueFinfo< CompartmentBase, double > Rm( "Rm",
 			"Membrane resistance",
 			&CompartmentBase::setRm,
 			&CompartmentBase::getRm
 		);
-		static ElementValueFinfo< CompartmentBase, double > Ra( "Ra", 
+		static ElementValueFinfo< CompartmentBase, double > Ra( "Ra",
 			"Axial resistance of compartment",
 			&CompartmentBase::setRa,
 			&CompartmentBase::getRa
 		);
-		static ValueFinfo< CompartmentBase, double > diameter( "diameter", 
+		static ValueFinfo< CompartmentBase, double > diameter( "diameter",
 			"Diameter of compartment",
 			&CompartmentBase::setDiameter,
 			&CompartmentBase::getDiameter
 		);
-		static ValueFinfo< CompartmentBase, double > length( "length", 
+		static ValueFinfo< CompartmentBase, double > length( "length",
 			"Length of compartment",
 			&CompartmentBase::setLength,
 			&CompartmentBase::getLength
 		);
-		static ValueFinfo< CompartmentBase, double > x0( "x0", 
+		static ValueFinfo< CompartmentBase, double > x0( "x0",
 			"X coordinate of start of compartment",
 			&CompartmentBase::setX0,
 			&CompartmentBase::getX0
 		);
-		static ValueFinfo< CompartmentBase, double > y0( "y0", 
+		static ValueFinfo< CompartmentBase, double > y0( "y0",
 			"Y coordinate of start of compartment",
 			&CompartmentBase::setY0,
 			&CompartmentBase::getY0
 		);
-		static ValueFinfo< CompartmentBase, double > z0( "z0", 
+		static ValueFinfo< CompartmentBase, double > z0( "z0",
 			"Z coordinate of start of compartment",
 			&CompartmentBase::setZ0,
 			&CompartmentBase::getZ0
@@ -260,16 +263,16 @@ const Cinfo* CompartmentBase::initCinfo()
 			&CompartmentBase::setY,
 			&CompartmentBase::getY
 		);
-		static ValueFinfo< CompartmentBase, double > z( "z", 
+		static ValueFinfo< CompartmentBase, double > z( "z",
 			"z coordinate of end of compartment",
 			&CompartmentBase::setZ,
 			&CompartmentBase::getZ
 		);
-	
+
 	//////////////////////////////////////////////////////////////////
 	// DestFinfo definitions
 	//////////////////////////////////////////////////////////////////
-		static DestFinfo injectMsg( "injectMsg", 
+		static DestFinfo injectMsg( "injectMsg",
 			"The injectMsg corresponds to the INJECT message in the "
 			"GENESIS compartment. Unlike the 'inject' field, any value "
 			"assigned by handleInject applies only for a single timestep."
@@ -277,7 +280,7 @@ const Cinfo* CompartmentBase::initCinfo()
 			"injection current",
 			new EpFunc1< CompartmentBase,  double >( &CompartmentBase::injectMsg )
 		);
-		
+
 		static DestFinfo randInject( "randInject",
 			"Sends a random injection current to the compartment. Must be"
 			"updated each timestep."
@@ -285,24 +288,24 @@ const Cinfo* CompartmentBase::initCinfo()
 			new EpFunc2< CompartmentBase, double, double > (
 				&CompartmentBase::randInject ) );
 
-		static DestFinfo cable( "cable", 
+		static DestFinfo cable( "cable",
 			"Message for organizing compartments into groups, called"
 			"cables. Doesn't do anything.",
 			new OpFunc0< CompartmentBase >( &CompartmentBase::cable )
 		);
-		static DestFinfo displace( "displace", 
+		static DestFinfo displace( "displace",
 			"Displaces compartment by specified vector",
 			new OpFunc3< CompartmentBase, double, double, double>(
 				   	&CompartmentBase::displace )
 		);
-		static DestFinfo setGeomAndElec( "setGeomAndElec", 
+		static DestFinfo setGeomAndElec( "setGeomAndElec",
 			"Assigns length and dia and accounts for any electrical "
 			"scaling needed as a result.",
 			new EpFunc2< CompartmentBase, double, double>(
 				   	&CompartmentBase::setGeomAndElec )
 		);
 	///////////////////////////////////////////////////////////////////
-	static Finfo* compartmentFinfos[] = 
+	static Finfo* compartmentFinfos[] =
 	{
 		&Vm,				// Value
 		&Cm,				// Value
@@ -381,7 +384,7 @@ bool CompartmentBase::rangeWarning( const string& field, double value )
 	if ( value < RANGE ) {
 		cout << "Warning: Ignored attempt to set " << field <<
 				" of compartment " <<
-				// c->target().e->name() << 
+				// c->target().e->name() <<
 				" to " << value << " as it is less than " << RANGE << endl;
 		return 1;
 	}
@@ -480,8 +483,8 @@ double CompartmentBase::getDiameter() const
 void CompartmentBase::setLength( double value )
 {
 	// If length is assigned correctly, also redo the end coords to match.
-	if ( value > 0 && length_ > 0 && 
-			doubleEq( length_ * length_, 
+	if ( value > 0 && length_ > 0 &&
+			doubleEq( length_ * length_,
 			(x_-x0_)*(x_-x0_) + (y_-y0_)*(y_-y0_) + (z_-z0_)*(z_-z0_) ) ) {
 		double ratio = value / length_;
 		x_ = x0_ + ratio * ( x_ - x0_ );
@@ -499,7 +502,7 @@ double CompartmentBase::getLength() const
 
 void CompartmentBase::updateLength()
 {
-	length_ = sqrt( (x_-x0_)*(x_-x0_) + 
+	length_ = sqrt( (x_-x0_)*(x_-x0_) +
 					(y_-y0_)*(y_-y0_) + (z_-z0_)*(z_-z0_) );
 }
 
@@ -585,7 +588,7 @@ void CompartmentBase::reinit(  const Eref& e, ProcPtr p )
 
 void CompartmentBase::initProc( const Eref& e, ProcPtr p )
 {
-	vInitProc( e, p ); 
+	vInitProc( e, p );
 }
 
 void CompartmentBase::initReinit( const Eref& e, ProcPtr p )
@@ -637,11 +640,11 @@ void CompartmentBase::setGeomAndElec( const Eref& e,
 				double len, double dia )
 {
 	if ( length_ > 0 && diameter_ > 0 && len > 0 && dia > 0 &&
-			doubleEq( length_ * length_, 
+			doubleEq( length_ * length_,
 			(x_-x0_)*(x_-x0_) + (y_-y0_)*(y_-y0_) + (z_-z0_)*(z_-z0_) ) ) {
 		vSetRm( e, vGetRm( e ) * diameter_ * length_ / ( dia * len ) );
 		vSetCm( e, vGetCm( e ) * dia * len / ( diameter_ * length_ ) );
-		vSetRa( e, vGetRa( e ) * len * (diameter_ * diameter_) / 
+		vSetRa( e, vGetRa( e ) * len * (diameter_ * diameter_) /
 				( length_ * dia * dia ) );
 		// Rescale channel Gbars here
 		vector< ObjId > chans;
@@ -658,7 +661,7 @@ void CompartmentBase::setGeomAndElec( const Eref& e,
 			Field< double >::set( concs[i], "length", len );
 			Field< double >::set( concs[i], "diameter", dia );
 		}
-		
+
 		setLength( len );
 		setDiameter( dia );
 	}
@@ -673,7 +676,7 @@ void CompartmentBase::vSetSolver( const Eref& e, Id hsolve )
 {;}
 
 // static func
-void CompartmentBase::zombify( Element* orig, const Cinfo* zClass, 
+void CompartmentBase::zombify( Element* orig, const Cinfo* zClass,
 				Id hsolve )
 {
 	if ( orig->cinfo() == zClass )
@@ -686,7 +689,7 @@ void CompartmentBase::zombify( Element* orig, const Cinfo* zClass,
 
 	for ( unsigned int i = 0; i < num; ++i ) {
 		Eref er( orig, i + start );
-		const CompartmentBase* cb = 
+		const CompartmentBase* cb =
 			reinterpret_cast< const CompartmentBase* >( er.data() );
 		cdh[i].readData( cb, er );
 	}

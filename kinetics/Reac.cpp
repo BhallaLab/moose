@@ -14,6 +14,7 @@
 #include "Reac.h"
 
 #define EPSILON 1e-15
+
 const Cinfo* Reac::initCinfo()
 {
 		//////////////////////////////////////////////////////////////
