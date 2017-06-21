@@ -86,7 +86,7 @@ def makeModel():
     stoich0.filterXreacs()
     stoich1.filterXreacs()
     stoich2.filterXreacs()
-    
+
     moose.element( '/model/chem/compt2/a[0]' ).concInit *= 1.5
 
     # Create the output tables
@@ -199,7 +199,7 @@ def makeChemModel( compt ):
     """
     # create container for model
     concA = 1 # millimolar
-    
+
     # create molecules and reactions
     a = moose.Pool( compt.path + '/a' )
     b = moose.Pool( compt.path + '/b' )
@@ -244,13 +244,13 @@ def makeChemModel( compt ):
 def main():
     """
     This example illustrates how to define a kinetic model embedded in
-    the branching pseudo-1-dimensional geometry of a neuron. The model 
+    the branching pseudo-1-dimensional geometry of a neuron. The model
     oscillates in space and time due to a Turing-like reaction-diffusion
     mechanism present in all compartments. For the sake of this demo,
     the initial conditions are set up slightly different on the PSD
     compartments, so as to break the symmetry and initiate oscillations
     in the spines.
-    This example uses an external electrical model file with basal 
+    This example uses an external electrical model file with basal
     dendrite and three branches on
     the apical dendrite. One of those branches has a dozen or so spines.
     In this example we build an identical model in each compartment, using
@@ -260,10 +260,10 @@ def main():
     Dsolve for handling diffusion.
     The display has four parts:
 
-        a. animated line plot of concentration against main compartment#. 
-        b. animated line plot of concentration against spine compartment#. 
-        c. animated line plot of concentration against psd compartment#. 
-        d. time-series plot that appears after the simulation has 
+        a. animated line plot of concentration against main compartment#.
+        b. animated line plot of concentration against spine compartment#.
+        c. animated line plot of concentration against psd compartment#.
+        d. time-series plot that appears after the simulation has
            ended. The plot is for the last (rightmost) compartment.
 
     """

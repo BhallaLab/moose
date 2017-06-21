@@ -85,7 +85,7 @@ def makeModel():
     stoich0.filterXreacs()
     stoich1.filterXreacs()
     stoich2.filterXreacs()
-    
+
     moose.element( '/model/chem/compt2/a[0]' ).concInit *= 1.5
 
     # Create the output tables
@@ -184,23 +184,24 @@ def finalizeDisplay( plotlist, cPlotDt ):
 
 def makeChemModel( compt ):
     """
-    This function setus up a simple oscillatory chemical system within
-    the script. The reaction system is::
+This function setus up a simple oscillatory chemical system within
+the script. The reaction system is::
 
-        s ---a---> a  // s goes to a, catalyzed by a.
-        s ---a---> b  // s goes to b, catalyzed by a.
-        a ---b---> s  // a goes to s, catalyzed by b.
-        b -------> s  // b is degraded irreversibly to s.
+    s ---a---> a  // s goes to a, catalyzed by a.
+    s ---a---> b  // s goes to b, catalyzed by a.
+    a ---b---> s  // a goes to s, catalyzed by b.
+    b -------> s  // b is degraded irreversibly to s.
 
-    in sum, **a** has a positive feedback onto itself and also forms **b**.
-    **b** has a negative feedback onto **a**.
-    Finally, the diffusion constant for **a** is 1/10 that of **b**.
+in sum, **a** has a positive feedback onto itself and also forms **b**.
+**b** has a negative feedback onto **a**.
+Finally, the diffusion constant for **a** is 1/10 that of **b**.
+
     """
     # create container for model
     diffConst = 10e-12 # m^2/sec
     motorRate = 1e-6 # m/sec
     concA = 1 # millimolar
-    
+
     # create molecules and reactions
     a = moose.Pool( compt.path + '/a' )
     b = moose.Pool( compt.path + '/b' )
@@ -244,28 +245,28 @@ def makeChemModel( compt ):
 
 def main():
     """
-    This example illustrates how to define a kinetic model embedded in
-    the branching pseudo-1-dimensional geometry of a neuron. The model 
-    oscillates in space and time due to a Turing-like reaction-diffusion
-    mechanism present in all compartments. For the sake of this demo,
-    the initial conditions are set up slightly different on the PSD
-    compartments, so as to break the symmetry and initiate oscillations
-    in the spines.
-    This example uses an external electrical model file with basal 
-    dendrite and three branches on
-    the apical dendrite. One of those branches has a dozen or so spines.
-    In this example we build an identical model in each compartment, using
-    the makeChemModel function. One could readily define a system with
-    distinct reactions in each compartment.
-    The model is set up to run using the Ksolve for integration and the
-    Dsolve for handling diffusion.
-    The display has four parts:
+This example illustrates how to define a kinetic model embedded in
+the branching pseudo-1-dimensional geometry of a neuron. The model
+oscillates in space and time due to a Turing-like reaction-diffusion
+mechanism present in all compartments. For the sake of this demo,
+the initial conditions are set up slightly different on the PSD
+compartments, so as to break the symmetry and initiate oscillations
+in the spines.
+This example uses an external electrical model file with basal
+dendrite and three branches on
+the apical dendrite. One of those branches has a dozen or so spines.
+In this example we build an identical model in each compartment, using
+the makeChemModel function. One could readily define a system with
+distinct reactions in each compartment.
+The model is set up to run using the Ksolve for integration and the
+Dsolve for handling diffusion.
+The display has four parts:
 
-        a. animated line plot of concentration against main compartment#. 
-        b. animated line plot of concentration against spine compartment#. 
-        c. animated line plot of concentration against psd compartment#. 
-        d. time-series plot that appears after the simulation has 
-           ended. The plot is for the last (rightmost) compartment.
+    a. animated line plot of concentration against main compartment#.
+    b. animated line plot of concentration against spine compartment#.
+    c. animated line plot of concentration against psd compartment#.
+    d. time-series plot that appears after the simulation has
+       ended. The plot is for the last (rightmost) compartment.
 
     """
     chemdt = 0.1 # Tested various dts, this is reasonable.

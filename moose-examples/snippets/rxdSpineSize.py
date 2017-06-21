@@ -1,14 +1,3 @@
-##################################################################
-## This program is part of 'MOOSE', the
-## Messaging Object Oriented Simulation Environment.
-##           Copyright (C) 2015 Upinder S. Bhalla. and NCBS
-## It is made available under the terms of the
-## GNU Lesser General Public License version 2.1
-## See the file COPYING.LIB for the full notice.
-##
-## rxdSpineSize.py: Builds a cell with spines and a propagating reaction
-## wave. Products diffuse into the spine and cause it to get bigger.
-##################################################################
 import math
 import pylab
 import numpy
@@ -128,17 +117,14 @@ def displayPlots():
 
 def main():
     """
-    This illustrates the use of rdesigneur to build a simple dendrite with
-    spines, and then to resize them using spine fields. These are the
-    fields that would be changed dynamically in a simulation with reactions
-    that affect spine geometry.
-    In this simulation there is a propagating reaction wave using a
-    highly abstracted equation, whose product diffuses into the spines and
-    makes them bigger.
+This illustrates the use of rdesigneur to build a simple dendrite with
+spines, and then to resize them using spine fields. These are the
+fields that would be changed dynamically in a simulation with reactions
+that affect spine geometry.
+In this simulation there is a propagating reaction wave using a
+highly abstracted equation, whose product diffuses into the spines and
+makes them bigger.
     """
-    makeModel()
-    elec = moose.element( '/model/elec' )
-    elec.setSpineAndPsdMesh( moose.element('/model/chem/spine'), moose.element('/model/chem/psd') )
 
     eHead = moose.wildcardFind( '/model/elec/#head#' )
     oldDia = [ i.diameter for i in eHead ]
@@ -175,7 +161,6 @@ def main():
 
 # Run the 'main' if this script is executed standalone.
 
-def showVisualization():
     makeModel()
     elec = moose.element( '/model/elec' )
     elec.setSpineAndPsdMesh( moose.element('/model/chem/spine'), moose.element('/model/chem/psd') )
@@ -272,7 +257,7 @@ def create_viewer(path, moose_dendrite, dendZ, diaTab, psdZ):
 
 
 if __name__ == '__main__':
-    if doMoo:
+    if doMoo
         showVisualization()
     else:
         main()

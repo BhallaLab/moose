@@ -52,7 +52,7 @@ def makeModel():
     assert( stoich0.numVarPools == 3 )
     assert( stoich0.numProxyPools == 0 )
     assert( stoich0.numRates == 4 )
-    
+
     num = compt0.numDiffCompts - 1
     moose.element( '/model/chem/compt0/a[' + str(num) + ']' ).concInit *= 1.5
 
@@ -117,23 +117,24 @@ def finalizeDisplay( plotlist, cPlotDt ):
 
 def makeChemModel( compt ):
     """
-    This function sets up a simple oscillatory chemical system within
-    the script. The reaction system is::
+This function sets up a simple oscillatory chemical system within
+the script. The reaction system is::
 
-        s ---a---> a  // s goes to a, catalyzed by a.
-        s ---a---> b  // s goes to b, catalyzed by a.
-        a ---b---> s  // a goes to s, catalyzed by b.
-        b -------> s  // b is degraded irreversibly to s.
+    s ---a---> a  // s goes to a, catalyzed by a.
+    s ---a---> b  // s goes to b, catalyzed by a.
+    a ---b---> s  // a goes to s, catalyzed by b.
+    b -------> s  // b is degraded irreversibly to s.
 
-    in sum, **a** has a positive feedback onto itself and also forms **b**.
-    **b** has a negative feedback onto **a**.
-    Finally, the diffusion constant for **a** is 1/10 that of **b**.
+in sum, **a** has a positive feedback onto itself and also forms **b**.
+**b** has a negative feedback onto **a**.
+Finally, the diffusion constant for **a** is 1/10 that of **b**.
+
     """
     # create container for model
     diffConst = 10e-12 # m^2/sec
     motorRate = 1e-6 # m/sec
     concA = 1 # millimolar
-    
+
     # create molecules and reactions
     a = moose.Pool( compt.path + '/a' )
     b = moose.Pool( compt.path + '/b' )
@@ -177,40 +178,39 @@ def makeChemModel( compt ):
 
 def main():
     """
-    reacDiffBranchingNeuron:
-    This example illustrates how to define a kinetic model embedded in
-    the branching pseudo 1-dimensional geometry of a neuron. This means
-    that diffusion only happens along the axis of dendritic segments, not
-    radially from inside to outside a dendrite, nor tangentially around
-    the dendrite circumference. The model 
-    oscillates in space and time due to a Turing-like reaction-diffusion
-    mechanism present in all compartments. For the sake of this demo,
-    the initial conditions are set to be slightly different on one of the
-    terminal dendrites, so as to break the symmetry and initiate 
-    oscillations.
-    This example uses an external model file to specify a binary branching 
-    neuron. This model does not have any spines. The electrical model is 
-    used here purely for the geometry and is not part of the computations.
-    In this example we build an identical chemical model throughout the
-    neuronal geometry, using the makeChemModel function.
-    The model is set up to run using the Ksolve for integration and the
-    Dsolve for handling diffusion.
+This example illustrates how to define a kinetic model embedded in
+the branching pseudo 1-dimensional geometry of a neuron. This means
+that diffusion only happens along the axis of dendritic segments, not
+radially from inside to outside a dendrite, nor tangentially around
+the dendrite circumference. The model
+oscillates in space and time due to a Turing-like reaction-diffusion
+mechanism present in all compartments. For the sake of this demo,
+the initial conditions are set to be slightly different on one of the
+terminal dendrites, so as to break the symmetry and initiate
+oscillations.
+This example uses an external model file to specify a binary branching
+neuron. This model does not have any spines. The electrical model is
+used here purely for the geometry and is not part of the computations.
+In this example we build an identical chemical model throughout the
+neuronal geometry, using the makeChemModel function.
+The model is set up to run using the Ksolve for integration and the
+Dsolve for handling diffusion.
 
-    The display has two parts:
+The display has two parts:
 
-        a. Animated pseudo-3D plot of neuronal geometry, where each point
-           represents a diffusive voxel and moves in the y-axis to show
-           changes in concentration.
-        b. Time-series plot that appears after the simulation has 
-           ended. The plots are for the first and last diffusive voxel,
-           that is, the soma and the tip of one of the apical dendrites.
+    a. Animated pseudo-3D plot of neuronal geometry, where each point
+       represents a diffusive voxel and moves in the y-axis to show
+       changes in concentration.
+    b. Time-series plot that appears after the simulation has
+       ended. The plots are for the first and last diffusive voxel,
+       that is, the soma and the tip of one of the apical dendrites.
 
     """
     chemdt = 0.1 # Tested various dts, this is reasonable.
     diffdt = 0.01
     plotdt = 1
     animationdt = 5
-    runtime = 750 
+    runtime = 750
 
     makeModel()
     plotlist = makeDisplay()

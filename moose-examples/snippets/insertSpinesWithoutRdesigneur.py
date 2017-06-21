@@ -82,9 +82,11 @@ def makeSpineProto():
 
 def main():
     """
-    This snippet illustrates how the Neuron class does the spine
-    specification, without the rdesigneur intermediate.
+This snippet illustrates how the Neuron class does the spine
+specification, without the rdesigneur intermediate.
+
     """
+
     app = QtGui.QApplication(sys.argv)
     moose.Neutral( '/library' )
     makeSpineProto()

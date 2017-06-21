@@ -14,15 +14,15 @@ import numpy
 def main():
     """
     This is the Hello MOOSE program. It shows how to get MOOSE to do
-    its most basic operations: to load, run, and graph a model defined 
+    its most basic operations: to load, run, and graph a model defined
     in an external model definition file.
-    
+
     The loadModel function is the core of this example. It can accept
     a range of file and model types, including kkit, cspace and GENESIS .p
     files. It autodetects the file type and loads in the simulation.
-    
+
     The wildcardFind function finds all objects matching the specified path,
-    in this case Table objects hoding the simulation results. They were 
+    in this case Table objects hoding the simulation results. They were
     all defined in the model file.
     """
     mfile = '../genesis/kkit_objects_example.g'

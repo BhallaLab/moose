@@ -19,12 +19,12 @@ def main():
     This example sets up the kinetic solver and steady-state finder, on
     a bistable model of a chemical system. The model is set up within the
     script.
-    The algorithm calls the steady-state finder 50 times with different 
+    The algorithm calls the steady-state finder 50 times with different
     (randomized) initial conditions, as follows:
 
     * Set up the random initial condition that fits the conservation laws
-    * Run for 2 seconds. This should not be mathematically necessary, but 
-      for obscure numerical reasons it makes it much more likely that the 
+    * Run for 2 seconds. This should not be mathematically necessary, but
+      for obscure numerical reasons it makes it much more likely that the
       steady state solver will succeed in finding a state.
     * Find the fixed point
     * Print out the fixed point vector and various diagnostics.
@@ -35,30 +35,30 @@ def main():
     After it does all this, the program runs for 100 more seconds on the
     last found fixed point (which turns out to be a saddle node), then
     is hard-switched in the script to the first attractor basin from which
-    it runs for another 100 seconds till it settles there, and then 
-    is hard-switched yet again to the second attractor and runs for 400 
+    it runs for another 100 seconds till it settles there, and then
+    is hard-switched yet again to the second attractor and runs for 400
     seconds.
 
     Looking at the output you will see many features of note:
 
-    * the first attractor (stable point) and the saddle point (unstable 
+    * the first attractor (stable point) and the saddle point (unstable
       fixed point) are both found quite often. But the second
-      attractor is found just once. 
+      attractor is found just once.
       It has a very small basin of attraction.
     * The values found for each of the fixed points match well with the
       values found by running the system to steady-state at the end.
     * There are a large number of failures to find a fixed point. These are
       found and reported in the diagnostics. They show up on the plot
       as cases where the 10-second runs are not flat.
- 
+
     If you wanted to find fixed points in a production model, you would
     not need to do the 10-second runs, and you would need to eliminate the
     cases where the state-finder failed. Then you could identify the good
     points and keep track of how many of each were found.
 
-    There is no way to guarantee that all fixed points have been found 
-    using this algorithm! If there are points in an obscure corner of state 
-    space (as for the singleton second attractor convergence in this 
+    There is no way to guarantee that all fixed points have been found
+    using this algorithm! If there are points in an obscure corner of state
+    space (as for the singleton second attractor convergence in this
     example) you may have to iterate very many times to find them.
 
     You may wish to sample concentration space logarithmically rather than
@@ -111,7 +111,7 @@ def makeModel():
     compartment = moose.CubeMesh( '/model/compartment' )
     compartment.volume = 1e-15
     # the mesh is created automatically by the compartment
-    mesh = moose.element( '/model/compartment/mesh' ) 
+    mesh = moose.element( '/model/compartment/mesh' )
 
     # create molecules and reactions
     a = moose.Pool( '/model/compartment/a' )
@@ -173,7 +173,7 @@ def displayPlots():
     pylab.show()
 
 def getState( ksolve, state ):
-    """ This function finds a steady state starting from a random 
+    """ This function finds a steady state starting from a random
     initial condition that is consistent with the stoichiometry rules
     and the original model concentrations.
     """

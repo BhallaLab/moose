@@ -1,51 +1,51 @@
-# lif.py --- 
-# 
+# lif.py ---
+#
 # Filename: lif.py
-# Description: 
-# Author:Subhasis Ray 
-# Maintainer: 
+# Description:
+# Author:Subhasis Ray
+# Maintainer:
 # Created: Sun Jul  8 14:00:31 2012 (+0530)
-# Version: 
+# Version:
 # Last-Updated: Tue Jul 17 16:45:44 2012 (+0530)
 #           By: subha
 #     Update #: 187
-# URL: 
-# Keywords: 
-# Compatibility: 
-# 
-# 
+# URL:
+# Keywords:
+# Compatibility:
+#
+#
 
-# Commentary: 
-# 
-# Demonstrates use of Leaky Integrate and Fire (LeakyIaf class) in
-# moose.
-# 
-# 
+# Commentary:
+#
+#
 
 # Change log:
-# 
-# 
-# 
-# 
+#
+#
+#
+#
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
 # published by the Free Software Foundation; either version 3, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program; see the file COPYING.  If not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 # Floor, Boston, MA 02110-1301, USA.
-# 
-# 
+#
+#
 
 # Code:
 
+"""
+Demonstrates use of Leaky Integrate and Fire (LeakyIaf class) in moose.
+"""
 import sys
 sys.path.append('../../python')
 import os
@@ -86,7 +86,7 @@ def setupmodel(modelpath, iaf_Rm, iaf_Cm, pulse_interval):
     pg.delay[0] = pulse_interval
     pg.width[0] = 1e-3
     pg.level[0] = 0.5
-    moose.connect(pg, 'output', sg, 'Vm')    
+    moose.connect(pg, 'output', sg, 'Vm')
     return {
         'model': model_container,
         'iaf': iaf,
@@ -131,5 +131,5 @@ if __name__ == '__main__':
     plt.legend()
     plt.show()
 
-# 
+#
 # lif.py ends here

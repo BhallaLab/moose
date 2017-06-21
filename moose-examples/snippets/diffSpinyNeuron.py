@@ -100,7 +100,7 @@ def makeModel():
     stoich0.filterXreacs()
     stoich1.filterXreacs()
     stoich2.filterXreacs()
-    
+
     Ca_input_dend = moose.vec( '/model/chem/compt0/Ca_input' )
     print((len( Ca_input_dend )))
     for i in range( 60 ):
@@ -110,7 +110,7 @@ def makeModel():
     print((len( Ca_input_PSD )))
     for i in range( 5 ):
         Ca_input_PSD[ 2 + i * 2].conc = 1.0
-    
+
     # Create the output tables
     num = compt0.numDiffCompts - 1
     graphs = moose.Neutral( '/model/graphs' )
@@ -201,11 +201,11 @@ def finalizeDisplay( plotlist, cPlotDt ):
 
 def makeChemModel( compt, doInput ):
     """
-    This function setus up a simple chemical system in which Ca input 
+    This function setus up a simple chemical system in which Ca input
     comes to the dend and to selected PSDs. There is diffusion between
     PSD and spine head, and between dend and spine head.
-    
-        Ca_input ------> Ca  // in dend and spine head only.
+
+    :: Ca_input ------> Ca  // in dend and spine head only.
     """
     # create molecules and reactions
     Ca = moose.Pool( compt.path + '/Ca' )
@@ -232,29 +232,29 @@ def makeChemModel( compt, doInput ):
 def main():
     """
     This example illustrates and tests diffusion embedded in
-    the branching pseudo-1-dimensional geometry of a neuron. 
-    An input pattern of Ca stimulus is applied in a periodic manner both 
+    the branching pseudo-1-dimensional geometry of a neuron.
+    An input pattern of Ca stimulus is applied in a periodic manner both
     on the dendrite and on the PSDs of the 13 spines. The Ca levels in
     each of the dend, the spine head, and the spine PSD are monitored.
     Since the same molecule name is used for Ca in the three compartments,
     these are automagially connected up for diffusion. The simulation
     shows the outcome of this diffusion.
-    This example uses an external electrical model file with basal 
+    This example uses an external electrical model file with basal
     dendrite and three branches on
     the apical dendrite. One of those branches has the 13 spines.
     The model is set up to run using the Ksolve for integration and the
     Dsolve for handling diffusion.
-    The timesteps here are not the defaults. It turns out that the 
+    The timesteps here are not the defaults. It turns out that the
     chem reactions and diffusion in this example are sufficiently fast
     that the chemDt has to be smaller than default. Note that this example
     uses rates quite close to those used in production models.
     The display has four parts:
 
-        a. animated line plot of concentration against main compartment#. 
-        b. animated line plot of concentration against spine compartment#. 
-        c. animated line plot of concentration against psd compartment#. 
-        d. time-series plot that appears after the simulation has 
-           ended. 
+        a. animated line plot of concentration against main compartment#.
+        b. animated line plot of concentration against spine compartment#.
+        c. animated line plot of concentration against psd compartment#.
+        d. time-series plot that appears after the simulation has
+           ended.
 
     """
 

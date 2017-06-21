@@ -33,7 +33,7 @@ def main():
         M-----Enzyme---->M*           All in compartment B
         \             /|
         \___basal___/
-    
+
 
     The way it works: We set the run off for a few seconds with the original
     model parameters. This version oscillates. Then we double the endo
@@ -47,7 +47,7 @@ def main():
     modelId = moose.loadModel( mfile, 'model', 'gsl' )
 
     moose.reinit()
-    moose.start( runtime ) 
+    moose.start( runtime )
 
     # Here begins the parameter tweaking.
     # Now we double the rates of the endo and exo reactions.

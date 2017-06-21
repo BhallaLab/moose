@@ -1,50 +1,45 @@
-# hhcomp.py --- 
-# 
+# hhcomp.py ---
+#
 # Filename: hhcomp.py
-# Description: 
+# Description:
 # Author: Subhasis Ray
-# Maintainer: 
+# Maintainer:
 # Created: Tue May  7 12:11:22 2013 (+0530)
-# Version: 
+# Version:
 # Last-Updated: Tue May  7 19:21:43 2013 (+0530)
 #           By: subha
 #     Update #: 309
-# URL: 
-# Keywords: 
-# Compatibility: 
-# 
-# 
+# URL:
+# Keywords:
+# Compatibility:
+#
+#
 
-# Commentary: 
-# 
-# 
-# 
-# 
+# Commentary:
+#
+#
+#
+#
 
 # Change log:
-# 
-# 
-# 
-# 
+#
+#
+#
+#
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
 # published by the Free Software Foundation; either version 3, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program; see the file COPYING.  If not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 # Floor, Boston, MA 02110-1301, USA.
-# 
-# 
-
-# Code:
-"""A compartment with hodgkin-huxley ion channels"""
 
 import sys
 sys.path.append('../../python')
@@ -60,10 +55,11 @@ EREST_ACT = -70e-3
 per_ms = 1e3
 
 def create_na_chan(parent='/library', name='na', vmin=-110e-3, vmax=50e-3, vdivs=3000):
-    """Create a Hodhkin-Huxley Na channel under `parent`.
-    
+    """
+    Create a Hodhkin-Huxley Na channel under `parent`.
+
     vmin, vmax, vdivs: voltage range and number of divisions for gate tables
-    
+
     """
     na = moose.HHChannel('%s/%s' % (parent, name))
     na.Xpower = 3
@@ -100,9 +96,9 @@ def create_na_chan(parent='/library', name='na', vmin=-110e-3, vmax=50e-3, vdivs
 
 def create_k_chan(parent='/library', name='k', vmin=-120e-3, vmax=40e-3, vdivs=3000):
     """Create a Hodhkin-Huxley K channel under `parent`.
-    
+
     vmin, vmax, vdivs: voltage range and number of divisions for gate tables
-    
+
     """
     k = moose.HHChannel('%s/%s' % (parent, name))
     k.Xpower = 4
@@ -162,11 +158,11 @@ def create_passive_comp(parent='/library', name='comp', diameter=30e-6, length=0
     else:
         sarea = np.pi * diameter * length
     # specific conductance gm = 0.3 mS/cm^2
-    comp.Rm = 1 / (0.3e-3 * sarea * 1e4) 
+    comp.Rm = 1 / (0.3e-3 * sarea * 1e4)
     # Specific capacitance cm = 1 uF/cm^2
     comp.Cm = 1e-6 * sarea * 1e4
     return comp, sarea
-    
+
 def create_hhcomp(parent='/library', name='hhcomp', diameter=-30e-6, length=0.0):
     """Create a compartment with Hodgkin-Huxley type ion channels (Na and
     K).
@@ -181,7 +177,7 @@ def create_hhcomp(parent='/library', name='hhcomp', diameter=-30e-6, length=0.0)
         create_na_chan(parent=comp.path)
     na = moose.element('%s/na' % (comp.path))
     # Na-conductance 120 mS/cm^2
-    na.Gbar = 120e-3 * sarea * 1e4 
+    na.Gbar = 120e-3 * sarea * 1e4
     na.Ek = 115e-3 + EREST_ACT
     moose.connect(comp, 'channel', na, 'channel')
     if moose.exists('/library/k'):
@@ -190,7 +186,7 @@ def create_hhcomp(parent='/library', name='hhcomp', diameter=-30e-6, length=0.0)
         create_k_chan(parent=comp.path)
     k = moose.element('%s/k' % (comp.path))
     # K-conductance 36 mS/cm^2
-    k.Gbar = 36e-3 * sarea * 1e4 
+    k.Gbar = 36e-3 * sarea * 1e4
     k.Ek = -12e-3 + EREST_ACT
     moose.connect(comp, 'channel', k, 'channel')
     return comp, na, k
@@ -203,7 +199,7 @@ def test_hhcomp():
 
     """
     model = moose.Neutral('/model')
-    data = moose.Neutral('/data')    
+    data = moose.Neutral('/data')
     comp, na, k = create_hhcomp(parent=model.path)
     print((comp.Rm, comp.Cm, na.Ek, na.Gbar, k.Ek, k.Gbar))
     pg = moose.PulseGen('%s/pg' % (model.path))
@@ -249,14 +245,14 @@ def test_hhcomp():
     # moose.showfield(comp)
     # moose.showfield(na)
     # moose.showfield(k)
-    
+
+
+def main():
+	"""A compartment with hodgkin-huxley ion channels"""
+	test_channel_gates()
+	test_hhcomp()
 
 if __name__ == '__main__':
-    test_channel_gates()
-    test_hhcomp()
-    
-
-
-
-# 
+	main()
+#
 # hhcomp.py ends here

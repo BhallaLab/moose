@@ -1,81 +1,49 @@
-# ionchannel.py --- 
-# 
+# ionchannel.py ---
+#
 # Filename: ionchannel.py
-# Description: 
+# Description:
 # Author: Subhasis Ray
-# Maintainer: 
+# Maintainer:
 # Created: Wed Sep 17 10:33:20 2014 (+0530)
-# Version: 
-# Last-Updated: 
-#           By: 
+# Version:
+# Last-Updated:
+#           By:
 #     Update #: 0
-# URL: 
-# Keywords: 
-# Compatibility: 
-# 
-# 
+# URL:
+# Keywords:
+# Compatibility:
+#
+#
 
-# Commentary: 
-# 
-# 
-# 
-# 
+# Commentary:
+#
+#
+#
+#
 
 # Change log:
-# 
-# 
-# 
-# 
+#
+#
+#
+#
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
 # published by the Free Software Foundation; either version 3, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program; see the file COPYING.  If not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 # Floor, Boston, MA 02110-1301, USA.
-# 
-# 
+#
+#
 
 # Code:
-"""This demo shows how to set the parameters for a Hodgkin-Huxley type ion channel.
-
-Hodgkin-Huxley type ion channels are composed of one or more gates
-that allow ions to cross the membrane. The gates transition between
-open and closed states and this, taken over a large population of
-ion channels over a patch of membrane has first order kinetics, where
-the rate of change of fraction of open gates (n) is given by::
-
-    dn/dt = alpha(Vm) * (1 - n) - beta(Vm) * n
-
-where alpha and beta are rate parameters for gate opening and
-closing respectively that depend on the membrane potential.
-The final channel conductance is computed as::
-
-    Gbar * m^x * h^y ...
-
-where m, n are the fraction of open gates of different types and x,
-y are the number of such gates in each channel. We can define the
-channel by specifying the alpha and beta parameters as functions of
-membrane potential and the exponents for each gate.
-The number gates is commonly one or two.
-
-Gate opening/closing rates have the form::
-
-    y(x) = (A + B * x) / (C + exp((x + D) / F))
-
-where x is membrane voltage and y is the rate parameter for gate
-closing or opening.
-
-
-"""
-
 import numpy as np
 import matplotlib.pyplot as plt
 import moose
@@ -93,7 +61,7 @@ Na_m_params = [1e5 * (25e-3 + EREST_ACT),   # 'A_A':
                 0.0,                        # 'B_B':
                 0.0,                        # 'B_C':
                 0.0 - EREST_ACT,            # 'B_D':
-                18e-3                       # 'B_F':    
+                18e-3                       # 'B_F':
                ]
 
 #: Parameters for defining h gate of Na+ channel
@@ -106,7 +74,7 @@ Na_h_params = [ 70.0,                        # 'A_A':
                 0.0,                       # 'B_B':
                 1.0,                       # 'B_C':
                 -30e-3 - EREST_ACT,        # 'B_D':
-                -0.01                    # 'B_F':       
+                -0.01                    # 'B_F':
                 ]
 
 #: K+ channel in Hodgkin-Huxley model has only one gate, n and these
@@ -120,7 +88,7 @@ K_n_params = [ 1e4 * (10e-3 + EREST_ACT),   #  'A_A':
                0.0,                        #  'B_B':
                0.0,                        #  'B_C':
                0.0 - EREST_ACT,            #  'B_D':
-               80e-3                       #  'B_F':  
+               80e-3                       #  'B_F':
                ]
 
 #: We define the rate parameters, which are functions of Vm as
@@ -133,11 +101,12 @@ VMAX = 120e-3 + EREST_ACT
 VDIVS = 3000
 
 def create_na_proto():
-    """Create and return a Na+ channel prototype '/library/na'
+    """
+    Create and return a Na+ channel prototype '/library/na'
 
     The Na+ channel conductance has the equation::
 
-        g = Gbar * m^3 * h 
+        g = Gbar * m^3 * h
 
     For each gate, we use the HHChannel.setupAlpha function to set up
     the interpolation table.
@@ -150,19 +119,20 @@ def create_na_proto():
     na.Xpower = 3
     #: channel/gateX is the m gate
     #: setting Xpower to a positive number automatically creates this gate.
-    xGate = moose.element(na.path + '/gateX')    
+    xGate = moose.element(na.path + '/gateX')
     xGate.setupAlpha(Na_m_params +
                       [VDIVS, VMIN, VMAX])
     #: channel/gateY is the h gate
     #: Exponent for h gate is 1
     na.Ypower = 1
     yGate = moose.element(na.path + '/gateY')
-    yGate.setupAlpha(Na_h_params + 
+    yGate.setupAlpha(Na_h_params +
                       [VDIVS, VMIN, VMAX])
     return na
-    
+
 def create_k_proto():
-    """Create and return a K+ channel prototype '/library/k'.
+    """
+    Create and return a K+ channel prototype '/library/k'.
 
     The K+ channel conductance has the equation::
 
@@ -173,7 +143,7 @@ def create_k_proto():
     k = moose.HHChannel('/library/k')
     k.tick = -1
     k.Xpower = 4.0
-    xGate = moose.HHGate(k.path + '/gateX')    
+    xGate = moose.HHGate(k.path + '/gateX')
     xGate.setupAlpha(K_n_params +
                       [VDIVS, VMIN, VMAX])
     return k
@@ -186,7 +156,7 @@ def create_1comp_neuron(path, number=1):
     path : str
         path of the compartment to be created
 
-    number : int 
+    number : int
         number of compartments to be created. If n is greater than 1,
         we create a vec with that size, each having the same property.
 
@@ -223,7 +193,8 @@ def create_1comp_neuron(path, number=1):
     return comps
 
 def current_step_test(simtime, simdt, plotdt):
-    """Create a single compartment and set it up for applying a step
+    """
+    Create a single compartment and set it up for applying a step
     current injection.
 
     We use a PulseGen object to generate a 40 ms wide 1 nA current
@@ -250,8 +221,39 @@ def current_step_test(simtime, simdt, plotdt):
     moose.start(simtime)
     ts = np.linspace(0, simtime, len(vm_tab.vector))
     return ts, current_tab.vector, vm_tab.vector,
-    
-if __name__ == '__main__':
+
+def main():
+    """
+This demo shows how to set the parameters for a Hodgkin-Huxley type ion channel.
+
+Hodgkin-Huxley type ion channels are composed of one or more gates
+that allow ions to cross the membrane. The gates transition between
+open and closed states and this, taken over a large population of
+ion channels over a patch of membrane has first order kinetics, where
+the rate of change of fraction of open gates (n) is given by::
+
+    dn/dt = alpha(Vm) * (1 - n) - beta(Vm) * n
+
+where alpha and beta are rate parameters for gate opening and
+closing respectively that depend on the membrane potential.
+The final channel conductance is computed as::
+
+    Gbar * m^x * h^y ...
+
+where m, n are the fraction of open gates of different types and x,
+y are the number of such gates in each channel. We can define the
+channel by specifying the alpha and beta parameters as functions of
+membrane potential and the exponents for each gate.
+The number gates is commonly one or two.
+
+Gate opening/closing rates have the form::
+
+    y(x) = (A + B * x) / (C + exp((x + D) / F))
+
+where x is membrane voltage and y is the rate parameter for gate
+closing or opening.
+    """
+
     simtime = 0.1
     simdt = 0.25e-5
     plotdt = 0.25e-3
@@ -260,7 +262,9 @@ if __name__ == '__main__':
     plt.plot(ts, current * 1e9, label='current (nA)')
     plt.legend()
     plt.show()
-    
 
-# 
+if __name__ == '__main__':
+    main()
+
+#
 # ionchannel.py ends here

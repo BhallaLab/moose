@@ -1,51 +1,51 @@
-# nsdf.py --- 
-# 
+# nsdf.py ---
+#
 # Filename: nsdf.py
-# Description: 
+# Description:
 # Author: subha
-# Maintainer: 
+# Maintainer:
 # Created: Fri Jun 26 12:23:07 2015 (-0400)
-# Version: 
+# Version:
 # Last-Updated: Tue Dec 29 12:50:27 2015 (-0500)
 #           By: Subhasis Ray
 #     Update #: 6
-# URL: 
-# Keywords: 
-# Compatibility: 
-# 
-# 
+# URL:
+# Keywords:
+# Compatibility:
+#
+#
 
-# Commentary: 
-# 
-# 
-# 
-# 
+# Commentary:
+#
+#
+#
+#
 
 # Change log:
-# 
-# 
-# 
-# 
+#
+#
+#
+#
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
 # published by the Free Software Foundation; either version 3, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program; see the file COPYING.  If not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 # Floor, Boston, MA 02110-1301, USA.
-# 
-# 
+#
+#
 
 # Code:
-"""NSDF : Neuroscience Simulation Data Format
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+"""
+NSDF : Neuroscience Simulation Data Format
 
 NSDF is an HDF5 based format for storing data from neuroscience
 simulation.
@@ -85,15 +85,13 @@ implemented in NSDFWriter. But units can be easily added as dataset
 attribute if desired as shown in this example.
 
 
-References: 
+References:
 
 Ray, Chintaluri, Bhalla and Wojcik. NSDF: Neuroscience Simulation Data
 Format, Neuroinformatics, 2015.
 
 http://nsdf.readthedocs.org/en/latest/
 
-See also:
-nsdf_vec.py
 """
 
 import numpy as np
@@ -103,7 +101,8 @@ import getpass
 import moose
 
 def setup_model():
-    """Setup a dummy model with a PulseGen and a SpikeGen. The SpikeGen
+    """
+    Setup a dummy model with a PulseGen and a SpikeGen. The SpikeGen
     detects the leading edges of the pulses created by the PulseGen
     and sends out the event times. We record the PulseGen outputValue
     as Uniform data and leading edge time as Event data in the NSDF
@@ -151,7 +150,7 @@ def setup_model():
 this simulation we generate square pules from a PulseGen object and
 use a SpikeGen to detect the threshold crossing events of rising
 edges. We store the pulsegen output as Uniform data and the threshold
-crossing times as Event data. '''    
+crossing times as Event data. '''
     nsdf.stringAttr['creator'] = getpass.getuser()
     nsdf.stringVecAttr['software'] = ['python2.7', 'moose3' ]
     nsdf.stringVecAttr['method'] = ['']
@@ -162,14 +161,15 @@ crossing times as Event data. '''
     nsdf.stringAttr['/data/uniform/PulseGen/outputValue/tunit'] = 's'
     nsdf.stringAttr['/data/uniform/PulseGen/outputValue/unit'] = 'A'
     eventDataPath = '/data/event/SpikeGen/spikeOut/{}_{}_{}/unit'.format(t_lead.vec.value,
-                                                                         t_lead.getDataIndex(), 
+                                                                         t_lead.getDataIndex(),
                                                                          t_lead.fieldIndex)
     nsdf.stringAttr[eventDataPath] = 's'
 
-
-if __name__ == '__main__':
+def main():
     setup_model()
 
+if __name__ == '__main__':
+    main()
 
-# 
+#
 # nsdf.py ends here
