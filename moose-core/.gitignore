@@ -58,7 +58,7 @@ tags
 *.i*86
 *.x86_64
 *.hex
-moose
+/moose
 
 CMakeCache.txt
 CMakeFiles
@@ -132,3 +132,4 @@ Session.vim
 *~
 *.clean
 
+/VERSION

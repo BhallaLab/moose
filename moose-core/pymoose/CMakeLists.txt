@@ -43,10 +43,10 @@ set_target_properties(_moose PROPERTIES
     SUFFIX ".so"
     )
 
-#if(NOT(PYTHON_SO_EXTENSION STREQUAL ""))
-#    set_target_properties(_moose PROPERTIES
-#    SUFFIX ${PYTHON_SO_EXTENSION})
-#endif()
+if(NOT(PYTHON_SO_EXTENSION STREQUAL ""))
+    set_target_properties(_moose PROPERTIES
+    SUFFIX ${PYTHON_SO_EXTENSION})
+endif()
 
 # see issue #80
 if(HDF5_LIBRARY_DIRS)

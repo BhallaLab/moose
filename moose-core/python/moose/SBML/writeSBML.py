@@ -23,7 +23,7 @@ import re
 from collections import Counter
 
 import moose
-from validation import validateModel
+from .validation import validateModel
 from moose.chemUtil.chemConnectUtil import *
 from moose.chemUtil.graphUtils import *
 
