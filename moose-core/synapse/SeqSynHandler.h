@@ -58,8 +58,10 @@ class SeqSynHandler: public SynHandlerBase
 		void setResponseScale( double v );
  		double getResponseScale() const;
  		double getSeqActivation() const; // summed activation of syn chan
-		void setWeightScale( double v );
- 		double getWeightScale() const;
+		void setPlasticityScale( double v );
+ 		double getPlasticityScale() const;
+		void setSequencePower( double v );
+ 		double getSequencePower() const;
  		vector< double > getWeightScaleVec() const;
  		vector< double > getKernel() const;
  		vector< double > getHistory() const;
@@ -91,6 +93,15 @@ class SeqSynHandler: public SynHandlerBase
 		double responseScale_; 
 		// Scaling factor for weight changes in each synapse from response
 		double weightScale_;
+
+		/**
+		 * Exponent to use for the outcome of the sequential calculations.
+		 * This is needed because linear summation of terms in the kernel
+		 * means that a brief stong sequence match is no better than lots
+		 * of successive low matches. In other words, 12345 is no better
+		 * than 11111.
+		 */
+		double sequencePower_;
 
 		///////////////////////////////////////////
 		// Some readonly fields

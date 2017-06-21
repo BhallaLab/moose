@@ -215,11 +215,14 @@ void SparseMsg::updateAfterFill()
 {
 	unsigned int startData = e2_->localDataStart();
 	unsigned int endData = startData + e2_->numLocalData();
-	for ( unsigned int i = 0; i < matrix_.nRows(); ++ i ) {
-		const unsigned int* colIndex;
-		const unsigned int* entry;
-		unsigned int num = matrix_.getRow( i, &entry, &colIndex );
+	SparseMatrix< unsigned int > temp( matrix_);
+	temp.transpose();
+	for ( unsigned int i = 0; i < temp.nRows(); ++ i ) {
 		if ( i >= startData && i < endData ) {
+			const unsigned int* colIndex;
+			const unsigned int* entry;
+			// SparseMatrix::getRow returns # of entries.
+			unsigned int num = temp.getRow( i, &entry, &colIndex );
 			e2_->resizeField( i - startData, num );
 		}
 	}

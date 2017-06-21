@@ -52,7 +52,11 @@ ReadSwc::ReadSwc( const string& fname )
 		cleanZeroLength();
 		parseBranches();
 	}
-	cout << "ReadSwc: " << fname << "	: NumSegs = " << segs_.size() << 
+	if ( verbose || !valid || (badSegs > 0) )
+		cout << "ReadSwc: " << fname << 
+			"	: " << (valid ? "OK" : "FAILED" )<<
+			", # Branches = " << branches_.size() << 
+			". # Segs = " << segs_.size() << 
 			", bad = " << badSegs <<
 			", Validated = " << valid << 
 			", numBranches = " << branches_.size() << 

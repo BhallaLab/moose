@@ -459,6 +459,8 @@ def createReaction(model, specInfoMap, modelAnnotaInfo, globparameterIdValue):
     for ritem in range(0, model.getNumReactions()):
         reactionCreated = False
         groupName = ""
+        rName = ""
+        rId = ""
         reac = model.getReaction(ritem)
         if (reac.isSetId()):
             rId = reac.getId()

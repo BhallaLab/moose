@@ -316,7 +316,7 @@ PyObject * moose_DestField_call(PyObject * self, PyObject * args,
         PyObject * arg = PyTuple_GetItem(args, ii);
         Py_INCREF(arg);
         PyTuple_SetItem(newargs, ii+1, arg);
-        Py_DECREF(arg);
+        // Py_DECREF(arg);
     }
     // Call ObjId._setDestField with the new arguments
     PyObject * ret = moose_ObjId_setDestField(((_Field*)self)->owner, newargs);

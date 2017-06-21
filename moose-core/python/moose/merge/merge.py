@@ -30,9 +30,40 @@ import mtypes
 
 from moose.chemUtil.chemConnectUtil import *
 from moose.chemUtil.graphUtils import *
+from moose.genesis import mooseWriteKkit
 
 def mergeChemModel(A,B):
     """ Merges two model or the path """
+    A = src
+    B = des
+    loadedA = False
+    loadedB = False
+    modelA = moose.element('/')
+    modelB = moose.element('/')
+
+    if os.path.isfile(A):
+        modelA,loadedA = loadModels(A)
+
+    elif moose.exists(A):
+        modelA = A
+        loadedA = True
+    else:
+        print ("%s path or file doesnot exists. Mergering will exist" % (A))
+        exit(0)
+
+    if os.path.isfile(B):
+        modelB,loadedB = loadModels(B)
+    elif moose.exists(B):
+        modelB = B
+        loadedB = True
+    else:
+        print ("%s path or file doesnot exists. Mergering will exist " % (B))
+        exit(0)
+
+    if loadedA and loadedB:
+        ## yet deleteSolver is called to make sure all the moose object are off from solver
+        deleteSolver(modelA) 
+        deleteSolver(modelB)
 
     modelA,loadedA = loadModels(A)
     modelB,loadedB = loadModels(B)
@@ -84,14 +115,19 @@ def mergeChemModel(A,B):
             funcNotallowed = []
             funcNotallowed = functionMerge(dictComptA,dictComptB,key)
             
-            poolListina = updatePoolList(dictComptA)
-            R_Duplicated,R_Notcopiedyet,R_Daggling = reacMerge(dictComptA,dictComptB,key,poolListina)
-
-            poolListina = updatePoolList(dictComptA)
-            E_Duplicated,E_Notcopiedyet,E_Daggling = enzymeMerge(dictComptA,dictComptB,key,poolListina)
-        
-        print("\n Model is merged to %s" %modelA)
-        
+            poolListinb = updatePoolList(dictComptB)
+            R_Duplicated,R_Notcopiedyet,R_Daggling = reacMerge(dictComptB,dictComptA,key,poolListinb)
+            
+            poolListinb = updatePoolList(dictComptB)
+            E_Duplicated,E_Notcopiedyet,E_Daggling = enzymeMerge(dictComptB,dictComptA,key,poolListinb)
+        spath, sfile = os.path.split(src)
+        dpath, dfile = os.path.split(des)
+        print("\nThe content of %s (src) model is merged to %s (des)." %(sfile, dfile))
+        # Here any error or warning during Merge is written it down
+        if funcExist:
+            print( "\nIn model \"%s\" pool already has connection from a function, these function from model \"%s\" is not allowed to connect to same pool,\n since no two function are allowed to connect to same pool:"%(dfile, sfile))
+            for fl in list(funcExist):
+                print("\t [Pool]:  %s [Function]:  %s \n" %(str(fl.parent.name), str(fl.path)))
         if funcNotallowed:
             print( "\nPool already connected to a function, this function is not to connect to same pool, since no two function are allowed to connect to same pool:")
             for fl in list(funcNotallowed):
@@ -133,8 +169,34 @@ def mergeChemModel(A,B):
             if E_Daggling:
                 print ("Enzyme:")
                 for ed in list(E_Daggling):
-                    print ("%s " %str(ed.name))             
-
+                    print ("%s " %str(ed.name))
+        ## Model is saved
+        print ("\n ")
+        savemodel = raw_input("Do you want to save the model?  \"YES\" \"NO\" ")
+        if savemodel.lower() == 'yes' or savemodel.lower() == 'y':
+            mergeto = raw_input("Enter File name ")
+            if mergeto and mergeto.strip():
+                filenameto = 'merge.g'
+            else:
+                if str(mergeto).rfind('.') != -1:
+                    mergeto = mergeto[:str(mergeto).rfind('.')]
+                if str(mergeto).rfind('/'):
+                    mergeto = mergeto+'merge'
+                
+                filenameto = mergeto+'.g'
+            
+            error,written = moose.mooseWriteKkit(modelB, filenameto)
+            if written == False:
+                print('Could not save the Model, check the files')
+            else:
+                if error == "":
+                    print(" \n The merged model is saved into \'%s\' " %(filenameto))
+                else:
+                    print('Model is saved but these are not written\n %s' %(error))
+        else:
+            print ('\nMerged model is available under moose.element(\'%s\')' %(modelB))
+            print ('  If you are in python terminal you could save \n   >moose.mooseWriteKkit(\'%s\',\'filename.g\')' %(modelB))
+        
 def functionMerge(comptA,comptB,key):
     funcNotallowed = []
     comptApath = moose.element(comptA[key]).path
@@ -233,7 +295,9 @@ def loadModels(filename):
         modeltype = mtypes.getType(filename)
         subtype = mtypes.getSubtype(filename, modeltype)
         if subtype == 'kkit' or modeltype == "cspace":
-            moose.loadModel(filename,modelpath)
+            if moose.exists(modelpath):
+                moose.delete(modelpath)
+            moose.loadModel(filepath,modelpath)
             loaded = True    
     
         elif subtype == 'sbml':
@@ -603,7 +667,40 @@ def mooseIsInstance(element, classNames):
 
 
 if __name__ == "__main__":
-
-    modelA = '/home/harsha/genesis_files/gfile/acc92.g'
-    modelB = '/home/harsha/genesis_files/gfile/acc50.g'
-    mergered = mergeChemModel(modelA,modelB)
+    try:
+        sys.argv[1]
+    except IndexError:
+        print("Source filename or path not given")
+        exit(0)
+    else:
+        src = sys.argv[1]
+        if not os.path.exists(src):
+            print("Filename or path does not exist",src)
+        else:
+            try:
+                sys.argv[2]
+            except IndexError:
+                print("Destination filename or path not given")
+                exit(0)
+            else:
+                des = sys.argv[2]
+                if not os.path.exists(src):
+                    print("Filename or path does not exist",des)
+                    exit(0)
+                else:
+                    mergered = mergeChemModel(src,des)
+                '''
+                try:
+                    sys.argv[3]
+                except IndexError:
+                    print ("Merge to save not specified")
+                    mergeto = "merge"
+                else:
+                    mergeto = sys.argv[3]
+                    if str(mergeto).rfind('.') != -1:
+                        mergeto = mergeto[:str(mergeto).rfind('.')]
+                    if str(mergeto).rfind('/'):
+                        mergeto = mergeto+'merge'
+                    
+                    mergered = mergeChemModel(src,des,mergeto)
+                '''
