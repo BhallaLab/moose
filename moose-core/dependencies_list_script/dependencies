@@ -1,0 +1,19 @@
+# AUTHOR    : AVIRAL GOEL
+# EMAIL-ID  : 
+
+# MOOSE Dependencies
+libgsl0-dev
+libgsl0ldbl
+libhdf5-dev
+libxml2-dev
+
+# GUI Dependencies
+#If one needs MOOSE GUI, install below mentioned libraries else comment
+libqt4-dev
+python-qt4-dev
+
+# MOOGLI Dependencies
+#If one needs MOOGLI, install below mentioned libraries else comment
+libopenscenegraph-dev
+python-sip-dev
+python-qt4-gl

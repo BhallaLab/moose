@@ -1,0 +1,40 @@
+/* This script sets up current injection on apical[90] section,
+corresponding to that between nodes 200 (-3.061, 56.39, -3.12) and 204
+(-32.910 128.5 -3.12) in the swc file.  */
+
+load_file("nrngui.hoc")
+load_file("stdrun.hoc")
+load_file("h10.CNG.hoc")
+
+objectvar stim, fd, vec_v_apical_90, vec_v_soma, vec_t
+
+secondorder=2
+dt = 0.025    // ms
+celsius=30
+v_init=-70.0  // mV
+
+apic[90] {
+    stim = new IClamp(0.5)
+    stim.amp = 1e-3    // nA
+    stim.del = 20.0 // ms
+    stim.dur = 10.0 // ms
+}
+
+vec_t = new Vector()
+vec_v_apical_90 = new Vector()
+vec_v_soma = new Vector()
+apic[90] vec_v_apical_90.record(&v(0.5))
+soma[1] vec_v_soma.record(&v(0.5))
+vec_t.record(&t)
+
+tstop = 100
+run()
+
+fd = new File()
+fd.wopen("h10.CNG.nrn.txt")
+for ii = 0, vec_t.size() - 1 {
+    fd.printf("%g %g %g\n", vec_t.x(ii), vec_v_soma.x(ii), vec_v_apical_90.x(ii))
+}
+fd.close()
+
+

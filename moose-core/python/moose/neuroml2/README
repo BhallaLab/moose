@@ -1,0 +1,21 @@
+NeuroML2 is a moving target and the current parser was generated from
+the schema publicly available on Jul 28 10:18:38 2013 using the
+generateDS.py module.
+
+This is broken with respect to NeuroML_v2beta3. Morphology loading
+works, but ion channels are not visible in the parsed document. This
+version of NeuroML2 has a mix of ionChannel and ionChannelHH and from
+the comments in the schema the situation seems to be inconsistent.
+
+You can install generateDS.py and generate the Python wrappers for the
+latest schema as follows:
+
+generateDS.py -o generated_neuroml.py -s generated_neuromlsub.py ~/src/neuroml_dev/NeuroML2/Schemas/NeuroML2/NeuroML_v2beta.xsd
+
+Replace the last argument with the path to NeurML xsd.
+
+The other python files in this directory were hand-coded. So you may
+need to tweak them in case NeuroML2 has some incompatible changes or
+adds new types.
+
+- Subhasis Ray, 2016-04-17
