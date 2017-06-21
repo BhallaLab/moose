@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<neuroml xmlns="http://morphml.org/neuroml/schema" xmlns:meta="http://morphml.org/metadata/schema" xmlns:mml="http://morphml.org/morphml/schema" xmlns:bio="http://morphml.org/biophysics/schema" xmlns:cml="http://morphml.org/channelml/schema" xmlns:net="http://morphml.org/networkml/schema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://morphml.org/neuroml/schema  http://neuroml.svn.sourceforge.net/viewvc/neuroml/trunk/web/NeuroMLFiles/Schemata/v1.8.1/Level3/NeuroML_Level3_v1.8.1.xsd" lengthUnits="micron">
+
+    <cells>
+        <cell name="LIF">
+
+            <meta:notes> Aditya Gilra: sample leaky integrate-and-fire neuron.</meta:notes>
+
+            <segments  xmlns="http://morphml.org/morphml/schema"> <!-- Changing the namespace from neuroml to morphml-->
+            <!-- Section: soma -->
+              <segment id="0" name = "soma" cable = "0">
+                <proximal x="0" y="0" z="0" diameter="32"/>
+                <distal x="32" y="0" z="0" diameter="32"/>
+                <!-- area of soma A = 3.217e-9 m^2-->
+              </segment>
+            </segments>
+      
+            <!--Adding the biophysical parameters-->
+
+            <biophysics units="SI Units">
+                <bio:mechanism name="pas" type="Channel Mechanism" passive_conductance="true">
+                    <!-- RM is set to give RM/A = Rm = 9644789647.82 Ohms using somatic A and Rm for Cerebellar Granule Cell 1998 -->
+                    <bio:parameter name="gmax" value="31">
+                      <bio:group>all</bio:group>
+                    </bio:parameter>
+                    <bio:parameter name="e" value="-0.065">
+                      <bio:group>all</bio:group>
+                    </bio:parameter>
+                </bio:mechanism>
+
+                <bio:mechanism name="IaF" type="Channel Mechanism">
+                    <!-- setting Rm, Cm, Em, etc to match the Cerebellar Granule Cell 1998
+                        which we compared against for type 1 vs type 2 behaviour. -->
+                    <!--<bio:parameter name="Cm" value="3.14159e-12"/>
+                    <bio:parameter name="Rm" value="9644789647.82"/>
+                    <bio:parameter name="Em" value="-0.065"/>-->
+                    <bio:parameter name="v_reset" value="-0.070">
+                        <bio:group>all</bio:group>
+                    </bio:parameter>
+                    <bio:parameter name="threshold" value="-0.045">
+                        <bio:group>all</bio:group>
+                    </bio:parameter>
+                    <bio:parameter name="t_refrac" value="0.005">
+                        <bio:group>all</bio:group>
+                    </bio:parameter>
+                </bio:mechanism>
+
+                <!-- capacitance and axial resistance and init_memb_potential
+                must be at the very end! Order of these three is important! -->
+                <bio:spec_capacitance>
+                <!-- CM set to give CM*A = Cm = 3.14159e-12 Farads using somatic A and Cm for Cerebellar Granule Cell 1998 -->
+                <!-- Then CM=0.001 which gives too high a firing rate, so setting it to 10.0 -->
+                <bio:parameter value="10.0">
+                  <bio:group>all</bio:group>
+                </bio:parameter>
+                </bio:spec_capacitance>
+                <bio:spec_axial_resistance>
+                <bio:parameter value="0.2">  <!-- Not functional as this is a single compartment neuron -->
+                  <bio:group>all</bio:group>
+                </bio:parameter>
+                </bio:spec_axial_resistance>
+                <bio:init_memb_potential>
+                <bio:parameter value="-0.065">  
+                  <bio:group>all</bio:group>
+                </bio:parameter>
+                </bio:init_memb_potential>
+
+            </biophysics>
+
+        </cell>
+    </cells>
+</neuroml>

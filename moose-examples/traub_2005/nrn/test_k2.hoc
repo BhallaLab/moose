@@ -1,0 +1,29 @@
+load_file("nrngui.hoc")
+// PI=3.141592
+FARADAY=96485
+secondorder=0
+celsius=30
+dt = 1e-3
+v_init = -65.0
+Dt = 1e-2
+tstop = 350 // ms 
+
+load_file("testutils.hoc")
+
+objref testcomp, vvec, gvec, tvec, vfile, gfile
+
+testcomp = new singlecomp()
+
+testcomp.setup_channel("k2", 1e-9)
+
+// (50 ms start positive current, 150 ms stop positive current, 200
+// ms start negative current, 300 ms stop negative current 350 ms stop
+// simulation)
+
+testcomp.setup_recording("k2", Dt)
+run()
+testcomp.save_data("K2", Dt)
+
+quit()
+
+
