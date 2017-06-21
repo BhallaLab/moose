@@ -1,5 +1,0 @@
-cmake_minimum_required(VERSION 2.8)
-include_directories( ../basecode ../utility ../kinetics)
-include_directories( ../external/muparser/include/ )
-file(GLOB SYNAPSE_SRCS *.cpp)
-add_library(synapse ${SYNAPSE_SRCS} )
