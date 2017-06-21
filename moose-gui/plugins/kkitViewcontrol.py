@@ -10,9 +10,9 @@ from moose import utils
 
 class GraphicalView(QtGui.QGraphicsView):
 
-    def __init__(self, modelRoot,parent,border,layoutPt,createdItem,minmaxratio):
+    def __init__(self, modelRoot,parent,border,layoutPt,createdItem):
         QtGui.QGraphicsView.__init__(self,parent)
-        self.minmaxratioDict = minmaxratio
+        
         self.state = None
         self.move  = False
         self.resetState()
@@ -99,7 +99,6 @@ class GraphicalView(QtGui.QGraphicsView):
                     return (item, ITEM)
                 if item.name == COMPARTMENT:
                     solution = (item, self.resolveCompartmentInteriorAndBoundary(item, position))
-
         if solution is None:
             return (None, EMPTY)
         return solution
@@ -171,15 +170,29 @@ class GraphicalView(QtGui.QGraphicsView):
                         iInfo = itemPath+'/info'
                         anno = moose.Annotator(iInfo)
                         modelAnno = moose.Annotator(self.modelRoot+'/info')
+                        x = item.parent().scenePos().x()/self.layoutPt.defaultScenewidth
+                        y = item.parent().scenePos().y()/self.layoutPt.defaultSceneheight
+                        anno.x = x
+                        anno.y = y
+                        '''
                         if modelAnno.modeltype == "kkit":
-                            x = ((self.mapToScene(event.pos()).x())+(self.minmaxratioDict['xmin']*self.minmaxratioDict['xratio']))/self.minmaxratioDict['xratio']
-                            y = (1.0 - self.mapToScene(event.pos()).y()+(self.minmaxratioDict['ymin']*self.minmaxratioDict['yratio']))/self.minmaxratioDict['yratio']
+                            # x = ((self.mapToScene(event.pos()).x())+(self.minmaxratioDict['xmin']*self.minmaxratioDict['xratio']))/self.minmaxratioDict['xratio']
+                            # y = (1.0 - self.mapToScene(event.pos()).y()+(self.minmaxratioDict['ymin']*self.minmaxratioDict['yratio']))/self.minmaxratioDict['yratio']
+                            # anno.x = x
+                            # anno.y = y
+                            print " kvc CONNECTOR ",item.parent().mobj, displacement.x(), " y ",displacement.y()
+                            print "scenePos CONNECTOR",item.parent().scenePos().x(),item.parent().scenePos().y(), 
+                            print "dive x ",item.parent().scenePos().x()/1000, " y ",item.parent().scenePos().y()/500
+                            #item.parent().update()
+                            #self.updateScale(1)
+                            x = item.parent().scenePos().x()/1000
+                            y = item.parent().scenePos().y()/500
                             anno.x = x
                             anno.y = y
                         elif(modelAnno.modeltype == "new_kkit" or modelAnno.modeltype == "sbml" or modelAnno.modeltype == "cspace"):
                             anno.x = self.mapToScene(event.pos()).x()
                             anno.y = self.mapToScene(event.pos()).y()
-                
+                        '''
                 #if not isinstance(item.parent(),FuncItem) and not isinstance(item.parent(),CplxItem):
                 if not isinstance(item.parent(),CplxItem):
                     self.removeConnector()
@@ -1102,17 +1115,28 @@ class GraphicalView(QtGui.QGraphicsView):
         if ( isinstance(moose.element(src),PoolBase) and ( (isinstance(moose.element(des),ReacBase) ) or isinstance(moose.element(des),EnzBase) )):
             #If one to tries to connect pool to Reac/Enz (substrate to Reac/Enz), check if already (product to Reac/Enz) exist.
             #If exist then connection not allowed one need to delete the msg and try connecting back.
-            found = False
+            #And in moose Enzyme can't have 2nd order reaction.
+            founds, foundp = False,False
+            
+            if isinstance(moose.element(des),EnzBase):
+                print moose.element(des).neighbors["subOut"]
+                if len(moose.element(des).neighbors["subOut"]) > 0:
+                    founds = True
+                
             for msg in des.msgOut:
                 if moose.element(msg.e2.path) == src:
                     if msg.srcFieldsOnE1[0] == "prdOut":
-                        found = True 
-            if found == False:
+                        foundp = True 
+            
+            if foundp == False and founds == False:
                 # moose.connect(src, 'reac', des, 'sub', 'OneToOne')
                 moose.connect(des, 'sub', src, 'reac', 'OneToOne')
-            else:
+            elif foundp:
                 srcdesString = srcClass+' is already connected as '+ '\'Product\''+' to '+desClass +' \n \nIf you wish to connect this object then first delete the exist connection'
                 QtGui.QMessageBox.information(None,'Connection Not possible','{srcdesString}'.format(srcdesString = srcdesString),QtGui.QMessageBox.Ok)
+            elif founds:
+                srcdesString = desClass+' has already connected to a'+ '\'Substrate\''+' \n \nIn moose Enzyme\'s can not have second order reaction. If you wish to connect this object then first delete the exist connection'
+                QtGui.QMessageBox.information(None,'Connection Not possible','{srcdesString}'.format(srcdesString = srcdesString),QtGui.QMessageBox.Ok)    
                        
         elif (isinstance (moose.element(src),PoolBase) and (isinstance(moose.element(des),Function))):
             numVariables = des.numVars
@@ -1153,15 +1177,22 @@ class GraphicalView(QtGui.QGraphicsView):
             ):
                 moose.connect(src, 'valueOut', des, 'setNumKf', 'OneToOne')
         elif (((isinstance(moose.element(src),ReacBase))or (isinstance(moose.element(src),EnzBase))) and (isinstance(moose.element(des),PoolBase))):
-            found = False
+            founds,foundp = False,False
+            if isinstance(moose.element(src),EnzBase):
+                if len(moose.element(src).neighbors["prdOut"]) > 0:
+                    foundp = True
+  
             for msg in src.msgOut:
                 if moose.element(msg.e2.path) == des:
                     if msg.srcFieldsOnE1[0] == "subOut":
-                        found = True 
-            if found == False:
+                        founds = True 
+            if founds == False and foundp == False:
                 #moose.connect(src, 'prd', des, 'reac', 'OneToOne')
-                moose.connect(src, 'prd', des, 'reac', 'OneToOne')    
-            else:
+                moose.connect(src, 'prd', des, 'reac', 'OneToOne')
+            elif foundp:
+                srcdesString = srcClass+' is already connected as '+ '\'Product\''+' to '+desClass +' \n \nIn moose Enzyme\'s can not have second order reaction. If you wish to connect this object then first delete the exist connection'
+                QtGui.QMessageBox.information(None,'Connection Not possible','{srcdesString}'.format(srcdesString = srcdesString),QtGui.QMessageBox.Ok)
+            elif founds:
                 srcdesString = desClass+' is already connected as '+'\'Substrate\''+' to '+srcClass +' \n \nIf you wish to connect this object then first delete the exist connection'
                 QtGui.QMessageBox.information(None,'Connection Not possible','{srcdesString}'.format(srcdesString = srcdesString),QtGui.QMessageBox.Ok)
         # elif( isinstance(moose.element(src),ReacBase) and (isinstance(moose.element(des),PoolBase) ) ):

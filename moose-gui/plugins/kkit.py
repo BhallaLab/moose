@@ -1,3 +1,13 @@
+
+__author__      =   "HarshaRani"
+__credits__     =   ["Upi Lab"]
+__license__     =   "GPL3"
+__version__     =   "1.0.0"
+__maintainer__  =   "HarshaRani"
+__email__       =   "hrani@ncbs.res.in"
+__status__      =   "Development"
+__updated__     =   "Mar 7 2017"
+import math
 import sys
 from PyQt4 import QtGui, QtCore, Qt
 from default import *
@@ -20,6 +30,7 @@ from PyQt4.QtGui import QColor
 import RunWidget
 from os.path import expanduser
 from setsolver import *
+
 
 class KkitPlugin(MoosePlugin):
     """Default plugin for MOOSE GUI"""
@@ -89,37 +100,25 @@ class KkitPlugin(MoosePlugin):
             elif filters[str(filter_)] == 'Genesis':
                 mdtype = moose.Annotator(self.modelRoot+'/info')
                 self.coOrdinates = {}
-                xycord = []
-                self.sceneObj = KkitEditorView(self).getCentralWidget().mooseId_GObj
-                #Here get x,y coordinates from the Annotation, to save layout position 
-                # into genesis
-                for k,v in self.sceneObj.items():
+                ss = KkitEditorView(self).getCentralWidget().mooseId_GObj
+                for k,v in ss.items():
                     if moose.exists(moose.element(k).path+'/info'):
                         annoInfo = Annotator(k.path+'/info')
-                        self.coOrdinates[k] = {'x':annoInfo.x, 'y':annoInfo.y}
-                if mdtype.modeltype != "kkit":
-                    #If coordinates come from kkit then directly transfering the co-ordinates 
-                    # else zoomed in factor is applied before saving it to genesis form
-                    for k,v in self.coOrdinates.items():
-                        xycord.append(v['x'])
-                        xycord.append(v['y'])
-                    cmin = min(xycord)
-                    cmax = max(xycord)
-                    for k,v in self.coOrdinates.items():
-                        x = v['x']
-                        xprime = int((20*(float(v['x']-cmin)/float(cmax-cmin)))-10)
-                        v['x'] = xprime
-                        y = v['y']
-                        yprime = int((20*(float(v['y']-cmin)/float(cmax-cmin)))-10)
-                        v['y'] = -yprime
+                        #co-ordinates will be in decimals converting to int which should be b/w 0 to 10
+                        x = annoInfo.x *10
+                        y = -annoInfo.y *10
+                        self.coOrdinates[k] = {'x':x, 'y':y}
 
-                filename = filename
-                writeerror = mooseWriteKkit(self.modelRoot,str(filename),self.coOrdinates)
-                if writeerror == False:
+                error,writen = mooseWriteKkit(self.modelRoot,str(filename),self.coOrdinates)
+                if writen == False:
                     QtGui.QMessageBox.information(None,'Could not save the Model','\nCheck the file')
                 else:
-                    QtGui.QMessageBox.information(None,'Saved the Model','\n File saved to \'{filename}\''.format(filename =filename+'.g'),QtGui.QMessageBox.Ok)
-
+                    if error == "":
+                        QtGui.QMessageBox.information(None,'Saved the Model','\n File saved to \'{filename}\''.format(filename =filename+'.g'),QtGui.QMessageBox.Ok)
+                    else:
+                        status = QtCore.QString("File saved but %2").arg(error);
+                        QtGui.QMessageBox.information(None,'Saved the Model but ...','{error}'.format(error=error),QtGui.QMessageBox.Ok)
+    
     def getPreviousPlugin(self):
         return None
 
@@ -167,13 +166,6 @@ class KkitPlugin(MoosePlugin):
         #schedulingDockWidget.runner.resetAndRun.connect(self.currentRunView.resetColor)
         graphView.layout().addWidget(self.currentRunView,0,0,2,1)
         return self.view
-
-# class AnotherKkitRunViewsCentralWidget(QWidget):
-
-#     def __init__():
-#         QWidget.__init__()
-
-#     def
 
 class AnotherKkitRunView(RunView):
 
@@ -335,22 +327,25 @@ class  KineticsWidget(EditorWidgetBase):
         self.comptPen = 5
         self.iconScale = 1
         self.arrowsize = 2
-        self.defaultComptsize = 5
-        self.noPositionInfo = True
-        self.xyCord             = {}
         self.reset()
-        self.qGraCompt          = {}
-        self.mooseId_GObj       = {}
+
+        self.defaultSceneheight = 500
+        self.defaultScenewidth  = 1000
+        self.positionInfoExist  = True
+        self.defaultComptsize   = 5
         self.srcdesConnection   = {}
+        
+        self.mooseId_GObj       = {}
+        self.qGraCompt          = {}
+        self.xyCord             = {}
         self.editor             = None
-        self.xmin               = 0.0
-        self.xmax               = 1.0
-        self.ymin               = 0.0
-        self.ymax               = 1.0
-        self.xratio             = 1.0
-        self.yratio             = 1.0
-
-
+        # self.xmin               = 0.0
+        # self.xmax               = 1.0
+        # self.ymin               = 0.0
+        # self.ymax               = 1.0
+        # self.xratio             = 1.0
+        # self.yratio             = 1.0
+        
     def reset(self):
         self.createdItem = {}
         #This are created at drawLine
@@ -371,16 +366,16 @@ class  KineticsWidget(EditorWidgetBase):
 
     def updateModelView(self):
         self.getMooseObj()
-        minmaxratiodict = {'xmin':self.xmin,'xmax':self.xmax,'ymin':self.ymin,'ymax':self.ymax,'xratio':self.xratio,'yratio':self.yratio}
+        #minmaxratiodict = {'xmin':self.xmin,'xmax':self.xmax,'ymin':self.ymin,'ymax':self.ymax,'xratio':self.xratio,'yratio':self.yratio}
         if not self.m:
             #At the time of model building
             # when we want an empty GraphicView while creating new model,
             # then remove all the view and add an empty view
             if hasattr(self, 'view') and isinstance(self.view, QtGui.QWidget):
                 self.layout().removeWidget(self.view)
-           #self.sceneContainer.setSceneRect(-self.width()/2,-self.height()/2,self.width(),self.height())
-            self.view = GraphicalView(self.modelRoot,self.sceneContainer,self.border,self,self.createdItem,minmaxratiodict)
-
+            #self.sceneContainer.setSceneRect(-self.width()/2,-self.height()/2,self.width(),self.height())
+            #self.view = GraphicalView(self.modelRoot,self.sceneContainer,self.border,self,self.createdItem,minmaxratiodict)
+            self.view = GraphicalView(self.modelRoot,self.sceneContainer,self.border,self,self.createdItem)
             if isinstance(self,kineticEditorWidget):
                 self.view.setRefWidget("editorView")
                 self.view.setAcceptDrops(True)
@@ -397,7 +392,8 @@ class  KineticsWidget(EditorWidgetBase):
             #self.drawLine_arrow()
             if hasattr(self, 'view') and isinstance(self.view, QtGui.QWidget):
                 self.layout().removeWidget(self.view)
-            self.view = GraphicalView(self.modelRoot,self.sceneContainer,self.border,self,self.createdItem,minmaxratiodict)
+            # self.view = GraphicalView(self.modelRoot,self.sceneContainer,self.border,self,self.createdItem,minmaxratiodict)
+            self.view = GraphicalView(self.modelRoot,self.sceneContainer,self.border,self,self.createdItem)
             if isinstance(self,kineticEditorWidget):
                 #self.getMooseObj()
                 self.mooseObjOntoscene()
@@ -422,44 +418,23 @@ class  KineticsWidget(EditorWidgetBase):
         # setupItem
         self.m = wildcardFind(self.modelRoot+'/##[ISA=ChemCompt]')
         if self.m:
-            # self.xmin = 0.0
-            # self.xmax = 1.0
-            # self.ymin = 0.0
-            # self.ymax = 1.0
-            self.autoCordinatepos = {}
             self.srcdesConnection = {}
-
             #self.meshEntry.clear= {}
             # Compartment and its members are setup
-            self.meshEntry,self.xmin,self.xmax,self.ymin,self.ymax,self.noPositionInfo = setupMeshObj(self.modelRoot)
-            self.autocoordinates = False
+            #self.meshEntry,self.xmin,self.xmax,self.ymin,self.ymax,self.noPositionInfo = setupMeshObj(self.modelRoot)
+
+            self.meshEntry,xcord,ycord = setupMeshObj(self.modelRoot)
+            self.positionInfoExist = not(len(np.nonzero(xcord)[0]) == 0 \
+                                     and len(np.nonzero(ycord)[0]) == 0)
+            
             if self.srcdesConnection:
                 self.srcdesConnection.clear()
             else:
                 self.srcdesConnection = {}
             setupItem(self.modelRoot,self.srcdesConnection)
-            if not self.noPositionInfo:
-                self.autocoordinates = True
-
-                self.xmin,self.xmax,self.ymin,self.ymax,self.autoCordinatepos = autoCoordinates(self.meshEntry,self.srcdesConnection)
-            # TODO: size will be dummy at this point, but size I need the availiable size from the Gui
-            self.size= QtCore.QSize(1000 ,550)
-
-            if self.xmax-self.xmin != 0:
-                self.xratio = (self.size.width()-10)/(self.xmax-self.xmin)
-            else: self.xratio = self.size.width()-10
-
-            if self.ymax-self.ymin:
-                self.yratio = (self.size.height()-10)/(self.ymax-self.ymin)
-            else: self.yratio = (self.size.height()-10)
-            
-            self.xratio = int(self.xratio)
-            self.yratio = int(self.yratio)
-            if self.xratio == 0:
-                self.xratio = 1
-            if self.yratio == 0:
-                self.yratio = 1
-            
+            if not self.positionInfoExist:
+                autoCoordinates(self.meshEntry,self.srcdesConnection)
+                                    
     def sizeHint(self):
         return QtCore.QSize(800,400)
 
@@ -561,7 +536,6 @@ class  KineticsWidget(EditorWidgetBase):
 
         # compartment's rectangle size is calculated depending on children
         self.comptChilrenBoundingRect()
-        
 
     def comptChilrenBoundingRect(self):
         for k, v in self.qGraCompt.items():
@@ -582,6 +556,11 @@ class  KineticsWidget(EditorWidgetBase):
         #    we are not using these colors for displaying the object so just passing dummy color white
         if( objClass == "reaction"  or objClass == "cplx" or objClass == "Function" or objClass == "StimulusTable"):
             textcolor,bgcolor = QColor("white"),QColor("white")
+        elif(objClass == "enzyme"):
+            textcolor,bgcolor = getColor(info)
+            if bgcolor.name() == "#ffffff" or bgcolor == "white":
+                bgcolor = getRandColor()
+                Annoinfo.color = str(bgcolor.name())
         else:
             textcolor,bgcolor = getColor(info)
             if bgcolor.name() == "#ffffff" or bgcolor == "white":
@@ -616,31 +595,13 @@ class  KineticsWidget(EditorWidgetBase):
         #Annoinfo.y = ypos
 
     def positioninfo(self,iteminfo):
-        Anno = moose.Annotator(self.modelRoot+'/info')
-        if not self.noPositionInfo:
-            try:
-                # kkit does exist item's/info which up querying for parent.path gives the information of item's parent
-                x,y = self.autoCordinatepos[(element(iteminfo).parent).path]
-            except:
-                # But in Cspace reader doesn't create item's/info, up on querying gives me the error which need to change\
-                # in ReadCspace.cpp, at present i am taking care b'cos i don't want to pass just the item where I need to check\
-                # type of the object (rea,pool,enz,cplx,tab) which I have already done.
-                parent, child = posixpath.split(iteminfo)
-                x,y = self.autoCordinatepos[parent]
-            ypos = (y-self.ymin)*self.yratio
-        else:
-            x = float(element(iteminfo).getField('x'))
-            y = float(element(iteminfo).getField('y'))
-            #Qt origin is at the top-left corner. The x values increase to the right and the y values increase downwards \
-            #as compared to Genesis codinates where origin is center and y value is upwards, that is why ypos is negated
-            # if Anno.modeltype == "kkit":
-            #     ypos = 1.0-(y-self.ymin)*self.yratio
-            # else:
-            #     ypos = (y-self.ymin)*self.yratio
-            ypos = 1.0 - (y-self.ymin)*self.yratio
-        xpos = (x-self.xmin)*self.xratio
-        return(xpos,ypos)
-
+        '''By this time, model loaded from kkit,cspace,SBML would have info field created and co-ordinates are added
+            either by autocoordinates (for cspace,SBML(unless it is not saved from moose)) or from kkit
+        '''
+        x = self.defaultScenewidth * float(element(iteminfo).getField('x'))
+        y = self.defaultSceneheight *float(element(iteminfo).getField('y'))    
+        return(x,y)
+        
     def drawLine_arrow(self, itemignoreZooming=False):
         for inn,out in self.srcdesConnection.items():
             #print "inn ",inn, " out ",out

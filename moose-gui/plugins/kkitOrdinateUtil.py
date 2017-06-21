@@ -1,13 +1,5 @@
 from moose import *
 import numpy as np
-import networkx as nx
-from collections import Counter
-
-def xyPosition(objInfo,xory):
-    try:
-        return(float(element(objInfo).getField(xory)))
-    except ValueError:
-        return (float(0))
 
 def setupMeshObj(modelRoot):
     ''' Setup compartment and its members pool,reaction,enz cplx under self.meshEntry dictionaries \ 
@@ -15,11 +7,6 @@ def setupMeshObj(modelRoot):
     value is key2:list where key2 represents moose object type,list of objects of a perticular type
     e.g self.meshEntry[meshEnt] = { 'reaction': reaction_list,'enzyme':enzyme_list,'pool':poollist,'cplx': cplxlist }
     '''
-    xmin = 0.0
-    xmax = 1.0
-    ymin = 0.0
-    ymax = 1.0
-    positionInfoExist = True
     meshEntry = {}
     if meshEntry:
         meshEntry.clear()
@@ -47,17 +34,8 @@ def setupMeshObj(modelRoot):
             for m in mol_cpl:
                 if isinstance(element(m.parent),CplxEnzBase):
                     cplxlist.append(m)
-                    objInfo = m.parent.path+'/info'
                 elif isinstance(element(m),moose.PoolBase):
                     mollist.append(m)
-                    objInfo =m.path+'/info'
-                xcord.append(xyPosition(objInfo,'x'))
-                ycord.append(xyPosition(objInfo,'y')) 
-
-            getxyCord(xcord,ycord,funclist)
-            getxyCord(xcord,ycord,enzlist)
-            getxyCord(xcord,ycord,realist)
-            getxyCord(xcord,ycord,tablist)
 
             meshEntry[meshEnt] = {'enzyme':enzlist,
                                   'reaction':realist,
@@ -66,27 +44,17 @@ def setupMeshObj(modelRoot):
                                   'table':tablist,
                                   'function':funclist
                                   }
-            xmin = min(xcord)
-            xmax = max(xcord)
-            ymin = min(ycord)
-            ymax = max(ycord)
-            positionInfoExist = not(len(np.nonzero(xcord)[0]) == 0 \
-                and len(np.nonzero(ycord)[0]) == 0)
-    return(meshEntry,xmin,xmax,ymin,ymax,positionInfoExist)
+
+        for mert in [mollist,enzlist,realist,tablist]:
+            for merts in mert:
+                objInfo = merts.path+'/info'
+                if exists(objInfo):
+                    xcord.append(element(objInfo).x)
+                    ycord.append(element(objInfo).y)
+    return(meshEntry,xcord,ycord)
 
 def sizeHint(self):
     return QtCore.QSize(800,400)
-
-def getxyCord(xcord,ycord,list1):
-    for item in list1:
-        # if isinstance(item,Function):
-        #     objInfo = moose.element(item.parent).path+'/info'
-        # else:
-        #     objInfo = item.path+'/info'
-        if not isinstance(item,Function):
-            objInfo = item.path+'/info'
-            xcord.append(xyPosition(objInfo,'x'))
-            ycord.append(xyPosition(objInfo,'y'))
 
 def setupItem(modelPath,cntDict):
     '''This function collects information of what is connected to what. \
@@ -145,20 +113,6 @@ def setupItem(modelPath,cntDict):
                     prdlist.append((element(funcpar),'stp',countuniqItem[funcpar]))
                 cntDict[items] = sublist,prdlist
 
-        # elif baseObj == 'Function':
-        #     #ZombieSumFunc adding inputs
-        #     inputlist = []
-        #     outputlist = []
-        #     funplist = []
-        #     nfunplist = []
-        #     for items in wildcardFind(path):
-        #         for funplist in moose.element(items).neighbors['valueOut']:
-        #             for func in funplist:
-        #                 funcx = moose.element(items.path+'/x[0]')
-        #                 uniqItem,countuniqItem = countitems(funcx,'input')
-        #                 for inPut in uniqItem:
-        #                     inputlist.append((inPut,'st',countuniqItem[inPut]))
-        #             cntDict[func] = inputlist
         else:
             for tab in wildcardFind(path):
                 tablist = []
@@ -169,17 +123,41 @@ def setupItem(modelPath,cntDict):
 
 def countitems(mitems,objtype):
     items = []
-    #print "mitems in countitems ",mitems,objtype
     items = element(mitems).neighbors[objtype]
     uniqItems = set(items)
-    countuniqItems = Counter(items)
+    #countuniqItemsauto = Counter(items)
+    countuniqItems = dict((i, items.count(i)) for i in items)
     return(uniqItems,countuniqItems)
 
+def recalculatecoordinatesforKkit(mObjlist,xcord,ycord):
+    
+    positionInfoExist = not(len(np.nonzero(xcord)[0]) == 0 \
+                        and len(np.nonzero(ycord)[0]) == 0)
+
+    if positionInfoExist:
+        #Here all the object has been taken now recalculate and reassign back x and y co-ordinates
+        xmin = min(xcord)
+        xmax = max(xcord)
+        ymin = min(ycord)
+        ymax = max(ycord)
+        for merts in mObjlist:
+            objInfo = merts.path+'/info'
+            if moose.exists(objInfo):
+                Ix = (xyPosition(objInfo,'x')-xmin)/(xmax-xmin)
+                Iy = (ymin-xyPosition(objInfo,'y'))/(ymax-ymin)
+                element(objInfo).x = Ix
+                element(objInfo).y = Iy  
+        
+def xyPosition(objInfo,xory):
+    try:
+        return(float(element(objInfo).getField(xory)))
+    except ValueError:
+        return (float(0))
+
+                                    
 def autoCoordinates(meshEntry,srcdesConnection):
-    xmin = 0.0
-    xmax = 1.0
-    ymin = 0.0
-    ymax = 1.0
+    print " kkit Ordinatesutil autoCoordinates "
+    
     G = nx.Graph()
     for cmpt,memb in meshEntry.items():
         for enzObj in find_index(memb,'enzyme'):
@@ -218,6 +196,7 @@ def autoCoordinates(meshEntry,srcdesConnection):
             else:
                 for items in (items for items in out ):
                     G.add_edge(element(items[0]).path,inn.path)
+<<<<<<< HEAD
     position = nx.spring_layout(G)
     #nx.draw(G,pos=nx.spring_layout(G))
     #position = nx.spring_layout(G)
@@ -231,20 +210,38 @@ def autoCoordinates(meshEntry,srcdesConnection):
     xcord = []
     ycord = []
     
+=======
+    
+    position = graphviz_layout(G)
+    xcord, ycord = [],[]
+>>>>>>> 320e525a5a34fbd3f1cb572b6de38eca0c0876f0
     for item in position.items():
         xy = item[1]
-        ann = moose.Annotator(item[0]+'/info')
-        ann.x = xy[0]
-        xcord.append(xy[0])
-        ann.y = xy[1]
-        ycord.append(xy[1])
+        xroundoff = round(xy[0],0)
+        yroundoff = round(xy[1],0)
+        xcord.append(xroundoff)
+        ycord.append(yroundoff)
     
+<<<<<<< HEAD
     if xcord and ycord:
         xmin = min(xcord)
         xmax = max(xcord)
         ymin = min(ycord)
         ymax = max(ycord)    	    
     return(xmin,xmax,ymin,ymax,position)
+=======
+    xmin = min(xcord)
+    xmax = max(xcord)
+    ymin = min(ycord)
+    ymax = max(ycord)
+    for item in position.items():
+        xy = item[1]
+        anno = Annotator(item[0]+'/info')
+        Ax = (xy[0]-xmin)/(xmax-xmin)
+        Ay = (xy[1]-ymin)/(ymax-ymin)
+        anno.x = round(Ax,1)
+        anno.y = round(Ay,1)
+>>>>>>> 320e525a5a34fbd3f1cb572b6de38eca0c0876f0
 
 def find_index(value, key):
     """ Value.get(key) to avoid expection which would raise if empty value in dictionary for a given key """
