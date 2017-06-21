@@ -1,51 +1,49 @@
-# wildcard.py --- 
-# 
+# wildcard.py ---
+#
 # Filename: wildcard.py
-# Description: 
+# Description:
 # Author: Subhasis Ray
-# Maintainer: 
+# Maintainer:
 # Created: Tue Jun  4 11:20:57 2013 (+0530)
-# Version: 
+# Version:
 # Last-Updated: Tue Jun  4 12:27:42 2013 (+0530)
 #           By: subha
 #     Update #: 143
-# URL: 
-# Keywords: 
-# Compatibility: 
-# 
-# 
+# URL:
+# Keywords:
+# Compatibility:
+#
+#
 
-# Commentary: 
-# 
-# 
-# 
-# 
+# Commentary:
+#
+#
+#
+#
 
 # Change log:
-# 
-# 
-# 
-# 
+#
+#
+#
+#
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
 # published by the Free Software Foundation; either version 3, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program; see the file COPYING.  If not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 # Floor, Boston, MA 02110-1301, USA.
-# 
-# 
+#
+#
 
 # Code:
-
-"""Explore the wildcard search in moose models"""
 
 import moose
 
@@ -53,7 +51,7 @@ def wildcard_setup():
     a = moose.Neutral('/alfa')
     b = moose.Compartment('/alfa/bravo')
     c = moose.HHChannel('/alfa/bravo/charlie')
-    f = moose.HHChannel2D('/alfa/bravo/foxtrot')    
+    f = moose.HHChannel2D('/alfa/bravo/foxtrot')
     e = moose.Neutral('/alfa/echo')
     d = moose.DiffAmp('/alfa/echo/delta')
     p = moose.PulseGen('/alfa/echo/papa')
@@ -149,14 +147,17 @@ def wildcard_test():
     print(('\nElements Matching:', wildcard))
     for element in moose.wildcardFind(wildcard):
         print(('\t', element.path, ', class:', element.className))
-    
 
-if __name__ == '__main__':
+def main():
+    """Explore the wildcard search in moose models"""
     wildcard_setup()
     wildcard_test()
-    
-    
+
+if __name__ == '__main__':
+    main()
 
 
-# 
+
+
+#
 # wildcard.py ends here

@@ -30,7 +30,7 @@ def loadGran98NeuroML_L123(filename):
     soma_path = populationDict['Gran'][1][0].path+'/Soma_0'
     somaVm = setupTable('somaVm',moose.Compartment(soma_path),'Vm')
     somaCa = setupTable('somaCa',moose.CaConc(soma_path+'/Gran_CaPool_98'),'Ca')
-    somaIKCa = setupTable('somaIKCa',moose.HHChannel(soma_path+'/Gran_KCa_98'),'Gk')
+    somaIKCa = setupTable('somaIKCa',moose.element(soma_path+'/Gran_KCa_98'),'Gk')
     ## Am not able to plot KDr gating variable X when running under hsolve
     #KDrX = setupTable('ChanX',moose.HHChannel(soma_path+'/Gran_KDr_98'),'X')
 

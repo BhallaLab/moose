@@ -6,13 +6,7 @@
 #** GNU Lesser General Public License version 2.1
 #** See the file COPYING.LIB for the full notice.
 #**********************************************************************/
-# This snippet shows the use of several objects.
-# This snippet sets up a StimulusTable to control a RandSpike which
-# sends its outputs to two places: to a SimpleSynHandler on an IntFire, 
-# which is used to monitor spike arrival, and to various Stats objects.
-# I record and plot each of these.
-# The StimulusTable has a sine-wave waveform
-#
+
 import numpy
 import pylab
 import moose
@@ -40,8 +34,8 @@ def make_model():
     plotf = moose.Table( 'plotf' )
 
     ############### Set up parameters ###############
-    stim.vector = [ maxFiringRate * 
-            numpy.sin(x * 2 * numpy.pi / sinePeriod) 
+    stim.vector = [ maxFiringRate *
+            numpy.sin(x * 2 * numpy.pi / sinePeriod)
             for x in range( sinePeriod )]
     stim.startTime = 0
     stim.stopTime = sinePeriod
@@ -83,17 +77,6 @@ def main():
     """
     make_model()
 
-    '''
-    moose.useClock( 0, '/stim', 'process' )
-    moose.useClock( 1, '/spike', 'process' )
-    moose.useClock( 2, '/syn', 'process' )
-    moose.useClock( 3, '/fire', 'process' )
-    moose.useClock( 4, '/stats#', 'process' )
-    moose.useClock( 8, '/plot#', 'process' )
-    for i in range (10):
-        moose.setClock( i, dt )
-    moose.useClock( 8, '/plot#', 'process' )
-        '''
     moose.reinit()
     moose.start( runtime )
     plots = moose.element( '/plots' )
@@ -107,6 +90,19 @@ def main():
     pylab.plot( t, plotf.vector, label='Vm' )
     pylab.legend()
     pylab.show()
+
+    '''
+    moose.useClock( 0, '/stim', 'process' )
+    moose.useClock( 1, '/spike', 'process' )
+    moose.useClock( 2, '/syn', 'process' )
+    moose.useClock( 3, '/fire', 'process' )
+    moose.useClock( 4, '/stats#', 'process' )
+    moose.useClock( 8, '/plot#', 'process' )
+    for i in range (10):
+        moose.setClock( i, dt )
+    moose.useClock( 8, '/plot#', 'process' )
+    '''
+
 
 # Run the 'main' if this script is executed standalone.
 if __name__ == '__main__':
