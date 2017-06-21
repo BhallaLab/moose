@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<channelml xmlns="http://morphml.org/channelml/schema" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:meta="http://morphml.org/metadata/schema" 
+    xsi:schemaLocation="http://morphml.org/channelml/schema  http://www.neuroml.org/NeuroMLValidator/NeuroMLFiles/Schemata/v1.8.1/Level2/ChannelML_v1.8.1.xsd"
+    units="SI Units">
+
+    <meta:notes>Glutamate receptor synchan, 2 ms tau. </meta:notes>
+
+	<synapse_type name = "glu">
+		<status value = "stable"/>
+		<meta:notes>Simple double exponential waveform glu synapse</meta:notes>
+		<doub_exp_syn max_conductance="1.0E-9" rise_time="2e-3" decay_time="2e-3" reversal_potential="0.0"/>
+	</synapse_type>
+</channelml>

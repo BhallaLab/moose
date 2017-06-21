@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<channelml xmlns="http://morphml.org/channelml/schema" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:meta="http://morphml.org/metadata/schema"
+    xsi:schemaLocation="http://morphml.org/channelml/schema  http://www.neuroml.org/NeuroMLValidator/NeuroMLFiles/Schemata/v1.8.1/Level2/ChannelML_v1.8.1.xsd"
+    units="Physiological Units">
+
+    <meta:notes>ChannelML file containing a single Channel description from Solinas et al 2007</meta:notes>
+    
+    <channel_type name="Golgi_CaHVA">
+        
+       <status value="stable">
+            <meta:comment>30mV for table may be too low an upper limit (peak of AP can go above this).</meta:comment>
+            <meta:contributor>
+                <meta:name>Matteo Farinella</meta:name>
+            </meta:contributor>
+            <meta:contributor>
+                <meta:name>Padraig Gleeson</meta:name>
+            </meta:contributor>
+        </status>
+        
+       <meta:notes>High voltage Activated Ca2+ channel, based on mod file supplied with Solinas et al 2007 (ModelDB 112685)</meta:notes>
+    
+        <meta:authorList>
+             <meta:modelAuthor>
+                <meta:name>E.DAngelo</meta:name>  
+                <meta:comment>Cited implementer according to the original .mod file. Note from original mod file: Last revised: 8.5.2000</meta:comment>
+            </meta:modelAuthor>
+
+            <meta:modelAuthor>
+                <meta:name>T.Nieus</meta:name>
+                <meta:comment>Cited implementer according to the original .mod file. Note from original mod file: Last revised: 8.5.2000</meta:comment>
+            </meta:modelAuthor>
+
+          <meta:modelAuthor>
+                <meta:name>A. Fontana</meta:name>
+                <meta:comment>Cited implementer according to the original .mod file. Note from original mod file: Last revised: 8.5.2000</meta:comment>
+            </meta:modelAuthor>
+
+            <meta:modelTranslator>
+                <meta:name>Matteo Farinella</meta:name>
+                <meta:institution>UCL</meta:institution>    
+                <meta:email>m.farinella - at - ucl.ac.uk</meta:email>
+            </meta:modelTranslator>
+
+            <meta:modelTranslator>
+                <meta:name>Padraig Gleeson</meta:name>
+                <meta:institution>UCL</meta:institution>
+                <meta:email>p.gleeson - at - ucl.ac.uk</meta:email>
+            </meta:modelTranslator>
+            
+        </meta:authorList>
+
+         <meta:publication>
+            <meta:fullTitle>Solinas S, Forti L, Cesana E, Mapelli J, De Schutter E, D'Angelo E. (2007) Computational reconstruction of pacemaking and intrinsic electroresponsiveness in cerebellar Golgi cells.  Front Cell Neurosci. 2007;1:2.</meta:fullTitle>
+            <meta:pubmedRef>http://www.ncbi.nlm.nih.gov/pubmed/18946520</meta:pubmedRef>
+        </meta:publication>
+
+        <meta:neuronDBref>
+            <meta:modelName>Ca channels</meta:modelName>
+            <meta:uri>http://senselab.med.yale.edu/NeuronDB/ChannelGene2.htm#table1</meta:uri>
+        </meta:neuronDBref>
+
+        <meta:modelDBref>
+            <meta:modelName>Cerebellar Golgi cell (Solinas et al. 2007a, 2007b)</meta:modelName>
+            <meta:uri>http://senselab.med.yale.edu/modeldb/ShowModel.asp?model=112685</meta:uri>
+        </meta:modelDBref>
+        
+        <current_voltage_relation cond_law="ohmic" ion="ca" default_gmax="0.1" default_erev="132.458" charge="2">
+            
+            <q10_settings q10_factor="3" experimental_temp="20"/>
+            
+            <gate name="s" instances="2">
+            
+                <closed_state id="s0"/>
+                <open_state id="s"/>
+                
+                      <!--                
+
+                     Aalpha_s = 0.04944 (/ms)
+					Kalpha_s =  15.87301587302 (mV)
+					V0alpha_s = -29.06 (mV)
+		
+					Abeta_s = 0.08298 (/ms)
+					Kbeta_s =  -25.641 (mV)
+					V0beta_s = -18.66 (mV)
+
+	                alpha_s =  tcorr*Aalpha_s*exp((v-V0alpha_s)/Kalpha_s) =  tcorr * 0.04944*exp((v  +  29.06)/   15.87301587302) 
+					beta_s =  tcorr*Abeta_s*exp((v-V0beta_s)/Kbeta_s)  = tcorr * 0.08298 *exp((v  +  18.66)/   -25.641)
+					    
+                	-->
+                     
+                <transition name="alpha" from="s0" to="s" expr_form="exponential" rate="0.04944" scale="15.87301587302" midpoint="-29.06"/>
+                
+                <transition name="beta" from="s" to="s0" expr_form="exponential" rate="0.08298" scale="-25.641" midpoint="-18.66"/>
+                     
+            </gate>
+            
+            <gate name="u" instances="1">
+	                
+		 <closed_state id="u0"/>
+		 <open_state id="u"/>
+
+         <!--
+
+					Aalpha_u = 0.0013 (/ms)
+					Kalpha_u =  -18.183 (mV)
+					V0alpha_u = -48 (mV)
+		
+					Abeta_u = 0.0013 (/ms)
+					Kbeta_u =   83.33 (mV)
+					V0beta_u = -48 (mV)
+
+                    alpha_u = tcorr*Aalpha_u*exp((v-V0alpha_u)/Kalpha_u)  = tcorr*0.0013*exp((v - (-48))/ -18.183) 
+					beta_u = tcorr*Abeta_u*exp((v-V0beta_u)/Kbeta_u)    = tcorr*0.0013 *exp((v-(-48))/83.33)    
+         
+          -->
+		 
+		 <transition name="alpha" from="u0" to="u" expr_form="exponential" rate="0.0013" scale=" -18.183" midpoint="-48"/>
+		 
+		 <transition name="beta" from="u" to="u0" expr_form="exponential" rate="0.0013 " scale="83.33" midpoint="-48"/>
+		                 
+         </gate>
+        
+        </current_voltage_relation> 
+        
+        <impl_prefs>
+		<table_settings max_v="30" min_v="-100" table_divisions="13000"/>
+	</impl_prefs>
+        
+        
+    </channel_type>
+</channelml>
