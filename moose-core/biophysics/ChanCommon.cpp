@@ -111,6 +111,7 @@ void ChanCommon::sendProcessMsgs(  const Eref& e, const ProcPtr info )
 void ChanCommon::sendReinitMsgs(  const Eref& e, const ProcPtr info )
 {
 		ChanBase::channelOut()->send( e, Gk_, Ek_ );
+		ChanBase::IkOut()->send( e, Ik_ );
 	// Needed by GHK-type objects
 		ChanBase::permeability()->send( e, Gk_ );
 }
