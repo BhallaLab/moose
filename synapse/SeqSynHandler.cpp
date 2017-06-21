@@ -105,19 +105,6 @@ const Cinfo* SeqSynHandler::initCinfo()
 			&SeqSynHandler::setWeightScale,
 			&SeqSynHandler::getWeightScale
 	);
-
-	static ValueFinfo< SeqSynHandler, double > sequencePower(
-			"sequencePower",
-			"Exponent for the outcome of the sequential calculations. "
-			"This is needed because linear summation of terms in the kernel"
-			"means that a brief stong sequence match is no better than lots"
-			"of successive low matches. In other words, 12345 is no better"
-			"than 11111. Using an exponent lets us select the former."
-			"Defaults to 1.0.",
-			&SeqSynHandler::setSequencePower,
-			&SeqSynHandler::getSequencePower
-	);
-
 	static ReadOnlyValueFinfo< SeqSynHandler, vector< double > > 
 			weightScaleVec(
 			"weightScaleVec",
@@ -141,14 +128,10 @@ const Cinfo* SeqSynHandler::initCinfo()
 		&kernelWidth,				// Field
 		&seqDt,						// Field
 		&historyTime,				// Field
-		&sequenceScale,				// Field
-		&baseScale,					// Field
-		&synapseOrder,				// Field
-		&synapseOrderOption,		// Field
-		&seqActivation,				// ReadOnlyField
-		&plasticityScale,			// Field
-		&sequencePower,				// Field
-		&weightScaleVec,			// ReadOnlyField
+		&responseScale,				// Field
+		&seqActivation,				// Field
+		&weightScale,				// Field
+		&weightScaleVec,			// Field
 		&kernel,					// ReadOnlyField
 		&history					// ReadOnlyField
 	};
@@ -177,12 +160,9 @@ SeqSynHandler::SeqSynHandler()
 		kernelWidth_( 5 ),
 		historyTime_( 2.0 ), 
 		seqDt_ ( 1.0 ), 
-		baseScale_( 0.0 ),
-		sequenceScale_( 1.0 ),
-		plasticityScale_( 0.0 ),
-		sequencePower_( 1.0 ),
-		seqActivation_( 0.0 ),
-		synapseOrderOption_( -1 ) // sequential ordering
+		responseScale_( 1.0 ),
+		weightScale_( 0.0 ),
+		seqActivation_( 0.0 )
 { 
 	int numHistory = static_cast< int >( 1.0 + floor( historyTime_ * (1.0 - 1e-6 ) / seqDt_ ) );
 	history_.resize( numHistory, 0 );
@@ -335,17 +315,7 @@ vector< double >SeqSynHandler::getWeightScaleVec() const
 	return weightScaleVec_;
 }
 
-double SeqSynHandler::getSequencePower() const
-{
-	return sequencePower_;
-}
-
-void SeqSynHandler::setSequencePower( double v )
-{
-	sequencePower_ = v;
-}
-
-vector< double >SeqSynHandler::getWeightScaleVec() const
+void SeqSynHandler::setWeightScale( double v )
 {
 	weightScale_ = v;
 }
@@ -424,7 +394,7 @@ void SeqSynHandler::vProcess( const Eref& e, ProcPtr p )
 				seqActivation_ = 0.0;
 				for ( vector< double >::iterator y = correlVec.begin(); 
 								y != correlVec.end(); ++y )
-					seqActivation_ += pow( *y, sequencePower_ );
+					seqActivation_ += *y;
 	
 				// We'll use the seqActivation_ to send a special msg.
 				seqActivation_ *= responseScale_;

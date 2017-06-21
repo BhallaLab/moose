@@ -1,6 +1,8 @@
 language: cpp
 dist: trusty
 sudo: required 
+group: edge 
+
 compiler:
     - gcc
     - clang
