@@ -1,0 +1,12 @@
+#!/usr/bin/env sh
+# AUTHOR    : AVIRAL GOEL
+# EMAIL-ID  : 
+
+echo "Installing dependencies for Ubuntu\n"
+sudo -E apt-get install $(grep -vE "^\s*#" dependencies  | tr "\n" " ")
+# if one needs SBML support run the below two lines else comment
+#CURRENTLY libSBML-5.9.0 is supported
+sbmlurl="http://sourceforge.net/projects/sbml/files/libsbml/5.9.0/stable/Linux/64-bit/libSBML-5.9.0-Linux-x64.deb"
+sudo -E wget "$sbmlurl" -O "libsbml.deb" && sudo -E dpkg -i "libsbml.deb" && sudo -E rm -rf "libsbml.deb"
+echo "Installed dependencies for Ubuntu\n"
+
