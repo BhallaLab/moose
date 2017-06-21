@@ -1,19 +1,5 @@
-__author__      =   "HarshaRani"
-__credits__     =   ["Upi Lab"]
-__license__     =   "GPL3"
-__version__     =   "1.0.0"
-__maintainer__  =   "HarshaRani"
-__email__       =   "hrani@ncbs.res.in"
-__status__      =   "Development"
-__updated__     =   "Feb 14 2017"
-
 from moose import *
 import numpy as np
-from moose import wildcardFind,element,PoolBase,CplxEnzBase,Annotator,exists
-import numpy as np
-import networkx as nx
-from networkx.drawing.nx_agraph import graphviz_layout
-
 
 def setupMeshObj(modelRoot):
     ''' Setup compartment and its members pool,reaction,enz cplx under self.meshEntry dictionaries \ 
@@ -173,8 +159,6 @@ def autoCoordinates(meshEntry,srcdesConnection):
     print " kkit Ordinatesutil autoCoordinates "
     
     G = nx.Graph()
-    #G = pgv.AGraph()
-    positionInfo = {}
     for cmpt,memb in meshEntry.items():
         for enzObj in find_index(memb,'enzyme'):
             #G.add_node(enzObj.path)

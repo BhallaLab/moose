@@ -25,7 +25,7 @@ def checkCreate(scene,view,modelpath,mobj,string,ret_string,num,event_pos,layout
     #     modelRoot = modelpath[0:modelpath.find('/',1)]
     # else:
     #     modelRoot = modelpath
-    #print "28 ",modelpath
+    print "28 ",modelpath
     if moose.exists(modelpath+'/info'):
         mType = moose.Annotator((moose.element(modelpath+'/info'))).modeltype
     itemAtView = view.sceneContainerPt.itemAt(view.mapToScene(event_pos))

@@ -119,8 +119,6 @@ def loadFile(filename, target, solver="gsl", merge=True):
     modelroot: root element of the model, None if could not be located - as is the case with Python scripts
     """
     num = 1
-    libsfound = True
-    model = '/'
     newTarget = target
     while moose.exists(newTarget):
         newTarget = target + "-" + str(num)
@@ -231,8 +229,7 @@ def loadFile(filename, target, solver="gsl", merge=True):
     # app.restoreOverrideCursor()
     return {'modeltype': modeltype,
             'subtype': subtype,
-            'model': model,
-            'foundlib' :libsfound}
+            'model': model}
 
 
 #
