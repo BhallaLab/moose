@@ -499,7 +499,8 @@ def createReaction(model, specInfoMap, modelAnnotaInfo, globparameterIdValue,gro
     for ritem in range(0, model.getNumReactions()):
         reactionCreated = False
         groupName = ""
-
+        rName = ""
+        rId = ""
         reac = model.getReaction(ritem)
         group = ""
         reacAnnoInfo = {}

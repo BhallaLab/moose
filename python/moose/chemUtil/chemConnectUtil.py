@@ -1,6 +1,6 @@
 import moose
 import numpy as np
-from collections import Counter
+#from collections import Counter
 
 def xyPosition(objInfo,xory):
     try:
@@ -177,5 +177,6 @@ def countitems(mitems,objtype):
     items = []
     items = moose.element(mitems).neighbors[objtype]
     uniqItems = set(items)
-    countuniqItems = Counter(items)
+    #countuniqItems = Counter(items)
+    countuniqItems = dict((i, items.count(i)) for i in items)
     return(uniqItems,countuniqItems)

@@ -51,7 +51,7 @@ def mooseWriteKkit( modelpath, filename, sceneitems={}):
             '\n\t sudo apt install python-maplotlib', "")
         return False
     else:
-        
+        error = " "
         ignoreColor= ["mistyrose","antiquewhite","aliceblue","azure","bisque","black","blanchedalmond","blue","cornsilk","darkolivegreen","darkslategray","dimgray","floralwhite","gainsboro","ghostwhite","honeydew","ivory","lavender","lavenderblush","lemonchiffon","lightcyan","lightgoldenrodyellow","lightgray","lightyellow","linen","mediumblue","mintcream","navy","oldlace","papayawhip","saddlebrown","seashell","snow","wheat","white","whitesmoke","aquamarine","lightsalmon","moccasin","limegreen","snow","sienna","beige","dimgrey","lightsage"]
         matplotcolor = {}
         for name,hexno in matplotlib.colors.cnames.items():
@@ -88,19 +88,21 @@ def mooseWriteKkit( modelpath, filename, sceneitems={}):
                 cmin,cmax,xmin1,xmax1,ymin1,ymax1 = findMinMax(sceneitems)
                 for k,v in list(sceneitems.items()):
                     anno = moose.element(k.path+'/info')
-                    x1 = calPrime(v['x'])
-                    y1 = calPrime(v['y'])
-                    sceneitems[k]['x'] = x1
-                    sceneitems[k]['y'] = y1
+                    # x1 = calPrime(v['x'])
+                    # y1 = calPrime(v['y'])
+                    # sceneitems[k]['x'] = x1
+                    # sceneitems[k]['y'] = y1
 
             f = open(filename, 'w')
             writeHeader (f,maxVol)
 
             gtId_vol = writeCompartment(modelpath,compt,f)
             writePool(modelpath,f,gtId_vol,sceneitems)
+            error = ""            
             reacList = writeReac(modelpath,f,sceneitems)
             enzList = writeEnz(modelpath,f,sceneitems)
-            writeSumtotal(modelpath,f)
+            error = writeSumtotal(modelpath,f,error)
+            error = writeStimulus(modelpath,f,error)
             f.write("simundump xgraph /graphs/conc1 0 0 99 0.001 0.999 0\n"
                     "simundump xgraph /graphs/conc2 0 0 100 0 1 0\n")
             tgraphs = moose.wildcardFind(modelpath+'/##[ISA=Table2]')
@@ -125,7 +127,7 @@ def mooseWriteKkit( modelpath, filename, sceneitems={}):
             writeNotes(modelpath,f)
             writeFooter2(f)
             print('Written to file '+filename)
-            return True
+            return error,True
         else:
             print(("Warning: writeKkit:: No model found on " , modelpath))
             return False
@@ -341,15 +343,45 @@ def trimPath(mobj):
         s = splitpath.replace("_dash_",'-')
         return s
 
-def writeSumtotal( modelpath,f):
+def writeSumtotal( modelpath,f, error):
     funclist = moose.wildcardFind(modelpath+'/##[ISA=Function]')
+    s = ""
     for func in funclist:
+        fInfound  = True
+        fOutfound = True
         funcInputs = moose.element(func.path+'/x[0]')
-        s = ""
-        for funcInput in funcInputs.neighbors["input"]:
-            s = s+ "addmsg /kinetics/" + trimPath(funcInput)+ " /kinetics/" + trimPath(moose.element(func.parent)) + " SUMTOTAL n nInit\n"
-        f.write(s)
+        if not len(funcInputs.neighbors["input"]):
+            fInfound = False
+            error = error +'\n/'+ (moose.element(func)).parent.name+ '/'+moose.element(func).name + ' function doesn\'t have input which is not allowed in genesis. \n This function is not written down into genesis file\n'
 
+        if not len(func.neighbors["valueOut"]):
+            error = error +'Function'+func.path+' has not been connected to any output, this function is not written to genesis file'
+            fOutfound = False
+        else:
+            for srcfunc in func.neighbors["valueOut"]:
+                if srcfunc.className in ["ZombiePool","ZombieBufPool","Pool","BufPool"]:
+                    functionOut = moose.element(srcfunc)
+                else:
+                    error = error +'Function output connected to '+srcfunc.name+ ' which is a '+ srcfunc.className+' which is not allowed in genesis, this function '+(moose.element(func)).path+' is not written to file'
+                    fOutfound = False
+
+        if fInfound and fOutfound:
+            srcPool = []
+            for funcInput in funcInputs.neighbors["input"]:
+                if funcInput not in srcPool:
+                    srcPool.append(funcInput)
+                    s = "addmsg /kinetics/" + trimPath(funcInput)+ " /kinetics/"+ trimPath(functionOut)+ " SUMTOTAL n nInit\n"
+                    f.write(s)
+                else:
+                    error = error + '\n Genesis doesn\'t allow same moluecule connect to function mutiple times. \n Pool \''+ moose.element(funcInput).name + '\' connected to '+ (moose.element(func)).path
+    return error
+
+def writeStimulus(modelpath,f,error):
+    
+    if len(moose.wildcardFind(modelpath+'/##[ISA=StimulusTable]')):
+        error = error +'\n StimulusTable is not written into genesis. This is in Todo List'
+
+    return error
 def storePlotMsgs( tgraphs,f):
     s = ""
     if tgraphs:

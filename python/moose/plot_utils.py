@@ -310,6 +310,7 @@ def plot_tables(data_dict, xvec = None, **kwargs):
         plt.figure(figsize=(10, 1.5*len(data_dict)))
         if not subplot:
             ax = plt.subplot( 1, 1, 1 )
+            kwargs[ 'ax' ] = ax
 
     for i, k in enumerate(data_dict):
         pu.info("+ Plotting for %s" % k)
@@ -325,8 +326,9 @@ def plot_tables(data_dict, xvec = None, **kwargs):
                 yvec = data_dict[k].vector
                 plotVector(yvec, xvec, label=k, **kwargs)
             else:
-                ax = plt.subplot(len(data_dict), 1, i)
-                yvec = data_dict[k]
+                ax = plt.subplot(len(data_dict), 1, i+1)
+                kwargs[ 'ax' ] = ax
+                yvec = data_dict[k].vector
                 plotVector(yvec, xvec, label=k, **kwargs)
     if subplot:
         try:

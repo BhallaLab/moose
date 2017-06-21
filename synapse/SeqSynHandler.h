@@ -66,6 +66,8 @@ class SeqSynHandler: public SynHandlerBase
  		double getSeqActivation() const; // summed activation of syn chan
 		void setPlasticityScale( double v );
  		double getPlasticityScale() const;
+		void setSequencePower( double v );
+ 		double getSequencePower() const;
  		vector< double > getWeightScaleVec() const;
  		vector< double > getKernel() const;
  		vector< double > getHistory() const;
@@ -108,6 +110,15 @@ class SeqSynHandler: public SynHandlerBase
 		 * synapse arising from sequential input.
 		 */
 		double plasticityScale_;
+
+		/**
+		 * Exponent to use for the outcome of the sequential calculations.
+		 * This is needed because linear summation of terms in the kernel
+		 * means that a brief stong sequence match is no better than lots
+		 * of successive low matches. In other words, 12345 is no better
+		 * than 11111.
+		 */
+		double sequencePower_;
 
 		///////////////////////////////////////////
 		// Some readonly fields

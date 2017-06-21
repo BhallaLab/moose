@@ -20,7 +20,7 @@ Last-Updated: Tue Apr 4 14:20:00 2017(+0530)
 '''
 import sys
 import re
-from collections import Counter
+#from collections import Counter
 import moose
 from moose.SBML.validation import validateModel
 from moose.chemUtil.chemConnectUtil import *
@@ -499,11 +499,13 @@ def parmUnit(rct_order, cremodel_):
     return unit_stream
 
 
+def Counter(items):
+    return dict((i, items.count(i)) for i in items)
+
 def getSubprd(cremodel_, mobjEnz, type, neighborslist):
     if type == "sub":
         reacSub = neighborslist
         reacSubCou = Counter(reacSub)
-
         # print " reacSubCou ",reacSubCou,"()",len(reacSubCou)
         noofSub = len(reacSubCou)
         rate_law = " "

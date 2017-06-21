@@ -301,13 +301,12 @@ void SparseMsg::updateAfterFill()
 	SparseMatrix< unsigned int > temp( matrix_);
 	temp.transpose();
 	for ( unsigned int i = 0; i < temp.nRows(); ++ i ) {
-		const unsigned int* colIndex;
-		const unsigned int* entry;
-		unsigned int num = temp.getRow( i, &entry, &colIndex );
 		if ( i >= startData && i < endData ) {
-			// Inefficient. Better to do it in one pass after getting 
-			// the max num
-			e2_->resizeField( i - startData, num + 1 );
+			const unsigned int* colIndex;
+			const unsigned int* entry;
+			// SparseMatrix::getRow returns # of entries.
+			unsigned int num = temp.getRow( i, &entry, &colIndex );
+			e2_->resizeField( i - startData, num );
 		}
 	}
 	e1()->markRewired();

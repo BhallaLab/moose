@@ -140,6 +140,19 @@ const Cinfo* SeqSynHandler::initCinfo()
 			&SeqSynHandler::setPlasticityScale,
 			&SeqSynHandler::getPlasticityScale
 	);
+
+	static ValueFinfo< SeqSynHandler, double > sequencePower(
+			"sequencePower",
+			"Exponent for the outcome of the sequential calculations. "
+			"This is needed because linear summation of terms in the kernel"
+			"means that a brief stong sequence match is no better than lots"
+			"of successive low matches. In other words, 12345 is no better"
+			"than 11111. Using an exponent lets us select the former."
+			"Defaults to 1.0.",
+			&SeqSynHandler::setSequencePower,
+			&SeqSynHandler::getSequencePower
+	);
+
 	static ReadOnlyValueFinfo< SeqSynHandler, vector< double > > 
 			weightScaleVec(
 			"weightScaleVec",
@@ -169,6 +182,7 @@ const Cinfo* SeqSynHandler::initCinfo()
 		&synapseOrderOption,		// Field
 		&seqActivation,				// ReadOnlyField
 		&plasticityScale,			// Field
+		&sequencePower,				// Field
 		&weightScaleVec,			// ReadOnlyField
 		&kernel,					// ReadOnlyField
 		&history					// ReadOnlyField
@@ -201,6 +215,7 @@ SeqSynHandler::SeqSynHandler()
 		baseScale_( 0.0 ),
 		sequenceScale_( 1.0 ),
 		plasticityScale_( 0.0 ),
+		sequencePower_( 1.0 ),
 		seqActivation_( 0.0 ),
 		synapseOrderOption_( -1 ) // sequential ordering
 { 
@@ -421,6 +436,16 @@ void SeqSynHandler::setPlasticityScale( double v )
 	plasticityScale_ = v;
 }
 
+double SeqSynHandler::getSequencePower() const
+{
+	return sequencePower_;
+}
+
+void SeqSynHandler::setSequencePower( double v )
+{
+	sequencePower_ = v;
+}
+
 vector< double >SeqSynHandler::getWeightScaleVec() const
 {
 	return weightScaleVec_;
@@ -525,7 +550,7 @@ void SeqSynHandler::vProcess( const Eref& e, ProcPtr p )
 				seqActivation_ = 0.0;
 				for ( vector< double >::iterator y = correlVec.begin(); 
 								y != correlVec.end(); ++y )
-					seqActivation_ += *y;
+					seqActivation_ += pow( *y, sequencePower_ );
 	
 				// We'll use the seqActivation_ to send a special msg.
 				seqActivation_ *= sequenceScale_;

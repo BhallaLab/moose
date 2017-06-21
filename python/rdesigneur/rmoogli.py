@@ -65,7 +65,9 @@ def interlude( view ):
     view.mooGroup.set("color", val, view.mapper)
     view.yaw( rotation )
     #print moogliDt, len( val ), runtime
-    if moose.element("/clock").currentTime >= runtime:
+    currt = moose.element("/clock").currentTime
+    view.timecb.set_title( 'T = {:.3f} s'.format( currt ) )
+    if currt >= runtime:
         view.stop()
 
 # This func is used for later viewers, that don't handle advancing time.
@@ -146,13 +148,34 @@ def makeMoogli( rd, mooObj, moogliEntry, fieldInfo ):
                                      moogliEntry[5],
                                      moogliEntry[6]))
     cb.set_num_labels(3)
+
+    # Use the text title on a colorbar to display the current time!!
+    # Spectacularly ugly hack, but I was unable to find other ways to put
+    # text in a predefined place in a moogli view.
+    timecb = moogli.widgets.ColorBar( id="timecb",
+        title = "T = 0 s",
+        text_color=moogli.colors.BLACK,
+        position=moogli.geometry.Vec3f(0.1, -0.01, 0.0),
+        size=moogli.geometry.Vec3f(0.01, 0.02, 0.0),
+        text_font="/usr/share/fonts/truetype/ubuntu-font-family/Ubuntu-R.ttf",
+        orientation=0.0,
+        text_character_size=16,
+        label_formatting_precision=1,
+        colormap=moogli.colors.MatplotlibColorMap(matplotlib.cm.rainbow),
+        color_resolution=2,
+        scalar_range=moogli.geometry.Vec2f( 0.0, 1.0 )
+    )
+    timecb.set_num_labels( 0 )
+
     view.attach_color_bar(cb)
+    view.attach_color_bar(timecb)
     view.rd = rd
     view.mooObj = displayObj
     view.mooGroup = updateGroup
     view.mooField = mooField
     view.mooScale = fieldInfo[2]
     view.mapper = mapper
+    view.timecb = timecb
     viewer.attach_view(view)
     return viewer
 
