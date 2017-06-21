@@ -1,26 +1,41 @@
 # __DEPRECATED__ __BROKEN__
 
-# testSigNeur.py ---
+# testSigNeur.py --- 
 # Upi Bhalla, NCBS Bangalore 2013.
 #
-# Commentary:
-#
-#
+# Commentary: 
+# 
+# A toy compartmental neuronal + chemical model. The neuronal model
+# geometry sets up the chemical volume to match the parent dendrite
+# and five dendritic spines, each with a shaft and head. This volume 
+# mapping uses the NeuroMesh, SpineMesh and PsdMesh classes from MOOSE.
+# There is a
+# 3-compartment chemical model to go with this: one for the dendrite,
+# one for the spine head, and one for the postsynaptic density. Note
+# that the three mesh classes distribute the chemical model appropriately
+# to all the respective spines, and set up the diffusion to the dendrite.
+# The electrical model contributes the incoming calcium flux to the
+# chemical model. This comes from the synaptic channels.
+# The signalling here does two things to the electrical model. First, the
+# amount of receptor in the chemical model controls the amount of glutamate
+# receptor in the PSD. Second, there is a small kinase reaction that 
+# phosphorylates and inactivates the dendritic potassium channel.
+# 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
 # published by the Free Software Foundation; either version 3, or
 # (at your option) any later version.
-#
+# 
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
-#
+# 
 # You should have received a copy of the GNU General Public License
 # along with this program; see the file COPYING.  If not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 # Floor, Boston, MA 02110-1301, USA.
-#
+# 
 
 # Code:
 
@@ -37,7 +52,7 @@ EREST_ACT = -70e-3
 # Gate equations have the form:
 #
 # y(x) = (A + B * x) / (C + exp((x + D) / F))
-#
+# 
 # where x is membrane voltage and y is the rate constant for gate
 # closing or opening
 
@@ -50,7 +65,7 @@ Na_m_params = [1e5 * (25e-3 + EREST_ACT),   # 'A_A':
                 0.0,                        # 'B_B':
                 0.0,                        # 'B_C':
                 0.0 - EREST_ACT,            # 'B_D':
-                18e-3                       # 'B_F':
+                18e-3                       # 'B_F':    
                ]
 Na_h_params = [ 70.0,                        # 'A_A':
                 0.0,                       # 'A_B':
@@ -61,8 +76,8 @@ Na_h_params = [ 70.0,                        # 'A_A':
                 0.0,                       # 'B_B':
                 1.0,                       # 'B_C':
                 -30e-3 - EREST_ACT,        # 'B_D':
-                -0.01                    # 'B_F':
-                ]
+                -0.01                    # 'B_F':       
+                ]        
 K_n_params = [ 1e4 * (10e-3 + EREST_ACT),   #  'A_A':
                -1e4,                      #  'A_B':
                -1.0,                       #  'A_C':
@@ -72,7 +87,7 @@ K_n_params = [ 1e4 * (10e-3 + EREST_ACT),   #  'A_A':
                0.0,                        #  'B_B':
                0.0,                        #  'B_C':
                0.0 - EREST_ACT,            #  'B_D':
-               80e-3                       #  'B_F':
+               80e-3                       #  'B_F':  
                ]
 VMIN = -30e-3 + EREST_ACT
 VMAX = 120e-3 + EREST_ACT
@@ -90,7 +105,7 @@ def createSquid():
     compt.Ra = 7639.44e3
     nachan = moose.HHChannel( '/n/compt/Na' )
     nachan.Xpower = 3
-    xGate = moose.HHGate(nachan.path + '/gateX')
+    xGate = moose.HHGate(nachan.path + '/gateX')    
     xGate.setupAlpha(Na_m_params + [VDIVS, VMIN, VMAX])
     xGate.useInterpolation = 1
     nachan.Ypower = 1
@@ -103,7 +118,7 @@ def createSquid():
 
     kchan = moose.HHChannel( '/n/compt/K' )
     kchan.Xpower = 4.0
-    xGate = moose.HHGate(kchan.path + '/gateX')
+    xGate = moose.HHGate(kchan.path + '/gateX')    
     xGate.setupAlpha(K_n_params + [VDIVS, VMIN, VMAX])
     xGate.useInterpolation = 1
     kchan.Gbar = 0.2836e-3
@@ -255,7 +270,7 @@ def createPool( compt, name, concInit ):
 def createChemModel( neuroCompt, spineCompt, psdCompt ):
     # Stuff in spine + psd
     # The psdCa pool is an unfortunate necessity because of limitations in
-    # the solver setup that require molecules to diffuse through all
+    # the solver setup that require molecules to diffuse through all 
     # compartments, at least as of the July 2013 version.
     psdCa = createPool( psdCompt, 'Ca', 0.0001 )
     psdGluR = createPool( psdCompt, 'psdGluR', 1 )
@@ -513,27 +528,10 @@ def testNeuroMeshMultiscale():
 
 
 def main():
-    """
-    A toy compartmental neuronal + chemical model. The neuronal model
-    geometry sets up the chemical volume to match the parent dendrite
-    and five dendritic spines, each with a shaft and head. This volume
-    mapping uses the NeuroMesh, SpineMesh and PsdMesh classes from MOOSE.
-    There is a
-    3-compartment chemical model to go with this: one for the dendrite,
-    one for the spine head, and one for the postsynaptic density. Note
-    that the three mesh classes distribute the chemical model appropriately
-    to all the respective spines, and set up the diffusion to the dendrite.
-    The electrical model contributes the incoming calcium flux to the
-    chemical model. This comes from the synaptic channels.
-    The signalling here does two things to the electrical model. First, the
-    amount of receptor in the chemical model controls the amount of glutamate
-    receptor in the PSD. Second, there is a small kinase reaction that
-    phosphorylates and inactivates the dendritic potassium channel.
-    """
     testNeuroMeshMultiscale()
 
 if __name__ == '__main__':
     main()
 
-#
+# 
 # testSigNeur.py ends here.

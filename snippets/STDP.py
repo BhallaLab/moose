@@ -15,9 +15,6 @@ import moose
 import matplotlib.pyplot as plt
 from numpy import arange, array
 
-##### Author: Aditya Gilra, NCBS, Bangalore, October, 2014.
-##### Fixed numpy imports and global variables: Subhasis Ray, Fri Jul 10 19:34:53 IST 2015
-
 # ###########################################
 # Neuron models
 # ###########################################
@@ -37,11 +34,10 @@ spikes = None
 dt = 1e-6
 
 def setupModel():
-    """
-Set up two LIF neurons and connect them by an STDPSynHandler.
-Set up some tables, and reinit MOOSE before simulation.
-
-    """
+    '''
+    Set up two LIF neurons and connect them by an STDPSynHandler.
+    Set up some tables, and reinit MOOSE before simulation.
+    '''
     global network, syn, Vms, weight, spikes, dt
     # ###########################################
     # Initialize neuron group
@@ -126,10 +122,8 @@ Set up some tables, and reinit MOOSE before simulation.
 
 # function to make the aPlus and aMinus settle to equilibrium values
 def reset_settle():
-    """
-Call this between every pre-post pair
-to reset the neurons and make them settle to rest.
-
+    """ Call this between every pre-post pair
+    to reset the neurons and make them settle to rest.
     """
     settletime = 100e-3 # s
     syn.synapse[0].weight = weight # V
@@ -138,10 +132,8 @@ to reset the neurons and make them settle to rest.
 # function to inject a sharp current pulse to make neuron spike
 # immediately at a given time step
 def make_neuron_spike(nrnidx,I=1e-7,duration=1e-3):
-    """
-Inject a brief current pulse to
-make a neuron spike
-
+    """ Inject a brief current pulse to 
+    make a neuron spike
     """
     network.vec[nrnidx].inject = I
     moose.start(duration)

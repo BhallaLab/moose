@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 import moose
 
 import os
-import signal
+import signal 
 PID = os.getpid()
 
 def doNothing( *args ):
@@ -43,7 +43,7 @@ def makeModel():
     compartment.x0 = 0
     compartment.x1 = len
     compartment.diffLength = diffLength
-
+    
     assert( compartment.numDiffCompts == num )
 
     # create molecules and reactions
@@ -118,7 +118,7 @@ def updatePlots( plotlist, time ):
     plotlist[5].set_ydata( c.conc )
     plotlist[6].set_ydata( d.conc )
     plotlist[0].canvas.draw()
-
+    
 
 def main():
     """

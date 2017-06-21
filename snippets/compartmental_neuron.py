@@ -1,51 +1,50 @@
-# compartmental_neuron.py ---
-#
+# compartmental_neuron.py --- 
+# 
 # Filename: compartmental_neuron.py
-# Description:
-# Author:Subhasis Ray
-# Maintainer:
+# Description: 
+# Author:Subhasis Ray 
+# Maintainer: 
 # Created: Tue Aug  7 10:27:26 2012 (+0530)
-# Version:
+# Version: 
 # Last-Updated: Tue Dec 29 12:40:48 2015 (-0500)
 #           By: Subhasis Ray
 #     Update #: 86
-# URL:
-# Keywords:
-# Compatibility:
-#
-#
+# URL: 
+# Keywords: 
+# Compatibility: 
+# 
+# 
 
-# Commentary:
-#
+# Commentary: 
+# 
 # Demostrates how to connect two compartments to form a simple neuron.
 # All units are in SI
-#
+# 
 
 # Change log:
-#
-#
-#
-#
+# 
+# 
+# 
+# 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
 # published by the Free Software Foundation; either version 3, or
 # (at your option) any later version.
-#
+# 
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
-#
+# 
 # You should have received a copy of the GNU General Public License
 # along with this program; see the file COPYING.  If not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 # Floor, Boston, MA 02110-1301, USA.
-#
-#
+# 
+# 
 
 # Code:
-"""
-Setting up a compartmental neuron from scratch using MOOSE classes.
+"""Setting up a compartmental neuron from scratch using MOOSE classes.
 
 A simple electrophysiological simulation of a neuron composed of two
 passive compartments. A current pulse is injected into the `soma`
@@ -92,8 +91,8 @@ moose.setClock(1, 0.025e-3)
 moose.setClock(2, 0.25e-3)
 # useClock: First argument is clock no.
 # Second argument is a wildcard path matching all elements of type Compartment
-# Last argument is the processing function to be executed at each tick of clock 0
-moose.useClock(0, '/model/#[TYPE=Compartment]', 'init')
+# Last argument is the processing function to be executed at each tick of clock 0 
+moose.useClock(0, '/model/#[TYPE=Compartment]', 'init') 
 moose.useClock(1, '/model/#[TYPE=Compartment]', 'process')
 moose.useClock(2, axon_Vm.path, 'process')
 moose.useClock(2, axon_Vm2.path, 'process')
@@ -125,5 +124,5 @@ data = np.vstack((time, axon_Vm.vector, axon_Vm2.vector))
 np.savetxt('compartmental_neuron.csv', data.T, delimiter=',', header='time,Vm1,Vm2')
 print('Saved data in compartmental_neuron.csv')
 
-#
+# 
 # compartmental_neuron.py ends here

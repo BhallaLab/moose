@@ -6,7 +6,12 @@
 #** GNU Lesser General Public License version 2.1
 #** See the file COPYING.LIB for the full notice.
 #**********************************************************************/
-
+# This snippet sets up a recurrent network of IntFire objects, using
+# SimpleSynHandlers to deal with spiking events. 
+# It isn't very satisfactory as activity runs down after a while.
+# It is a good example for using the IntFire, setting up random
+# connectivity, and using SynHandlers.
+#
 import os
 import random
 import time

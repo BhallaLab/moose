@@ -1,47 +1,47 @@
-# gapjunction.py ---
-#
+# gapjunction.py --- 
+# 
 # Filename: gapjunction.py
-# Description:
-# Author:Subhasis Ray
-# Maintainer:
+# Description: 
+# Author:Subhasis Ray 
+# Maintainer: 
 # Created: Tue Jul  2 14:28:35 2013 (+0530)
-# Version:
+# Version: 
 # Last-Updated: Tue Jul 23 21:28:45 2013 (+0530)
 #           By: subha
 #     Update #: 57
-# URL:
-# Keywords:
-# Compatibility:
-#
-#
+# URL: 
+# Keywords: 
+# Compatibility: 
+# 
+# 
 
-# Commentary:
-#
-#
-#
-#
+# Commentary: 
+# 
+# 
+# 
+# 
 
 # Change log:
-#
-#
-#
-#
+# 
+# 
+# 
+# 
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
 # published by the Free Software Foundation; either version 3, or
 # (at your option) any later version.
-#
+# 
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
-#
+# 
 # You should have received a copy of the GNU General Public License
 # along with this program; see the file COPYING.  If not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 # Floor, Boston, MA 02110-1301, USA.
-#
-#
+# 
+# 
 
 # Code:
 
@@ -101,14 +101,12 @@ def gapjunction_demo():
     pylab.plot(t, pulse_tab.vector*1e9, label='inject (nA)')
     pylab.legend()
     pylab.show()
-
-def main():
-	"""
-This example is to demonstrate, how gap junction can be modeled using MOOSE.
-	"""
-	gapjunction_demo()
-
+    
+    
 if __name__ == '__main__':
-	main()
-#
+    gapjunction_demo()
+
+
+
+# 
 # gapjunction.py ends here

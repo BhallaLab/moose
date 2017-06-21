@@ -1,3 +1,38 @@
+
+# testHsolve.py --- 
+# Upi Bhalla, NCBS Bangalore, 9 June 2013.
+#
+# Commentary: 
+#
+# A small compartmental model that demonstrates 
+# a) how to set up a multicompartmental model using SymCompartments
+# b) Solving this with the default Exponential Euler (EE) method
+# c) Solving this with the Hsolver.
+# d) What happens at different timesteps.
+# 
+# 
+# Also have a look at what happens without the useInterpolate flag for
+# the ion channels, even though the voltage range is subdivided into 3000
+# intervals.
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as
+# published by the Free Software Foundation; either version 3, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License
+# along with this program; see the file COPYING.  If not, write to
+# the Free Software Foundation, Inc., 51 Franklin Street, Fifth
+# Floor, Boston, MA 02110-1301, USA.
+# 
+
+# Code:
+
 import sys
 sys.path.append('../../python')
 import os
@@ -13,7 +48,7 @@ EREST_ACT = -70e-3
 # Gate equations have the form:
 #
 # y(x) = (A + B * x) / (C + exp((x + D) / F))
-#
+# 
 # where x is membrane voltage and y is the rate constant for gate
 # closing or opening
 
@@ -26,7 +61,7 @@ Na_m_params = [1e5 * (25e-3 + EREST_ACT),   # 'A_A':
                 0.0,                        # 'B_B':
                 0.0,                        # 'B_C':
                 0.0 - EREST_ACT,            # 'B_D':
-                18e-3                       # 'B_F':
+                18e-3                       # 'B_F':    
                ]
 Na_h_params = [ 70.0,                        # 'A_A':
                 0.0,                       # 'A_B':
@@ -37,8 +72,8 @@ Na_h_params = [ 70.0,                        # 'A_A':
                 0.0,                       # 'B_B':
                 1.0,                       # 'B_C':
                 -30e-3 - EREST_ACT,        # 'B_D':
-                -0.01                    # 'B_F':
-                ]
+                -0.01                    # 'B_F':       
+                ]        
 K_n_params = [ 1e4 * (10e-3 + EREST_ACT),   #  'A_A':
                -1e4,                      #  'A_B':
                -1.0,                       #  'A_C':
@@ -48,7 +83,7 @@ K_n_params = [ 1e4 * (10e-3 + EREST_ACT),   #  'A_A':
                0.0,                        #  'B_B':
                0.0,                        #  'B_C':
                0.0 - EREST_ACT,            #  'B_D':
-               80e-3                       #  'B_F':
+               80e-3                       #  'B_F':  
                ]
 VMIN = -30e-3 + EREST_ACT
 VMAX = 120e-3 + EREST_ACT
@@ -66,7 +101,7 @@ def create_squid():
     compt.Ra = 7639.44e3
     nachan = moose.HHChannel( '/n/compt/Na' )
     nachan.Xpower = 3
-    xGate = moose.HHGate(nachan.path + '/gateX')
+    xGate = moose.HHGate(nachan.path + '/gateX')    
     xGate.setupAlpha(Na_m_params + [VDIVS, VMIN, VMAX])
         #This is important: one can run without it but the output will diverge.
     xGate.useInterpolation = 1
@@ -80,7 +115,7 @@ def create_squid():
 
     kchan = moose.HHChannel( '/n/compt/K' )
     kchan.Xpower = 4.0
-    xGate = moose.HHGate(kchan.path + '/gateX')
+    xGate = moose.HHGate(kchan.path + '/gateX')    
     xGate.setupAlpha(K_n_params + [VDIVS, VMIN, VMAX])
     xGate.useInterpolation = 1
     kchan.Gbar = 0.2836e-3
@@ -220,11 +255,11 @@ def make_spiny_compt():
         syn.weight = 0.2
         syn.delay = i * 1.0e-4
         """
-path = '/n/head' + str(i)
-sib1 = moose.element( path )
-for j in range( i - 1 ):
-     sib2 = moose.element( '/n/head' + str(j) )
-     moose.connect( sib1, 'sibling', sib2, 'sibling', 'Single' )
+        path = '/n/head' + str(i)
+        sib1 = moose.element( path )
+        for j in range( i - 1 ):
+             sib2 = moose.element( '/n/head' + str(j) )
+             moose.connect( sib1, 'sibling', sib2, 'sibling', 'Single' )
         """
 
 def create_pool( compt, name, concInit ):
@@ -270,17 +305,10 @@ def test_elec_alone():
         dump_plots( 'h_instab' + str( dt ) + '.plot' )
 
 def main():
-    """
-A small compartmental model that demonstrates ::
-    a) how to set up a multicompartmental model using SymCompartments
-    b) Solving this with the default Exponential Euler (EE) method
-    c) Solving this with the Hsolver.
-    d) What happens at different timesteps.
-    """
     test_elec_alone()
 
 if __name__ == '__main__':
     main()
 
-#
+# 
 # testHsolve.py ends here

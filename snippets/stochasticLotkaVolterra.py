@@ -1,3 +1,13 @@
+#########################################################################
+## This program is part of 'MOOSE', the
+## Messaging Object Oriented Simulation Environment.
+##           Copyright (C) 2013 Upinder S. Bhalla. and NCBS
+## It is made available under the terms of the
+## GNU Lesser General Public License version 2.1
+## See the file COPYING.LIB for the full notice.
+#########################################################################
+
+
 import math
 import pylab
 import numpy
@@ -60,40 +70,38 @@ def makeModel():
 
 def main():
     """
-The stochasticLotkaVolterra example is almost identical to the
-funcReacLotkaVolterra. It shows how to use function objects
-as part of differential equation systems in the framework of the MOOSE
-kinetic solvers. Here the difference is that we use a a stochastic
-solver. The system is interesting because it illustrates the
-instability of Lotka-Volterra systems in stochastic conditions. Here we
-see exctinction of one of the species and runaway buildup of the other.
-The simulation has to be halted at this point.
-
-Here the system is set up explicitly using the
-scripting, in normal use one would expect to use SBML.
-
-In this example we set up a Lotka-Volterra system. The equations
-are readily expressed as a pair of reactions each of whose rate is
-governed by a function::
-
-        x' = x( alpha - beta.y )
-        y' = -y( gamma - delta.x )
-
-This translates into two reactions::
-
-        x ---> z        Kf = beta.y - alpha
-        y ---> z        Kf = gamma - delta.x
-
-Here z is a dummy molecule whose concentration is buffered to zero.
-
-The model first runs using default Exponential Euler integration.
-This is not particularly accurate even with a small timestep.
-The model is then converted to use the deterministic Kinetic solver
-Ksolve. This is accurate and faster.
-
-Note that we cannot use the stochastic GSSA solver for this system, it
-cannot handle a reaction term whose rate keeps changing.
-
+    The stochasticLotkaVolterra example is almost identical to the 
+    funcReacLotkaVolterra. It shows how to use function objects
+    as part of differential equation systems in the framework of the MOOSE
+    kinetic solvers. Here the difference is that we use a a stochastic
+    solver. The system is interesting because it illustrates the 
+    instability of Lotka-Volterra systems in stochastic conditions. Here we
+    see exctinction of one of the species and runaway buildup of the other.
+    The simulation has to be halted at this point.
+    
+    Here the system is set up explicitly using the 
+    scripting, in normal use one would expect to use SBML.
+    
+    In this example we set up a Lotka-Volterra system. The equations
+    are readily expressed as a pair of reactions each of whose rate is
+    governed by a function::
+    
+            x' = x( alpha - beta.y )
+            y' = -y( gamma - delta.x )
+    
+    This translates into two reactions::
+    
+            x ---> z        Kf = beta.y - alpha
+            y ---> z        Kf = gamma - delta.x
+            
+    Here z is a dummy molecule whose concentration is buffered to zero.
+    
+    The model first runs using default Exponential Euler integration.
+    This is not particularly accurate even with a small timestep.
+    The model is then converted to use the deterministic Kinetic solver
+    Ksolve. This is accurate and faster.
+    Note that we cannot use the stochastic GSSA solver for this system, it
+    cannot handle a reaction term whose rate keeps changing.
     """
     makeModel()
 
