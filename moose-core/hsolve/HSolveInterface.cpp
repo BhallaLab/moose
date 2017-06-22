@@ -246,7 +246,8 @@ void HSolve::addGkEk( Id id, double Gk, double Ek )
 void HSolve::addConc( Id id, double conc )
 {
     unsigned int index = localIndex( id );
-    assert(  index + 1 < externalCalcium_.size() );
+    assert(  index < externalCalcium_.size() );
+  
     externalCalcium_[ index ] = conc;
 }
 

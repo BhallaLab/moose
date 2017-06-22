@@ -235,6 +235,7 @@ void DifBuffer::vSetShapeMode(const Eref& e, unsigned int shapeMode )
     return;
   }
   shapeMode_ = shapeMode;
+  calculateVolumeArea(e);
 }
 
 unsigned int DifBuffer::vGetShapeMode(const Eref& e) const
@@ -250,6 +251,7 @@ void DifBuffer::vSetLength(const Eref& e, double length )
   }
 
   length_ = length;
+    calculateVolumeArea(e);
 }
 
 double DifBuffer::vGetLength(const Eref& e ) const
@@ -265,6 +267,7 @@ void DifBuffer::vSetDiameter(const Eref& e, double diameter )
   }
 
   diameter_ = diameter;
+  calculateVolumeArea(e);
 }
 
 double DifBuffer::vGetDiameter(const Eref& e ) const
@@ -280,6 +283,7 @@ void DifBuffer::vSetThickness( const Eref& e, double thickness )
   }
 
   thickness_ = thickness;
+  calculateVolumeArea(e);
 }
 
 double DifBuffer::vGetThickness(const Eref& e) const
@@ -360,7 +364,54 @@ double DifBuffer::integrate( double state, double dt, double A, double B )
 	}
 	return state + A * dt ;
 }
+void DifBuffer::calculateVolumeArea(const Eref& e)
+{
+double rOut = diameter_/2.;
+  
+  double rIn = rOut - thickness_;
 
+  if (rIn <0)
+	  rIn = 0.;
+  
+  switch ( shapeMode_ )
+    {
+      /*
+       * Onion Shell
+       */
+    case 0:
+      if ( length_ == 0.0 ) { // Spherical shell
+	volume_ = 4./3.* M_PI * ( rOut * rOut * rOut - rIn * rIn * rIn );
+	outerArea_ = 4*M_PI * rOut * rOut;
+	innerArea_ = 4*M_PI * rIn * rIn;
+      } else { // Cylindrical shell
+	volume_ = ( M_PI * length_  ) * ( rOut * rOut - rIn * rIn );
+	outerArea_ = 2*M_PI * rOut * length_;
+	innerArea_ = 2*M_PI * rIn * length_;
+      }
+		
+      break;
+	
+      /*
+       * Cylindrical Slice
+       */
+    case 1:
+      volume_ = M_PI * diameter_ * diameter_ * thickness_ / 4.0;
+      outerArea_ = M_PI * diameter_ * diameter_ / 4.0;
+      innerArea_ = outerArea_;
+      break;
+	
+      /*
+       * User defined
+       */
+    case 3:
+      // Nothing to be done here. Volume and inner-, outer areas specified by
+      // user.
+      break;
+	
+    default:
+      assert( 0 );
+    }
+}
 
 void DifBuffer::vProcess( const Eref & e, ProcPtr p )
 {

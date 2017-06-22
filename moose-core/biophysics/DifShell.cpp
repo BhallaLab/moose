@@ -100,6 +100,8 @@ void DifShell::vSetCeq( const Eref& e, double Ceq )
   }
 	
   Ceq_ = Ceq;
+  prevC_ = Ceq;
+  C_ = Ceq;
 }
 
 double DifShell::vGetCeq(const Eref& e ) const
@@ -155,6 +157,7 @@ void DifShell::vSetShapeMode(const Eref& e, unsigned int shapeMode )
     return;
   }
   shapeMode_ = shapeMode;
+  calculateVolumeArea(e);
 }
 
 unsigned int DifShell::vGetShapeMode(const Eref& e) const
@@ -170,6 +173,7 @@ void DifShell::vSetLength(const Eref& e, double length )
   }
 	
   length_ = length;
+  calculateVolumeArea(e);
 }
 
 double DifShell::vGetLength(const Eref& e ) const
@@ -185,6 +189,7 @@ void DifShell::vSetDiameter(const Eref& e, double diameter )
   }
 	
   diameter_ = diameter;
+  calculateVolumeArea(e);
 }
 
 double DifShell::vGetDiameter(const Eref& e ) const
@@ -200,6 +205,7 @@ void DifShell::vSetThickness( const Eref& e, double thickness )
   }
 	
   thickness_ = thickness;
+  calculateVolumeArea(e);
 }
 
 double DifShell::vGetThickness(const Eref& e) const
@@ -276,12 +282,9 @@ double DifShell::integrate( double state, double dt, double A, double B )
 	return state + A * dt ;
 }
 
-void DifShell::vReinit( const Eref& e, ProcPtr p )
+void DifShell::calculateVolumeArea(const Eref& e)
 {
-  dCbyDt_ = leak_;
-  Cmultiplier_ = 0;
-
-  double rOut = diameter_/2.;
+double rOut = diameter_/2.;
   
   double rIn = rOut - thickness_;
 
@@ -326,11 +329,20 @@ void DifShell::vReinit( const Eref& e, ProcPtr p )
     default:
       assert( 0 );
     }
+}
+  
+void DifShell::vReinit( const Eref& e, ProcPtr p )
+{
+  dCbyDt_ = leak_;
+  Cmultiplier_ = 0;
+  calculateVolumeArea(e);
+
   C_= Ceq_;
   prevC_ = Ceq_;
   concentrationOut()->send( e, C_ );
   innerDifSourceOut()->send( e, prevC_, thickness_ );
   outerDifSourceOut()->send( e, prevC_, thickness_ );
+ 
 }
 
 void DifShell::vProcess( const Eref & e, ProcPtr p )
@@ -342,22 +354,24 @@ void DifShell::vProcess( const Eref & e, ProcPtr p )
   
  
   C_ = integrate(C_,p->dt,dCbyDt_,Cmultiplier_);
- 
+  
   /**
    * Send ion concentration to ion buffers. They will send back information on
    * the reaction (forward / backward rates ; free / bound buffer concentration)
    * immediately, which this DifShell will use to find amount of ion captured
    * or released in the current time-step.
    */
-  prevC_ = C_;
+ 
 
-  //cout<<"Shell "<< C_<<" ";
   dCbyDt_ = leak_;
   Cmultiplier_ = 0;
+  prevC_ = C_;
+
   innerDifSourceOut()->send( e, prevC_, thickness_ );
   outerDifSourceOut()->send( e, prevC_, thickness_ );
-  concentrationOut()->send( e, C_ );
 
+  concentrationOut()->send( e, C_ );
+  
 }
 void DifShell::vBuffer(const Eref& e,
 			   double kf,
@@ -380,6 +394,7 @@ void DifShell::vFluxFromOut(const Eref& e, double outerC, double outerThickness 
   
   dCbyDt_ +=  diff * outerC;
   Cmultiplier_ += diff ;
+
 }
 
 void DifShell::vFluxFromIn(const Eref& e, double innerC, double innerThickness )
@@ -387,6 +402,7 @@ void DifShell::vFluxFromIn(const Eref& e, double innerC, double innerThickness )
   //influx from inner shell
   //double dx = ( innerThickness + thickness_ ) / 2.0;
   double diff = 2.* D_/volume_ * innerArea_ / (innerThickness + thickness_);
+  
   dCbyDt_ +=  diff *  innerC ;
   Cmultiplier_ += diff ;
 }
@@ -399,6 +415,7 @@ void DifShell::vInflux(const Eref& e,	double I )
    * valence_: charge on ion: dimensionless
    */
   dCbyDt_ += I / ( F * valence_ * volume_ );
+
 }
 
 /**
@@ -448,6 +465,7 @@ void DifShell::vEqTauPump(const Eref& e, double kP )
 void DifShell::vMMPump(const Eref& e, double vMax, double Kd )
 {
   Cmultiplier_ += ( vMax / volume_ )  / ( C_ + Kd ) ;
+
 }
 
 void DifShell::vHillPump(const Eref& e, double vMax, double Kd, unsigned int hill )
