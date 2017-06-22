@@ -32,8 +32,6 @@ PYTHON3="/usr/bin/python3"
     # Old makefile based flow.
     $PYTHON2 -m compileall -q .
     if type $PYTHON3 > /dev/null; then $PYTHON3 -m compileall -q . ; fi
-    # Traditional make.
-    make 
     ## CMAKE based flow
     mkdir -p _GSL_BUILD && cd _GSL_BUILD && \
         cmake -DDEBUG=ON -DPYTHON_EXECUTABLE="$PYTHON2" ..
