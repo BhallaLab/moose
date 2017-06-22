@@ -1,3 +1,6 @@
+# Test scripts are always called from BUILD directory by cmake. 
+
+import os
 import sys
 import numpy as np
 import time
@@ -11,11 +14,11 @@ print('Using moose from %s' % moose.__file__ )
 difshell_no = 3
 difbuf_no = 0
 
+script_dir_ = os.path.dirname( os.path.abspath( __file__ ) )
 
-p_file = "soma.p"
-cond = {'CaL12':30*0.35e-5,
-        'SK':0.5*0.35e-6}
+p_file = os.path.join( script_dir_, "soma.p" )
 
+cond = {'CaL12':30*0.35e-5, 'SK':0.5*0.35e-6}
 
 if __name__ =='__main__':
     for tick in range(0, 7):
@@ -63,7 +66,9 @@ if __name__ =='__main__':
     t_stop = 10.
     moose.reinit()
     moose.start(t_stop)
-    print len(np.where(sktab.vector<1e-19)[0]), len(np.where(shelltab.vector>50e-6)[0])
-    
-    
+    print( sktab.vector )
+    print( shelltab.vector )
+    print(len(np.where(sktab.vector<1e-19)[0]), 
+            len(np.where(shelltab.vector>50e-6)[0])
+            )
     
