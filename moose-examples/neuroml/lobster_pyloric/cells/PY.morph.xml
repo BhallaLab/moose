@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<neuroml xmlns="http://morphml.org/neuroml/schema" xmlns:meta="http://morphml.org/metadata/schema" xmlns:mml="http://morphml.org/morphml/schema" xmlns:bio="http://morphml.org/biophysics/schema" xmlns:cml="http://morphml.org/channelml/schema" xmlns:net="http://morphml.org/networkml/schema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://morphml.org/neuroml/schema  http://neuroml.svn.sourceforge.net/viewvc/neuroml/trunk/web/NeuroMLFiles/Schemata/v1.8.1/Level3/NeuroML_Level3_v1.8.1.xsd" lengthUnits="micron">
+
+    <cells>
+        <cell name="PY">
+
+            <meta:notes>Stomatogastric Ganglion (STG) neuron
+From: Alternative to Hand-Tuning Conductance-Based Models: Construction and Analysis of Databases of Model Neurons
+Astrid A. Prinz, Cyrus P. Billimoria, and Eve Marder,
+J Neurophysiol 90: 3998–4015, 2003.
+
+The PY cell is an STG neuron with channel densities corresponding to PY neuron #1 from Table 2 of:
+Similar network activity from disparate circuit parameters
+Astrid A Prinz, Dirk Bucher and Eve Marder
+Nature Neuroscience, 2004.
+
+Converted to neuroConstruct from details in above two papers by Aditya Gilra, NCBS, Bangalore, India.</meta:notes>
+
+            <mml:segments>
+
+                <mml:segment id="0" name="Soma" cable="0">
+                    <mml:proximal x="0.0" y="0.0" z="0.0" diameter="141.4"/>
+                    <mml:distal x="0.0" y="141.4" z="0.0" diameter="141.4"/>
+                </mml:segment>
+
+                
+            </mml:segments>
+
+            <mml:cables>
+
+                <mml:cable id="0" name="Soma"/>
+        
+
+            
+            
+                <mml:cablegroup name="all">
+                    <mml:cable id="0"/>
+                    <mml:inhomogeneous_param name="ZeroToOneOverCell" variable="p">
+                        <mml:metric>Path Length from root</mml:metric>
+                        <mml:proximal translationStart="0"/>
+                        <mml:distal normalizationEnd="1"/>
+                    </mml:inhomogeneous_param>
+                    
+                    <mml:inhomogeneous_param name="PathLengthOverCell" variable="p">
+                        <mml:metric>Path Length from root</mml:metric>
+                    </mml:inhomogeneous_param>
+                    
+               </mml:cablegroup>
+            
+                <mml:cablegroup name="soma_group">
+                    <mml:cable id="0"/>
+               </mml:cablegroup>
+            </mml:cables>
+
+            <!--Adding the biophysical parameters-->
+
+            <biophysics units="Physiological Units">
+
+                <bio:mechanism name="H_STG" type="Channel Mechanism">
+                    <bio:parameter name="gmax" value="0.05">
+                        <bio:group>soma_group</bio:group>
+                    </bio:parameter>
+                </bio:mechanism>
+
+                <bio:mechanism name="CaT_STG" type="Channel Mechanism">
+                    <bio:parameter name="gmax" value="2.5">
+                        <bio:group>soma_group</bio:group>
+                    </bio:parameter>
+                </bio:mechanism>
+
+                <bio:mechanism name="LeakConductance" type="Channel Mechanism" passive_conductance="true">
+                    <bio:parameter name="e" value="-50.0">
+                        <bio:group>soma_group</bio:group>
+                    </bio:parameter>
+                    <bio:parameter name="gmax" value="0.01">
+                        <bio:group>soma_group</bio:group>
+                    </bio:parameter>
+                </bio:mechanism>
+
+                <bio:mechanism name="Na_STG" type="Channel Mechanism">
+                    <bio:parameter name="gmax" value="100.0">
+                        <bio:group>soma_group</bio:group>
+                    </bio:parameter>
+                </bio:mechanism>
+
+                <bio:mechanism name="KA_STG" type="Channel Mechanism">
+                    <bio:parameter name="gmax" value="50.0">
+                        <bio:group>soma_group</bio:group>
+                    </bio:parameter>
+                </bio:mechanism>
+
+                <bio:mechanism name="CaPool_STG" type="Ion Concentration">
+                    <bio:parameter name="gmax" value="0.1">
+                        <bio:group>soma_group</bio:group>
+                    </bio:parameter>
+                </bio:mechanism>
+
+                <bio:mechanism name="KCa_STG" type="Channel Mechanism">
+                    <bio:parameter name="gmax" value="0.0">
+                        <bio:group>soma_group</bio:group>
+                    </bio:parameter>
+                </bio:mechanism>
+
+                <bio:mechanism name="Kd_STG" type="Channel Mechanism">
+                    <bio:parameter name="gmax" value="125.0">
+                        <bio:group>soma_group</bio:group>
+                    </bio:parameter>
+                </bio:mechanism>
+
+                <bio:mechanism name="CaS_STG" type="Channel Mechanism">
+                    <bio:parameter name="gmax" value="2.0">
+                        <bio:group>soma_group</bio:group>
+                    </bio:parameter>
+                </bio:mechanism>
+
+                <bio:spec_capacitance>
+                    <bio:parameter value="1.0">
+                        <bio:group>all</bio:group>
+                    </bio:parameter>
+                </bio:spec_capacitance>
+
+                <bio:spec_axial_resistance>
+                    <bio:parameter value="0.03">
+                        <bio:group>all</bio:group>
+                    </bio:parameter>
+                </bio:spec_axial_resistance>
+
+                <bio:init_memb_potential>
+                    <bio:parameter value="-50.0">
+                        <bio:group>all</bio:group>
+                    </bio:parameter>
+                </bio:init_memb_potential></biophysics>
+
+            <connectivity>
+                <net:potential_syn_loc synapse_type="DoubExpSyn_Glu" synapse_direction="preAndOrPost">
+                    <net:group>soma_group</net:group>
+                </net:potential_syn_loc>
+            
+                <net:potential_syn_loc synapse_type="DoubExpSyn_Ach" synapse_direction="preAndOrPost">
+                    <net:group>soma_group</net:group>
+                </net:potential_syn_loc>
+            </connectivity>
+
+        </cell>
+    </cells>
+</neuroml>

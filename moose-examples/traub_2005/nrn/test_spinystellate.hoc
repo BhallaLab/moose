@@ -1,0 +1,58 @@
+load_file("nrngui.hoc")
+load_file("hoc/traubcon.hoc")
+load_file("cells/spinstell_template.hoc")
+load_file("hoc/utility.hoc")
+objref vm_vec, stim, dump_file, input, cell
+PI=3.141592
+FARADAY=96485
+secondorder=2
+dt = 0.025
+// plotdt = 1e-2
+celsius=30
+v_init = -65
+// cvode.active()
+define_shape()
+/* runcell(runtime, delay) */
+proc runcell(){ local i, t1, a1, t2, a2 localobj presyn_vvec, soma_vvec, tvec, f_presyn, f_soma, g
+    tstop = $1
+    t1 = $2
+    printf("Run for: %g ms, stim at: %g\n", tstop, t1)
+    t2 = 1e9 a2 = 0
+    cell = new spinstell()
+    // soma
+    cell.comp[1] { 
+        input = new IClamp(0.5) 
+        input.amp = 1 // nA
+        input.del = t1
+        input.dur = 100 // ms
+        printf("Stimulus: onset: %g ms, amp: %d nA, duration: %g ms\n", input.del, input.amp, input.dur)
+    }
+    f_presyn = new File()
+    tvec = new Vector()
+    presyn_vvec = new Vector()
+    soma_vvec = new Vector()
+    cell.comp[cell.presyn_comp] presyn_vvec.record(&v(0.5))
+    cell.comp[1] soma_vvec.record(&v(0.5))
+    // cell.comp[cell.presyn_comp] cvode.record(&v(0.5), presyn_vvec, tvec, plotdt)
+    // cell.comp[1] cvode.record(&v(0.5), soma_vvec, tvec, plotdt)
+    tvec.record(&t)
+    // vvec.record(&cell.comp[cell.presyn_comp].v(0.5), plotdt)
+    // print_cell(cell, "tcr")
+    run()
+    f_presyn.wopen("data/SpinyStellate_presynaptic_Vm.dat")
+    for ii = 0, presyn_vvec.size() - 1{
+    	f_presyn.printf("%g %g\n", tvec.x(ii), presyn_vvec.x(ii))
+    }
+    f_presyn.close()
+    f_soma = new File()
+    f_soma.wopen("data/SpinyStellate_soma_Vm.dat")
+    for ii = 0, presyn_vvec.size() - 1 {
+    	f_soma.printf("%g %g\n", tvec.x(ii), soma_vvec.x(ii))
+    }
+    f_soma.close()
+    cell.comp[1] {printf("Soma e_pas: %g", e_pas)}
+    print_cell(cell, "data/SpinyStellate.csv")
+}
+
+runcell(1000.0, 100.0)
+quit()

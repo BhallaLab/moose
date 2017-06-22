@@ -1,0 +1,587 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>Simulation of squid axon with Hodgkin-Huxley ion channels</title>
+<meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1"/>
+<meta name="title" content="Simulation of squid axon with Hodgkin-Huxley ion channels"/>
+<meta name="generator" content="Org-mode"/>
+<meta name="generated" content="2012-09-25 17:03:29 IST"/>
+<meta name="author" content="Subhasis Ray"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  html { font-family: Times, serif; font-size: 12pt; }
+  .title  { text-align: center; }
+  .todo   { color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #add8e6; font-weight:normal }
+  .target { }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  {margin-left:auto; margin-right:0px;  text-align:right;}
+  .left   {margin-left:0px;  margin-right:auto; text-align:left;}
+  .center {margin-left:auto; margin-right:auto; text-align:center;}
+  p.verse { margin-left: 3% }
+  pre {
+	border: 1pt solid #AEBDCC;
+	background-color: #F3F5F7;
+	padding: 5pt;
+	font-family: courier, monospace;
+        font-size: 90%;
+        overflow:auto;
+  }
+  table { border-collapse: collapse; }
+  td, th { vertical-align: top;  }
+  th.right  { text-align:center;  }
+  th.left   { text-align:center;   }
+  th.center { text-align:center; }
+  td.right  { text-align:right;  }
+  td.left   { text-align:left;   }
+  td.center { text-align:center; }
+  dt { font-weight: bold; }
+  div.figure { padding: 0.5em; }
+  div.figure p { text-align: center; }
+  div.inlinetask {
+    padding:10px;
+    border:2px solid gray;
+    margin:10px;
+    background: #ffffcc;
+  }
+  textarea { overflow-x: auto; }
+  .linenr { font-size:smaller }
+  .code-highlighted {background-color:#ffff00;}
+  .org-info-js_info-navigation { border-style:none; }
+  #org-info-js_console-label { font-size:10px; font-weight:bold;
+                               white-space:nowrap; }
+  .org-info-js_search-highlight {background-color:#ffff00; color:#000000;
+                                 font-weight:bold; }
+  /*]]>*/-->
+</style>
+<script type="text/javascript">
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+
+</head>
+<body>
+
+<div id="preamble">
+
+</div>
+
+<div id="content">
+<h1 class="title">Simulation of squid axon with Hodgkin-Huxley ion channels</h1>
+
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1 Navigation: navigation toolbar is located at bottom of the plots</a>
+<ul>
+<li><a href="#sec-1-1">1.1 Zoom</a></li>
+<li><a href="#sec-1-2">1.2 Pan:</a></li>
+<li><a href="#sec-1-3">1.3 Reset to initial plot state:</a></li>
+<li><a href="#sec-1-4">1.4 Change spacing and position of subplots:</a></li>
+<li><a href="#sec-1-5">1.5 Configure axes:</a></li>
+<li><a href="#sec-1-6">1.6 Save plot:</a></li>
+</ul>
+</li>
+<li><a href="#sec-2">2 Rearranging the frames on small screens</a></li>
+<li><a href="#sec-3">3 The SQUID tutorial</a>
+<ul>
+<li><a href="#sec-3-1">3.1 The Model</a></li>
+<li><a href="#sec-3-2">3.2 Running the Simulation</a></li>
+<li><a href="#sec-3-3">3.3 Voltage Clamping</a></li>
+<li><a href="#sec-3-4">3.4 Changing Extracellular Concentrations</a></li>
+<li><a href="#sec-3-5">3.5 Controlling Graphs</a></li>
+<li><a href="#sec-3-6">3.6 State Plots</a></li>
+<li><a href="#sec-3-7">3.7 Channel Blocking</a></li>
+<li><a href="#sec-3-8">3.8 Saving Graphs</a></li>
+<li><a href="#sec-3-9">3.9 Units used in the simulation</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Navigation: navigation toolbar is located at bottom of the plots</h2>
+<div class="outline-text-2" id="text-1">
+
+<p>  This uses the built-in navigation toolbar of <a href="http://matplotlib.org/users/navigation_toolbar.html">matplotlib</a> [click to
+  open in your default web-browser].  
+</p>
+
+<div id="fignavigationtoolbar" class="figure">
+<p><img src="./images/navigationtoolbar.jpg"  alt="./images/navigationtoolbar.jpg" /></p>
+<p>Navigation toolbar for plots</p>
+</div>
+
+<p>
+  You can hover the mouse cursor on any icon on this toolbar to get a
+  brief tool-tip. To summarize:
+</p>
+
+</div>
+
+<div id="outline-container-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> Zoom</h3>
+<div class="outline-text-3" id="text-1-1">
+
+<ol>
+<li>Zoom-in:
+<ol>
+<li>Zoom-in both X and Y axes:      
+<ul>
+<li>click on the subplot you want to zoom and scroll mouse
+           wheel down, or
+</li>
+<li>click magnifier icon and press left mouse button on the
+           subplot and drag. This will zoom the subplot to the
+           rectangle you cover by this.
+</li>
+<li>click compass icon and press right mouse button on the plot
+           and drag towards top-right.
+</li>
+</ul>
+
+</li>
+<li>Zoom-in along X-axis: 
+<ul>
+<li>click compass icon and press right mouse button on the plot
+           and drag towards right.
+</li>
+</ul>
+
+</li>
+<li>Zoom-in along  Y-axis:
+<ul>
+<li>click compass icon and press right mouse button on the plot
+           and drag upwards.
+</li>
+</ul>
+
+</li>
+</ol>
+
+</li>
+<li>Zoom-out:
+<ol>
+<li>Zoom-out both X and Y axes:
+<ul>
+<li>click on the subplot you want to zoom and scroll mouse wheel up, or
+</li>
+<li>click magnifier icon and press right mouse button on the
+           plot and drag. The whole visible axis area will fit into
+           the rectangle you cover by this.
+</li>
+<li>click compass icon and press right mouse button on the plot
+           and drag towards bottom-left.
+</li>
+</ul>
+
+</li>
+<li>Zoom-out whole plot window along X-axis: 
+<ul>
+<li>click compass icon and press right mouse button on the plot
+           and drag towards left.
+</li>
+</ul>
+
+</li>
+<li>Zoom-out Y-axis: 
+<ul>
+<li>click compass icon and press right mouse button on the plot
+           and drag downwards.
+</li>
+</ul>
+
+</li>
+</ol>
+
+</li>
+<li>Go forward/backward in zoom stack: 
+      click right/left arrow icon.
+</li>
+</ol>
+
+</div>
+
+</div>
+
+<div id="outline-container-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> Pan:</h3>
+<div class="outline-text-3" id="text-1-2">
+
+<p>   click compass-icon and left click-and-drag
+</p></div>
+
+</div>
+
+<div id="outline-container-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> Reset to initial plot state:</h3>
+<div class="outline-text-3" id="text-1-3">
+
+<p>   click home icon.
+</p></div>
+
+</div>
+
+<div id="outline-container-1-4" class="outline-3">
+<h3 id="sec-1-4"><span class="section-number-3">1.4</span> Change spacing and position of subplots:</h3>
+<div class="outline-text-3" id="text-1-4">
+
+<p>   click button with four green arrow-heads pointing (this is called
+   the Subplot-Configuration button).
+</p></div>
+
+</div>
+
+<div id="outline-container-1-5" class="outline-3">
+<h3 id="sec-1-5"><span class="section-number-3">1.5</span> Configure axes:</h3>
+<div class="outline-text-3" id="text-1-5">
+
+<p>   click green tick-mark. In the pop-up dialog select the axis you want
+   to modify and click OK. In the next dialog you can set the range of
+   X and Y values for the axes and modify several other properties.
+</p></div>
+
+</div>
+
+<div id="outline-container-1-6" class="outline-3">
+<h3 id="sec-1-6"><span class="section-number-3">1.6</span> Save plot:</h3>
+<div class="outline-text-3" id="text-1-6">
+
+<p>   click floppy-disk icon.
+</p>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> Rearranging the frames on small screens</h2>
+<div class="outline-text-2" id="text-2">
+
+<p>  The default layout of the squid demo may exceed available screen
+  size on your system. But you can always undock the control panels
+  and put them one over the other to save screen space. To undock all
+  panels in one go, click the "Undock all" button in the tool bar.
+</p>
+<p>
+  To move or float a single panel, click the left mouse button on its
+  title bar (in the same horizontal line with the expand buttons) of
+  any of the panels and drag. You can choose to leave it floating or
+  drop it somewhere (top, left, bottom or right of the plot window) in
+  the main window to reposition it. You can drop multiple panels in
+  the same location. Then they will be put as multiple tabs over one
+  another.
+</p>
+<p>
+  An undocked panel will be always on top of the main window. If this
+  is a problem, you can close it by clicking the close button. You can
+  make it visible again by clicking "Show all" button on the tool bar.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> The SQUID tutorial</h2>
+<div class="outline-text-2" id="text-3">
+
+<p>  The following is adapted from the GENESIS squid demo notes with
+  modifications for MOOSE by Subhasis Ray, September 2012.
+</p>
+<p>  
+  The original header was:
+</p>
+
+<hr/>
+
+<p>
+  SQUID
+</p>
+<p>  
+  An Introductory Tutorial for GENESIS, XODUS, and the HODGKIN-HUXLEY model
+</p>
+<p>
+  By M. Nelson, Caltech, April 1989 - Modified by D. Beeman, June 1991, Dec 1994
+                                  &shy; Modified by E. Vigmond, September 1993
+</p>
+
+<hr/>
+
+<p>
+  In the process of working through this tutorial, you will learn
+  something about the Hodgkin-Huxley model.  This program may serve as
+  a good starting point for those of you who plan to work on
+  single-cell models for a course project.
+</p>
+
+</div>
+
+<div id="outline-container-3-1" class="outline-3">
+<h3 id="sec-3-1"><span class="section-number-3">3.1</span> The Model</h3>
+<div class="outline-text-3" id="text-3-1">
+
+<p>   For the time being, we are going to simulate a single axon
+   compartment with active Na and K conductances, as described by Hodgkin
+   and Huxley for the squid giant axon.  In other tutorials we will link
+   compartments together to form a simple model of an entire neuron with
+   a soma and dendrites (the Neuron tutorial), model a cable with many
+   compartments (the cable tutorial), and build neural circuits with
+   connected neurons (MultiCell and tritonia).  For now, we confine
+   ourselves to a single axon compartment.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-3-2" class="outline-3">
+<h3 id="sec-3-2"><span class="section-number-3">3.2</span> Running the Simulation</h3>
+<div class="outline-text-3" id="text-3-2">
+
+<p>   The model has already been initialized with some reasonable
+   parameter values, so all you have to do to run the simulation is:
+</p>
+<p>
+   click on the ``Run`` button in the toolbar.
+</p>
+<p>
+   The simulation which you just observed was for a constant current
+   pulse, which is shown in the lower left graph panel.  The upper left
+   graph shows the membrane potential.  You can see that 3 action
+   potentials were generated during this 50 msec simulation.  Now let's
+   change the injection current and see what happens.
+</p>
+<p>   
+   At the bottom of the left panel is a widget labeled "Electronics"
+   and inside it there are two tabs labeled ``Current clamp`` and
+   ``Voltage clamp``. Select the ``Current clamp`` tab and you will
+   see a series of labeled text boxes with default values. In order
+   to change the injection current:
+</p>
+<p>
+   position the cursor to the right of the last digit in the "First
+   Pulse Current" field and click in the text box with the left mouse
+   button.
+</p>
+<p>
+   Let's change the peak injection current from 0.1 to 1.0.
+</p>
+<p>
+   type &lt;BACKSPACE&gt; to delete the 0.1 and then type 1.0
+</p>
+<p>
+   The value in the dialog field should now be 1.0. 
+</p>
+<p>
+   Now we'll run the simulation again.
+</p>
+<p>
+   click the "Run" button on the toolbar again.
+</p>
+<p>
+   There should be a dramatic change in the time-course of the
+   membrane potential at this higher current injection level.
+   Experiment with the injection level to see what happens to the
+   axon at higher injection currents.  Also try decreasing the
+   injection level until an action potential is no longer elicited by
+   the stimulus.  What is the threshold for producing an action
+   potential in this compartment?
+</p>
+<p>
+   You may also experiment with trains of short pulses.  Set the
+   "First Pulse Width" dialog field to 1 msec and click on the
+   "Single Pulse" drop down box and select "Pulse Train".  Now vary
+   "First Onset Delay".  What is the minimum interval between action
+   potentials that you can achieve?
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-3-3" class="outline-3">
+<h3 id="sec-3-3"><span class="section-number-3">3.3</span> Voltage Clamping</h3>
+<div class="outline-text-3" id="text-3-3">
+
+<p>   You can also perform voltage clamp experiments in this simulation.
+</p>
+<p>
+   click on the "Voltage clamp" tab header at the bottom of the
+   control form under "Electronics".
+</p>
+<p>
+   Again, reasonable default values have been selected , so all you
+   have to do to run the voltage clamp simulation is:
+</p>
+<p>
+   click the "Run" button on the control form
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-3-4" class="outline-3">
+<h3 id="sec-3-4"><span class="section-number-3">3.4</span> Changing Extracellular Concentrations</h3>
+<div class="outline-text-3" id="text-3-4">
+
+<p>   You can alter the extracellular concentrations of the ions through
+   the "Channels" panel.  Any changes in concentration will cause the
+   reversal potentials to be recalculated.  To reset the values back
+   to the initial ones, just click on the "Restore defaults" button
+   in the top tool bar.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-3-5" class="outline-3">
+<h3 id="sec-3-5"><span class="section-number-3">3.5</span> Controlling Graphs</h3>
+<div class="outline-text-3" id="text-3-5">
+
+<p>   The graph of the clamp current (lower left panel) has gone off
+   scale.  In order to rescale the graph:
+</p>
+<p>
+   click on the button with green tick mark in the navigation toolbar
+   at the bottom of the plots.
+</p>
+<p>
+   A dialog containing drop-down to select the subplot should appear.
+   Select the "Injection current" and click OK. Another dialog box
+   will appear with text boxes for `Min` and `Max` values for X-Axis
+   and Y-Axis. Adjust for Y axis to bring the graph into range and
+   press "Apply".
+</p>
+
+<p>
+   The top toolbar has an "Overlay plots" button.  When it is
+   checked, any existing plots in the graph will be held and new
+   simulation results will be overlayed. Try this now.
+</p>
+<p>
+   Click "Overlay plots" and run the simulation at several values of
+   the clamp voltage. Do the first run with "Overlay plots" button
+   unchecked so that all previous graphs are cleared at this
+   run. Then click this button to checked state and do the subsequent
+   runs.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-3-6" class="outline-3">
+<h3 id="sec-3-6"><span class="section-number-3">3.6</span> State Plots</h3>
+<div class="outline-text-3" id="text-3-6">
+
+<p>   One can learn a great deal by studying plots in which one of the
+   Hodgkin-Huxley channel activation parameters (the K activation
+   "n", the Na activation "m", or the Na inactivation "h") is plotted
+   as a function of the membrane potential, V.  (See, for example,
+   Chapter 5 of "Methods in Neuronal Modeling", by Koch and Segev.)
+</p>
+<p>
+   In order to view such a plot, click the left mouse button on the
+   button labeled "State plot" in the top toolbar. The label will
+   change to "State Plot Visible", and a state plot graph will
+   appear. Clicking the button again will hide the graph.  The
+   default plot is to show the K channel "n" parameter on the y-axis
+   and the membrane potential on the x-axis.  The drop-down menus at
+   the top of the window allow you to change these defaults.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-3-7" class="outline-3">
+<h3 id="sec-3-7"><span class="section-number-3">3.7</span> Channel Blocking</h3>
+<div class="outline-text-3" id="text-3-7">
+
+<p>   In order to explore the effects of blocking one of the channels,
+   you may click on one of the check boxes in the "Channels" panel
+   for blocking and unblocking a channel.  When a channel is blocked,
+   its conductance is set to zero.  Activation parameters for a
+   blocked channel are still calculated and may be plotted, but are
+   relatively meaningless because they will have no effect on the
+   membrane potential.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-3-8" class="outline-3">
+<h3 id="sec-3-8"><span class="section-number-3">3.8</span> Saving Graphs</h3>
+<div class="outline-text-3" id="text-3-8">
+
+<p>   You can save a graph to file by clicking the save button in the
+   navigation toolbar. In the file dialog you can select from several
+   formats including PDF, JPEG, PNG and SVG.
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-3-9" class="outline-3">
+<h3 id="sec-3-9"><span class="section-number-3">3.9</span> Units used in the simulation</h3>
+<div class="outline-text-3" id="text-3-9">
+
+<p>   Units: 
+</p><table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption></caption>
+<colgroup><col class="left" /><col class="left" />
+</colgroup>
+<thead>
+<tr><th scope="col" class="left">quantity</th><th scope="col" class="left">unit</th></tr>
+</thead>
+<tbody>
+<tr><td class="left">time</td><td class="left">msec</td></tr>
+<tr><td class="left">length</td><td class="left">um (microns)</td></tr>
+<tr><td class="left">potential</td><td class="left">mV</td></tr>
+<tr><td class="left">conductance</td><td class="left">mS (mmho)</td></tr>
+<tr><td class="left">resistance</td><td class="left">kohm</td></tr>
+<tr><td class="left">capacitance</td><td class="left">uF</td></tr>
+<tr><td class="left">specific axial resistance</td><td class="left">kohm-cm</td></tr>
+<tr><td class="left">specific membrane conductance</td><td class="left">mS/cm<sup>2</sup></td></tr>
+<tr><td class="left">specific membrane capacitance</td><td class="left">uF/cm<sup>2</sup></td></tr>
+</tbody>
+</table>
+
+
+</div>
+</div>
+</div>
+</div>
+
+<div id="postamble">
+<p class="date">Date: 2012-09-25 17:03:29 IST</p>
+<p class="author">Author: Subhasis Ray</p>
+<p class="creator">Org version 7.8.11 with Emacs version 23</p>
+<a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
+
+</div>
+</body>
+</html>
