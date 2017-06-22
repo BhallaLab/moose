@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<channelml xmlns="http://morphml.org/channelml/schema" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:meta="http://morphml.org/metadata/schema" 
+    xsi:schemaLocation="http://morphml.org/channelml/schema  http://www.neuroml.org/NeuroMLValidator/NeuroMLFiles/Schemata/v1.8.0/Level2/ChannelML_v1.8.0.xsd"
+    units="Physiological Units">
+
+	<meta:notes>Voltage-gated K channel</meta:notes>
+    
+    <channel_type name="Pyramidal_KM">        
+	    
+        <status value="stable">
+            <meta:contributor>
+                <meta:name>Matteo Farinella</meta:name>
+            </meta:contributor>
+        </status>
+        
+        <meta:notes>Channel translated from the original .mod file used in Kole MH, Ilschner SU, Kampa BM, Williams SR, Ruben PC, Stuart GJ, Action potential generation requires a high sodium channel density in the axon initial segment. Nat Neurosci. 2008 Feb;11(2):178-86.
+            Based on I-M (muscarinic K channel) Slow, noninactivating</meta:notes>
+
+
+        <meta:authorList>
+            <meta:modelAuthor>
+                <meta:name>Zach Mainen</meta:name>
+                <meta:institution>Salk Institute</meta:institution>
+            </meta:modelAuthor>
+            <meta:modelTranslator>
+                <meta:name>Padraig Gleeson</meta:name>
+                <meta:institution>UCL</meta:institution>
+                <meta:email>p.gleeson - at - ucl.ac.uk</meta:email>
+            </meta:modelTranslator>
+            <meta:modelTranslator>
+                <meta:name>Matteo Farinella</meta:name>
+                <meta:institution>UCL</meta:institution>
+                <meta:email>m.farinella - at - ucl.ac.uk</meta:email>
+            </meta:modelTranslator>
+        </meta:authorList>
+
+
+
+        <meta:publication>
+            <meta:fullTitle>Rothman JS, Cathala L, Steuber V, Silver RA, Synaptic depression enables neuronal gain control. Nature. 2009 Jan 14</meta:fullTitle>
+            <meta:pubmedRef>http://www.ncbi.nlm.nih.gov/pubmed/19145233?ordinalpos=1&amp;itool=EntrezSystem2.PEntrez.Pubmed.Pubmed_ResultsPanel.Pubmed_DefaultReportPanel.Pubmed_RVDocSum</meta:pubmedRef>
+        </meta:publication>
+
+
+        <meta:neuronDBref>
+            <meta:modelName>K channels</meta:modelName>
+            <meta:uri>http://senselab.med.yale.edu/senselab/NeuronDB/channelGene2.htm#table3</meta:uri>
+        </meta:neuronDBref>
+
+        
+        <current_voltage_relation cond_law="ohmic" ion="k" default_gmax="5.0" default_erev="-85">
+            
+            <q10_settings q10_factor="2.3" experimental_temp="23" scale_max_cond="true"/>
+            
+            
+            <gate name="n" instances="1">
+            
+                <closed_state id="n0"/>
+                <open_state id="n"/>
+                
+                        <!--
+                Original parameters and equations:
+
+                        tha  = -30	(mV)		: v 1/2 for inf
+                qa   = 9	(mV)		: inf slope
+                Ra   = 0.001	(/ms)		: max act rate  (slow)
+                Rb   = 0.001
+
+                        a =  Ra * (v - tha) / (1 - exp(-(v - tha)/qa))
+                    b = -Rb * (v - tha) / (1 - exp((v - tha)/qa))
+
+                        -->
+                     
+                <transition name="alpha" from="n0" to="n" expr_form="exp_linear"
+                            rate="0.009" scale="9" midpoint="-30" />
+                            
+                <transition name="beta" from="n" to="n0" expr_form="exp_linear"
+                            rate="0.009" scale="-9" midpoint="-30" />
+                    
+            </gate>
+        
+        </current_voltage_relation> 
+	
+        <impl_prefs>
+            <table_settings max_v="100" min_v="-120" table_divisions="199"/>
+        </impl_prefs>
+        
+    </channel_type>
+</channelml>

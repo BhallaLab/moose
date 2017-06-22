@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<channelml xmlns="http://morphml.org/channelml/schema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:meta="http://morphml.org/metadata/schema" xsi:schemaLocation="http://morphml.org/channelml/schema   ../../Schemata/v1.7.2/Level2/ChannelML_v1.7.2.xsd" units="SI Units">
+
+	<meta:notes>Ca pool</meta:notes>
+    
+    <ion name="ca" charge="2" role="SignallingSubstance">  
+        <meta:notes>Signifies that the ion is involved in a process which alters its concentration</meta:notes>
+    </ion>
+    
+    <ion_concentration name="CaPool_STG">
+        
+        <status value="stable">
+            <meta:comment>Equations from Alternative to Hand-Tuning Conductance-Based Models: Construction and Analysis of Databases of Model Neurons, Astrid A. Prinz, Cyrus P. Billimoria, and Eve Marder, J Neurophysiol 90: 3998–4015, 2003.</meta:comment>
+            <meta:contributor>
+                <meta:name>Aditya Gilra</meta:name>
+            </meta:contributor>
+        </status>
+
+        <meta:notes>An expontially decaying pool of calcium</meta:notes>
+        
+        <meta:authorList>
+            <meta:modelTranslator>
+                <meta:name>Aditya Gilra</meta:name>
+                <meta:institution>National Centre for Biological Sciences, Bangalore, India.</meta:institution>    
+                <meta:email>adityag - at - ncbs.res.in</meta:email>
+            </meta:modelTranslator>
+        </meta:authorList>
+
+        <meta:publication>
+            <meta:fullTitle>Alternative to Hand-Tuning Conductance-Based Models: Construction and Analysis of Databases of Model Neurons, Astrid A. Prinz, Cyrus P. Billimoria, and Eve Marder, J Neurophysiol 90: 3998–4015, 2003.</meta:fullTitle>
+            <meta:pubmedRef/>
+        </meta:publication>
+
+        <meta:neuronDBref>
+            <meta:modelName>Ca Pool Ion Concentration</meta:modelName>
+            <meta:uri/>
+        </meta:neuronDBref>
+
+        
+        <ion_species name="ca"/>
+        
+        <decaying_pool_model resting_conc="5.0e-5" decay_constant="0.2">     <!-- SI units -->
+
+            
+                <!--<pool_volume_info shell_thickness = "8.4e-8"/>-->
+
+
+            <fixed_pool_info phi="74.8e6"/>     <!-- phi = f/tau from the Prinz et al 2003 paper -->
+     <!-- SI units -->
+
+            
+        </decaying_pool_model>
+        
+        
+    </ion_concentration>
+</channelml>

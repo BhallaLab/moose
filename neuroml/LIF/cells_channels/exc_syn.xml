@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<channelml xmlns="http://morphml.org/channelml/schema" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:meta="http://morphml.org/metadata/schema" 
+    xsi:schemaLocation="http://morphml.org/channelml/schema  http://www.neuroml.org/NeuroMLValidator/NeuroMLFiles/Schemata/v1.8.1/Level2/ChannelML_v1.8.1.xsd"
+    units="SI Units">
+
+    <meta:notes>Excitatory synpase</meta:notes>
+     
+    <synapse_type name="exc_syn">
+               
+        <status value="in_progress">
+            <meta:contributor>
+                <meta:name>Aditya Gilra</meta:name>
+            </meta:contributor>
+        </status>
+    
+        <meta:notes> Dual exponential excitatory synapse </meta:notes>
+        
+        <meta:authorList>
+            <meta:modelAuthor>
+                <meta:name>Aditya Gilra</meta:name>
+            </meta:modelAuthor>
+            <meta:modelTranslator>
+                <meta:name>Aditya Gilra</meta:name>
+                <meta:institution>NCBS, India</meta:institution>    
+                <meta:email>adityag@ncbs.res.in</meta:email>
+            </meta:modelTranslator>
+        </meta:authorList>
+        
+        <meta:neuronDBref>
+            <meta:modelName></meta:modelName>
+            <meta:uri></meta:uri>
+        </meta:neuronDBref>
+       
+       <doub_exp_syn max_conductance="1.0e-9" rise_time="1.0e-3" decay_time="1.0e-3" reversal_potential="0.0"/>
+       
+    </synapse_type>
+</channelml>

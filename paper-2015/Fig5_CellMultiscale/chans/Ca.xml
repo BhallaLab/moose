@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<channelml xmlns="http://morphml.org/channelml/schema" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:meta="http://morphml.org/metadata/schema" 
+    xsi:schemaLocation="http://morphml.org/channelml/schema  http://www.neuroml.org/NeuroMLValidator/NeuroMLFiles/Schemata/v1.8.1/Level2/ChannelML_v1.8.1.xsd"
+    units="SI Units">
+
+    <meta:notes>A channel from Maex, R and De Schutter, E. Synchronization of Golgi and Granule Cell Firing in a 
+    Detailed Network Model of the Cerebellar Granule Cell Layer</meta:notes>
+     
+    <channel_type name="Ca">
+    
+        <status value="in_progress">
+        </status>
+        
+        <meta:notes>Voltage-gated Ca2+ channel, based on Traub</meta:notes>
+    
+        <meta:authorList>
+            <meta:modelAuthor>
+                <meta:name>Traub, R.</meta:name>
+            </meta:modelAuthor>
+            <meta:modelTranslator>
+                <meta:name>Upi Bhalla</meta:name>
+                <meta:institution>NCBS</meta:institution>    
+                <meta:email>bhalla - at - ncbs.res.in</meta:email>
+            </meta:modelTranslator>
+        </meta:authorList>
+
+        <current_voltage_relation cond_law="ohmic" 
+                                  ion="ca" 
+                                  default_gmax="9.084216" 
+                                  default_erev="0.080"
+                                  charge="2"
+                                  fixed_erev="yes">  <!-- In the orig model, [Ca] alterations didn't alter erev for channel from 80mV -->
+            
+            <q10_settings q10_factor="3" experimental_temp="20"/>
+            <offset value="0.010"/>
+            
+            <gate name="m" instances="2">
+                <closed_state id="m0"/>
+                <open_state id="m"/>
+                     
+                <transition name="alpha" from="m0" to="m" expr_form="sigmoid" rate="1600" scale="-0.01388888889" midpoint="0.005" />
+                <transition name="beta" from="m" to="m0" expr_form="exp_linear" rate="100" scale="-0.005" midpoint="-0.0089" />
+                    
+            </gate>
+        
+            <gate name="h" instances="1">
+                <closed_state id="h0"/>
+                <open_state id="h"/>
+                     
+                <transition name="alpha" from="h0" to="h" expr_form="generic" expr="v  &lt; -0.060 ? 5.0 : 5 * (exp (-50 * (v - (-0.060))))" />
+                <transition name="beta" from="h" to="h0" expr_form="generic" expr="v  &lt; -0.060 ? 0 : 5 - (5 * (exp (-50 * (v - (-0.060)))))" />
+                    
+            </gate>
+        </current_voltage_relation> 
+        
+        
+    </channel_type>
+</channelml>
+
