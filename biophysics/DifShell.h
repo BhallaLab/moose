@@ -73,6 +73,9 @@ class DifShell: public DifShellBase{
 
   void vSetInnerArea(const Eref& e, double innerArea );
   double vGetInnerArea(const Eref& e) const;
+
+  void calculateVolumeArea(const Eref& e);
+  
   static const Cinfo * initCinfo();
   
                 
