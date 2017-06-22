@@ -156,7 +156,10 @@ class NetworkML():
                 cell_name = self.populationDict[population][0]
                 segment_path = self.populationDict[population][1][int(cell_id)].path+'/'+\
                     self.cellSegmentDict[cell_name][0][segment_id][0]
-                compartment = moose.Compartment(segment_path)
+                if moose.exists( segment_path ):
+                    compartment = moose.element( segment_path )
+                else:
+                    compartment = moose.Compartment(segment_path)
                 _logger.debug("Adding pulse at {0}: {1}".format(
                     segment_path, pulsegen.firstLevel )
                     )
@@ -224,9 +227,11 @@ class NetworkML():
             try:
                 childobj = moose.element(childId)
                 if childobj.className in ['Compartment','SymCompartment']:
-                    ## SymCompartment inherits from Compartment,
-                    ## so below wrapping by Compartment() is fine for both Compartment and SymCompartment
-                    child = moose.Compartment(childId)
+                    if moose.exists( childId ):
+                        child = moose.element(childId)
+                    else:
+                        child = moose.Compartment(childId)
+
                     x0 = child.x0
                     y0 = child.y0
                     x0new = x0*cos(ztheta)-y0*sin(ztheta)
@@ -316,7 +321,7 @@ class NetworkML():
                                     weight_override, threshold, delay_override)
 
     def connect(self, syn_name, pre_path, post_path, weight, threshold, delay):
-        postcomp = moose.Compartment(post_path)
+        postcomp = moose.element(post_path)
         ## We usually try to reuse an existing SynChan & SynHandler -
         ## event based SynHandlers have an array of weights and delays and can represent multiple synapses,
         ## so a new element of the weights and delays array is created
@@ -349,7 +354,7 @@ class NetworkML():
         if gradedchild is not None and gradedchild.value=='True': # graded synapse
             interpol = moose.element(syn.path+"/graded_table")
             #### always connect source to input - else 'cannot create message' error.
-            precomp = moose.Compartment(pre_path)
+            precomp = moose.element(pre_path)
             moose.connect(precomp,"VmOut",interpol,"input")
             try:
                 tau_table = moose.element(syn.path+'/tau_table')
@@ -377,7 +382,7 @@ class NetworkML():
                 else:
                     if not moose.exists(pre_path+'/'+syn_name+'_spikegen'):
                         ## create new spikegen
-                        spikegen = moose.SpikeGen(pre_path+'/'+syn_name+'_spikegen')
+                        spikegen = moose.element(pre_path+'/'+syn_name+'_spikegen')
                         ## connect the compartment Vm to the spikegen
                         moose.connect(precomp,"VmOut",spikegen,"Vm")
                         ## spikegens for different synapse_types can have different thresholds
