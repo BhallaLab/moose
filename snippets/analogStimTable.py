@@ -85,11 +85,7 @@ def analogStimTable():
     pylab.show()
 
 if __name__ == '__main__':
-    
     analogStimTable()
-
-if __name__ == '__main__':
-    main
 
 #
 # stimtable.py ends here

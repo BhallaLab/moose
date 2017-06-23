@@ -28,9 +28,9 @@ def loadGran98NeuroML_L123(filename):
     soma_path = populationDict['Gran'][1][0].path+'/Soma_0'
     somaVm = setupTable('somaVm',moose.Compartment(soma_path),'Vm')
     somaCa = setupTable('somaCa',moose.CaConc(soma_path+'/Gran_CaPool_98'),'Ca')
-    somaIKC = setupTable('somaIKC',moose.HHChannel(soma_path+'/KC_CML'),'Gk')
-    somaIKCa = setupTable('somaIKCa',moose.HHChannel(soma_path+'/Gran_KCa_98'),'Gk')
-    #KDrX = setupTable('ChanX',moose.HHChannel(soma_path+'/Gran_KDr_98'),'X')
+    somaIKC = setupTable('somaIKC',moose.element(soma_path+'/KC_CML'),'Gk')
+    somaIKCa = setupTable('somaIKCa',moose.element(soma_path+'/Gran_KCa_98'),'Gk')
+    #KDrX = setupTable('ChanX',moose.element(soma_path+'/Gran_KDr_98'),'X')
     soma = moose.Compartment(soma_path)
     print("Reinit MOOSE ... ")
     resetSim(['/elec','/cells'],simdt,plotdt) # from moose.utils

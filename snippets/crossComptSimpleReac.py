@@ -30,7 +30,7 @@
 
 import math
 import matplotlib.pyplot as plt
-import numpy
+import numpy as np
 import moose
 
 def makeModel():
@@ -161,7 +161,7 @@ def main():
 
     ## Iterate through all plots, dump their contents to data.plot.
     for x in moose.wildcardFind( '/model/graphs/conc#' ):
-       t = numpy.linspace( 0, runtime, x.vector.size ) # sec
+       t = np.linspace( 0, runtime, x.vector.size ) # sec
        plt.plot( t, x.vector, label=x.name )
     plt.legend()
     plt.show()

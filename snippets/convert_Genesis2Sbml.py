@@ -46,7 +46,6 @@
 # Code:
 
 import moose
-from moose.SBML import *
 
 def main():
     """This example illustrates loading a kinetic model defined in Genesis format
@@ -58,7 +57,7 @@ def main():
     moose.loadModel('../genesis/Kholodenko.g','/Kholodenko')
         
     #Writes model to xml file
-    written = mooseWriteSBML('/Kholodenko','../genesis/Kholodenko_tosbml.xml')
+    written = moose.mooseWriteSBML('/Kholodenko','../genesis/Kholodenko_tosbml.xml')
     print(written)
 
 if __name__ == '__main__':

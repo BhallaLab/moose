@@ -49,13 +49,12 @@ import moose
 
 def connect_two_intfires():
     """
-Connect two IntFire neurons so that spike events in one gets
-transmitted to synapse of the other.
-
+    Connect two IntFire neurons so that spike events in one gets
+    transmitted to synapse of the other.
     """
-    if1 = moose.IntFire('if1')
-    if2 = moose.IntFire('if2')
-    sf1 = moose.SimpleSynHandler( 'if1/sh' )
+    if1 = moose.IntFire('/if1')
+    if2 = moose.IntFire('/if2')
+    sf1 = moose.SimpleSynHandler( '/if1/sh' )
     moose.connect( sf1, 'activationOut', if1, 'activation' )
     sf1.synapse.num = 1
     syn1 = moose.element(sf1.synapse)
@@ -64,13 +63,12 @@ transmitted to synapse of the other.
 
 def connect_spikegen():
     """
-Connect a SpikeGen object to an IntFire neuron such that spike
-events in spikegen get transmitted to the synapse of the IntFire
-neuron.
-
-if3 = moose.IntFire('if3')
+    Connect a SpikeGen object to an IntFire neuron such that spike
+    events in spikegen get transmitted to the synapse of the IntFire
+    neuron.
     """
-    sf3 = moose.SimpleSynHandler( 'if3/sh' )
+    if3 = moose.IntFire('/if3')
+    sf3 = moose.SimpleSynHandler( '/if3/sh' )
     moose.connect( sf3, 'activationOut', if3, 'activation' )
     sf3.synapse.num = 1
     sg = moose.SpikeGen('sg')
@@ -79,7 +77,7 @@ if3 = moose.IntFire('if3')
 
 def setup_synapse():
     """
-Create an intfire object and create two synapses on it.
+    Create an intfire object and create two synapses on it.
 
     """
     if4 = moose.IntFire('if4')
@@ -96,8 +94,8 @@ Create an intfire object and create two synapses on it.
 
 def main():
     """
-Demonstrates connection between 2 IntFire neurons to observe
-spike generation.
+    Demonstrates connection between 2 IntFire neurons to observe
+    spike generation.
 
     """
     connect_two_intfires()
