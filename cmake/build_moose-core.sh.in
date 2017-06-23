@@ -19,6 +19,7 @@ echo "Building MOOSE"
         -DCMAKE_BUILD_TYPE=Release \
         -DWITH_BOOST=@WITH_BOOST@ \
         -DPYTHON_EXECUTABLE=@PYTHON_EXECUTABLE@ \
+        -DMOOSE_VERSION=@MOOSE_VERSION@ \
         @CMAKE_PYMOOSE_ARGS@ \
         @PYMOOSE_SOURCE_DIR@ 
     $MAKE
