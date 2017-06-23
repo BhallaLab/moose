@@ -1,5 +1,13 @@
 #!/usr/bin/env bash
 
+trap ctrl_c INT 
+
+function ctrl_c( )
+{
+    echo "CTRL+C pressed. Quitting..."
+    exit;
+}
+
 PWD=$(cd "$(dirname "${BASH_SOURCE[0]}" )" && pwd)
 
 BLACKLISTED=$PWD/BLACKLISTED
@@ -18,10 +26,13 @@ if [ ! -f $MATPLOTRC ]; then
     exit
 fi
 
-TIMEOUT=5m
+TIMEOUT=1m
+NTHREADS=8
 for f in `cat ./TORUN`; do
     d=`dirname $f`
     fn=`basename $f`
+    # Wait of NTHREADS to join
+    ((i=i%NTHREADS)); ((i++==0)) && wait
     (
         cp $MATPLOTRC $d/
         cd $d
@@ -50,7 +61,7 @@ for f in `cat ./TORUN`; do
             cat $TEMP
             echo "|| Failed. Error written to $FAILED"
         fi
-    )
+    ) & 
 done
 
 echo "Following scripts were successful"

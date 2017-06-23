@@ -13,6 +13,7 @@ import moose
 
 dt = 0.01
 runtime = 100
+
 def make_model():
     sinePeriod = 50
     maxFiringRate = 10
@@ -91,6 +92,7 @@ def main():
     pylab.legend()
     pylab.show()
 
+
     '''
     moose.useClock( 0, '/stim', 'process' )
     moose.useClock( 1, '/spike', 'process' )
@@ -102,8 +104,6 @@ def main():
         moose.setClock( i, dt )
     moose.useClock( 8, '/plot#', 'process' )
     '''
-
-
 # Run the 'main' if this script is executed standalone.
 if __name__ == '__main__':
         main()

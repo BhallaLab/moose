@@ -267,8 +267,6 @@ def main():
         moose.setClock( i, chemdt ) # for the chem objects
     moose.setClock( 10, diffdt ) # for the diffusion
     moose.setClock( 18, plotdt ) # for the output tables.
-    '''
-    '''
     moose.reinit()
 
     t1 = time.time( )

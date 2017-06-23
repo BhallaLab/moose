@@ -26,7 +26,8 @@ import os
 import math
 import pylab,numpy
 import moose
-
+import numpy
+import matplotlib.pyplot as plt
 EREST_ACT = -70e-3
 
 # Gate equations have the form:
@@ -215,7 +216,7 @@ def makeElecPlots():
     #addPlot( '/n/head0/gluR', 'getGk', 'elec/head0Gk' )
     #addPlot( '/n/head2/gluR', 'getGk', 'elec/head2Gk' )
 
-def dumpPlots( fname ):
+def dumpPlots( fname,runtime ):
     if ( os.path.exists( fname ) ):
         os.remove( fname )
     for x in moose.wildcardFind( '/graphs/##[ISA=Table]' ):
@@ -384,21 +385,21 @@ def makeChemInCubeMesh():
     assert dendKinaseEnzCplx.volume == dendSide * dendSide * dendSide
 
 def makeSolvers( elecDt ):
-        # Put in the solvers, see how they fare.
-        # Here we kludge in a single chem solver for the whole system.
-        ksolve = moose.Ksolve( '/model/ksolve' )
-        stoich = moose.Stoich( '/model/stoich' )
-        stoich.compartment = moose.element( '/model/chem/neuroMesh' )
-        stoich.ksolve = ksolve
-        stoich.path = '/model/chem/##'
-        #stoich.method = 'rk5'
-        moose.useClock( 5, '/model/ksolve', 'init' )
-        moose.useClock( 6, '/model/ksolve', 'process' )
-        # Here is the elec solver
-        hsolve = moose.HSolve( '/model/hsolve' )
-        moose.useClock( 1, '/model/hsolve', 'process' )
-        hsolve.dt = elecDt
-        hsolve.target = '/model/elec/compt'
+    # Put in the solvers, see how they fare.
+    # Here we kludge in a single chem solver for the whole system.
+    ksolve = moose.Ksolve( '/model/ksolve' )
+    stoich = moose.Stoich( '/model/stoich' )
+    stoich.compartment = moose.element( '/model/chem/neuroMesh' )
+    stoich.ksolve = ksolve
+    stoich.path = '/model/chem/##'
+    #stoich.method = 'rk5'
+    moose.useClock( 5, '/model/ksolve', 'init' )
+    moose.useClock( 6, '/model/ksolve', 'process' )
+    # Here is the elec solver
+    hsolve = moose.HSolve( '/model/hsolve' )
+    moose.useClock( 1, '/model/hsolve', 'process' )
+    hsolve.dt = elecDt
+    hsolve.target = '/model/elec/compt'
 
 def makeCubeMultiscale():
     makeSpinyCompt()
@@ -498,25 +499,26 @@ def testCubeMultiscale( useSolver ):
         makeSolvers( elecDt )
     moose.reinit()
     moose.start( 1.0 )
-    dumpPlots( plotName )
+    runtime = 1.0
+    dumpPlots( plotName,runtime )
 
 def main():
-	"""
-	A toy compartmental neuronal + chemical model. The neuronal model is in
-	a dendrite and five dendritic spines. The chemical model is in three
-	compartments: one for the dendrite,
-	one for the spine head, and one for the postsynaptic density. However,
-	the spatial geometry of the neuronal model is ignored and the chemical
-	model just has three cubic volumes for each compartment. So there
-	is a functional mapping but spatial considerations are lost.
-	The electrical model contributes the incoming calcium flux to the
-	chemical model. This comes from the synaptic channels.
-	The signalling here does two things to the electrical model. First, the
-	amount of receptor in the chemical model controls the amount of glutamate
-	receptor in the PSD. Second, there is a small kinase reaction that
-	phosphorylates and inactivates the dendritic potassium channel.
-	"""
-	testCubeMultiscale( 1 )
+    """
+    A toy compartmental neuronal + chemical model. The neuronal model is in
+    a dendrite and five dendritic spines. The chemical model is in three
+    compartments: one for the dendrite,
+    one for the spine head, and one for the postsynaptic density. However,
+    the spatial geometry of the neuronal model is ignored and the chemical
+    model just has three cubic volumes for each compartment. So there
+    is a functional mapping but spatial considerations are lost.
+    The electrical model contributes the incoming calcium flux to the
+    chemical model. This comes from the synaptic channels.
+    The signalling here does two things to the electrical model. First, the
+    amount of receptor in the chemical model controls the amount of glutamate
+    receptor in the PSD. Second, there is a small kinase reaction that
+    phosphorylates and inactivates the dendritic potassium channel.
+    """
+    testCubeMultiscale( 1 )
 
 if __name__ == '__main__':
     main()

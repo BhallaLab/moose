@@ -160,7 +160,7 @@ def main():
         fig.canvas.draw()
 
     print( "Hit 'enter' to exit" )
-    eval(input())
+    raw_input( )
 
 
 
