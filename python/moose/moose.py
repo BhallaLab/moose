@@ -1,24 +1,29 @@
-# moose.py ---
-# This is the primary moose module. It wraps _moose.so and adds some
-# utility functions.
+from __future__ import print_function, division, absolute_import
 
-# Filename: moose.py
 # Author: Subhasis Ray
 # Maintainer: Dilawar Singh, Harsha Rani, Upi Bhalla
 
-from __future__ import print_function
 from contextlib import closing
 import warnings
 import platform
 import pydoc
 import os
 from io import StringIO
-from collections import defaultdict
-from . import _moose
-from ._moose import *
-import __main__ as main
-from .genesis import writeKkit
-from . import SBML
+
+import moose.SBML.readSBML as _readSBML
+import moose.SBML.writeSBML as _writeSBML
+import moose.genesis.writeKkit as _writeKkit
+import moose.chemUtil as _chemUtil
+
+# Import function from C++ module into moose namespace.
+from moose._moose import *
+
+def version( ):
+    return VERSION
+
+# Tests
+from moose.moose_test import test
+
 sequence_types = ['vector<double>',
                   'vector<int>',
                   'vector<long>',
@@ -43,8 +48,6 @@ known_types = ['void',
                'melement'] + sequence_types
 
 # SBML related functions.
-
-
 def mooseReadSBML(filepath, loadpath, solver='ee'):
     """Load SBML model.
 
@@ -55,7 +58,7 @@ def mooseReadSBML(filepath, loadpath, solver='ee'):
     solver   -- Solver to use (default 'ee' ) \n
 
     """
-    return SBML.readSBML.mooseReadSBML( filepath, loadpath, solver )
+    return _readSBML.mooseReadSBML( filepath, loadpath, solver )
 
 
 def mooseWriteSBML(modelpath, filepath, sceneitems={}):
@@ -74,7 +77,7 @@ def mooseWriteSBML(modelpath, filepath, sceneitems={}):
                             --- else, auto-coordinates is used for layout position and passed
 
     """
-    return SBML.writeSBML.mooseWriteSBML(modelpath, filepath, sceneitems)
+    return _writeSBML.mooseWriteSBML(modelpath, filepath, sceneitems)
 
 
 def mooseWriteKkit(modelpath, filepath,sceneitems={}):
@@ -85,7 +88,7 @@ def mooseWriteKkit(modelpath, filepath,sceneitems={}):
     modelpath -- model path in moose \n
     filepath -- Path of output file.
     """
-    return writeKkit.mooseWriteKkit(modelpath, filepath,sceneitems)
+    return _writeKkit.mooseWriteKkit(modelpath, filepath,sceneitems)
 
 
 def moosedeleteChemSolver(modelpath):
@@ -94,7 +97,7 @@ def moosedeleteChemSolver(modelpath):
         this should be followed by mooseaddChemSolver for add solvers on to compartment to simulate else
         default is Exponential Euler (ee)
     """
-    return chemUtil.add_Delete_ChemicalSolver.moosedeleteChemSolver(modelpath)
+    return _chemUtil.add_Delete_ChemicalSolver.moosedeleteChemSolver(modelpath)
 
 
 def mooseaddChemSolver(modelpath, solver):
@@ -108,7 +111,7 @@ def mooseaddChemSolver(modelpath, solver):
               "Runge Kutta"       ("gsl")
 
     """
-    return chemUtil.add_Delete_ChemicalSolver.mooseaddChemSolver(modelpath, solver)
+    return _chemUtil.add_Delete_ChemicalSolver.mooseaddChemSolver(modelpath, solver)
 
 ################################################################
 # Wrappers for global functions
