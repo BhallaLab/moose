@@ -1,19 +1,17 @@
-from __future__ import print_function, division
-
-"""
-utils.py:
-
+"""utils.py:
 Utility functions for moose.
 
 NOTE: Some function might break because unicode is default string in python3.
 
 """
 
+from __future__ import print_function, division
+from __future__ import absolute_import
+
 __author__           = 'Subhasis Ray, Aditya Gilra, Dilawar Singh'
-__copyright__        = "Copyright 2013, NCBS Bangalore"
-__credits__          = ["NCBS Bangalore", "Bhalla Lab"]
-__license__          = "GPL"
-__version__          = "1.0.0"
+__copyright__        = "Copyright 2013-, NCBS Bangalore"
+__credits__          = ["NCBS Bangalore"]
+__license__          = "GPLv3"
 
 import types
 import parser
@@ -26,16 +24,16 @@ from datetime import datetime
 from collections import defaultdict
 import re
 
-from moose_constants import *
+from moose.moose_constants import *
 
 # Make these import non-important.
 try:
-    from plot_utils import *
+    from moose.plot_utils import *
 except Exception as e:
     pass
 
 try:
-    from print_utils import *
+    from moose.print_utils import *
 except Exception as e:
     pass
 
