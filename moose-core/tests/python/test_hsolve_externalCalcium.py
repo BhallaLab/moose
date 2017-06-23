@@ -4,11 +4,11 @@ import os
 import sys
 import numpy as np
 import time
-import moose
-import matplotlib.pyplot as plt
 import test_difshells as td
 import chan_proto
 import param_chan
+
+import moose
 print('Using moose from %s' % moose.__file__ )
 
 difshell_no = 3
@@ -19,6 +19,13 @@ script_dir_ = os.path.dirname( os.path.abspath( __file__ ) )
 p_file = os.path.join( script_dir_, "soma.p" )
 
 cond = {'CaL12':30*0.35e-5, 'SK':0.5*0.35e-6}
+
+def assert_stat( vec, expected ):
+    min_, max_ = np.min( vec ), np.max( vec )
+    mean, std = np.mean( vec ), np.std( vec )
+    computed = [ min_, max_, mean, std ]
+    assert np.allclose( computed, expected ),  \
+        "Got %s expected %s" % (computed, expected)
 
 if __name__ =='__main__':
     for tick in range(0, 7):
@@ -66,9 +73,10 @@ if __name__ =='__main__':
     t_stop = 10.
     moose.reinit()
     moose.start(t_stop)
-    print( sktab.vector )
-    print( shelltab.vector )
-    print(len(np.where(sktab.vector<1e-19)[0]), 
-            len(np.where(shelltab.vector>50e-6)[0])
-            )
+    vec1 = sktab.vector
+    vec2 = shelltab.vector
+    assert_stat( vec1, [ 0.0, 5.102834e-22, 4.79066e-22, 2.08408e-23 ] )
+    assert_stat( vec2, [ 5.0e-5, 5.075007e-5, 5.036985e-5, 2.1950117e-7] )
+    assert len(np.where(sktab.vector<1e-19)[0]) == 2001
+    assert len(np.where(shelltab.vector>50e-6)[0]) == 2000
     
