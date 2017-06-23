@@ -1,7 +1,19 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
-
 PROJECT(MOOSE)
-set(MOOSE_VERSION "3.1.1")
+
+# If from command line, version info is not passed, use the git to generate a
+# version file. If GIT fails, use the previous known version.
+find_program(GIT_EXEC "git")
+message( STATUS "Looking for git ${GIT_EXEC}" )
+if( (NOT MOOSE_VERSION) AND GIT_EXEC)
+    execute_process( 
+        COMMAND ${GIT_EXEC} describe --tags --long
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        OUTPUT_VARIABLE MOOSE_VERSION
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+endif( )
+message( STATUS "Building version ${MOOSE_VERSION}" )
 
 # Options to pass down to moose-core
 option(WITH_DOC "Build documentation" OFF)
@@ -9,6 +21,7 @@ option(DEBUG "Build with DEBUG support" OFF)
 option(WITH_BOOST "Use Boost libraries instead of GSL" OFF)
 option(WITH_CUDA "Use CUDA/GPU" OFF)
 option(WITH_MPI "Use MPI" OFF)
+
 
 # Required packages.
 find_package(PythonInterp REQUIRED)
