@@ -23,32 +23,8 @@ import sys
 import os.path
 import collections
 import moose
-from validation import validateModel
+from moose.SBML.validation import validateModel
 import re
-'''
-   TODO in
-    -Compartment
-      --Need to add group
-      --Need to deal with compartment outside
-    -Molecule
-      -- Need to add group
-      -- mathML only AssisgmentRule is taken partly I have checked addition and multiplication,
-       --, need to do for other calculation.
-       -- In Assisgment rule one of the variable is a function, in moose since assignment is done using function,
-          function can't get input from another function (model 000740 in l3v1)
-    -Loading Model from SBML
-      --Tested 1-30 testcase example model provided by l3v1 and l2v4 std.
-        ---These are the models that worked (sbml testcase)1-6,10,14-15,17-21,23-25,34,35,58
-    ---Need to check
-         ----what to do when boundarycondition is true i.e.,
-             differential equation derived from the reaction definitions
-             should not be calculated for the species(7-9,11-13,16)
-             ----kineticsLaw, Math fun has fraction,ceiling,reminder,power 28etc.
-             ----Events to be added 26
-         ----initial Assisgment for compartment 27
-             ----when stoichiometry is rational number 22
-         ---- For Michaelis Menten kinetics km is not defined which is most of the case need to calculate
-'''
 
 foundLibSBML_ = False
 try:
@@ -57,18 +33,48 @@ try:
 except ImportError:
     pass
 
+
+'''
+TODO in
+-Compartment
+  --Need to add group
+  --Need to deal with compartment outside
+-Molecule
+  -- Need to add group
+  -- mathML only AssisgmentRule is taken partly I have checked addition and multiplication,
+   --, need to do for other calculation.
+   -- In Assisgment rule one of the variable is a function, in moose since assignment is done using function,
+      function can't get input from another function (model 000740 in l3v1)
+-Loading Model from SBML
+  --Tested 1-30 testcase example model provided by l3v1 and l2v4 std.
+    ---These are the models that worked (sbml testcase)1-6,10,14-15,17-21,23-25,34,35,58
+---Need to check
+     ----what to do when boundarycondition is true i.e.,
+         differential equation derived from the reaction definitions
+         should not be calculated for the species(7-9,11-13,16)
+         ----kineticsLaw, Math fun has fraction,ceiling,reminder,power 28etc.
+         ----Events to be added 26
+     ----initial Assisgment for compartment 27
+         ----when stoichiometry is rational number 22
+     ---- For Michaelis Menten kinetics km is not defined which is most of the case need to calculate
+'''
+
+
 def mooseReadSBML(filepath, loadpath, solver="ee"):
+    """Load SBML model 
+    """
     global foundLibSBML_
     if not foundLibSBML_:
-        print('No python-libsbml found.' 
+        print('[FATAL] Module python-libsbml is not found.' 
             '\nThis module can be installed by following command in terminal:'
             '\n\t easy_install python-libsbml'
-            '\n\t apt-get install python-libsbml'
+            # NOTE: Not available on most DEBIAN.
+            # '\n\t apt-get install python-libsbml'. 
             )
         return None
 
     if not os.path.isfile(filepath):
-        print('%s is not found ' % filepath)
+        print('[FATAL] Model file %s is not found ' % filepath)
         return None
 
     with open(filepath, "r") as filep:

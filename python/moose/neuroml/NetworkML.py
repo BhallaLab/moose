@@ -156,7 +156,10 @@ class NetworkML():
                 cell_name = self.populationDict[population][0]
                 segment_path = self.populationDict[population][1][int(cell_id)].path+'/'+\
                     self.cellSegmentDict[cell_name][0][segment_id][0]
-                compartment = moose.element(segment_path)
+                if moose.exists( segment_path ):
+                    compartment = moose.element( segment_path )
+                else:
+                    compartment = moose.Compartment(segment_path)
                 _logger.debug("Adding pulse at {0}: {1}".format(
                     segment_path, pulsegen.firstLevel )
                     )
@@ -224,9 +227,11 @@ class NetworkML():
             try:
                 childobj = moose.element(childId)
                 if childobj.className in ['Compartment','SymCompartment']:
-                    ## SymCompartment inherits from Compartment,
-                    ## so below wrapping by Compartment() is fine for both Compartment and SymCompartment
-                    child = moose.element(childId)
+                    if moose.exists( childId ):
+                        child = moose.element(childId)
+                    else:
+                        child = moose.Compartment(childId)
+
                     x0 = child.x0
                     y0 = child.y0
                     x0new = x0*cos(ztheta)-y0*sin(ztheta)
@@ -377,7 +382,7 @@ class NetworkML():
                 else:
                     if not moose.exists(pre_path+'/'+syn_name+'_spikegen'):
                         ## create new spikegen
-                        spikegen = moose.SpikeGen(pre_path+'/'+syn_name+'_spikegen')
+                        spikegen = moose.element(pre_path+'/'+syn_name+'_spikegen')
                         ## connect the compartment Vm to the spikegen
                         moose.connect(precomp,"VmOut",spikegen,"Vm")
                         ## spikegens for different synapse_types can have different thresholds

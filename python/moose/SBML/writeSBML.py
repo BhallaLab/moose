@@ -1,38 +1,34 @@
-'''
-*******************************************************************
- * File:            writeSBML.py
- * Description:
- * Author:          HarshaRani
- * E-mail:          hrani@ncbs.res.in
- ********************************************************************/
-/**********************************************************************
-** This program is part of 'MOOSE', the
-** Messaging Object Oriented Simulation Environment,
-** also known as GENESIS 3 base code.
-**           copyright (C) 2003-2017 Upinder S. Bhalla. and NCBS
-Created : Friday May 27 12:19:00 2016(+0530)
-Version
-Last-Updated: Wed Jan 11 15:20:00 2017(+0530)
-          By:
-**********************************************************************/
-/****************************
+# *******************************************************************
+#  * File:            writeSBML.py
+#  * Description:
+#  * Author:          HarshaRani
+#  * E-mail:          hrani@ncbs.res.in
+#
+# ** This program is part of 'MOOSE', the
+# ** Messaging Object Oriented Simulation Environment,
+# ** also known as GENESIS 3 base code.
+# **           copyright (C) 2003-2017 Upinder S. Bhalla. and NCBS
+# Created : Friday May 27 12:19:00 2016(+0530)
+# Version
+# Last-Updated: Wed Jan 11 15:20:00 2017(+0530)
+#           By:
+# **********************************************************************/
 
-'''
+# TODO:
+#   Table should be written
+#   Group's should be added
+# boundary condition for buffer pool having assignment statment constant
+# shd be false
+
 import sys
 import re
 from collections import Counter
 
 import moose
-from validation import validateModel
+from moose.SBML.validation import validateModel
 from moose.chemUtil.chemConnectUtil import *
 from moose.chemUtil.graphUtils import *
 
-
-# ToDo:
-#   Table should be written
-#   Group's should be added
-# boundary condition for buffer pool having assignment statment constant
-# shd be false
 
 foundLibSBML_ = False
 try:
@@ -43,14 +39,12 @@ except Exception as e:
 
 def mooseWriteSBML(modelpath, filename, sceneitems={}):
     global foundLibSBML_ 
-    msg = " "
     if not foundLibSBML_:
-        print('No python-libsbml found.' 
-            '\nThis module can be installed by following command in terminal:'
-            '\n\t easy_install python-libsbml or'
-            '\n\t apt-get install python-libsbml'
-            )
-        return -2, "Could not save the model in to SBML file. \nThis module can be installed by following command in terminal: \n\t easy_install python-libsbml or \n\t apt-get install python-libsbml",''
+        msg = ['No python-libsbml found.'
+                , 'This module can be installed by following command in terminal:'
+                , '\t easy_install python-libsbml' ] 
+        print( '\n'.join(msg) )
+        return -2, "[FATAL] Could not save the model in to SBML file."
 
     sbmlDoc = SBMLDocument(3, 1)
     filepath, filenameExt = os.path.split(filename)
@@ -112,13 +106,12 @@ def mooseWriteSBML(modelpath, filename, sceneitems={}):
         writeEnz(modelpath, cremodel_, sceneitems)
         consistencyMessages = ""
         SBMLok = validateModel(sbmlDoc)
-        if (SBMLok):
+        if SBMLok:
             writeTofile = filepath + "/" + filename + '.xml'
             writeSBMLToFile(sbmlDoc, writeTofile)
             return True, consistencyMessages, writeTofile
-
-        if (not SBMLok):
-            cerr << "Errors encountered " << endl
+        else:
+            print( "[FTAL] Errors encountered " )
             return -1, consistencyMessages
     else:
         return False, "Atleast one compartment should exist to write SBML"
