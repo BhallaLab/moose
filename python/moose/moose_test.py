@@ -117,19 +117,26 @@ def run_test( index, testfile ):
     global total_
     pyExec = os.environ.get( 'PYTHON_EXECUTABLE', '/usr/bin/python' )
     cmd = Command( [ pyExec, testfile ] )
+
     ti = time.time( )
-    status = cmd.run( timeout = 60 )
     name = os.path.basename( testfile )
+    out = (name + '.' * 50)[:50]
+    print( '[TEST %3d/%d] %50s ' % (index, total_, out), end='' )
+    sys.stdout.flush( )
+
+    # Run the test.
+    status = cmd.run( timeout = 60 )
     t = time.time( ) - ti
+    print( ' %.3f ' % t, end='' )
+    sys.stdout.flush( )
+
+    # Change to directory and copy before running then test.
     cwd = os.path.dirname( testfile )
     os.chdir( cwd )
     with open( os.path.join( cwd, 'matplotlibrc' ), 'w' ) as f:
         _logger.debug( 'Writing matplotlibrc to %s' % cwd )
         f.write( matplotlibrc_ )
 
-    out = (name + '.' * 50)[:50]
-    print( '[TEST %3d/%d] %50s %.2f sec ' % (index, total_, out, t), end='' )
-    sys.stdout.flush( )
     if status != 0:
         if status == -15:
             msg = '%2d TIMEOUT' % status
@@ -141,6 +148,7 @@ def run_test( index, testfile ):
     else:
         print( '%2d PASSED' % status )
         test_status_[ 'PASSED' ].append( testfile )
+
     sys.stdout.flush( )
 
 def print_test_stat( ):

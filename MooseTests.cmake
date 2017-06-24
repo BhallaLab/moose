@@ -10,23 +10,29 @@ ADD_TEST(NAME moose.bin-raw-run
     COMMAND moose.bin -u -q
     )
 
-## PyMOOSE tests.
 
-SET(PYMOOSE_TEST_DIRECTORY ${CMAKE_SOURCE_DIR}/tests/python)
-
-# This test does not work with python-2.6 because of unittest changed API.
-#ADD_TEST(NAME pymoose-test-pymoose
-#    COMMAND ${PYTHON_EXECUTABLE} test_pymoose.py
-#    WORKING_DIRECTORY ${PYMOOSE_TEST_DIRECTORY}
-#    )
-
-IF(WITH_MPI)
+# Configure tests here.
+set(PYMOOSE_TEST_DIRECTORY ${CMAKE_SOURCE_DIR}/tests/python)
+set(TEST_COMMAND ${PYTHON_EXECUTABLE})
+if(WITH_MPI)
     SET(TEST_COMMAND ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} 4
         ${MPIEXEC_PREFLAGS} ${PYTHON_EXECUTABLE} ${MPIEXEC_POSTFLAGS}
         )
-else(WITH_MPI)
-    SET(TEST_COMMAND ${PYTHON_EXECUTABLE})
 endif(WITH_MPI)
+
+## PyMOOSE tests starts here.
+ADD_TEST( NAME pymoose-sanity
+    COMMAND ${TEST_COMMAND} -c "import moose; print( moose.version( ) );" 
+    )
+set_tests_properties(pymoose-sanity
+    PROPERTIES ENVIRONMENT "PYTHONPATH=${PROJECT_BINARY_DIR}/python"
+    )
+
+# This test does not work with python-2.6 because of unittest changed API.
+# ADD_TEST(NAME pymoose-test-pymoose
+#    COMMAND ${PYTHON_EXECUTABLE} test_pymoose.py
+#    WORKING_DIRECTORY ${PYMOOSE_TEST_DIRECTORY}
+#    )
 
 ADD_TEST(NAME pymoose-test-synchan
     COMMAND ${TEST_COMMAND} ${PROJECT_SOURCE_DIR}/tests/python/test_synchan.py
@@ -56,7 +62,7 @@ set_tests_properties(pymoose-pyrun
     PROPERTIES ENVIRONMENT "PYTHONPATH=${PROJECT_BINARY_DIR}/python"
     )
 
-# Do not run this test after packaging.
+# DO NOT run this test after packaging.
 ADD_TEST(NAME pymoose-neuroml-reader-test 
     COMMAND ${TEST_COMMAND} ${PROJECT_SOURCE_DIR}/tests/python/test_neuroml.py
     )
