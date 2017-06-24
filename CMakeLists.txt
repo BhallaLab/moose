@@ -127,7 +127,7 @@ add_custom_command(OUTPUT  __uninstall_moose-gui__
 #################################################################################
 enable_testing( )
 add_test( NAME test_pymoose_sanity 
-    COMMAND ${PYTHON_EXECUTABLE} -c "import moose"
+    COMMAND ${PYTHON_EXECUTABLE} -c "import moose; print( moose.version( ) );"
     )
 add_test( NAME test_gui_sanity 
     COMMAND ${PYTHON_EXECUTABLE} ${MOOSE_GUI_INSTALL_DIR}/mgui.py 
