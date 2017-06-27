@@ -23,6 +23,6 @@ set -e
 gbp buildpackage  --git-ignore-branch --git-ignore-new -uc -us
 cd __moose-core_build && ctest --output-on-failure && cd ..
 sudo dpkg -D=2 -i ../moose*.deb
-cd ~ && python -c 'import moose; moose.test( timeout = 10 )'
-cd ~ && python -c 'import moogli'
+cd ~ && /usr/bin/python -c "import moose; moose.test( timeout = 10 )"
+cd ~ && /usr/bin/python -c "import moogli"
 
