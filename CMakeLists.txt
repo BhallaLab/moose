@@ -410,8 +410,23 @@ install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/scripts/moose
     DESTINATION bin
     )
 
-# This target is built by pymoose/CMakeLists.txt file.
+# INSTALL python module.
+# This target is built by pymoose/CMakeLists.txt file. Using the --prefix option
+# always override debian default installation directory. It will be installed in
+# site-packages instead of dist-packages. 
+# See https://bugs.launchpad.net/ubuntu/+source/python2.6/+bug/362570
+# HACK: Get platform information from python and use it to fix the layout.
+execute_process( 
+    COMMAND ${PYTHON_EXECUTABLE} -mplatform OUTPUT_VARIABLE _platform_desc 
+    )
+message( STATUS "Platform ${_platform_desc}" )
+
 if(WITH_PYTHON)
+    set(EXTRA_ARGS "--prefix ${CMAKE_INSTALL_PREFIX}")
+    if( ${_platform_desc} MATCHES ".*(Ubuntu|Debian).*" )
+        list( APPEND EXTRA_ARGS "--install-layout=deb" )
+    endif( )
+
     install(CODE 
         "
         execute_process(
