@@ -12,6 +12,13 @@
 # URL:
 # Keywords:
 # Compatibility:
+#
+#
+
+# Commentary:
+#
+#
+#
 
 # Change log:
 #
@@ -36,6 +43,11 @@
 #
 
 # Code:
+"""
+Following, is a demo to create a network of single compartmental neurons connected
+via alpha synapses. This is same as compartment_net.py except that
+we avoid ematrix and use single melements.
+"""
 
 import sys
 sys.path.append('../../python')
@@ -228,17 +240,18 @@ def create_population(container, size):
             'synchan': synchans}
 
 def make_synapses(spikegen, synchan, delay=5e-3):
-    """Create synapses from spikegens to synchans in a manner similar to
+    """
+    Create synapses from spikegens to synchans in a manner similar to
     OneToAll connection.
 
-    spikegen: list of spikegen objects - these are sources of synaptic
-    event messages.
+spikegen:   list of spikegen objects
+            These are sources of synaptic event messages.
 
-    synchan: list of synchan objects - these are the targets of the
-    synaptic event messages.
+synchan:    list of synchan objects
+            These are the targets of the synaptic event messages.
 
-    delay: mean delay of synaptic transmission. Individual delays are
-    normally distributed with sd=0.1*mean.
+delay:      mean delay of synaptic transmission.
+            Individual delays are normally distributed with sd=0.1*mean.
 
     """
     scount = len(spikegen)
@@ -319,7 +332,8 @@ def single_population(size=2):
 
 inited = False
 def assign_clocks(model_container_list, simdt, plotdt):
-    """Assign clocks to elements under the listed paths.
+    """
+    Assign clocks to elements under the listed paths.
 
     This should be called only after all model components have been
     created. Anything created after this will not be scheduled.
@@ -399,7 +413,6 @@ def main():
     plt.legend()
     plt.show()
 
-if __name__ == '__main__':
-    main()
+
 #
 # compartment_net_no_array.py ends here

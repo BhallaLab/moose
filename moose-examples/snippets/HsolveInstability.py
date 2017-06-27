@@ -2,6 +2,10 @@
 
 # Commentary:
 #
+# A toy compartmental neuronal + chemical model that causes bad things
+# to happen to the hsolver, as of 28 May 2013. Hopefully this will
+# become irrelevant soon.
+#
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
 # published by the Free Software Foundation; either version 3, or
@@ -259,9 +263,9 @@ def make_spiny_compt():
 def main():
     """
     A toy compartmental neuronal + chemical model that causes bad things
-    to happen to the hsolver, as of 28 May 2013. Hopefully this will
-    become irrelevant soon
-    
+    to happen to the hsolver, as of 28 May 2013.
+    Hopefully this will become irrelevant soon
+
     """
     fineDt = 1e-5
     coarseDt = 5e-5

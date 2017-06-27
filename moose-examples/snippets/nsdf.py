@@ -46,6 +46,7 @@
 # Code:
 """
 NSDF : Neuroscience Simulation Data Format
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 NSDF is an HDF5 based format for storing data from neuroscience
 simulation.

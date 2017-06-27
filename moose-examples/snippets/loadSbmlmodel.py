@@ -42,7 +42,6 @@ import numpy as np
 import pylab
 
 import moose
-from moose.SBML import *
 from moose.chemUtil.add_Delete_ChemicalSolver import *
 
 def main():
@@ -78,7 +77,7 @@ If someone wants to load anyother file then
         runtime = float(sys.argv[2])
     sbmlId = moose.element('/')
     # Loading the sbml file into MOOSE, models are loaded in path/model
-    sbmlId = mooseReadSBML(filepath,'/sbml')
+    sbmlId = moose.mooseReadSBML(filepath,'/sbml')
     if isinstance(sbmlId, (list, tuple)):
         print(sbmlId)
 
@@ -97,7 +96,7 @@ If someone wants to load anyother file then
         moose.connect( outputs2,'requestOut', s2, 'getConc' );
 
         # gsl solver is added, default is ee
-        mooseaddChemSolver(sbmlId.path,"ee")
+        moose.mooseaddChemSolver(sbmlId.path,"ee")
 
         # Reset and Run
         moose.reinit()

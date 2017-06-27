@@ -6,9 +6,9 @@
 # Maintainer: 
 # Created: Fri Mar  8 11:26:13 2013 (+0530)
 # Version: 
-# Last-Updated: Thu Aug 11 11:29:36 2016 (-0400)
-#           By: Subhasis Ray
-#     Update #: 389
+# Last-Updated: Sun Jun 25 15:09:55 2017 (-0400)
+#           By: subha
+#     Update #: 390
 # URL: 
 # Keywords: 
 # Compatibility: 
@@ -63,7 +63,7 @@ def node_sizes(g):
 
     """
     sizes = []
-    comps = [moose.Compartment(n) for n in g.nodes()]
+    comps = [moose.element(n) for n in g.nodes()]
     sizes = np.array([c.length * c.diameter for c in comps])
     soma_i = [ii for ii in range(len(comps)) if comps[ii].path.endswith('comp_1')]
     sizes[soma_i] *= np.pi/4 # for soma, length=diameter. So area is dimater^2 * pi / 4
@@ -83,7 +83,7 @@ def cell_to_graph(cell, label=False):
         raise Exception('No neighbors on raxial or distal')
     es = [(c1.path, c2[0].path, {'weight': 2/ (c1.Ra + c2[0].Ra)}) \
               for c1 in moose.wildcardFind('%s/##[ISA=CompartmentBase]' % (cell.path)) \
-              for c2 in moose.Compartment(c1).neighbors[msg]]
+              for c2 in moose.element(c1).neighbors[msg]]
     g = nx.Graph()
     g.add_edges_from(es)
     if label:

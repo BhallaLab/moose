@@ -53,6 +53,7 @@ import moose
 
 
 def interpolation_demo():
+    """ Example of Interpol object in 2-dimension."""
     interpol = moose.Interpol2D('/interpol2D')
     interpol.xmin = 0.0
     interpol.xmax = 1.0

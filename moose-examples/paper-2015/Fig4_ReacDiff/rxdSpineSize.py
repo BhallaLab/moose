@@ -10,12 +10,10 @@
 ## wave. Products diffuse into the spine and cause it to get bigger.
 ##################################################################
 import math
-import pylab
 import numpy
 import matplotlib.pyplot as plt
 import moose
 import sys
-sys.path.append( '../util' )
 import rdesigneur as rd
 from PyQt4 import QtGui
 import moogli
@@ -134,9 +132,9 @@ def displayPlots():
     for x in moose.wildcardFind( '/graphs/#[0]' ):
         tab = moose.vec( x )
         for i in range( len( tab ) ):
-            pylab.plot( tab[i].vector, label=x.name[:-3] + " " + str( i ) )
-        pylab.legend()
-        pylab.figure()
+            plt.plot( tab[i].vector, label=x.name[:-3] + " " + str( i ) )
+        plt.legend()
+        plt.figure()
 
 def main():
     """
@@ -172,10 +170,10 @@ def main():
     moose.start( runtime )
 
     displayPlots()
-    pylab.plot( oldDia, label = 'old Diameter' )
-    pylab.plot( [ i.diameter for i in eHead ], label = 'new Diameter' )
-    pylab.legend()
-    pylab.show()
+    plt.plot( oldDia, label = 'old Diameter' )
+    plt.plot( [ i.diameter for i in eHead ], label = 'new Diameter' )
+    plt.legend()
+    plt.show()
 
     app = QtGui.QApplication(sys.argv)
     #widget = mv.MoogliViewer( '/model' )

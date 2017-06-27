@@ -122,22 +122,22 @@ def updatePlots( plotlist, time ):
 
 def main():
     """
-    This example illustrates how to set up a diffusion/transport model with 
-    a simple reaction-diffusion system in a tapering cylinder: 
+    This example illustrates how to set up a diffusion/transport model with
+    a simple reaction-diffusion system in a tapering cylinder:
 
-    | Molecule **a** diffuses with diffConst of 10e-12 m^2/s. 
-    | Molecule **b** diffuses with diffConst of 5e-12 m^2/s. 
-    | Molecule **b** also undergoes motor transport with a rate of 10e-6 m/s
-    |   Thus it 'piles up' at the end of the cylinder.
+    | Molecule **a** diffuses with diffConst of 10e-12 m^2/s.
+    | Molecule **b** diffuses with diffConst of 5e-12 m^2/s.
+    | Molecule **b** also undergoes motor transport with a rate of 10e-6 m/s,
+    | Thus it 'piles up' at the end of the cylinder.
     | Molecule **c** does not move: diffConst = 0.0
-    | Molecule **d** does not move: diffConst = 10.0e-12 but it is buffered. 
-    |   Because it is buffered, it is treated as non-diffusing.
+    | Molecule **d** does not move: diffConst = 10.0e-12 but it is buffered.
+    | Because it is buffered, it is treated as non-diffusing.
 
     All molecules other than **d** start out only in the leftmost (first)
     voxel, with a concentration of 1 mM. **d** is present throughout
     at 0.2 mM, except in the last voxel, where it is at 1.0 mM.
 
-    The cylinder has a starting radius of 2 microns, and end radius of 
+    The cylinder has a starting radius of 2 microns, and end radius of
     1 micron. So when the molecule undergoing motor transport gets to the
     narrower end, its concentration goes up.
 

@@ -1,0 +1,14 @@
+./../snippets/transportBranchingNeuron.py
+./../snippets/crossComptNeuroMesh.py
+./../snippets/gssaRDspiny.py
+./../snippets/cylinderDiffusion.py
+./../snippets/reacDiffBranchingNeuron.py
+./../snippets/diffSpinyNeuron.py
+./../snippets/IntegrateFireZoo.py
+./../snippets/reacDiffSpinyNeuron.py
+./../paper-2015/Fig6_NetMultiscale/Fig6BCDE.py
+./../paper-2015/Fig6_NetMultiscale/ReducedModel.py
+./../izhikevich/Izhikevich.py
+./../tutorials/ChemicalBistables/scaleVolumes.py
+./../tutorials/ChemicalBistables/propagationBis.py
+./../tutorials/ChemicalOscillators/TuringOneDim.py

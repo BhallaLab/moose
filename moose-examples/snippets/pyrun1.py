@@ -44,6 +44,12 @@
 #
 
 # Code:
+"""
+You can use the PyRun class to run Python statements from MOOSE at
+runtime. This opens up many possibilities of interleaving computing in
+Python and MOOSE. You can also use this for debugging simulations.
+
+"""
 
 import numpy as np
 from matplotlib import pyplot as plt
@@ -67,7 +73,7 @@ def run_sequence():
     ``moose.reinit()``.
 
     In the `runString` we put a couple of print statements to indicate
-    the name fof the object which is running and the current
+    the name of the object which is running and the current
     count. Then we increase the count directly.
 
     When we call ``moose.start()``, the `runString` gets executed at
@@ -123,6 +129,42 @@ incr_count()
 
 
 def input_output():
+    """The PyRun class can take a double input through `trigger`
+    field. Whenever another object sends an input to this field, the
+    `runString` is executed.
+
+    The fun part of this is that you can use the input value in your
+    python statements in `runString`. This is stored in a local
+    variable called `input_`. You can rename this by setting `inputVar`
+    field.
+
+    Things become even more interesting when you can send out a value
+    computed using Python. PyRun objects allow you to define a local
+    variable called `output` and whatever value you assign to this,
+    will be sent out through the source field `output` on successful
+    execution of the `runString`.
+
+    You can rename the output variable by setting `outputVar` field.
+
+    In this example, we send the output of a pulsegen object sending
+    out the values 1, 2, 3 during each pulse and compute the square of
+    these numbers in Python and set output to this square.
+
+    The calculated value is assigned to the `output` variable and in
+    turn sent out to a Table object's input and gets recorded.
+
+    By default PyRun executes the `runString` whenever a `trigger`
+    message is received and when its process method is called at each
+    timestep. In both cases it sends out the `output` value. Since
+    this may cause inaccuracies depending on what the Python
+    statements in `runString` do, a `mode` can be specified to disable
+    one of the above. We set ``mode = 2`` to disable the `process`
+    method. Note that this could also have been done by setting its
+    ``tick = -1``.
+
+    ``mode = 1`` will disable `trigger` message and ``mode = 0``, the
+    default, enables both.
+    """
     model = moose.Neutral('/model')
     input_pulse = moose.PulseGen('/model/pulse')
     #: set the baseline output 0
@@ -216,6 +258,7 @@ def main():
 
 if __name__ == '__main__':
     main()
+
 
 #
 # pyrun.py ends here

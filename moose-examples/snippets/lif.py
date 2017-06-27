@@ -17,6 +17,9 @@
 
 # Commentary:
 #
+# Demonstrates use of Leaky Integrate and Fire (LeakyIaf class) in
+# moose.
+#
 #
 
 # Change log:
@@ -44,7 +47,7 @@
 # Code:
 
 """
-Demonstrates use of Leaky Integrate and Fire (LeakyIaf class) in moose.
+    Demonstrates use of Leaky Integrate and Fire (LeakyIaf class) in moose.
 """
 
 import sys

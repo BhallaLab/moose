@@ -15,6 +15,13 @@
 #
 #
 
+# Commentary:
+#
+# A demo to create a network of single compartmental neurons connected
+# via alpha synapses.
+#
+#
+
 # Change log:
 #
 #
@@ -55,7 +62,7 @@ def create_population(container, size):
     connected to these which can act as plug points for setting up
     synapses later.
 
-    This uses ..ref::`ionchannel.create_1comp_neuron`.
+    This uses **ionchannel.create_1comp_neuron**.
 
     """
     path = container.path
@@ -78,22 +85,23 @@ def create_population(container, size):
             synchan, 'synhandler': synhandler}
 
 def make_synapses(spikegen, synhandler, connprob=1.0, delay=5e-3):
-    """Create synapses from spikegen array to synchan array.
+    """
+    Create synapses from spikegen array to synchan array.
 
-    Parameters
-    ----------
-    spikegen : vec of SpikGen elements
-        Spike generators from neurons.
+Parameters
+----------
+spikegen:   vec of SpikGen elements
+            Spike generators from neurons.
 
-    synhandler : vec of SynHandler elements
-        Handles presynaptic spike event inputs to synchans.
+synhandler: vec of SynHandler elements
+            Handles presynaptic spike event inputs to synchans.
 
-    connprob: float in range (0, 1]
-        connection probability between any two neurons
+connprob:   float in range (0, 1]
+            connection probability between any two neurons
 
-    delay: float
-        mean delay of synaptic transmission. Individual delays are
-        normally distributed with sd=0.1*mean.
+delay:      float (mean delay of synaptic transmission)
+            Individual delays are normally distributed with sd=0.1*mean.
+            
     """
     for sh in synhandler:
         scount = len(spikegen)
@@ -168,9 +176,6 @@ def main():
     plt.legend()
     plt.show()
 
-
-if __name__ == '__main__':
-    main()
 
 #
 # compartment_net.py ends here

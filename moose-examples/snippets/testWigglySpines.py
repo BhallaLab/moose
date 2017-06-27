@@ -26,9 +26,6 @@ spineSpacing = 1.5e-6
 spineSpacingDistrib = 1e-10
 spineSize = 1.0
 spineSizeDistrib = 0
-spineAngle= numpy.pi / 2.0
-spineAngleDistrib = 0.0
-
 
 def makeCellProto( name ):
     elec = moose.Neuron( '/library/' + name )
@@ -53,6 +50,9 @@ def makeSpineProto2( name ):
     moose.connect( shaft, 'axial', head, 'raxial' )
 
 def makeModel():
+    spineAngle= numpy.pi / 2.0
+    spineAngleDistrib = 0.0
+    
     moose.Neutral( '/library' )
     makeCellProto( 'cellProto' )
     makeChemProto( 'cProto' )
@@ -96,11 +96,10 @@ def assertEq( a, b ):
 
 def main():
     """
-This illustrates the use of rdesigneur to build a simple dendrite with
-spines, and then to resize them using spine fields. These are the
-fields that would be changed dynamically in a simulation with reactions
-that affect spine geometry.
-
+    This illustrates the use of rdesigneur to build a simple dendrite with
+    spines, and then to resize them using spine fields. These are the
+    fields that would be changed dynamically in a simulation with reactions
+    that affect spine geometry.
     """
     makeModel()
     elec = moose.element( '/model/elec' )

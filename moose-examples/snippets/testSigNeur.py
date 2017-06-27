@@ -24,6 +24,23 @@
 
 # Code:
 
+"""
+A toy compartmental neuronal + chemical model. The neuronal model
+geometry sets up the chemical volume to match the parent dendrite
+and five dendritic spines, each with a shaft and head. This volume
+mapping uses the NeuroMesh, SpineMesh and PsdMesh classes from MOOSE.
+There is a 3-compartment chemical model to go with this: one for the dendrite,
+one for the spine head, and one for the postsynaptic density. Note
+that the three mesh classes distribute the chemical model appropriately
+to all the respective spines, and set up the diffusion to the dendrite.
+The electrical model contributes the incoming calcium flux to the
+chemical model. This comes from the synaptic channels.
+The signalling here does two things to the electrical model. First, the
+amount of receptor in the chemical model controls the amount of glutamate
+receptor in the PSD. Second, there is a small kinase reaction that
+phosphorylates and inactivates the dendritic potassium channel.
+"""
+
 import sys
 sys.path.append('../../python')
 import os

@@ -83,13 +83,13 @@ def main():
     5. We set tick-interval of ticks 0 and 1 to 0.01 and schedule
        `pulse` on tick 0 and `tab` on tick 1.
 
-    5. Run the simulation for 5 s and save data to the ascii file
+    6. Run the simulation for 5 s and save data to the ascii file
        `output_tabledemo.csv`.
     """
     example()
 
 if __name__ == '__main__':
-    main()
+    example()
 
 
 #

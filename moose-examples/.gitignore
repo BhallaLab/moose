@@ -5,6 +5,10 @@ __pycache__/
 # C extensions
 *.so
 
+#generated output files in snippets
+*.png
+*.csv
+
 # Distribution / packaging
 .Python
 env/

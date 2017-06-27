@@ -6,9 +6,9 @@
 # Maintainer: 
 # Created: Wed May 30 23:51:58 2012 (+0530)
 # Version: 
-# Last-Updated: Sat Aug  6 15:26:45 2016 (-0400)
+# Last-Updated: Sun Jun 25 15:45:33 2017 (-0400)
 #           By: subha
-#     Update #: 125
+#     Update #: 135
 # URL: 
 # Keywords: 
 # Compatibility: 
@@ -28,11 +28,12 @@
 
 # Code:
 
-
+import os
 import uuid
 import unittest
 import numpy as np
 import moose
+import config
 import channelbase
 import testutils
 
@@ -54,9 +55,9 @@ def run_single_channel(channelname, Gbar, simtime, simdt=testutils.SIMDT, plotdt
     print('Starting simulation', testId, 'for', simtime, 's')
     moose.start(simtime)
     print('Finished simulation')
-    vm_file = 'data/%s_Vm.dat' % (channelname)
-    gk_file = 'data/%s_Gk.dat' % (channelname)
-    ik_file = 'data/%s_Ik.dat' % (channelname)
+    vm_file = '%s/%s_Vm.dat' % (config.data_dir, channelname)
+    gk_file = '%s/%s_Gk.dat' % (config.data_dir, channelname)
+    ik_file = '%s/%s_Ik.dat' % (config.data_dir, channelname)
     tseries = np.array(list(range(len(vm_data.vector)))) * simdt
     print(('Vm:', len(vm_data.vector), 'Gk', len(gk_data.vector), 'Ik', len(ik_data.vector)))
     data = np.c_[tseries, vm_data.vector]
@@ -68,14 +69,14 @@ def run_single_channel(channelname, Gbar, simtime, simdt=testutils.SIMDT, plotdt
     print(('Saved Gk in', gk_file))
     data = np.c_[tseries, ik_data.vector]
     np.savetxt(ik_file, data)
-    print('Saved Gk in', ik_file)
+    print('Saved Ik in', ik_file)
     return params
 
 def compare_channel_data(series, channelname, param, simulator, x_range=None, plot=False):
     if simulator == 'moose':
-        ref_file = 'testdata/%s_%s.dat.gz' % (channelname, param)
+        ref_file = os.path.join(config.mydir, 'testdata', '%s_%s.dat.gz' % (channelname, param))
     elif simulator == 'neuron':
-        ref_file = '../nrn/data/%s_%s.dat.gz' % (channelname, param)
+        ref_file = os.path.join(config.mydir, '..', 'nrn', 'data', '%s_%s.dat.gz' % (channelname, param))
     else:
         raise ValueError('Unrecognised simulator: %s' % (simulator))
     try:

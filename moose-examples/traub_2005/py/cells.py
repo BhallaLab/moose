@@ -6,9 +6,9 @@
 # Maintainer: 
 # Created: Fri Mar  9 23:17:17 2012 (+0530)
 # Version: 
-# Last-Updated: Sat Aug  6 15:25:57 2016 (-0400)
+# Last-Updated: Sun Jun 25 10:08:16 2017 (-0400)
 #           By: subha
-#     Update #: 694
+#     Update #: 699
 # URL: 
 # Keywords: 
 # Compatibility: 
@@ -41,6 +41,7 @@ import archan
 import cachans
 import capool
 from channelinit import init_chanlib
+import metafix
 
 channel_types = ['ar',
                  'cad',
@@ -194,7 +195,9 @@ class CellMeta(type):
         return type.__new__(cls, name, bases, cdict)
 
     
-class CellBase(moose.Neuron, CellMeta):
+@metafix.with_metaclass(CellMeta)
+class CellBase(moose.Neuron):
+    # __metaclass__ = CellMeta  # This is incompatible with Python3
     annotation = {'cno': 'cno_0000020'}
     def __init__(self, path):
         if not moose.exists(path):

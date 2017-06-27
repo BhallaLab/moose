@@ -140,6 +140,7 @@ def main():
         moose.setClock( i, elecDt )
     for i in range( 10, 18 ):
         moose.setClock( i, chemDt )
+
     graphs = moose.Neutral( '/graphs' )
     caplot = addPlot( '/model/elec/soma/Ca_conc', 'getCa', 'somaCa', 8 )
     vmplot = addPlot( '/model/elec/soma', 'getVm', 'somaVm', 8 )
@@ -182,4 +183,4 @@ def main():
     quit()
 
 if __name__ == '__main__':
-        main()
+    main()

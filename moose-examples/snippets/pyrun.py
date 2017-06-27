@@ -13,11 +13,18 @@
 # Keywords:
 # Compatibility:
 #
+#
 
 # Commentary:
 #
+#
+#
+#
 
 # Change log:
+#
+#
+#
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -59,7 +66,7 @@ def run_sequence():
     ``moose.reinit()``.
 
     In the `runString` we put a couple of print statements to indicate
-    the name fof the object which is running and the current
+    the name of the object which is running and the current
     count. Then we increase the count directly.
 
     When we call ``moose.start()``, the `runString` gets executed at
@@ -209,7 +216,10 @@ Python and MOOSE. You can also use this for debugging simulations.
 	input_output()
 
 if __name__ == '__main__':
-	main()
+    run_sequence()
+    moose.delete('/model')
+    input_output()
+
 
 
 #

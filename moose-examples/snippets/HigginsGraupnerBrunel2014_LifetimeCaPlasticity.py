@@ -1,58 +1,67 @@
+
+#/**********************************************************************
+#** This program is part of 'MOOSE', the
+#** Messaging Object Oriented Simulation Environment.
+#**           Copyright (C) 2003-2014 Upinder S. Bhalla. and NCBS
+#** It is made available under the terms of the
+#** GNU Lesser General Public License version 2.1
+#** See the file COPYING.LIB for the full notice.
+#**********************************************************************/
+
 import moose
 from pylab import *
 
-numrepeats = 10         # repeat runtime for numrepeats
-
-frate = 1.0             # pre- and post-synaptic firing rate
-                        # 1 Hz gives ~300s lifetime, ~0.2 efficacy (weight)
-                        # 10 Hz gives ~10s lifetime, ~0.5 efficacy (weight)
-                        # high firing rates make synaptic efficacy go to 0.5.
-runtime = 600.0/frate   # s
-
-#############################################
-# Ca Plasticity parameters: synapses (not for ExcInhNetBase)
-#############################################
-
-## Cortical slice values -- Table Suppl 2 in Graupner & Brunel 2012
-## Also used in Higgins et al 2014
-tauCa = 22.6936e-3      # s # Ca decay time scale
-tauSyn = 346.3615       # s # synaptic plasticity time scale
-## in vitro values in Higgins et al 2014, faster plasticity
-CaPre = 0.56175         # mM
-CaPost = 1.2964         # mM
-## in vivo values in Higgins et al 2014, slower plasticity
-#CaPre = 0.33705         # mM
-#CaPost = 0.74378        # mM
-delayD = 4.6098e-3      # s # CaPre is added to Ca after this delay
-                        # proxy for rise-time of NMDA
-thetaD = 1.0            # mM # depression threshold for Ca
-thetaP = 1.3            # mM # potentiation threshold for Ca
-gammaD = 331.909        # factor for depression term
-gammaP = 725.085        # factor for potentiation term
-
-J = 5e-3 # V            # delta function synapse, adds to Vm
-weight = 0.43           # initial synaptic weight
-                        # gammaP/(gammaP+gammaD) = eq weight w/o noise
-                        # see eqn (22), noiseSD also appears
-                        # but doesn't work here,
-                        # weights away from 0.4 - 0.5 screw up the STDP rule!!
-
-bistable = True        # if bistable is True, use bistable potential for weights
-noisy = True           # use noisy weight updates given by noiseSD
-noiseSD = 3.3501        # if noisy, use noiseSD (3.3501 from Higgins et al 2014)
-
-##########################################
-
 def main():
     """
-Simulate pre and post Poisson firing for a synapse with
-Ca plasticity of Graupner and Brunel 2012.
-See the trace over time (lifetime) for the synaptic efficacy,
-similar to figure 2A of Higgins, Graupner, Brunel, 2014.
+    Simulate pre and post Poisson firing for a synapse with
+    Ca plasticity of Graupner and Brunel 2012.
+    See the trace over time (lifetime) for the synaptic efficacy,
+    similar to figure 2A of Higgins, Graupner, Brunel, 2014.
 
-Author: Aditya Gilra, NCBS, Bangalore, October, 2014.
-
+    Author: Aditya Gilra, NCBS, Bangalore, October, 2014.
     """
+
+    numrepeats = 10         # repeat runtime for numrepeats
+
+    frate = 1.0             # pre- and post-synaptic firing rate
+                            # 1 Hz gives ~300s lifetime, ~0.2 efficacy (weight)
+                            # 10 Hz gives ~10s lifetime, ~0.5 efficacy (weight)
+                            # high firing rates make synaptic efficacy go to 0.5.
+    runtime = 600.0/frate   # s
+
+    #############################################
+    # Ca Plasticity parameters: synapses (not for ExcInhNetBase)
+    #############################################
+
+    ## Cortical slice values -- Table Suppl 2 in Graupner & Brunel 2012
+    ## Also used in Higgins et al 2014
+    tauCa = 22.6936e-3      # s # Ca decay time scale
+    tauSyn = 346.3615       # s # synaptic plasticity time scale
+    ## in vitro values in Higgins et al 2014, faster plasticity
+    CaPre = 0.56175         # mM
+    CaPost = 1.2964         # mM
+    ## in vivo values in Higgins et al 2014, slower plasticity
+    #CaPre = 0.33705         # mM
+    #CaPost = 0.74378        # mM
+    delayD = 4.6098e-3      # s # CaPre is added to Ca after this delay
+                            # proxy for rise-time of NMDA
+    thetaD = 1.0            # mM # depression threshold for Ca
+    thetaP = 1.3            # mM # potentiation threshold for Ca
+    gammaD = 331.909        # factor for depression term
+    gammaP = 725.085        # factor for potentiation term
+
+    J = 5e-3 # V            # delta function synapse, adds to Vm
+    weight = 0.43           # initial synaptic weight
+                            # gammaP/(gammaP+gammaD) = eq weight w/o noise
+                            # see eqn (22), noiseSD also appears
+                            # but doesn't work here,
+                            # weights away from 0.4 - 0.5 screw up the STDP rule!!
+
+    bistable = True        # if bistable is True, use bistable potential for weights
+    noisy = True           # use noisy weight updates given by noiseSD
+    noiseSD = 3.3501        # if noisy, use noiseSD (3.3501 from Higgins et al 2014)
+
+    ##########################################
 
     prePoisson = moose.RandSpike('/pre')
     prePoisson.rate = frate

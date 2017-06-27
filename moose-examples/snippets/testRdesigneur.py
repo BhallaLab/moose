@@ -21,9 +21,6 @@ spineSpacing = 2.0e-6
 spineSpacingDistrib = 0.0
 spineSize = 1.0
 spineSizeDistrib = 0.2
-spineAngle= 0.0
-spineAngleDistrib = 2*numpy.pi
-
 
 # Here we define a function that is used to make a cell prototype. Normally
 # it would load in a model from a file.
@@ -60,6 +57,9 @@ def makeChemProto( name ):
 
 
 def makeModel():
+    spineAngle= 0.0
+    spineAngleDistrib = 2*numpy.pi
+    
     moose.Neutral( '/library' )
     # Here we illustrate building the chem proto directly. This is not
     # good practice as it takes the model definition away from the

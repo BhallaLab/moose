@@ -82,7 +82,7 @@ def main():
     This example creates a bistable model having two enzymes and a reaction.
     One of the enzymes is autocatalytic.
     The model is set up to run using default Exponential Euler integration.
-    The snippet scriptKineticSolver.py uses the much better GSL
+    The snippet **scriptKineticSolver.py** uses the much better GSL 
     Runge-Kutta-Fehlberg integration scheme on this same model.
     """
     makeModel()

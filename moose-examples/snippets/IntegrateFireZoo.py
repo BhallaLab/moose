@@ -11,51 +11,7 @@
 
 #### Author: Aditya Gilra, NCBS, Bangalore, October, 2014.
 
-import moose
-import matplotlib.pyplot as plt
-import numpy as np
-
-# ###########################################
-# Neuron model parameters (definitions above)
-# ###########################################
-
-# Leaky Integrate and Fire neuron (common to all IFs)
-Vrest = -65e-3 # V      # resting potential
-Vt_base = -45e-3 # V    # threshold
-Vreset = -55e-3 # V     # Vreset need not be same as Vrest
-R = 1e8 # Ohm
-tau = 10e-3 # s
-refrT = 1e-3 # s
-
-# for QIF
-vCritical = -54e-3 # V  # critical voltage above
-                        # which Vm rises fast quadratically
-a0 = 1e3 # V^-1         # parameter in equation
-
-# for ExIF
-deltaThresh = 10e-3 # V
-vPeak = 30e-3 # V       # for ExpIF & IzhIF, reset is from vPeak, not thresh.
-                        # I also use vPeak for adding spikes post-simulation
-                        # to LIF, QIF, etc.
-# for AdExIF
-a0AdEx = 0.0 # unitless # voltage-dependent adaptation factor
-b0 = 5e-10 # Amp        # current step added to the adaptation current at each spike
-tauW = 20e-3 # s        # decay time constant of the adaptation current
-
-# for AdThreshIF
-a0AdTh = 0.0 # unitless # voltage-dependent adaptation factor
-threshJump = 5e-3 # V   # voltage step added to the threshold at each spike
-tauThresh = 20e-3 # s   # decay time constant of the adaptative threshold
-
-# for IzhIF
-a = 50.0 # s^-1         # d u / dt = a * ( b * Vm - u )
-b = 246.15 # s^-1       # to obtain Em = -65mV at rest, set b = (a0*Em^2 + b0*Em + c0)/Em
-                        # b = (4×10⁴×(−65×10⁻³)^2 + 5×10³×(−65×10⁻³) + 140) ÷ (−65×10⁻³)
-uRest = -16 # V/s       # uRest = b*Em = -16 V/s
-d = 10 # V/s            # d is added to u at every spike
-
-def main():
-    """
+"""
 Simulate current injection into various Integrate and Fire neurons.
 
 All integrate and fire (IF) neurons are subclasses of compartment,
@@ -107,10 +63,56 @@ The fields of the MOOSE objects are named exactly as the parameters in the equat
            Rm from Compartment is not used here, vReset is same as c in the usual formalism.
            At rest, u0 = b V0, and V0 = ( -(-b0-b) +/- sqrt((b0-b)^2 - 4*a0*c0)) / (2*a0).
 
-On the command-line, in moose-examples/snippets directory, run ``python IntegrateFireZoo.py``.
-The script will ask you which neuron you want to simulate and you can choose and run what you want.
-Play with the parameters of the IF neurons in the source code.
+"""
 
+import moose
+import matplotlib.pyplot as plt
+import numpy as np
+
+# ###########################################
+# Neuron model parameters (definitions above)
+# ###########################################
+
+# Leaky Integrate and Fire neuron (common to all IFs)
+Vrest = -65e-3 # V      # resting potential
+Vt_base = -45e-3 # V    # threshold
+Vreset = -55e-3 # V     # Vreset need not be same as Vrest
+R = 1e8 # Ohm
+tau = 10e-3 # s
+refrT = 1e-3 # s
+
+# for QIF
+vCritical = -54e-3 # V  # critical voltage above
+                        # which Vm rises fast quadratically
+a0 = 1e3 # V^-1         # parameter in equation
+
+# for ExIF
+deltaThresh = 10e-3 # V
+vPeak = 30e-3 # V       # for ExpIF & IzhIF, reset is from vPeak, not thresh.
+                        # I also use vPeak for adding spikes post-simulation
+                        # to LIF, QIF, etc.
+# for AdExIF
+a0AdEx = 0.0 # unitless # voltage-dependent adaptation factor
+b0 = 5e-10 # Amp        # current step added to the adaptation current at each spike
+tauW = 20e-3 # s        # decay time constant of the adaptation current
+
+# for AdThreshIF
+a0AdTh = 0.0 # unitless # voltage-dependent adaptation factor
+threshJump = 5e-3 # V   # voltage step added to the threshold at each spike
+tauThresh = 20e-3 # s   # decay time constant of the adaptative threshold
+
+# for IzhIF
+a = 50.0 # s^-1         # d u / dt = a * ( b * Vm - u )
+b = 246.15 # s^-1       # to obtain Em = -65mV at rest, set b = (a0*Em^2 + b0*Em + c0)/Em
+                        # b = (4×10⁴×(−65×10⁻³)^2 + 5×10³×(−65×10⁻³) + 140) ÷ (−65×10⁻³)
+uRest = -16 # V/s       # uRest = b*Em = -16 V/s
+d = 10 # V/s            # d is added to u at every spike
+
+def main():
+    """
+    On the command-line, in moose-examples/snippets directory, run ``python IntegrateFireZoo.py``.
+    The script will ask you which neuron you want to simulate and you can choose and run what you want.
+    Play with the parameters of the IF neurons in the source code.
     """
     neuronChoices = {'LIF':moose.LIF, 'QIF':moose.QIF, 'ExIF':moose.ExIF, 'AdExIF':moose.AdExIF,
                     'AdThreshIF':moose.AdThreshIF, 'IzhIF':moose.IzhIF}
@@ -221,5 +223,7 @@ Play with the parameters of the IF neurons in the source code.
 
 # Run below if script is executed standalone.
 if __name__ == '__main__':
-#    The main function to simulate an integrate and fire neuron.
+    """The main function to simulate an integrate and fire neuron."""
     main()
+
+# end of IntegrateFireZoo.py
