@@ -110,37 +110,45 @@ def suitable_for_testing( script ):
             return False, 'waits for user input'
     return True, 'OK'
 
-def run_test( index, testfile ):
+def run_test( index, testfile, timeout,  **kwargs):
     """Run a given test
     """
     global test_status_
     global total_
     pyExec = os.environ.get( 'PYTHON_EXECUTABLE', '/usr/bin/python' )
     cmd = Command( [ pyExec, testfile ] )
+
     ti = time.time( )
-    status = cmd.run( timeout = 60 )
     name = os.path.basename( testfile )
+    out = (name + '.' * 50)[:40]
+    print( '[TEST %3d/%d] %41s ' % (index, total_, out), end='' )
+    sys.stdout.flush( )
+
+    # Run the test.
+    status = cmd.run( timeout = timeout )
     t = time.time( ) - ti
+    print( '% 7.2f ' % t, end='' )
+    sys.stdout.flush( )
+
+    # Change to directory and copy before running then test.
     cwd = os.path.dirname( testfile )
     os.chdir( cwd )
     with open( os.path.join( cwd, 'matplotlibrc' ), 'w' ) as f:
         _logger.debug( 'Writing matplotlibrc to %s' % cwd )
         f.write( matplotlibrc_ )
 
-    out = (name + '.' * 50)[:50]
-    print( '[TEST %3d/%d] %50s %.2f sec ' % (index, total_, out, t), end='' )
-    sys.stdout.flush( )
     if status != 0:
         if status == -15:
-            msg = '%2d TIMEOUT' % status
+            msg = '% 4d TIMEOUT' % status
             test_status_[ 'TIMED-OUT' ].append( testfile )
         else:
-            msg = '%2d FAILED' % status
+            msg = '% 4d FAILED' % status
             test_status_[ 'FAILED' ].append( testfile )
         print( msg )
     else:
-        print( '%2d PASSED' % status )
+        print( '% 4d PASSED' % status )
         test_status_[ 'PASSED' ].append( testfile )
+
     sys.stdout.flush( )
 
 def print_test_stat( ):
@@ -148,7 +156,7 @@ def print_test_stat( ):
     for status in test_status_:
         print( 'Total %d tests %s' % (len( test_status_[status] ), status ) )
 
-def test_all( ):
+def test_all( timeout, **kwargs ):
     global test_dir_ 
     global total_
     scripts = [ ]
@@ -171,20 +179,21 @@ def test_all( ):
     total_ = len( scripts )
     for i, s in enumerate( scripts ):
         _logger.info( 'Running test : %s' % s )
-        run_test(i, s )
+        run_test(i, s, timeout, **kwargs )
 
 
-def test( ):
+def test( timeout = 60, **kwargs ):
     """Download and run tests.
 
     """
+    print( '[INFO] Running test with timeout %d sec' % timeout )
     try:
         init_test_dir( )
     except Exception as e:
         print( '[INFO] Failed to clone moose-examples. Error was %s' % e )
         quit( )
 
-    test_all( )
+    test_all( timeout = timeout, **kwargs  )
     print_test_stat( )
 
 if __name__ == '__main__':

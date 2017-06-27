@@ -1,5 +1,6 @@
 set(CMAKE_LEGACY_CYGWIN_WIN32 0)
-cmake_minimum_required(VERSION 2.6.0 FATAL_ERROR)
+cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
+project(MOOSE)
 
 if(COMMAND cmake_policy)
     cmake_policy(SET CMP0003 NEW)
@@ -9,7 +10,6 @@ if(COMMAND cmake_policy)
     endif(POLICY CMP0050)
 endif(COMMAND cmake_policy)
 
-project(MOOSE)
 
 include(CheckCXXCompiler.cmake)
 include(CheckIncludeFileCXX)
@@ -48,8 +48,6 @@ message( STATUS "MOOSE Version ${MOOSE_VERSION}" )
 # sure that we don't have any stray generated files lying around in the tree
 # (which would end up getting picked up by header search, instead of the correct
 # versions).
-
-message(STATUS "CMAKE_INSTALL_PREFIX : ${CMAKE_INSTALL_PREFIX}")
 if( CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR AND NOT MSVC_IDE )
     message(FATAL_ERROR 
         "======================================================================\n"
@@ -415,17 +413,26 @@ install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/scripts/moose
     DESTINATION bin
     )
 
-# This target is built by pymoose/CMakeLists.txt file.
+# INSTALL python module.
+# This target is built by pymoose/CMakeLists.txt file. Using the --prefix option
+# always override debian default installation directory. It will be installed in
+# site-packages instead of dist-packages. 
+# See https://bugs.launchpad.net/ubuntu/+source/python2.6/+bug/362570
+# HACK: Some trickery is involved. Don't pass --prefix if CMAKE_INSTALL_PREFIX is 
+# just /usr. This fixes debian builds.
 if(WITH_PYTHON)
-    install(CODE 
-        "
-        execute_process(
-            COMMAND ${PYTHON_EXECUTABLE} setup.py install --prefix=${CMAKE_INSTALL_PREFIX}
-            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/python
-            )
-        "
-        )
+    if( "${CMAKE_INSTALL_PREFIX}" STREQUAL "/usr" )
+        set(EXTRA_ARGS "" )
+    else()
+        set(EXTRA_ARGS "--prefix ${CMAKE_INSTALL_PREFIX}")
+    endif( )
 
+    install(CODE 
+        "execute_process( 
+            COMMAND ${PYTHON_EXECUTABLE} setup.py install ${EXTRA_ARGS} 
+            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/python
+            )" 
+            )
 endif(WITH_PYTHON)
 
 # Print message to start build process
