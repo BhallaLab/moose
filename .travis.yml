@@ -50,6 +50,6 @@ script:
     - sudo dpkg -i ../moose*.deb
 
 after_success:
-    - python -c 'import moose'
+    - python -c 'import moose; moose.test( timeout = 10 )'
     - python -c 'import moogli'
     - cd __moose-core_build && ctest --output-on-failure
