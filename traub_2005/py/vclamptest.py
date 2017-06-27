@@ -6,9 +6,9 @@
 # Maintainer: 
 # Created: Wed Feb  6 16:25:52 2013 (+0530)
 # Version: 
-# Last-Updated: Tue Jun 11 17:30:34 2013 (+0530)
+# Last-Updated: Sun Jun 25 14:47:22 2017 (-0400)
 #           By: subha
-#     Update #: 148
+#     Update #: 149
 # URL: 
 # Keywords: 
 # Compatibility: 
@@ -96,11 +96,11 @@ def vclamptest(compartment, vclamp, duration=50e-3, delay=150e-3, solver='ee', v
         command.width[ii] = duration
         command.level[ii] = clamping_voltage
     injected = moose.Table('%s/Iinject' % (dc.path))
-    moose.connect(injected, 'requestData', clamp, 'getCurrent')
+    moose.connect(injected, 'requestOut', clamp, 'getCurrent')
     voltage = moose.Table('%s/Vcommand' % (dc.path))
-    moose.connect(voltage, 'requestData', command, 'getOutputValue')
+    moose.connect(voltage, 'requestOut', command, 'getOutputValue')
     vm = moose.Table('%s/Vm' % (dc.path))
-    moose.connect(vm, 'requestData', compartment, 'getVm')
+    moose.connect(vm, 'requestOut', compartment, 'getVm')
     utils.resetSim([mc.path, dc.path], simdt, plotdt, simmethod=solver)
     moose.start(simtime)
     ivec = np.asarray(injected.vector)

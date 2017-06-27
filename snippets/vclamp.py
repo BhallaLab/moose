@@ -53,8 +53,10 @@ from squid import SquidAxon
 from pylab import *
 
 def vclamp_demo(simtime=50.0, dt=1e-2):
-    ## It is good practice to modularize test elements inside a
-    ## container
+    """
+    Demonstration of voltage clamping in a neuron.
+    """
+    ## It is good practice to modularize test elements inside a container
     container = moose.Neutral('/vClampDemo')
     ## Create a compartment with properties of a squid giant axon
     comp = SquidAxon('/vClampDemo/axon')
@@ -130,8 +132,6 @@ This snippet is to demonstrate modelling of voltage clamping.
     """
     vclamp_demo()
 
-if __name__ == '__main__':
-    main()
 
 #
 # vclamp.py ends here

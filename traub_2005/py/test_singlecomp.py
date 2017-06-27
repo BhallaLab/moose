@@ -6,9 +6,9 @@
 # Maintainer: 
 # Created: Tue Jul 17 21:01:14 2012 (+0530)
 # Version: 
-# Last-Updated: Sat Aug  6 15:46:37 2016 (-0400)
+# Last-Updated: Sun Jun 25 15:37:21 2017 (-0400)
 #           By: subha
-#     Update #: 317
+#     Update #: 320
 # URL: 
 # Keywords: 
 # Compatibility: 
@@ -186,7 +186,8 @@ class TestSingleComp(unittest.TestCase):
         vm_axis = plt.subplot(2,1,1)
         ca_axis = plt.subplot(2,1,2)
         try:
-            nrndata = np.loadtxt('../nrn/data/singlecomp_Vm.dat')
+            fname = os.path.join(config.mydir, 'nrn', 'data', 'singlecomp_Vm.dat')
+            nrndata = np.loadtxt(fname)
             vm_axis.plot(nrndata[:,0], nrndata[:,1], label='Vm (mV) - nrn')
             ca_axis.plot(nrndata[:,0], nrndata[:,2], label='Ca (mM) - nrn')
         except IOError as e:
@@ -213,7 +214,7 @@ class TestSingleComp(unittest.TestCase):
         data = np.vstack((tseries*1e-3, 
                           self.tables['Vm'].vector, 
                           self.tables['Ca'].vector))
-        np.savetxt('data/singlecomp_Vm.dat', 
+        np.savetxt(os.path.join(config.data_dir, 'singlecomp_Vm.dat'), 
                    np.transpose(data))
 
 if __name__ == '__main__':

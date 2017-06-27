@@ -2,6 +2,10 @@
 # Author: Upi Bhalla NCBS Bangalore 2014.
 # Commentary:
 
+# Demonstrates how to load a simple neuronal model in GENESIS dotp format.
+# The model has branches and a few spines.
+# It is adorned just with classic HH squid channels.
+#
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
 # published by the Free Software Foundation; either version 3, or
@@ -28,13 +32,6 @@ import numpy
 import moose
 
 EREST_ACT = -70e-3
-
-# Gate equations have the form:
-#
-# y(x) = (A + B * x) / (C + exp((x + D) / F))
-#
-# where x is membrane voltage and y is the rate constant for gate
-# closing or opening
 
 Na_m_params = [1e5 * (25e-3 + EREST_ACT),   # 'A_A':
                 -1e5,                       # 'A_B':
@@ -86,7 +83,7 @@ def makeChannelPrototypes():
     compt.Ra = 7639.44e3
     nachan = moose.HHChannel( '/library/Na' )
     nachan.Xpower = 3
-    xGate = moose.HHGate(nachan.path + '/gateX')        
+    xGate = moose.HHGate(nachan.path + '/gateX')
     xGate.setupAlpha(Na_m_params + [VDIVS, VMIN, VMAX])
     xGate.useInterpolation = 1
     nachan.Ypower = 1
@@ -98,7 +95,7 @@ def makeChannelPrototypes():
 
     kchan = moose.HHChannel( '/library/K' )
     kchan.Xpower = 4.0
-    xGate = moose.HHGate(kchan.path + '/gateX')        
+    xGate = moose.HHGate(kchan.path + '/gateX')
     xGate.setupAlpha(K_n_params + [VDIVS, VMIN, VMAX])
     xGate.useInterpolation = 1
     kchan.Gbar = 0.2836e-3
@@ -146,8 +143,15 @@ def testModel( useSolver ):
 def main():
     """
     Demonstrates how to load a simple neuronal model in GENESIS dotp format.
-    The model has branches and a few spines.
-    It is adorned just with classic HH squid channels.
+    The model has branches and a few spines.\n
+    It is adorned just with classic HH squid channels.\n
+
+    Gate equations have the form::
+
+        y(x) = (A + B * x) / (C + exp((x + D) / F))
+
+    where x is membrane voltage and y is the rate constant for gate closing or opening.
+
     """
     testModel( 1 )
 

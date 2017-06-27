@@ -5,7 +5,7 @@
 # This configuration file does the followings:
 # - plt.show() function become non-blocking.
 
-backend : TkAgg
+backend : agg
 
 # This makes all plots non-blocking.
 interactive : True

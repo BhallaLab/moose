@@ -6,9 +6,9 @@
 # Maintainer: 
 # Created: Fri Apr 17 23:58:13 2009 (+0530)
 # Version: 
-# Last-Updated: Sat Dec  8 15:51:51 2012 (+0530)
+# Last-Updated: Sun Jun 25 01:54:48 2017 (-0400)
 #           By: subha
-#     Update #: 402
+#     Update #: 403
 # URL: 
 # Keywords: 
 # Compatibility: 
@@ -141,7 +141,6 @@ class NaPF(NaChannel):
 class NaPF_SS(NaPF):
     abstract = False
     shift = -2.5e-3
-    v = v_array + shift
     tau_x = where((v_array + shift) < -30e-3, \
                        1.0e-3 * (0.025 + 0.14 * exp(((v_array + shift)  + 30.0e-3) / 10.0e-3)), \
                        1.0e-3 * (0.02 + 0.145 * exp((- (v_array + shift) - 30.0e-3) / 10.0e-3)))

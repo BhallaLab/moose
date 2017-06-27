@@ -44,7 +44,11 @@
 #
 
 # Code:
+
 """
+This is an example showing pymoose implementation of the NaF
+channel in Traub et al 2005
+
 Author: Subhasis Ray
 
 """
@@ -62,13 +66,14 @@ vdivs = 640
 v_array = np.linspace(vmin, vmax, vdivs+1)
 
 def create_naf_proto():
-    """Create an NaF channel prototype in /library. You can copy it later
+    """
+    Create an NaF channel prototype in /library. You can copy it later
     into any compartment or load a .p file with this channel using
     loadModel.
 
-    This channel has the conductance form:
+    This channel has the conductance form::
 
-    Gk(v) = Gbar * m^3 * h (V - Ek)
+        Gk(v) = Gbar * m^3 * h (V - Ek)
 
     We are using all SI units
 
@@ -175,8 +180,7 @@ def do_iclamp(vclamp, iclamp, pid):
     iclamp.gain = 1.0
 
 def setup_model():
-    """Setup the model and the electronic circuit. Also creates the data
-    container."""
+    """Setup the model and the electronic circuit. Also creates the data container."""
     model = moose.Neutral('model')
     data =moose.Neutral('/data')
     comp = create_compartment(model.path, 'soma')
@@ -192,17 +196,12 @@ inited = False
 def run_sim(model, data, simtime=100e-3, simdt=1e-6, plotdt=1e-4, solver='ee'):
     """Reset and run the simulation.
 
-    model: model container element
-
-    data: data container element
-
-    simtime: simulation run time
-
-    simdt: simulation timestep
-
-    plotdt: plotting time step
-
-    solver: neuronal solver to use.
+        model: model container element \n
+        data: data container element \n
+        simtime: simulation run time \n
+        simdt: simulation timestep \n
+        plotdt: plotting time step \n
+        solver: neuronal solver to use \n
 
     """
     global inited
@@ -217,34 +216,28 @@ def run_clamp(model_dict, clamp, levels, holding=0.0, simtime=100e-3):
     """Run either voltage or current clamp for default timing settings
     with multiple levels of command input.
 
-    model_dict: dictionary containing the model components -
+    model_dict: dictionary containing the model components - \n
+        `vlcamp` - the voltage clamp amplifier \n
+        `iclamp` - the current clamp amplifier \n
+        `model` - the model container \n
+        `data` - the data container \n
+        `inject_tab` - table recording membrane \n
+        `command_tab` - table recording command input for voltage or current clamp \n
+        `vm_tab` - table recording membrane potential \n
 
-                `vlcamp` - the voltage clamp amplifier\n
-                `iclamp` - the current clamp amplifier\n
-                `model` - the model container
+    clamp: string specifying clamp mode, either `voltage` or `current` \n
 
-                `data` - the data container
+    levels: sequence of values for command input levels to be simulated \n
 
-                `inject_tab` - table recording membrane
-
-                `command_tab` - table recording command input for voltage or current clamp
-
-                `vm_tab` - table recording membrane potential
-
-    clamp: string specifying clamp mode, either `voltage` or `current`
-
-    levels: sequence of values for command input levels to be
-            simulated.
-
-    holding: holding current or voltage
+    holding: holding current or voltage \n
 
     Returns:
     a dict containing the following lists of time series:
 
-    `command` - list of  command input time series
-    `inject` - list of of membrane current (includes injected current) time series
-    `vm` - list of membrane voltage time series
-    `t` - list of time points for all of the above
+        `command` - list of  command input time series \n
+        `inject` - list of of membrane current (includes injected current) time series \n
+        `vm` - list of membrane voltage time series \n
+        `t` - list of time points for all of the above
 
     """
     if clamp == 'voltage':
@@ -274,11 +267,9 @@ def run_clamp(model_dict, clamp, levels, holding=0.0, simtime=100e-3):
             'gk': gvec,
             't': tvec}
 
-def main():
-    """
-    This is an example showing pymoose implementation of the NaF
-    channel in Traub et al 2005
-    """
+
+
+if __name__ == '__main__':
     mdict = setup_model()
     current_levels = (-0.3e-8, 0.1e-8, 0.3e-8, 0.5e-8)
     iclamp_data = run_clamp(mdict, 'current', current_levels)
@@ -330,7 +321,5 @@ def main():
 
     plt.show()
 
-if __name__ == '__main__':
-    main()
 #
 # traub_naf.py ends here

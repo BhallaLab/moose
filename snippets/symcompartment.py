@@ -54,6 +54,7 @@ simdt = 1e-6
 simtime = 100e-3
 
 def test_symcompartment():
+    """This example demonstrates the use of SymCompartment class of MOOSE."""
     model = moose.Neutral('model')
     soma = moose.SymCompartment('%s/soma' % (model.path))
     soma.Em = -60e-3
@@ -108,6 +109,7 @@ def main():
 
 if __name__ == '__main__':
     main()
+
 
 #
 # symcompartment.py ends here

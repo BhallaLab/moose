@@ -16,7 +16,8 @@
 #
 
 # Commentary:
-
+#
+#
 
 # Change log:
 #
@@ -24,6 +25,12 @@
 #
 
 # Code:
+
+"""
+Example of using multithreading to run a MOOSE simulation in
+parallel with querying MOOSE objects involved. See the documentatin
+of the classes to get an idea of this demo's function.
+"""
 
 import sys
 import threading
@@ -90,12 +97,7 @@ class StatusThread(threading.Thread):
                         , len(self.table.vector)
                         ))
 
-def main():
-    """
-    Example of using multithreading to run a MOOSE simulation in
-    parallel with querying MOOSE objects involved. See the documentatin
-    of the classes to get an idea of this demo's function.
-    """
+if __name__ == '__main__':
     pg = moose.PulseGen('pg')
     pg.firstDelay = 10.0
     pg.firstLevel = 10.0
@@ -112,7 +114,5 @@ def main():
     tab.xplot('threading_demo.dat', 'pulsegen_output')
     print(('Ending threading_demo: final length of table', len(tab.vector)))
 
-if __name__ == '__main__':
-    main()
 #
 # threading_demo.py ends here

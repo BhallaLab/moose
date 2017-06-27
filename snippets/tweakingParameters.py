@@ -40,7 +40,6 @@ def main():
     and exo forward rates and run it further to show that the period becomes
     nearly twice as fast. Then we restore endo and exo, and instead double
     the initial amounts of M. We run it further again to see what happens.
-    This model takes several seconds to run.
     """
     mfile = '../genesis/OSC_Cspace.g'
     runtime = 4000.0

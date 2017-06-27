@@ -46,8 +46,6 @@
 #
 
 # Code:
-
-
 import moose
 import pylab
 import numpy
@@ -56,26 +54,23 @@ SIMDT = 1.0
 
 def main():
     """
-    Pulse generator example
+This example shows the full range of operations of PulseGen objects
+with a reimplementation of corresponding GENESIS demo.
 
-    This example shows the full range of operations of PulseGen objects
-    with a reimplementation of corresponding GENESIS demo.
+A PulseGen object can be run in three modes: free running
+(trigMode=0), triggered (trigMode=1) and gated (trigMode=2).
 
-    A PulseGen object can be run in three modes: free running
-    (trigMode=0), triggered (trigMode=1) and gated (trigMode=2).
+In the free running mode it keeps repeating the pulse series
+indefinitely.
 
-    In the free running mode it keeps repeating the pulse series
-    indefinitely.
+In triggered mode, it generates a pulse series on the leading edge of
+the trigger signal coming to its `input` field. The trigger can be the
+`output` of another PulseGen as in this example.
 
-    In triggered mode, it generates a pulse series on the leading edge of
-    the trigger signal coming to its `input` field. The trigger can be the
-    `output` of another PulseGen as in this example.
-
-    In gated mode, the PulseGen acts as if it was free-running as long as
-    the `input` remains high.
+In gated mode, the PulseGen acts as if it was free-running as long as
+the `input` remains high.
 
     """
-
 
     # Pulse generator with trigger mode = 0 This is free running - and
     # creates a series of pulses
@@ -169,6 +164,5 @@ def main():
 
 if __name__ == '__main__':
     main()
-
 #
 # pulsegen2.py ends here

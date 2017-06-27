@@ -26,8 +26,8 @@ if [ ! -f $MATPLOTRC ]; then
     exit
 fi
 
-TIMEOUT=1m
-NTHREADS=8
+TIMEOUT=10
+NTHREADS=4
 for f in `cat ./TORUN`; do
     d=`dirname $f`
     fn=`basename $f`
@@ -37,15 +37,17 @@ for f in `cat ./TORUN`; do
         cp $MATPLOTRC $d/
         cd $d
         echo "++ Executing script $f"
-        # Do not run more than 2 minutes. 
+        # Do not run more than $TIMEOUT
         timeout $TIMEOUT $PYC $fn &> $TEMP
         status=$?
         if [ "$status" -eq "0" ]; then                   # success
             echo "|| Success. Written to $SUCCEEDED"
             echo "- [x] $f" >> $SUCCEEDED
-        elif [ "$status" -gt "128" ]; then               # timeout
             # If there is timeout then add to BLACKLISTED
-            echo "|| Killed by signal status: $status" 
+            # For return status See 
+            # http://git.savannah.gnu.org/cgit/coreutils.git/tree/src/timeout.c
+        elif [ "$status" -eq "124" ]; then               # timeout. 
+            echo "|| Timed-out status: $status" 
             echo "- [ ] $f" >> $BLACKLISTED
             sed -i 's/^/\ \ /' $TEMP
             printf "\n\`i\`\`\n" >> $BLACKLISTED 
@@ -63,14 +65,21 @@ for f in `cat ./TORUN`; do
         fi
     ) & 
 done
+wait
 
+# Auto deploy to README.md file
+python ./deploy_gh_pages.py || echo "failed to generated site"
+
+wait
 echo "Following scripts were successful"
 cat $SUCCEEDED
 
 if [ -f $BLACKLISTED ]; then
     echo "Following scripts were blacklisted due to timeout or singal interrupt"
     cat $BLACKLISTED 
+    echo "# Blacklisted " >> ../README.md
 fi
+
 
 if [ -f $FAILED ]; then 
     echo "=========================================="
@@ -79,4 +88,4 @@ if [ -f $FAILED ]; then
     exit 1
 fi
 
-## If less than 84 files passed, raise and error.
+

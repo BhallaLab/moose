@@ -45,6 +45,9 @@
 
 # Code:
 
+"""
+    Demonstrates connection between 2 IntFire neurons to observe spike generation.
+"""
 import moose
 
 def connect_two_intfires():
@@ -102,7 +105,5 @@ def main():
     connect_spikegen()
     setup_synapse()
 
-if __name__ == '__main__':
-    main()
 #
 # intfire.py ends here

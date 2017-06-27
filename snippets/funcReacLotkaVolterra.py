@@ -60,32 +60,31 @@ def makeModel():
 
 def main():
     """
-The funcReacLotkaVolterra example shows how to use function objects
-as part of differential equation systems in the framework of the MOOSE
-kinetic solvers. Here the system is set up explicitly using the
-scripting, in normal use one would expect to use SBML.
+    The funcReacLotkaVolterra example shows how to use function objects
+    as part of differential equation systems in the framework of the MOOSE
+    kinetic solvers. Here the system is set up explicitly using the
+    scripting, in normal use one would expect to use SBML.
 
-In this example we set up a Lotka-Volterra system. The equations
-are readily expressed as a pair of reactions each of whose rate is
-governed by a function::
+    In this example we set up a Lotka-Volterra system. The equations
+    are readily expressed as a pair of reactions each of whose rate is
+    governed by a function::
 
-        x' = x( alpha - beta.y )
-        y' = -y( gamma - delta.x )
+            x' = x( alpha - beta.y )
+            y' = -y( gamma - delta.x )
 
-This translates into two reactions::
+    This translates into two reactions::
 
-        x ---> z        Kf = beta.y - alpha
-        y ---> z        Kf = gamma - delta.x
+            x ---> z        Kf = beta.y - alpha
+            y ---> z        Kf = gamma - delta.x
 
-Here z is a dummy molecule whose concentration is buffered to zero.
+    Here z is a dummy molecule whose concentration is buffered to zero.
 
-The model first runs using default Exponential Euler integration.
-This is not particularly accurate even with a small timestep.
-The model is then converted to use the deterministic Kinetic solver
-Ksolve. This is accurate and faster.
-Note that we cannot use the stochastic GSSA solver for this system, it
-cannot handle a reaction term whose rate keeps changing.
-
+    The model first runs using default Exponential Euler integration.
+    This is not particularly accurate even with a small timestep.
+    The model is then converted to use the deterministic Kinetic solver
+    Ksolve. This is accurate and faster.\n
+    Note that we cannot use the stochastic GSSA solver for this system, it
+    cannot handle a reaction term whose rate keeps changing.
     """
 
     makeModel()

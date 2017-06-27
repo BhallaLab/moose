@@ -51,6 +51,9 @@ sys.path.append('../../python')
 import moose
 
 def test_one_to_one(size=2):
+    """
+    Demonstrates one-to-one connection using the 'connect' function of MOOSE.
+    """
     pg = moose.PulseGen('pulsegen', size)
     for ix, ii in enumerate(pg.vec):
         pulse = moose.element(ii)
@@ -72,9 +75,6 @@ def main():
 Demonstrates one-to-one connection between objects through ''moose.connect''.
     """
     test_one_to_one()
-
-if __name__ == '__main__':
-    main()
 
 #
 # onetoonemsg.py ends here

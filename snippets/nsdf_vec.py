@@ -154,21 +154,21 @@ def read_nsdf(fname):
 
 def main():
     """
-    Example code to dump data from multiple elements in a vector.
+Example code to dump data from multiple elements in a vector.
 
-    In this demo we create a PulseGen vector where each element has a
-    different set of pulse parameters. After saving the output vector
-    directly using MOOSE NSDFWriter we open the NSDF file using h5py and
-    plot the saved data.
+In this demo we create a PulseGen vector where each element has a
+different set of pulse parameters. After saving the output vector
+directly using MOOSE NSDFWriter we open the NSDF file using h5py and
+plot the saved data.
 
-    You need h5py module installed to run this simulation.
+You need h5py module installed to run this simulation.
 
-    References:
+References:
 
-    Ray, Chintaluri, Bhalla and Wojcik. NSDF: Neuroscience Simulation Data
-    Format, Neuroinformatics, 2015.
+Ray, Chintaluri, Bhalla and Wojcik. NSDF: Neuroscience Simulation Data
+Format, Neuroinformatics, 2015.
 
-    http://nsdf.readthedocs.org/en/latest/
+http://nsdf.readthedocs.org/en/latest/
 
     """
     fname = write_nsdf()

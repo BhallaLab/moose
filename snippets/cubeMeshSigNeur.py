@@ -2,6 +2,7 @@
 
 # Commentary:
 #
+# A toy compartmental neuronal + chemical model in just a cubic volume
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -298,7 +299,7 @@ def testCubeMultiscale( useSolver ):
     displayPlots()
 
 def main():
-    """ A toy compartmental neuronal + chemical model in just a cubic volume """
+    """ A toy compartmental neuronal + chemical model in just a cubic volume !"""
     testCubeMultiscale( 1 ) # change argument to 0 to run without solver.
 
 if __name__ == '__main__':

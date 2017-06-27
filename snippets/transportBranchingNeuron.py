@@ -159,7 +159,6 @@ def makeChemModel( compt ):
 
 def main():
     """
-    transportBranchingNeuron:
     This example illustrates bidirectional transport
     embedded in the branching pseudo 1-dimensional geometry of a neuron.
     This means that diffusion and transport only happen along the axis of
@@ -182,8 +181,8 @@ def main():
 
         a. Animated pseudo-3D plot of neuronal geometry, where each point
            represents a diffusive voxel and moves in the y-axis to show
-           changes in concentration of molecule a.
-        b. Similar animated pseudo-3D plot for molecule b.
+           changes in concentration of molecule **a**.
+        b. Similar animated pseudo-3D plot for molecule **b**.
         c. Time-series plot that appears after the simulation has
            ended. The plots are for the first and last diffusive voxel,
            that is, the soma and the tip of one of the apical dendrites.

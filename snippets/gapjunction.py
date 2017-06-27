@@ -62,9 +62,9 @@ def make_compartment(path):
     return comp
 
 def gapjunction_demo():
-    
+
     """
-    Demo for gap junction
+    Demonstration of medelling gap junction using MOOSE.
     """
 
     model = moose.Neutral('model')
@@ -102,13 +102,16 @@ def gapjunction_demo():
     pylab.legend()
     pylab.show()
 
+
+if __name__ == '__main__':
+    gapjunction_demo()
+
 def main():
 	"""
 This example is to demonstrate, how gap junction can be modeled using MOOSE.
 	"""
 	gapjunction_demo()
 
-if __name__ == '__main__':
-	main()
+
 #
 # gapjunction.py ends here

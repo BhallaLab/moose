@@ -4,7 +4,8 @@ sys.path.append('../../python')
 import moose
 
 def main():
-    """This is to show a _raw_ way of traversing messages."""
+    """This is to show a 'raw' way of traversing messages."""
+
     connectionProbability = 0.5
     net = moose.IntFire('/net1', 10)
     syn = moose.SimpleSynHandler( '/net1/sh', 10 )
@@ -20,4 +21,4 @@ def main():
             print(('\t--> %s.%s' % (dest.path, df)))
 
 if __name__ == '__main__':
-        main()
+    main()

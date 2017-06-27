@@ -1,13 +1,14 @@
 dist : trusty
 sudo : required 
 group : edge
+
 notifications:
     email:
         recipients:
             - dilawar.s.rajput@gmail.com
-            - upi.bhalla@gmail.com
-            - malavs@ncbs.res.in
+            - bhalla@ncbs.res.in
             - hrani@ncbs.res.in
+            - malavs@ncbs.res.in
 
 
 install:
@@ -15,9 +16,11 @@ install:
     - sudo apt-key add - < Release.key  
     - sudo sh -c "echo 'deb http://download.opensuse.org/repositories/home:/moose/xUbuntu_14.04/ /' >> /etc/apt/sources.list.d/moose.list"
     - sudo apt-get -y update
-    - sudo apt-get -y --force-yes install python-qt4 python-pip 
+    - sudo apt-get -y --force-yes install python-qt4 python-pip graphviz
+    - sudo apt-get -y --force-yes install python-h5py python-scipy python-pygraphviz
     - sudo apt-get -y --force-yes install moose 
-    - sudo pip install python-libsbml
+    - sudo pip install python-libsbml python-networkx
+
 script:
     - # Making sure no python3 incompatible file.
     - python3 -m compileall -q .
@@ -25,3 +28,14 @@ script:
     - /usr/bin/python -c 'import moose'
     - /usr/bin/python -c 'import moogli'
     - cd _travis && ./find_scripts_to_run.sh && ./run_scripts.sh 
+
+exclude : [vendor]
+
+deploy:
+    provider : pages
+    skip_cleanup : true
+    github_token : $GHI_TOKEN
+    local_dir : _travis/_site
+    on:
+        branch : master
+

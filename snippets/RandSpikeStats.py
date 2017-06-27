@@ -6,7 +6,13 @@
 #** GNU Lesser General Public License version 2.1
 #** See the file COPYING.LIB for the full notice.
 #**********************************************************************/
-
+# This snippet shows the use of several objects.
+# This snippet sets up a StimulusTable to control a RandSpike which
+# sends its outputs to two places: to a SimpleSynHandler on an IntFire,
+# which is used to monitor spike arrival, and to various Stats objects.
+# I record and plot each of these.
+# The StimulusTable has a sine-wave waveform
+#
 import numpy
 import pylab
 import moose
@@ -71,8 +77,11 @@ def main():
     """
     This snippet shows the use of several objects.
     This snippet sets up a StimulusTable to control a RandSpike which
-    sends its outputs to two places: to a SimpleSynHandler on an IntFire, 
-    which is used to monitor spike arrival, and to various Stats objects.
+    sends its outputs to two places:
+
+    to a SimpleSynHandler on an IntFire, which is used to monitor spike arrival,
+    and to various Stats objects.
+
     I record and plot each of these.
     The StimulusTable has a sine-wave waveform
     """

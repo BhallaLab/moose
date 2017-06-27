@@ -44,6 +44,8 @@
 #
 
 # Code:
+__author__ = 'Subhasis Ray'
+
 import sys
 import math
 import numpy as np
@@ -53,7 +55,9 @@ sys.path.append('../../python')
 import moose
 
 def main():
-    """Example of Interpol object."""
+    """
+    Example of Interpol object.
+    """
     simtime = 1.0
     simdt = 0.001
     model = moose.Neutral('/model')
@@ -86,7 +90,6 @@ def main():
 
 if __name__ == '__main__':
     main()
-
 
 
 

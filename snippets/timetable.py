@@ -44,6 +44,19 @@
 #
 
 # Code:
+"""Demonstrates the use of TimeTable elements in MOOSE.
+
+This script creates two time tables, #1 is filled with entries in a
+numpy array and #2 is filled from a text file containing the event
+times.
+
+The `state` field of #1, which becomes 1 when an event occurs and 0
+otherwise, is recorded.
+
+On the other hand, #2 is connected to a synapse (in a SynChan element)
+to demonstrate artificial spike event generation.
+
+"""
 
 import os
 import numpy as np
@@ -154,9 +167,6 @@ def main():
 
     """
     timetable_demo()
-
-if __name__ == '__main__':
-    main()
 
 
 
