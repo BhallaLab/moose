@@ -47,10 +47,7 @@ install:
 
 script:
     - gbp buildpackage  --git-ignore-branch --git-ignore-new -uc -us
-    - dpkg -L ../moose*.deb
-    - sudo dpkg -i ../moose*.deb
-
-after_success:
     - cd __moose-core_build && ctest --output-on-failure
+    - sudo dpkg -i ../moose*.deb
     - cd ~ && python -c 'import moose; moose.test( timeout = 10 )'
     - cd ~ && python -c 'import moogli'
