@@ -14,6 +14,7 @@ import random
 import re
 import matplotlib
 import moose
+
 from moose.chemUtil.chemConnectUtil import *
 from moose.chemUtil.graphUtils import *
 
@@ -624,6 +625,6 @@ if __name__ == "__main__":
     output = modelpath+"_.g"
     written = write('/'+modelpath,output)
     if written:
-            print((" file written to ",output))
+            print(" file written to ",output)
     else:
             print(" could be written to kkit format")

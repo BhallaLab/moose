@@ -12,8 +12,14 @@ from io import StringIO
 
 import moose.SBML.readSBML as _readSBML
 import moose.SBML.writeSBML as _writeSBML
-import moose.genesis.writeKkit as _writeKkit
 import moose.chemUtil as _chemUtil
+
+kkitImport_, kkitImport_error_ = True, ''
+try:
+    import moose.genesis.writeKkit as _writeKkit
+except ImportError as e:
+    kkitImport_ = False
+    kkitImport_err_ = '%s' % e 
 
 # Import function from C++ module into moose namespace.
 from moose._moose import *
@@ -88,6 +94,11 @@ def mooseWriteKkit(modelpath, filepath,sceneitems={}):
     modelpath -- model path in moose \n
     filepath -- Path of output file.
     """
+    global kkitImport_, kkitImport_err_
+    if not kkitImport_:
+        print( '[WARN] Could not import module to enable this function' )
+        print( '\tError was %s' % kkitImport_error_ )
+        return False
     return _writeKkit.mooseWriteKkit(modelpath, filepath,sceneitems)
 
 
