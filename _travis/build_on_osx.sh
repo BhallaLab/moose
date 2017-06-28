@@ -21,6 +21,6 @@ set -o nounset                              # Treat unset variables as an error
 set -e
 (
     cd _travis
-    brew audit --strict --online moose.rb
+    # brew audit --strict --online moose.rb # Failling with seg-fault.
     brew install -V --build-from-source moose.rb
 )
