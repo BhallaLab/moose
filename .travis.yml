@@ -27,7 +27,9 @@ env:
 
 before_script:
     - if [ "$TRAVIS_OS_NAME" == "linux" ]; then ./_travis/prepare_linux.sh ; fi
+    - if [ "$TRAVIS_OS_NAME" == "osx" ]; then ./_travis/prepare_osx.sh ; fi
 
 
 script:
-    - ./build_on_travis.sh
+    - if [ "$TRAVIS_OS_NAME" == "linux" ]; then ./_travis/build_on_linux.sh ; fi
+    - if [ "$TRAVIS_OS_NAME" == "osx" ]; then ./_travis/build_on_osx.sh ; fi
