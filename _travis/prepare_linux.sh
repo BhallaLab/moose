@@ -1,4 +1,4 @@
-#!/bin/bash/env bash
+#!/usr/bin/env bash
 
 sudo apt-get update -qq
 sudo apt-get install libxml2-dev libbz2-dev wget
@@ -11,4 +11,3 @@ sudo apt-get install doxygen python-sphinx
 sudo apt-get install git-buildpackage 
 sudo apt-get install libgsl-dev
 sudo apt-get install -f
-sudo ldconfig /usr/lib64
