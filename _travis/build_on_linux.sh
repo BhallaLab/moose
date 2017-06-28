@@ -20,8 +20,10 @@
 set -o nounset                              # Treat unset variables as an error
 set -e
 
-gbp buildpackage  --git-ignore-branch --git-ignore-new -uc -us
-cd __moose-core_build && ctest --output-on-failure && cd ..
-sudo dpkg -D=2 -i ../moose*.deb
-cd ~ && /usr/bin/python -c \
-    "import moose; print moose.version(); print( moose.__file__ ); moose.test( timeout = 10 )"
+(
+    gbp buildpackage  --git-ignore-branch --git-ignore-new -uc -us
+    cd __moose-core_build && ctest --output-on-failure && cd ..
+    sudo dpkg -D=2 -i ../moose*.deb
+    cd ~ && /usr/bin/python -c \
+        "import moose; print moose.version(); print( moose.__file__ ); moose.test( timeout = 10 )"
+)
