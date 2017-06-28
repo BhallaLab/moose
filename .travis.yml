@@ -9,6 +9,11 @@ os:
     - linux
     - osx
 
+allow_failure:
+    - osx
+
+osx_image : xcode8
+
 branches:
     only:
         - master
