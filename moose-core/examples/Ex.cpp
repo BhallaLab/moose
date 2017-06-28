@@ -84,7 +84,7 @@ const Cinfo* Ex::initCinfo()
 	
 	static SharedFinfo proc(
 		"proc",
-		"Shared message to receive Process messages",
+		"Handles 'reinit' and 'process' calls from a clock.",
 		processShared,
 		sizeof(processShared) / sizeof(Finfo*)
 	);

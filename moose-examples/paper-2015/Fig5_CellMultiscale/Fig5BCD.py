@@ -197,7 +197,7 @@ def buildPlots( rdes ):
     moose.connect( eSpineGkTab, 'requestOut', path, 'getGk' )
 
 def saveAndClearPlots( name ):
-    print 'saveAndClearPlots( ', name, ' )'
+    print(('saveAndClearPlots( ', name, ' )'))
     for i in moose.wildcardFind( "/graphs/#" ):
         #plot stuff
         i.xplot( name + '.xplot', i.name )
@@ -208,8 +208,8 @@ def printPsd( name ):
     psdR = moose.vec( '/model/chem/psd/tot_PSD_R' )
     neuronVoxel = moose.element( '/model/chem/spine' ).neuronVoxel
     elecComptMap = moose.element( '/model/chem/dend' ).elecComptMap
-    print "len( neuronVoxel = ", len( neuronVoxel), min( neuronVoxel), max( neuronVoxel)
-    print len( elecComptMap), elecComptMap[0], elecComptMap[12]
+    print(("len( neuronVoxel = ", len( neuronVoxel), min( neuronVoxel), max( neuronVoxel)))
+    print((len( elecComptMap), elecComptMap[0], elecComptMap[12]))
     neuron = moose.element( '/model/elec' )
     ncompts = neuron.compartments
     d = {}
@@ -253,11 +253,11 @@ def main():
     global synSpineList 
     global synDendList 
     numpy.random.seed( 1234 )
-    rdes = buildRdesigneur()
+    rdes = buildRdesigneur( )
     for i in elecFileNames:
-        print i
+        print(i)
         rdes.cellProtoList = [ ['./cells/' + i, 'elec'] ]
-        rdes.buildModel( '/model' )
+        rdes.buildModel( )
         assert( moose.exists( '/model' ) )
         synSpineList = moose.wildcardFind( "/model/elec/#head#/glu,/model/elec/#head#/NMDA" )
         temp = set( moose.wildcardFind( "/model/elec/#/glu,/model/elec/#/NMDA" ) )
@@ -270,7 +270,7 @@ def main():
         probeStimulus( baselineTime )
         tetanicStimulus( tetTime )
         probeStimulus( postTetTime )
-        print 'real time = ', time.time() - t1
+        print(('real time = ', time.time() - t1))
 
         printPsd( i + ".fig5" )
         saveAndClearPlots( i + ".fig5" )

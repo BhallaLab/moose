@@ -1,44 +1,52 @@
-# test_moose_thread.py --- 
-# 
+# test_moose_thread.py ---
+#
 # Filename: test_moose_thread.py
-# Description: 
+# Description:
 # Author: Subhasis Ray
-# Maintainer: 
+# Maintainer:
 # Created: Thu Mar  8 09:38:02 2012 (+0530)
-# Version: 
+# Version:
 # Last-Updated: Thu Mar  8 15:16:03 2012 (+0530)
 #           By: Subhasis Ray
 #     Update #: 162
-# URL: 
-# Keywords: 
-# Compatibility: 
-# 
-# 
+# URL:
+# Keywords:
+# Compatibility:
+#
+#
 
-# Commentary: 
-# 
-# Example of using multithreading to run a MOOSE simulation in
-# parallel with querying MOOSE objects involved. See the documentatin
-# of the classes to get an idea of this demo's function.
-# 
+# Commentary:
+#
+#
 
 # Change log:
-# 
+#
 # 2012-03-08 12:31:46 (+0530) Initial version by Subha
-# 
+#
 
 # Code:
 
-import sys
-from datetime import datetime
-import threading
-import Queue
-import time
+"""
+Example of using multithreading to run a MOOSE simulation in
+parallel with querying MOOSE objects involved. See the documentatin
+of the classes to get an idea of this demo's function.
+"""
 
+import sys
+import threading
+
+# Python3 and python2.
+try:
+    import queue
+except ImportError as e:
+    import Queue as queue
+
+import time
+from datetime import datetime
 import moose
 
-worker_queue = Queue.Queue()
-status_queue = Queue.Queue()
+worker_queue = queue.Queue()
+status_queue = queue.Queue()
 
 class WorkerThread(threading.Thread):
     """This thread initializes the simulation (reinit) and then runs
@@ -49,16 +57,16 @@ class WorkerThread(threading.Thread):
     def __init__(self, runtime):
         threading.Thread.__init__(self)
         self.runtime = runtime
-        print 'Created WorkerThread of name', self.name
-        
+        print(('Created WorkerThread of name', self.name))
+
     def run(self):
-        print self.name, 'Starting run for', self.runtime, ' seconds'        
+        print((self.name, 'Starting run for', self.runtime, ' seconds'))
         moose.reinit()
         moose.start(self.runtime)
         while moose.isRunning():
             time.sleep(1.0)
-            print self.name, 'Table length', len(moose.Table('/tab').vector)
-        print self.name, 'Finishing simulation'
+            print((self.name, 'Table length', len(moose.Table('/tab').vector)))
+        print((self.name, 'Finishing simulation'))
         worker_queue.put(self.name)
 
 class StatusThread(threading.Thread):
@@ -71,19 +79,24 @@ class StatusThread(threading.Thread):
     def __init__(self, tab):
         threading.Thread.__init__(self)
         self.table = tab
-        print 'Created StatusThread of name', self.name
-        
+        print(('Created StatusThread of name', self.name))
+
     def run(self):
         while True:
             try:
                 value = worker_queue.get(False)
-                print self.name, 'Received queue entry: ', value, '. Final table length:', len(self.table.vector), ' ... now Finishing'
+                print((self.name, 'Received queue entry: ', value
+                        , '. Final table length:', len(self.table.vector)
+                        , ' ... now Finishing'
+                        ))
                 status_queue.put(self.name)
                 return
-            except Queue.Empty:
+            except queue.Empty:
                 time.sleep(1.0)
-                print self.name, 'Queue is empty. Current table length:', len(self.table.vector)
-        
+                print((self.name, 'Queue is empty. Current table length:'
+                        , len(self.table.vector)
+                        ))
+
 if __name__ == '__main__':
     pg = moose.PulseGen('pg')
     pg.firstDelay = 10.0
@@ -99,7 +112,7 @@ if __name__ == '__main__':
     t1.start()
     status_queue.get(True)
     tab.xplot('threading_demo.dat', 'pulsegen_output')
-    print 'Ending threading_demo: final length of table', len(tab.vector) 
+    print(('Ending threading_demo: final length of table', len(tab.vector)))
 
-# 
+#
 # threading_demo.py ends here

@@ -46,21 +46,21 @@ double lookupVolumeFromMesh( const Eref& e )
  * Figures out all the volumes of the substrates or products on the
  * specified reaction 'reac'. The SrcFinfo is for the sub or prd msg.
  * Returns the index of the smallest vol. Passes back a vector of volumes.
- * The meshIndex is zero. Reasoning is as follows: both in the case of 
+ * The meshIndex is zero. Reasoning is as follows: both in the case of
  * well-stirred (single mesh entry) models, and in the case of spatial
- * models with consistent mesh sizes and alignments, the mesh entry 
+ * models with consistent mesh sizes and alignments, the mesh entry
  * volumes are in the same ratio.
  * Cases with more complex arrangements may also use the current vols as
  * a starting point, but will need to add index-specific scaling factors
  * to their reaction system.
  */
 
-unsigned int getReactantVols( const Eref& reac, const SrcFinfo* pools, 
+unsigned int getReactantVols( const Eref& reac, const SrcFinfo* pools,
 	vector< double >& vols )
 {
 	static const unsigned int meshIndex = 0;
 
-	const vector< MsgFuncBinding >* mfb = 
+	const vector< MsgFuncBinding >* mfb =
 		reac.element()->getMsgAndFunc( pools->getBindIndex() );
 	unsigned int smallIndex = 0;
 
@@ -88,22 +88,22 @@ unsigned int getReactantVols( const Eref& reac, const SrcFinfo* pools,
 }
 
 /**
- * Returns conversion factor to convert rates from concentration to 
+ * Returns conversion factor to convert rates from concentration to
  * mol# units.
  * Handles arbitrary combinations of volumes.
- * Assumes that the reference volume for computing rates is the 
+ * Assumes that the reference volume for computing rates is the
  * smallest volume.
  * 26 Feb 2013: This is now changed to use the volume of the first entry.
  * Should only be used for substrates. For products need to find the
  * first substrate, separately, and use that to scale down the conv factor.
  * Assumes all calculations are in SI: cubic metres and millimolar.
- * 27 Feb 2013: This is changed to use the volume of a voxel of the 
+ * 27 Feb 2013: This is changed to use the volume of a voxel of the
  * the home compartment of the reac.
  * Be warned: this can cause unexpected problems if the home compartment
- * isn't according to convention. For example, if there is a single 
+ * isn't according to convention. For example, if there is a single
  * substrate and the home compartment is elsewhere, you will get very odd
  * Kf:kf values.
- * 9 Oct 2013: This is now changed to use the volume of the first 
+ * 9 Oct 2013: This is now changed to use the volume of the first
  * substrate. Note that if the conversion is for products, then the
  * routine has to look up the substrate list to get the first substrate.
  * Reason is that the home compartment was often wrong in ReadKkit.
@@ -111,7 +111,7 @@ unsigned int getReactantVols( const Eref& reac, const SrcFinfo* pools,
  * conventions they use for cross-compartment reactions.
  */
 
-double convertConcToNumRateUsingMesh( const Eref& e, const SrcFinfo* pools, 
+double convertConcToNumRateUsingMesh( const Eref& e, const SrcFinfo* pools,
 	bool doPartialConversion )
 {
 	vector< double > vols;
@@ -157,10 +157,10 @@ double convertConcToNumRateUsingMesh( const Eref& e, const SrcFinfo* pools,
  * This variant already knows the volume, but has to figure out # of
  * reactants.
  */
-double convertConcToNumRateUsingVol( const Eref& e, const SrcFinfo* pools, 
+double convertConcToNumRateUsingVol( const Eref& e, const SrcFinfo* pools,
 	double volume, double scale, bool doPartialConversion )
 {
-	const vector< MsgFuncBinding >* mfb = 
+	const vector< MsgFuncBinding >* mfb =
 		e.element()->getMsgAndFunc( pools->getBindIndex() );
 	double conversion = 1.0;
 	if ( mfb && mfb->size() > 0 ) {
@@ -171,7 +171,7 @@ double convertConcToNumRateUsingVol( const Eref& e, const SrcFinfo* pools,
 				conversion = pow( conversion, power );
 			}
 		}
-		if ( conversion <= 0 ) 
+		if ( conversion <= 0 )
 			conversion = 1.0;
 	}
 
@@ -184,7 +184,7 @@ double convertConcToNumRateUsingVol( const Eref& e, const SrcFinfo* pools,
  * or mesh entries, and may therefore have different volumes.
  * We already know the reactants and their affiliations.
  */
-double convertConcToNumRateInTwoCompts( double v1, unsigned int n1, 
+double convertConcToNumRateInTwoCompts( double v1, unsigned int n1,
 	double v2, unsigned int n2, double scale )
 {
 	double conversion = 1.0;
@@ -194,7 +194,7 @@ double convertConcToNumRateInTwoCompts( double v1, unsigned int n1,
 	for ( unsigned int i = 0; i < n2; ++i )
 		conversion *= scale * NA * v2;
 
-	if ( conversion <= 0 ) 
+	if ( conversion <= 0 )
 			conversion = 1.0;
 
 	return conversion;

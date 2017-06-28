@@ -6,9 +6,9 @@
 # Maintainer: 
 # Created: Wed May 23 11:31:40 2012 (+0530)
 # Version: 
-# Last-Updated: Sat Aug  6 15:25:16 2016 (-0400)
+# Last-Updated: Sun Jun 25 15:34:25 2017 (-0400)
 #           By: subha
-#     Update #: 130
+#     Update #: 141
 # URL: 
 # Keywords: 
 # Compatibility: 
@@ -29,9 +29,11 @@
 
 # Code:
 
-from __future__ import print_function
+
 import settings
 import os
+
+mydir = os.path.dirname(os.path.abspath(__file__))
 
 # These settings are to imitate sedml entities for configuring simulation
 simulationSettings = settings.SimulationSettings()
@@ -44,7 +46,7 @@ simulationSettings.endTime = 10.0
 
 modelSettings.container = '/network'
 modelSettings.libpath = '/library'
-modelSettings.protodir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'proto')
+modelSettings.protodir = os.path.join(mydir, 'proto')
 
 modelSettings.morph_has_postion = False
 modelSettings.populationSize['SupPyrRS'] = 1000
@@ -115,15 +117,17 @@ import logging
 
 timestamp = datetime.now()
 mypid = os.getpid()
-data_dir_prefix = 'data'
+data_dir_prefix = os.path.join(mydir, 'data')
 if not os.access(data_dir_prefix, os.W_OK):
     data_dir_prefix = '/tmp/traub2005_data'
 if not os.access(data_dir_prefix, os.F_OK):
-    os.mkdir(data_dir_prefix)
+    os.makedirs(data_dir_prefix)
 data_dir = os.path.join(data_dir_prefix, timestamp.strftime('%Y_%m_%d'))
 if not os.access(data_dir, os.F_OK):
-    os.mkdir(data_dir)
+    os.makedirs(data_dir)
 print('data_dir =', data_dir)
+
+
 filename_suffix = '_%s_%d' % (timestamp.strftime('%Y%m%d_%H%M%S'), mypid)
 
 def handleError(self, record):

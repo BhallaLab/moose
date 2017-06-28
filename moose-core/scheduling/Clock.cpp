@@ -327,7 +327,7 @@ const Cinfo* Clock::initCinfo()
         "The clock also starts up with some default timesteps for each "
         "of these ticks, and this can be overridden using the shell "
         "command setClock, or by directly assigning tickStep values on the "
-        "clock object. \n"
+        "clock object."
         "Which objects use which tick? As a rule of thumb, try this: \n"
         "Electrical/compartmental model calculations: Ticks 0-7 \n"
         "Tables and output objects for electrical output: Tick 8 \n"
@@ -342,53 +342,57 @@ const Cinfo* Clock::initCinfo()
         "clock ticks for the tables/fileIO objects handling output at "
         "different time-resolutions. Typically one uses tick 8 and 18.\n"
         "Here are the detailed mappings of class to tick.\n"
-        "	Class				Tick		dt \n"
-        "	DiffAmp				0		50e-6\n"
-        "	Interpol			0		50e-6\n"
-        "	PIDController			0		50e-6\n"
-        "	PulseGen			0		50e-6\n"
-        "	StimulusTable			0		50e-6\n"
-        "	testSched			0		50e-6\n"
-        "	VClamp				0		50e-6\n"
-        "	SynHandlerBase			1		50e-6\n"
-        "	SimpleSynHandler		1		50e-6\n"
-        "   STDPSynHandler		1		50e-6\n"
-        "   GraupnerBrunel2012CaPlasticitySynHandler    1		50e-6\n"
-        "   SeqSynHandler		1		50e-6\n"
+        "   Class              Tick       dt \n"
+        "   DiffAmp             0       50e-6\n"
+        "   Interpol            0       50e-6\n"
+        "   PIDController       0       50e-6\n"
+        "   PulseGen            0       50e-6\n"
+        "   StimulusTable       0       50e-6\n"
+        "   testSched           0       50e-6\n"
+        "   VClamp              0       50e-6\n"
+        "   SynHandlerBase      1       50e-6\n"
+        "   SimpleSynHandler    1       50e-6\n"
+        "   STDPSynHandler      1       50e-6\n"
+        "   GraupnerBrunel2012CaPlasticitySynHandler    1        50e-6\n"
+        "   SeqSynHandler       1       50e-6\n"
         "	CaConc				1		50e-6\n"
         "	CaConcBase			1		50e-6\n"
         "	DifShell			1		50e-6\n"
+	    "	DifShellBase		1		50e-6\n"
+	    "   MMPump              1       50e-6\n"
+	    "	DifBuffer			1		50e-6\n"
+	    "	DifBufferBase		1		50e-6\n"
         "	MgBlock				1		50e-6\n"
         "	Nernst				1		50e-6\n"
         "	RandSpike			1		50e-6\n"
         "	ChanBase			2		50e-6\n"
         "	IntFire				2		50e-6\n"
         "	IntFireBase			2		50e-6\n"
-        "	LIF				2		50e-6\n"
-        "	QIF				2		50e-6\n"
+        "	LIF					2		50e-6\n"
+        "	QIF					2		50e-6\n"
         "	ExIF				2		50e-6\n"
         "	AdExIF				2		50e-6\n"
-        "	AdThreshIF				2		50e-6\n"
+        "	AdThreshIF			2		50e-6\n"
         "	IzhIF				2		50e-6\n"
-        "	IzhikevichNrn			2		50e-6\n"
+        "	IzhikevichNrn		2		50e-6\n"
         "	SynChan				2		50e-6\n"
-        "	NMDAChan				2		50e-6\n"
+        "	NMDAChan			2		50e-6\n"
         "	GapJunction			2		50e-6\n"
         "	HHChannel			2		50e-6\n"
         "	HHChannel2D			2		50e-6\n"
         "	Leakage				2		50e-6\n"
-        "	MarkovChannel			2		50e-6\n"
-        "	MarkovGslSolver			2		50e-6\n"
-        "	MarkovRateTable			2		50e-6\n"
-        "	MarkovSolver			2		50e-6\n"
-        "	MarkovSolverBase		2		50e-6\n"
-        "	RC				2		50e-6\n"
-        "	Compartment (init)		3		50e-6\n"
+        "	MarkovChannel		2		50e-6\n"
+        "	MarkovGslSolver		2		50e-6\n"
+        "	MarkovRateTable		2		50e-6\n"
+        "	MarkovSolver		2		50e-6\n"
+        "	MarkovSolverBase	2		50e-6\n"
+        "	RC					2		50e-6\n"
+        "	Compartment (init)	3		50e-6\n"
         "	CompartmentBase (init )		3		50e-6\n"
         "	SymCompartment	(init)		3		50e-6\n"
-        "	Compartment 			4		50e-6\n"
-        "	CompartmentBase			4		50e-6\n"
-        "	SymCompartment			4		50e-6\n"
+        "	Compartment 		4		50e-6\n"
+        "	CompartmentBase		4		50e-6\n"
+        "	SymCompartment		4		50e-6\n"
         "	SpikeGen			5		50e-6\n"
         "	HSolve				6		50e-6\n"
         "	SpikeStats			7		50e-6\n"
@@ -404,23 +408,23 @@ const Cinfo* Clock::initCinfo()
         "	Pool				13		0.1\n"
         "	PoolBase			13		0.1\n"
         "	CplxEnzBase			14		0.1\n"
-        "	Enz				14		0.1\n"
+        "	Enz					14		0.1\n"
         "	EnzBase				14		0.1\n"
         "	MMenz				14		0.1\n"
         "	Reac				14		0.1\n"
         "	ReacBase			14		0.1\n"
-        "	Gsolve	(init)			15		0.1\n"
-        "	Ksolve	(init)			15		0.1\n"
+        "	Gsolve	(init)		15		0.1\n"
+        "	Ksolve	(init)		15		0.1\n"
         "	Gsolve				16		0.1\n"
         "	Ksolve				16		0.1\n"
         "	Stats				17		0.1\n"
         "	Table2				18		1\n"
         "	Streamer			19		10\n"
 
-        "	HDF5DataWriter			30		1\n"
-        "	HDF5WriterBase			30		1\n"
+        "	HDF5DataWriter		30		1\n"
+        "	HDF5WriterBase		30		1\n"
         "	NSDFWriter			30		1\n"
-        "       PyRun                           30              1\n"
+        "   PyRun           	30      1\n"
         "	PostMaster			31		0.01\n"
         "	\n"
         "	Note that the other classes are not scheduled at all.",
@@ -742,7 +746,7 @@ void Clock::handleStep( const Eref& e, unsigned long numSteps )
                 time( &rawtime );
                 timeinfo = localtime( &rawtime );
                 strftime(now, 80, "%c", timeinfo);
-                cout << "@ " << now << ": " << 100 * currentTime_ / runTime_ 
+                cout << "@ " << now << ": " << 100 * currentTime_ / runTime_
                     << "% of total " << runTime_ << " seconds is over." << endl;
             }
         }
@@ -837,6 +841,10 @@ void Clock::buildDefaultTick()
     defaultTick_["CaConc"] = 1;
     defaultTick_["CaConcBase"] = 1;
     defaultTick_["DifShell"] = 1;
+    defaultTick_["DifShellBase"] = 1;
+    defaultTick_["MMPump"] =  1;
+    defaultTick_["DifBuffer"] = 1;
+    defaultTick_["DifBufferBase"] = 1;
     defaultTick_["MgBlock"] = 1;
     defaultTick_["Nernst"] = 1;
     defaultTick_["RandSpike"] = 1;
@@ -991,5 +999,3 @@ unsigned int Clock::lookupDefaultTick( const string& className )
     }
     return i->second;
 }
-
-

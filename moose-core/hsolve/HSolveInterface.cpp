@@ -243,6 +243,14 @@ void HSolve::addGkEk( Id id, double Gk, double Ek )
     externalCurrent_[ 2 * index + 1 ] += Gk * Ek;
 }
 
+void HSolve::addConc( Id id, double conc )
+{
+    unsigned int index = localIndex( id );
+    assert(  index < externalCalcium_.size() );
+    externalCalcium_[ index ] = conc;
+}
+
+
 void HSolve::setPowers(
     Id id,
     double Xpower,
@@ -280,7 +288,7 @@ void HSolve::setHHChannelGbar( Id id, double value )
     unsigned int index = localIndex( id );
     assert( index < channel_.size() );
     channel_[ index ].Gbar_ = value;
-    // cout << "HSolve::setHHChannelGbar( " << id.path() << ", " << value << " ), index = " << index << endl;
+
 }
 
 double HSolve::getEk( Id id ) const

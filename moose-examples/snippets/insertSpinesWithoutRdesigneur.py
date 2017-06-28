@@ -1,4 +1,25 @@
 #########################################################################
+# insertSpinesWithoutRdesigneur.py --- 
+# 
+# Filename:  insertSpinesWithoutRdesigneur.py
+# Author: Upinder S. Bhalla
+# Maintainer: 
+# Created: Oct  12 16:26:05 2014 (+0530)
+# Version: 
+# Last-Updated: May 15 2017
+#           By: Upinder S. Bhalla
+#     Update #: 
+# URL: 
+# Keywords: 
+# Compatibility: 
+# 
+# 
+# Commentary: 
+# 
+# 
+# 
+# 
+# Change log: updated with current API
 ## This program is part of 'MOOSE', the
 ## Messaging Object Oriented Simulation Environment.
 ##           Copyright (C) 2015 Upinder S. Bhalla. and NCBS
@@ -61,9 +82,11 @@ def makeSpineProto():
 
 def main():
     """
-    This snippet illustrates how the Neuron class does the spine
-    specification, without the rdesigneur intermediate.
+This snippet illustrates how the Neuron class does the spine
+specification, without the rdesigneur intermediate.
+
     """
+
     app = QtGui.QApplication(sys.argv)
     moose.Neutral( '/library' )
     makeSpineProto()
@@ -83,16 +106,22 @@ def main():
 
     # Now we set up the display
     compts = moose.wildcardFind( "/model/#[ISA=CompartmentBase]" )
+    #print " compartment ",compts
     compts[0].inject = inject
-    ecomptPath = map( lambda x : x.path, compts )
-    morphology = moogli.read_morphology_from_moose(name = "", path = "/model")
-    morphology.create_group( "group_all", ecomptPath, -0.08, 0.02, \
-            [0.0, 0.5, 1.0, 1.0], [1.0, 0.0, 0.0, 0.9] ) 
-
-    viewer = moogli.DynamicMorphologyViewerWidget(morphology)
+    ecomptPath = [x.path for x in compts]
+    #morphology = moogli.read_morphology_from_moose(name = "", path = "/model")
+    morphology = moogli.extensions.moose.read(path="/model/", vertices=15)
+    
+    # morphology.create_group( "group_all", ecomptPath, -0.08, 0.02, \
+    #         [0.0, 0.5, 1.0, 1.0], [1.0, 0.0, 0.0, 0.9] ) 
+    viewer = moogli.Viewer("Viewer")
+    viewer.attach_shapes( morphology.shapes.values() )
+    view = moogli.View("main-view")
+    viewer.attach_view( view )
+    #viewer = moogli.DynamicMorphologyViewerWidget(morphology)
     def callback( morphology, viewer ):
         moose.start( frameRunTime )
-        Vm = map( lambda x: moose.element( x ).Vm, compts )
+        Vm = [moose.element( x ).Vm for x in compts]
         morphology.set_color( "group_all", Vm )
         currTime = moose.element( '/clock' ).currentTime
         #print currTime, compts[0].Vm
@@ -100,8 +129,8 @@ def main():
             return True
         return False
 
-    viewer.set_callback( callback, idletime = 0 )
-    viewer.showMaximized()
+    #viewer.set_callback( callback, idletime = 0 )
+    #viewer.showMaximized()
     viewer.show()
     app.exec_()
 

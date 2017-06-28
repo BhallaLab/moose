@@ -109,13 +109,13 @@ const Cinfo* PoolBase::initCinfo()
 		// SrcFinfo Definitions
 		//////////////////////////////////////////////////////////////
 
-		static SrcFinfo1< double > nOut( 
-				"nOut", 
+		static SrcFinfo1< double > nOut(
+				"nOut",
 				"Sends out # of molecules in pool on each timestep"
 		);
 
-		static SrcFinfo0 requestMolWt( 
-				"requestMolWt", 
+		static SrcFinfo0 requestMolWt(
+				"requestMolWt",
 				"Requests Species object for mol wt"
 		);
 
@@ -160,7 +160,7 @@ const Cinfo* PoolBase::initCinfo()
 		&species,			// SharedFinfo
 	};
 
-	static string doc[] = 
+	static string doc[] =
 	{
 		"Name", "PoolBase",
 		"Author", "Upi Bhalla",
@@ -260,7 +260,7 @@ double PoolBase::getNinit( const Eref& e ) const
 }
 
 // Conc is given in millimolar. Volume is in m^3
-void PoolBase::setConc( const Eref& e, double c ) 
+void PoolBase::setConc( const Eref& e, double c )
 {
 	vSetConc( e, c );
 }
@@ -348,7 +348,7 @@ double PoolBase::vGetMotorConst(const Eref& e ) const
 // There should also be a subsequent call to resched for the entire tree.
 //////////////////////////////////////////////////////////////
 // static func
-void PoolBase::zombify( Element* orig, const Cinfo* zClass, 
+void PoolBase::zombify( Element* orig, const Cinfo* zClass,
 				Id ksolve, Id dsolve )
 {
 	if ( orig->cinfo() == zClass )
@@ -363,7 +363,7 @@ void PoolBase::zombify( Element* orig, const Cinfo* zClass,
 	vector< double > motorConst( num, 0.0 );
 	for ( unsigned int i = 0; i < num; ++i ) {
 		Eref er( orig, i + start );
-		const PoolBase* pb = 
+		const PoolBase* pb =
 			reinterpret_cast< const PoolBase* >( er.data() );
 		species[ i ] = pb->getSpecies( er );
 		concInit[ i ] = pb->getConcInit( er );

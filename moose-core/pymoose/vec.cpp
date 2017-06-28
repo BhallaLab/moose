@@ -26,7 +26,7 @@
 // Mon Jul 22 16:47:10 IST 2013 - Splitting contents of
 // moosemodule.cpp into speparate files.
 //
-//
+//c
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License as
 // published by the Free Software Foundation; either version 3, or
@@ -85,6 +85,11 @@ PyDoc_STRVAR(moose_Id_delete_doc,
              "\nDelete the underlying moose object. This will invalidate all"
              "\nreferences to this object and any attempt to access it will raise a"
              "\nValueError."
+             "\n Example"
+             "\n--------"
+             "\n        >>>iaf.delete()"
+             "\n        >>>print iaf.path"
+             "\n          \\            "
              "\n");
 
 PyDoc_STRVAR(moose_Id_setField_doc,
@@ -97,13 +102,20 @@ PyDoc_STRVAR(moose_Id_setField_doc,
              "fieldname: str\n"
              "    field to be set.\n"
              "value: sequence of values\n"
-             "    sequence of values corresponding to individual elements under this\n"
-             "    vec.\n"
-             "\n"
+             "    sequence of values corresponding to individual elements"
+			    	 "    under this vec.\n"
+             "\n Example"
+             "\n--------"
+             "\n        >>> iaf.setField('Vm', 20)"
+             "\n        >>> print iaf.Vm"
+             "\n            [ 20.  20.  20.  20.  20.  20.  20.  20.  20.  20.]"
+             "\n        >>> iaf.setField('Vm', (1, 2, 3, 4, 5, 6, 7, 8, 9, 10))"
+             "\n        >>> print iaf.Vm"
+             "\n            [  1.   2.   3.   4.   5.   6.   7.   8.   9.  10.]"
              "Notes\n"
              "-----\n"
-             "    This is an interface to SetGet::setVec\n"
-            );
+             "    This is an interface to SetGet::setVec"
+             "\n");
 
 static PyMethodDef IdMethods[] =
 {
@@ -115,15 +127,15 @@ static PyMethodDef IdMethods[] =
     },
     {
         "getValue", (PyCFunction)moose_Id_getValue, METH_NOARGS,
-        "Return integer representation of the id of the element."
+        "Returns integer representation of the id of the element."
     },
     {
         "getPath", (PyCFunction)moose_Id_getPath, METH_NOARGS,
-        "Return the path of this vec object."
+        "Returns the path of this vec object."
     },
     {
         "getShape", (PyCFunction)moose_Id_getShape, METH_NOARGS,
-        "Get the shape of the vec object as a tuple."
+        "Returns the shape of the vec object as a tuple."
     },
     {
         "setField", (PyCFunction)moose_Id_setField, METH_VARARGS,
@@ -166,23 +178,54 @@ PyDoc_STRVAR(moose_Id_doc,
              "\n"
              "array-elements are array-like objects which can have one or more"
              " single-elements within them."
-             " vec can be traversed like a Python sequence and is item is an"
+             " vec can be traversed like a Python sequence and its each item is an"
              " element identifying single-objects contained in the array element.\n"
              "\n"
-             "you can create multiple references to the same MOOSE object in Python,"
-             " but as long as they have the same path/id value, they all point to"
+             "you can create multiple references to the same MOOSE object in Python."
+             " As long as they have the same path/id value, they all point to"
              " the same entity in MOOSE.\n"
              "\n"
              "Field access are vectorized. For example, if `comp` is a vec of"
-             " Compartments, which has a field called `Vm` for membrane voltage, then"
+             " Compartments (of size 10), which has a field called `Vm` as membrane voltage, then"
              " `comp.Vm` returns a"
-             " tuple containing the `Vm` value of all the single-elements in this"
+             " tuple containing the `Vm` value of all 10 single-elements in this"
              " vec. There are a few special fields that are unique for vec and are not"
              " vectorized. These are `path`, `name`, `value`, `shape` and `className`."
-             " There are two ways an vec can be initialized, (1) create a new array"
-             " element or (2) create a reference to an existing object.\n"
-             "\n    Fields:"
-             "\n    -------"
+             " There are two ways an vec can be initialized, \n"
+             "(1) create a new array element or \n"
+             "(2) create a reference to an existing object.\n"
+             "\n"
+             "\n      Constructor:"
+             "\n"
+             "\n    vec(self, path=path, n=size, g=isGlobal, dtype=className)"
+             "\n    "
+             "\n    "
+             "\n    Parameters"
+             "\n    ----------"
+             "\n    path : str/vec/int "
+             "\n        Path of an existing array element or for creating a new one. This has"
+             "\n        the same format as unix file path: /{element1}/{element2} ... "
+             "\n        If there is no object with the specified path, moose attempts to create "
+             "\n        a new array element. For that to succeed everything until the last `/`"
+             "\n        character must exist or an error is raised"
+             "\n"
+             "\n        Alternatively, path can be vec or integer value of the Id of an"
+             "\n        existing vec object. The new object will be another reference to"
+             "\n        the existing object."
+             "\n    "
+             "\n    n : positive int"
+             "\n        This is a positive integers specifying the size of the array element"
+             "\n        to be created. Thus n=2 will create an vec with 2 elements."
+             "\n    "
+             "\n    g : int"
+             "\n        Specify if this is a global or local element. Global elements are"
+             "\n        shared between nodes in a computing cluster."
+             "\n    "
+             "\n    dtype: string"
+             "\n        The vector will be of this moose-class."
+             "\n    "
+             "\n    Attributes:"
+             "\n    -----------"
              "\n    path : str"
              "\n       Path of the vec. In moose vecs are organized in a tree structure"
              " like unix file system and the paths follow the same convention."
@@ -205,46 +248,15 @@ PyDoc_STRVAR(moose_Id_doc,
              " thin wrappers around them. This field provides you the moose class"
              " name as defined in C++"
              "\n"
-             "\n Constructor:"
-             "\n"
-             "\n    vec(self, path=path, n=size, g=isGlobal, dtype=className)"
-             "\n    "
-             "\n    "
-             "\n    Parameters"
-             "\n    ----------"
-             "\n    path : str/vec/int "
-             "\n        Path of an existing array element or for creating a new one. This has"
-             "\n        the same format as unix file path: /{element1}/{element2} ... If there"
-             "\n        is no object with the specified path, moose attempts to create a new"
-             "\n        array element. For that to succeed everything until the last `/`"
-             "\n        character must exist or an error is raised"
-             "\n"
-             "\n        Alternatively, path can be vec or integer value of the id of an"
-             "\n        existing vec object. The new object will be another reference to"
-             "\n        the existing object."
-             "\n    "
-             "\n    n : positive int"
-             "\n        This is a positive integers specifying the size of the array element"
-             "\n        to be created. Thus n=2 will create an"
-             "\n        vec with 2 elements."
-             "\n    "
-             "\n    "
-             "\n    g : int"
-             "\n        Specify if this is a global or local element. Global elements are"
-             "\n        shared between nodes in a computing cluster."
-             "\n    "
-             "\n    dtype: string"
-             "\n        The vector will be of this moose-class."
-             "\n    "
              "\n    "
              "\n    Examples"
              "\n    ---------"
              "\n        >>> iaf = moose.vec('/iaf', n=10, dtype='IntFire')"
              "\n        >>> iaf.Vm = range(10)"
              "\n        >>> print iaf[5].Vm"
-             "\n        5.0"
+             "\n            5.0"
              "\n        >>> print iaf.Vm"
-             "\n        array([ 0.,  1.,  2.,  3.,  4.,  5.,  6.,  7.,  8.,  9.])"
+             "\n            array([ 0.,  1.,  2.,  3.,  4.,  5.,  6.,  7.,  8.,  9.])"
             );
 
 PyTypeObject IdType =

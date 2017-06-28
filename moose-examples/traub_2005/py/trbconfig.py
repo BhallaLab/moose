@@ -29,7 +29,7 @@
 # Code:
 
 from datetime import datetime
-import ConfigParser as configparser
+import configparser as configparser
 import logging
 import numpy
 import os

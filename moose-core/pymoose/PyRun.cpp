@@ -1,47 +1,47 @@
-// PyRun.cpp --- 
-// 
+// PyRun.cpp ---
+//
 // Filename: PyRun.cpp
-// Description: 
+// Description:
 // Author: subha
-// Maintainer: 
+// Maintainer:
 // Created: Sat Oct 11 14:47:22 2014 (+0530)
-// Version: 
+// Version:
 // Last-Updated: Fri Jun 19 18:56:06 2015 (-0400)
 //           By: Subhasis Ray
 //     Update #: 15
-// URL: 
-// Keywords: 
-// Compatibility: 
-// 
-// 
+// URL:
+// Keywords:
+// Compatibility:
+//
+//
 
-// Commentary: 
-// 
-// 
-// 
-// 
+// Commentary:
+//
+//
+//
+//
 
 // Change log:
-// 
-// 
-// 
-// 
+//
+//
+//
+//
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License as
 // published by the Free Software Foundation; either version 3, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; see the file COPYING.  If not, write to
 // the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 // Floor, Boston, MA 02110-1301, USA.
-// 
-// 
+//
+//
 
 // Code:
 
@@ -77,6 +77,7 @@ const Cinfo * PyRun::initCinfo()
         "String to be executed at initialization (reinit).",
         &PyRun::setInitString,
         &PyRun::getInitString);
+
     static ValueFinfo< PyRun, string > inputvar(
         "inputVar",
         "Name of local variable in which input balue is to be stored. Default"
@@ -87,13 +88,13 @@ const Cinfo * PyRun::initCinfo()
 
     static ValueFinfo< PyRun, string > outputvar(
         "outputVar",
-        "Name of local variable for storing output. Default is `output`",
+        "Name of local variable for storing output. Default is `output`.",
         &PyRun::setOutputVar,
         &PyRun::getOutputVar);
 
     static ValueFinfo< PyRun, int > mode(
         "mode",
-        "Flag to indicate whether runString should be executed for both trigger and process, or one of them",
+        "Flag to indicate whether runString should be executed for both trigger and process, or one of them.",
         &PyRun::setMode,
         &PyRun::getMode);
 
@@ -118,7 +119,7 @@ const Cinfo * PyRun::initCinfo()
         " builtin function `input`). If debug is True, it prints the input"
         " value.",
         new EpFunc1< PyRun, double >(&PyRun::trigger));
-    
+
     static DestFinfo run(
         "run",
         "Runs a specified string. Does not modify existing run or init strings.",
@@ -133,7 +134,7 @@ const Cinfo * PyRun::initCinfo()
         "reinit",
         "Handles reinit call. Runs the current initString.",
         new ProcOpFunc< PyRun >( &PyRun::reinit ));
-    
+
     static Finfo * processShared[] = { &process, &reinit };
     static SharedFinfo proc(
         "proc",
@@ -195,7 +196,7 @@ PyRun::PyRun():mode_(0), initstr_(""), runstr_(""),
     }
     if (PyDict_SetItemString(locals_, inputvar_.c_str(), value)){
         PyErr_Print();
-    }    
+    }
 }
 
 PyRun::~PyRun()
@@ -264,7 +265,7 @@ void PyRun::trigger(const Eref& e, double input)
     if (mode_ == 1){
         return;
     }
-    
+
     PyObject * value = PyDict_GetItemString(locals_, inputvar_.c_str());
     if (value){
         Py_DECREF(value);
@@ -335,12 +336,12 @@ void handleError(bool syntax)
 {
     PyObject *exc, *val, *trb;
     char * msg;
-    
-    if (syntax && PyErr_ExceptionMatches (PyExc_SyntaxError)){           
+
+    if (syntax && PyErr_ExceptionMatches (PyExc_SyntaxError)){
         PyErr_Fetch (&exc, &val, &trb);        /* clears exception! */
-        
+
         if (PyArg_ParseTuple (val, "sO", &msg, &trb) &&
-            !strcmp (msg, "unexpected EOF while parsing")){ /* E_EOF */            
+            !strcmp (msg, "unexpected EOF while parsing")){ /* E_EOF */
             Py_XDECREF (exc);
             Py_XDECREF (val);
             Py_XDECREF (trb);
@@ -350,21 +351,21 @@ void handleError(bool syntax)
         }
     } else {                                     /* some non-syntax error */
         PyErr_Print ();
-    }                
+    }
 }
 
 void PyRun::reinit(const Eref& e, ProcPtr p)
 {
     PyObject * main_module;
     if (globals_ == NULL){
-        main_module = PyImport_AddModule("__main__");        
+        main_module = PyImport_AddModule("__main__");
         globals_ = PyModule_GetDict(main_module);
         Py_XINCREF(globals_);
     }
     if (locals_ == NULL){
         locals_ = PyDict_New();
         if (!locals_){
-            cerr << "Could not initialize locals dict" << endl;            
+            cerr << "Could not initialize locals dict" << endl;
         }
     }
     initcompiled_ = (PYCODEOBJECT*)Py_CompileString(
@@ -396,5 +397,5 @@ void PyRun::reinit(const Eref& e, ProcPtr p)
 }
 
 
-// 
+//
 // PyRun.cpp ends here

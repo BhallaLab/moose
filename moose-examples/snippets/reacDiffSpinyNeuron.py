@@ -85,7 +85,7 @@ def makeModel():
     stoich0.filterXreacs()
     stoich1.filterXreacs()
     stoich2.filterXreacs()
-    
+
     moose.element( '/model/chem/compt2/a[0]' ).concInit *= 1.5
 
     # Create the output tables
@@ -93,7 +93,7 @@ def makeModel():
     graphs = moose.Neutral( '/model/graphs' )
     moose.le( '/model/chem/compt1' )
     a = moose.element( '/model/chem/compt1' )
-    print a.voxelVolume
+    print((a.voxelVolume))
     makeTab( 'a_soma', '/model/chem/compt0/a[0]' )
     makeTab( 'b_soma', '/model/chem/compt0/b[0]' )
     makeTab( 'a_apical', '/model/chem/compt0/a[' + str( num ) + ']' )
@@ -110,65 +110,65 @@ def makeTab( plotname, molpath ):
 
 
 def makeDisplay():
-        plt.ion()
-        fig = plt.figure( figsize=(10,12) )
+    plt.ion()
+    fig = plt.figure( figsize=(10,12) )
 
-        dend = fig.add_subplot( 411 )
-        plt.ylabel( 'Conc (mM)' )
-        plt.xlabel( 'Dend voxel #' )
-        plt.legend()
-        timeLabel = plt.text(200, 0.5, 'time = 0')
+    dend = fig.add_subplot( 411 )
+    plt.ylabel( 'Conc (mM)' )
+    plt.xlabel( 'Dend voxel #' )
+    plt.legend()
+    timeLabel = plt.text(200, 0.5, 'time = 0')
 
-        spine = fig.add_subplot( 412 )
-        plt.ylabel( 'Conc (mM)' )
-        plt.xlabel( 'Spine voxel #' )
-        plt.legend()
+    spine = fig.add_subplot( 412 )
+    plt.ylabel( 'Conc (mM)' )
+    plt.xlabel( 'Spine voxel #' )
+    plt.legend()
 
-        psd = fig.add_subplot( 413 )
-        plt.ylabel( 'Conc (mM)' )
-        plt.xlabel( 'PSD voxel #' )
-        plt.legend()
+    psd = fig.add_subplot( 413 )
+    plt.ylabel( 'Conc (mM)' )
+    plt.xlabel( 'PSD voxel #' )
+    plt.legend()
 
-        timeSeries = fig.add_subplot( 414 )
-        timeSeries.set_ylim( 0, 0.6 )
-        plt.ylabel( 'Conc (mM)' )
-        plt.xlabel( 'time (seconds)' )
-        plt.legend()
+    timeSeries = fig.add_subplot( 414 )
+    timeSeries.set_ylim( 0, 0.6 )
+    plt.ylabel( 'Conc (mM)' )
+    plt.xlabel( 'time (seconds)' )
+    plt.legend()
 
-	a = moose.vec( '/model/chem/compt0/a' )
-	b = moose.vec( '/model/chem/compt0/b' )
-        line1, = dend.plot( range( len( a ) ), a.conc, label='a' )
-        line2, = dend.plot( range( len( b ) ), b.conc, label='b' )
-        dend.set_ylim( 0, 0.6 )
+    a = moose.vec( '/model/chem/compt0/a' )
+    b = moose.vec( '/model/chem/compt0/b' )
+    line1, = dend.plot( list(range( len( a ))), a.conc, label='a' )
+    line2, = dend.plot( list(range( len( b ))), b.conc, label='b' )
+    dend.set_ylim( 0, 0.6 )
 
-	a = moose.vec( '/model/chem/compt1/a' )
-	b = moose.vec( '/model/chem/compt1/b' )
-        line3, = spine.plot( range( len( a ) ), a.conc, label='a' )
-        line4, = spine.plot( range( len( b ) ), b.conc, label='b' )
-        spine.set_ylim( 0, 0.6 )
+    a = moose.vec( '/model/chem/compt1/a' )
+    b = moose.vec( '/model/chem/compt1/b' )
+    line3, = spine.plot( list(range( len( a ))), a.conc, label='a' )
+    line4, = spine.plot( list(range( len( b ))), b.conc, label='b' )
+    spine.set_ylim( 0, 0.6 )
 
-	a = moose.vec( '/model/chem/compt2/a' )
-	b = moose.vec( '/model/chem/compt2/b' )
-        line5, = psd.plot( range( len( a ) ), a.conc, label='a' )
-        line6, = psd.plot( range( len( b ) ), b.conc, label='b' )
-        psd.set_ylim( 0, 0.6 )
+    a = moose.vec( '/model/chem/compt2/a' )
+    b = moose.vec( '/model/chem/compt2/b' )
+    line5, = psd.plot( list(range( len( a ))), a.conc, label='a' )
+    line6, = psd.plot( list(range( len( b ))), b.conc, label='b' )
+    psd.set_ylim( 0, 0.6 )
 
-        fig.canvas.draw()
-        return ( timeSeries, dend, spine, psd, fig, line1, line2, line3, line4, line5, line6, timeLabel )
+    fig.canvas.draw()
+    return ( timeSeries, dend, spine, psd, fig, line1, line2, line3, line4, line5, line6, timeLabel )
 
 def updateDisplay( plotlist ):
-	a = moose.vec( '/model/chem/compt0/a' )
-	b = moose.vec( '/model/chem/compt0/b' )
+        a = moose.vec( '/model/chem/compt0/a' )
+        b = moose.vec( '/model/chem/compt0/b' )
         plotlist[5].set_ydata( a.conc )
         plotlist[6].set_ydata( b.conc )
 
-	a = moose.vec( '/model/chem/compt1/a' )
-	b = moose.vec( '/model/chem/compt1/b' )
+        a = moose.vec( '/model/chem/compt1/a' )
+        b = moose.vec( '/model/chem/compt1/b' )
         plotlist[7].set_ydata( a.conc )
         plotlist[8].set_ydata( b.conc )
 
-	a = moose.vec( '/model/chem/compt2/a' )
-	b = moose.vec( '/model/chem/compt2/b' )
+        a = moose.vec( '/model/chem/compt2/a' )
+        b = moose.vec( '/model/chem/compt2/b' )
         plotlist[9].set_ydata( a.conc )
         plotlist[10].set_ydata( b.conc )
         plotlist[4].canvas.draw()
@@ -179,28 +179,29 @@ def finalizeDisplay( plotlist, cPlotDt ):
         pos = numpy.arange( 0, x.vector.size, 1 ) * cPlotDt
         line1, = plotlist[0].plot( pos, x.vector, label=x.name )
     plotlist[4].canvas.draw()
-    print( "Hit 'enter' to exit" )
-    raw_input()
+    print( "Hit '0' to exit" )
+    eval(str(input()))
 
 def makeChemModel( compt ):
     """
-    This function setus up a simple oscillatory chemical system within
-    the script. The reaction system is::
+This function setus up a simple oscillatory chemical system within
+the script. The reaction system is::
 
-        s ---a---> a  // s goes to a, catalyzed by a.
-        s ---a---> b  // s goes to b, catalyzed by a.
-        a ---b---> s  // a goes to s, catalyzed by b.
-        b -------> s  // b is degraded irreversibly to s.
+    s ---a---> a  // s goes to a, catalyzed by a.
+    s ---a---> b  // s goes to b, catalyzed by a.
+    a ---b---> s  // a goes to s, catalyzed by b.
+    b -------> s  // b is degraded irreversibly to s.
 
-    in sum, **a** has a positive feedback onto itself and also forms **b**.
-    **b** has a negative feedback onto **a**.
-    Finally, the diffusion constant for **a** is 1/10 that of **b**.
+in sum, **a** has a positive feedback onto itself and also forms **b**.
+**b** has a negative feedback onto **a**.
+Finally, the diffusion constant for **a** is 1/10 that of **b**.
+
     """
     # create container for model
     diffConst = 10e-12 # m^2/sec
     motorRate = 1e-6 # m/sec
     concA = 1 # millimolar
-    
+
     # create molecules and reactions
     a = moose.Pool( compt.path + '/a' )
     b = moose.Pool( compt.path + '/b' )
@@ -244,28 +245,28 @@ def makeChemModel( compt ):
 
 def main():
     """
-    This example illustrates how to define a kinetic model embedded in
-    the branching pseudo-1-dimensional geometry of a neuron. The model 
-    oscillates in space and time due to a Turing-like reaction-diffusion
-    mechanism present in all compartments. For the sake of this demo,
-    the initial conditions are set up slightly different on the PSD
-    compartments, so as to break the symmetry and initiate oscillations
-    in the spines.
-    This example uses an external electrical model file with basal 
-    dendrite and three branches on
-    the apical dendrite. One of those branches has a dozen or so spines.
-    In this example we build an identical model in each compartment, using
-    the makeChemModel function. One could readily define a system with
-    distinct reactions in each compartment.
-    The model is set up to run using the Ksolve for integration and the
-    Dsolve for handling diffusion.
-    The display has four parts:
+This example illustrates how to define a kinetic model embedded in
+the branching pseudo-1-dimensional geometry of a neuron. The model
+oscillates in space and time due to a Turing-like reaction-diffusion
+mechanism present in all compartments. For the sake of this demo,
+the initial conditions are set up slightly different on the PSD
+compartments, so as to break the symmetry and initiate oscillations
+in the spines.
+This example uses an external electrical model file with basal
+dendrite and three branches on
+the apical dendrite. One of those branches has a dozen or so spines.
+In this example we build an identical model in each compartment, using
+the makeChemModel function. One could readily define a system with
+distinct reactions in each compartment.
+The model is set up to run using the Ksolve for integration and the
+Dsolve for handling diffusion.
+The display has four parts:
 
-        a. animated line plot of concentration against main compartment#. 
-        b. animated line plot of concentration against spine compartment#. 
-        c. animated line plot of concentration against psd compartment#. 
-        d. time-series plot that appears after the simulation has 
-           ended. The plot is for the last (rightmost) compartment.
+    a. animated line plot of concentration against main compartment#.
+    b. animated line plot of concentration against spine compartment#.
+    c. animated line plot of concentration against psd compartment#.
+    d. time-series plot that appears after the simulation has
+       ended. The plot is for the last (rightmost) compartment.
 
     """
     chemdt = 0.1 # Tested various dts, this is reasonable.
@@ -294,4 +295,4 @@ def main():
 
 # Run the 'main' if this script is executed standalone.
 if __name__ == '__main__':
-	main()
+        main()

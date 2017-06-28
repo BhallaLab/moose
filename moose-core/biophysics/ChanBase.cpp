@@ -13,21 +13,21 @@
 
 SrcFinfo1< double >* ChanBase::permeability()
 {
-	static SrcFinfo1< double > permeability( "permeabilityOut", 
+	static SrcFinfo1< double > permeability( "permeabilityOut",
 		"Conductance term going out to GHK object" );
 	return &permeability;
 }
 
 SrcFinfo2< double, double >* ChanBase::channelOut()
 {
-	static SrcFinfo2< double, double > channelOut( "channelOut", 
+	static SrcFinfo2< double, double > channelOut( "channelOut",
 		"Sends channel variables Gk and Ek to compartment" );
 	return &channelOut;
 }
 
 SrcFinfo1< double >* ChanBase::IkOut()
 {
-	static SrcFinfo1< double > IkOut( "IkOut", 
+	static SrcFinfo1< double > IkOut( "IkOut",
 		"Channel current. This message typically goes to concen"
 		"objects that keep track of ion concentration." );
 	return &IkOut;
@@ -38,10 +38,10 @@ const Cinfo* ChanBase::initCinfo()
 	/////////////////////////////////////////////////////////////////////
 	// Shared messages
 	/////////////////////////////////////////////////////////////////////
-	static DestFinfo process( "process", 
+	static DestFinfo process( "process",
 		"Handles process call",
 		new ProcOpFunc< ChanBase >( &ChanBase::process ) );
-	static DestFinfo reinit( "reinit", 
+	static DestFinfo reinit( "reinit",
 		"Handles reinit call",
 		new ProcOpFunc< ChanBase >( &ChanBase::reinit ) );
 
@@ -50,13 +50,13 @@ const Cinfo* ChanBase::initCinfo()
 		&process, &reinit
 	};
 
-	static SharedFinfo proc( "proc", 
+	static SharedFinfo proc( "proc",
 		"Shared message to receive Process message from scheduler",
 		processShared, sizeof( processShared ) / sizeof( Finfo* ) );
 
 	/////////////////////////////////////////////////////////////////////
 	/// ChannelOut SrcFinfo defined above.
-	static DestFinfo Vm( "Vm", 
+	static DestFinfo Vm( "Vm",
 		"Handles Vm message coming in from compartment",
 		new OpFunc1< ChanBase, double >( &ChanBase::handleVm ) );
 
@@ -64,7 +64,7 @@ const Cinfo* ChanBase::initCinfo()
 	{
 		channelOut(), &Vm
 	};
-	static SharedFinfo channel( "channel", 
+	static SharedFinfo channel( "channel",
 		"This is a shared message to couple channel to compartment. "
 		"The first entry is a MsgSrc to send Gk and Ek to the compartment "
 		"The second entry is a MsgDest for Vm from the compartment.",
@@ -79,7 +79,7 @@ const Cinfo* ChanBase::initCinfo()
 	{
 		&Vm, permeability()
 	};
-	static SharedFinfo ghk( "ghk", 
+	static SharedFinfo ghk( "ghk",
 		"Message to Goldman-Hodgkin-Katz object",
 		ghkShared, sizeof( ghkShared ) / sizeof( Finfo* ) );
 
@@ -104,7 +104,7 @@ const Cinfo* ChanBase::initCinfo()
 			&ChanBase::setModulation,
 			&ChanBase::getModulation
 		);
-		static ElementValueFinfo< ChanBase, double > Ek( "Ek", 
+		static ElementValueFinfo< ChanBase, double > Ek( "Ek",
 			"Reversal potential of channel",
 			&ChanBase::setEk,
 			&ChanBase::getEk
@@ -127,7 +127,7 @@ const Cinfo* ChanBase::initCinfo()
 ///////////////////////////////////////////////////////
 // MsgDest definitions
 ///////////////////////////////////////////////////////
-	
+
 ///////////////////////////////////////////////////////
 	static Finfo* ChanBaseFinfos[] =
 	{
@@ -141,7 +141,7 @@ const Cinfo* ChanBase::initCinfo()
 		IkOut(),			// Src
 		&proc,				// Shared
 	};
-	
+
 	static string doc[] =
 	{
 		"Name", "ChanBase",
@@ -151,7 +151,7 @@ const Cinfo* ChanBase::initCinfo()
 	};
 
         static  ZeroSizeDinfo< int > dinfo;
-        
+
 	static Cinfo ChanBaseCinfo(
 		"ChanBase",
 		Neutral::initCinfo(),

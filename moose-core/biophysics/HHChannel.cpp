@@ -322,12 +322,12 @@ void HHChannel::vProcess( const Eref& e, ProcPtr info )
 	}
 
 	ChanCommon::vSetGk( e, g_ * HHChannelBase::modulation_ );
-	this->updateIk();
+	ChanCommon::updateIk();
 	// Gk_ = g_;
 	// Ik_ = ( Ek_ - Vm_ ) * g_;
 
 	// Send out the relevant channel messages.
-	sendProcessMsgs( e, info );
+	ChanCommon::sendProcessMsgs( e, info );
 	
 	g_ = 0.0;
 }
@@ -386,13 +386,13 @@ void HHChannel::vReinit( const Eref& er, ProcPtr info )
 	}
 
 	ChanCommon::vSetGk( er, g_ * HHChannelBase::modulation_ );
-	updateIk();
+	ChanCommon::updateIk();
 	// Gk_ = g_;
 	// Ik_ = ( Ek_ - Vm_ ) * g_;
 
 	// Send out the relevant channel messages.
 	// Same for reinit as for process.
-	sendReinitMsgs( er, info );
+	ChanCommon::sendReinitMsgs( er, info );
 	
 	g_ = 0.0;
 }

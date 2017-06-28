@@ -1,5 +1,6 @@
 set(CMAKE_LEGACY_CYGWIN_WIN32 0)
-cmake_minimum_required(VERSION 2.6.0 FATAL_ERROR)
+cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
+project(MOOSE)
 
 if(COMMAND cmake_policy)
     cmake_policy(SET CMP0003 NEW)
@@ -9,7 +10,6 @@ if(COMMAND cmake_policy)
     endif(POLICY CMP0050)
 endif(COMMAND cmake_policy)
 
-project(MOOSE)
 
 include(CheckCXXCompiler.cmake)
 include(CheckIncludeFileCXX)
@@ -48,8 +48,6 @@ message( STATUS "MOOSE Version ${MOOSE_VERSION}" )
 # sure that we don't have any stray generated files lying around in the tree
 # (which would end up getting picked up by header search, instead of the correct
 # versions).
-
-message(STATUS "CMAKE_INSTALL_PREFIX : ${CMAKE_INSTALL_PREFIX}")
 if( CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR AND NOT MSVC_IDE )
     message(FATAL_ERROR 
         "======================================================================\n"
@@ -118,7 +116,7 @@ elseif(ENABLE_UNIT_TESTS)
 else()
     message(STATUS "Building for Release/No unit tests.")
     set(CMAKE_BUILD_TYPE Release)
-    add_definitions(-UDO_UNIT_TESTS -O3)
+    add_definitions(-UDO_UNIT_TESTS -DQUIET_MODE -O3)
 endif()
 
 if(GPROF AND DEBUG)
@@ -165,7 +163,7 @@ if(WITH_GSL)
             " Or build and install gsl from source code \n"
             "     https://www.gnu.org/software/gsl/ \n"
             " After installing gsl, rerun cmake.\n\n"
-            " If you install gsl in non-standard place, set the GSL_HOME environment \n"
+            " If you install gsl in non-standard place, set the GSL_ROOT_DIR environment \n"
             " variable. CMAKE use this to search for required files. \n"
             "====================================================================\n"
             )
@@ -175,7 +173,7 @@ if(WITH_GSL)
     # top level.
     include_directories( ${GSL_INCLUDE_DIRS} )
 elseif(WITH_BOOST)
-    find_package(Boost 1.44 COMPONENTS filesystem random REQUIRED)
+    find_package(Boost 1.44 COMPONENTS system filesystem random REQUIRED)
     find_package( LAPACK REQUIRED )
     add_definitions( -DUSE_BOOST -UUSE_GSL )
     include_directories( ${Boost_INCLUDE_DIRS} )
@@ -220,7 +218,15 @@ if(HDF5_FOUND)
         set(HDF5_LIBRARIES ${HDF5_CXX_LIBRARIES} ${HDF5_HL_LIBRARIES})
     endif()
 
-    message(STATUS "MOOSE will following HDF5 ${HDF5_LIBRARIES}" )
+    
+    # Make sure, HDF5_HL_LIBRARIES are set. The COMPONENTS in find_package may
+    # or may not work. See BhallaLab/moose-core#163. 
+    if(NOT HDF5_HL_LIBRARIES)
+        set(HDF5_HL_LIBRARIES ${HDF5_HL_LIBRARIES})
+    endif(NOT HDF5_HL_LIBRARIES)
+    list(APPEND HDF5_LIBRARIES ${HDF5_HL_LIBRARIES})
+
+    message(STATUS "MOOSE will use following HDF5 ${HDF5_LIBRARIES}" )
     foreach(HDF5_LIB ${HDF5_LIBRARIES})
         if(HDF5_LIB)
             get_filename_component( HDF5_LIB_EXT ${HDF5_LIB} EXT )
@@ -382,7 +388,10 @@ endif(MACOSX)
 
 add_dependencies(moose.bin libmoose)
 
-target_link_libraries(moose.bin LINK_PUBLIC moose ${CMAKE_DL_LIBS})
+target_link_libraries(moose.bin moose ${CMAKE_DL_LIBS})
+if( WITH_BOOST )
+    target_link_libraries( moose.bin ${Boost_LIBRARIES} )
+endif( WITH_BOOST )
 
 ######################### BUILD PYMOOSE ########################################
 # Root of all python module.
@@ -404,17 +413,29 @@ install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/scripts/moose
     DESTINATION bin
     )
 
-# This target is built by pymoose/CMakeLists.txt file.
-if(WITH_PYTHON)
-    install(CODE 
-        "
-        execute_process(
-            COMMAND ${PYTHON_EXECUTABLE} setup.py install --prefix=${CMAKE_INSTALL_PREFIX}
-            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/python
-            )
-        "
-        )
+# INSTALL python module.
+# This target is built by pymoose/CMakeLists.txt file. Using the --prefix option
+# always override debian default installation directory. It will be installed in
+# site-packages instead of dist-packages. 
+# See https://bugs.launchpad.net/ubuntu/+source/python2.6/+bug/362570
+# HACK: Get platform information from python and use it to fix the layout.
+execute_process( 
+    COMMAND ${PYTHON_EXECUTABLE} -mplatform OUTPUT_VARIABLE _platform_desc 
+    )
+message( STATUS "Platform ${_platform_desc}" )
 
+if(WITH_PYTHON)
+    set(EXTRA_ARGS "--prefix ${CMAKE_INSTALL_PREFIX}")
+    if( ${_platform_desc} MATCHES ".*(Ubuntu|Debian).*" )
+        list( APPEND EXTRA_ARGS "--install-layout=deb" )
+    endif( )
+
+    install(CODE 
+        "execute_process( 
+            COMMAND ${PYTHON_EXECUTABLE} setup.py install ${EXTRA_ARGS} 
+            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/python
+            )" 
+            )
 endif(WITH_PYTHON)
 
 # Print message to start build process

@@ -130,7 +130,7 @@ Id  makeStandardElements( Id pa, const string& modelname )
 		mgr = shell->doCreate( "Neutral", pa, modelname, 1, MooseGlobal );
 	Id kinetics( modelPath + "/kinetics" );
 	if ( kinetics == Id() ) {
-		kinetics = 
+		kinetics =
 		shell->doCreate( "CubeMesh", mgr, "kinetics", 1,  MooseGlobal );
 		SetGet2< double, unsigned int >::set( kinetics, "buildDefaultMesh", 1e-15, 1 );
 	}
@@ -143,7 +143,7 @@ Id  makeStandardElements( Id pa, const string& modelname )
 	Id geometry = shell->doCreate( "Neutral", mgr, "geometry", 1, MooseGlobal );
 	assert( geometry != Id() );
 
-	Id groups = 
+	Id groups =
 		shell->doCreate( "Neutral", mgr, "groups", 1, MooseGlobal );
 	assert( groups != Id() );
 	return mgr;
@@ -162,7 +162,7 @@ static void positionCompt( ObjId compt, double side, bool shiftUp )
 	}
 }
 
-void makeSolverOnCompt( Shell* s, const vector< ObjId >& compts, 
+void makeSolverOnCompt( Shell* s, const vector< ObjId >& compts,
 				bool isGsolve )
 {
 	if ( compts.size() > 3 ) {
@@ -180,8 +180,8 @@ void makeSolverOnCompt( Shell* s, const vector< ObjId >& compts,
 		positionCompt( compts[0], side, true );
 		positionCompt( compts[2], side, false );
 	}
-	
-	for ( vector< ObjId >::const_iterator 
+
+	for ( vector< ObjId >::const_iterator
 					i = compts.begin(); i != compts.end(); ++i ) {
 		string simpath = i->path() + "/##";
 		Id ksolve;
@@ -202,19 +202,19 @@ void makeSolverOnCompt( Shell* s, const vector< ObjId >& compts,
 		SetGet1< Id >::set( stoichVec[1], "buildXreacs", stoichVec[0] );
 		SetGet1< Id >::set( stoichVec[1], "buildXreacs", stoichVec[2] );
 	}
-	for ( vector< Id >::iterator 
+	for ( vector< Id >::iterator
 					i = stoichVec.begin(); i != stoichVec.end(); ++i ) {
 		SetGet0::set( *i, "filterXreacs" );
 	}
 }
 
-void setMethod( Shell* s, Id mgr, double simdt, double plotdt, 
+void setMethod( Shell* s, Id mgr, double simdt, double plotdt,
 				const string& method )
 {
 	vector< ObjId > ret;
 	simpleWildcardFind( mgr.path() + "/#[ISA=ChemCompt]", ret );
 	assert( ret.size() > 0 );
-				
+
 	Id compt( mgr.path() + "/kinetics" );
 	assert( compt != Id() );
 	string simpath2 = mgr.path() + "/##[ISA=StimulusTable]," +
@@ -224,11 +224,11 @@ void setMethod( Shell* s, Id mgr, double simdt, double plotdt,
 	if ( m == "rk4" ) {
 		cout << "Warning, not yet implemented. Using rk5 instead\n";
 		m = "rk5";
-	}	
-	if ( m == "ksolve" || m == "gsl" || 
+	}
+	if ( m == "ksolve" || m == "gsl" ||
 		m == "rk5" || m == "rkf" || m == "rk" ) {
 			makeSolverOnCompt( s, ret, false );
-	} else if ( m == "gssa" || m == "gsolve" || 
+	} else if ( m == "gssa" || m == "gsolve" ||
 		m == "gillespie" || m == "stochastic" ) {
 			makeSolverOnCompt( s, ret, true );
 	} else if ( m == "ee" || m == "neutral" ) {
@@ -257,10 +257,10 @@ void setMethod( Shell* s, Id mgr, double simdt, double plotdt,
  * of parser and is likely to remain a legacy for a while.
  */
 Id ReadKkit::read(
-	const string& filename, 
+	const string& filename,
 	const string& modelname,
 	Id pa, const string& methodArg )
-{   
+{
 	string method = methodArg;
 	ifstream fin( filename.c_str() );
 	if (!fin){
@@ -298,7 +298,7 @@ Id ReadKkit::read(
 	convertParametersToConcUnits();
 
 	// s->doSetClock( 8, plotdt_ );
-	
+
 	// string plotpath = basePath_ + "/graphs/##[TYPE=Table]," + basePath_ + "/moregraphs/##[TYPE=Table]";
 	// s->doUseClock( plotpath, "process", 8 );
 
@@ -335,7 +335,7 @@ void ReadKkit::run()
 	/*
 	string poolpath = basePath_ + "/kinetics/##[ISA=Pool]";
 	string reacpath = basePath_ + "/kinetics/##[ISA!=Pool]";
-	string plotpath = basePath_ + "/graphs/##[TYPE=Table]," + 
+	string plotpath = basePath_ + "/graphs/##[TYPE=Table]," +
 		basePath_ + "/moregraphs/##[TYPE=Table]";
 	shell_->doUseClock( reacpath, "process", 4 );
 	shell_->doUseClock( poolpath, "process", 5 );
@@ -362,10 +362,10 @@ void ReadKkit::dumpPlots( const string& filename )
 {
 	// ofstream fout ( filename.c_str() );
 	vector< ObjId > plots;
-	string plotpath = basePath_ + "/graphs/##[TYPE=Table2]," + 
+	string plotpath = basePath_ + "/graphs/##[TYPE=Table2]," +
 		basePath_ + "/moregraphs/##[TYPE=Table2]";
 	wildcardFind( plotpath, plots );
-	for ( vector< ObjId >::iterator 
+	for ( vector< ObjId >::iterator
 					i = plots.begin(); i != plots.end(); ++i )
 		SetGet2< string, string >::set( *i, "xplot",
 			filename, i->element()->getName() );
@@ -388,8 +388,8 @@ void ReadKkit::innerRead( ifstream& fin )
 		if ( temp.length() == 0 )
 				continue;
 		pos = temp.find_last_not_of( "\t " );
-		if ( pos == string::npos ) { 
-			// Nothing new in line, go with what was left earlier, 
+		if ( pos == string::npos ) {
+			// Nothing new in line, go with what was left earlier,
 			// and clear out line for the next cycle.
 			temp = "";
 			clearLine = 1;
@@ -404,7 +404,7 @@ void ReadKkit::innerRead( ifstream& fin )
 				clearLine = 1;
 			}
 		}
-			
+
 		pos = line.find_first_not_of( "\t " );
 		if ( pos == string::npos )
 				continue;
@@ -412,7 +412,7 @@ void ReadKkit::innerRead( ifstream& fin )
 			line = line.substr( pos );
 		if ( line.substr( 0, 2 ) == "//" )
 				continue;
-		if ( (pos = line.find("//")) != string::npos ) 
+		if ( (pos = line.find("//")) != string::npos )
 			line = line.substr( 0, pos );
 		if ( line.substr( 0, 2 ) == "/*" ) {
 				parseMode = COMMENT;
@@ -434,15 +434,15 @@ void ReadKkit::innerRead( ifstream& fin )
 				parseMode = readInit( line );
 		}
 	}
-	
+
 	/*
 	cout << " innerRead: " <<
-			lineNum_ << " lines read, " << 
-			numCompartments_ << " compartments, " << 
-			numPools_ << " molecules, " << 
-			numReacs_ << " reacs, " << 
-			numEnz_ << " enzs, " << 
-			numMMenz_ << " MM enzs, " << 
+			lineNum_ << " lines read, " <<
+			numCompartments_ << " compartments, " <<
+			numPools_ << " molecules, " <<
+			numReacs_ << " reacs, " <<
+			numEnz_ << " enzs, " <<
+			numMMenz_ << " MM enzs, " <<
 			numOthers_ << " others," <<
 			numPlot_ << " plots," <<
 			" PlotDt = " << plotdt_ <<
@@ -453,7 +453,7 @@ void ReadKkit::innerRead( ifstream& fin )
 ReadKkit::ParseMode ReadKkit::readInit( const string& line )
 {
 	vector< string > argv;
-	chopLine( line, argv ); 
+	chopLine( line, argv );
 	if ( argv.size() < 3 )
 		return INIT;
 
@@ -505,8 +505,8 @@ ReadKkit::ParseMode ReadKkit::readInit( const string& line )
 void ReadKkit::readData( const string& line )
 {
 	vector< string > argv;
-	chopLine( line, argv ); 
-	
+	chopLine( line, argv );
+
 	if ( argv[0] == "simundump" )
 		undump( argv );
 	else if ( argv[0] == "addmsg" )
@@ -526,7 +526,7 @@ string ReadKkit::pathTail( const string& path, string& head ) const
 	string::size_type pos = path.find_last_of( "/" );
 	assert( pos != string::npos );
 
-	head = basePath_ + path.substr( 0, pos ); 
+	head = basePath_ + path.substr( 0, pos );
 	return path.substr( pos + 1 );
 }
 
@@ -535,11 +535,11 @@ string ReadKkit::cleanPath( const string& path ) const
 	// Could surely do this better with STL. But harder to understand.
 	// Harsha: Cleaned up this function
 	// minus was getting replaced with underscore, but in some genesis model
-	// pool and reaction/Enzyme has same string name with 
+	// pool and reaction/Enzyme has same string name with
 	// difference of minus and underscore like eIF4G_A-clx and eIF4G_A_clx,
 	// which later created a problem as the same name exist in moose when minus
 	// was replaced with underscore.
-	//So replacing minus with _minus_ like I do in SBML 
+	//So replacing minus with _minus_ like I do in SBML
 	string ret = path;
 	string cleanString;
 	for ( unsigned int i = 0; i < path.length(); ++i ) {
@@ -680,10 +680,10 @@ Id ReadKkit::buildReac( const vector< string >& args )
 	// the model has been created, once we know the order of each reac.
 
 	Id reac = shell_->doCreate( "Reac", pa, tail, 1 );
-	reacIds_[ clean.substr( 10 ) ] = reac; 
+	reacIds_[ clean.substr( 10 ) ] = reac;
 	// Here is another hack: The native values stored in the reac are
 	// Kf and Kb, in conc units. However the 'clean' values from kkit
-	// are the number values numKf and numKb. In the 
+	// are the number values numKf and numKb. In the
 	// function convertReacRatesToNumUnits we take the numKf and numKb and
 	// do proper conc scaling.
 	Field< double >::set( reac, "Kf", kf );
@@ -709,7 +709,7 @@ void ReadKkit::separateVols( Id pool, double vol )
 	volCategories_.push_back( temp );
 }
 
-bool volCompare( 
+bool volCompare(
 				const pair< unsigned int, double >& A,
 				const pair< unsigned int, double >& B )
 {
@@ -717,7 +717,7 @@ bool volCompare(
 }
 // Returns the ranking of each volume. Largest is 0. This would be the
 // suffix to attach to the compartment name.
-vector< unsigned int > findVolOrder( const vector< double >& vols ) 
+vector< unsigned int > findVolOrder( const vector< double >& vols )
 {
 	vector< pair< unsigned int, double > > p( vols.size() );
 	for ( unsigned int i = 0; i < vols.size(); ++i ) {
@@ -758,7 +758,7 @@ void ReadKkit::assignPoolCompartments()
 			ss << "compartment_" << j;
 			name = ss.str();
 			comptId = Neutral::child( baseId_.eref(), name );
-			if ( comptId == Id() ) 
+			if ( comptId == Id() )
 				comptId = shell_->doCreate( "CubeMesh", baseId_, name, 1 );
 		}
 		SetGet1< double >::set( comptId, "setVolumeNotRates",vols_[i]);
@@ -793,7 +793,7 @@ Id findParentComptOfReac( Id reac )
 		reac.element()->getNeighbors( subVec, subFinfo );
 		if ( subVec.size() == 0 ) // Dangling reaction
 			return Id();
-		// For now just put the reac in the compt belonging to the 
+		// For now just put the reac in the compt belonging to the
 		// first substrate
 		return getCompt( subVec[0] );
 }
@@ -806,7 +806,7 @@ Id findParentComptOfReac( Id reac )
  */
 void ReadKkit::assignReacCompartments()
 {
-	for ( map< string, Id >::iterator i = reacIds_.begin(); 
+	for ( map< string, Id >::iterator i = reacIds_.begin();
 		i != reacIds_.end(); ++i ) {
 		Id compt = findParentComptOfReac( i->second );
 		if ( compt != Id() ) {
@@ -845,7 +845,7 @@ void ReadKkit::assignEnzCompartments()
 {
 		/*
 		Should not be needed, because the parent pool will move.
-	for ( map< string, Id >::iterator i = enzIds_.begin(); 
+	for ( map< string, Id >::iterator i = enzIds_.begin();
 		i != enzIds_.end(); ++i ) {
 		Id compt = getCompt( Neutral::parent( i->second ).id );
 		if ( moveOntoCompartment_ ) {
@@ -866,7 +866,7 @@ void ReadKkit::assignMMenzCompartments()
 {
 		/*
 		Should not be needed, because the parent pool will move.
-	for ( map< string, Id >::iterator i = mmEnzIds_.begin(); 
+	for ( map< string, Id >::iterator i = mmEnzIds_.begin();
 		i != mmEnzIds_.end(); ++i ) {
 		Id compt = getCompt( Neutral::parent( i->second ).id );
 		if ( moveOntoCompartment_ ) {
@@ -889,13 +889,13 @@ Id ReadKkit::buildEnz( const vector< string >& args )
 	double k2 = atof( args[ enzMap_[ "k2" ] ].c_str() );
 	double k3 = atof( args[ enzMap_[ "k3" ] ].c_str() );
 	// double volscale = atof( args[ enzMap_[ "vol" ] ].c_str() );
-	double nComplexInit = 
+	double nComplexInit =
 		atof( args[ enzMap_[ "nComplexInit" ] ].c_str() );
 	// double vol = atof( args[ enzMap_[ "vol" ] ].c_str());
 	bool isMM = atoi( args[ enzMap_[ "usecomplex" ] ].c_str());
 	assert( poolVols_.find( pa ) != poolVols_.end() );
 	double vol = poolVols_[ pa ];
-	
+
 	/**
 	 * vsf is vol scale factor, which is what GENESIS stores in 'vol' field
 	 * n = vsf * conc( uM )
@@ -907,7 +907,7 @@ Id ReadKkit::buildEnz( const vector< string >& args )
 		Id enz = shell_->doCreate( "MMenz", pa, tail, 1 );
 		assert( enz != Id () );
 		string mmEnzPath = clean.substr( 10 );
-		mmEnzIds_[ mmEnzPath ] = enz; 
+		mmEnzIds_[ mmEnzPath ] = enz;
 
 		assert( k1 > EPSILON );
 		double Km = ( k2 + k3 ) / k1;
@@ -922,7 +922,7 @@ Id ReadKkit::buildEnz( const vector< string >& args )
 		// double parentVol = Field< double >::get( pa, "volume" );
 		assert( enz != Id () );
 		string enzPath = clean.substr( 10 );
-		enzIds_[ enzPath ] = enz; 
+		enzIds_[ enzPath ] = enz;
 
 		// Need to figure out what to do about these. Perhaps it is OK
 		// to do this assignments in raw #/cell units.
@@ -939,7 +939,7 @@ Id ReadKkit::buildEnz( const vector< string >& args )
 		string cplxPath = enzPath + "/" + cplxName;
 		Id cplx = shell_->doCreate( "Pool", enz, cplxName, 1 );
 		assert( cplx != Id () );
-		poolIds_[ cplxPath ] = cplx; 
+		poolIds_[ cplxPath ] = cplx;
 		// Field< double >::set( cplx, "nInit", nComplexInit );
 		Field< double >::set( cplx, "nInit", nComplexInit );
 
@@ -947,9 +947,9 @@ Id ReadKkit::buildEnz( const vector< string >& args )
 		enzCplxMols_.push_back( pair< Id, Id >(  pa, cplx ) );
 		separateVols( cplx, -1 ); // -1 vol is a flag to defer mesh assignment for the cplx pool.
 
-		ObjId ret = shell_->doAddMsg( "OneToAll", 
+		ObjId ret = shell_->doAddMsg( "OneToAll",
 			ObjId( enz, 0 ), "cplx",
-			ObjId( cplx, 0 ), "reac" ); 
+			ObjId( cplx, 0 ), "reac" );
 		assert( ret != ObjId() );
 
 
@@ -969,7 +969,7 @@ Id ReadKkit::buildText( const vector< string >& args )
 	return text;
 }
 
-Id ReadKkit::buildInfo( Id parent, 
+Id ReadKkit::buildInfo( Id parent,
 	map< string, int >& m, const vector< string >& args )
 {
 	Id info = shell_->doCreate( "Annotator", parent, "info", 1 );
@@ -982,7 +982,7 @@ Id ReadKkit::buildInfo( Id parent,
 	Field< double >::set( info, "x", x );
 	Field< double >::set( info, "y", y );
 	Field< string >::set( info, "color", args[ m[ "xtree_fg_req" ] ] );
-	Field< string >::set( info, "textColor", 
+	Field< string >::set( info, "textColor",
 		args[ m[ "xtree_textfg_req" ] ] );
 	return info;
 }
@@ -1004,7 +1004,7 @@ Id ReadKkit::buildGroup( const vector< string >& args )
 
 /**
  * There is a problem with this conversion, because of the discrepancy of
- * the correct NA and the version (6e23) used in kkit. I take the 
+ * the correct NA and the version (6e23) used in kkit. I take the
  * concentration as authoritative, not the # of molecules. This is because
  * I use conc units for the rates as well, and to use n for pools and
  * conc for reactions will always introduce errors. This is still not
@@ -1020,7 +1020,7 @@ Id ReadKkit::buildPool( const vector< string >& args )
 	assert( pa != Id() );
 
 	double nInit = atof( args[ poolMap_[ "nInit" ] ].c_str() );
-	double vsf = atof( args[ poolMap_[ "vol" ] ].c_str() ); 
+	double vsf = atof( args[ poolMap_[ "vol" ] ].c_str() );
 	/**
 	 * vsf is vol scale factor, which is what GENESIS stores in 'vol' field
 	 * n = vsf * conc( uM )
@@ -1031,9 +1031,9 @@ Id ReadKkit::buildPool( const vector< string >& args )
 	int slaveEnable = atoi( args[ poolMap_[ "slave_enable" ] ].c_str() );
 	double diffConst = atof( args[ poolMap_[ "DiffConst" ] ].c_str() );
 
-	// I used -ve D as a flag to replace pool-specific D 
+	// I used -ve D as a flag to replace pool-specific D
 	// with the global value of D. Here we just ignore it.
-	if ( diffConst < 0 ) 
+	if ( diffConst < 0 )
 		diffConst = 0;
 
 	Id pool;
@@ -1044,14 +1044,14 @@ Id ReadKkit::buildPool( const vector< string >& args )
 	} else {
 		pool = shell_->doCreate( "Pool", pa, tail, 1 );
 		/*
-		cout << "ReadKkit::buildPool: Unknown slave_enable flag '" << 
+		cout << "ReadKkit::buildPool: Unknown slave_enable flag '" <<
 			slaveEnable << "' on " << clean << "\n";
 			*/
 		poolFlags_[pool] = slaveEnable;
 	}
 	assert( pool != Id() );
 	// skip the 10 chars of "/kinetics/"
-	poolIds_[ clean.substr( 10 ) ] = pool; 
+	poolIds_[ clean.substr( 10 ) ] = pool;
 
 	Field< double >::set( pool, "nInit", nInit );
 	Field< double >::set( pool, "diffConst", diffConst );
@@ -1062,8 +1062,8 @@ Id ReadKkit::buildPool( const vector< string >& args )
 	Id info = buildInfo( pool, poolMap_, args );
 
 	/*
-	cout << setw( 20 ) << head << setw( 15 ) << tail << "	" << 
-		setw( 12 ) << nInit << "	" << 
+	cout << setw( 20 ) << head << setw( 15 ) << tail << "	" <<
+		setw( 12 ) << nInit << "	" <<
 		vol << "	" << diffConst << "	" <<
 		slaveEnable << endl;
 		*/
@@ -1072,13 +1072,13 @@ Id ReadKkit::buildPool( const vector< string >& args )
 }
 
 /**
- * Finds the source pool for a SumTot. It also deals with cases where 
+ * Finds the source pool for a SumTot. It also deals with cases where
  * the source is an enz-substrate complex
  */
 Id ReadKkit::findSumTotSrc( const string& src )
 {
 	map< string, Id >::iterator i = poolIds_.find( src );
-	if ( i != poolIds_.end() ) { 
+	if ( i != poolIds_.end() ) {
 		return i->second;
 	}
 	i = enzIds_.find( src );
@@ -1086,7 +1086,7 @@ Id ReadKkit::findSumTotSrc( const string& src )
 		string head;
 		string cplx = src + '/' + pathTail( src, head ) + "_cplx";
 		i = poolIds_.find( cplx );
-		if ( i != poolIds_.end() ) { 
+		if ( i != poolIds_.end() ) {
 			return i->second;
 		}
 	}
@@ -1100,7 +1100,7 @@ void ReadKkit::buildSumTotal( const string& src, const string& dest )
 	map< string, Id >::iterator i = poolIds_.find( dest );
 	assert( i != poolIds_.end() );
 	Id destId = i->second;
-	
+
 	Id sumId;
 	// Check if the pool has not yet been converted to handle SumTots.
 	if ( destId.element()->cinfo()->name() == "Pool" ) {
@@ -1108,9 +1108,9 @@ void ReadKkit::buildSumTotal( const string& src, const string& dest )
 		// Turn dest into a FuncPool.
 		destId.element()->zombieSwap( BufPool::initCinfo() );
 
-		ObjId ret = shell_->doAddMsg( "single", 
+		ObjId ret = shell_->doAddMsg( "single",
 			ObjId( sumId, 0 ), "valueOut",
-			ObjId( destId, 0 ), "setN" ); 
+			ObjId( destId, 0 ), "setN" );
 		assert( ret != ObjId() );
 	} else {
 		sumId = Neutral::child( destId.eref(), "func" );
@@ -1121,15 +1121,15 @@ void ReadKkit::buildSumTotal( const string& src, const string& dest )
 		<< dest << "'\n";
 		return;
 	}
-	
+
 	Id srcId = findSumTotSrc( src );
 	unsigned int numVars = Field< unsigned int >::get( sumId, "numVars" );
 	ObjId xi( sumId.value() + 1, 0, numVars );
 	Field< unsigned int >::set( sumId, "numVars", numVars + 1 );
 
-	ObjId ret = shell_->doAddMsg( "single", 
+	ObjId ret = shell_->doAddMsg( "single",
 		ObjId( srcId, 0 ), "nOut",
-		xi, "input" ); 
+		xi, "input" );
 	assert( ret != ObjId() );
 
 
@@ -1152,12 +1152,12 @@ Id ReadKkit::buildStim( const vector< string >& args )
 	Id pa = shell_->doFind( head ).id;
 	assert( pa != Id() );
 
-	double level1 = atof( args[ stimMap_[ "firstLevel" ] ].c_str() ); 
-	double width1 = atof( args[ stimMap_[ "firstWidth" ] ].c_str() ); 
-	double delay1 = atof( args[ stimMap_[ "firstDelay" ] ].c_str() ); 
-	double level2 = atof( args[ stimMap_[ "secondLevel" ] ].c_str() ); 
-	double width2 = atof( args[ stimMap_[ "secondWidth" ] ].c_str() ); 
-	double delay2 = atof( args[ stimMap_[ "secondLevel" ] ].c_str() ); 
+	double level1 = atof( args[ stimMap_[ "firstLevel" ] ].c_str() );
+	double width1 = atof( args[ stimMap_[ "firstWidth" ] ].c_str() );
+	double delay1 = atof( args[ stimMap_[ "firstDelay" ] ].c_str() );
+	double level2 = atof( args[ stimMap_[ "secondLevel" ] ].c_str() );
+	double width2 = atof( args[ stimMap_[ "secondWidth" ] ].c_str() );
+	double delay2 = atof( args[ stimMap_[ "secondLevel" ] ].c_str() );
 	double baselevel = atof( args[ stimMap_[ "baseLevel" ] ].c_str() );
 
 	Id stim = shell_->doCreate( "PulseGen", pa, tail, 1 );
@@ -1195,7 +1195,7 @@ Id ReadKkit::buildChan( const vector< string >& args )
 	chanIds_[ chanPath ] = chan;
 	return chan;
 }
-	
+
 
 Id ReadKkit::buildGeometry( const vector< string >& args )
 {
@@ -1231,7 +1231,7 @@ Id ReadKkit::buildPlot( const vector< string >& args )
 	assert( plot != Id() );
 
 	temp = graph + "/" + tail;
-	plotIds_[ temp ] = plot; 
+	plotIds_[ temp ] = plot;
 
 	numPlot_++;
 	return plot;
@@ -1267,7 +1267,7 @@ Id ReadKkit::buildTable( const vector< string >& args )
 
 
 	string temp = clean.substr( 10 );
-	tabIds_[ temp ] = tab; 
+	tabIds_[ temp ] = tab;
 
 	Id info = buildInfo( tab, tableMap_, args );
 
@@ -1306,14 +1306,14 @@ unsigned int ReadKkit::loadTab( const vector< string >& args )
 	Field< vector< double > >::set( tab, "vector", tabEntries_ );
 
 	// cout << "Loading table for " << args[0] << "," << args[1] << "," << clean << endl;
-	
+
 	if ( args[1] == "-end" )
 		lastTab_ = Id();
 
 	return 0;
 }
 
-void ReadKkit::innerAddMsg( 
+void ReadKkit::innerAddMsg(
 	const string& src, const map< string, Id >& m1, const string& srcMsg,
 	const string& dest, const map< string, Id >& m2, const string& destMsg,
 	bool isBackward )
@@ -1328,14 +1328,14 @@ void ReadKkit::innerAddMsg(
 
 	// dest pool is substrate of src reac
 	if ( isBackward ) {
-		ObjId ret = shell_->doAddMsg( "AllToOne", 
+		ObjId ret = shell_->doAddMsg( "AllToOne",
 			ObjId( srcId, 0 ), srcMsg,
-			ObjId( destId, 0 ), destMsg ); 
+			ObjId( destId, 0 ), destMsg );
 		assert( ret != ObjId() );
 	} else {
-		ObjId ret = shell_->doAddMsg( "OneToAll", 
+		ObjId ret = shell_->doAddMsg( "OneToAll",
 			ObjId( srcId, 0 ), srcMsg,
-			ObjId( destId, 0 ), destMsg ); 
+			ObjId( destId, 0 ), destMsg );
 		assert( ret != ObjId() );
 	}
 }
@@ -1345,7 +1345,7 @@ void ReadKkit::addmsg( const vector< string >& args)
 {
 	string src = cleanPath( args[1] ).substr( 10 );
 	string dest = cleanPath( args[2] ).substr( 10 );
-	
+
 	if ( args[3] == "REAC" ) {
 		if ( args[4] == "A" && args[5] == "B" ) {
 			// Ignore kchans
@@ -1353,7 +1353,7 @@ void ReadKkit::addmsg( const vector< string >& args)
 				; // found a kchan, do nothing
 			else
 				innerAddMsg( src, reacIds_, "sub", dest, poolIds_, "reac");
-		} 
+		}
 		else if ( args[4] == "B" && args[5] == "A" ) {
 			// Ignore kchans
 			if ( chanIds_.find( src ) != chanIds_.end() )
@@ -1410,7 +1410,7 @@ void ReadKkit::addmsg( const vector< string >& args)
 				return;
 			}
 			vector< Id > enzcplx;
-			i->second.element()->getNeighbors( enzcplx, 
+			i->second.element()->getNeighbors( enzcplx,
 				i->second.element()->cinfo()->findFinfo( "cplxOut" ) );
 			assert( enzcplx.size() == 1 );
 			pool = enzcplx[0];
@@ -1461,7 +1461,7 @@ void ReadKkit::setupSlaveMsg( const string& src, const string& dest )
 		nameMap = &stimIds_;
 		output = "output";
 	} else {
-		cout << "Error: Unknown source for SLAVE msg: (" << src << 
+		cout << "Error: Unknown source for SLAVE msg: (" << src <<
 			", " << dest << ")\n";
 		return;
 	}
@@ -1469,7 +1469,7 @@ void ReadKkit::setupSlaveMsg( const string& src, const string& dest )
 	// NSLAVE is 1, CONCSLAVE is 2.
 	map< Id, int >::iterator i = poolFlags_.find( destId );
 	if ( i == poolFlags_.end() || !( i->second & 2 ) ) {
-		innerAddMsg( src, *nameMap, output, dest, poolIds_, 
+		innerAddMsg( src, *nameMap, output, dest, poolIds_,
 			"setNInit" );
 	} else {
 		innerAddMsg( src, *nameMap, output, dest, poolIds_,
@@ -1510,7 +1510,7 @@ void ReadKkit::convertParametersToConcUnits()
 void ReadKkit::convertPoolAmountToConcUnits()
 {
 	const double NA_RATIO = KKIT_NA / NA;
-	for ( map< string, Id >::iterator i = poolIds_.begin(); 
+	for ( map< string, Id >::iterator i = poolIds_.begin();
 		i != poolIds_.end(); ++i ) {
 		Id pool = i->second;
 		double nInit = Field< double >::get( pool, "nInit" );
@@ -1526,7 +1526,7 @@ void ReadKkit::convertPoolAmountToConcUnits()
 void ReadKkit::convertReacRatesToConcUnits()
 {
 	const double NA_RATIO = KKIT_NA / NA;
-	for ( map< string, Id >::iterator i = reacIds_.begin(); 
+	for ( map< string, Id >::iterator i = reacIds_.begin();
 		i != reacIds_.end(); ++i ) {
 		Id reac = i->second;
 		double kf = Field< double >::get( reac, "Kf" );
@@ -1537,9 +1537,9 @@ void ReadKkit::convertReacRatesToConcUnits()
 
 		// At this point the kf and kb are off because the
 		// NA for kkit is not accurate. So we correct for this.
-		unsigned int numSub = 
+		unsigned int numSub =
 			Field< unsigned int >::get( reac, "numSubstrates" );
-		unsigned int numPrd = 
+		unsigned int numPrd =
 			Field< unsigned int >::get( reac, "numProducts" );
 
 		if ( numSub > 1 )
@@ -1548,7 +1548,7 @@ void ReadKkit::convertReacRatesToConcUnits()
 		if ( numPrd > 1 )
 			kb *= pow( NA_RATIO, numPrd - 1.0 );
 
-		// Now we have the correct numKf and numKb, plug them into the 
+		// Now we have the correct numKf and numKb, plug them into the
 		// reac, and let it internally fix up the Kf and Kb.
 		Field< double >::set( reac, "numKf", kf );
 		Field< double >::set( reac, "numKb", kb );
@@ -1558,17 +1558,17 @@ void ReadKkit::convertReacRatesToConcUnits()
 void ReadKkit::convertMMenzRatesToConcUnits()
 {
 	const double NA_RATIO = KKIT_NA / NA;
-	for ( map< string, Id >::iterator i = mmEnzIds_.begin(); 
+	for ( map< string, Id >::iterator i = mmEnzIds_.begin();
 		i != mmEnzIds_.end(); ++i ) {
 		Id enz = i->second;
 		// This was set in the original # units.
 		double numKm = Field< double >::get( enz, "Km" );
 		// At this point the numKm is inaaccurate because the
 		// NA for kkit is not accurate. So we correct for this.
-		double numSub = 
+		double numSub =
 			Field< unsigned int >::get( enz, "numSubstrates" );
 		// Note that we always have the enz itself as a substrate term.
-		if ( numSub > 0 ) 
+		if ( numSub > 0 )
 			numKm *= pow( NA_RATIO, -numSub );
 
 		// Now we have the correct numKm, plug it into the MMenz, and
@@ -1584,16 +1584,16 @@ void ReadKkit::convertMMenzRatesToConcUnits()
 void ReadKkit::convertEnzRatesToConcUnits()
 {
 	const double NA_RATIO = KKIT_NA / NA;
-	for ( map< string, Id >::iterator i = enzIds_.begin(); 
+	for ( map< string, Id >::iterator i = enzIds_.begin();
 		i != enzIds_.end(); ++i ) {
 		Id enz = i->second;
 		double k1 = Field< double >::get( enz, "k1" );
 		// At this point the k1 is inaaccurate because the
 		// NA for kkit is not accurate. So we correct for this.
-		double numSub = 
+		double numSub =
 			Field< unsigned int >::get( enz, "numSubstrates" );
 		// Note that we always have the enz itself as a substrate term.
-		if ( numSub > 0 ) 
+		if ( numSub > 0 )
 			k1 *= pow( NA_RATIO, numSub );
 		Field< double >::set( enz, "k1", k1 );
 	}

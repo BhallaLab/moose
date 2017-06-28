@@ -109,7 +109,7 @@ Id ReadCspace::readModelString( const string& model,
 	// SetGet2< double, unsigned int >::set( compt_, "buildDefaultMesh",     1e-18, 1 );
 	string temp = model.substr( pos + 1 );
 	pos = temp.find_first_of( " 	\n" );
-	
+
 	for (unsigned long i = 0 ; i < temp.length() && i < pos; i += 5 ) {
 		build( temp.c_str() + i );
 		if ( temp[ i + 4 ] != '|' )
@@ -151,7 +151,7 @@ void ReadCspace::makePlots( double plotdt )
     		Id tab = shell->doCreate( "Table2", graphs, plotname, 1 );
 			assert( tab != Id() );
 			// cout << "ReadCspace made plot " << plotname << endl;
-			ObjId mid = shell->doAddMsg( "Single", 
+			ObjId mid = shell->doAddMsg( "Single",
 				tab, "requestOut", children[i], "getConc" );
 			assert( mid != ObjId() );
 		}
@@ -160,7 +160,7 @@ void ReadCspace::makePlots( double plotdt )
     shell->doSetClock( 8, plotdt );
 
     string plotpath = basepath + "/graphs/##[TYPE=Table2]";
-    shell->doUseClock( plotpath, "process", 8 ); 
+    shell->doUseClock( plotpath, "process", 8 );
 	*/
 }
 
@@ -181,33 +181,33 @@ void ReadCspace::makePlots( double plotdt )
 //        else if (line == "A --B--> B + C") type = 'L';
 /////////////////////////////////////////////////////////////////////
 
-void ReadCspace::expandEnzyme( 
+void ReadCspace::expandEnzyme(
 	const char* name, int e, int s, int p, int p2 )
 {
 	static Shell* shell = reinterpret_cast< Shell* >( Id().eref().data() );
 
 	Id enzMolId = mol_[ name[e] - 'a' ];
-	
+
 	Id enzId = shell->doCreate( "Enz", enzMolId, name, 1 );
 	assert( enzId != Id() );
 	string cplxName = name;
 	cplxName += "_cplx";
 	Id cplxId = shell->doCreate( "Pool", enzId, cplxName, 1 );
 	assert( cplxId != Id() );
-	ObjId ret = shell->doAddMsg( "OneToOne", 
+	ObjId ret = shell->doAddMsg( "OneToOne",
 		enzId, "cplx", cplxId, "reac" );
 
-	ret = shell->doAddMsg( "OneToOne", 
+	ret = shell->doAddMsg( "OneToOne",
 		enzMolId, "reac", enzId, "enz" );
 
-	ret = shell->doAddMsg( "OneToOne", 
+	ret = shell->doAddMsg( "OneToOne",
 		mol_[ name[ s ] - 'a' ], "reac", enzId, "sub" );
 
-	ret = shell->doAddMsg( "OneToOne", 
+	ret = shell->doAddMsg( "OneToOne",
 		mol_[ name[ p ] - 'a' ], "reac", enzId, "prd" );
 
 	if ( p2 != 0 )
-		ret = shell->doAddMsg( "OneToOne", 
+		ret = shell->doAddMsg( "OneToOne",
 			mol_[ name[ p2 ] - 'a' ], "reac", enzId, "prd" );
 
 	assert( ret != ObjId() );
@@ -226,12 +226,12 @@ void ReadCspace::expandReaction( const char* name, int nm1 )
 	int i;
 
 	Id reacId = s->doCreate( "Reac", compt_, name, 1 );
-	
+
 	// A is always a substrate
 	for (i = 0; i < nm1; i++ ) {
 		s->doAddMsg( "OneToOne", reacId, "sub", mol_[ name[1] - 'a' ], "reac" );
 	}
-		
+
 	if ( name[0] < 'G' ) { // B is a product
 		s->doAddMsg( "OneToOne", reacId, "prd", mol_[ name[2] - 'a' ], "reac" );
 	} else { // B is a substrate
@@ -308,7 +308,7 @@ void ReadCspace::makeMolecule( char name )
 	unsigned int index = 1 + name - 'a';
 
 	// Put in molecule if it is a new one.
-	if ( find( molseq_.begin(), molseq_.end(), index - 1 ) == 
+	if ( find( molseq_.begin(), molseq_.end(), index - 1 ) ==
 					molseq_.end() )
 			molseq_.push_back( index - 1 );
 
@@ -444,7 +444,7 @@ void ReadCspace::testReadModel( )
 		Id temp( path );
 		r1 = Field< double >::get( temp, "Kf");
 		r2 = Field< double >::get( temp, "Kb");
-		assert( doubleEq( r1, i* 100 + 101 ) && 
+		assert( doubleEq( r1, i* 100 + 101 ) &&
 			doubleEq( r2, i * 100 + 102 ) );
 	}
 

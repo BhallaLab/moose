@@ -1,52 +1,52 @@
-# timetable.py --- 
-# 
+# timetable.py ---
+#
 # Filename: timetable.py
-# Description: 
+# Description:
 # Author: Subhasis Ray
-# Maintainer: 
+# Maintainer:
 # Created: Wed Jun 19 19:37:00 2013 (+0530)
-# Version: 
+# Version:
 # Last-Updated: Thu Oct 02
 #           By: Upi
 #     Update #: ?
-# URL: 
-# Keywords: 
-# Compatibility: 
-# 
-# 
+# URL:
+# Keywords:
+# Compatibility:
+#
+#
 
-# Commentary: 
-# 
-# 
-# 
-# 
+# Commentary:
+#
+#
+#
+#
 
 # Change log:
-# 
-# 
-# 
-# 
+#
+#
+#
+#
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
 # published by the Free Software Foundation; either version 3, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program; see the file COPYING.  If not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 # Floor, Boston, MA 02110-1301, USA.
-# 
-# 
+#
+#
 
 # Code:
 """Demonstrates the use of TimeTable elements in MOOSE.
 
-This scripts creates two time tables, #1 is filled with entries in a
+This script creates two time tables, #1 is filled with entries in a
 numpy array and #2 is filled from a text file containing the event
 times.
 
@@ -113,7 +113,7 @@ def timetable_demo():
     comp = moose.Compartment('/model/comp')
     comp.Em = -60e-3
     comp.Rm = 1e9
-    comp.Cm = 1e-12  
+    comp.Cm = 1e-12
     synchan = moose.SynChan('/model/comp/synchan')
     synchan.Gbar = 1e-6
     synchan.Ek = 0.0
@@ -151,11 +151,25 @@ def timetable_demo():
     pylab.legend()
     pylab.show()
 
-if __name__ == '__main__':
+def main():
+    """
+    Demonstrates the use of TimeTable elements in MOOSE.
+
+    This scripts creates two time tables, #1 is filled with entries in a
+    numpy array and #2 is filled from a text file containing the event
+    times.
+
+    The `state` field of #1, which becomes 1 when an event occurs and 0
+    otherwise, is recorded.
+
+    On the other hand, #2 is connected to a synapse (in a SynChan element)
+    to demonstrate artificial spike event generation.
+
+    """
     timetable_demo()
-    
-    
 
 
-# 
+
+
+#
 # timetable.py ends here

@@ -33,21 +33,20 @@ def main():
         M-----Enzyme---->M*           All in compartment B
         \             /|
         \___basal___/
-    
+
 
     The way it works: We set the run off for a few seconds with the original
     model parameters. This version oscillates. Then we double the endo
     and exo forward rates and run it further to show that the period becomes
     nearly twice as fast. Then we restore endo and exo, and instead double
     the initial amounts of M. We run it further again to see what happens.
-    This model takes several seconds to run.
     """
     mfile = '../genesis/OSC_Cspace.g'
     runtime = 4000.0
     modelId = moose.loadModel( mfile, 'model', 'gsl' )
 
     moose.reinit()
-    moose.start( runtime ) 
+    moose.start( runtime )
 
     # Here begins the parameter tweaking.
     # Now we double the rates of the endo and exo reactions.
@@ -72,4 +71,4 @@ def main():
 
 # Run the 'main' if this script is executed standalone.
 if __name__ == '__main__':
-	main()
+        main()

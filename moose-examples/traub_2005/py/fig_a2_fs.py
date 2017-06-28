@@ -6,9 +6,9 @@
 # Maintainer: 
 # Created: Thu Jun 27 12:06:52 2013 (+0530)
 # Version: 
-# Last-Updated: Sat Aug  6 15:28:07 2016 (-0400)
+# Last-Updated: Sun Jun 25 15:09:51 2017 (-0400)
 #           By: subha
-#     Update #: 30
+#     Update #: 31
 # URL: 
 # Keywords: 
 # Compatibility: 
@@ -49,7 +49,7 @@ Reproduce the experiment for Fig A2 in Traub et al 2005.
 
 FS (deep basket cell) with 0.5 nA current pusle simulated for 1 s
 """
-from __future__ import print_function
+
 
 import numpy as np
 import pylab
@@ -68,7 +68,7 @@ def setup_model(root='/', hsolve=True):
     model = moose.Neutral('model')
     data = moose.Neutral('data')
     cell = DeepBasket('%s/deepbasket' % (model.path))
-    soma = moose.Compartment('%s/comp_1' % (cell.path))
+    soma = moose.element('%s/comp_1' % (cell.path))
     if hsolve:
         solver = moose.HSolve('%s/solve' % (cell.path))
         solver.dt = simdt

@@ -1,9 +1,0 @@
-#!/bin/sh
-
-echo "[ Generating HTML ]"
-echo "README.markdown -> README.html"
-
-pandoc                             \
-	--toc                          \
-	-c css/stylesheet.css          \
-	README.markdown -o README.html

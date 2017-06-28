@@ -11,7 +11,7 @@
 
 #### Author: Aditya Gilra, NCBS, Bangalore, October, 2014.
 
-'''
+"""
 Simulate current injection into various Integrate and Fire neurons.
 
 All integrate and fire (IF) neurons are subclasses of compartment,
@@ -27,43 +27,43 @@ The adaptive IFs have an extra adapting variable apart from membrane potential V
 Details of the IFs are given below.
 The fields of the MOOSE objects are named exactly as the parameters in the equations below.
 
- LIF:      Leaky Integrate and Fire: 
+ LIF:      Leaky Integrate and Fire:
            Rm*Cm * dVm/dt = -(Vm-Em) + Rm*I
-           
- QIF:      Quadratic LIF: 
+
+ QIF:      Quadratic LIF:
            Rm*Cm * dVm/dt = a0*(Vm-Em)*(Vm-vCritical) + Rm*I
-           
- ExIF:     Exponential leaky integrate and fire: 
+
+ ExIF:     Exponential leaky integrate and fire:
            Rm*Cm * dVm/dt = -(Vm-Em) + deltaThresh * exp((Vm-thresh)/deltaThresh) + Rm*I
-           
- AdExIF:   Adaptive Exponential LIF: 
+
+ AdExIF:   Adaptive Exponential LIF:
            Rm*Cm * dVm/dt = -(Vm-Em) + deltaThresh * exp((Vm-thresh)/deltaThresh) + Rm*I - w,
-           
+
            tau_w * dw/dt = a0*(Vm-Em) - w,
-           
+
            At each spike, w -> w + b0 "
-           
+
  AdThreshIF: Adaptive threshold LIF:
            Rm*Cm * dVm/dt = -(Vm-Em) + Rm*I,
-           
+
            tauThresh * d threshAdaptive / dt = a0*(Vm-Em) - threshAdaptive,
-           
-           At each spike, threshAdaptive is increased by threshJump  
-           the spiking threshold adapts as thresh + threshAdaptive  
-           
+
+           At each spike, threshAdaptive is increased by threshJump
+           the spiking threshold adapts as thresh + threshAdaptive
+
  IzhIF:    Izhikevich:
            d Vm /dt = a0 * Vm^2 + b0 * Vm + c0 - u + I/Cm,
-           
+
            d u / dt = a * ( b * Vm - u ),
-           
+
            At each spike, u -> u + d,
-           
+
            By default, a0 = 0.04e6/V/s, b0 = 5e3/s, c0 = 140 V/s are set to SI units,
            so use SI consistently, or change a0, b0, c0 also if you wish to use other units.
            Rm from Compartment is not used here, vReset is same as c in the usual formalism.
            At rest, u0 = b V0, and V0 = ( -(-b0-b) +/- sqrt((b0-b)^2 - 4*a0*c0)) / (2*a0).
 
-'''
+"""
 
 import moose
 import matplotlib.pyplot as plt
@@ -109,19 +109,18 @@ uRest = -16 # V/s       # uRest = b*Em = -16 V/s
 d = 10 # V/s            # d is added to u at every spike
 
 def main():
-    '''
-    On the command-line, in moose-examples/snippets directory, run ``python IntegrateFireZoo.py``.  
-    The script will ask you which neuron you want to simulate and you can choose and run what you want.  
+    """
+    On the command-line, in moose-examples/snippets directory, run ``python IntegrateFireZoo.py``.
+    The script will ask you which neuron you want to simulate and you can choose and run what you want.
     Play with the parameters of the IF neurons in the source code.
-    '''
+    """
     neuronChoices = {'LIF':moose.LIF, 'QIF':moose.QIF, 'ExIF':moose.ExIF, 'AdExIF':moose.AdExIF,
                     'AdThreshIF':moose.AdThreshIF, 'IzhIF':moose.IzhIF}
     #### CHOOSE ONE OF THE NEURON KEYS AS choiceKey FROM BELOW DICTIONARY ####
     #choiceKey = 'LIF'
     #### No need, am inputting it from the user on the terminal
-    choiceKeys = neuronChoices.keys() # keys() does not retain the order in dict defn above!
-    choiceIndex = input('Choose a number corresponding to your desired neuron: '+ \
-                        str([(i,key) for (i,key) in enumerate(choiceKeys)])+' -- ')
+    choiceKeys = list(neuronChoices.keys()) # keys() does not retain the order in dict defn above!
+    choiceIndex = eval(str(input('Choose a number corresponding to your desired neuron: '+str([(i,key) for (i,key) in enumerate(choiceKeys)])+' -- ')))
     choiceKey = choiceKeys[choiceIndex]
     neuronChoice = neuronChoices[choiceKey]
 
@@ -171,7 +170,7 @@ def main():
         network.vec.vPeak = vPeak           # reset at vPeak, not at thresh
         network.vec.inject = 5e-9  # Amp    # injected current I
 
-    print "Injecting current =",network.vec[0].inject,"in",choiceKey,"neuron."
+    print(("Injecting current =",network.vec[0].inject,"in",choiceKey,"neuron."))
 
     # ###########################################
     # Setting up table
@@ -224,5 +223,7 @@ def main():
 
 # Run below if script is executed standalone.
 if __name__ == '__main__':
-    '''The main function to simulate an integrate and fire neuron.'''
+    """The main function to simulate an integrate and fire neuron."""
     main()
+
+# end of IntegrateFireZoo.py

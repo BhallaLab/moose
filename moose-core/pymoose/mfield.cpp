@@ -163,7 +163,6 @@ PyObject * moose_Field_repr(_Field * self)
     return PyString_FromString(fieldPath.str().c_str());
 }
 
-
 PyDoc_STRVAR(moose_Field_documentation,
              "Base class for MOOSE fields.\n"
              "\n"
@@ -175,8 +174,6 @@ PyDoc_STRVAR(moose_Field_documentation,
              "are putting fields as dictionary keys, you should do that after names\n"
              "of all elements have been finalized.\n"
              "\n");
-
-
 static PyTypeObject moose_Field =
 {
     PyVarObject_HEAD_INIT(NULL, 0)

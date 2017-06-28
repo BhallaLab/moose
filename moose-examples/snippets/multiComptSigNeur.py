@@ -1,36 +1,22 @@
-# multiComptSigNeur.py --- 
+# multiComptSigNeur.py ---
 # Upi Bhalla NCBS Bangalore 2013.
-# Commentary: 
-
-# A toy compartmental neuronal + chemical model. The neuronal model is in
-# a dendrite and five dendritic spines. The chemical model is in three
-# compartments: one for the dendrite,
-# one for the spine head, and one for the postsynaptic density. However,
-# the spatial geometry of the neuronal model is ignored and the chemical
-# model just has three cubic volumes for each compartment. So there
-# is a functional mapping but spatial considerations are lost.
-# The electrical model contributes the incoming calcium flux to the
-# chemical model. This comes from the synaptic channels.
-# The signalling here does two things to the electrical model. First, the
-# amount of receptor in the chemical model controls the amount of glutamate
-# receptor in the PSD. Second, there is a small kinase reaction that 
-# phosphorylates and inactivates the dendritic potassium channel.
-# 
+# Commentary:
+#
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
 # published by the Free Software Foundation; either version 3, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program; see the file COPYING.  If not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 # Floor, Boston, MA 02110-1301, USA.
-# 
+#
 
 # Code:
 
@@ -38,15 +24,16 @@ import sys
 
 import os
 import math
-
+import pylab,numpy
 import moose
-
+import numpy
+import matplotlib.pyplot as plt
 EREST_ACT = -70e-3
 
 # Gate equations have the form:
 #
 # y(x) = (A + B * x) / (C + exp((x + D) / F))
-# 
+#
 # where x is membrane voltage and y is the rate constant for gate
 # closing or opening
 
@@ -59,7 +46,7 @@ Na_m_params = [1e5 * (25e-3 + EREST_ACT),   # 'A_A':
                 0.0,                        # 'B_B':
                 0.0,                        # 'B_C':
                 0.0 - EREST_ACT,            # 'B_D':
-                18e-3                       # 'B_F':    
+                18e-3                       # 'B_F':
                ]
 Na_h_params = [ 70.0,                        # 'A_A':
                 0.0,                       # 'A_B':
@@ -70,8 +57,8 @@ Na_h_params = [ 70.0,                        # 'A_A':
                 0.0,                       # 'B_B':
                 1.0,                       # 'B_C':
                 -30e-3 - EREST_ACT,        # 'B_D':
-                -0.01                    # 'B_F':       
-                ]        
+                -0.01                    # 'B_F':
+                ]
 K_n_params = [ 1e4 * (10e-3 + EREST_ACT),   #  'A_A':
                -1e4,                      #  'A_B':
                -1.0,                       #  'A_C':
@@ -81,7 +68,7 @@ K_n_params = [ 1e4 * (10e-3 + EREST_ACT),   #  'A_A':
                0.0,                        #  'B_B':
                0.0,                        #  'B_C':
                0.0 - EREST_ACT,            #  'B_D':
-               80e-3                       #  'B_F':  
+               80e-3                       #  'B_F':
                ]
 VMIN = -30e-3 + EREST_ACT
 VMAX = 120e-3 + EREST_ACT
@@ -99,7 +86,7 @@ def createSquid():
     compt.Ra = 7639.44e3
     nachan = moose.HHChannel( '/n/compt/Na' )
     nachan.Xpower = 3
-    xGate = moose.HHGate(nachan.path + '/gateX')    
+    xGate = moose.HHGate(nachan.path + '/gateX')
     xGate.setupAlpha(Na_m_params + [VDIVS, VMIN, VMAX])
     xGate.useInterpolation = 1
     nachan.Ypower = 1
@@ -112,7 +99,7 @@ def createSquid():
 
     kchan = moose.HHChannel( '/n/compt/K' )
     kchan.Xpower = 4.0
-    xGate = moose.HHGate(kchan.path + '/gateX')    
+    xGate = moose.HHGate(kchan.path + '/gateX')
     xGate.setupAlpha(K_n_params + [VDIVS, VMIN, VMAX])
     xGate.useInterpolation = 1
     kchan.Gbar = 0.2836e-3
@@ -229,11 +216,15 @@ def makeElecPlots():
     #addPlot( '/n/head0/gluR', 'getGk', 'elec/head0Gk' )
     #addPlot( '/n/head2/gluR', 'getGk', 'elec/head2Gk' )
 
-def dumpPlots( fname ):
+def dumpPlots( fname,runtime ):
     if ( os.path.exists( fname ) ):
         os.remove( fname )
     for x in moose.wildcardFind( '/graphs/##[ISA=Table]' ):
-        x.xplot( fname, x.name )
+        #x.xplot( fname, x.name )
+        t = numpy.arange( 0, x.vector.size, 1 ) * x.dt
+        pylab.plot( t, x.vector, label=x.name )
+    pylab.legend()
+    pylab.show()
 
 def makeSpinyCompt():
     comptLength = 30e-6
@@ -338,19 +329,19 @@ def createChemModel( neuroCompt, spineCompt, psdCompt ):
 # Just for printf debugging
 def printMolVecs( title ):
     print(title)
-    """    
+    """
     nCa = moose.vec( '/model/chem/neuroMesh/Ca' )
     sCa = moose.vec( '/model/chem/spineMesh/Ca' )
     sR = moose.vec( '/model/chem/spineMesh/headGluR' )
     pR = moose.vec( '/model/chem/psdMesh/psdGluR' )
-    print 'sizes: nCa, sCa, sR, pR = ', len(nCa), len(sCa), len(sR), len(pR) 
+    print 'sizes: nCa, sCa, sR, pR = ', len(nCa), len(sCa), len(sR), len(pR)
     #print 'nCa=', nCa.conc, ', sCa=', sCa.conc, ', sR=', sR.n, ', pR=', pR.n
     print 'nCaConcInit=', nCa.concInit, ', sCa=', sCa.concInit
     #print 'sRnInit=', sR.nInit, ', pR=', pR.nInit
     print 'sRconcInit=', sR.concInit, ', pR=', pR.concInit
 
     #print 'nCaSize=', nCa.volume, ', sCa=', sCa.volume, ', sR=', sR.n, ', pR=', pR.n
-    """    
+    """
 
 def makeChemInCubeMesh():
     dendSide = 10.8e-6
@@ -394,21 +385,21 @@ def makeChemInCubeMesh():
     assert dendKinaseEnzCplx.volume == dendSide * dendSide * dendSide
 
 def makeSolvers( elecDt ):
-        # Put in the solvers, see how they fare.
-        # Here we kludge in a single chem solver for the whole system.
-        ksolve = moose.Ksolve( '/model/ksolve' )
-        stoich = moose.Stoich( '/model/stoich' )
-        stoich.compartment = moose.element( '/model/chem/neuroMesh' )
-        stoich.ksolve = ksolve
-        stoich.path = '/model/chem/##'
-        #stoich.method = 'rk5'
-        moose.useClock( 5, '/model/ksolve', 'init' )
-        moose.useClock( 6, '/model/ksolve', 'process' )
-        # Here is the elec solver
-        hsolve = moose.HSolve( '/model/hsolve' )
-        moose.useClock( 1, '/model/hsolve', 'process' )
-        hsolve.dt = elecDt
-        hsolve.target = '/model/elec/compt'
+    # Put in the solvers, see how they fare.
+    # Here we kludge in a single chem solver for the whole system.
+    ksolve = moose.Ksolve( '/model/ksolve' )
+    stoich = moose.Stoich( '/model/stoich' )
+    stoich.compartment = moose.element( '/model/chem/neuroMesh' )
+    stoich.ksolve = ksolve
+    stoich.path = '/model/chem/##'
+    #stoich.method = 'rk5'
+    moose.useClock( 5, '/model/ksolve', 'init' )
+    moose.useClock( 6, '/model/ksolve', 'process' )
+    # Here is the elec solver
+    hsolve = moose.HSolve( '/model/hsolve' )
+    moose.useClock( 1, '/model/hsolve', 'process' )
+    hsolve.dt = elecDt
+    hsolve.target = '/model/elec/compt'
 
 def makeCubeMultiscale():
     makeSpinyCompt()
@@ -425,7 +416,7 @@ def makeCubeMultiscale():
     diffReac = moose.Reac( '/model/chem/spineMesh/diff' )
     moose.connect( diffReac, 'sub', headCa, 'reac' )
     moose.connect( diffReac, 'prd', dendCa, 'reac' )
-    diffReac.Kf = 1 
+    diffReac.Kf = 1
     diffReac.Kb = headCa.volume / dendCa.volume
 
     # set up adaptors
@@ -508,13 +499,30 @@ def testCubeMultiscale( useSolver ):
         makeSolvers( elecDt )
     moose.reinit()
     moose.start( 1.0 )
-    dumpPlots( plotName )
+    runtime = 1.0
+    dumpPlots( plotName,runtime )
 
 def main():
+    """
+A toy compartmental neuronal + chemical model. The neuronal model is in
+a dendrite and five dendritic spines. The chemical model is in three
+compartments: one for the dendrite, one for the spine head, and one for the postsynaptic density.
+
+However, the spatial geometry of the neuronal model is ignored and the chemical
+model just has three cubic volumes for each compartment. So there
+is a functional mapping but spatial considerations are lost.
+The electrical model contributes the incoming calcium flux to the
+chemical model. This comes from the synaptic channels.
+
+The signalling here does two things to the electrical model.
+- First, the amount of receptor in the chemical model controls the amount of glutamate
+receptor in the PSD.
+- Second, there is a small kinase reaction that phosphorylates and inactivates the dendritic potassium channel.
+    """
     testCubeMultiscale( 1 )
 
 if __name__ == '__main__':
     main()
 
-# 
+#
 # HsolveInstability.py ends here

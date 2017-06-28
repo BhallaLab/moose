@@ -434,4 +434,3 @@ void SeqSynHandler::vReinit( const Eref& e, ProcPtr p )
 	while( !events_.empty() )
 		events_.pop();
 }
-

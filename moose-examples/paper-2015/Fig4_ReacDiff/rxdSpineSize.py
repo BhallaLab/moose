@@ -10,12 +10,10 @@
 ## wave. Products diffuse into the spine and cause it to get bigger.
 ##################################################################
 import math
-import pylab
 import numpy
 import matplotlib.pyplot as plt
 import moose
 import sys
-sys.path.append( '../util' )
 import rdesigneur as rd
 from PyQt4 import QtGui
 import moogli
@@ -54,7 +52,7 @@ def makeChemProto( name ):
     chem = moose.Neutral( '/library/' + name )
     comptVol = diffLen * dendDia * dendDia * PI / 4.0
     for i in ( ['dend', comptVol], ['spine', 1e-19], ['psd', 1e-20] ):
-        print 'making ', i
+        print(('making ', i))
         compt = moose.CubeMesh( chem.path + '/' + i[0] )
         compt.volume = i[1]
         #x = moose.Pool( compt.path + '/x' )
@@ -72,7 +70,7 @@ def makeChemProto( name ):
     x.diffConst = diffConst
     func = moose.Function( x.path + '/func' )
     func.expr = "-x0 * (0.3 - " + nstr + " * x0) * ( 1 - " + nstr + " * x0)"
-    print func.expr
+    print((func.expr))
     func.x.num = 1
     moose.connect( x, 'nOut', func.x[0], 'input' )
     moose.connect( func, 'valueOut', x, 'increment' )
@@ -134,9 +132,9 @@ def displayPlots():
     for x in moose.wildcardFind( '/graphs/#[0]' ):
         tab = moose.vec( x )
         for i in range( len( tab ) ):
-            pylab.plot( tab[i].vector, label=x.name[:-3] + " " + str( i ) )
-        pylab.legend()
-        pylab.figure()
+            plt.plot( tab[i].vector, label=x.name[:-3] + " " + str( i ) )
+        plt.legend()
+        plt.figure()
 
 def main():
     """
@@ -172,10 +170,10 @@ def main():
     moose.start( runtime )
 
     displayPlots()
-    pylab.plot( oldDia, label = 'old Diameter' )
-    pylab.plot( [ i.diameter for i in eHead ], label = 'new Diameter' )
-    pylab.legend()
-    pylab.show()
+    plt.plot( oldDia, label = 'old Diameter' )
+    plt.plot( [ i.diameter for i in eHead ], label = 'new Diameter' )
+    plt.legend()
+    plt.show()
 
     app = QtGui.QApplication(sys.argv)
     #widget = mv.MoogliViewer( '/model' )
@@ -264,9 +262,9 @@ def create_viewer(path, moose_dendrite, dendZ, diaTab, psdZ):
             view.stop()
 
     viewer = moogli.Viewer("Viewer")
-    viewer.attach_shapes(network.shapes.values())
+    viewer.attach_shapes(list(network.shapes.values()))
     viewer.detach_shape(dendrite)
-    viewer.attach_shapes(chem_compt_group.shapes.values())
+    viewer.attach_shapes(list(chem_compt_group.shapes.values()))
 
     view = moogli.View("main-view",
                        prelude=prelude,

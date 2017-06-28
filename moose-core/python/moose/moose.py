@@ -1,56 +1,45 @@
-# moose.py --- 
- 
-# Filename: moose.py
-# Description: 
+from __future__ import print_function, division, absolute_import
+
 # Author: Subhasis Ray
-# Maintainer: 
-# Copyright (C) 2010 Subhasis Ray, all rights reserved.
-# Created: Sat Mar 12 14:02:40 2011 (+0530)
-# Version: 
-# Last-Updated: Tue Oct 27 15:00:31 2015 (-0400)
-#           By: Subhasis Ray
-#     Update #: 2182
-# URL: 
-# Keywords: 
-# Compatibility: 
-# 
-# 
+# Maintainer: Dilawar Singh, Harsha Rani, Upi Bhalla
 
-# Commentary: 
-# 
-# This is the primary moose module. It wraps _moose.so and adds some
-# utility functions.
-# 
-
-# Change log:
-# 
-# Mon Sep 9 22:56:35 IST 2013 - Renamed some function parameters and
-# updated docstrings to consistently follow numpy docstring
-# convention.
-# 
-
-# Code:
-
-from __future__ import print_function
 from contextlib import closing
 import warnings
 import platform
 import pydoc
+import os
 from io import StringIO
-from collections import defaultdict
-from . import _moose
-from ._moose import *
-import __main__ as main
 
-sequence_types = [ 'vector<double>',
-                   'vector<int>',
-                   'vector<long>',
-                   'vector<unsigned int>',
-                   'vector<float>',
-                   'vector<unsigned long>',
-                   'vector<short>',
-                   'vector<Id>',
-                   'vector<ObjId>' ]
+import moose.SBML.readSBML as _readSBML
+import moose.SBML.writeSBML as _writeSBML
+import moose.chemUtil as _chemUtil
+
+kkitImport_, kkitImport_error_ = True, ''
+try:
+    import moose.genesis.writeKkit as _writeKkit
+except ImportError as e:
+    kkitImport_ = False
+    kkitImport_err_ = '%s' % e 
+
+# Import function from C++ module into moose namespace.
+from moose._moose import *
+
+def version( ):
+    return VERSION
+
+# Tests
+from moose.moose_test import test
+
+sequence_types = ['vector<double>',
+                  'vector<int>',
+                  'vector<long>',
+                  'vector<unsigned int>',
+                  'vector<float>',
+                  'vector<unsigned long>',
+                  'vector<short>',
+                  'vector<Id>',
+                  'vector<ObjId>']
+
 known_types = ['void',
                'char',
                'short',
@@ -64,10 +53,82 @@ known_types = ['void',
                'vec',
                'melement'] + sequence_types
 
+# SBML related functions.
+def mooseReadSBML(filepath, loadpath, solver='ee'):
+    """Load SBML model.
+
+    keyword arguments: \n
+
+    filepath -- filepath to be loaded \n
+    loadpath -- Root path for this model e.g. /model/mymodel \n
+    solver   -- Solver to use (default 'ee' ) \n
+
+    """
+    return _readSBML.mooseReadSBML( filepath, loadpath, solver )
+
+
+def mooseWriteSBML(modelpath, filepath, sceneitems={}):
+    """Writes loaded model under modelpath to a file in SBML format.
+
+    keyword arguments:\n
+
+    modelpath -- model path in moose e.g /model/mymodel \n
+    filepath -- Path of output file. \n
+    sceneitems -- dictlist (UserWarning: user need not worry about this) \n
+                    layout position is saved in Annotation field of all the moose Object (pool,Reaction,enzyme)\n
+                    If this function is called from \n
+                        -- GUI, the layout position of moose object is passed \n
+                        -- command line, \n
+                            ---if genesis/kkit model is loaded then layout position is taken from the file \n
+                            --- else, auto-coordinates is used for layout position and passed
+
+    """
+    return _writeSBML.mooseWriteSBML(modelpath, filepath, sceneitems)
+
+
+def mooseWriteKkit(modelpath, filepath,sceneitems={}):
+    """Writes  loded model under modelpath to a file in Kkit format.
+
+    keyword arguments:\n
+
+    modelpath -- model path in moose \n
+    filepath -- Path of output file.
+    """
+    global kkitImport_, kkitImport_err_
+    if not kkitImport_:
+        print( '[WARN] Could not import module to enable this function' )
+        print( '\tError was %s' % kkitImport_error_ )
+        return False
+    return _writeKkit.mooseWriteKkit(modelpath, filepath,sceneitems)
+
+
+def moosedeleteChemSolver(modelpath):
+    """ deletes solver on all the compartment and its children.
+        This is neccesary while created a new moose object on a pre-existing modelpath,\n
+        this should be followed by mooseaddChemSolver for add solvers on to compartment to simulate else
+        default is Exponential Euler (ee)
+    """
+    return _chemUtil.add_Delete_ChemicalSolver.moosedeleteChemSolver(modelpath)
+
+
+def mooseaddChemSolver(modelpath, solver):
+    """ Add solver on chemical compartment and its children for calculation
+
+    keyword arguments:\n
+
+    modelpath -- model path that is loaded into moose \n
+    solver -- "Exponential Euler" (ee) (default), \n
+              "Gillespie"         ("gssa"), \n
+              "Runge Kutta"       ("gsl")
+
+    """
+    return _chemUtil.add_Delete_ChemicalSolver.mooseaddChemSolver(modelpath, solver)
+
 ################################################################
 # Wrappers for global functions
-################################################################ 
-    
+################################################################
+
+
 def pwe():
     """Print present working element. Convenience function for GENESIS
     users. If you want to retrieve the element in stead of printing
@@ -77,11 +138,12 @@ def pwe():
     pwe_ = _moose.getCwe()
     print(pwe_.getPath())
     return pwe_
-    
+
+
 def le(el=None):
     """List elements under `el` or current element if no argument
     specified.
-    
+
     Parameters
     ----------
     el : str/melement/vec/None
@@ -100,13 +162,14 @@ def le(el=None):
             raise ValueError('no such element')
         el = element(el)
     elif isinstance(el, vec):
-        el = el[0]    
+        el = el[0]
     print('Elements under', el.path)
     for ch in el.children:
         print(ch.path)
     return [child.path for child in el.children]
 
-ce = setCwe # ce is a GENESIS shorthand for change element.
+ce = setCwe  # ce is a GENESIS shorthand for change element.
+
 
 def syncDataHandler(target):
     """Synchronize data handlers for target.
@@ -134,6 +197,7 @@ First fix that issue with SynBase or something in that line.')
         target = vec(target)
         _moose.syncDataHandler(target)
 
+
 def showfield(el, field='*', showtype=False):
     """Show the fields of the element `el`, their data types and
     values in human readable format. Convenience function for GENESIS
@@ -159,13 +223,14 @@ def showfield(el, field='*', showtype=False):
         if not exists(el):
             raise ValueError('no such element')
         el = element(el)
-    if field == '*':        
+    if field == '*':
         value_field_dict = getFieldDict(el.className, 'valueFinfo')
         max_type_len = max(len(dtype) for dtype in value_field_dict.values())
         max_field_len = max(len(dtype) for dtype in value_field_dict.keys())
         print('\n[', el.path, ']')
-        for key, dtype in sorted( value_field_dict.items() ):
-            if dtype == 'bad' or key == 'this' or key == 'dummy' or key == 'me' or dtype.startswith('vector') or 'ObjId' in dtype:
+        for key, dtype in sorted(value_field_dict.items()):
+            if dtype == 'bad' or key == 'this' or key == 'dummy' or key == 'me' or dtype.startswith(
+                    'vector') or 'ObjId' in dtype:
                 continue
             value = el.getField(key)
             if showtype:
@@ -179,21 +244,25 @@ def showfield(el, field='*', showtype=False):
         try:
             print(field, '=', el.getField(field))
         except AttributeError:
-            pass # Genesis silently ignores non existent fields
+            pass  # Genesis silently ignores non existent fields
+
 
 def showfields(el, showtype=False):
     """Convenience function. Should be deprecated if nobody uses it.
 
     """
-    warnings.warn('Deprecated. Use showfield(element, field="*", showtype=True) instead.', DeprecationWarning)
+    warnings.warn(
+        'Deprecated. Use showfield(element, field="*", showtype=True) instead.',
+        DeprecationWarning)
     showfield(el, field='*', showtype=showtype)
 
-# Predefined field types and their human readable names    
-finfotypes = [('valueFinfo', 'value field') , 
+# Predefined field types and their human readable names
+finfotypes = [('valueFinfo', 'value field'),
               ('srcFinfo', 'source message field'),
               ('destFinfo', 'destination message field'),
               ('sharedFinfo', 'shared message field'),
               ('lookupFinfo', 'lookup field')]
+
 
 def listmsg(el):
     """Return a list containing the incoming and outgoing messages of
@@ -207,7 +276,7 @@ def listmsg(el):
     Returns
     -------
     msg : list
-        List of Msg objects corresponding to incoming and outgoing 
+        List of Msg objects corresponding to incoming and outgoing
         connections of `el`.
 
     """
@@ -218,6 +287,7 @@ def listmsg(el):
     for msg in obj.outMsg:
         ret.append(msg)
     return ret
+
 
 def showmsg(el):
     """Print the incoming and outgoing messages of `el`.
@@ -235,33 +305,44 @@ def showmsg(el):
     obj = element(el)
     print('INCOMING:')
     for msg in obj.msgIn:
-        print(msg.e2.path, msg.destFieldsOnE2, '<---', msg.e1.path, msg.srcFieldsOnE1)
+        print(
+            msg.e2.path,
+            msg.destFieldsOnE2,
+            '<---',
+            msg.e1.path,
+            msg.srcFieldsOnE1)
     print('OUTGOING:')
     for msg in obj.msgOut:
-        print(msg.e1.path, msg.srcFieldsOnE1, '--->', msg.e2.path, msg.destFieldsOnE2)
+        print(
+            msg.e1.path,
+            msg.srcFieldsOnE1,
+            '--->',
+            msg.e2.path,
+            msg.destFieldsOnE2)
+
 
 def getfielddoc(tokens, indent=''):
     """Return the documentation for field specified by `tokens`.
-    
+
     Parameters
     ----------
     tokens : (className, fieldName) str
-        A sequence whose first element is a MOOSE class name and second 
+        A sequence whose first element is a MOOSE class name and second
         is the field name.
-              
+
     indent : str
-        indentation (default: empty string) prepended to builtin 
+        indentation (default: empty string) prepended to builtin
         documentation string.
 
     Returns
     -------
     docstring : str
-        string of the form 
+        string of the form
         `{indent}{className}.{fieldName}: {datatype} - {finfoType}\n{Description}\n`
 
     Raises
     ------
-    NameError 
+    NameError
         If the specified fieldName is not present in the specified class.
     """
     assert(len(tokens) > 1)
@@ -272,7 +353,7 @@ def getfielddoc(tokens, indent=''):
             classelement = _moose.element('/classes/' + classname)
             for finfo in classelement.children:
                 for fieldelement in finfo:
-                    baseinfo = '' 
+                    baseinfo = ''
                     if classname != tokens[0]:
                         baseinfo = ' (inherited from {})'.format(classname)
                     if fieldelement.fieldName == fieldname:
@@ -288,20 +369,22 @@ def getfielddoc(tokens, indent=''):
                             docs=fieldelement.docs)
             classname = classelement.baseClass
         except ValueError:
-            raise NameError('`%s` has no field called `%s`' 
-                    % (tokens[0], tokens[1]))
-                    
-def toUnicode( v, encoding= 'utf8' ):
-    #if isinstance(v, str):
-        #return v
+            raise NameError('`%s` has no field called `%s`'
+                            % (tokens[0], tokens[1]))
+
+
+def toUnicode(v, encoding='utf8'):
+    # if isinstance(v, str):
+        # return v
     try:
         return v.decode(encoding)
     except (AttributeError, UnicodeEncodeError):
         return str(v)
-    
+
+
 def getmoosedoc(tokens, inherited=False):
     """Return MOOSE builtin documentation.
-  
+
     Parameters
     ----------
     tokens : (className, [fieldName])
@@ -313,7 +396,7 @@ def getmoosedoc(tokens, inherited=False):
 
     Returns
     -------
-    docstring : str        
+    docstring : str
         Documentation string for class `className`.`fieldName` if both
         are specified, for the class `className` if fieldName is not
         specified. In the latter case, the fields and their data types
@@ -323,7 +406,7 @@ def getmoosedoc(tokens, inherited=False):
     ------
     NameError
         If class or field does not exist.
-    
+
     """
     indent = '    '
     with closing(StringIO()) as docstring:
@@ -334,17 +417,17 @@ def getmoosedoc(tokens, inherited=False):
         except ValueError:
             raise NameError('name \'%s\' not defined.' % (tokens[0]))
         if len(tokens) > 1:
-            docstring.write( toUnicode( getfielddoc(tokens)) )
+            docstring.write(toUnicode(getfielddoc(tokens)))
         else:
-            docstring.write( toUnicode('%s\n' % (class_element.docs) ) )
+            docstring.write(toUnicode('%s\n' % (class_element.docs)))
             append_finfodocs(tokens[0], docstring, indent)
             if inherited:
                 mro = eval('_moose.%s' % (tokens[0])).mro()
                 for class_ in mro[1:]:
                     if class_ == _moose.melement:
                         break
-                    docstring.write( toUnicode( 
-                        '\n\n#Inherited from %s#\n' % (class_.__name__) ) )
+                    docstring.write(toUnicode(
+                        '\n\n#Inherited from %s#\n' % (class_.__name__)))
                     append_finfodocs(class_.__name__, docstring, indent)
                     if class_ == _moose.Neutral:    # Neutral is the toplevel moose class
                         break
@@ -358,38 +441,39 @@ def append_finfodocs(classname, docstring, indent):
     except ValueError:
         raise NameError('class \'%s\' not defined.' % (classname))
     for ftype, rname in finfotypes:
-        docstring.write( toUnicode( '\n*%s*\n' % (rname.capitalize())) )
+        docstring.write(toUnicode('\n*%s*\n' % (rname.capitalize())))
         try:
             finfo = _moose.element('%s/%s' % (class_element.path, ftype))
             for field in finfo.vec:
-                docstring.write( toUnicode( 
-                    '%s%s: %s\n' % (indent, field.fieldName, field.type)) )
+                docstring.write(toUnicode(
+                    '%s%s: %s\n' % (indent, field.fieldName, field.type)))
         except ValueError:
-            docstring.write( toUnicode( '%sNone\n' % (indent) ) )
-    
-    
+            docstring.write(toUnicode('%sNone\n' % (indent)))
+
+
 # the global pager is set from pydoc even if the user asks for paged
 # help once. this is to strike a balance between GENESIS user's
 # expectation of control returning to command line after printing the
 # help and python user's expectation of seeing the help via more/less.
-pager=None
+pager = None
+
 
 def doc(arg, inherited=True, paged=True):
     """Display the documentation for class or field in a class.
-    
+
     Parameters
     ----------
     arg : str/class/melement/vec
         A string specifying a moose class name and a field name
         separated by a dot. e.g., 'Neutral.name'. Prepending `moose.`
         is allowed. Thus moose.doc('moose.Neutral.name') is equivalent
-        to the above.    
+        to the above.
         It can also be string specifying just a moose class name or a
         moose class or a moose object (instance of melement or vec
         or there subclasses). In that case, the builtin documentation
         for the corresponding moose class is displayed.
 
-    paged: bool    
+    paged: bool
         Whether to display the docs via builtin pager or print and
         exit. If not specified, it defaults to False and
         moose.doc(xyz) will print help on xyz and return control to
@@ -431,7 +515,7 @@ def doc(arg, inherited=True, paged=True):
         pager(text)
     else:
         print(text)
-                
 
-# 
+
+#
 # moose.py ends here

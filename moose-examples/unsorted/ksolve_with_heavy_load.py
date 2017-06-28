@@ -35,7 +35,7 @@ def add_table(elem):
 
 def plot( numPlots ):
     global records_ 
-    toPlots = records_.keys()[0:numPlots]
+    toPlots = list(records_.keys())[0:numPlots]
     newPlots = {}
     for i in toPlots:
         newPlots[i] = records_[i]

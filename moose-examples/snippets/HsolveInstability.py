@@ -1,26 +1,26 @@
-# HsolveInstability.py --- 
+# HsolveInstability.py ---
 
-# Commentary: 
-# 
+# Commentary:
+#
 # A toy compartmental neuronal + chemical model that causes bad things
 # to happen to the hsolver, as of 28 May 2013. Hopefully this will
 # become irrelevant soon.
-# 
+#
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
 # published by the Free Software Foundation; either version 3, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program; see the file COPYING.  If not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 # Floor, Boston, MA 02110-1301, USA.
-# 
+#
 
 # Code:
 
@@ -39,7 +39,7 @@ EREST_ACT = -70e-3
 # Gate equations have the form:
 #
 # y(x) = (A + B * x) / (C + exp((x + D) / F))
-# 
+#
 # where x is membrane voltage and y is the rate constant for gate
 # closing or opening
 
@@ -52,7 +52,7 @@ Na_m_params = [1e5 * (25e-3 + EREST_ACT),   # 'A_A':
                 0.0,                        # 'B_B':
                 0.0,                        # 'B_C':
                 0.0 - EREST_ACT,            # 'B_D':
-                18e-3                       # 'B_F':    
+                18e-3                       # 'B_F':
                ]
 Na_h_params = [ 70.0,                        # 'A_A':
                 0.0,                       # 'A_B':
@@ -63,8 +63,8 @@ Na_h_params = [ 70.0,                        # 'A_A':
                 0.0,                       # 'B_B':
                 1.0,                       # 'B_C':
                 -30e-3 - EREST_ACT,        # 'B_D':
-                -0.01                    # 'B_F':       
-                ]        
+                -0.01                    # 'B_F':
+                ]
 K_n_params = [ 1e4 * (10e-3 + EREST_ACT),   #  'A_A':
                -1e4,                      #  'A_B':
                -1.0,                       #  'A_C':
@@ -74,7 +74,7 @@ K_n_params = [ 1e4 * (10e-3 + EREST_ACT),   #  'A_A':
                0.0,                        #  'B_B':
                0.0,                        #  'B_C':
                0.0 - EREST_ACT,            #  'B_D':
-               80e-3                       #  'B_F':  
+               80e-3                       #  'B_F':
                ]
 VMIN = -30e-3 + EREST_ACT
 VMAX = 120e-3 + EREST_ACT
@@ -84,12 +84,12 @@ def create_na_proto():
     lib = moose.Neutral('/library')
     na = moose.HHChannel('/library/na')
     na.Xpower = 3
-    xGate = moose.HHGate(na.path + '/gateX')    
+    xGate = moose.HHGate(na.path + '/gateX')
     xGate.setupAlpha(Na_m_params +
                       [VDIVS, VMIN, VMAX])
     na.Ypower = 1
     yGate = moose.HHGate(na.path + '/gateY')
-    yGate.setupAlpha(Na_h_params + 
+    yGate.setupAlpha(Na_h_params +
                       [VDIVS, VMIN, VMAX])
     return na
 
@@ -97,7 +97,7 @@ def create_k_proto():
     lib = moose.Neutral('/library')
     k = moose.HHChannel('/library/k')
     k.Xpower = 4.0
-    xGate = moose.HHGate(k.path + '/gateX')    
+    xGate = moose.HHGate(k.path + '/gateX')
     xGate.setupAlpha(K_n_params +
                       [VDIVS, VMIN, VMAX])
     return k
@@ -114,12 +114,12 @@ def create_squid():
     compt.Ra = 7639.44e3
     nachan = moose.HHChannel( '/n/compt/Na' )
     nachan.Xpower = 3
-    xGate = moose.HHGate(nachan.path + '/gateX')    
+    xGate = moose.HHGate(nachan.path + '/gateX')
     xGate.setupAlpha(Na_m_params +
                       [VDIVS, VMIN, VMAX])
     nachan.Ypower = 1
     yGate = moose.HHGate(nachan.path + '/gateY')
-    yGate.setupAlpha(Na_h_params + 
+    yGate.setupAlpha(Na_h_params +
                       [VDIVS, VMIN, VMAX])
     nachan.Gbar = 0.942e-3
     nachan.Ek = 115e-3+EREST_ACT
@@ -127,7 +127,7 @@ def create_squid():
 
     kchan = moose.HHChannel( '/n/compt/K' )
     kchan.Xpower = 4.0
-    xGate = moose.HHGate(kchan.path + '/gateX')    
+    xGate = moose.HHGate(kchan.path + '/gateX')
     xGate.setupAlpha(K_n_params +
                       [VDIVS, VMIN, VMAX])
     kchan.Gbar = 0.2836e-3
@@ -187,7 +187,7 @@ def create_spine( parentCompt, parentObj, index, frac, length, dia, theta ):
     return head
 
 def create_spine_with_receptor( compt, cell, index, frac ):
-    FaradayConst = 96485.3415			# s A / mol
+    FaradayConst = 96485.3415                        # s A / mol
     spineLength = 5.0e-6
     spineDia = 4.0e-6
     head = create_spine( compt, cell, index, frac, spineLength, spineDia, 0.0 )
@@ -199,10 +199,10 @@ def create_spine_with_receptor( compt, cell, index, frac ):
     moose.connect( head, 'channel', gluR, 'channel', 'single' )
 
     caPool = moose.CaConc( head.path + '/ca' )
-    caPool.CaBasal = 1e-4 		# 0.1 micromolar
+    caPool.CaBasal = 1e-4                 # 0.1 micromolar
     caPool.tau = 0.01
     B = 1.0 / ( FaradayConst * spineLength * spineDia * spineDia *math.pi/4)
-    B = B / 20.0 				# scaling factor for Ca buffering
+    B = B / 20.0                                 # scaling factor for Ca buffering
     caPool.B = B
     moose.connect( gluR, 'IkOut', caPool, 'current', 'single' )
 
@@ -227,7 +227,7 @@ def display_plots( name ):
     pylab.figure()
     for x in moose.wildcardFind( '/graphs/#' ):
         pos = numpy.arange( 0, x.vector.size ) * x.dt
-        print len( pos ), len( x.vector )
+        print((len( pos ), len( x.vector )))
         pylab.plot( pos, x.vector, label=x.name )
     pylab.legend()
     pylab.title( name )
@@ -261,6 +261,12 @@ def make_spiny_compt():
         syn.delay = i * 1.0e-4
 
 def main():
+    """
+    A toy compartmental neuronal + chemical model that causes bad things
+    to happen to the hsolver, as of 28 May 2013.
+    Hopefully this will become irrelevant soon
+
+    """
     fineDt = 1e-5
     coarseDt = 5e-5
     make_spiny_compt()
@@ -285,5 +291,5 @@ def main():
 if __name__ == '__main__':
     main()
 
-# 
+#
 # HsolveInstability.py ends here

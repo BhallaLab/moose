@@ -485,3 +485,9 @@ vector< double >& TableBase::vec()
 {
 	return vec_;
 }
+
+// Fetch the const copy of table. Used in Streamer class.
+const vector< double >& TableBase::data( )
+{
+    return vec_;
+}

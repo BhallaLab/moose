@@ -28,12 +28,12 @@ def loadGran98NeuroML_L123(filename):
     soma_path = populationDict['Gran'][1][0].path+'/Soma_0'
     somaVm = setupTable('somaVm',moose.Compartment(soma_path),'Vm')
     somaCa = setupTable('somaCa',moose.CaConc(soma_path+'/Gran_CaPool_98'),'Ca')
-    somaIKCa = setupTable('somaIKCa',moose.HHChannel(soma_path+'/Gran_KCa_98'),'Gk')
-    #KDrX = setupTable('ChanX',moose.HHChannel(soma_path+'/Gran_KDr_98'),'X')
+    somaIKCa = setupTable('somaIKCa',moose.element(soma_path+'/Gran_KCa_98'),'Gk')
+    #KDrX = setupTable('ChanX',moose.element(soma_path+'/Gran_KDr_98'),'X')
     soma = moose.Compartment(soma_path)
-    print "Reinit MOOSE ... "
+    print("Reinit MOOSE ... ")
     resetSim(['/elec','/cells'],simdt,plotdt,simmethod='ee') # from moose.utils
-    print "Running ... "
+    print("Running ... ")
     moose.start(runtime)
     tvec = arange(0.0,runtime,plotdt)
     plot(tvec,somaVm.vector[1:])
@@ -50,7 +50,7 @@ def loadGran98NeuroML_L123(filename):
     title('KCa current (A)')
     xlabel('time (s)')
     ylabel('')
-    print "Showing plots ..."
+    print("Showing plots ...")
     show()
 
 filename = "GranuleCell.net.xml"

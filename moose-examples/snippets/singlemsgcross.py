@@ -1,52 +1,49 @@
-# singlemsgcross.py --- 
-# 
+# singlemsgcross.py ---
+#
 # Filename: singlemsgcross.py
-# Description: 
-# Author:Subhasis Ray 
-# Maintainer: 
+# Description:
+# Author:Subhasis Ray
+# Maintainer:
 # Created: Wed May  1 11:05:30 2013 (+0530)
-# Version: 
+# Version:
 # Last-Updated: Wed May  1 12:16:14 2013 (+0530)
 #           By: subha
 #     Update #: 43
-# URL: 
-# Keywords: 
-# Compatibility: 
-# 
-# 
+# URL:
+# Keywords:
+# Compatibility:
+#
+#
 
-# Commentary: 
-# 
-# 
-# 
-# 
+# Commentary:
+#
+#
+#
+#
 
 # Change log:
-# 
-# 
-# 
-# 
+#
+#
+#
+#
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
 # published by the Free Software Foundation; either version 3, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program; see the file COPYING.  If not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 # Floor, Boston, MA 02110-1301, USA.
-# 
-# 
+#
+#
 
 # Code:
-
-"""This example shows that you can have two ematrix objects and
-connect individual elements using `Single` message"""
 
 import pylab
 import sys
@@ -74,22 +71,29 @@ def test_crossing_single():
     tab = moose.Table('table', size)
     moose.connect(tab.vec[0], 'requestOut', pg.vec[1], 'getOutputValue', 'Single')
     moose.connect(tab.vec[1], 'requestOut', pg.vec[0], 'getOutputValue', 'Single')
-    print 'Neighbors:'
+    print('Neighbors:')
     for t in tab.vec:
-        print t.path
+        print((t.path))
         for n in moose.element(t).neighbors['requestOut']:
-            print 'requestOut <-', n.path
+            print(('requestOut <-', n.path))
     moose.setClock(0, 0.1)
     moose.useClock(0, '/##', 'process')
     moose.start(5)
     for ii in tab.vec:
         t = moose.Table(ii).vector
-        print len(t)
+        print((len(t)))
         pylab.plot(t)
     pylab.show()
 
-if __name__ == '__main__':
+def main():
+    """
+    This example shows that you can have two ematrix objects and
+    connect individual elements using `Single` message
+    """
     test_crossing_single()
 
-# 
+if __name__ == '__main__':
+    main()
+
+#
 # singlemsgcross.py ends here

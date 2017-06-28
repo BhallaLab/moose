@@ -65,7 +65,7 @@ extern unsigned int initMsgManagers();
 extern void destroyMsgManagers();
 // void regressionTests();
 #endif
-extern void speedTestMultiNodeIntFireNetwork( 
+extern void speedTestMultiNodeIntFireNetwork(
 	unsigned int size, unsigned int runsteps );
 
 #ifdef USE_SMOLDYN
@@ -95,7 +95,7 @@ unsigned int getNumCores()
 
 #ifdef MACOSX
 	int mib[4];
-	size_t len = sizeof(numCPU); 
+	size_t len = sizeof(numCPU);
 
 	/* set the mib for hw.ncpu */
 	mib[0] = CTL_HW;
@@ -104,7 +104,7 @@ unsigned int getNumCores()
 	/* get the number of CPUs from the system */
 	sysctl(mib, 2, &numCPU, &len, NULL, 0);
 
-	if( numCPU < 1 ) 
+	if( numCPU < 1 )
 	{
 		mib[1] = HW_NCPU;
 		sysctl( mib, 2, &numCPU, &len, NULL, 0 );
@@ -112,7 +112,7 @@ unsigned int getNumCores()
 #endif
 	if ( numCPU < 1 )
 	{
-#ifndef QUIET_MODE 
+#ifndef QUIET_MODE
 		cout << "No CPU information available. Assuming single core." << endl;
 #else
 #endif
@@ -129,7 +129,7 @@ void checkChildren( Id parent, const string& info )
 {
 	vector< Id > ret;
 	Neutral::children( parent.eref(), ret );
-	cout << info << " checkChildren of " << 
+	cout << info << " checkChildren of " <<
 			parent.element()->getName() << ": " <<
 		ret.size() << " children\n";
 	for ( vector< Id >::iterator i = ret.begin(); i != ret.end(); ++i )
@@ -199,16 +199,16 @@ Id init( int argc, char** argv, bool& doUnitTests, bool& doRegressionTests,
 				exit( 1 );
 		}
 	}
-	if ( myNode == 0 ) 
+	if ( myNode == 0 )
         {
 #ifndef QUIET_MODE
-		cout << "on node " << myNode << ", numNodes = " 
+		cout << "on node " << myNode << ", numNodes = "
                     << numNodes << ", numCores = " << numCores << endl;
 #endif
         }
 
 	Id shellId;
-	Element* shelle = 
+	Element* shelle =
 		new GlobalDataElement( shellId, Shell::initCinfo(), "root", 1 );
 
 	Id clockId = Id::nextId();
@@ -254,7 +254,7 @@ Id init( int argc, char** argv, bool& doUnitTests, bool& doRegressionTests,
 	// SetGet::setShell();
 	// Msg* m = new OneToOneMsg( shelle, shelle );
 	// assert ( m != 0 );
-	
+
 	while ( isInfinite ) // busy loop for debugging under gdb and MPI.
 		;
 

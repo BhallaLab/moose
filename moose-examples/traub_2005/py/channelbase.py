@@ -6,9 +6,9 @@
 # Maintainer: 
 # Created: Fri May  4 14:55:52 2012 (+0530)
 # Version: 
-# Last-Updated: Fri May  3 11:45:07 2013 (+0530)
+# Last-Updated: Sun Jun 25 10:08:35 2017 (-0400)
 #           By: subha
-#     Update #: 337
+#     Update #: 347
 # URL: 
 # Keywords: 
 # Compatibility: 
@@ -33,6 +33,7 @@ from warnings import warn
 import numpy as np
 import moose
 import config
+import metafix
 
 vmin = -120e-3
 vmax = 40e-3
@@ -154,7 +155,7 @@ class ChannelMeta(type):
             mstring.value = mstring_field[1]
         if 'annotation' in cdict:
             info = moose.Annotator('%s/info' % (proto.path))
-            info.notes = '\n'.join('%s: %s' % kv for kv in cdict['annotation'].items())
+            info.notes = '\n'.join('%s: %s' % kv for kv in list(cdict['annotation'].items()))
             # print proto.path, info.notes
         cdict['prototype'] = proto
         prototypes[name] = proto
@@ -162,10 +163,11 @@ class ChannelMeta(type):
         return type.__new__(cls, name, bases, cdict)
 
 
+@metafix.with_metaclass(ChannelMeta)
 class ChannelBase(moose.HHChannel):
+    # __metaclass__ = ChannelMeta  # This is incompatible with Python3
     annotation = {'cno': 'cno_0000047'}
     abstract = True
-    __metaclass__ = ChannelMeta
     def __init__(self, path, xpower=1, ypower=0, Ek=0.0):
         moose.HHChannel.__init__(self, path)
 

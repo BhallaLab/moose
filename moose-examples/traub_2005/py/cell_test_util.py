@@ -6,9 +6,9 @@
 # Maintainer: 
 # Created: Mon Oct 15 15:03:09 2012 (+0530)
 # Version: 
-# Last-Updated: Sat Aug  6 15:33:12 2016 (-0400)
+# Last-Updated: Sun Jun 25 16:04:13 2017 (-0400)
 #           By: subha
-#     Update #: 303
+#     Update #: 309
 # URL: 
 # Keywords: 
 # Compatibility: 
@@ -28,7 +28,7 @@
 # 
 
 # Code:
-from __future__ import print_function
+
 
 from datetime import datetime
 import time
@@ -215,11 +215,13 @@ class SingleCellCurrentStepTest(unittest.TestCase):
         pylab.plot(self.tseries*1e3, self.injectionTab.vector * 1e9,
                    label='Stimulus (nA)')
         try:
-            nrn_data = np.loadtxt('../nrn/data/%s_presynaptic_Vm.dat' % \
-                                      (self.celltype))
-            nrn_indices = np.nonzero(nrn_data[:, 0] <= self.tseries[-1]*1e3)[0]
-            pylab.plot(nrn_data[nrn_indices,0], nrn_data[nrn_indices,1], 
-                       label='Vm (mV) - neuron')
+            fname = os.path.join(config.mydir, '..', 'nrn', 'data',
+                                 '%s_presynaptic_Vm.dat' % (self.celltype))
+            nrn_data = np.loadtxt( fname)
+            nrn_indices = np.nonzero(nrn_data[:, 0] <=
+                                     self.tseries[-1]*1e3)[0]
+            pylab.plot(nrn_data[nrn_indices,0],
+                       nrn_data[nrn_indices,1], label='Vm (mV) - neuron')
         except IOError:
             print('No neuron data found.')
         pylab.legend()

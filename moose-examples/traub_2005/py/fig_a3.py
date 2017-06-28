@@ -6,9 +6,9 @@
 # Maintainer: 
 # Created: Wed Jun 26 17:07:59 2013 (+0530)
 # Version: 
-# Last-Updated: Sat Aug  6 15:46:14 2016 (-0400)
+# Last-Updated: Sun Jun 25 15:09:46 2017 (-0400)
 #           By: subha
-#     Update #: 161
+#     Update #: 162
 # URL: 
 # Keywords: 
 # Compatibility: 
@@ -64,11 +64,13 @@ def setup_model(root='/', hsolve=True):
     model = moose.Neutral('model')
     data = moose.Neutral('data')
     cell = SpinyStellate('%s/spinystellate' % (model.path))
-    soma = moose.Compartment('%s/comp_1' % (cell.path))
+    soma = moose.element('%s/comp_1' % (cell.path))
+
     if hsolve:
         solver = moose.HSolve('%s/solve' % (cell.path))
         solver.dt = simdt
-        solver.target = cell.path
+        solver.target = model.path
+
     pulse = moose.PulseGen('%s/stimulus' % (model.path))
     moose.connect(pulse, 'output', soma, 'injectMsg')
     tab_vm = moose.Table('%s/spinystellate_soma_Vm' % (data.path))
@@ -105,7 +107,7 @@ def main():
                    np.vstack((t, inject, vm)).transpose())
         msg = 'Saved data for %g A current pulse in %s' % (a, fname)
         config.logger.info(msg)
-        print( msg)
+        print(msg)
         pylab.subplot(3,1,ii+1)
         pylab.title('%g nA' % (a*1e9))
         pylab.plot(t, vm, label='soma-Vm (mV)')

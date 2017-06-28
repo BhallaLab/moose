@@ -115,7 +115,7 @@ void Enz::vProcess( const Eref& e, ProcPtr p )
 	cplxOut->send( e, r1_, r3_ + r2_ );
 
 	// cout << "	proc: " << r1_ << ", " << r2_ << ", " << r3_ << endl;
-	
+
 	r1_ = k1_;
 }
 
@@ -181,7 +181,7 @@ double Enz::vGetKcat( const Eref& e ) const
 void Enz::vSetKm( const Eref& e, double v )
 {
 	Km_ = v;
-	double volScale = 
+	double volScale =
 		convertConcToNumRateUsingMesh( e, subOut, 1 );
 	k1_ = ( k2_ + k3_ ) / ( v * volScale );
 }
@@ -207,7 +207,7 @@ double Enz::vGetNumKm( const Eref& e ) const
 void Enz::vSetRatio( const Eref& e, double v )
 {
 	k2_ = v * k3_;
-	double volScale = 
+	double volScale =
 		convertConcToNumRateUsingMesh( e, subOut, 1 );
 
 	k1_ = ( k2_ + k3_ ) / ( Km_ * volScale );
@@ -237,4 +237,3 @@ double Enz::vGetConcK1( const Eref& e ) const
 	}
 	return ( k2_ + k3_ ) / Km_;
 }
-

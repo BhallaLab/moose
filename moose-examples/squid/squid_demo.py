@@ -95,7 +95,7 @@ where P<sub>C</sub> is the permeability of the membrane to ion C.
 
 """
 
-tooltip_NaChan = u"""<h3>Na+ channel conductance</h3>
+tooltip_NaChan = """<h3>Na+ channel conductance</h3>
 <p/>
 The Na<sup>+</sup> channel conductance in squid giant axon is given by:
 
@@ -120,7 +120,7 @@ and time constant for steady state is:
 and similarly for h.
 """
 
-tooltip_KChan = u"""<h3>K+ channel conductance</h3>
+tooltip_KChan = """<h3>K+ channel conductance</h3>
 <p/>The K+ channel conductance in squid giant axon is given by:
 
 <p> G<sub>K</sub> = Ḡ<sub>K</sub> * n<sup>4</sup></p>
@@ -634,7 +634,7 @@ class SquidGui(QtGui.QMainWindow):
 
     def _runSlot(self):
         if moose.isRunning():
-            print 'Stopping simulation in progress ...'
+            print('Stopping simulation in progress ...')
             moose.stop()
         self._runtime = self.getFloatInput(self._runTimeEdit, self._runTimeLabel.text())
         self._overlayPlots(self._overlayAction.isChecked())
@@ -892,7 +892,7 @@ if __name__ == '__main__':
     QtGui.qApp = app
     squid_gui = SquidGui()
     squid_gui.show()
-    print squid_gui.size()
+    print((squid_gui.size()))
     sys.exit(app.exec_())
 
 # 

@@ -1,0 +1,6 @@
+(0.942477796076938, 0.2827433388230814)
+('CuReadCell: 3 compartments, 0 channels, 0 others
+, dataIndex=2, path=/Msgs[0]/singleMsg[2]>)
+Vm saved to Vm.dat
+K conductance saved to gK.dat
+Na conductance saved to gNa.dat

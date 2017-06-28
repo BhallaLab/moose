@@ -48,9 +48,9 @@ def main():
     function moose.loadModel( filename, modelpath, solver ).
     Having loaded in the model, you can change the solver to use on it.
     This example illustrates how to assign and change solvers for a
-    kinetic model. This process is necessary in two situations: 
+    kinetic model. This process is necessary in two situations:
 
-    * If we want to change the numerical method employed, for example, 
+    * If we want to change the numerical method employed, for example,
       from deterministic to stochastic.
     * If we are already using a solver, and we have changed the reaction
       network by adding or removing molecules or reactions.
@@ -67,8 +67,8 @@ def main():
     #. gsl
 
     If you're removing the solvers, you just delete the stoichiometry
-    object and the associated ksolve/gsolve. Should there be diffusion 
-    (a dsolve)then you should delete that too. If you're 
+    object and the associated ksolve/gsolve. Should there be diffusion
+    (a dsolve)then you should delete that too. If you're
     building the solvers up again, then you must do the following
     steps in order:
 
@@ -76,7 +76,7 @@ def main():
     #. Assign stoich.ksolve
     #. Assign stoich.path.
 
-    See the Reaction-diffusion section should you want to do diffusion 
+    See the Reaction-diffusion section should you want to do diffusion
     as well.
 
     """
@@ -84,10 +84,10 @@ def main():
     solver = "gsl"  # Pick any of gsl, gssa, ee..
     mfile = '../genesis/kkit_objects_example.g'
     modelId = moose.loadModel( mfile, 'model', solver )
-    # Increase volume so that the stochastic solver gssa 
+    # Increase volume so that the stochastic solver gssa
     # gives an interesting output
     compt = moose.element( '/model/kinetics' )
-    compt.volume = 1e-19 
+    compt.volume = 1e-19
     runAndSavePlots( 'gsl' )
     #########################################################
     switchSolvers( 'ee' )
@@ -134,4 +134,4 @@ def main():
 
 # Run the 'main' if this script is executed standalone.
 if __name__ == '__main__':
-	main()
+        main()

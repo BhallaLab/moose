@@ -5,11 +5,11 @@
 ## Here goes the debian make.
 
 %:
-	dh "$@" --with python2
+	dh "$@" 
 
+# Override clean target.
 override_dh_auto_clean:
 	rm -rf $(BUILD_DIR_MOOSE)
-	dh_auto_clean --buildsystem=cmake
 
 # consider using -DUSE_VERSIONED_DIR=ON if backporting
 override_dh_auto_configure:

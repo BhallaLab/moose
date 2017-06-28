@@ -32,9 +32,9 @@ def displayPlots():
 
 def main():
     """
-    This is a toy model of synaptic bidirectional plasticity. The model has 
-    a small a bistable chemical switch, and a small set of reactions that
-    decode calcium input. One can turn the switch on with short high 
+    This is a toy model of synaptic bidirectional plasticity. The model has
+    a small bistable chemical switch, and a small set of reactions that
+    decode calcium input. One can turn the switch on with short high
     calcium pulses (over 2 uM for about 10 sec). One can turn it back off
     again using a long, lower calcium pulse (0.2 uM, 2000 sec).
     """
@@ -49,13 +49,13 @@ def main():
     modelId = moose.loadModel( './stargazin_synapse.g', 'model', method )
     moose.start( 1000.0 ) # Run the model for 1000 seconds.
     Ca = moose.element( '/model/kinetics/BULK/Ca' )
-    Ca.concInit = 2.0e-3 	# Calcium stimulus for turnon
+    Ca.concInit = 2.0e-3         # Calcium stimulus for turnon
     moose.start( 20.0 ) # Run the model for 100 seconds.
-    Ca.concInit = 0.08e-3	# Calcium back to baseline
+    Ca.concInit = 0.08e-3        # Calcium back to baseline
     moose.start( 1000.0 ) # Let system settle for 1000 sec
-    Ca.concInit = 0.2e-3	# 	Calcium turnoff stimulus
+    Ca.concInit = 0.2e-3        #         Calcium turnoff stimulus
     moose.start( 2000.0 ) # Run the model for 1000 seconds for turnoff
-    Ca.concInit = 0.08e-3	# Calcium back to baseline
+    Ca.concInit = 0.08e-3        # Calcium back to baseline
     moose.start( 2000.0 ) # Let system settle for 2000 sec
 
     displayPlots()
@@ -63,4 +63,4 @@ def main():
 
 # Run the 'main' if this script is executed standalone.
 if __name__ == '__main__':
-	main()
+    main()

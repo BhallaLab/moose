@@ -1,48 +1,48 @@
-// melement.cpp --- 
-// 
+// melement.cpp ---
+//
 // Filename: melement.cpp
-// Description: 
-// Author: 
-// Maintainer: 
+// Description:
+// Author:
+// Maintainer:
 // Created: Mon Jul 22 16:50:41 2013 (+0530)
-// Version: 
+// Version:
 // Last-Updated: Fri Sep 25 23:02:53 2015 (-0400)
 //           By: subha
 //     Update #: 76
-// URL: 
-// Keywords: 
-// Compatibility: 
-// 
-// 
+// URL:
+// Keywords:
+// Compatibility:
+//
+//
 
-// Commentary: 
-// 
+// Commentary:
+//
 // Mon Jul 22 16:50:47 IST 2013 - Taking out ObjId stuff from
 // moosemodule.cpp
-// 
-// 
+//
+//
 
 // Change log:
-// 
-// 
-// 
-// 
+//
+//
+//
+//
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License as
 // published by the Free Software Foundation; either version 3, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; see the file COPYING.  If not, write to
 // the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 // Floor, Boston, MA 02110-1301, USA.
-// 
-// 
+//
+//
 
 // Code:
 
@@ -122,7 +122,7 @@ int moose_ObjId_init_from_id(_ObjId * self, PyObject * args, PyObject * kwargs)
         if (Id_Check(obj)){
             if (!Id::isValid(((_Id*)obj)->id_)){
                 RAISE_INVALID_ID(-1, "moose_ObjId_init_from_id");
-            }                    
+            }
             self->oid_ = ObjId(((_Id*)obj)->id_, data, field );
             if (self->oid_.bad()){
                 PyErr_SetString(PyExc_ValueError, "Invalid dataIndex/fieldIndex.");
@@ -132,7 +132,7 @@ int moose_ObjId_init_from_id(_ObjId * self, PyObject * args, PyObject * kwargs)
         } else if (PyObject_IsInstance(obj, (PyObject*)&ObjIdType)){
             if (!Id::isValid(((_ObjId*)obj)->oid_.id)){
                 RAISE_INVALID_ID(-1, "moose_ObjId_init_from_id");
-            }                    
+            }
             self->oid_ = ((_ObjId*)obj)->oid_;
             if (self->oid_.bad()){
                 PyErr_SetString(PyExc_ValueError, "Invalid ObjId");
@@ -156,7 +156,7 @@ int moose_ObjId_init_from_path(_ObjId * self, PyObject * args,
     self->oid_ = ObjId( 0, BADINDEX );
     PyTypeObject * mytype = Py_TYPE(self);
     string mytypename(mytype->tp_name);
-    
+
     // First try to parse the arguments as (parsedPath, n, g, dtype)
     bool parse_success = false;
     if (PyArg_ParseTupleAndKeywords(args, kwargs,
@@ -167,20 +167,20 @@ int moose_ObjId_init_from_path(_ObjId * self, PyObject * args,
     }
     // we need to clear the parse error so that the callee can try
     // other alternative: moose_ObjId_init_from_id
-    PyErr_Clear(); 
+    PyErr_Clear();
     if (!parse_success){
         return -2;
     }
 
     string path(parsedPath);
     // Remove one or more instances of '/' by a single '/' e.g. //a -> /a,
-    // /a//b -> /a/b etc. 
+    // /a//b -> /a/b etc.
     path = moose::fix(path);
 
     ostringstream err;
     // First see if there is an existing object with at path
     self->oid_ = ObjId(path);
-    PyTypeObject * basetype = getBaseClass((PyObject*)self);
+    PyTypeObject* basetype = getBaseClass((PyObject*)self);
     string basetype_str;
     if (type == NULL){
         if (basetype == NULL){
@@ -189,7 +189,7 @@ int moose_ObjId_init_from_path(_ObjId * self, PyObject * args,
         }
         basetype_str = string(basetype->tp_name).substr(6); // remove `moose.` prefix from type name
     } else {
-        basetype_str = string(type);            
+        basetype_str = string(type);
     }
 
 
@@ -210,15 +210,26 @@ int moose_ObjId_init_from_path(_ObjId * self, PyObject * args,
     } else { // this is a non-root existing element
         // If the current class is a subclass of some predefined
         // moose class, do nothing.
+        string className = self->oid_.element()->cinfo()->name();
+        map <string, PyTypeObject * >::iterator ii =
+        	get_moose_classes().find( className );
+        PyTypeObject * basetype = 0;
+        if ( ii != get_moose_classes().end() ) {
+    	    basetype = ii->second;
+            basetype_str = string(basetype->tp_name).substr(6); // remove `moose.` prefix from type name
+        } else {
+            err << "Unknown class: " << className << endl;
+            basetype = getBaseClass((PyObject*)self);
+        }
         if ((basetype != NULL) && PyType_IsSubtype(mytype, basetype)){
             return 0;
         }
         // element exists at this path, but it does not inherit from any moose class.
         // throw an error
         err << "cannot convert "
-            << Field<string>::get(self->oid_, "className")
+			<< className
             << " to "
-            << basetype_str
+            << mytypename
             << ". To get the existing object use `moose.element(obj)` instead.";
         PyErr_SetString(PyExc_TypeError, err.str().c_str());
         return -1;
@@ -234,7 +245,7 @@ int moose_ObjId_init_from_path(_ObjId * self, PyObject * args,
     self->oid_ = ObjId(new_id);
     return 0;
 }
-    
+
 int moose_ObjId_init(_ObjId * self, PyObject * args,
                      PyObject * kwargs)
 {
@@ -256,7 +267,7 @@ int moose_ObjId_init(_ObjId * self, PyObject * args,
     PyErr_SetString(PyExc_ValueError,
                     "Could not parse arguments. "
                     " Call __init__(path, n, g, dtype) or"
-                    " __init__(id, dataIndex, fieldIndex)");        
+                    " __init__(id, dataIndex, fieldIndex)");
     return -1;
 }
 
@@ -316,14 +327,20 @@ PyObject * moose_ObjId_str(_ObjId * self)
 PyDoc_STRVAR(moose_ObjId_getId_documentation,
              "getId() -> vec\n"
              "\n"
-             "Get the vec of this object\n"
+             "Returns the information of the object's classtype, Id, and path \n"
+             "in form of a vector.\n"
+             "\nExample\n"
+             "-------\n"
+             "    >>> com = moose.Compartment('/com')\n"
+             "    >>> com.getId()\n"
+             "        moose.vec: class=Compartment, id=481, path=/com>"
              "\n");
 PyObject* moose_ObjId_getId(_ObjId * self)
 {
     if (!Id::isValid(self->oid_.id)){
         RAISE_INVALID_ID(NULL, "moose_ObjId_getId");
     }
-    extern PyTypeObject IdType;        
+    extern PyTypeObject IdType;
     _Id * ret = PyObject_New(_Id, &IdType);
     ret->id_ = self->oid_.id;
     return (PyObject*)ret;
@@ -332,12 +349,15 @@ PyObject* moose_ObjId_getId(_ObjId * self)
 PyDoc_STRVAR(moose_ObjId_getFieldType_documentation,
              "getFieldType(fieldname)\n"
              "\n"
-             "Get the string representation of the type of the field `fieldname`.\n"
+             "Returns the type of the field `fieldname` (as a string).\n"
              "\n"
              "Parameters\n"
              "----------\n"
              "fieldname : string\n"
              "    Name of the field to be queried.\n"
+             "\n"
+             "      >>> comp.getFieldType('neighbors')\n"
+             "      >>> 'string,vector<Id>' \n"
              "\n");
 
 PyObject * moose_ObjId_getFieldType(_ObjId * self, PyObject * args)
@@ -368,18 +388,21 @@ PyObject * moose_ObjId_getFieldType(_ObjId * self, PyObject * args)
 PyDoc_STRVAR(moose_ObjId_getField_documentation,
              "getField(fieldname)\n"
              "\n"
-             "Get the value of the field `fieldname`.\n"
+             "Returns the value of the field `fieldname`.\n"
              "\n"
              "Parameters\n"
              "----------\n"
              "fieldname : string\n"
-             "    Name of the field.");
+             "    Name of the field.\n"
+             "\n"
+             "      >>> comp.getField('x0')\n"
+             "      >>> 0.0 \n");
 PyObject * moose_ObjId_getField(_ObjId * self, PyObject * args)
 {
     if (!Id::isValid(self->oid_.id)){
         RAISE_INVALID_ID(NULL, "moose_ObjId_getField");
     }
-    PyObject * attr;        
+    PyObject * attr;
     if (!PyArg_ParseTuple(args, "O:moose_ObjId_getField", &attr)){
         return NULL;
     }
@@ -388,7 +411,7 @@ PyObject * moose_ObjId_getField(_ObjId * self, PyObject * args)
 
 /**
    2011-03-28 13:59:41 (+0530)
-   
+
    Get a specified field. Re-done on: 2011-03-23 14:42:03 (+0530)
 
    I wonder how to cleanly do this. The Id - ObjId dichotomy is
@@ -425,7 +448,7 @@ PyObject * moose_ObjId_getattro(_ObjId * self, PyObject * attr)
             break;
         }
     }
-            
+
     string type = getFieldType(className, fieldName);
     if (type.empty() || !isValueField ){
         // Check if this field name is aliased and update fieldName and type if so.
@@ -509,12 +532,12 @@ PyObject * moose_ObjId_getattro(_ObjId * self, PyObject * attr)
             _ret = to_py(&value, ftype);
             break;
         }
-        case 'x': {                    
+        case 'x': {
             Id value = Field<Id>::get(self->oid_, fieldName);
             _ret = to_py(&value, ftype);
             break;
         }
-        case 'y': {                    
+        case 'y': {
             ObjId value = Field<ObjId>::get(self->oid_, fieldName);
             _ret = to_py(&value, ftype);
             break;
@@ -533,12 +556,12 @@ PyObject * moose_ObjId_getattro(_ObjId * self, PyObject * attr)
             vector < Id > value = Field<vector <Id> >::get(self->oid_, fieldName);
             _ret = to_py(&value, ftype);
             break;
-        } 
+        }
         case 'Y': { // vector<ObjId>
             vector < ObjId > value = Field<vector <ObjId> >::get(self->oid_, fieldName);
             _ret = to_py(&value, ftype);
             break;
-        } 
+        }
         case 'M': {
             vector< long > value = Field< vector <long> >::get(self->oid_, fieldName);
             _ret = to_py(&value, ftype);
@@ -568,12 +591,12 @@ PyObject * moose_ObjId_getattro(_ObjId * self, PyObject * attr)
             vector < vector < unsigned int > > value = Field<vector <vector < unsigned int > > >::get(self->oid_, fieldName);
             _ret = to_py(&value, ftype);
             break;
-        } 
+        }
         case 'Q': { // vector< vector < int > >
             vector <  vector < int >  > value = Field<vector < vector < int > > >::get(self->oid_, fieldName);
             _ret = to_py(&value, ftype);
             break;
-        } 
+        }
         case 'R': { // vector< vector < double > >
             vector <  vector < double >  > value = Field<vector < vector < double > > >::get(self->oid_, fieldName);
             _ret = to_py(&value, ftype);
@@ -624,12 +647,12 @@ PyObject * moose_ObjId_getattro(_ObjId * self, PyObject * attr)
 
         default:
             _ret = PyObject_GenericGetAttr((PyObject*)self, attr);
-            
+
     }
     if (new_attr){
         Py_DECREF(attr);
     }
-    return _ret;        
+    return _ret;
 }
 
 /**
@@ -646,7 +669,12 @@ PyDoc_STRVAR(moose_ObjId_setField_documentation,
              "    Field to be assigned value to.\n"
              "\n"
              "value : python datatype compatible with the type of the field\n"
-             "    The value to be assigned to the field.");
+             "    The value to be assigned to the field."
+             "\n"
+             "\n"
+             "        >>> comp.setField('x0', 45.25) \n"
+             "        >>> print comp.x0\n"
+             "            45.25\n");
 
 PyObject * moose_ObjId_setField(_ObjId * self, PyObject * args)
 {
@@ -683,7 +711,7 @@ int  moose_ObjId_setattro(_ObjId * self, PyObject * attr, PyObject * value)
         // typos). Otherwise, it must have been subclassed in
         // Python. Then we allow normal Pythonic behaviour and
         // consider such mistakes user's responsibility.
-        string className = ((PyTypeObject*)PyObject_Type((PyObject*)self))->tp_name;            
+        string className = ((PyTypeObject*)PyObject_Type((PyObject*)self))->tp_name;
         if (get_moose_classes().find(className) == get_moose_classes().end()){
             return PyObject_GenericSetAttr((PyObject*)self, PyString_FromString(field), value);
         }
@@ -716,7 +744,7 @@ int  moose_ObjId_setattro(_ObjId * self, PyObject * attr, PyObject * value)
             unsigned long _value = PyInt_AsUnsignedLongMask(value);
             ret = Field<unsigned long>::set(self->oid_, string(field), _value);
             break;
-        }                
+        }
         case 'f': {
             float _value = PyFloat_AsDouble(value);
             ret = Field<float>::set(self->oid_, string(field), _value);
@@ -888,7 +916,7 @@ int  moose_ObjId_setattro(_ObjId * self, PyObject * attr, PyObject * value)
                 ret = Field< vector < float > >::set(self->oid_, string(field), _value);
             }
             break;
-        }              
+        }
         case 'S': {
             if (!PySequence_Check(value)){
                 PyErr_SetString(PyExc_TypeError, "For setting vector<string> field, specified value must be a sequence." );
@@ -944,7 +972,7 @@ int  moose_ObjId_setattro(_ObjId * self, PyObject * attr, PyObject * value)
                 ret = Field< vector < Id > >::set(self->oid_, string(field), _value);
             }
             break;
-        }              
+        }
         case 'Y': {//SET_VECFIELD(ObjId, f)
             if (!PySequence_Check(value)){
                 PyErr_SetString(PyExc_TypeError, "For setting vector<ObjId> field, specified value must be a sequence." );
@@ -960,8 +988,8 @@ int  moose_ObjId_setattro(_ObjId * self, PyObject * attr, PyObject * value)
                 ret = Field< vector < ObjId > >::set(self->oid_, string(field), _value);
             }
             break;
-        }              
-        default:                
+        }
+        default:
             break;
     }
     // MOOSE Field::set returns 1 for success 0 for
@@ -996,10 +1024,10 @@ PyObject * moose_ObjId_getItem(_ObjId * self, Py_ssize_t index)
     // what is s0[1]? ObjId(X
     // syn[0][1]->ObjId(X, 0, 1) =syn[0][0][0] - which is an ObjId.
     // Now, what is syn[0][1][2] ?
-    
+
     // In PyMOOSE, user is allowed to directly put in the numbers
     // for Id, dataIndex and fieldIndex directly and construct an
-    // ObjId. 
+    // ObjId.
     _ObjId * ret = PyObject_New(_ObjId, &ObjIdType);
     ret->oid_ = ObjId(self->oid_.id, self->oid_.dataIndex, index);
     return (PyObject*)ret;
@@ -1020,8 +1048,8 @@ PyObject * moose_ObjId_getSlice(_ObjId * self, Py_ssize_t start, Py_ssize_t end)
         return PyTuple_New(0);
     }
     PyObject * ret = PyTuple_New((Py_ssize_t)(end - start));
-    
-    // Py_XINCREF(ret);        
+
+    // Py_XINCREF(ret);
     for ( int ii = start; ii < end; ++ii){
         _ObjId * value = PyObject_New(_ObjId, &ObjIdType);
         value->oid_ = ObjId(self->oid_.id, self->oid_.dataIndex, ii);
@@ -1084,39 +1112,39 @@ PyObject * getLookupField(ObjId target, char * fieldName, PyObject * key)
         case 'h': {
             ret = lookup_value <short> (target, string(fieldName), value_type_code, key_type_code, key);
             break;
-        }            
+        }
         case 'H': {
             ret = lookup_value <unsigned short> (target, string(fieldName), value_type_code, key_type_code, key);
             break;
-        }            
+        }
         case 'i': {
             ret = lookup_value <int> (target, string(fieldName), value_type_code, key_type_code, key);
             break;
-        }            
+        }
         case 'I': {
             ret = lookup_value <unsigned int> (target, string(fieldName), value_type_code, key_type_code, key);
             break;
-        }            
+        }
         case 'l': {
             ret = lookup_value <long> (target, string(fieldName), value_type_code, key_type_code, key);
             break;
-        }                        
+        }
         case 'k': {
             ret = lookup_value <unsigned long> (target, string(fieldName), value_type_code, key_type_code, key);
             break;
-        }                        
+        }
         case 'L': {
             ret = lookup_value <long long> (target, string(fieldName), value_type_code, key_type_code, key);
             break;
-        }                        
+        }
         case 'K': {
             ret = lookup_value <unsigned long long> (target, string(fieldName), value_type_code, key_type_code, key);
             break;
-        }                        
+        }
         case 'd': {
             ret = lookup_value <double> (target, string(fieldName), value_type_code, key_type_code, key);
             break;
-        }                        
+        }
         case 'f': {
             ret = lookup_value <float> (target, string(fieldName), value_type_code, key_type_code, key);
             break;
@@ -1136,7 +1164,7 @@ PyObject * getLookupField(ObjId target, char * fieldName, PyObject * key)
         case 'D': {
             ret = lookup_value < vector <double> >(target, string(fieldName), value_type_code, key_type_code, key);
             break;
-        }                
+        }
         case 'S': {
             ret = lookup_value < vector <string> >(target, string(fieldName), value_type_code, key_type_code, key);
             break;
@@ -1164,11 +1192,11 @@ PyObject * getLookupField(ObjId target, char * fieldName, PyObject * key)
         case 'F': {
             ret = lookup_value < vector <float> >(target, string(fieldName), value_type_code, key_type_code, key);
             break;
-        }                
+        }
         case 'w': {
             ret = lookup_value < vector <short> >(target, string(fieldName), value_type_code, key_type_code, key);
             break;
-        }   
+        }
         case 'C': {
             ret = lookup_value < vector <char> >(target, string(fieldName), value_type_code, key_type_code, key);
             break;
@@ -1231,11 +1259,11 @@ int setLookupField(ObjId target, char * fieldName, PyObject * key, PyObject * va
         case 'I': {
             ret = set_lookup_value <unsigned int> (target, string(fieldName), value_type_code, key_type_code, key, value);
             break;
-        }            
+        }
         case 'k': {
             ret = set_lookup_value <unsigned long> (target, string(fieldName), value_type_code, key_type_code, key, value);
             break;
-        }                        
+        }
         case 's': {
             ret = set_lookup_value <string> (target, string(fieldName), value_type_code, key_type_code, key, value);
             break;
@@ -1243,19 +1271,19 @@ int setLookupField(ObjId target, char * fieldName, PyObject * key, PyObject * va
         case 'i': {
             ret = set_lookup_value <int> (target, string(fieldName), value_type_code, key_type_code, key, value);
             break;
-        }            
+        }
         case 'l': {
             ret = set_lookup_value <long> (target, string(fieldName), value_type_code, key_type_code, key, value);
             break;
-        }                        
+        }
         case 'L': {
             ret = set_lookup_value <long long> (target, string(fieldName), value_type_code, key_type_code, key, value);
             break;
-        }                        
+        }
         case 'K': {
             ret = set_lookup_value <unsigned long long> (target, string(fieldName), value_type_code, key_type_code, key, value);
             break;
-        }                        
+        }
         case 'b': {
             ret = set_lookup_value <bool> (target, string(fieldName), value_type_code, key_type_code, key, value);
             break;
@@ -1267,15 +1295,15 @@ int setLookupField(ObjId target, char * fieldName, PyObject * key, PyObject * va
         case 'h': {
             ret = set_lookup_value <short> (target, string(fieldName), value_type_code, key_type_code, key, value);
             break;
-        }            
+        }
         case 'H': {
             ret = set_lookup_value <unsigned short> (target, string(fieldName), value_type_code, key_type_code, key, value);
             break;
-        }            
+        }
         case 'd': {
             ret = set_lookup_value <double> (target, string(fieldName), value_type_code, key_type_code, key, value);
             break;
-        }                        
+        }
         case 'f': {
             ret = set_lookup_value <float> (target, string(fieldName), value_type_code, key_type_code, key, value);
             break;
@@ -1293,7 +1321,7 @@ int setLookupField(ObjId target, char * fieldName, PyObject * key, PyObject * va
             error << "setLookupField: invalid key type " << type_vec[0];
             PyErr_SetString(PyExc_TypeError, error.str().c_str());
     }
-    return ret;        
+    return ret;
 }// setLookupField
 
 PyDoc_STRVAR(moose_ObjId_setLookupField_documentation,
@@ -1362,7 +1390,7 @@ PyObject * moose_ObjId_setDestField(_ObjId * self, PyObject * args)
         PyErr_SetString(PyExc_ValueError, error.str().c_str());
         return NULL;
     }
-    
+
     // Get the destFinfo name
     char * fieldName = PyString_AsString(arglist[0]);
     if (!fieldName){ // not a string, raises TypeError
@@ -1370,7 +1398,7 @@ PyObject * moose_ObjId_setDestField(_ObjId * self, PyObject * args)
         PyErr_SetString(PyExc_TypeError, error.str().c_str());
         return NULL;
     }
-    
+
     // Try to parse the arguments.
     vector< string > argType;
     if (parseFinfoType(Field<string>::get(oid, "className"),
@@ -1408,7 +1436,7 @@ PyObject * setDestFinfo(ObjId obj, string fieldName, PyObject *arg, string argTy
     ostringstream error;
     error << "moose.setDestFinfo: ";
 
-switch (typecode){                    
+switch (typecode){
     case 'f': case 'd': {
         double param = PyFloat_AsDouble(arg);
         if (typecode == 'f'){
@@ -1453,7 +1481,7 @@ switch (typecode){
         if (id == NULL){
             error << "argument should be an vec or an melement";
             PyErr_SetString(PyExc_TypeError, error.str().c_str());
-            return NULL;                                
+            return NULL;
         }
         param = id->id_;
         ret = SetGet1<Id>::set(obj, fieldName, param);
@@ -1465,7 +1493,7 @@ switch (typecode){
         if (oid == NULL){
             error << "argument should be vec or an melement";
             PyErr_SetString(PyExc_TypeError, error.str().c_str());
-            return NULL;                                
+            return NULL;
         }
         param = oid->oid_;
         ret = SetGet1<ObjId>::set(obj, fieldName, param);
@@ -1497,7 +1525,7 @@ switch (typecode){
     }
     case 'L': {//SET_VECFIELD(long, l) {
         return _set_vector_destFinfo<long>(obj, string(fieldName), arg, typecode);
-    }            
+    }
     case 'N': { //SET_VECFIELD(unsigned int, I)
         return _set_vector_destFinfo<unsigned int>(obj, string(fieldName), arg, typecode);
     }
@@ -1509,7 +1537,7 @@ switch (typecode){
     }
     case 'D': {//SET_VECFIELD(double, d)
         return _set_vector_destFinfo<double>(obj, string(fieldName), arg, typecode);
-    }                
+    }
     case 'S': {
         return _set_vector_destFinfo<string>(obj, string(fieldName), arg, typecode);
     }
@@ -1583,7 +1611,7 @@ switch (type2){
             if (id == NULL){
                 error << "argument should be an vec or an melement";
                 PyErr_SetString(PyExc_TypeError, error.str().c_str());
-                return NULL;                                
+                return NULL;
             }
             param = id->id_;
         // } else if (ObjId_SubtypeCheck(arg)){
@@ -1591,7 +1619,7 @@ switch (type2){
         //     if (oid == NULL){
         //         error << "argument should be an vec or an melement";
         //         PyErr_SetString(PyExc_TypeError, error.str().c_str());
-        //         return NULL;                                
+        //         return NULL;
         //     }
         //     param = oid->oid_.id;
         // }
@@ -1604,7 +1632,7 @@ switch (type2){
         //     if (id == NULL){
         //         error << "argument should be an vec or an melement";
         //         PyErr_SetString(PyExc_TypeError, error.str().c_str());
-        //         return NULL;                                
+        //         return NULL;
         //     }
         //     param = ObjId(id->id_);
         // } else if (ObjId_SubtypeCheck(arg)){
@@ -1612,7 +1640,7 @@ switch (type2){
             if (oid == NULL){
                 error << "argument should be an vec or an melement";
                 PyErr_SetString(PyExc_TypeError, error.str().c_str());
-                return NULL;                                
+                return NULL;
             }
             param = oid->oid_;
         // }
@@ -1643,26 +1671,31 @@ switch (type2){
 PyDoc_STRVAR(moose_ObjId_getFieldNames_documenation,
              "getFieldNames(fieldType='') -> tuple of str\n"
              "\n"
-             "Get the names of fields on this element.\n"
+             "Returns the names of fields of this element of fieldType kind.\n"
              "\n"
              "Parameters\n"
              "----------\n"
              "fieldType : str\n"
-             "    Field type to retrieve. Can be `valueFinfo`, `srcFinfo`,\n"
-             "   `destFinfo`, `lookupFinfo`, etc. If an empty string is specified,\n"
-             "    names of all avaialable fields are returned.\n"
+             "    Type of the fields you wish to retrieve. Can be\n"
+             "     - `valueFinfo` - attributes of the object\n"
+             "     - `srcFinfo`   - fields of the object which can be used as source of information for connect\n"
+             "     - `destFinfo`  - fields of the object which can be used as destination of information for connect\n"
+             "     - `lookupFinfo`- fields which can be looked at through this object"
+             ", etc. If an empty string is specified, names of all avaialable fields are returned.\n"
              "\n"
              "Returns\n"
              "-------\n"
              "names : tuple of strings.\n"
-             "    names of the fields of the specified type.\n"   
+             "    names of the fields of the specified type.\n"
              "\n"
              "Examples\n"
              "--------\n"
              "List names of all the source fields in PulseGen class:\n"
              "\n"
-             "    >>> moose.getFieldNames('PulseGen', 'srcFinfo')\n"
-             "    ('childMsg', 'output')\n"
+             "      >>> comp.getFieldNames('lookupFinfo') \n"
+             "          ('neighbors', 'msgDests', 'msgDestFunctions', 'isA')\n"
+             "      >>> moose.getFieldNames('PulseGen', 'srcFinfo')\n"
+             "          ('childMsg', 'output')\n"
              "\n");
 // 2011-03-23 15:28:26 (+0530)
 PyObject * moose_ObjId_getFieldNames(_ObjId * self, PyObject *args)
@@ -1681,13 +1714,13 @@ PyObject * moose_ObjId_getFieldNames(_ObjId * self, PyObject *args)
         for (const char **a = getFinfoTypes(); *a; ++a){
             vector<string> fields = getFieldNames(className, string(*a));
             ret.insert(ret.end(), fields.begin(), fields.end());
-        }            
+        }
     } else {
         ret = getFieldNames(className, ftype_str);
     }
-    
+
     PyObject * pyret = PyTuple_New((Py_ssize_t)ret.size());
-            
+
     for (unsigned int ii = 0; ii < ret.size(); ++ ii ){
         PyObject * fname = Py_BuildValue("s", ret[ii].c_str());
         if (!fname){
@@ -1702,7 +1735,7 @@ PyObject * moose_ObjId_getFieldNames(_ObjId * self, PyObject *args)
             break;
         }
     }
-    return pyret;             
+    return pyret;
 }
 
 PyDoc_STRVAR(moose_ObjId_getNeighbors_documentation,
@@ -1720,7 +1753,7 @@ PyDoc_STRVAR(moose_ObjId_getNeighbors_documentation,
              "neighbors: tuple of vecs.\n"
              "    tuple containing the ids of the neighbour vecs.\n"
              "\n");
-             
+
 PyObject * moose_ObjId_getNeighbors(_ObjId * self, PyObject * args)
 {
     if (!Id::isValid(self->oid_.id)){
@@ -1733,14 +1766,14 @@ PyObject * moose_ObjId_getNeighbors(_ObjId * self, PyObject * args)
     vector< Id > val = LookupField< string, vector< Id > >::get(self->oid_, "neighbors", string(field));
 
     PyObject * ret = PyTuple_New((Py_ssize_t)val.size());
-            
-    for (unsigned int ii = 0; ii < val.size(); ++ ii ){            
+
+    for (unsigned int ii = 0; ii < val.size(); ++ ii ){
         _Id * entry = PyObject_New(_Id, &IdType);
         if (!entry || PyTuple_SetItem(ret, (Py_ssize_t)ii, (PyObject*)entry)){
             Py_DECREF(ret);
             // Py_DECREF((PyObject*)entry);
-            ret = NULL;                                 
-            break;                                      
+            ret = NULL;
+            break;
         }
         entry->id_ = val[ii];
     }
@@ -1753,21 +1786,33 @@ PyObject * moose_ObjId_getNeighbors(_ObjId * self, PyObject * args)
 
 // 2011-03-28 10:51:52 (+0530)
 PyDoc_STRVAR(moose_ObjId_connect_documentation,
-             "connect(srcfield, destobj, destfield, msgtype) -> bool\n"
+             "connect(src, srcfield, destobj, destfield[,msgtype]) -> bool\n"
              "\n"
-             "Connect another object via a message.\n"
+             "Create a message between `src_field` on `src` object to `dest_field` on `dest` object.\n"
+             "This function is used mainly, to say, connect two entities, and to denote what kind of give-and-take relationship they share."
+             "It enables the 'destfield' (of the 'destobj') to acquire the data, from 'srcfield'(of the 'src')."
              "\n"
              "Parameters\n"
              "----------\n"
+             "src : element/vec/string\n"
+             "    the source object (or its path) \n"
+             "    (the one that provides information)\n"
              "srcfield : str\n"
-             "    source field on self.\n"
+             "    source field on self.(type of the information)\n"
              "destobj : element\n"
              "    Destination object to connect to.\n"
+             "    (The one that need to get information)\n"
              "destfield : str\n"
              "    field to connect to on `destobj`.\n"
              "msgtype : str\n"
-             "    type of the message. Can be `Single`, `OneToAll`, `AllToOne`,\n"
-             "   `OneToOne`, `Reduce`, `Sparse`. Default: `Single`.\n"
+             "    type of the message. Can be \n"
+             "    `Single` - \n"
+             "    `OneToAll` - \n"
+             "    `AllToOne` - \n"
+             "    `OneToOne` - \n"
+             "    `Reduce` - \n"
+             "    `Sparse` - \n"
+             "    Default: `Single`.\n"
              "\n"
              "Returns\n"
              "-------\n"
@@ -1793,7 +1838,7 @@ PyObject * moose_ObjId_connect(_ObjId * self, PyObject * args)
     if (!Id::isValid(self->oid_.id)){
         RAISE_INVALID_ID(NULL, "moose_ObjId_connect");
     }
-    extern PyTypeObject ObjIdType;        
+    extern PyTypeObject ObjIdType;
     PyObject * destPtr = NULL;
     char * srcField = NULL, * destField = NULL, * msgType = NULL;
     static char default_msg_type[] = "Single";
@@ -1819,7 +1864,7 @@ PyObject * moose_ObjId_connect(_ObjId * self, PyObject * args)
                         "connect failed: check field names and type compatibility.");
         return NULL;
     }
-    _ObjId* msgMgrId = (_ObjId*)PyObject_New(_ObjId, &ObjIdType);        
+    _ObjId* msgMgrId = (_ObjId*)PyObject_New(_ObjId, &ObjIdType);
     msgMgrId->oid_ = mid;
     return (PyObject*)msgMgrId;
 }
@@ -1829,7 +1874,7 @@ PyDoc_STRVAR(moose_ObjId_richcompare_documentation,
              "the paths of the element instances. This function exists only to\n"
              "facilitate certain operations requiring sorting/comparison, like\n"
              "using elements for dict keys. Conceptually only equality comparison is\n"
-             "meaningful for elements.\n"); 
+             "meaningful for elements.\n");
 PyObject* moose_ObjId_richcompare(_ObjId * self, PyObject * other, int op)
 {
     if (!Id::isValid(self->oid_.id)){
@@ -1881,13 +1926,19 @@ PyObject* moose_ObjId_richcompare(_ObjId * self, PyObject * other, int op)
 PyDoc_STRVAR(moose_ObjId_getDataIndex_documentation,
              "getDataIndex() -> int\n"
              "\n"
-             "Get the dataIndex of this object.\n"
+             "Returns the dataIndex (position of the object in vector) "
+             "of this object, if it belongs to a vector, otherwise returns 0.\n"
+             "\n"
+             "        >>> comp = moose.Compartment('/comp')\n"
+             "        >>> comp.getDataIndex()\n"
+             "        >>> 0\n"
+             ""
              );
 PyObject * moose_ObjId_getDataIndex(_ObjId * self)
 {
     if (!Id::isValid(self->oid_.id)){
         RAISE_INVALID_ID(NULL, "moose_ObjId_getDataIndex");
-    }        
+    }
     PyObject * ret = Py_BuildValue("I", self->oid_.dataIndex);
     return ret;
 }
@@ -1910,7 +1961,7 @@ PyObject * moose_ObjId_getFieldIndex(_ObjId * self)
 
 static PyMethodDef ObjIdMethods[] = {
     {"getFieldType", (PyCFunction)moose_ObjId_getFieldType, METH_VARARGS,
-     moose_ObjId_getFieldType_documentation},        
+     moose_ObjId_getFieldType_documentation},
     {"getField", (PyCFunction)moose_ObjId_getField, METH_VARARGS,
      moose_ObjId_getField_documentation},
     {"setField", (PyCFunction)moose_ObjId_setField, METH_VARARGS,
@@ -1936,7 +1987,7 @@ static PyMethodDef ObjIdMethods[] = {
      "Get the index of this object as a field."},
     {"setDestField", (PyCFunction)moose_ObjId_setDestField, METH_VARARGS,
      moose_ObjId_setDestField_documentation},
-    {NULL, NULL, 0, NULL},        /* Sentinel */        
+    {NULL, NULL, 0, NULL},        /* Sentinel */
 };
 
 
@@ -2000,7 +2051,7 @@ PyDoc_STRVAR(moose_ObjId_documentation,
              ">>> c = moose.melement(b)"
              );
 
-PyTypeObject ObjIdType = { 
+PyTypeObject ObjIdType = {
     PyVarObject_HEAD_INIT(NULL, 0)            /* tp_head */
     "moose.melement",                      /* tp_name */
     sizeof(_ObjId),                     /* tp_basicsize */
@@ -2044,5 +2095,5 @@ PyTypeObject ObjIdType = {
 
 
 
-// 
+//
 // melement.cpp ends here

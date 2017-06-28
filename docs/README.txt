@@ -1,18 +1,15 @@
-This is the MOOSE documentation directory. The documentation is grouped into
-the following directories:
+The source code of documentation is /source directory.
 
-    - user: This is for anyone wishing to learn/use MOOSE.
-            This part of the documentation is encoded in Markdown format.
-    - developer: If you wish to learn about MOOSE code, go here.
-    - doxygen: Source code documentation generation.
-    - markdown: This contains a quick introduction to Markdown itself.
-    - images: These are images that are included in the user and developer
-              documentation.
+This directory contains MOOSE user documentation in reST format that can be
+compiled into various formats by sphinx. To build the documentation in HTML,
+format  enter the command:
 
---------------------------------------------------------------------------------
-N.B.: This text file has Windows-style line endings (CR/LF) for easy
-viewing in Windows. We will try to keep the other text files here
-Windows-compatible (e.g.: *.markdown files), but we may slip.
-If you have difficulty viewing them in Notepad, try the inbuilt Wordpad
-editor, or better still, download a good text editor like Notepad++ or Geany.
---------------------------------------------------------------------------------
+	make html
+
+in this directory. Then you can open build/html/index.html in browser to
+browse the generated documentation.
+
+Other files in /source folder
+    - conf.py: the Sphinx configuration file.
+    - index.rst: This is the index file for use when building the Python
+            docs using sphinx.

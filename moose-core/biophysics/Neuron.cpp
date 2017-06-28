@@ -14,11 +14,10 @@
 #include "shell/Wildcard.h"
 #include "ReadCell.h"
 #include "utility/Vec.h"
-#include "randnum/Normal.h"
-#include "randnum/randnum.h"
 #include "SwcSegment.h"
 #include "Spine.h"
 #include "Neuron.h"
+#include "basecode/global.h"
 
 #include "muParser.h"
 
@@ -1737,7 +1736,7 @@ static void addPos( unsigned int segIndex, unsigned int eIndex,
 	unsigned int n = 1 + dendLength / minSpacing;
 	double dx = dendLength / n;
 	for( unsigned int i = 0; i < n; ++i ) {
-		if ( mtrand() < dx / spacing ) {
+		if ( moose::mtrand() < dx / spacing ) {
 			seglistIndex.push_back( segIndex );
 			elistIndex.push_back( eIndex );
 			pos.push_back( i * dx + dx*0.5 );
@@ -1758,12 +1757,12 @@ static void addPos( unsigned int segIndex, unsigned int eIndex,
 {
 	if ( spacingDistrib > 0.0 ) {
 		double position = spacing * 0.5 + 
-				( mtrand() - 0.5 ) * spacingDistrib;
+				( moose::mtrand() - 0.5 ) * spacingDistrib;
 		while ( position < dendLength ) {
 			seglistIndex.push_back( segIndex );
 			elistIndex.push_back( eIndex );
 			pos.push_back( position );
-			position += spacing + ( mtrand() - 0.5 ) * spacingDistrib;
+			position += spacing + ( moose::mtrand() - 0.5 ) * spacingDistrib;
 		} 
 	} else {
 		for ( double position = spacing * 0.5; 
@@ -1846,7 +1845,7 @@ static void makeAngleDistrib ( const vector< ObjId >& elist,
 				angleDistrib = distribParser.eval( val.begin() + j);
 			}
 			if ( angleDistrib > 0 )
-				theta[k] = angle + ( mtrand() - 0.5 ) * angleDistrib;
+				theta[k] = angle + ( moose::mtrand() - 0.5 ) * angleDistrib;
 			else
 				theta[k] = angle;
 		}
@@ -1883,7 +1882,7 @@ static void makeSizeDistrib ( const vector< ObjId >& elist,
 				sizeDistrib = distribParser.eval( val.begin() + j);
 			}
 			if ( sizeDistrib > 0 )
-				size[k] = sz + ( mtrand() - 0.5 ) * sizeDistrib;
+				size[k] = sz + ( moose::mtrand() - 0.5 ) * sizeDistrib;
 			else
 				size[k] = sz;
 		}

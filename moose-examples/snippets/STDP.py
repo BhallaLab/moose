@@ -11,17 +11,12 @@
 ##### Author: Aditya Gilra, NCBS, Bangalore, October, 2014.  
 ##### Fixed numpy imports and global variables: Subhasis Ray, Fri Jul 10 19:34:53 IST 2015
 
-
-'''
-Connect two cells via a plastic synapse (STDPSynHandler).  
-Induce spikes spearated by varying intervals, in the pre and post synaptic cells.  
-Plot the synaptic weight change for different intervals between the spike-pairs.  
-This ia a pseudo-STDP protocol and we get the STDP rule.  
-'''
-
 import moose
 import matplotlib.pyplot as plt
 from numpy import arange, array
+
+##### Author: Aditya Gilra, NCBS, Bangalore, October, 2014.
+##### Fixed numpy imports and global variables: Subhasis Ray, Fri Jul 10 19:34:53 IST 2015
 
 # ###########################################
 # Neuron models
@@ -42,10 +37,11 @@ spikes = None
 dt = 1e-6
 
 def setupModel():
-    '''
-    Set up two LIF neurons and connect them by an STDPSynHandler.
-    Set up some tables, and reinit MOOSE before simulation.
-    '''
+    """
+Set up two LIF neurons and connect them by an STDPSynHandler.
+Set up some tables, and reinit MOOSE before simulation.
+
+    """
     global network, syn, Vms, weight, spikes, dt
     # ###########################################
     # Initialize neuron group
@@ -130,8 +126,10 @@ def setupModel():
 
 # function to make the aPlus and aMinus settle to equilibrium values
 def reset_settle():
-    """ Call this between every pre-post pair
-    to reset the neurons and make them settle to rest.
+    """
+Call this between every pre-post pair
+to reset the neurons and make them settle to rest.
+
     """
     settletime = 100e-3 # s
     syn.synapse[0].weight = weight # V
@@ -140,24 +138,31 @@ def reset_settle():
 # function to inject a sharp current pulse to make neuron spike
 # immediately at a given time step
 def make_neuron_spike(nrnidx,I=1e-7,duration=1e-3):
-    """ Inject a brief current pulse to 
-    make a neuron spike
+    """
+Inject a brief current pulse to
+make a neuron spike
+
     """
     network.vec[nrnidx].inject = I
     moose.start(duration)
     network.vec[nrnidx].inject = 0.
 
 def main():
-    '''
+    """
+    Connect two cells via a plastic synapse (STDPSynHandler).  
+    Induce spikes spearated by varying intervals, in the pre and post synaptic cells.  
+    Plot the synaptic weight change for different intervals between the spike-pairs.  
+    This ia a pseudo-STDP protocol and we get the STDP rule.  
+
     On the command-line, in moose-examples/snippets directory, run ``python STDP.py``
-    '''
+    """
     setupModel()
     dwlist_neg = []
     ddt = 2e-3 # s
     t_extent = 20e-3 # s
     # dt = tpost - tpre
     # negative dt corresponds to post before pre
-    print '-----------------------------------------------'
+    print('-----------------------------------------------')
     for deltat in arange(t_extent,0.0,-ddt):
         reset_settle()
         # post neuron spike
@@ -167,9 +172,9 @@ def main():
         make_neuron_spike(0)
         moose.start(1e-3)
         dw = ( syn.synapse[0].weight - weight ) / weight
-        print 'post before pre, dt = %1.3f s, dw/w = %1.3f'%(-deltat,dw)
+        print(('post before pre, dt = %1.3f s, dw/w = %1.3f'%(-deltat,dw)))
         dwlist_neg.append(dw)
-    print '-----------------------------------------------'
+    print('-----------------------------------------------')
     # positive dt corresponds to pre before post
     dwlist_pos = []
     for deltat in arange(ddt,t_extent+ddt,ddt):
@@ -181,9 +186,9 @@ def main():
         make_neuron_spike(1)
         moose.start(1e-3)
         dw = ( syn.synapse[0].weight - weight ) / weight
-        print 'pre before post, dt = %1.3f s, dw/w = %1.3f'%(deltat,dw)
+        print(('pre before post, dt = %1.3f s, dw/w = %1.3f'%(deltat,dw)))
         dwlist_pos.append(dw)
-    print '-----------------------------------------------'
+    print('-----------------------------------------------')
 
     # ###########################################
     # Plot the simulated Vm-s and STDP curve

@@ -16,26 +16,24 @@ import os
 
 import moose
 import moose.utils as mu
-from moose.SBML import *
+
 # the model lives in the same directory as the test script
-modeldir = os.path.dirname(__file__)
+modeldir = os.path.dirname( os.path.realpath( __file__ ) )
 
 def main():
-    modelname = os.path.join(modeldir, 'chem_models/00001-sbml-l3v1.xml')
-    model = mooseReadSBML(modelname, '/sbml')
-    tables = moose.wildcardFind('/sbml/##[TYPE=Table2]')
-    records = {}
-    for t in tables: records[t.path.split('/')[-1]] = t
+    modelname = os.path.join(modeldir, './chem_models/00001-sbml-l3v1.xml' )
+    model = moose.mooseReadSBML( modelname, '/sbml' )
+    print( model )
     c = moose.Clock('/clock')
     moose.reinit()
     moose.start(200)
-    #check(tables)
+    check(  )
 
-def check(tables):
-    assert len(tables) > 0, "No moose.Table2 created."
-    for t in tables:
-        assert len(t.vec) > 100
+def check( ):
     # TODO: Add more tests here.
+    p = moose.wildcardFind( '/sbml/##' )
+    for x in p:
+        print( x )
 
 if __name__ == '__main__':
     main()

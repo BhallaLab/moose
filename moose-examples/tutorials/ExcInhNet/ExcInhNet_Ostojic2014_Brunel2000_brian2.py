@@ -107,9 +107,9 @@ conn_i = []
 conn_j = []
 for j in range(0,N):
     ## draw excC number of neuron indices out of NmaxExc neurons
-    preIdxsE = random.sample(range(NE),excC)
+    preIdxsE = random.sample(list(range(NE)),excC)
     ## draw inhC=C-excC number of neuron indices out of inhibitory neurons
-    preIdxsI = random.sample(range(NE,N),C-excC)
+    preIdxsI = random.sample(list(range(NE,N)),C-excC)
     ## connect these presynaptically to i-th post-synaptic neuron
     ## choose the synapses object based on whether post-syn nrn is exc or inh
     conn_i += preIdxsE
@@ -132,17 +132,17 @@ sm = SpikeMonitor(P)
 popm = PopulationRateMonitor(P)
 
 # voltage monitor
-sm_vm = StateMonitor(P,'v',record=range(10)+range(NE,NE+10))
+sm_vm = StateMonitor(P,'v',record=list(range(10))+list(range(NE,NE+10)))
 
 # ###########################################
 # Simulate
 # ###########################################
 
-print "Setup complete, running for",simtime,"at dt =",dt,"s."
+print(("Setup complete, running for",simtime,"at dt =",dt,"s."))
 t1 = time.time()
 run(simtime,report='text')
 device.build(directory='output', compile=True, run=True, debug=False)
-print 'inittime + runtime, t = ', time.time() - t1
+print(('inittime + runtime, t = ', time.time() - t1))
 
 #print "For g,J =",g,J,"mean exc rate =",\
 #    sm_e.num_spikes/float(NE)/(simtime/second),'Hz.'
@@ -201,7 +201,7 @@ title(str(N)+" exc & inh neurons")
 xlim([0,simtime/second])
 xlabel("")
 
-print "plotting firing rates"
+print("plotting firing rates")
 subplot(232)
 # firing rates
 timeseries = arange(0,simtime/second+dt,dt)
@@ -227,7 +227,7 @@ ylim(0,300)
 xlabel("Time (s)")
 ylabel("Hz")
 
-print "plotting pop firing rates"
+print("plotting pop firing rates")
 # Population firing rates
 subplot(233)
 timeseries = arange(0,simtime/second,dt)

@@ -6,9 +6,9 @@
 # Maintainer: 
 # Created: Mon Jul 16 16:12:55 2012 (+0530)
 # Version: 
-# Last-Updated: Sat Aug  6 15:29:42 2016 (-0400)
+# Last-Updated: Sun Jun 25 16:30:03 2017 (-0400)
 #           By: subha
-#     Update #: 530
+#     Update #: 531
 # URL: 
 # Keywords: 
 # Compatibility: 
@@ -28,7 +28,7 @@
 # 
 
 # Code:
-from __future__ import print_function
+
 import unittest
 from cell_test_util import setup_current_step_model, SingleCellCurrentStepTest
 import testutils
@@ -76,13 +76,13 @@ class TestTCR(SingleCellCurrentStepTest):
         self.pulsegen.delay[0] = 100e-3
         self.pulsegen.width[0] = 100e-3
         self.pulsegen.level[0] = -10e-3
-        moose.connect(self.pulsegen, 'output', clamp, 'setCommand')
+        moose.connect(self.pulsegen, 'output', clamp, 'commandIn')
         tab = moose.Table('%s/command' % (self.data_container.path))
         moose.connect(tab, 'requestOut', clamp, 'getCommand')
         for ii in moose.wildcardFind('/##[TYPE=VClamp]'):
-            print(ii.path)
+            print((ii.path))
         self.runsim(simtime)
-        print(tab, len(tab.vector))
+        print((tab, len(tab.vector)))
         pylab.plot(pylab.linspace(0, simtime, len(tab.vector)), tab.vector, 'kx')
         self.plot_vm()
 

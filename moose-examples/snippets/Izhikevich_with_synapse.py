@@ -1,49 +1,46 @@
 # __BROKEN__
-# Izhikevich_with_synapse.py --- 
-# 
+# Izhikevich_with_synapse.py ---
+#
 # Filename: Izhikevich_with_synapse.py
-# Description: 
+# Description:
 # Author: Subhasis Ray
-# Maintainer: 
+# Maintainer:
 # Created: Sat Apr 19 10:47:15 2014 (+0530)
-# Version: 
-# Last-Updated: 
-#           By: 
+# Version:
+# Last-Updated:
+#           By:
 #     Update #: 0
-# URL: 
-# Keywords: 
-# Compatibility: 
-# 
-# 
+# URL:
+# Keywords:
+# Compatibility:
+#
+#
 
-# Commentary: 
-# 
-# This shows the use of SynChan with Izhikevich neuron. This can be
-# used for creating a network of Izhikevich neurons.
-# 
-# 
+# Commentary:
+#
+#
 
 # Change log:
-# 
-# 
-# 
-# 
+#
+#
+#
+#
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
 # published by the Free Software Foundation; either version 3, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program; see the file COPYING.  If not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 # Floor, Boston, MA 02110-1301, USA.
-# 
-# 
+#
+#
 
 # Code:
 
@@ -57,11 +54,11 @@ def make_neuron(path):
     """Create a neuron with parameters set for tonic_bursting."""
     nrn = moose.IzhikevichNrn(path)
     # "tonic_bursting":   ['C', 0.02  ,    0.2  ,   -50.0,     2.0  ,      15.0,      -70.0,  220.0], # Fig. 1.C
-    print((path,dir(nrn)))
+    #print((path,dir(nrn)))
     nrn.alpha = 0.04
     nrn.beta = 5.0
     nrn.gamma = 140.0
-    #nrn.Rm = 1.0           # FIXME: IzhikevichNrn does not have this field. 
+    #nrn.Rm = 1.0           # FIXME: IzhikevichNrn does not have this field.
     nrn.a = 0.02
     nrn.b = 0.2
     nrn.c = -50.0
@@ -85,22 +82,23 @@ def make_synapse(path):
     syn.tau2 = 1.0 # ms
     syn.Gbar = 1.0 # mS
     syn.Ek = 0.0
-    syn.synapse.num = 1
+    synsh = moose.SimpleSynHandler( path + '/sh' )
+    synsh.synapse.num = 1
     # syn.bufferTime = 1.0 # ms
-    syn.synapse.delay = 1.0
-    syn.synapse.weight = 1.0    
-    print(('Synapses:', len(syn.synapse), 'w=', syn.synapse[0].weight))
+    synsh.synapse.delay = 1.0
+    synsh.synapse.weight = 1.0
+    print(('Synapses:', len(synsh.synapse), 'w=', synsh.synapse[0].weight))
     spikegen = moose.SpikeGen('%s/spike' % (syn.parent.path))
     spikegen.edgeTriggered = False # Make it fire continuously when input is high
     spikegen.refractT = 10.0 # With this setting it will fire at 1 s / 10 ms = 100 Hz
     spikegen.threshold = 0.5
     # This will send alternatind -1 and +1 to SpikeGen to make it fire
-    spike_stim = moose.PulseGen('%s/spike_stim' % (syn.parent.path)) 
+    spike_stim = moose.PulseGen('%s/spike_stim' % (syn.parent.path))
     spike_stim.delay[0] = 50.0
     spike_stim.level[0] = 1.0
     spike_stim.width[0] = 100.0
     moose.connect(spike_stim, 'output', spikegen, 'Vm')
-    m = moose.connect(spikegen, 'spikeOut', syn.synapse[0], 'addSpike')
+    m = moose.connect(spikegen, 'spikeOut', synsh.synapse[0], 'addSpike')
     return syn, spikegen
 
 def make_model():
@@ -127,7 +125,12 @@ def setup_data_recording(neuron, pulse, synapse, spikegen):
     moose.connect(spikegen, 'spikeOut', spike_in_table, 'spike')
     return [vm_table, inject_table, gk_table, spike_in_table]
 
-if __name__ == '__main__':
+def main():
+    """
+    This shows the use of SynChan with Izhikevich neuron. This can be
+    used for creating a network of Izhikevich neurons.
+    """
+    
     simtime = 200.0
     stepsize = 10.0
     model_dict = make_model()
@@ -152,6 +155,10 @@ if __name__ == '__main__':
     pylab.plot(pylab.linspace(0, simtime, len(gk.vector)), gk.vector, label='Gk (mS)')
     pylab.legend()
     pylab.show()
-    
-# 
+
+if __name__ == '__main__':
+    main()
+
+
+#
 # Izhikevich_with_synapse.py ends here

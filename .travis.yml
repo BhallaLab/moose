@@ -1,13 +1,14 @@
-language: cpp
+sudo : required
+dist : trusty
+group : edge
+
 compiler:
     - gcc
     - clang
 os:
     - linux
     - osx
-matrix:
-    allow_failures:
-        - os: osx
+
 branches:
     only:
         - master
@@ -17,38 +18,18 @@ notifications:
             - dilawar.s.rajput@gmail.com
             - bhalla@ncbs.res.in
             - hrani@ncbs.res.in
-            - ray.subhasis@gmail.com
 
         on_success: change
         on_failure: always
 
 env:
     - CTEST_MODEL=Nightly
-cache: apt
-before_script:
-    - sudo apt-get update -qq
-    - sudo apt-get install libxml2-dev libbz2-dev wget
-    - sudo apt-get install libhdf5-serial-dev
-    - sudo apt-get install python-numpy python-setuptools python-networkx python-pip
-    - sudo apt-get install cmake cdbs
-    - sudo apt-get install python-suds python-matplotlib python-nose
-    - sudo apt-get install python-qt4-dev python-qt4-gl python-sip-dev libqt4-dev libopenscenegraph-dev
-    - sudo apt-get install doxygen python-sphinx
-    - sudo apt-get install git-buildpackage
 
-install:
-    - wget http://ftp.debian.org/debian/pool/main/g/gsl/libgsl0ldbl_1.16+dfsg-2_amd64.deb -O gsl_1.16.deb
-    - sudo dpkg -i gsl_1.16.deb
-    - wget http://ftp.debian.org/debian/pool/main/g/gsl/libgsl0-dev_1.16+dfsg-2_amd64.deb -O gsl_1.16-dev.deb
-    - sudo dpkg -i gsl_1.16-dev.deb
-    - sudo apt-get install -f
-    - sudo ldconfig /usr/lib64
+before_script:
+    - if [ "$TRAVIS_OS_NAME" == "linux" ]; then ./_travis/prepare_linux.sh ; fi
+    - if [ "$TRAVIS_OS_NAME" == "osx" ]; then ./_travis/prepare_osx.sh ; fi
+
 
 script:
-    - git buildpackage  --git-ignore-new -uc -us
-    - sudo dpkg -i ../moose*.deb
-
-after_success:
-    - python -c 'import moose'
-    - python -c 'import moogli'
-    - cd __moose-core_build && ctest --output-on-failure
+    - if [ "$TRAVIS_OS_NAME" == "linux" ]; then ./_travis/build_on_linux.sh ; fi
+    - if [ "$TRAVIS_OS_NAME" == "osx" ]; then ./_travis/build_on_osx.sh ; fi

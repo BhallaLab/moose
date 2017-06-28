@@ -323,7 +323,7 @@ CPP_CLI_SUPPORT        = NO
 # of private inheritance when no explicit protection keyword is present.
 # The default value is: NO.
 
-SIP_SUPPORT            = YES
+SIP_SUPPORT            = NO
 
 # For Microsoft's IDL there are propget and propput attributes to indicate
 # getter and setter methods for a property. Setting this option to YES will make
