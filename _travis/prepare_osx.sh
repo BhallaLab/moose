@@ -18,7 +18,4 @@
 #===============================================================================
 
 set -o nounset                              # Treat unset variables as an error
-brew install gsl
-brew install cmake 
-brew install homebrew/science/hdf5
-brew install homebrew/science/matplotlib
+echo "Nothing to do here. The moose.rb formula will install all dependecnies"
