@@ -79,6 +79,11 @@ class SparseMsg: public Msg
 		double getProbability() const;
 		void setProbability( double value );
 
+                //
+                vector< unsigned int > getMatrixEntry() const;
+                vector< unsigned int > getColIndex() const;
+                vector< unsigned int > getRowStart() const;
+
 		long getSeed() const;
 		void setSeed( long value );
 
