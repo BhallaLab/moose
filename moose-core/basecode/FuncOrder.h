@@ -7,7 +7,7 @@
 ** See the file COPYING.LIB for the full notice.
 **********************************************************************/
 /**
- * Utility function for sorting by function pointer. 
+ * Utility function for sorting by function pointer.
  * Used in Element::msgDigest
  */
 

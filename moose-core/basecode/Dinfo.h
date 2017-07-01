@@ -26,7 +26,7 @@ class DinfoBase
 		virtual unsigned int sizeIncrement() const = 0;
 
 		/**
-		 * Return a newly allocated copy of the original data, repeated 
+		 * Return a newly allocated copy of the original data, repeated
 		 * copyEntries times. Orig data untouched.
 		 * Analogous to copying a vector into a bigger one. Repeat the
 		 * original data as many times as possible.
@@ -36,7 +36,7 @@ class DinfoBase
 
 		/**
 		 * Assigns data contents from 'orig' over to 'copy'. Tiles the
-		 * origEntries onto the copyEntries. So if there are fewer 
+		 * origEntries onto the copyEntries. So if there are fewer
 		 * origEntries, the orig data contents are repeated till the
 		 * copy is full.
 		 */
@@ -64,14 +64,14 @@ template< class D > class Dinfo: public DinfoBase
 			: sizeIncrement_( sizeof( D ) )
 		{;}
 		Dinfo( bool isOneZombie )
-			: DinfoBase( isOneZombie ), 
+			: DinfoBase( isOneZombie ),
 				sizeIncrement_( isOneZombie ? 0 : sizeof( D ) )
 		{;}
 
 		char* allocData( unsigned int numData ) const {
 			if ( numData == 0 )
 				return 0;
-			else 
+			else
 				return reinterpret_cast< char* >( new( nothrow) D[ numData ] );
 		}
 
@@ -127,7 +127,7 @@ template< class D > class Dinfo: public DinfoBase
 					tgt[i +j] = origData[j];
 				}
 				// memcpy( data + i * sizeof( D ), orig, sizeof( D ) * numCopies );
-				// Memcpy is fast but it does not permit for C++ to do 
+				// Memcpy is fast but it does not permit for C++ to do
 				// various constructor and assignment operations that are
 				// important if D has pointers in it.
 			}

@@ -12,7 +12,7 @@
 class ProcInfo
 {
     public:
-        ProcInfo() 
+        ProcInfo()
             : dt( 1.0 ), currTime( 0.0 )
         {;}
         double dt;

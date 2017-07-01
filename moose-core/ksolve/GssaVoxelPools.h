@@ -98,7 +98,7 @@ private:
      */
     vector< double > v_;
     // Possibly we should put independent RNGS, so save one here.
-	
+
 	// Count how many times each reaction has fired.
 	vector< unsigned int > numFire_;
 

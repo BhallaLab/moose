@@ -25,12 +25,12 @@
  * which duplicate the same reactions, but does not diffuse to other
  * spine heads.
  * Instead it has an effective diffusion constant to the parent
- * dendrite compartment, obtained by treating the spine neck as a 
+ * dendrite compartment, obtained by treating the spine neck as a
  * diffusion barrier with zero volume.
  */
 class NeuroMesh: public MeshCompt
 {
-	public: 
+	public:
 		NeuroMesh();
 		NeuroMesh( const NeuroMesh& other );
 		~NeuroMesh();
@@ -49,13 +49,13 @@ class NeuroMesh: public MeshCompt
 		// Field assignment stuff
 		//////////////////////////////////////////////////////////////////
 
-		/** 
+		/**
 		 * This overloaded function sets up a presumed contiguous set of
- 		 * compartments, complains if they are not contiguous due to the 
+ 		 * compartments, complains if they are not contiguous due to the
 		 * check in NeuroNode::traverse.
- 		 * 
-		 * The 'path' argument specifies a wildcard list of compartments, 
-		 * which can be also a comma-separated explicit list. Does not 
+ 		 *
+		 * The 'path' argument specifies a wildcard list of compartments,
+		 * which can be also a comma-separated explicit list. Does not
 		 * have to be in any particular order.
  		 */
 		void setSubTreePath( const Eref& e, string path	);
@@ -138,7 +138,7 @@ class NeuroMesh: public MeshCompt
 		void innerSetNumEntries( unsigned int n );
 
 		/**
-		 * Inherited virtual func. Returns volume of soma and whole 
+		 * Inherited virtual func. Returns volume of soma and whole
 		 * dendritic tree of neuron, excluding spines. Any axonal
 		 * compartments are also included.
 		 */
@@ -150,11 +150,11 @@ class NeuroMesh: public MeshCompt
 		 * The length and diameter of each compartment are scaled by
 		 * the same factor = volscale^(1/3)
 		 * The rescaling carries through to the spines and PSDs, which
-		 * are also updated. They are not permitted to 
+		 * are also updated. They are not permitted to
 		 * change their own volumes.
 		 */
 		bool vSetVolumeNotRates( double volume );
-		
+
 		//////////////////////////////////////////////////////////////////
 		// Dest funcs
 		//////////////////////////////////////////////////////////////////
@@ -170,7 +170,7 @@ class NeuroMesh: public MeshCompt
 		);
 
 		void innerHandleNodeInfo(
-			const Eref& e, 
+			const Eref& e,
 			unsigned int numNodes, unsigned int numThreads );
 
 		// void transmitChange( const Eref& e, double oldVol );
@@ -188,14 +188,14 @@ class NeuroMesh: public MeshCompt
 		//////////////////////////////////////////////////////////////////
 		// inherited virtual funcs for Boundary
 		//////////////////////////////////////////////////////////////////
-		
-		void matchMeshEntries( const ChemCompt* other, 
+
+		void matchMeshEntries( const ChemCompt* other,
 			vector< VoxelJunction > & ret ) const;
 
-		void matchCubeMeshEntries( const ChemCompt* other, 
+		void matchCubeMeshEntries( const ChemCompt* other,
 			vector< VoxelJunction > & ret ) const;
 
-		void matchNeuroMeshEntries( const ChemCompt* other, 
+		void matchNeuroMeshEntries( const ChemCompt* other,
 			vector< VoxelJunction > & ret ) const;
 
 		/**
@@ -206,12 +206,12 @@ class NeuroMesh: public MeshCompt
 		 * Doesn't worry about whether this distance is inside or outside
 		 * cell.
 		 */
-		double nearest( double x, double y, double z, 
+		double nearest( double x, double y, double z,
 						unsigned int& index ) const;
-	
-		void indexToSpace( unsigned int index, 
+
+		void indexToSpace( unsigned int index,
 						double& x, double& y, double& z ) const;
-		
+
 
 		//////////////////////////////////////////////////////////////////
 		// Utility functions for building tree.
@@ -246,8 +246,8 @@ class NeuroMesh: public MeshCompt
 		 * The first two are classified into the shaft_ vector.
 		 */
 		bool filterSpines( Id compt );
-		/** 
-		 * converts the parents_ vector from identifying the parent 
+		/**
+		 * converts the parents_ vector from identifying the parent
 		 * NeuroNode to identifying the parent voxel, for each shaft entry.
  		 */
 		void updateShaftParents();
@@ -287,7 +287,7 @@ class NeuroMesh: public MeshCompt
 		vector< unsigned int > nodeIndex_;
 
 		/**
-		 * Volscale pre-calculations for each MeshEntry. 
+		 * Volscale pre-calculations for each MeshEntry.
 		 * vs = #molecules / vol
 		 * where vol is expressed in m^3.
 		 */
@@ -298,7 +298,7 @@ class NeuroMesh: public MeshCompt
 		 * This is the cross-section area of the middle of each voxel.
 		 */
 		vector< double > area_;
-		
+
 		/// Pre-calculation of length of each MeshEntry
 		vector< double > length_;
 
@@ -311,13 +311,13 @@ class NeuroMesh: public MeshCompt
 		 * been created, and a spineList message sent from the NeuroMesh
 		 * to the SpineMesh.
 		 */
-		bool separateSpines_; 
+		bool separateSpines_;
 
 		string geometryPolicy_;
 
 		/**
 		 * Decides how finely to subdivide diffLength_ or radius or cubic
-		 * mesh side when computing surfacearea of intersections with 
+		 * mesh side when computing surfacearea of intersections with
 		 * CubeMesh. Defaults to 0.1.
 		 */
 		double surfaceGranularity_;
@@ -330,10 +330,10 @@ class NeuroMesh: public MeshCompt
 		vector< Id > head_;	/// Id of head compartment
 		vector< unsigned int > parent_; /// Index of parent voxel of spines
 		/**
-		 * Index of parent voxel of each voxel. The root voxel has a 
+		 * Index of parent voxel of each voxel. The root voxel has a
 		 * parent of -1.
 		 */
-		vector< unsigned int > parentVoxel_; 
+		vector< unsigned int > parentVoxel_;
 };
 
 

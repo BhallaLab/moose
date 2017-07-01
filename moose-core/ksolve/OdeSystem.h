@@ -27,7 +27,7 @@ class OdeSystem {
 
         std::string method;
         // GSL stuff
-        
+
 #ifdef USE_GSL
         gsl_odeiv2_system gslSys;
         const gsl_odeiv2_step_type* gslStep;

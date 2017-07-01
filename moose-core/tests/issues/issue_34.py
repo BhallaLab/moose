@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Issue 34 on github.
 import moose
 import moose.utils as mu

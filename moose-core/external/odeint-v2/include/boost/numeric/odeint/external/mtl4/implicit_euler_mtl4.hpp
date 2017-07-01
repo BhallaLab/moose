@@ -1,6 +1,6 @@
 /*
 [begin_description]
-Modification of the implicit Euler method, works with the MTL4 matrix library only. 
+Modification of the implicit Euler method, works with the MTL4 matrix library only.
 [end_description]
 
 Copyright 2012-2013 Andreas Angelopoulos

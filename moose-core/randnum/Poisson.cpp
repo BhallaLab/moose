@@ -1,6 +1,6 @@
 /*******************************************************************
  * File:            Poisson.cpp
- * Description:      
+ * Description:
  * Author:          Subhasis Ray
  * E-mail:          ray.subhasis@gmail.com
  * Created:         2007-11-01 16:09:38
@@ -62,7 +62,7 @@ Poisson::~Poisson()
     if (gammaGen_)
     {
         delete gammaGen_;
-    }    
+    }
 }
 
 
@@ -117,12 +117,12 @@ double Poisson::getNextSample() const
 double Poisson::poissonSmall(const Poisson& poisson)
 {
     double product = 1.0;
-    
+
     int i = 0;
     while ( product > poisson.mValue_ )
     {
         product *= mtrand();
-        ++i;        
+        ++i;
     }
     return i;
 }
@@ -140,21 +140,21 @@ double Poisson::poissonSmall(const Poisson& poisson)
     static double m_value = floor(0.875*mean_); // alpha = 7/8 = 0.875 is a good value according to Ahrens and Dieter
     static Gamma gammaGen(m_value, 1.0);
     double n_value;
-    
-    double x_value = gammaGen.getNextSample();    
-    
+
+    double x_value = gammaGen.getNextSample();
+
     if ( x_value < mean_ )
     {
-        Poisson poissonGen(mean_ - x_value);        
+        Poisson poissonGen(mean_ - x_value);
         n_value = m_value + poissonGen.getNextSample();
     }
     else
     {
         Binomial binomialGen((long)m_value-1,mean_/x_value);
-        n_value = binomialGen.getNextSample();        
+        n_value = binomialGen.getNextSample();
     }
-    
-    return n_value;    
+
+    return n_value;
 }
 */
  // WATCH OUT: this is recursive. look for better alternative.
@@ -178,27 +178,27 @@ double Poisson::poissonLarge(const Poisson& poisson)
 int main(int argc, char **argv)
 {
     double mean = 4;
-    
+
     if (argc > 1)
         mean = atof(argv[1]);
-    
-        
+
+
     double sum = 0.0;
-    double sd = 0.0;    
+    double sd = 0.0;
     vector <double> samples;
     Poisson poisson(mean);
     int MAX_SAMPLE = 100000;
     unsigned index;
-    
-    
+
+
     cout << "epsilon = " << getMachineEpsilon() << endl;
     for ( int i = 0; i < MAX_SAMPLE; ++i )
     {
         double p = poisson.getNextSample();//aliasMethod();
         samples.push_back(p);
-                
+
         sum += p;
-        sd += (p - mean)*(p - mean);        
+        sd += (p - mean)*(p - mean);
     }
     mean = sum/MAX_SAMPLE;
     sd = sqrt(sd/MAX_SAMPLE);
@@ -208,11 +208,11 @@ int main(int argc, char **argv)
     unsigned i = 0;
     unsigned start = 0;
     index = 0;
-    
+
     while ( i < samples.size() )
     {
         int count = 0;
-        
+
         while( ( i < samples.size() ) && (samples[i] == samples[start] ))
         {
             ++count;
@@ -222,9 +222,9 @@ int main(int argc, char **argv)
         {
             cout << index++ << " " << 0 << endl;
         }
-        
-        cout << index++ << " " << count << endl;        
-        start = i;     
+
+        cout << index++ << " " << count << endl;
+        start = i;
     }
     return 0;
 }

@@ -64,7 +64,7 @@ void RollingMatrix::sumIntoRow( const vector< double >& input, unsigned int row 
 }
 
 
-double RollingMatrix::dotProduct( const vector< double >& input, 
+double RollingMatrix::dotProduct( const vector< double >& input,
 				unsigned int row, unsigned int startColumn ) const
 {
 	unsigned int index = (row + currentStartRow_) % nrows_;
@@ -82,7 +82,7 @@ double RollingMatrix::dotProduct( const vector< double >& input,
 	return ret;
 }
 
-void RollingMatrix::correl( vector< double >& ret, 
+void RollingMatrix::correl( vector< double >& ret,
 				const vector< double >& input, unsigned int row) const
 
 {
@@ -103,7 +103,7 @@ void RollingMatrix::rollToNextRow()
 {
 	if ( currentStartRow_ == 0 )
 		currentStartRow_ = nrows_ - 1;
-	else 
+	else
 		currentStartRow_--;
 	zeroOutRow( 0 );
 }

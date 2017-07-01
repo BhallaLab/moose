@@ -28,7 +28,7 @@ enum NormalGenerator
 
 class Normal : public Probability
 {
-    
+
   public:
     Normal(double mean=0.0, double variance=1.0, NormalGenerator algorithm=ALIAS);
     double getMean()  const;
@@ -47,8 +47,8 @@ class Normal : public Probability
     static double BoxMueller();
     static double aliasMethod();
     static double gslZiggurat();
-    static bool testAcceptance(unsigned long t, unsigned long v);    
+    static bool testAcceptance(unsigned long t, unsigned long v);
 };
 
-    
+
 #endif

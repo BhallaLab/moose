@@ -24,7 +24,7 @@ from moose.neuroml.NeuroML import NeuroML
 import numpy as np
 import unittest
 
-soma_ = None 
+soma_ = None
 cellSpikeTable_ = None
 
 def loadModel(filename):
@@ -53,7 +53,7 @@ def applyCurrent(currenti):
     if len(spikesList)>0:
         spikesList = spikesList[np.where(spikesList>0.0)[0]]
         spikesNow = len(spikesList)
-    else: 
+    else:
         spikesNow = 0.0
     print("For injected current {0}, no of spikes in {1} second: {2}".format(
         currenti, 1.0, spikesNow )

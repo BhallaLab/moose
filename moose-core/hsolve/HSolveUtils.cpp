@@ -13,7 +13,7 @@ void HSolveUtils::initialize( Id object )
 {
 	//~ ProcInfoBase p;
 	//~ SetConn c( object(), 0 );
-	//~ 
+	//~
 	//~ if ( object()->className() == "Compartment" )
 		//~ moose::Compartment::reinitFunc( &c, &p );
 	//~ else if ( object()->className() == "HHChannel" )
@@ -79,13 +79,13 @@ int HSolveUtils::gates(
 {
 //        dump("HSolveUtils::gates() is not tested with new hsolve api", "FIXME");
 	unsigned int oldSize = ret.size();
-	
+
 	static string gateName[] = {
 		string( "gateX[0]" ),
 		string( "gateY[0]" ),
 		string( "gateZ[0]" )
 	};
-	
+
 	static string powerField[] = {
 		string( "Xpower" ),
 		string( "Ypower" ),
@@ -98,7 +98,7 @@ int HSolveUtils::gates(
 
             if ( power > 0.0 ) {
                 // string gatePath = moose::joinPath(channel.path(), gateName[i]);
-                string gatePath = moose::fixPath( channel.path() ) + 
+                string gatePath = moose::fixPath( channel.path() ) +
 						"/" +  gateName[i];
                 Id gate( gatePath );
 
@@ -152,7 +152,7 @@ int HSolveUtils::caDepend( Id channel, vector< Id >& ret )
 
 //~ /**
  //~ * Finds the xmin and xmax for the lookup tables (A and B) belonging to a gate.
- //~ * 
+ //~ *
  //~ * 'min' will be the smaller of the 2 mins.
  //~ * 'max' will be the greater of the 2 maxs.
  //~ */
@@ -163,30 +163,30 @@ int HSolveUtils::caDepend( Id channel, vector< Id >& ret )
 //~ {
 	//~ Id A;
 	//~ Id B;
-	//~ 
+	//~
 	//~ bool success;
 	//~ success = lookupGet< Id, string >( gate(), "lookupChild", A, "A" );
 	//~ if ( ! success ) {
 		//~ cerr << "Error: Interpol A not found as child of " << gate()->name();
 		//~ return 0;
 	//~ }
-	//~ 
+	//~
 	//~ success = lookupGet< Id, string >( gate(), "lookupChild", B, "B" );
 	//~ if ( ! success ) {
 		//~ cerr << "Error: Interpol B not found as child of " << gate()->name();
 		//~ return 0;
 	//~ }
-	//~ 
+	//~
 	//~ double Amin, Amax;
 	//~ double Bmin, Bmax;
 	//~ get< double >( A(), "xmin", Amin );
 	//~ get< double >( A(), "xmax", Amax );
 	//~ get< double >( B(), "xmin", Bmin );
 	//~ get< double >( B(), "xmax", Bmax );
-	//~ 
+	//~
 	//~ min = Amin < Bmin ? Amin : Bmin;
 	//~ max = Amax > Bmax ? Amax : Bmax;
-	//~ 
+	//~
 	//~ return 1;
 //~ }
 
@@ -198,7 +198,7 @@ unsigned int HSolveUtils::Grid::size()
 double HSolveUtils::Grid::entry( unsigned int i )
 {
 	assert( i <= divs_ + 1 );
-	
+
 	return ( min_ + dx_ * i );
 }
 
@@ -255,20 +255,20 @@ void HSolveUtils::rates(
 //~ {
 	//~ Id A;
 	//~ Id B;
-	//~ 
+	//~
 	//~ bool success;
 	//~ success = lookupGet< Id, string >( gate(), "lookupChild", A, "A" );
 	//~ if ( ! success ) {
 		//~ cerr << "Error: Interpol A not found as child of " << gate()->name();
 		//~ return 0;
 	//~ }
-	//~ 
+	//~
 	//~ success = lookupGet< Id, string >( gate(), "lookupChild", B, "B" );
 	//~ if ( ! success ) {
 		//~ cerr << "Error: Interpol B not found as child of " << gate()->name();
 		//~ return 0;
 	//~ }
-	//~ 
+	//~
 	//~ get< int >( A(), "mode", AMode );
 	//~ get< int >( B(), "mode", BMode );
 	//~ return 1;
@@ -286,16 +286,16 @@ int HSolveUtils::targets(
 	bool include )   // Default: true
 {
 	vector< string > filter_v;
-	
+
 	if ( filter != "" )
 		filter_v.push_back( filter );
-	
+
 	return targets( object, msg, target, filter_v, include );
 }
 
 /**
- * Appends to 'target' any destination objects of messages of the 
- * 	specified name found on the object. 
+ * Appends to 'target' any destination objects of messages of the
+ * 	specified name found on the object.
  *	The filter restricts the returns to those objects of the specified class
  *	include is a flag, when false it flips the returns to objects _not_ of
  *	the specified class.
@@ -311,14 +311,14 @@ int HSolveUtils::targets(
 	bool include )                     // Default: true
 {
 	unsigned int oldSize = target.size();
-	
+
 	vector< Id > all;
 	Element* e = object.element();
 	const Finfo* f = e->cinfo()->findFinfo( msg );
 	if ( !f ) // Might not find SymCompartment Finfos if it is a Compartment
 		return 0;
 	e->getNeighbors( all, f );
-	
+
 	vector< Id >::iterator ia;
 	if ( filter.empty() )
 		target.insert( target.end(), all.begin(), all.end() );
@@ -331,11 +331,11 @@ int HSolveUtils::targets(
 					filter.end(),
 					className
 				) != filter.end();
-			
+
 			if ( ( hit && include ) || ( !hit && !include ) )
 				target.push_back( *ia );
 		}
-	
+
 	return target.size() - oldSize;
 }
 
@@ -350,22 +350,22 @@ void testHSolveUtils( )
         //TEST_BEGIN;
 	Shell* shell = reinterpret_cast< Shell* >( Id().eref().data() );
 	bool success;
-	
+
 	Id n = shell->doCreate( "Neutral", Id(), "n", 1 );
-	
+
 	/**
 	 *  First we test the functions which return the compartments linked to a
 	 *  given compartment: adjacent(), and children().
-	 *  
+	 *
 	 *  A small tree is created for this:
-	 *  
+	 *
 	 *               c0
 	 *                L c1
 	 *                   L c2
 	 *                   L c3
 	 *                   L c4
 	 *                   L c5
-	 *  
+	 *
 	 *  (c0 is the parent of c1. c1 is the parent of c2, c3, c4, c5.)
 	 */
 	Id c[ 6 ];
@@ -375,7 +375,7 @@ void testHSolveUtils( )
 	c[ 3 ] = shell->doCreate( "Compartment", n, "c3", 1 );
 	c[ 4 ] = shell->doCreate( "Compartment", n, "c4", 1 );
 	c[ 5 ] = shell->doCreate( "Compartment", n, "c5", 1 );
-	
+
 	ObjId mid;
 	mid = shell->doAddMsg( "Single", c[ 0 ], "axial", c[ 1 ], "raxial" );
 	ASSERT( ! mid.bad(), "Linking compartments" );
@@ -387,11 +387,11 @@ void testHSolveUtils( )
 	ASSERT( ! mid.bad(), "Linking compartments" );
 	mid = shell->doAddMsg( "Single", c[ 1 ], "axial", c[ 5 ], "raxial" );
 	ASSERT( ! mid.bad(), "Linking compartments" );
-	
+
 	vector< Id > found;
 	unsigned int nFound;
-	
-	/* 
+
+	/*
 	 * Testing version 1 of HSolveUtils::adjacent.
 	 * It finds all neighbors of given compartment.
 	 */
@@ -401,7 +401,7 @@ void testHSolveUtils( )
 	// c1 is adjacent
 	ASSERT( nFound == 1, "Finding adjacent compartments" );
 	ASSERT( found[ 0 ] == c[ 1 ], "Finding adjacent compartments" );
-	
+
 	// Neighbors of c1
 	found.clear();
 	nFound = HSolveUtils::adjacent( c[ 1 ], found );
@@ -416,14 +416,14 @@ void testHSolveUtils( )
 			find( found.begin(), found.end(), c[ i ] ) != found.end();
 		ASSERT( success, "Finding adjacent compartments" );
 	}
-	
+
 	// Neighbors of c2
 	found.clear();
 	nFound = HSolveUtils::adjacent( c[ 2 ], found );
 	// c1 is adjacent
 	ASSERT( nFound == 1, "Finding adjacent compartments" );
 	ASSERT( found[ 0 ] == c[ 1 ], "Finding adjacent compartments" );
-	
+
 	/*
 	 * Testing version 2 of HSolveUtils::adjacent.
 	 * It finds all but one neighbors of given compartment.
@@ -439,7 +439,7 @@ void testHSolveUtils( )
 			find( found.begin(), found.end(), c[ i ] ) != found.end();
 		ASSERT( success, "Finding adjacent compartments" );
 	}
-	
+
 	// Neighbors of c1 (excluding c2)
 	found.clear();
 	nFound = HSolveUtils::adjacent( c[ 1 ], c[ 2 ], found );
@@ -454,20 +454,20 @@ void testHSolveUtils( )
 			find( found.begin(), found.end(), c[ i ] ) != found.end();
 		ASSERT( success, "Finding adjacent compartments" );
 	}
-	
+
 	// Neighbors of c2 (excluding c1)
 	found.clear();
 	nFound = HSolveUtils::adjacent( c[ 2 ], c[ 1 ], found );
 	// None adjacent, if c1 is excluded
 	ASSERT( nFound == 0, "Finding adjacent compartments" );
-	
+
 	// Neighbors of c2 (excluding c3)
 	found.clear();
 	nFound = HSolveUtils::adjacent( c[ 2 ], c[ 3 ], found );
 	// c1 is adjacent, while c3 is not even connected
 	ASSERT( nFound == 1, "Finding adjacent compartments" );
 	ASSERT( found[ 0 ] == c[ 1 ], "Finding adjacent compartments" );
-	
+
 	/*
 	 * Testing HSolveUtils::children.
 	 * It finds all compartments which are dests for the "axial" message.
@@ -478,7 +478,7 @@ void testHSolveUtils( )
 	ASSERT( nFound == 1, "Finding child compartments" );
 	// c1 is a child
 	ASSERT( found[ 0 ] == c[ 1 ], "Finding child compartments" );
-	
+
 	// Children of c1
 	found.clear();
 	nFound = HSolveUtils::children( c[ 1 ], found );
@@ -489,13 +489,13 @@ void testHSolveUtils( )
 			find( found.begin(), found.end(), c[ i ] ) != found.end();
 		ASSERT( success, "Finding child compartments" );
 	}
-	
+
 	// Children of c2
 	found.clear();
 	nFound = HSolveUtils::children( c[ 2 ], found );
 	// c2 has no children
 	ASSERT( nFound == 0, "Finding child compartments" );
-	
+
 	// Clean up
 	shell->doDelete( n );
         cout << "." << flush;

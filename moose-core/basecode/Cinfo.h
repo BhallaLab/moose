@@ -22,7 +22,7 @@ class Cinfo
 			 * The Cinfo intializer is used for static initialization
 			 * of all the MOOSE Cinfos. Each MOOSE class must set up
 			 * a function to build its Cinfo. This function must be
-			 * called statically in the MOOSE class .cpp file. 
+			 * called statically in the MOOSE class .cpp file.
 			 * Note how it takes the base *Cinfo as an argument. This
 			 * lets us call the base Cinfo initializer when making
 			 * each Cinfo class, thus ensuring the correct static
@@ -72,7 +72,7 @@ class Cinfo
 
 			/**
 			 * Used in derived classes, to replace the original OpFunc with
-			 * the new one. 
+			 * the new one.
 			 */
 			void overrideFunc( FuncId fid, const OpFunc* f );
 
@@ -122,7 +122,7 @@ class Cinfo
 			const Cinfo* baseCinfo() const;
 
 			/**
-			 * Finds Finfo by name in the list for this class, 
+			 * Finds Finfo by name in the list for this class,
 			 * ignoring any element-specific fields.
 			 * Returns 0 on failure.
 			 */
@@ -164,7 +164,7 @@ class Cinfo
 		/////////////////////////////////////////////////////////////////
 		// Functions here for the MOOSE Cinfo inspection class
 		/////////////////////////////////////////////////////////////////
-			
+
 			/**
 			 * Return the documentation string
 			 */
@@ -241,23 +241,23 @@ class Cinfo
 			void setNumFinfo( unsigned int v );
 
 			/**
-			 * Returns the name of the SrcFinfo having the specified 
+			 * Returns the name of the SrcFinfo having the specified
 			 * BindIndex, on this Cinfo.
 			 * Returns "" on failure.
 			 */
 			 const string& srcFinfoName( BindIndex bid ) const;
 
 			/**
-			 * Returns the name of the DestFinfo having the specified 
+			 * Returns the name of the DestFinfo having the specified
 			 * FuncId, on this Cinfo.
 			 * Returns "" on failure.
 			 */
 			 const string& destFinfoName( FuncId fid ) const;
 
-	
+
 
 			/**
-			 * Utility function used at init to create the inspection 
+			 * Utility function used at init to create the inspection
 			 * Elements for each of the Cinfos.
 			 */
 			static void makeCinfoElements( Id parent );
@@ -284,7 +284,7 @@ class Cinfo
 
 			BindIndex numBindIndex_;
 			std::map< std::string, std::string > doc_;
-			
+
 			bool banCreation_;
 
 			/**

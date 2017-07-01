@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 ## Description: class NetworkML for loading NetworkML from file or xml element into MOOSE
 ## Version 1.0 by Aditya Gilra, NCBS, Bangalore, India, 2011 for serial MOOSE
 ## Version 1.5 by Niraj Dudani, NCBS, Bangalore, India, 2012, ported to parallel MOOSE
@@ -42,7 +43,7 @@ class NetworkML():
         self.model_dir = nml_params['model_dir']
 
     def readNetworkMLFromFile(self,filename,cellSegmentDict,params={}):
-        """ 
+        """
         specify tweak params = {'excludePopulations':[popname1,...], 'excludeProjections':[projname1,...], \
             'onlyInclude':{'includePopulation':(popname,[id1,...]),'includeProjections':(projname1,...)} }
         If excludePopulations is present, then excludeProjections must also be present:
@@ -88,7 +89,7 @@ class NetworkML():
         self.params = params
 
         self.populationDict = {}
-        [ self.createPopulation(pop) for pop in 
+        [ self.createPopulation(pop) for pop in
                 self.network.findall(".//{"+nml_ns+"}population")
                 ]
 
@@ -96,7 +97,7 @@ class NetworkML():
         projections = self.network.find(".//{"+nml_ns+"}projections")
         if projections:
             # see pg 219 (sec 13.2) of Book of Genesis
-            if projections.attrib["units"] == 'Physiological Units': 
+            if projections.attrib["units"] == 'Physiological Units':
                 Efactor = 1e-3 # V from mV
                 Tfactor = 1e-3 # s from ms
             else:
@@ -109,12 +110,12 @@ class NetworkML():
             _logger.info("Creating input under /elec ")
             units = inputs.attrib['units']
             # see pg 219 (sec 13.2) of Book of Genesis
-            if units == 'Physiological Units': 
-                Vfactor, Tfactor, Ifactor = 1e-3, 1e-3, 1e-6 
+            if units == 'Physiological Units':
+                Vfactor, Tfactor, Ifactor = 1e-3, 1e-3, 1e-6
             else:
                 Vfactor, Tfactor, Ifactor = 1.0, 1.0, 1.0
             [ self.createInput(inputelem, Vfactor, Tfactor, Ifactor) for
-                    inputelem in self.network.findall(".//{"+nml_ns+"}input") 
+                    inputelem in self.network.findall(".//{"+nml_ns+"}input")
                     ]
 
         return (self.populationDict,self.projectionDict)
@@ -160,7 +161,7 @@ class NetworkML():
                 _logger.debug("Adding pulse at {0}: {1}".format(
                     segment_path, pulsegen.firstLevel )
                     )
-                    
+
                 _logger.debug("Connecting {0}:output to {1}:injectMst".format(
                     iclamp, compartment)
                     )
@@ -218,7 +219,7 @@ class NetworkML():
             y = float(location.attrib['y'])*self.length_factor
             z = float(location.attrib['z'])*self.length_factor
             self.translate_rotate(cell,x,y,z,zrotation)
-            
+
     def translate_rotate(self,obj,x,y,z,ztheta): # recursively translate all compartments under obj
         for childId in obj.children:
             try:
@@ -394,7 +395,7 @@ class NetworkML():
                 ## wrap Synapse element by moose.Synapse(synhandler.path+'/synapse') or synhandler.synapse
                 ## Synpase is an array element, first add to it, to addSpike-s, get/set weights, etc.
                 synhandler.numSynapses += 1
-                ## see Demos/snippets/synapse.py for an example of 
+                ## see Demos/snippets/synapse.py for an example of
                 ## how to connect multiple SpikeGens to the same SynChan
                 m = moose.connect(spikegen, 'spikeOut',
                                     synhandler.synapse[-1], 'addSpike', 'Single')

@@ -63,7 +63,7 @@ class NMDAChan: public SynChan
 		void assignIntCa( double v );
 ///////////////////////////////////////////////////
 		static const Cinfo* initCinfo();
-	private: 
+	private:
 		/// 1/eta
 		double KMg_A_;
 		/// 1/gamma
@@ -85,11 +85,11 @@ class NMDAChan: public SynChan
 					// not a const but depends on temperature
 					// const_ = F*valency/RT
 		static const double valency_; // Always +2.
-    
+
 ///////////////////////////////////////////////////
 // Utility function
 ///////////////////////////////////////////////////
-		
+
 };
 
 

@@ -397,7 +397,7 @@ private:
     template< class StateInOut >
     void extrapolate( size_t k , state_table_type &table , const value_matrix &coeff , StateInOut &xest )
     /* polynomial extrapolation, see http://www.nr.com/webnotes/nr3web21.pdf
-       uses the obtained intermediate results to extrapolate to dt->0 
+       uses the obtained intermediate results to extrapolate to dt->0
     */
     {
         static const value_type val1 = static_cast< value_type >( 1.0 );
@@ -518,7 +518,7 @@ private:
 /**
  * \class bulirsch_stoer
  * \brief The Bulirsch-Stoer algorithm.
- * 
+ *
  * The Bulirsch-Stoer is a controlled stepper that adjusts both step size
  * and order of the method. The algorithm uses the modified midpoint and
  * a polynomial extrapolation compute the solution.
@@ -534,7 +534,7 @@ private:
 
     /**
      * \fn bulirsch_stoer::bulirsch_stoer( value_type eps_abs , value_type eps_rel , value_type factor_x , value_type factor_dxdt )
-     * \brief Constructs the bulirsch_stoer class, including initialization of 
+     * \brief Constructs the bulirsch_stoer class, including initialization of
      * the error bounds.
      *
      * \param eps_abs Absolute tolerance level.
@@ -548,15 +548,15 @@ private:
      * \brief Tries to perform one step.
      *
      * This method tries to do one step with step size dt. If the error estimate
-     * is to large, the step is rejected and the method returns fail and the 
+     * is to large, the step is rejected and the method returns fail and the
      * step size dt is reduced. If the error estimate is acceptably small, the
-     * step is performed, success is returned and dt might be increased to make 
+     * step is performed, success is returned and dt might be increased to make
      * the steps as large as possible. This method also updates t if a step is
      * performed. Also, the internal order of the stepper is adjusted if required.
      *
-     * \param system The system function to solve, hence the r.h.s. of the ODE. 
+     * \param system The system function to solve, hence the r.h.s. of the ODE.
      * It must fulfill the Simple System concept.
-     * \param x The state of the ODE which should be solved. Overwritten if 
+     * \param x The state of the ODE which should be solved. Overwritten if
      * the step is successful.
      * \param t The value of the time. Updated if the step is successful.
      * \param dt The step size. Updated.
@@ -568,15 +568,15 @@ private:
      * \brief Tries to perform one step.
      *
      * This method tries to do one step with step size dt. If the error estimate
-     * is to large, the step is rejected and the method returns fail and the 
+     * is to large, the step is rejected and the method returns fail and the
      * step size dt is reduced. If the error estimate is acceptably small, the
-     * step is performed, success is returned and dt might be increased to make 
+     * step is performed, success is returned and dt might be increased to make
      * the steps as large as possible. This method also updates t if a step is
      * performed. Also, the internal order of the stepper is adjusted if required.
      *
-     * \param system The system function to solve, hence the r.h.s. of the ODE. 
+     * \param system The system function to solve, hence the r.h.s. of the ODE.
      * It must fulfill the Simple System concept.
-     * \param x The state of the ODE which should be solved. Overwritten if 
+     * \param x The state of the ODE which should be solved. Overwritten if
      * the step is successful.
      * \param dxdt The derivative of state.
      * \param t The value of the time. Updated if the step is successful.
@@ -591,13 +591,13 @@ private:
      * \note This method is disabled if state_type=time_type to avoid ambiguity.
      *
      * This method tries to do one step with step size dt. If the error estimate
-     * is to large, the step is rejected and the method returns fail and the 
+     * is to large, the step is rejected and the method returns fail and the
      * step size dt is reduced. If the error estimate is acceptably small, the
-     * step is performed, success is returned and dt might be increased to make 
+     * step is performed, success is returned and dt might be increased to make
      * the steps as large as possible. This method also updates t if a step is
      * performed. Also, the internal order of the stepper is adjusted if required.
      *
-     * \param system The system function to solve, hence the r.h.s. of the ODE. 
+     * \param system The system function to solve, hence the r.h.s. of the ODE.
      * It must fulfill the Simple System concept.
      * \param in The state of the ODE which should be solved.
      * \param t The value of the time. Updated if the step is successful.
@@ -612,13 +612,13 @@ private:
      * \brief Tries to perform one step.
      *
      * This method tries to do one step with step size dt. If the error estimate
-     * is to large, the step is rejected and the method returns fail and the 
+     * is to large, the step is rejected and the method returns fail and the
      * step size dt is reduced. If the error estimate is acceptably small, the
-     * step is performed, success is returned and dt might be increased to make 
+     * step is performed, success is returned and dt might be increased to make
      * the steps as large as possible. This method also updates t if a step is
      * performed. Also, the internal order of the stepper is adjusted if required.
      *
-     * \param system The system function to solve, hence the r.h.s. of the ODE. 
+     * \param system The system function to solve, hence the r.h.s. of the ODE.
      * It must fulfill the Simple System concept.
      * \param in The state of the ODE which should be solved.
      * \param dxdt The derivative of state.

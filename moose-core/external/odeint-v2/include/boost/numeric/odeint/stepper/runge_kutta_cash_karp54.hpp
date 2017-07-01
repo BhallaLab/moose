@@ -1,14 +1,14 @@
 /*
  [auto_generated]
  boost/numeric/odeint/stepper/runge_kutta_cash_karp54.hpp
- 
+
  [begin_description]
  Implementation of the Runge Kutta Cash Karp 5(4) method. It uses the generic error stepper.
  [end_description]
- 
+
  Copyright 2011-2013 Mario Mulansky
  Copyright 2011-2013 Karsten Ahnert
- 
+
  Distributed under the Boost Software License, Version 1.0.
  (See accompanying file LICENSE_1_0.txt or
  copy at http://www.boost.org/LICENSE_1_0.txt)
@@ -155,7 +155,7 @@ template<
 #ifndef DOXYGEN_SKIP
 class runge_kutta_cash_karp54 : public explicit_error_generic_rk< 6 , 5 , 5 , 4 ,
         State , Value , Deriv , Time , Algebra , Operations , Resizer >
-#else 
+#else
 class runge_kutta_cash_karp54 : public explicit_error_generic_rk
 #endif
 {
@@ -203,7 +203,7 @@ public:
  * <a href="http://en.wikipedia.org/wiki/Cash%E2%80%93Karp_methods">en.wikipedia.org/wiki/Cash-Karp_methods</a>.
  * The method is explicit and fulfills the Error Stepper concept. Step size control
  * is provided but continuous output is not available for this method.
- * 
+ *
  * This class derives from explicit_error_stepper_base and inherits its interface via CRTP (current recurring template pattern).
  * Furthermore, it derivs from explicit_error_generic_rk which is a generic Runge-Kutta algorithm with error estimation.
  * For more details see explicit_error_stepper_base and explicit_error_generic_rk.

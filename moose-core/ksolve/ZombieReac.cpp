@@ -54,11 +54,11 @@ const Cinfo* ZombieReac::initCinfo()
 //////////////////////////////////////////////////////////////
 static const Cinfo* zombieReacCinfo = ZombieReac::initCinfo();
 
-static const SrcFinfo2< double, double >* subOut = 
+static const SrcFinfo2< double, double >* subOut =
  	dynamic_cast< const SrcFinfo2< double, double >* >(
 					zombieReacCinfo->findFinfo( "subOut" ) );
 
-static const SrcFinfo2< double, double >* prdOut = 
+static const SrcFinfo2< double, double >* prdOut =
  	dynamic_cast< const SrcFinfo2< double, double >* >(
 					zombieReacCinfo->findFinfo( "prdOut" ) );
 

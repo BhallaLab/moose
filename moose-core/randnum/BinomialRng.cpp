@@ -1,6 +1,6 @@
 /*******************************************************************
  * File:            BinomialRng.cpp
- * Description:      
+ * Description:
  * Author:          Subhasis Ray
  * E-mail:          ray.subhasis@gmail.com
  * Created:         2007-11-08 10:58:01
@@ -42,7 +42,7 @@ const Cinfo* BinomialRng::initCinfo()
         &n,
         &p,
     };
-    
+
     static string doc[] = {
         "Name", "BinomialRng",
         "Author", "Subhasis Ray",
@@ -60,7 +60,7 @@ const Cinfo* BinomialRng::initCinfo()
     return &binomialRngCinfo;
 }
 
-    
+
 static const Cinfo* binomialRngCinfo = BinomialRng::initCinfo();
 
 BinomialRng::BinomialRng()
@@ -68,9 +68,9 @@ BinomialRng::BinomialRng()
     isNSet_ = false;
     isPSet_ = false;
     isModified_ = true;
-    
+
     n_ = 0;
-    p_ = 0;    
+    p_ = 0;
 }
 
 /**
@@ -85,30 +85,30 @@ void BinomialRng::setN(double value)
         cerr << "ERROR: BinomialRng::innerSetN - n must be a positive integer." << endl;
         return;
     }
-    
+
     if(!isNSet_)
     {
         isNSet_ = true;
         n_ = n;
     }
-    else 
+    else
     {
         if (n_!= n  )
         {
             n_ = n;
-            isModified_ = true;            
+            isModified_ = true;
         }
     }
-    
+
     if ( isNSet_ && isPSet_ && isModified_)
     {   {
             if ( rng_ )
             {
                 delete rng_;
-            }           
+            }
             rng_ = new Binomial((unsigned long)n_,p_);
-            isModified_ = false;            
-        }     
+            isModified_ = false;
+        }
     }
 }
 
@@ -136,16 +136,16 @@ void BinomialRng::setP(double p)
     } else {
         if (!isClose< double >(p_,p, DBL_EPSILON)) {
             p_ = p;
-            isModified_ = true;            
+            isModified_ = true;
         }
-    }        
-    
+    }
+
     if ( isNSet_ && isPSet_ && isModified_ ){
         if ( rng_ ){
-            delete rng_;            
+            delete rng_;
         }
         rng_ = new Binomial((long)(n_),p_);
-        isModified_ = false;        
+        isModified_ = false;
     }
 }
 

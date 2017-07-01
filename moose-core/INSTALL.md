@@ -12,7 +12,7 @@ https://software.opensuse.org/download.html?project=home:moose&package=moose
 
 MOOSE is available via [homebrew](http://brew.sh).
 
-    $ brew install homebrew/science/moose 
+    $ brew install homebrew/science/moose
 
 
 # Building MOOSE from source
@@ -28,13 +28,13 @@ Download the latest source code of moose from github.
 For moose-core:
 
 - gsl-1.16 or higher.
-- libhdf5-dev (optional) 
-- python-dev 
-- python-numpy 
+- libhdf5-dev (optional)
+- python-dev
+- python-numpy
 
 On Ubuntu-12.04 or higher, these can be installed with:
-    
-    sudo apt-get install python-dev python-numpy libhdf5-dev cmake libgsl0-dev g++ 
+
+    sudo apt-get install python-dev python-numpy libhdf5-dev cmake libgsl0-dev g++
 
 __NOTE__ : On Ubuntu 12.04, gsl version is 1.15. You should skip `libgsl0-dev` install gsl-1.16 or higher manually.
 
@@ -43,10 +43,10 @@ SBML support is enabled by installing [python-libsbml](http://sbml.org/Software/
     $ sudo pip install python-libsbml
 
 ## Use `cmake` to build moose:
-    
-    $ cd /path/to/moose-core 
+
+    $ cd /path/to/moose-core
     $ mkdir _build
-    $ cd _build 
+    $ cd _build
     $ cmake ..
     $ make  
     $ ctest --output-on-failure
@@ -56,9 +56,9 @@ check if build process was successful.
 
 To install MOOSE into non-standard directory, pass additional argument `-DCMAKE_INSTALL_PREFIX=path/to/install/dir` to cmake.
 
-### Python3 
+### Python3
 
-You just need to one command in previous set of instructions to following 
+You just need to one command in previous set of instructions to following
 
     cmake -DPYTHON_EXECUTABLE=/opt/bin/python3 ..
 
@@ -80,14 +80,14 @@ calling make:
     export CXXFLAGS= -I/opt/libsbml/include
     export LDFLAGS= -L/opt/libsbml/lib
 
-  
+
 ### Release build:
 
     cd moose
     make BUILD=release
 
 ### Debug build:
-    
+
     cd moose
     make BUILD=debug
 
@@ -99,7 +99,7 @@ Python 3K, you need to pass the additional flag:
     PYTHON=3
 
 like:
-     
+
     make BUILD=release PYTHON=3
 
 ## Installation:
@@ -108,12 +108,12 @@ For system-wide installation you can run:
 
     sudo make install
 
-## Post installation 
+## Post installation
 
 Now you can import moose in a Python script or interpreter with the statement:
 
     import moose
-     
+
 If you have installed the GUI dependencies below for running the graphical user
 interface, then you can run the GUI by double-clicking on the desktop icon or
 via the main-menu.  The squid axon tutorial/demo is also accessible via these
@@ -128,7 +128,7 @@ variable. Suppose you have a ~/lib directory where you keep all your locally
 built libraries, do:
 
     cp -r {moose-source-directory}/python ~/lib/
- 
+
 and add this to your .bashrc file (if you use bash shell):
 
     export PYTHONPATH="$HOME/lib/python":"$PYTHONPATH"

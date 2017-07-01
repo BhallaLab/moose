@@ -17,7 +17,7 @@
  */
 class ZombieMMenz: public EnzBase
 {
-	public: 
+	public:
 		ZombieMMenz();
 
 		//////////////////////////////////////////////////////////////////

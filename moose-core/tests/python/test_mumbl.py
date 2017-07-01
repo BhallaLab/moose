@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # This file is part of MOOSE simulator: http://moose.ncbs.res.in.
 
 # MOOSE is free software: you can redistribute it and/or modify
@@ -13,14 +14,14 @@
 # along with MOOSE.  If not, see <http://www.gnu.org/licenses/>.
 
 
-"""test_mumbl.py: 
+"""test_mumbl.py:
 
     A test script to test MUMBL support in MOOSE.
 
 Last modified: Fri Jun 13, 2014  06:30PM
 
 """
-    
+
 __author__           = "Dilawar Singh"
 __copyright__        = "Copyright 2013, NCBS Bangalore"
 __credits__          = ["NCBS Bangalore", "Bhalla Lab"]
@@ -58,6 +59,6 @@ def main():
             , outfile = '%s.png' % sys.argv[0]
             , subplot = True
             )
-    
+
 if __name__ == '__main__':
     main()

@@ -1,9 +1,10 @@
+# -*- coding: utf-8 -*-
 """plot_utils.py: Some utility function for plotting data in moose.
 
 Last modified: Sun Jan 10, 2016  04:04PM
 
 """
-    
+
 __author__           = "Dilawar Singh"
 __copyright__        = "Copyright 2013, NCBS Bangalore"
 __credits__          = ["NCBS Bangalore", "Bhalla Lab"]
@@ -46,7 +47,7 @@ def plotInTerminal(yvec, xvec = None, file=None):
     g.stdin.flush()
 
 def xyToString( yvec, xvec, sepby = ' '):
-    """ Given two list-like objects, returns a text string. 
+    """ Given two list-like objects, returns a text string.
     """
     textLines = []
     for y, x in zip( yvec, xvec ):
@@ -56,7 +57,7 @@ def xyToString( yvec, xvec, sepby = ' '):
 
 def saveNumpyVec( yvec, xvec, file):
     """save the numpy vectors to a data-file
-    
+
     """
     if file is None:
         return
@@ -99,7 +100,7 @@ def reformatTable(table, kwargs):
     """ Given a table return x and y vectors with proper scaling """
     clock = moose.Clock('/clock')
     if type(table) == moose.Table:
-        vecY = table.vector 
+        vecY = table.vector
         vecX = np.arange(0, clock.currentTime, len(vecY))
     elif type(table) == tuple:
         vecX, vecY = table
@@ -109,10 +110,10 @@ def plotTable(table, **kwargs):
     """Plot a given table. It plots table.vector
 
     This function can scale the x-axis. By default, y-axis and x-axis scaling is
-    done by a factor of 1.  
+    done by a factor of 1.
 
     Pass 'xscale' and/or 'yscale' argument to function to modify scales.
-    
+
     """
     if not type(table) == moose.Table:
         msg = "Expected moose.Table, got {}".format( type(table) )
@@ -135,7 +136,7 @@ def plotTables(tables, outfile=None, **kwargs):
     for i, tname in enumerate(tables):
         if subplot:
             plt.subplot(len(tables), 1, i+1)
-        yvec = tables[tname].vector 
+        yvec = tables[tname].vector
         xvec = np.linspace(0, moose.Clock('/clock').currentTime, len(yvec))
         plt.plot(xvec, yvec, label=tname)
 
@@ -144,7 +145,7 @@ def plotTables(tables, outfile=None, **kwargs):
             plt.legend(loc='best', framealpha=0.4)
         except:
             plt.legend(loc = 'best')
-    
+
     plt.tight_layout()
     if outfile:
         pu.dump("PLOT", "Saving plots to file {}".format(outfile))
@@ -188,7 +189,7 @@ def plotVector(vec, xvec = None, **options):
         plt.xlabel('Time (sec)')
     else:
         plt.xlabel(options.get('xlabel', ''))
-    
+
     plt.ylabel = options.get('ylabel', '')
     plt.title(options.get('title', ''))
 
@@ -200,7 +201,7 @@ def plotVector(vec, xvec = None, **options):
 
 
 def saveRecords(records, xvec = None, **kwargs):
-    """saveRecords 
+    """saveRecords
     Given a dictionary of data with (key, numpy array) pair, it saves them to a
     file 'outfile'
 
@@ -253,12 +254,12 @@ def plotRecords(records, xvec = None, **kwargs):
         plotThis = False
         if not filters: plotThis = True
         for accept in filters:
-            if accept in k.lower(): 
+            if accept in k.lower():
                 plotThis = True
                 break
-                
+
         if plotThis:
-            if not subplot: 
+            if not subplot:
                 yvec = dataDict[k].vector
                 plotVector(yvec, xvec, label=k, **kwargs)
             else:

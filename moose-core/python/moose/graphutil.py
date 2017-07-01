@@ -1,29 +1,30 @@
-# graphutil.py --- 
-# 
+# -*- coding: utf-8 -*-
+# graphutil.py ---
+#
 # Filename: graphutil.py
-# Description: 
+# Description:
 # Author: Subhasis Ray
-# Maintainer: 
+# Maintainer:
 # Created: Sun Mar 18 13:42:28 2012 (+0530)
-# Version: 
+# Version:
 # Last-Updated: Wed Mar 28 18:27:26 2012 (+0530)
 #           By: subha
 #     Update #: 103
-# URL: 
-# Keywords: 
-# Compatibility: 
-# 
-# 
+# URL:
+# Keywords:
+# Compatibility:
+#
+#
 
-# Commentary: 
-# 
-# 
-# 
-# 
+# Commentary:
+#
+#
+#
+#
 
 # Change log:
-# 
-# 
+#
+#
 
 # Code:
 
@@ -31,13 +32,13 @@ from collections import defaultdict
 import re
 import networkx as nx
 import numpy as np
-from . import moose 
+from . import moose
 
 def moosegraph(element, ies=['childMsg'], ied=['parentMsg'], iv=[], keep_solitary=False):
     """Create a graph out of all objects under teh element
     specified. Ignore edges going outside the subtree rooted at
     element.
-    
+
     If element is a string, it can be a wildcard path in MOOSE
 
     ies is a list of sourcefields to be ignored when constructing edges.
@@ -103,7 +104,7 @@ def moosegraph(element, ies=['childMsg'], ied=['parentMsg'], iv=[], keep_solitar
                         src.add(fname)
                     except KeyError:
                         graph.add_edge(vv, nn, src=set([fname]))
-            
+
         for fname in vv[0].getFieldNames('destFinfo'):
             matches = [True for regex in ied_re if regex.search(fname)]
             if matches:
@@ -116,7 +117,7 @@ def moosegraph(element, ies=['childMsg'], ied=['parentMsg'], iv=[], keep_solitar
                         dest.add(fname)
                     except KeyError:
                         graph.add_edge(nn, vv, dest=set([fname]))
-                
+
         for fname in vv[0].getFieldNames('sharedFinfo'):
             nlist = vv[0].getNeighbors(fname)
             for nn in nlist:
@@ -154,7 +155,7 @@ def draw_moosegraph(graph, pos=None, label_edges=True):
             edge_labels[ee] = label
     nx.draw(graph, pos)
     nx.draw_networkx_edge_labels(graph, pos, edge_labels)
-                
+
 import unittest
 import pylab
 
@@ -188,5 +189,5 @@ if '__main__' == __name__:
 
 
 
-# 
+#
 # graphutil.py ends here

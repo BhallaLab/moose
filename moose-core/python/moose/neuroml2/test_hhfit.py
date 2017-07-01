@@ -1,49 +1,50 @@
-# test_hhfit.py --- 
-# 
+# -*- coding: utf-8 -*-
+# test_hhfit.py ---
+#
 # Filename: test_hhfit.py
-# Description: 
-# Author: 
-# Maintainer: 
+# Description:
+# Author:
+# Maintainer:
 # Created: Tue May 21 16:34:45 2013 (+0530)
-# Version: 
+# Version:
 # Last-Updated: Tue May 21 16:37:28 2013 (+0530)
 #           By: subha
 #     Update #: 9
-# URL: 
-# Keywords: 
-# Compatibility: 
-# 
-# 
+# URL:
+# Keywords:
+# Compatibility:
+#
+#
 
-# Commentary: 
-# 
-# 
-# 
-# 
+# Commentary:
+#
+#
+#
+#
 
 # Change log:
-# 
+#
 # Tue May 21 16:34:53 IST 2013 - Subha moved code from
 # test_converter.py to test_hhfit.py.
 
-# 
-# 
+#
+#
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
 # published by the Free Software Foundation; either version 3, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program; see the file COPYING.  If not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 # Floor, Boston, MA 02110-1301, USA.
-# 
-# 
+#
+#
 
 # Code:
 
@@ -78,7 +79,7 @@ class TestFindRateFn(unittest.TestCase):
         # 1992.;
         #1e-3 * (0.612 + 1 / (np.exp((self.v_array*1e3 + 132)/-16.7) + np.exp((self.v_array*1e3 + 16.8)/18.2)))
         p_dblexp = (1e-3, -1/16.7e-3, -132e-3, 1/18.2e-3, -16.8e-3, 0.612e-3)
-        self.dblexp = p_dblexp[5] + p_dblexp[0] / (np.exp(p_dblexp[1] * (self.v_array - p_dblexp[2])) + 
+        self.dblexp = p_dblexp[5] + p_dblexp[0] / (np.exp(p_dblexp[1] * (self.v_array - p_dblexp[2])) +
                                                         np.exp(p_dblexp[3] * (self.v_array - p_dblexp[4])))
         self.p_dblexp = p_dblexp
 
@@ -86,8 +87,8 @@ class TestFindRateFn(unittest.TestCase):
         print('Testing sigmoid')
         fn, params = hhfit.find_ratefn(self.v_array, self.sigmoid)
         print('Sigmoid params original:', self.p_sigmoid, 'detected:', params)
-        pylab.plot(self.v_array, self.sigmoid, 'y-', 
-                   self.v_array, hhfit.sigmoid(self.v_array, *self.p_sigmoid), 'b--', 
+        pylab.plot(self.v_array, self.sigmoid, 'y-',
+                   self.v_array, hhfit.sigmoid(self.v_array, *self.p_sigmoid), 'b--',
                    self.v_array, fn(self.v_array, *params), 'r-.')
         pylab.legend(('original sigmoid', 'computed', 'fitted %s' % (fn)))
         pylab.show()
@@ -111,7 +112,7 @@ class TestFindRateFn(unittest.TestCase):
         # but only the fit
         rms_error = np.sqrt(np.sum((self.exp - fnval)**2))
         # pylab.plot(self.v_array, self.exp, 'b-')
-        # pylab.plot(self.v_array, fnval, 'r-.') 
+        # pylab.plot(self.v_array, fnval, 'r-.')
         # pylab.show()
         print(rms_error, rms_error/max(self.exp))
         self.assertAlmostEqual(rms_error/max(self.exp), 0.0, places=3)
@@ -120,7 +121,7 @@ class TestFindRateFn(unittest.TestCase):
         print('Testing linoid')
         fn, params = hhfit.find_ratefn(self.v_array, self.linoid)
         print('Linoid params original:', self.p_linoid, 'detected:', params)
-        pylab.plot(self.v_array, self.linoid, 'y-', 
+        pylab.plot(self.v_array, self.linoid, 'y-',
                    self.v_array, hhfit.linoid(self.v_array, *self.p_linoid), 'b--',
                    self.v_array, fn(self.v_array, *params), 'r-.')
         pylab.legend(('original linoid', 'computed', 'fitted %s' % (fn)))
@@ -137,7 +138,7 @@ class TestFindRateFn(unittest.TestCase):
         print('Testing double exponential')
         fn, params = hhfit.find_ratefn(self.v_array, self.dblexp)
         fnval = fn(self.v_array, *params)
-        pylab.plot(self.v_array, self.dblexp, 'y-', 
+        pylab.plot(self.v_array, self.dblexp, 'y-',
                    self.v_array, hhfit.double_exp(self.v_array, *self.p_dblexp), 'b--',
                    self.v_array, fnval, 'r-.')
         pylab.legend(('original dblexp', 'computed', 'fitted %s' % (fn)))
@@ -150,7 +151,7 @@ class TestFindRateFn(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-        
 
-# 
+
+#
 # test_hhfit.py ends here

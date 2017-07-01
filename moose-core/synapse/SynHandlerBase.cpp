@@ -44,7 +44,7 @@ const Cinfo* SynHandlerBase::initCinfo()
 		"Handles 'reinit' call. Initializes all the synapses.",
 		new ProcOpFunc< SynHandlerBase >(& SynHandlerBase::reinit ) );
 
-	static Finfo* processShared[] = 
+	static Finfo* processShared[] =
 	{
 		&process, &reinit
 	};
@@ -64,7 +64,7 @@ const Cinfo* SynHandlerBase::initCinfo()
 	{
 		"Name", "SynHandlerBase",
 		"Author", "Upi Bhalla",
-		"Description", 
+		"Description",
 		"Base class for handling synapse arrays converging onto a given "
 		"channel or integrate-and-fire neuron. This class provides the "
 		"interface for channels/intFires to connect to a range of synapse "
@@ -125,7 +125,7 @@ bool SynHandlerBase::rangeWarning( const string& field, double value )
 	if ( value < RANGE ) {
 		cout << "Warning: Ignored attempt to set " << field <<
 				" of SynHandler " <<
-				// c->target().e->name() << 
+				// c->target().e->name() <<
 				" to less than " << RANGE << endl;
 		return 1;
 	}

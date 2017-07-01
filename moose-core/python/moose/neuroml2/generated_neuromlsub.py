@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 
 
 #
@@ -20,7 +21,7 @@
 import sys
 from lxml import etree as etree_
 
-# FIXME: Comment it out 
+# FIXME: Comment it out
 # import ??? as supermod
 
 def parsexml_(infile, parser=None, **kwargs):

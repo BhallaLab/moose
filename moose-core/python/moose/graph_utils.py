@@ -1,10 +1,11 @@
+# -*- coding: utf-8 -*-
 """graph_utils.py: Graph related utilties. It does not require networkx library.
 It writes files to be used with graphviz.
 
 Last modified: Sat Jan 18, 2014  05:01PM
 
 """
-    
+
 __author__           = "Dilawar Singh"
 __copyright__        = "Copyright 2013, NCBS Bangalore"
 __credits__          = ["NCBS Bangalore", "Bhalla Lab"]
@@ -43,7 +44,7 @@ def writeGraphviz(filename=None, pat='/##[TYPE=Compartment]'):
             path = path + '[0]'
         return path
 
-        
+
     pathList = getMoosePaths(pat)
     compList = _moose.wildcardFind(pat)
     if not compList:

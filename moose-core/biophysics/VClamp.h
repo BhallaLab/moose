@@ -1,41 +1,41 @@
-/* VClamp.h --- 
- * 
+/* VClamp.h ---
+ *
  * Filename: VClamp.h
- * Description: 
- * Author: 
- * Maintainer: 
+ * Description:
+ * Author:
+ * Maintainer:
  * Created: Fri Feb  1 19:22:19 2013 (+0530)
- * Version: 
+ * Version:
  * Last-Updated: Wed Feb  6 17:20:48 2013 (+0530)
  *           By: subha
  *     Update #: 55
- * URL: 
- * Keywords: 
- * Compatibility: 
- * 
+ * URL:
+ * Keywords:
+ * Compatibility:
+ *
  */
 
-/* Commentary: 
- * 
+/* Commentary:
+ *
  * Class for implementing voltage clamp
- * 
+ *
  */
 
 /* Change log:
- * 
- * 
+ *
+ *
  */
 
 /* This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation; either version 3, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; see the file COPYING.  If not, write to
  * the Free Software Foundation, Inc., 51 Franklin Street, Fifth
@@ -72,12 +72,12 @@ namespace moose
         double getGain() const;
         void process(const Eref& e, ProcPtr p);
         void reinit(const Eref& e, ProcPtr p);
-        
+
         static const Cinfo* initCinfo();
 
         // finfo used to send out injection current to compartment
         static SrcFinfo1< double >* currentOut();
-        
+
   protected:
         double vIn_; // membrane potential read from the compartment
         double command_; // command potential
@@ -99,7 +99,7 @@ namespace moose
         double cmdIn_; // older value of command potential
         double oldCmdIn_;
         double expt_;
-        
+
     };
 }
 

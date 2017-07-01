@@ -1,6 +1,6 @@
 /*******************************************************************
  * File:            Uniform.h
- * Description:      
+ * Description:
  * Author:          Subhasis Ray
  * E-mail:          ray.subhasis@gmail.com
  * Created:         2008-02-21 17:09:54
@@ -32,12 +32,12 @@ class Uniform: public Probability
     double getMax() const;
     void setMin(double min);
     void setMax(double max);
-    
+
   private:
     double min_;
     double max_;
-    
+
 };
 
-    
+
 #endif

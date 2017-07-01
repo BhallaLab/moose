@@ -77,7 +77,7 @@ class Time = Value ,
 class Algebra = typename algebra_dispatcher< State >::algebra_type ,
 class Operations = typename operations_dispatcher< State >::operations_type ,
 class Resizer = initially_resizer ,
-class InitializingStepper = extrapolation_stepper< order_helper<Steps>::value, 
+class InitializingStepper = extrapolation_stepper< order_helper<Steps>::value,
                                                    State, Value, Deriv, Time,
                                                    Algebra, Operations, Resizer >
 >
@@ -118,7 +118,7 @@ public :
     typedef detail::rotating_buffer< wrapped_deriv_type , steps > step_storage_type;
 
 
-    
+
     order_type order( void ) const { return order_value; }
 
     adams_bashforth( const algebra_type &algebra = algebra_type() )
@@ -283,13 +283,13 @@ private:
  * \brief The Adams-Bashforth multistep algorithm.
  *
  * The Adams-Bashforth method is a multi-step algorithm with configurable step
- * number. The step number is specified as template parameter Steps and it 
+ * number. The step number is specified as template parameter Steps and it
  * then uses the result from the previous Steps steps. See also
  * <a href="http://en.wikipedia.org/wiki/Linear_multistep_method">en.wikipedia.org/wiki/Linear_multistep_method</a>.
  * Currently, a maximum of Steps=8 is supported.
  * The method is explicit and fulfills the Stepper concept. Step size control
  * or continuous output are not provided.
- * 
+ *
  * This class derives from algebra_base and inherits its interface via
  * CRTP (current recurring template pattern). For more details see
  * algebra_stepper_base.
@@ -308,7 +308,7 @@ private:
     /**
      * \fn adams_bashforth::adams_bashforth( const algebra_type &algebra )
      * \brief Constructs the adams_bashforth class. This constructor can be used as a default
-     * constructor if the algebra has a default constructor. 
+     * constructor if the algebra has a default constructor.
      * \param algebra A copy of algebra is made and stored.
      */
 

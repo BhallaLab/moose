@@ -35,7 +35,7 @@
 namespace boost {
 namespace numeric {
 namespace odeint {
-   
+
 /*
  * by default any type is not resizable
  */

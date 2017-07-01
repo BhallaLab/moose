@@ -63,7 +63,7 @@ namespace odeint {
         #endif
 
     public:
-   
+
         /**
          * \brief Constructs a n_step_iterator. This constructor should be used to construct the begin iterator.
          *

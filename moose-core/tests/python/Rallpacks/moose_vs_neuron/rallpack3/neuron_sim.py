@@ -1,6 +1,7 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
-"""rallpack3_moose_vs_neuron.py: 
+"""rallpack3_moose_vs_neuron.py:
 
     This file compares moose and neuron for rallpack3.
 
@@ -8,7 +9,7 @@ Last modified: Sun May 25, 2014  07:05AM
 
 """
 from __future__ import print_function
-    
+
 __author__           = "Dilawar Singh"
 __copyright__        = "Copyright 2013, NCBS Bangalore"
 __credits__          = ["NCBS Bangalore", "Bhalla Lab"]
@@ -110,7 +111,7 @@ if __name__ == '__main__':
             , default = 999
             , type = int
             , help = 'Index of compartment at which membrane potential is recorded'
-            ) 
+            )
     parser.add_argument( '--length'
             , default = 1e-3
             , type = float

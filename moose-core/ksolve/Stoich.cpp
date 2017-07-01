@@ -1494,7 +1494,7 @@ void Stoich::unZombifyModel()
 
     unZombifyPools();
 
-	vector< Id > temp = reacVec_; temp.insert( temp.end(), 
+	vector< Id > temp = reacVec_; temp.insert( temp.end(),
 					offSolverReacVec_.begin(), offSolverReacVec_.end() );
     for ( vector< Id >::iterator i = temp.begin(); i != temp.end(); ++i )
     {
@@ -1503,7 +1503,7 @@ void Stoich::unZombifyModel()
             ReacBase::zombify( e, reacCinfo, Id() );
     }
 
-	temp = mmEnzVec_; temp.insert( temp.end(), 
+	temp = mmEnzVec_; temp.insert( temp.end(),
 					offSolverMMenzVec_.begin(), offSolverMMenzVec_.end() );
     for ( vector< Id >::iterator i = temp.begin(); i != temp.end(); ++i )
     {
@@ -1512,7 +1512,7 @@ void Stoich::unZombifyModel()
             EnzBase::zombify( e, mmEnzCinfo, Id() );
     }
 
-	temp = enzVec_; temp.insert( temp.end(), 
+	temp = enzVec_; temp.insert( temp.end(),
 					offSolverEnzVec_.begin(), offSolverEnzVec_.end() );
     for ( vector< Id >::iterator i = temp.begin(); i != temp.end(); ++i )
     {
@@ -1521,7 +1521,7 @@ void Stoich::unZombifyModel()
             CplxEnzBase::zombify( e, enzCinfo, Id() );
     }
 
-	temp = poolFuncVec_; temp.insert( temp.end(), 
+	temp = poolFuncVec_; temp.insert( temp.end(),
 		incrementFuncVec_.begin(), incrementFuncVec_.end() );
     for ( vector< Id >::iterator i = temp.begin(); i != temp.end(); ++i )
     {

@@ -21,7 +21,7 @@ set(VERSION_FILE ${CMAKE_CURRENT_SOURCE_DIR}/VERSION)
 find_program(GIT_EXEC "git")
 message( STATUS "Looking for git ${GIT_EXEC}" )
 if( (NOT MOOSE_VERSION) AND GIT_EXEC)
-    execute_process( 
+    execute_process(
         COMMAND ${GIT_EXEC} describe --tags --long
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
         OUTPUT_VARIABLE MOOSE_VERSION
@@ -49,7 +49,7 @@ message( STATUS "MOOSE Version ${MOOSE_VERSION}" )
 # (which would end up getting picked up by header search, instead of the correct
 # versions).
 if( CMAKE_CURRENT_SOURCE_DIR STREQUAL CMAKE_BINARY_DIR AND NOT MSVC_IDE )
-    message(FATAL_ERROR 
+    message(FATAL_ERROR
         "======================================================================\n"
         "In-source builds are not allowed. Remove CMakeCache.txt and CMakeFiles\n"
         "directory and do something like this inside this directory \n"
@@ -85,9 +85,6 @@ else()
 endif()
 
 ################################ CMAKE OPTIONS ##################################
-
-option(VERBOSITY "Set MOOSE verbosity level (deprecated)" 0)
-## Unit testing and debug mode.
 option(DEBUG "Build with debug support" OFF)
 option(GPROF "Build for profiling using gprof" OFF)
 option(ENABLE_UNIT_TESTS "Enable unit tests (DEBUG should also be ON)" OFF)
@@ -95,6 +92,8 @@ option(WITH_PYTHON "Build native python extension" ON)
 option(WITH_MPI  "Enable Openmpi support" OFF)
 option(WITH_BOOST "Use boost library instead of GSL" OFF)
 option(WITH_GSL  "Use gsl-library. Alternative is WITH_BOOST" ON)
+option(PARALLELIZED_SOLVERS "Use parallel version of GSOLVE. (alpha)" OFF )
+option(PARALLELIZED_CLOCK "High level parallelization of moose::Clock (alpha)" OFF )
 
 ################################# CMKAE MACROS #################################
 
@@ -125,6 +124,7 @@ if(GPROF AND DEBUG)
     set(CMAKE_EXE_LINKER_FLAGS_DEBUG "-pg")
 endif()
 
+
 ################################### TARGETS ####################################
 
 add_library(libmoose SHARED basecode/main.cpp)
@@ -152,7 +152,7 @@ set(SYSTEM_SHARED_LIBS ${LibXML2_LIBRARIES})
 if(WITH_GSL)
     find_package(GSL 1.16)
     if(NOT GSL_FOUND)
-        message(FATAL_ERROR 
+        message(FATAL_ERROR
             "=====================================================================\n"
             " FATAL gsl(>1.16) not found.\n\n"
             " MOOSE requires Gnu Scientific Library (GSL) 1.16 or higher. \n"
@@ -209,18 +209,18 @@ if(HDF5_FOUND)
     add_definitions( -DUSE_HDF5 )
     if(HDF5_USE_STATIC_LIBRARIES)
 	message(STATUS "Finding static HDF5 libraries in $ENV{HDF5_ROOT}")
-        find_library(HDF5_CXX_LIBRARIES NAMES libhdf5.a 
+        find_library(HDF5_CXX_LIBRARIES NAMES libhdf5.a
             PATHS $ENV{HDF5_ROOT}/lib $ENV{HDF5_ROOT}/lib64
             )
         find_library(HDF5_HL_LIBRARIES NAMES libhdf5_hl.a
-            PATHS $ENV{HDF5_ROOT}/lib $ENV{HDF5_ROOT}/lib64 
+            PATHS $ENV{HDF5_ROOT}/lib $ENV{HDF5_ROOT}/lib64
             )
         set(HDF5_LIBRARIES ${HDF5_CXX_LIBRARIES} ${HDF5_HL_LIBRARIES})
     endif()
 
-    
+
     # Make sure, HDF5_HL_LIBRARIES are set. The COMPONENTS in find_package may
-    # or may not work. See BhallaLab/moose-core#163. 
+    # or may not work. See BhallaLab/moose-core#163.
     if(NOT HDF5_HL_LIBRARIES)
         set(HDF5_HL_LIBRARIES ${HDF5_HL_LIBRARIES})
     endif(NOT HDF5_HL_LIBRARIES)
@@ -343,15 +343,15 @@ list(APPEND MOOSE_LIBRARIES
     randnum
     scheduling
     moose_mpi
-    biophysics 
-    utility 
-    kinetics 
+    biophysics
+    utility
+    kinetics
     synapse
     intfire
-    hsolve 
+    hsolve
     mesh
     signeur
-    diffusion 
+    diffusion
     ksolve
     device
     basecode
@@ -377,7 +377,7 @@ if(MACOSX)
         ${CMAKE_DL_LIBS}
         )
 ELSE(MACOSX)
-    target_link_libraries(libmoose 
+    target_link_libraries(libmoose
         "-Wl,--whole-archive"
         ${MOOSE_LIBRARIES}
         ${STATIC_LIBRARIES}
@@ -416,11 +416,11 @@ install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/scripts/moose
 # INSTALL python module.
 # This target is built by pymoose/CMakeLists.txt file. Using the --prefix option
 # always override debian default installation directory. It will be installed in
-# site-packages instead of dist-packages. 
+# site-packages instead of dist-packages.
 # See https://bugs.launchpad.net/ubuntu/+source/python2.6/+bug/362570
 # HACK: Get platform information from python and use it to fix the layout.
-execute_process( 
-    COMMAND ${PYTHON_EXECUTABLE} -mplatform OUTPUT_VARIABLE _platform_desc 
+execute_process(
+    COMMAND ${PYTHON_EXECUTABLE} -mplatform OUTPUT_VARIABLE _platform_desc
     )
 message( STATUS "Platform ${_platform_desc}" )
 
@@ -430,11 +430,11 @@ if(WITH_PYTHON)
         list( APPEND EXTRA_ARGS "--install-layout=deb" )
     endif( )
 
-    install(CODE 
-        "execute_process( 
-            COMMAND ${PYTHON_EXECUTABLE} setup.py install ${EXTRA_ARGS} 
+    install(CODE
+        "execute_process(
+            COMMAND ${PYTHON_EXECUTABLE} setup.py install ${EXTRA_ARGS}
             WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/python
-            )" 
+            )"
             )
 endif(WITH_PYTHON)
 

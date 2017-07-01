@@ -49,7 +49,7 @@ integrate( System system , State &start_state , Time start_time , Time end_time 
 }
 
 template< class Value , class System , class State , class Time , class Observer >
-size_t 
+size_t
 integrate( System system , State &start_state , Time start_time , Time end_time , Time dt , Observer observer )
 {
     typedef controlled_runge_kutta< runge_kutta_dopri5< State , Value , State , Time > > stepper_type;
@@ -80,17 +80,17 @@ size_t integrate( System system , State &start_state , Time start_time , Time en
  * \fn integrate( System system , State &start_state , Time start_time , Time end_time , Time dt , Observer observer )
  * \brief Integrates the ODE.
  *
- * Integrates the ODE given by system from start_time to end_time starting 
+ * Integrates the ODE given by system from start_time to end_time starting
  * with start_state as initial condition and dt as initial time step.
  * This function uses a dense output dopri5 stepper and performs an adaptive
  * integration with step size control, thus dt changes during the integration.
  * This method uses standard error bounds of 1E-6.
  * After each step, the observer is called.
- * 
+ *
  * \attention A second version of this function template exists which explicitly
  * expects the value type as template parameter, i.e. integrate< double >( sys , x , t0 , t1 , dt , obs );
  *
- * \param system The system function to solve, hence the r.h.s. of the 
+ * \param system The system function to solve, hence the r.h.s. of the
  * ordinary differential equation.
  * \param start_state The initial state.
  * \param start_time Start time of the integration.
@@ -105,17 +105,17 @@ size_t integrate( System system , State &start_state , Time start_time , Time en
  * \fn integrate( System system , State &start_state , Time start_time , Time end_time , Time dt )
  * \brief Integrates the ODE without observer calls.
  *
- * Integrates the ODE given by system from start_time to end_time starting 
+ * Integrates the ODE given by system from start_time to end_time starting
  * with start_state as initial condition and dt as initial time step.
  * This function uses a dense output dopri5 stepper and performs an adaptive
  * integration with step size control, thus dt changes during the integration.
  * This method uses standard error bounds of 1E-6.
  * No observer is called.
- * 
+ *
  * \attention A second version of this function template exists which explicitly
  * expects the value type as template parameter, i.e. integrate< double >( sys , x , t0 , t1 , dt );
  *
- * \param system The system function to solve, hence the r.h.s. of the 
+ * \param system The system function to solve, hence the r.h.s. of the
  * ordinary differential equation.
  * \param start_state The initial state.
  * \param start_time Start time of the integration.

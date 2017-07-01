@@ -62,7 +62,7 @@ class ReacInfo
 /* Matrix inversion routine.
    Uses lu_factorize and lu_substitute in uBLAS to invert a matrix */
     template<class T>
-bool inverse(const ublas::matrix<T>& input, ublas::matrix<T>& inverse) 
+bool inverse(const ublas::matrix<T>& input, ublas::matrix<T>& inverse)
 {
     using namespace boost::numeric::ublas;
     typedef permutation_matrix<std::size_t> pmatrix;
@@ -103,7 +103,7 @@ public:
         x1.resize( size_, 0);
 
         ri.nVec.resize( size_ );
-        dx_ = sqrt( numeric_limits<double>::epsilon() );  
+        dx_ = sqrt( numeric_limits<double>::epsilon() );
     }
 
     vector_type compute_at(const vector_type& x)

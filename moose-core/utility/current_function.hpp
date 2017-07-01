@@ -8,7 +8,7 @@
 #endif
 
 //
-//  Modified boost/current_function.hpp 
+//  Modified boost/current_function.hpp
 //
 //  SIMPLE_CURRENT_FUNCTION
 //

@@ -29,13 +29,13 @@ class MsgElement: public Element
 		 * name is its name
 		 */
 		MsgElement( Id id, const Cinfo* c, const string& name,
-			 unsigned int( *numMsg )(), 
+			 unsigned int( *numMsg )(),
 			 char* ( *lookupMsg )( unsigned int ) )
-				: 
+				:
 					Element( id, c, name ),
 					numMsg_( numMsg ),
 					lookupMsg_( lookupMsg )
-	   	{;}	
+	   	{;}
 
 		/**
 		 * Virtual Destructor. Nothing to do here.
@@ -43,12 +43,12 @@ class MsgElement: public Element
 		~MsgElement()
 		{;}
 
-		/** 
+		/**
 		 * Virtual copier. Doesn't do anything. The copy
 		 * happens at the lower level, involving the Msg classes
 		 * and the MsgElement just manages them.
 		 */
-		Element* copyElement( Id newParent, Id newId, unsigned int n, 
+		Element* copyElement( Id newParent, Id newId, unsigned int n,
 			bool toGlobal ) const
 		{
 			return 0;
@@ -107,7 +107,7 @@ class MsgElement: public Element
 
 		/**
 		 * Inherited virtual
-		 * True if this is a FieldElement having an array of fields 
+		 * True if this is a FieldElement having an array of fields
 		 * on each data entry. Clearly not true for the MsgElement.
 		 */
 		bool hasFields() const {
@@ -129,7 +129,7 @@ class MsgElement: public Element
 		/**
 		 * Inherited virtual.
 		 * Looks up specified field data entry. On regular objects just
-		 * returns the data entry specified by the rawIndex. 
+		 * returns the data entry specified by the rawIndex.
 		 * On FieldElements like synapses, does a second lookup on the
 		 * field index.
 		 * Note that the index is NOT a
@@ -142,7 +142,7 @@ class MsgElement: public Element
 		 *
 		 * Returns 0 if either index is out of range.
 		 */
-		char* data( unsigned int rawIndex, 
+		char* data( unsigned int rawIndex,
 						unsigned int fieldIndex = 0 ) const
 		{
 			return lookupMsg_( rawIndex );
@@ -166,7 +166,7 @@ class MsgElement: public Element
 
 		/////////////////////////////////////////////////////////////////
 		/**
-		 * Virtual func. The parent does the data swap part, so here it is 
+		 * Virtual func. The parent does the data swap part, so here it is
 		 * just the Cinfo we replace.
 		 */
 		void zombieSwap( const Cinfo* newCinfo ) {

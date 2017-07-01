@@ -58,8 +58,8 @@ class Compartment: public CompartmentBase
 			 * The initProc function is for a second phase of 'process'
 			 * operations. It sends the axial and raxial messages
 			 * to other compartments. It has to be executed out of phase
-			 * with the main process so that all compartments are 
-			 * equivalent and there is no calling order dependence in 
+			 * with the main process so that all compartments are
+			 * equivalent and there is no calling order dependence in
 			 * the results.
 			 */
 			void vInitProc( const Eref& e, ProcPtr p );

@@ -23,7 +23,7 @@ LookupTable::LookupTable(
 	dx_ = ( max - min ) / nDivs;
 	// Every row has 2 entries for each type of gate
 	nColumns_ = 2 * nSpecies;
-	
+
 	//~ interpolate_.resize( nSpecies );
 	table_.resize( nPts_ * nColumns_ );
 }
@@ -42,14 +42,14 @@ void LookupTable::addColumns(
 	for ( unsigned int igrid = 0; igrid < nPts_ - 1 ; ++igrid ) {
 		*( iTable )     = *ic1;
 		*( iTable + 1 ) = *ic2;
-		
+
 		iTable += nColumns_;
 		++ic1, ++ic2;
 	}
 	// Then duplicate the last point
 	*( iTable )     = C1.back();
 	*( iTable + 1 ) = C2.back();
-	
+
 	//~ interpolate_[ species ] = interpolate;
 }
 
@@ -65,10 +65,10 @@ void LookupTable::row( double x, LookupRow& row )
 		x = min_;
 	else if ( x > max_ )
 		x = max_;
-	
+
 	double div = ( x - min_ ) / dx_;
 	unsigned int integer = ( unsigned int )( div );
-	
+
 	row.fraction = div - integer;
 	row.row = &( table_.front() ) + integer * nColumns_;
 }
@@ -81,22 +81,22 @@ void LookupTable::lookup(
 {
 	double a, b;
 	double *ap, *bp;
-	
+
 	ap = row.row + column.column;
-	
+
 	//~ if ( ! column.interpolate ) {
 		//~ C1 = *ap;
 		//~ C2 = *( ap + 1 );
-		//~ 
+		//~
 		//~ return;
 	//~ }
-	
+
 	bp = ap + nColumns_;
-	
+
 	a = *ap;
 	b = *bp;
 	C1 = a + ( b - a ) * row.fraction;
-	
+
 	a = *( ap + 1 );
 	b = *( bp + 1 );
 	C2 = a + ( b - a ) * row.fraction;

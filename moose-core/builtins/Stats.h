@@ -11,13 +11,13 @@
 
 class Stats
 {
-	public: 
+	public:
 		Stats();
 
 		////////////////////////////////////////////////////////////////
 		// Field assignment stuff.
 		////////////////////////////////////////////////////////////////
-		
+
 		double getMean() const;
 		double getSdev() const;
 		double getSum() const;
@@ -35,7 +35,7 @@ class Stats
 		// Dest Func
 		////////////////////////////////////////////////////////////////
 		void input( double v );
-		
+
 		void process( const Eref& e, ProcPtr p );
 		void reinit( const Eref& e, ProcPtr p );
 

@@ -31,14 +31,14 @@ class Msg
 
 		/**
 		 * Obtain the first target Eref for the specified Src Eref
-		 * It is really meant only to work with messages with a 
+		 * It is really meant only to work with messages with a
 		 * single target ObjId for each given src, typically OneToOne.
 		 */
 		virtual Eref firstTgt( const Eref& src ) const = 0;
 
 		 /**
 		  * Return all the sources of e2 from e1, that is, all the msgs
-		  * coming into specified entries on e2 from e1. 
+		  * coming into specified entries on e2 from e1.
 		  *
 		  * ALLDATA used when the
 		  * sources include all data entries on a source.
@@ -48,8 +48,8 @@ class Msg
 
 		 /**
 		  * Return all the targets of e1 on e2, that is, all the msgs
-		  * going from specified entries on e1 to e2. 
-		  * ALLDATA used when the 
+		  * going from specified entries on e1 to e2.
+		  * ALLDATA used when the
 		  * targets include all data entries on a target.
 		  * Indexing is v[dataId in range e1.numData][tgt list]
 		  */
@@ -108,13 +108,13 @@ class Msg
 		}
 
 		/**
-		 * Find the other end of this Msg. In most cases this is a 
+		 * Find the other end of this Msg. In most cases this is a
 		 * straightforward return of e1 or e2, plus perhaps a DataId.
 		 * But in some complex msgs we need to figure out
 		 * DataIds that match with the target.
 		 * In many-to-one cases we just return the first entry.
 		 * If no Element match, return ObjId( Id(), DataId::bad() )
-		 * If Element e matches but not DataId, return 
+		 * If Element e matches but not DataId, return
 		 * ObjId( e.id(), DataId::bad() )
 		 */
 		virtual ObjId findOtherEnd( ObjId ) const = 0;
@@ -124,7 +124,7 @@ class Msg
 		 * Wrapper for findOtherEnd - to expose it as a LookupFinfo.
 		 */
 		ObjId getAdjacent( ObjId ) const;
-                
+
 		/**
 		 * Make a copy of this Msg. The original msg was on
 		 * origSrc. The new Msg should go from newSrc to newTgt,

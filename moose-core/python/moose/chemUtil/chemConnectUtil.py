@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import moose
 import numpy as np
 from collections import Counter
@@ -9,8 +10,8 @@ def xyPosition(objInfo,xory):
         return (float(0))
 
 def setupMeshObj(modelRoot):
-    ''' Setup compartment and its members pool,reaction,enz cplx under self.meshEntry dictionaries \ 
-    self.meshEntry with "key" as compartment, 
+    ''' Setup compartment and its members pool,reaction,enz cplx under self.meshEntry dictionaries \
+    self.meshEntry with "key" as compartment,
     value is key2:list where key2 represents moose object type,list of objects of a perticular type
     e.g self.meshEntry[meshEnt] = { 'reaction': reaction_list,'enzyme':enzyme_list,'pool':poollist,'cplx': cplxlist }
     '''
@@ -53,9 +54,9 @@ def setupMeshObj(modelRoot):
                     objInfo =m.path+'/info'
                 if moose.exists(objInfo):
                     listOfitems[moose.element(moose.element(objInfo).parent)]={'x':xyPosition(objInfo,'x'),'y':xyPosition(objInfo,'y')}
-                
+
                 xcord.append(xyPosition(objInfo,'x'))
-                ycord.append(xyPosition(objInfo,'y')) 
+                ycord.append(xyPosition(objInfo,'y'))
 
             getxyCord(xcord,ycord,funclist,listOfitems)
             getxyCord(xcord,ycord,enzlist,listOfitems)
@@ -112,22 +113,22 @@ def setupItem(modelPath,cntDict):
                 prdlist = []
                 uniqItem,countuniqItem = countitems(items,'subOut')
                 subNo = uniqItem
-                for sub in uniqItem: 
+                for sub in uniqItem:
                     sublist.append((moose.element(sub),'s',countuniqItem[sub]))
 
                 uniqItem,countuniqItem = countitems(items,'prd')
                 prdNo = uniqItem
                 if (len(subNo) == 0 or len(prdNo) == 0):
                     print ("Substrate Product is empty ",path, " ",items)
-                    
+
                 for prd in uniqItem:
                     prdlist.append((moose.element(prd),'p',countuniqItem[prd]))
-                
+
                 if (baseObj == 'CplxEnzBase') :
                     uniqItem,countuniqItem = countitems(items,'toEnz')
                     for enzpar in uniqItem:
                         sublist.append((moose.element(enzpar),'t',countuniqItem[enzpar]))
-                    
+
                     uniqItem,countuniqItem = countitems(items,'cplxDest')
                     for cplx in uniqItem:
                         prdlist.append((moose.element(cplx),'cplx',countuniqItem[cplx]))
@@ -145,7 +146,7 @@ def setupItem(modelPath,cntDict):
                 uniqItem,countuniqItem = countitems(item,'input')
                 for funcpar in uniqItem:
                     sublist.append((moose.element(funcpar),'sts',countuniqItem[funcpar]))
-                
+
                 uniqItem,countuniqItem = countitems(items,'valueOut')
                 for funcpar in uniqItem:
                     prdlist.append((moose.element(funcpar),'stp',countuniqItem[funcpar]))

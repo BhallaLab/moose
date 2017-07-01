@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 foundLibSBML_ = False
 try:
     from libsbml import *
@@ -10,7 +11,7 @@ def validateModel(sbmlDoc):
         tobecontinued = False
         for i in range(0,sbmlDoc.getNumErrors()):
             print (sbmlDoc.getError(i).getMessage())
-            return False        
+            return False
 
     if (not sbmlDoc):
         print("validateModel: given a null SBML Document")
@@ -39,11 +40,11 @@ def validateModel(sbmlDoc):
         constStr = sbmlDoc.printErrors()
         if sbmlDoc.printErrors():
             consistencyMessages = constStr
-    
+
     # If the internal checks fail, it makes little sense to attempt
     # further validation, because the model may be too compromised to
     # be properly interpreted.
-    
+
     if (numConsistencyErrors > 0):
         consistencyMessages += "Further validation aborted."
     else:
@@ -63,7 +64,7 @@ def validateModel(sbmlDoc):
         warning = sbmlDoc.getErrorLog().toString()
         oss = sbmlDoc.printErrors()
         validationMessages = oss
-    
+
     if (noProblems):
         return True
     else:

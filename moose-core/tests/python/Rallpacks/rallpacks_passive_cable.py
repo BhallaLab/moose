@@ -1,11 +1,12 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 """cable.py: A passive cable of n compartments.
 
 Last modified: Wed May 21, 2014  04:26AM
 
 """
-    
+
 __author__           = "Dilawar Singh"
 __copyright__        = "Copyright 2013, NCBS Bangalore"
 __credits__          = ["NCBS Bangalore", "Bhalla Lab"]
@@ -55,7 +56,7 @@ class PasiveCable( ):
             self.cable.append(c)
         self.connect( )
         utils.dump( "STEP"
-                , "Passive cable is connected and ready for simulation." 
+                , "Passive cable is connected and ready for simulation."
                 )
 
     def connect( self ):
@@ -77,7 +78,7 @@ class PasiveCable( ):
 
         # Inject the current from stim to first compartment.
         moose.connect( stim, 'output', self.cable[0].mc_, 'injectMsg' )
-        
+
         # Fill the data from stim into table.
         inputTable = moose.Table( '{}/inputTable'.format( self.tablePath ) )
         self.stimTables.append( inputTable )
@@ -99,8 +100,8 @@ class PasiveCable( ):
         self.simDt = simDt
         self.plotDt = plotDt
         self.setupDUT( )
- 
-        # Setup clocks 
+
+        # Setup clocks
         utils.dump("STEP", "Setting up the clocks ... ")
         moose.setClock( 0, self.simDt )
         moose.setClock( 1, self.simDt )
@@ -179,7 +180,7 @@ if __name__ == '__main__':
     parser.add_argument( '--x'
             , default = 1e-3
             , help = 'You should record membrane potential somewhere, right?'
-            ) 
+            )
     parser.add_argument( '--length'
             , default = 1e-3
             , help = 'Length of the cable'

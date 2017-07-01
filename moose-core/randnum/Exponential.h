@@ -1,6 +1,6 @@
 /*******************************************************************
  * File:            Exponential.h
- * Description:      
+ * Description:
  * Author:          Subhasis Ray
  * E-mail:          ray.subhasis@gmail.com
  * Created:         2007-11-01 08:59:47
@@ -24,13 +24,13 @@ enum ExponentialGenerator
     RANDOM_MINIMIZATION
 };
 
-    
+
 class Exponential: public Probability
 {
   public:
     Exponential(double mean);
     Exponential( ExponentialGenerator generator, double mean);
-    
+
     double getMean() const;
     double getVariance() const;
     double getNextSample() const;
@@ -39,10 +39,10 @@ class Exponential: public Probability
     double (*generator_)(double);
     static double logarithmic(double mean);
     static double randomMinimization(double mean);
-    
-    
+
+
 };
 
-    
+
 
 #endif

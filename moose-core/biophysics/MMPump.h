@@ -20,23 +20,23 @@ public:
 
   double getVmax(const Eref& e) const; //Vmax of the pump
   void setVmax(const Eref& e,double value);
-  
+
   int getVal(const Eref& e) const; //Valence
   void setVal(const Eref& e,int value);
- 
+
   double getKd(const Eref& e) const;           //  Pump's Kd
   void setKd(const Eref& e,double value);
-  
- 
+
+
 
   static SrcFinfo2< double,double >* PumpOut(); //Pump parameters;
 
   static const Cinfo * initCinfo();
 
 private:
-      
+
   double Vmax_;
-  double Kd_; 
+  double Kd_;
 };
 
 

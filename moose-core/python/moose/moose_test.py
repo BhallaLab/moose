@@ -1,10 +1,11 @@
+# -*- coding: utf-8 -*-
 """
 Test MOOSE installation with moose-examples.
 
 """
 
 from __future__ import print_function
-    
+
 __author__           = "Dilawar Singh"
 __copyright__        = "Copyright 2016, Dilawar Singh"
 __credits__          = ["NCBS Bangalore"]
@@ -40,7 +41,7 @@ _logger = logging.getLogger('moose.test')
 _logger.addHandler(console)
 
 test_data_url_ = 'https://github.com/BhallaLab/moose-examples/archive/master.zip'
-test_repo_url_ = 'https://github.com/BhallaLab/moose-examples' 
+test_repo_url_ = 'https://github.com/BhallaLab/moose-examples'
 test_dir_ = os.path.join( tempfile.gettempdir( ), 'moose-examples' )
 
 ignored_dict_ = defaultdict( list )
@@ -73,7 +74,7 @@ class Command(object):
     def run(self, timeout):
         def target():
             _logger.info( "Running %s" % self )
-            self.process = subprocess.Popen( 
+            self.process = subprocess.Popen(
                     self.cmd, shell=False
                     , stdout = self.fnull, stderr = subprocess.STDOUT
                     )
@@ -94,7 +95,7 @@ def init_test_dir( ):
     if( not os.path.exists( test_dir_ ) ):
         os.makedirs( test_dir_ )
         _logger.info( "Donwloading test repository" )
-        subprocess.call( 
+        subprocess.call(
                 [ 'git', 'clone', '--depth=10', test_repo_url_, test_dir_ ]
                 )
     os.chdir( test_dir_ )
@@ -157,7 +158,7 @@ def print_test_stat( ):
         print( 'Total %d tests %s' % (len( test_status_[status] ), status ) )
 
 def test_all( timeout, **kwargs ):
-    global test_dir_ 
+    global test_dir_
     global total_
     scripts = [ ]
     for d, ds, fs in os.walk( test_dir_ ):

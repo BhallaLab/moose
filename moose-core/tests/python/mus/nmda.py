@@ -10,4 +10,4 @@ import moose
 def make_nmda(path):
     nmda = moose.MarkovChannel(path)
     return nmda
-    
+

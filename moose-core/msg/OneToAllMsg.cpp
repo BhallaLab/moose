@@ -15,9 +15,9 @@ Id OneToAllMsg::managerId_;
 vector< OneToAllMsg* > OneToAllMsg::msg_;
 
 OneToAllMsg::OneToAllMsg( Eref e1, Element* e2, unsigned int msgIndex )
-	: 
-		Msg( 
-			ObjId( managerId_, (msgIndex != 0) ? msgIndex: msg_.size() ), 
+	:
+		Msg(
+			ObjId( managerId_, (msgIndex != 0) ? msgIndex: msg_.size() ),
 			e1.element(), e2
 		   ),
 		i1_( e1.dataIndex() )
@@ -37,7 +37,7 @@ OneToAllMsg::~OneToAllMsg()
 	msg_[ mid_.dataIndex ] = 0; // ensure deleted ptr isn't reused.
 }
 
-Eref OneToAllMsg::firstTgt( const Eref& src ) const 
+Eref OneToAllMsg::firstTgt( const Eref& src ) const
 {
 	if ( src.element() == e1_ )
 		return Eref( e2_, 0 );
@@ -74,7 +74,7 @@ ObjId OneToAllMsg::findOtherEnd( ObjId f ) const
 	} else if ( f.element() == e2() ) {
 		return ObjId( e1()->id(), i1_ );
 	}
-	
+
 	return ObjId( 0, BADINDEX );
 }
 

@@ -22,17 +22,17 @@ class HSolvePassive: public HinesMatrix
 #ifdef DO_UNIT_TESTS
 	friend void testHSolvePassive();
 #endif
-	
+
 public:
 	void setup( Id seed, double dt );
 	void solve();
-	
+
 protected:
 	// Integration
 	void updateMatrix();
 	void forwardEliminate();
 	void backwardSubstitute();
-	
+
 	vector< CompartmentStruct >       compartment_;
 	vector< Id >                      compartmentId_;
 	vector< double >                  V_;				/**< Compartment Vm.
@@ -45,14 +45,14 @@ protected:
 	map< unsigned int, InjectStruct > inject_;			/**< inject map.
 		* contains the list of compartments that have current injections into
 		* them. */
-	
+
 private:
 	// Setting up of data structures
 	void clear();
 	void walkTree( Id seed );
 	void initialize();
 	void storeTree();
-	
+
 	// Used for unit tests.
 	double getV( unsigned int row ) const;
 };

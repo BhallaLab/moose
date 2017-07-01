@@ -11,8 +11,8 @@
 #include "Species.h"
 
 static SrcFinfo1< double > *molWtOut() {
-	static SrcFinfo1< double > molWtOut( 
-			"molWtOut", 
+	static SrcFinfo1< double > molWtOut(
+			"molWtOut",
 			"returns molWt."
 			);
 	return &molWtOut;

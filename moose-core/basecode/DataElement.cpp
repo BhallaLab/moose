@@ -10,9 +10,9 @@
 #include "header.h"
 #include "FuncOrder.h"
 
-DataElement::DataElement( Id id, const Cinfo* c, const string& name, 
+DataElement::DataElement( Id id, const Cinfo* c, const string& name,
 	unsigned int numData )
-	:	
+	:
 		Element( id, c, name )
 {
 	data_ = c->dinfo()->allocData( numData );
@@ -32,14 +32,14 @@ DataElement::DataElement( Id id, const Cinfo* c, const string& name,
  * startEntry is the starting index. It is expected that the subset used
  * will be contiguous from this index.
  */
-DataElement::DataElement( Id id, const Element* orig, 
+DataElement::DataElement( Id id, const Element* orig,
 				unsigned int n, unsigned int startEntry )
-	:	
+	:
 		Element( id, orig->cinfo(), orig->getName() )
 {
 	numLocalData_ = n;
 	size_ = cinfo()->dinfo()->sizeIncrement();
-	data_ = cinfo()->dinfo()->copyData( orig->data( 0 ), orig->numData(), 
+	data_ = cinfo()->dinfo()->copyData( orig->data( 0 ), orig->numData(),
 					numLocalData_, startEntry );
 	// cinfo_->postCreationFunc( id, this );
 }
@@ -89,14 +89,14 @@ char* DataElement::data( unsigned int rawIndex, unsigned int fieldIndex ) const
 /**
  * virtual func, overridden.
  * Here we resize the local data. This function would be called by
- * derived classes to do their own data management as per node 
+ * derived classes to do their own data management as per node
  * decomposition.
  */
 void DataElement::resize( unsigned int newNumLocalData )
 {
 	numLocalData_ = newNumLocalData;
 	char* temp = data_;
-	data_ = cinfo()->dinfo()->copyData( 
+	data_ = cinfo()->dinfo()->copyData(
 					temp, numLocalData_, newNumLocalData, 0 );
 	cinfo()->dinfo()->destroyData( temp );
 	numLocalData_ = newNumLocalData;

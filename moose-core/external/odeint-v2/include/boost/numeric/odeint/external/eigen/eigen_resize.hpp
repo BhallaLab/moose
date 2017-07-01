@@ -37,7 +37,7 @@ namespace odeint {
 template< class Derived >
 struct is_resizeable_sfinae< Derived ,
                       typename boost::enable_if< typename boost::is_base_of< Eigen::MatrixBase< Derived > , Derived >::type >::type >
-{ 
+{
     typedef boost::true_type type;
     const static bool value = type::value;
 };
@@ -46,7 +46,7 @@ struct is_resizeable_sfinae< Derived ,
 template < class Derived  >
 struct is_resizeable_sfinae< Derived ,
                       typename boost::enable_if< typename boost::is_base_of< Eigen::ArrayBase< Derived > , Derived >::type >::type >
-{ 
+{
     typedef boost::true_type type;
     const static bool value = type::value;
 };

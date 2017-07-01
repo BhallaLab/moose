@@ -15,14 +15,14 @@ template< class T, class A > class GetOpFunc;
 
 /**
  * Similar to Field< A >::fastGet(), except that an existing Msg is not needed.
- * 
+ *
  * Instant-return call for a single value. Bypasses all the queueing stuff.
  * It is hardcoded so type safety will have to be coded in too:
  * the dynamic_cast will catch it only at runtime.
- * 
+ *
  * Perhaps analogous localSet(), localLookupGet(), localGetVec(), etc. should
  * also be added.
- * 
+ *
  * Also, will be nice to change this to Field< A >::localGet() to make things
  * more uniform.
  */
@@ -33,17 +33,17 @@ A localGet( const Eref& er, string field )
 	fullFieldName[3] = std::toupper( fullFieldName[3] );
 	const Finfo* finfo = er.element()->cinfo()->findFinfo( fullFieldName );
 	assert( finfo );
-	
+
 	const DestFinfo* dest = dynamic_cast< const DestFinfo* >( finfo );
 	assert( dest );
-	
+
 	const OpFunc* op = dest->getOpFunc();
 	assert( op );
-	
+
 	const GetOpFunc< T, A >* gop =
 		dynamic_cast< const GetOpFunc< T, A >* >( op );
 	assert( gop );
-	
+
 	return gop->reduceOp( er );
 }
 
@@ -61,13 +61,13 @@ class SetGet
 		 * source type, to look up and pass back the fid, and to return
 		 * the number of targetEntries.
 		 * Tgt is passed in as the destination ObjId. May be changed inside,
-		 * if the function determines that it should be directed to a 
+		 * if the function determines that it should be directed to a
 		 * child Element acting as a Value.
 		 * Checks arg # and types for a 'set' call. Can be zero to 3 args.
-		 * Returns # of tgts if good. This is 0 if bad. 
+		 * Returns # of tgts if good. This is 0 if bad.
 		 * Passes back found fid.
 		 */
-		static const OpFunc* checkSet( 
+		static const OpFunc* checkSet(
 			const string& field, ObjId& tgt, FuncId& fid );
 
 //////////////////////////////////////////////////////////////////////
@@ -84,8 +84,8 @@ class SetGet
 		static bool strSet( const ObjId& dest, const string& field, const string& val );
 
 		/// Sends out request for data, and awaits its return.
-		static const vector< double* >* dispatchGet( 
-			const ObjId& tgt, FuncId tgtFid, 
+		static const vector< double* >* dispatchGet(
+			const ObjId& tgt, FuncId tgtFid,
 			const double* arg, unsigned int size );
 
 		virtual bool checkOpClass( const OpFunc* op ) const = 0;
@@ -105,13 +105,13 @@ class SetGet0: public SetGet
 			FuncId fid;
 			ObjId tgt( dest ); // checkSet may change the tgt.
 			const OpFunc* func = checkSet( field, tgt, fid );
-			const OpFunc0Base* op = 
+			const OpFunc0Base* op =
 					dynamic_cast< const OpFunc0Base* >( func );
 			if ( op ) {
 				if ( tgt.isOffNode() ) {
-					const OpFunc* op2 = op->makeHopFunc( 
+					const OpFunc* op2 = op->makeHopFunc(
 						HopIndex( op->opIndex(), MooseSetHop ) );
-					const OpFunc0Base* hop = 
+					const OpFunc0Base* hop =
 						dynamic_cast< const OpFunc0Base* >( op2 );
 					assert( hop );
 					hop->op( tgt.eref() );
@@ -130,7 +130,7 @@ class SetGet0: public SetGet
 		/**
 		 * Blocking call using string conversion
 		 */
-		static bool innerStrSet( const ObjId& dest, const string& field, 
+		static bool innerStrSet( const ObjId& dest, const string& field,
 			const string& val )
 		{
 			return set( dest, field );
@@ -155,13 +155,13 @@ template< class A > class SetGet1: public SetGet
 			FuncId fid;
 			ObjId tgt( dest );
 			const OpFunc* func = checkSet( field, tgt, fid );
-			const OpFunc1Base< A >* op = 
+			const OpFunc1Base< A >* op =
 					dynamic_cast< const OpFunc1Base< A >* >( func );
 			if ( op ) {
 				if ( tgt.isOffNode() ) {
-					const OpFunc* op2 = op->makeHopFunc( 
+					const OpFunc* op2 = op->makeHopFunc(
 						HopIndex( op->opIndex(), MooseSetHop ) );
-					const OpFunc1Base< A >* hop = 
+					const OpFunc1Base< A >* hop =
 						dynamic_cast< const OpFunc1Base< A >* >( op2 );
 					hop->op( tgt.eref(), arg );
 					delete op2;
@@ -185,7 +185,7 @@ template< class A > class SetGet1: public SetGet
 		 * buffer: if the number of targets exceeds the vector size, it
 		 * rolls over.
 		 */
-		static bool setVec( ObjId destId, const string& field, 
+		static bool setVec( ObjId destId, const string& field,
 			const vector< A >& arg )
 		{
 			if ( arg.size() == 0 ) return 0;
@@ -196,9 +196,9 @@ template< class A > class SetGet1: public SetGet
 			const OpFunc* func = checkSet( field, tgt, fid );
 			const OpFunc1Base< A >* op = dynamic_cast< const OpFunc1Base< A >* >( func );
 			if ( op ) {
-				const OpFunc* op2 = op->makeHopFunc( 
+				const OpFunc* op2 = op->makeHopFunc(
 					HopIndex( op->opIndex(), MooseSetVecHop ) );
-				const OpFunc1Base< A >* hop = 
+				const OpFunc1Base< A >* hop =
 					dynamic_cast< const OpFunc1Base< A >* >( op2 );
 				hop->opVec( tgt.eref(), arg, op );
 				delete op2;
@@ -210,7 +210,7 @@ template< class A > class SetGet1: public SetGet
 		/**
 		 * Sets all target array values to the single value
 		 */
-		static bool setRepeat( ObjId destId, const string& field, 
+		static bool setRepeat( ObjId destId, const string& field,
 			const A& arg )
 		{
 			vector< A >temp ( 1, arg );
@@ -220,7 +220,7 @@ template< class A > class SetGet1: public SetGet
 		/**
 		 * Blocking call using string conversion
 		 */
-		static bool innerStrSet( const ObjId& dest, const string& field, 
+		static bool innerStrSet( const ObjId& dest, const string& field,
 			const string& val )
 		{
 			A arg;
@@ -249,7 +249,7 @@ template< class A > class Field: public SetGet1< A >
 			return SetGet1< A >::set( dest, temp, arg );
 		}
 
-		static bool setVec( ObjId destId, const string& field, 
+		static bool setVec( ObjId destId, const string& field,
 			const vector< A >& arg )
 		{
 			string temp = "set" + field;
@@ -257,7 +257,7 @@ template< class A > class Field: public SetGet1< A >
 			return SetGet1< A >::setVec( destId, temp, arg );
 		}
 
-		static bool setRepeat( ObjId destId, const string& field, 
+		static bool setRepeat( ObjId destId, const string& field,
 			A arg )
 		{
 			string temp = "set" + field;
@@ -268,7 +268,7 @@ template< class A > class Field: public SetGet1< A >
 		/**
 		 * Blocking call using string conversion
 		 */
-		static bool innerStrSet( const ObjId& dest, const string& field, 
+		static bool innerStrSet( const ObjId& dest, const string& field,
 			const string& arg )
 		{
 			A val;
@@ -282,31 +282,31 @@ template< class A > class Field: public SetGet1< A >
 
 		// Returns a field value.
 		static A get( const ObjId& dest, const string& field)
-		{ 
+		{
 			ObjId tgt( dest );
 			FuncId fid;
 			string fullFieldName = "get" + field;
 			fullFieldName[3] = std::toupper( fullFieldName[3] );
 			const OpFunc* func = SetGet::checkSet( fullFieldName, tgt, fid );
-			const GetOpFuncBase< A >* gof = 
+			const GetOpFuncBase< A >* gof =
 					dynamic_cast< const GetOpFuncBase< A >* >( func );
 			if ( gof ) {
 				if ( tgt.isDataHere() ) {
 					return gof->returnOp( tgt.eref() );
 				} else {
-					const OpFunc* op2 = gof->makeHopFunc( 
+					const OpFunc* op2 = gof->makeHopFunc(
 						HopIndex( gof->opIndex(), MooseGetHop ) );
-					const OpFunc1Base< A* >* hop = 
+					const OpFunc1Base< A* >* hop =
 						dynamic_cast< const OpFunc1Base< A* >* >( op2 );
 					assert( hop );
 					// Blocking function.
-					A ret; 
+					A ret;
 					hop->op( tgt.eref(), &ret );
 					delete op2;
 					return ret;
 				}
 			}
-			cout << "Warning: Field::Get conversion error for " << 
+			cout << "Warning: Field::Get conversion error for " <<
 					dest.id.path() << "." << field << endl;
 			return A();
 		}
@@ -323,12 +323,12 @@ template< class A > class Field: public SetGet1< A >
 			string fullFieldName = "get" + field;
 			fullFieldName[3] = std::toupper( fullFieldName[3] );
 			const OpFunc* func = SetGet::checkSet( fullFieldName, tgt, fid );
-			const GetOpFuncBase< A >* gof = 
+			const GetOpFuncBase< A >* gof =
 					dynamic_cast< const GetOpFuncBase< A >* >( func );
 			if ( gof ) {
-				const OpFunc* op2 = gof->makeHopFunc( 
+				const OpFunc* op2 = gof->makeHopFunc(
 					HopIndex( gof->opIndex(), MooseGetVecHop ) );
-				const GetHopFunc< A >* hop = 
+				const GetHopFunc< A >* hop =
 					dynamic_cast< const GetHopFunc< A >* >( op2 );
 				hop->opGetVec( tgt.eref(), vec, gof );
 				delete op2;
@@ -342,7 +342,7 @@ template< class A > class Field: public SetGet1< A >
 		 * Blocking call for finding a value and returning in a
 		 * string.
 		 */
-		static bool innerStrGet( const ObjId& dest, const string& field, 
+		static bool innerStrGet( const ObjId& dest, const string& field,
 			string& str )
 		{
 			Conv< A >::val2str( str, get( dest, field ) );
@@ -362,19 +362,19 @@ template< class A1, class A2 > class SetGet2: public SetGet
 		/**
 		 * Blocking, typed 'Set' call
 		 */
-		static bool set( const ObjId& dest, const string& field, 
+		static bool set( const ObjId& dest, const string& field,
 			A1 arg1, A2 arg2 )
 		{
 			FuncId fid;
 			ObjId tgt( dest );
 			const OpFunc* func = checkSet( field, tgt, fid );
-			const OpFunc2Base< A1, A2 >* op = 
+			const OpFunc2Base< A1, A2 >* op =
 					dynamic_cast< const OpFunc2Base< A1, A2 >* >( func );
 			if ( op ) {
 				if ( tgt.isOffNode() ) {
-					const OpFunc* op2 = op->makeHopFunc( 
+					const OpFunc* op2 = op->makeHopFunc(
 						HopIndex( op->opIndex(), MooseSetHop ) );
-					const OpFunc2Base< A1, A2 >* hop = 
+					const OpFunc2Base< A1, A2 >* hop =
 						dynamic_cast< const OpFunc2Base< A1, A2 >* >( op2 );
 					hop->op( tgt.eref(), arg1, arg2 );
 					delete op2;
@@ -393,7 +393,7 @@ template< class A1, class A2 > class SetGet2: public SetGet
 		 * Assign a vector of targets, using matching vectors of arguments
 		 * arg1 and arg2. Specifically, index i on the target receives
 		 * arguments arg1[i], arg2[i].
-		 * Note that there is no requirement for the size of the 
+		 * Note that there is no requirement for the size of the
 		 * argument vectors to be equal to the size of the target array
 		 * of objects. If there are fewer arguments then the index cycles
 		 * back, so as to tile the target array with as many arguments as
@@ -401,28 +401,28 @@ template< class A1, class A2 > class SetGet2: public SetGet
 		 *
 		 * Not yet implemented correct handling for FieldElements.
 		 */
-		static bool setVec( Id destId, const string& field, 
+		static bool setVec( Id destId, const string& field,
 			const vector< A1 >& arg1, const vector< A2 >& arg2 )
 		{
 			ObjId tgt( destId, 0 );
 			FuncId fid;
 			const OpFunc* func = checkSet( field, tgt, fid );
-			const OpFunc2Base< A1, A2 >* op = 
+			const OpFunc2Base< A1, A2 >* op =
 					dynamic_cast< const OpFunc2Base< A1, A2 >* >( func );
 			if ( op ) {
 				/*
-				unsigned int size = tgt.element()->numData(); 
+				unsigned int size = tgt.element()->numData();
 				// total # of entries on element and maybe to include fields
 				for ( unsigned int i = 0; i < size; ++i ) {
 					Eref er( tgt.element(), i );
-					op->op( er, arg1[ i % arg1.size() ], 
+					op->op( er, arg1[ i % arg1.size() ],
 									arg2[ i % arg2.size() ] );
 				}
 				return true;
 				*/
-				const OpFunc* op2 = op->makeHopFunc( 
+				const OpFunc* op2 = op->makeHopFunc(
 					HopIndex( op->opIndex(), MooseSetVecHop ) );
-				const OpFunc2Base< A1, A2 >* hop = 
+				const OpFunc2Base< A1, A2 >* hop =
 					dynamic_cast< const OpFunc2Base< A1, A2 >* >( op2 );
 				hop->opVec( tgt.eref(), arg1, arg2, op );
 				delete op2;
@@ -434,7 +434,7 @@ template< class A1, class A2 > class SetGet2: public SetGet
 		/**
 		 * Blocking call using string conversion.
 		 */
-		static bool innerStrSet( const ObjId& dest, const string& field, 
+		static bool innerStrSet( const ObjId& dest, const string& field,
 			const string& val )
 		{
 			A1 arg1;
@@ -452,7 +452,7 @@ template< class A1, class A2 > class SetGet2: public SetGet
  * The first argument in the 'Set' is the index, the second the value.
  * The first and only argument in the 'get' is the index.
  * Here A is the type of the value, and L the lookup index.
- * 
+ *
  */
 template< class L, class A > class LookupField: public SetGet2< L, A >
 {
@@ -464,7 +464,7 @@ template< class L, class A > class LookupField: public SetGet2< L, A >
 		/**
 		 * Blocking, typed 'Set' call. Identical to SetGet2::set.
 		 */
-		static bool set( const ObjId& dest, const string& field, 
+		static bool set( const ObjId& dest, const string& field,
 			L index, A arg )
 		{
 			string temp = "set" + field;
@@ -472,11 +472,11 @@ template< class L, class A > class LookupField: public SetGet2< L, A >
 			return SetGet2< L, A >::set( dest, temp, index, arg );
 		}
 
-		/** 
+		/**
 		 * This setVec assigns goes through each object entry in the
 		 * destId, and assigns the corresponding index and argument to it.
 		 */
-		static bool setVec( Id destId, const string& field, 
+		static bool setVec( Id destId, const string& field,
 			const vector< L >& index, const vector< A >& arg )
 		{
 			string temp = "set" + field;
@@ -490,7 +490,7 @@ template< class L, class A > class LookupField: public SetGet2< L, A >
 		 * index and assigns the corresponding argument.
 		 * This is a brute-force assignment.
 		 */
-		static bool setVec( ObjId dest, const string& field, 
+		static bool setVec( ObjId dest, const string& field,
 			const vector< L >& index, const vector< A >& arg )
 		{
 			string temp = "set" + field;
@@ -501,7 +501,7 @@ template< class L, class A > class LookupField: public SetGet2< L, A >
 		/**
 		 * Faking setRepeat too. Just plugs into setVec.
 		 */
-		static bool setRepeat( Id destId, const string& field, 
+		static bool setRepeat( Id destId, const string& field,
 			const vector< L >& index, A arg )
 		{
 			vector< A > avec( index.size(), arg );
@@ -511,7 +511,7 @@ template< class L, class A > class LookupField: public SetGet2< L, A >
 		/**
 		 * Blocking call using string conversion
 		 */
-		static bool innerStrSet( const ObjId& dest, const string& field, 
+		static bool innerStrSet( const ObjId& dest, const string& field,
 			const string& indexStr, const string& val )
 		{
 			L index;
@@ -536,16 +536,16 @@ template< class L, class A > class LookupField: public SetGet2< L, A >
 			string fullFieldName = "get" + field;
 			fullFieldName[3] = std::toupper( fullFieldName[3] );
 			const OpFunc* func = SetGet::checkSet( fullFieldName, tgt, fid);
-			const LookupGetOpFuncBase< L, A >* gof = 
+			const LookupGetOpFuncBase< L, A >* gof =
 				dynamic_cast< const LookupGetOpFuncBase< L, A >* >( func );
 			if ( gof ) {
 				if ( tgt.isDataHere() ) {
 					return gof->returnOp( tgt.eref(), index );
 				} else {
 						/*
-					const OpFunc* op2 = gof->makeHopFunc( 
+					const OpFunc* op2 = gof->makeHopFunc(
 						HopIndex( gof->opIndex(), MooseGetHop ), index );
-					const OpFunc1Base< A* >* hop = 
+					const OpFunc1Base< A* >* hop =
 						dynamic_cast< const OpFunc1Base< A* >* >( op2 );
 						*/
 					cout << "Warning: LookupField::get: cannot cross nodes yet\n";
@@ -559,7 +559,7 @@ template< class L, class A > class LookupField: public SetGet2< L, A >
 					*/
 				}
 			}
-			cout << "LookupField::get: Warning: Field::Get conversion error for " << 
+			cout << "LookupField::get: Warning: Field::Get conversion error for " <<
 				dest.id.path() << "." << field << endl;
 			return A();
 		}
@@ -570,7 +570,7 @@ template< class L, class A > class LookupField: public SetGet2< L, A >
 		 * and passes in the same lookup index to each one. The results
 		 * are put together in the vector vec.
 		 */
-		static void getVec( Id dest, const string& field, 
+		static void getVec( Id dest, const string& field,
 			vector< L >& index, vector< A >& vec )
 		{
 			vec.resize( 0 );
@@ -579,7 +579,7 @@ template< class L, class A > class LookupField: public SetGet2< L, A >
 			string fullFieldName = "get" + field;
 			fullFieldName[3] = std::toupper( fullFieldName[3] );
 			const OpFunc* func = SetGet::checkSet( fullFieldName, tgt, fid );
-			const LookupGetOpFuncBase< L, A >* gof = 
+			const LookupGetOpFuncBase< L, A >* gof =
 				dynamic_cast< const LookupGetOpFuncBase< L, A >* >( func );
 			if ( gof ) {
 				Element* elm = dest.element();
@@ -599,7 +599,7 @@ template< class L, class A > class LookupField: public SetGet2< L, A >
 		 * Blocking virtual call for finding a value and returning in a
 		 * string.
 		 */
-		static bool innerStrGet( const ObjId& dest, const string& field, 
+		static bool innerStrGet( const ObjId& dest, const string& field,
 			const string& indexStr, string& str )
 		{
 			L index;
@@ -623,20 +623,20 @@ template< class A1, class A2, class A3 > class SetGet3: public SetGet
 		/**
 		 * Blocking, typed 'Set' call
 		 */
-		static bool set( const ObjId& dest, const string& field, 
+		static bool set( const ObjId& dest, const string& field,
 			A1 arg1, A2 arg2, A3 arg3 )
 		{
 			FuncId fid;
 			ObjId tgt( dest );
 			const OpFunc* func = checkSet( field, tgt, fid );
-			const OpFunc3Base< A1, A2, A3 >* op = 
+			const OpFunc3Base< A1, A2, A3 >* op =
 					dynamic_cast< const OpFunc3Base< A1, A2, A3 >* >( func);
 			if ( op ) {
 				if ( tgt.isOffNode() ) {
-					const OpFunc* op2 = op->makeHopFunc( 
+					const OpFunc* op2 = op->makeHopFunc(
 						HopIndex( op->opIndex(), MooseSetHop ) );
-					const OpFunc3Base< A1, A2, A3 >* hop = 
-						dynamic_cast< const OpFunc3Base< A1, A2, A3 >* >( 
+					const OpFunc3Base< A1, A2, A3 >* hop =
+						dynamic_cast< const OpFunc3Base< A1, A2, A3 >* >(
 										op2 );
 					hop->op( tgt.eref(), arg1, arg2, arg3 );
 					delete op2;
@@ -656,7 +656,7 @@ template< class A1, class A2, class A3 > class SetGet3: public SetGet
 		 * As yet we don't have 2 arg conversion from a single string.
 		 * So this is a dummy
 		 */
-		static bool innerStrSet( const ObjId& dest, const string& field, 
+		static bool innerStrSet( const ObjId& dest, const string& field,
 			const string& val )
 		{
 			A1 arg1;
@@ -684,19 +684,19 @@ template< class A1, class A2, class A3, class A4 > class SetGet4: public SetGet
 		/**
 		 * Blocking, typed 'Set' call
 		 */
-		static bool set( const ObjId& dest, const string& field, 
+		static bool set( const ObjId& dest, const string& field,
 			A1 arg1, A2 arg2, A3 arg3, A4 arg4 )
 		{
 			FuncId fid;
 			ObjId tgt( dest );
 			const OpFunc* func = checkSet( field, tgt, fid );
-			const OpFunc4Base< A1, A2, A3, A4 >* op = 
+			const OpFunc4Base< A1, A2, A3, A4 >* op =
 				dynamic_cast< const OpFunc4Base< A1, A2, A3, A4 >* >( func);
 			if ( op ) {
 				if ( tgt.isOffNode() ) {
-					const OpFunc* op2 = op->makeHopFunc( 
+					const OpFunc* op2 = op->makeHopFunc(
 						HopIndex( op->opIndex(), MooseSetHop ) );
-					const OpFunc4Base< A1, A2, A3, A4 >* hop = 
+					const OpFunc4Base< A1, A2, A3, A4 >* hop =
 						dynamic_cast< const OpFunc4Base< A1, A2, A3, A4 >* >( op2 );
 					hop->op( tgt.eref(), arg1, arg2, arg3, arg4 );
 					delete op2;
@@ -716,7 +716,7 @@ template< class A1, class A2, class A3, class A4 > class SetGet4: public SetGet
 		 * As yet we don't have 2 arg conversion from a single string.
 		 * So this is a dummy
 		 */
-		static bool innerStrSet( const ObjId& dest, const string& field, 
+		static bool innerStrSet( const ObjId& dest, const string& field,
 			const string& val )
 		{
 			A1 arg1;
@@ -746,19 +746,19 @@ template< class A1, class A2, class A3, class A4, class A5 > class SetGet5:
 		SetGet5()
 		{;}
 
-		static bool set( const ObjId& dest, const string& field, 
+		static bool set( const ObjId& dest, const string& field,
 			A1 arg1, A2 arg2, A3 arg3, A4 arg4, A5 arg5 )
 		{
 			FuncId fid;
 			ObjId tgt( dest );
 			const OpFunc* func = checkSet( field, tgt, fid );
-			const OpFunc5Base< A1, A2, A3, A4, A5 >* op = 
+			const OpFunc5Base< A1, A2, A3, A4, A5 >* op =
 				dynamic_cast< const OpFunc5Base< A1, A2, A3, A4, A5 >* >( func);
 			if ( op ) {
 				if ( tgt.isOffNode() ) {
-					const OpFunc* op2 = op->makeHopFunc( 
+					const OpFunc* op2 = op->makeHopFunc(
 						HopIndex( op->opIndex(), MooseSetHop ) );
-					const OpFunc5Base< A1, A2, A3, A4, A5 >* hop = 
+					const OpFunc5Base< A1, A2, A3, A4, A5 >* hop =
 						dynamic_cast< const OpFunc5Base< A1, A2, A3, A4, A5 >* >( op2 );
 					hop->op( tgt.eref(), arg1, arg2, arg3, arg4, arg5 );
 					delete op2;
@@ -778,7 +778,7 @@ template< class A1, class A2, class A3, class A4, class A5 > class SetGet5:
 		 * As yet we don't have 2 arg conversion from a single string.
 		 * So this is a dummy
 		 */
-		static bool innerStrSet( const ObjId& dest, const string& field, 
+		static bool innerStrSet( const ObjId& dest, const string& field,
 			const string& val )
 		{
 			A1 arg1;
@@ -815,19 +815,19 @@ template< class A1, class A2, class A3, class A4, class A5, class A6 > class Set
 		/**
 		 * Blocking, typed 'Set' call
 		 */
-		static bool set( const ObjId& dest, const string& field, 
+		static bool set( const ObjId& dest, const string& field,
 			A1 arg1, A2 arg2, A3 arg3, A4 arg4, A5 arg5, A6 arg6 )
 		{
 			FuncId fid;
 			ObjId tgt( dest );
 			const OpFunc* func = checkSet( field, tgt, fid );
-			const OpFunc6Base< A1, A2, A3, A4, A5, A6 >* op = 
+			const OpFunc6Base< A1, A2, A3, A4, A5, A6 >* op =
 				dynamic_cast< const OpFunc6Base< A1, A2, A3, A4, A5, A6 >* >( func);
 			if ( op ) {
 				if ( tgt.isOffNode() ) {
-					const OpFunc* op2 = op->makeHopFunc( 
+					const OpFunc* op2 = op->makeHopFunc(
 						HopIndex( op->opIndex(), MooseSetHop ) );
-					const OpFunc6Base< A1, A2, A3, A4, A5, A6 >* hop = 
+					const OpFunc6Base< A1, A2, A3, A4, A5, A6 >* hop =
 						dynamic_cast< const OpFunc6Base< A1, A2, A3, A4, A5, A6 >* >( op2 );
 					hop->op( tgt.eref(), arg1, arg2, arg3, arg4, arg5, arg6 );
 					delete op2;
@@ -845,7 +845,7 @@ template< class A1, class A2, class A3, class A4, class A5, class A6 > class Set
 		/**
 		 * Blocking call using string conversion.
 		 */
-		static bool innerStrSet( const ObjId& dest, const string& field, 
+		static bool innerStrSet( const ObjId& dest, const string& field,
 			const string& val )
 		{
 			A1 arg1;

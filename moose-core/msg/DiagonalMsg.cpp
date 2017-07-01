@@ -16,7 +16,7 @@ vector< DiagonalMsg* > DiagonalMsg::msg_;
 
 DiagonalMsg::DiagonalMsg( Element* e1, Element* e2, unsigned int msgIndex )
 	: Msg( ObjId( managerId_, (msgIndex != 0) ? msgIndex: msg_.size() ),
-					e1, e2 ), 
+					e1, e2 ),
 	stride_( 1 )
 {
 	if ( msgIndex == 0 ) {
@@ -34,7 +34,7 @@ DiagonalMsg::~DiagonalMsg()
 	msg_[ mid_.dataIndex ] = 0; // ensure deleted ptr isn't reused.
 }
 
-Eref DiagonalMsg::firstTgt( const Eref& src ) const 
+Eref DiagonalMsg::firstTgt( const Eref& src ) const
 {
 	if ( src.element() == e1_ ) {
 		unsigned int nextData = src.dataIndex() + stride_;

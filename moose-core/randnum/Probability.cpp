@@ -1,6 +1,6 @@
 /*******************************************************************
  * File:            Probability.cpp
- * Description:      
+ * Description:
  * Author:          Subhasis Ray
  * E-mail:          ray.subhasis@gmail.com
  * Created:         2007-10-28 13:35:39

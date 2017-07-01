@@ -28,13 +28,13 @@ class LookupTable
 {
 public:
 	LookupTable() { ; }
-	
+
 	LookupTable(
 		double min,					///< min of range
 		double max,					///< max of range
 		unsigned int nDivs,			///< number of divisions (~ no. of rows)
 		unsigned int nSpecies );	///< number of species (no. of columns / 2)
-	
+
 	/// Adds the columns for a given species. Columns supplied are C1 and C2
 	void addColumns(
 		int species,
@@ -42,11 +42,11 @@ public:
 		const vector< double >& C2 );
 		//~ const vector< double >& C2,
 		//~ bool interpolate );
-	
+
 	void column(
 		unsigned int species,
 		LookupColumn& column );
-	
+
 	/**
 	 * Returns the row corresponding to x in the "row" parameter.
 	 * i.e., returns the leftover fraction and the row's start address.
@@ -54,14 +54,14 @@ public:
 	void row(
 		double x,
 		LookupRow& row );
-	
+
 	/// Actually performs the lookup and the linear interpolation
 	void lookup(
 		const LookupColumn& column,
 		const LookupRow& row,
 		double& C1,
 		double& C2 );
-	
+
 private:
 	//~ vector< bool >       interpolate_;
 	vector< double >     table_;		///< Flattened table

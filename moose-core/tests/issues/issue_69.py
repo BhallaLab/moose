@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Github issue #69, Also BhallaLab/moose-gui#3.
 
 import moose

@@ -40,7 +40,7 @@ const Cinfo* PsdMesh::initCinfo()
 		);
 
 		static ReadOnlyValueFinfo< PsdMesh, vector< unsigned int > >
-			neuronVoxel 
+			neuronVoxel
 		(
 		 	"neuronVoxel",
 			"Vector of indices of voxels on parent NeuroMesh, from which "
@@ -153,7 +153,7 @@ PsdMesh::PsdMesh()
 }
 
 PsdMesh::PsdMesh( const PsdMesh& other )
-	: 
+	:
 		psd_( other.psd_ ),
 		surfaceGranularity_( other.surfaceGranularity_ )
 {;}
@@ -195,7 +195,7 @@ vector< Id > PsdMesh::getElecComptMap() const
 vector< unsigned int > PsdMesh::getStartVoxelInCompt() const
 {
 	vector< unsigned int > ret( elecCompt_.size() );
-	for ( unsigned int i = 0; i < ret.size(); ++i ) 
+	for ( unsigned int i = 0; i < ret.size(); ++i )
 		ret[i] = i;
 	return ret;
 }
@@ -203,7 +203,7 @@ vector< unsigned int > PsdMesh::getStartVoxelInCompt() const
 vector< unsigned int > PsdMesh::getEndVoxelInCompt() const
 {
 	vector< unsigned int > ret( elecCompt_.size() );
-	for ( unsigned int i = 0; i < ret.size(); ++i ) 
+	for ( unsigned int i = 0; i < ret.size(); ++i )
 		ret[i] = i+1;
 	return ret;
 }
@@ -224,7 +224,7 @@ unsigned int PsdMesh::innerGetDimensions() const
 }
 
 // Here we set up the psds.
-void PsdMesh::handlePsdList( 
+void PsdMesh::handlePsdList(
 		const Eref& e,
 		vector< double > diskCoords, //ctr(xyz), dir(xyz), dia, diffDist
 		// The elecCompt refers to the spine head elec compartment.
@@ -260,7 +260,7 @@ void PsdMesh::handlePsdList(
 			psd_.back().setIsCylinder( true );
 				// This is an entirely nominal
 				// length, so that the effective vol != 0.
-			psd_.back().setLength( thickness_ ); 
+			psd_.back().setLength( thickness_ );
 
 			parentDist_.push_back( *x++ );
 			vs_[i] = psd_.back().volume( psd_.back() );
@@ -272,7 +272,7 @@ void PsdMesh::handlePsdList(
 		updateCoords();
 
 		Id meshEntry( e.id().value() + 1 );
-		
+
 		vector< unsigned int > localIndices( psd_.size() );
 		vector< double > vols( psd_.size() );
 		for ( unsigned int i = 0; i < psd_.size(); ++i ) {
@@ -462,7 +462,7 @@ void PsdMesh::matchMeshEntries( const ChemCompt* other,
 }
 
 void PsdMesh::indexToSpace( unsigned int index,
-			double& x, double& y, double& z ) const 
+			double& x, double& y, double& z ) const
 {
 	if ( index >= innerGetNumEntries() )
 		return;
@@ -471,7 +471,7 @@ void PsdMesh::indexToSpace( unsigned int index,
 	z = psd_[index].getZ();
 }
 
-double PsdMesh::nearest( double x, double y, double z, 
+double PsdMesh::nearest( double x, double y, double z,
 				unsigned int& index ) const
 {
 	double best = 1e12;
@@ -555,7 +555,7 @@ const vector< double >& PsdMesh::vGetVoxelVolume() const
 * The order of coords sent in is
 		 * 	centre xyz
 		 * 	direction xyz
-		 * 	dia, 
+		 * 	dia,
 		 * 	diffusion distance to middle of spine Head.
 */
 const vector< double >& PsdMesh::vGetVoxelMidpoint() const
@@ -564,7 +564,7 @@ const vector< double >& PsdMesh::vGetVoxelMidpoint() const
 	midpoint.resize( psd_.size() * 3 );
 	vector< double >::iterator k = midpoint.begin();
 	for ( unsigned int i = 0; i < psd_.size(); ++i ) {
-		vector< double > coords = 
+		vector< double > coords =
 				psd_[i].getCoordinates( pa_[i], 0 );
 		*k = ( coords[0] + coords[3] ) / 2.0;
 		*(k + psd_.size() ) = ( coords[1] + coords[4] ) / 2.0;
@@ -588,7 +588,7 @@ const vector< double >& PsdMesh::getVoxelLength() const
 double PsdMesh::vGetEntireVolume() const
 {
 	double ret = 0.0;
-	for ( vector< double >::const_iterator i = 
+	for ( vector< double >::const_iterator i =
 					vs_.begin(); i != vs_.end(); ++i )
 		ret += *i;
 	return ret;

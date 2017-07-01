@@ -1,31 +1,31 @@
-// PIDController.cpp --- 
-// 
+// PIDController.cpp ---
+//
 // Filename: PIDController.cpp
-// Description: 
+// Description:
 // Author: subhasis ray
-// Maintainer: 
+// Maintainer:
 // Created: Tue Dec 30 23:36:01 2008 (+0530)
-// Version: 
+// Version:
 // Last-Updated: Tue Jun 11 17:00:51 2013 (+0530)
 //           By: subha
 //     Update #: 338
-// URL: 
-// Keywords: 
-// Compatibility: 
-// 
-// 
+// URL:
+// Keywords:
+// Compatibility:
+//
+//
 
-// Commentary: 
-// 
-// 
-// 
-// 
+// Commentary:
+//
+//
+//
+//
 
 // Change log:
-// 
-// 
-// 
-// 
+//
+//
+//
+//
 /**********************************************************************
  ** This program is part of 'MOOSE', the
  ** Messaging Object Oriented Simulation Environment,
@@ -44,7 +44,7 @@
 
 static SrcFinfo1< double > * outputOut()
 {
-    static SrcFinfo1 <double> outputOut("output", 
+    static SrcFinfo1 <double> outputOut("output",
                                         "Sends the output of the PIDController. This is known as manipulated"
                                         " variable (MV) in control theory. This should be fed into the process"
                                         " which we are trying to control.");
@@ -62,7 +62,7 @@ const Cinfo* PIDController::initCinfo()
     static Finfo* processShared[] = {
 		&process, &reinit
     };
-    
+
         static ValueFinfo<PIDController, double> gain( "gain",
                                                 "This is the proportional gain (Kp). This tuning parameter scales the"
                                                 " proportional term. Larger gain usually results in faster response, but"
@@ -76,14 +76,14 @@ const Cinfo* PIDController::initCinfo()
                                               &PIDController::getSaturation);
         static ValueFinfo<PIDController, double> command("command",
                                               "The command (desired) value of the sensed parameter. In control theory"
-                                              " this is commonly known as setpoint(SP).",                                               
-                                              &PIDController::setCommand, 
+                                              " this is commonly known as setpoint(SP).",
+                                              &PIDController::setCommand,
                                               &PIDController::getCommand);
         static ReadOnlyValueFinfo<PIDController, double> sensed( "sensed",
                                                        "Sensed (measured) value. This is commonly known as process variable"
                                                        "(PV) in control theory.",
                                                        &PIDController::getSensed);
-        static ValueFinfo<PIDController, double> tauI( "tauI", 
+        static ValueFinfo<PIDController, double> tauI( "tauI",
                                                "The integration time constant, typically = dt. This is actually"
                                                " proportional gain divided by integral gain (Kp/Ki)). Larger Ki"
                                                " (smaller tauI) usually leads to fast elimination of steady state"
@@ -97,14 +97,14 @@ const Cinfo* PIDController::initCinfo()
                                                " and may lead to instability.",
                                                &PIDController::setTauD,
                                                &PIDController::getTauD);
-        static ReadOnlyValueFinfo<PIDController, double> outputValue( "outputValue", 
+        static ReadOnlyValueFinfo<PIDController, double> outputValue( "outputValue",
                                                        "Output of the PIDController. This is given by:"
                                                        "      gain * ( error + INTEGRAL[ error dt ] / tau_i   + tau_d * d(error)/dt )\n"
                                                        "Where gain = proportional gain (Kp), tau_i = integral gain (Kp/Ki) and"
                                                        " tau_d = derivative gain (Kd/Kp). In control theory this is also known"
                                                        " as the manipulated variable (MV)",
-                                                       &PIDController::getOutput);                                                  
-        static ReadOnlyValueFinfo<PIDController, double> error( "error", 
+                                                       &PIDController::getOutput);
+        static ReadOnlyValueFinfo<PIDController, double> error( "error",
                                                        "The error term, which is the difference between command and sensed"
                                                        " value.",
                                                        &PIDController::getError);
@@ -326,5 +326,5 @@ void PIDController::reinit(const Eref& e, ProcPtr proc )
 
 
 
-// 
+//
 // PIDController.cpp ends here

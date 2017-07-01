@@ -35,12 +35,12 @@ const Cinfo* NMDAChan::initCinfo()
 	///////////////////////////////////////////////////////
 	// Field definitions
 	///////////////////////////////////////////////////////
-	static ValueFinfo< NMDAChan, double > KMg_A( "KMg_A", 
+	static ValueFinfo< NMDAChan, double > KMg_A( "KMg_A",
 			"1/eta",
 			&NMDAChan::setKMg_A,
 			&NMDAChan::getKMg_A
 		);
-	static ValueFinfo< NMDAChan, double > KMg_B( "KMg_B", 
+	static ValueFinfo< NMDAChan, double > KMg_B( "KMg_B",
 			"1/gamma",
 			&NMDAChan::setKMg_B,
 			&NMDAChan::getKMg_B
@@ -50,17 +50,17 @@ const Cinfo* NMDAChan::initCinfo()
 			&NMDAChan::setCMg,
 			&NMDAChan::getCMg
 		);
-	static ValueFinfo< NMDAChan, double > temperature( "temperature", 
+	static ValueFinfo< NMDAChan, double > temperature( "temperature",
 			"Temperature in degrees Kelvin.",
 			&NMDAChan::setTemperature,
 			&NMDAChan::getTemperature
 		);
-	static ValueFinfo< NMDAChan, double > extCa( "extCa", 
+	static ValueFinfo< NMDAChan, double > extCa( "extCa",
 			"External concentration of Calcium in millimolar",
 			&NMDAChan::setExtCa,
 			&NMDAChan::getExtCa
 		);
-	static ValueFinfo< NMDAChan, double > intCa( "intCa", 
+	static ValueFinfo< NMDAChan, double > intCa( "intCa",
 			"Internal concentration of Calcium in millimolar."
 			"This is the final value used by the internal calculations, "
 			"and may also be updated by the assignIntCa message after "
@@ -68,7 +68,7 @@ const Cinfo* NMDAChan::initCinfo()
 			&NMDAChan::setIntCa,
 			&NMDAChan::getIntCa
 		);
-	static ValueFinfo< NMDAChan, double > intCaScale( "intCaScale", 
+	static ValueFinfo< NMDAChan, double > intCaScale( "intCaScale",
 			"Scale factor for internal concentration of Calcium in mM, "
 			"applied to values coming in through the assignIntCa message. "
 			"Required because in many models the units of calcium may "
@@ -76,7 +76,7 @@ const Cinfo* NMDAChan::initCinfo()
 			&NMDAChan::setIntCaScale,
 			&NMDAChan::getIntCaScale
 		);
-	static ValueFinfo< NMDAChan, double > intCaOffset( "intCaOffset", 
+	static ValueFinfo< NMDAChan, double > intCaOffset( "intCaOffset",
 			"Offsetfor internal concentration of Calcium in mM, "
 			"applied _after_ the scaling to mM is done. "
 			"Applied to values coming in through the assignIntCa message. "
@@ -85,7 +85,7 @@ const Cinfo* NMDAChan::initCinfo()
 			&NMDAChan::setIntCaOffset,
 			&NMDAChan::getIntCaOffset
 		);
-	static ValueFinfo< NMDAChan, double > condFraction( "condFraction", 
+	static ValueFinfo< NMDAChan, double > condFraction( "condFraction",
 			"Fraction of total channel conductance that is due to the "
 			"passage of Ca ions. This is related to the ratio of "
 			"permeabilities of different ions, and is typically in "
@@ -96,12 +96,12 @@ const Cinfo* NMDAChan::initCinfo()
 			&NMDAChan::setCondFraction,
 			&NMDAChan::getCondFraction
 		);
-	static ReadOnlyValueFinfo< NMDAChan, double > ICa( "ICa", 
+	static ReadOnlyValueFinfo< NMDAChan, double > ICa( "ICa",
 			"Current carried by Ca ions",
 			&NMDAChan::getICa
 		);
-	static ElementValueFinfo< ChanBase, double > permeability( 
-			"permeability", 
+	static ElementValueFinfo< ChanBase, double > permeability(
+			"permeability",
 			"Permeability. Alias for Gbar. Note that the mapping is not"
 			" really correct. Permeability is in units of m/s whereas "
 			"Gbar is 1/ohm. Some nasty scaling is involved in the "
@@ -111,7 +111,7 @@ const Cinfo* NMDAChan::initCinfo()
 			&ChanBase::getGbar
 		);
 	/////////////////////////////////////////////////////////////////////
-		static DestFinfo assignIntCa( "assignIntCa", 
+		static DestFinfo assignIntCa( "assignIntCa",
 			"Assign the internal concentration of Ca. The final value "
 			"is computed as: "
 			"     intCa = assignIntCa * intCaScale + intCaOffset ",
@@ -166,7 +166,7 @@ static const Cinfo* NMDAChanCinfo = NMDAChan::initCinfo();
 // Constructor
 ///////////////////////////////////////////////////
 NMDAChan::NMDAChan()
-	:	
+	:
 		KMg_A_( 1.0 ), // These are NOT the same as the A, B state
 		KMg_B_( 1.0 ), //. variables used for Exp Euler integration.
 		CMg_( 1.0 ), 	/// Extracellular Conc of Mg in mM
@@ -312,7 +312,7 @@ void NMDAChan::assignIntCa( double v )
  * Note the implicit mapping between permeability and conductance.
  * From the GENESIS source code:
  * A thought about the units, by EDS 6/95 (based on Hille 92):
- * Units: 
+ * Units:
  * 		p in M/s
  * 		EF/RT and z are dimensionless
  * 		F in C/mol
@@ -329,7 +329,7 @@ void NMDAChan::assignIntCa( double v )
 
 void NMDAChan::vProcess( const Eref& e, ProcPtr info )
 {
-	// First do the regular channel current calculations for the 
+	// First do the regular channel current calculations for the
 	// summed ions, in which the NMDAR behaves like a regular channel
 	// modulo the Mg block.
 	double Gk = SynChan::calcGk();
@@ -337,16 +337,16 @@ void NMDAChan::vProcess( const Eref& e, ProcPtr info )
 	Gk *= KMg / (KMg + CMg_);
 	ChanBase::setGk( e, Gk );
 	ChanCommon::updateIk();
-	
+
 	////////////////////////////////////////////////////////////////////
 	// Here we do the calculations for the Ca portion of the current.
 	// Total current is still done using a regular reversal potl for chan.
-	// Here we use Gk = Permeability * Z * FaradayConst * area / dV. 
+	// Here we use Gk = Permeability * Z * FaradayConst * area / dV.
 	// Note that Cin and Cout are in moles/m^3, and FaradayConst is in
 	// Coulombs/mole.
 	//
 	// The GHK flux equation for an ion S (Hille 2001):
-	// \Phi_{S} = P_{S}z_{S}^2\frac{V_{m}F^{2}}{RT}\frac{[\mbox{S}]_{i} - [\mbox{S}]_{o}\exp(-z_{S}V_{m}F/RT)}{1 - \exp(-z_{S}V_{m}F/RT)} 
+	// \Phi_{S} = P_{S}z_{S}^2\frac{V_{m}F^{2}}{RT}\frac{[\mbox{S}]_{i} - [\mbox{S}]_{o}\exp(-z_{S}V_{m}F/RT)}{1 - \exp(-z_{S}V_{m}F/RT)}
 	// where
 	// \PhiS is the current across the membrane carried by ion S, measured in amperes per square meter (A·m−2)
 	// PS is the permeability of the membrane for ion S measured in m·s−1
@@ -370,7 +370,7 @@ void NMDAChan::vProcess( const Eref& e, ProcPtr info )
 	// We want ICa in Amps. We use perm times area which is m^3/s
 	// Flux ( mol/sec) = Perm (m/s ) * area (m^2) * (Cout - Cin) (mol/m^3)
 	//
-	// But we also have 
+	// But we also have
 	//
 	// Flux (mol/sec) = Gk ( Coul/(sec*V) ) * dV (V) / (zF (Coul/Mol))
 	//
@@ -390,7 +390,7 @@ void NMDAChan::vProcess( const Eref& e, ProcPtr info )
 	//                                     ------------------------------
 	//                                     (cout-cin) *  (1-e2exponent)
 	//
-	// Note how the calculation for Perm in terms of Gk has to use 
+	// Note how the calculation for Perm in terms of Gk has to use
 	// different terms for dV and conc, than the GHK portion.
 	//
 	// A further factor comes in because we want to relate the Gk for
@@ -422,7 +422,7 @@ void NMDAChan::vProcess( const Eref& e, ProcPtr info )
 	//
 	// Gchan = 23GCa + 25GCa + GCa
 	// So GCa = Gchan / 49. So condFraction ~0.02 in the vicinity of 0.0mV.
-	// 
+	//
 	// Rather than build in this calculation, I'll just provide the user
 	// with a scaling field to use and set it to the default of 0.02
 	//
@@ -434,10 +434,10 @@ void NMDAChan::vProcess( const Eref& e, ProcPtr info )
 	double exponent = const_ * Vm_;
 	double e2e = exp( -exponent );
 	if ( fabs( exponent) < 0.00001 ) { // Exponent too near zero, use Taylor
-		ICa_ = Gk * dV * exponent * ( Cin_ - Cout_ * e2e ) / 
+		ICa_ = Gk * dV * exponent * ( Cin_ - Cout_ * e2e ) /
 				( ( Cin_ - Cout_ ) * (1 - 0.5 * exponent ) );
 	} else {
-		ICa_ = Gk * dV * exponent * ( Cin_ - Cout_ * e2e ) / 
+		ICa_ = Gk * dV * exponent * ( Cin_ - Cout_ * e2e ) /
 				( ( Cin_ - Cout_ ) * (1 - e2e ) );
 	}
 	ICa_ *= condFraction_; // Scale Ca current by fraction carried by Ca.

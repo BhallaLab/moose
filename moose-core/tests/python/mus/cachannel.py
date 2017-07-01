@@ -1,47 +1,48 @@
-# cachannel.py --- 
-# 
+# -*- coding: utf-8 -*-
+# cachannel.py ---
+#
 # Filename: cachannel.py
-# Description: 
+# Description:
 # Author: Subhasis Ray
-# Maintainer: 
+# Maintainer:
 # Created: Wed Jun  4 14:59:08 2014 (+0530)
-# Version: 
-# Last-Updated: 
-#           By: 
+# Version:
+# Last-Updated:
+#           By:
 #     Update #: 0
-# URL: 
-# Keywords: 
-# Compatibility: 
-# 
-# 
+# URL:
+# Keywords:
+# Compatibility:
+#
+#
 
-# Commentary: 
-# 
-# 
-# 
-# 
+# Commentary:
+#
+#
+#
+#
 
 # Change log:
-# 
-# 
-# 
-# 
+#
+#
+#
+#
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
 # published by the Free Software Foundation; either version 3, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program; see the file COPYING.  If not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 # Floor, Boston, MA 02110-1301, USA.
-# 
-# 
+#
+#
 
 # Code:
 import numpy as np
@@ -54,11 +55,11 @@ lib = moose.Neutral('/library')
 def make_cat():
     """
     Ported to pymoose. - Subhasis Ray. Wed Jun  4 15:25:21 IST 2014
-    
+
     Original comment:
-    
+
     COMMENT
-    T-type Ca channel 
+    T-type Ca channel
     ca.mod to lead to thalamic ca current inspired by destexhe and huguenrd
     Uses fixed eca instead of GHK eqn
     changed from (AS Oct0899)
@@ -109,14 +110,14 @@ def make_cahva():
     COMMENT
     26 Ago 2002 Modification of original channel to allow variable time step and to correct an initialization error.
     Done by Michael Hines(michael.hines@yale.e) and Ruggero Scorcioni(rscorcio@gmu.edu) at EU Advance Course in Computational Neuroscience. Obidos, Portugal
-    
+
     ca.mod
     Uses fixed eca instead of GHK eqn
-    
+
     HVA Ca current
     Based on Reuveni, Friedman, Amitai and Gutnick (1993) J. Neurosci. 13:
     4609-4621.
-    
+
     Author: Zach Mainen, Salk Institute, 1994, zach@salk.edu
 
     ENDCOMMENT
@@ -131,7 +132,7 @@ def make_cahva():
     b = 0.94*np.exp((-75-vm)/17)
     mtau = 1/tadj/(a+b)
     minf = a/(a+b)
-    # "h" inactivation 
+    # "h" inactivation
     a = 0.000457*np.exp((-13-vm)/50)
     b = 0.0065/(np.exp((-vm-15)/28) + 1)
     htau = 1/tadj/(a+b)
@@ -152,5 +153,5 @@ def make_cahva():
     return channel
 
 
-# 
+#
 # cachannel.py ends here

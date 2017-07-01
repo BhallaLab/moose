@@ -21,7 +21,7 @@ CompartmentDataHolder::CompartmentDataHolder()
 			Em_( -0.06 ),
 			initVm_( -0.06 ),
 			inject_( 0.0 ),
-					
+
 			diameter_( 1.0e-6 ),
 			length_( 100.0e-6 ),
 			x0_( 0.0 ),

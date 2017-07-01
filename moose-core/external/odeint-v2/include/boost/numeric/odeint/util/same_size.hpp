@@ -34,7 +34,7 @@
 namespace boost {
 namespace numeric {
 namespace odeint {
-    
+
 template< typename State1 , typename State2 , class Enabler = void >
 struct same_size_impl_sfinae
 {

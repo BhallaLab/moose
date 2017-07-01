@@ -13,8 +13,8 @@
 #define _ChanCommon_h
 
 /**
- * The ChanCommon.g handles the data fields for all ion channel classes 
- * in MOOSE, when they are using regular ee calculations rather than 
+ * The ChanCommon.g handles the data fields for all ion channel classes
+ * in MOOSE, when they are using regular ee calculations rather than
  * being zombified by the solver.
  */
 
@@ -37,7 +37,7 @@ class ChanCommon: public virtual ChanBase
 		double vGetEk( const Eref& e ) const;
 		void vSetGk( const Eref& e, double Gk );
 		double vGetGk( const Eref& e ) const;
-		/// Ik is read-only for MOOSE, but we provide the set 
+		/// Ik is read-only for MOOSE, but we provide the set
 		/// func for derived classes to update it.
 		void vSetIk( const Eref& e, double Ic );
 		double vGetIk( const Eref& e ) const;

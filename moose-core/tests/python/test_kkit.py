@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import matplotlib
 # Tests may be run over ssh without -X e.g. on travis.
 matplotlib.use( 'Agg' )
@@ -12,7 +13,7 @@ scriptdir = os.path.dirname( os.path.realpath( __file__ ) )
 print( 'Script dir %s' % scriptdir )
 
 def main():
-        """ This example illustrates loading, running, and saving a kinetic model 
+        """ This example illustrates loading, running, and saving a kinetic model
         defined in kkit format. It uses a default kkit model but you can specify another using the command line ``python filename runtime solver``. We use the gsl solver here. The model already defines a couple of plots and sets the runtime to 20 seconds.
         """
         solver = "gsl"  # Pick any of gsl, gssa, ee..
@@ -27,13 +28,13 @@ def main():
         if ( len( sys.argv ) == 4 ):
                 solver = sys.argv[3]
         modelId = moose.loadModel( mfile, 'model', solver )
-        # Increase volume so that the stochastic solver gssa 
+        # Increase volume so that the stochastic solver gssa
         # gives an interesting output
         #compt = moose.element( '/model/kinetics' )
-        #compt.volume = 1e-19 
+        #compt.volume = 1e-19
 
         moose.reinit()
-        moose.start( runtime ) 
+        moose.start( runtime )
 
         # Report parameters
         '''
@@ -53,7 +54,7 @@ def main():
         vals = x.vector
         stats = [ vals.min(), vals.max( ), vals.mean(), vals.std( ) ]
         expected = [ 0.0, 0.00040464 , 0.0001444 , 0.00013177 ]
-        assert numpy.allclose(stats, expected, rtol=1e-4) , 'Got %s expected %s' % (stats, expected ) 
+        assert numpy.allclose(stats, expected, rtol=1e-4) , 'Got %s expected %s' % (stats, expected )
         plt.legend()
         plt.savefig( '%s.png' % sys.argv[0] )
         print( 'Wrote results to %s.png' % sys.argv[0] )

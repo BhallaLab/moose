@@ -9,14 +9,14 @@
 **********************************************************************/
 
 /**
- * This little class sets up a muParser to execute on entries in the 
+ * This little class sets up a muParser to execute on entries in the
  * molecule 'n' vector, and possibly on the time t.
  *
  * The user must first set the arg indices (FuncTerm::setArgIndex), before
  * specifying the function string.
- * 
+ *
  * The arguments are named x0, x1, x2 ..., t )
- * 
+ *
  */
 
 #include <vector>
@@ -72,7 +72,7 @@ const vector< unsigned int >& FuncTerm::getReactantIndex() const
 
 void showError(mu::Parser::exception_type &e)
 {
-    cout << "Error occurred in parser.\n" 
+    cout << "Error occurred in parser.\n"
          << "Message:  " << e.GetMsg() << "\n"
          << "Formula:  " << e.GetExpr() << "\n"
          << "Token:    " << e.GetToken() << "\n"
@@ -140,7 +140,7 @@ double FuncTerm::operator() ( const double* S, double t ) const
 	for ( i = 0; i < reactantIndex_.size(); ++i )
 		args_[i] = S[reactantIndex_[i]];
 	args_[i] = t;
-        try 
+        try
         {
             double result = parser_.Eval() * volScale_;
             return result;
@@ -161,7 +161,7 @@ void FuncTerm::evalPool( double* S, double t ) const
 	for ( i = 0; i < reactantIndex_.size(); ++i )
 		args_[i] = S[reactantIndex_[i]];
 	args_[i] = t;
-        try 
+        try
         {
             S[ target_] = parser_.Eval() * volScale_;
         }

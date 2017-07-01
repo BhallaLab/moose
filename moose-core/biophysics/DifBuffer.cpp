@@ -1,4 +1,4 @@
-// DifBuffer.cpp --- 
+// DifBuffer.cpp ---
 //
 // Filename: DifBuffer.cpp
 // Description:
@@ -367,12 +367,12 @@ double DifBuffer::integrate( double state, double dt, double A, double B )
 void DifBuffer::calculateVolumeArea(const Eref& e)
 {
 double rOut = diameter_/2.;
-  
+
   double rIn = rOut - thickness_;
 
   if (rIn <0)
 	  rIn = 0.;
-  
+
   switch ( shapeMode_ )
     {
       /*
@@ -388,9 +388,9 @@ double rOut = diameter_/2.;
 	outerArea_ = 2*M_PI * rOut * length_;
 	innerArea_ = 2*M_PI * rIn * length_;
       }
-		
+
       break;
-	
+
       /*
        * Cylindrical Slice
        */
@@ -399,7 +399,7 @@ double rOut = diameter_/2.;
       outerArea_ = M_PI * diameter_ * diameter_ / 4.0;
       innerArea_ = outerArea_;
       break;
-	
+
       /*
        * User defined
        */
@@ -407,7 +407,7 @@ double rOut = diameter_/2.;
       // Nothing to be done here. Volume and inner-, outer areas specified by
       // user.
       break;
-	
+
     default:
       assert( 0 );
     }

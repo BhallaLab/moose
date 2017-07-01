@@ -13,7 +13,7 @@
 
 /**
  * This variant of ValueFinfo provides facilities to set and get
- * values of fields that require information about the managing Element 
+ * values of fields that require information about the managing Element
  */
 template < class T, class F > class ElementValueFinfo: public ValueFinfoBase
 {
@@ -23,7 +23,7 @@ template < class T, class F > class ElementValueFinfo: public ValueFinfoBase
 			delete get_;
 		}
 
-		ElementValueFinfo( const string& name, const string& doc, 
+		ElementValueFinfo( const string& name, const string& doc,
 			void ( T::*setFunc )( const Eref&, F ),
 			F ( T::*getFunc )( const Eref& ) const )
 			: ValueFinfoBase( name, doc )
@@ -51,14 +51,14 @@ template < class T, class F > class ElementValueFinfo: public ValueFinfoBase
 			c->registerFinfo( get_ );
 		}
 
-		bool strSet( const Eref& tgt, const string& field, 
+		bool strSet( const Eref& tgt, const string& field,
 			const string& arg ) const {
 			return Field< F >::innerStrSet( tgt.objId(), field, arg );
 		}
 
-		bool strGet( const Eref& tgt, const string& field, 
+		bool strGet( const Eref& tgt, const string& field,
 			string& returnValue ) const {
-			return Field< F >::innerStrGet( 
+			return Field< F >::innerStrGet(
 							tgt.objId(), field, returnValue );
 		}
 
@@ -76,7 +76,7 @@ template < class T, class F > class ReadOnlyElementValueFinfo: public ValueFinfo
 			delete get_;
 		}
 
-		ReadOnlyElementValueFinfo( const string& name, const string& doc, 
+		ReadOnlyElementValueFinfo( const string& name, const string& doc,
 			F ( T::*getFunc )( const Eref& e ) const )
 			: ValueFinfoBase( name, doc )
 		{
@@ -94,14 +94,14 @@ template < class T, class F > class ReadOnlyElementValueFinfo: public ValueFinfo
 			c->registerFinfo( get_ );
 		}
 
-		bool strSet( const Eref& tgt, const string& field, 
+		bool strSet( const Eref& tgt, const string& field,
 			const string& arg ) const {
 			return 0;
 		}
 
-		bool strGet( const Eref& tgt, const string& field, 
+		bool strGet( const Eref& tgt, const string& field,
 			string& returnValue ) const {
-			return Field< F >::innerStrGet( 
+			return Field< F >::innerStrGet(
 							tgt.objId(), field, returnValue );
 		}
 

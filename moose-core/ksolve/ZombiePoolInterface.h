@@ -12,7 +12,7 @@
 
 /**
  * This pure virtual base class is for solvers that want to talk to
- * the zombie pool. 
+ * the zombie pool.
  * The Eref specifies both the pool identity and the voxel number within
  * the pool.
  */
@@ -57,26 +57,26 @@ class ZombiePoolInterface
 		virtual double volume( unsigned int i ) const = 0;
 
 		/**
-		 * Gets block of data. The first 4 entries are passed in 
-		 * on the 'values' vector: the start voxel, numVoxels, 
+		 * Gets block of data. The first 4 entries are passed in
+		 * on the 'values' vector: the start voxel, numVoxels,
 		 * start pool#, numPools.
 		 * These are followed by numVoxels * numPools of data values
 		 * which are filled in by the function.
-		 * We assert that the entire requested block is present in 
+		 * We assert that the entire requested block is present in
 		 * this ZombiePoolInterface.
 		 * The block is organized as an array of arrays of voxels;
 		 * values[pool#][voxel#]
 		 *
 		 * Note that numVoxels and numPools are the number in the current
-		 * block, not the upper limit of the block. So 
+		 * block, not the upper limit of the block. So
 		 * values.size() == 4 + numPools * numVoxels.
 		 */
 		virtual void getBlock( vector< double >& values ) const = 0;
 
 		/**
-		 * Sets block of data. The first 4 entries 
-		 * on the 'values' vector are the start voxel, numVoxels, 
-		 * start pool#, numPools. These are 
+		 * Sets block of data. The first 4 entries
+		 * on the 'values' vector are the start voxel, numVoxels,
+		 * start pool#, numPools. These are
 		 * followed by numVoxels * numPools of data values.
 		 */
 		virtual void setBlock( const vector< double >& values ) = 0;
@@ -97,11 +97,11 @@ class ZombiePoolInterface
 		Id getCompartment() const;
 
 		/// Sets up cross-solver reactions.
-		void setupCrossSolverReacs( 
-			const map< Id, vector< Id > >& xr, 
+		void setupCrossSolverReacs(
+			const map< Id, vector< Id > >& xr,
 			Id otherStoich );
-		void setupCrossSolverReacVols( 
-			const vector< vector< Id > >& subCompts, 
+		void setupCrossSolverReacVols(
+			const vector< vector< Id > >& subCompts,
 			const vector< vector< Id > >& prdCompts );
 
 		void filterCrossRateTerms( const vector< Id >& xreacs,
@@ -126,15 +126,15 @@ class ZombiePoolInterface
 		void assignXferIndex( unsigned int numProxyMols,
 			unsigned int xferCompt,
 			const vector< vector< unsigned int > >& voxy );
-		void setupXfer( Id myZombiePoolInterface, 
+		void setupXfer( Id myZombiePoolInterface,
 			Id otherZombiePoolInterface,
 			unsigned int numProxyMols, const vector< VoxelJunction >& vj );
 		 unsigned int assignProxyPools( const map< Id, vector< Id > >& xr,
-			Id myZombiePoolInterface, Id otherZombiePoolInterface, 
+			Id myZombiePoolInterface, Id otherZombiePoolInterface,
 			Id otherComptId );
 		void matchJunctionVols( vector< double >& vols, Id otherComptId )
 				const;
-		
+
 		//////////////////////////////////////////////////////////////
 	protected:
 		/**
@@ -146,7 +146,7 @@ class ZombiePoolInterface
 		/// Id of Chem compartment used to figure out volumes of voxels.
 		Id compartment_;
 
-		/** 
+		/**
 		 * All the data transfer information from current to other solvers.
 		 * xfer_[otherKsolveIndex]
 		 */

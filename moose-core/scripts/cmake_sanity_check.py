@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """cmake_sanity_check.py: Check if Cmake files are ok.
 
 Last modified: Sat Jan 18, 2014  05:01PM
@@ -6,7 +7,7 @@ Last modified: Sat Jan 18, 2014  05:01PM
 NOTE: Run in this directory only.
 
 """
-    
+
 __author__           = "Dilawar Singh"
 __copyright__        = "Copyright 2013, Dilawar Singh and NCBS Bangalore"
 __credits__          = ["NCBS Bangalore"]
@@ -87,7 +88,7 @@ def checkSrcs():
             else:
                 print(" Failed: In dir {}, CMake is missing object {}".format(d,
                     srcName))
-    
+
 def main():
     test_dir = sys.argv[1]
     check(test_dir)

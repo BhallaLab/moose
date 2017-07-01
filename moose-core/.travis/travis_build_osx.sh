@@ -1,12 +1,12 @@
-#!/bin/bash - 
+#!/bin/bash -
 #===============================================================================
 #
 #          FILE: travis_build_linux.sh
-# 
-#         USAGE: ./travis_build_linux.sh 
-# 
+#
+#         USAGE: ./travis_build_linux.sh
+#
 #   DESCRIPTION:  Build  on linux environment.
-# 
+#
 #       OPTIONS: ---
 #  REQUIREMENTS: ---
 #          BUGS: ---
@@ -23,8 +23,9 @@ set -e
 (
     mkdir -p _GSL_BUILD && cd _GSL_BUILD && cmake -DDEBUG=ON -DPYTHON_EXECUTABLE=`which python` ..
     make && ctest --output-on-failure
+    sudo make install
     cd .. # Now with boost.
     mkdir -p _BOOST_BUILD && cd _BOOST_BUILD && cmake -DWITH_BOOST=ON -DDEBUG=ON -DPYTHON_EXECUTABLE=`which python` ..
     make && ctest --output-on-failure
-    cd .. 
+    cd ..
 )

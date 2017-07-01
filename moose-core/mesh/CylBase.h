@@ -17,7 +17,7 @@
 class CylBase
 {
 	public:
-		CylBase( double x, double y, double z, 
+		CylBase( double x, double y, double z,
 						double dia, double length, unsigned int numDivs );
 		CylBase();
 
@@ -66,11 +66,11 @@ class CylBase
  		* to be computed external to the CylBase, typically by calling the
  		* getDiffusionArea for the child CylBase.
  		*/
-		double getDiffusionArea( 
+		double getDiffusionArea(
 			const CylBase& parent, unsigned int index ) const;
 
 		/// Return cross-section area of middle of specified voxel.
-		double getMiddleArea( 
+		double getMiddleArea(
 			const CylBase& parent, unsigned int index ) const;
 
 		/// Return length of voxel. All are equal.
@@ -100,7 +100,7 @@ class CylBase
 
 	private:
 		/// end of the node. The start is given by parent coords.
-		double x_; 
+		double x_;
 		double y_;
 		double z_;
 

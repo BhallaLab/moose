@@ -1,47 +1,48 @@
-# units.py --- 
-# 
+# -*- coding: utf-8 -*-
+# units.py ---
+#
 # Filename: units.py
-# Description: 
-# Author: 
-# Maintainer: 
+# Description:
+# Author:
+# Maintainer:
 # Created: Thu Jul 25 16:30:14 2013 (+0530)
-# Version: 
+# Version:
 # Last-Updated: Sat Mar  5 14:56:35 2016 (-0500)
 #           By: subha
 #     Update #: 57
-# URL: 
-# Keywords: 
-# Compatibility: 
-# 
-# 
+# URL:
+# Keywords:
+# Compatibility:
+#
+#
 
-# Commentary: 
-# 
-# 
-# 
-# 
+# Commentary:
+#
+#
+#
+#
 
 # Change log:
-# 
-# 
-# 
-# 
+#
+#
+#
+#
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
 # published by the Free Software Foundation; either version 3, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program; see the file COPYING.  If not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 # Floor, Boston, MA 02110-1301, USA.
-# 
-# 
+#
+#
 
 # Code:
 
@@ -79,6 +80,6 @@ def SI(expression):
         return magnitude * np.power(10, int(unit.power))
     except AttributeError: # degC has offset in stead of magnitude
         return magnitude + float(unit.offset)
-    
-# 
+
+#
 # units.py ends here

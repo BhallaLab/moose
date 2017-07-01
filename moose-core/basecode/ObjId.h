@@ -95,12 +95,12 @@ class ObjId
 		/**
 		 * Here are the data values.
 		 */
-		Id id; 
+		Id id;
 		unsigned int dataIndex;
 		unsigned int fieldIndex;
 
 		/**
-		 * True if the return value is bad: either returning a failure, 
+		 * True if the return value is bad: either returning a failure,
 		 * or the DataIndex or FieldIndex is out of range. However, this
 		 * is a node-local funtion so it can't report the FieldIndex status
 		 * in all cases.

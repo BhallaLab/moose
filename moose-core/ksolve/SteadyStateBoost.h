@@ -129,7 +129,7 @@ private:
 
 #if USE_BOOST
     NonlinearSystem* ss;
-#endif 
+#endif
 
 };
 

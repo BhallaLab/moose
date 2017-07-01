@@ -53,7 +53,7 @@ static const Cinfo* testSchedCinfo = TestSched::initCinfo();
 
 void TestSched::process( const Eref& e, ProcPtr p )
 {
-	static const int timings[] = { 1, 2, 2, 2, 3, 3, 4, 4, 4, 
+	static const int timings[] = { 1, 2, 2, 2, 3, 3, 4, 4, 4,
 		5, 5, 5, 6, 6, 6, 6, 7, 8, 8, 8, 9, 9, 10, 10, 10, 10, 10,
 		11, 12, 12, 12, 12, 13, 14, 14, 14, 15, 15, 15, 15,
 		16, 16, 16, 17, 18, 18, 18, 18, 19, 20, 20, 20, 20, 20,
@@ -102,24 +102,24 @@ void testClock()
 	Element* tse = new Element( tsid, testSchedCinfo, "tse", 1 );
 
 	Eref ts( tse, 0 );
-	
+
 	FuncId f( processFinfo.getFid() );
 	const Finfo* proc0 = clock.element()->cinfo()->findFinfo( "process0" );
 	assert( proc0 );
 	const SrcFinfo* sproc0 = dynamic_cast< const SrcFinfo* >( proc0 );
 	assert( sproc0 );
 	unsigned int b0 = sproc0->getBindIndex();
-	SingleMsg *m0 = new SingleMsg( er0.eref(), ts ); 
+	SingleMsg *m0 = new SingleMsg( er0.eref(), ts );
 	er0.element()->addMsgAndFunc( m0->mid(), f, er0.dataId.value()*2 + b0);
-	SingleMsg *m1 = new SingleMsg( er1.eref(), ts ); 
+	SingleMsg *m1 = new SingleMsg( er1.eref(), ts );
 	er1.element()->addMsgAndFunc( m1->mid(), f, er1.dataId.value()*2 + b0);
 	SingleMsg *m2 = new SingleMsg( er2.eref(), ts );
 	er2.element()->addMsgAndFunc( m2->mid(), f, er2.dataId.value()*2 + b0);
-	SingleMsg *m3 = new SingleMsg( er3.eref(), ts ); 
+	SingleMsg *m3 = new SingleMsg( er3.eref(), ts );
 	er3.element()->addMsgAndFunc( m3->mid(), f, er3.dataId.value()*2 + b0);
-	SingleMsg *m4 = new SingleMsg( er4.eref(), ts ); 
+	SingleMsg *m4 = new SingleMsg( er4.eref(), ts );
 	er4.element()->addMsgAndFunc( m4->mid(), f, er4.dataId.value()*2 + b0);
-	SingleMsg *m5 = new SingleMsg( er5.eref(), ts ); 
+	SingleMsg *m5 = new SingleMsg( er5.eref(), ts );
 	er5.element()->addMsgAndFunc( m5->mid(), f, er5.dataId.value()*2 + b0);
 
 

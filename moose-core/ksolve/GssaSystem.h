@@ -18,7 +18,7 @@
 class Stoich;
 class GssaSystem
 {
-	public: 
+	public:
 		GssaSystem()
 			: stoich( 0 ), useRandInit( true ), isReady( false )
 		{;}
@@ -35,8 +35,8 @@ class GssaSystem
 		 * When initializing the mol# from floating-point Sinit values,
 		 * we have two options. One is to look at each Sinit, and round
 		 * to the nearest integer. The other is to look at each Sinit,
-		 * and probabilistically round up or down depending on the 
-		 * value. For example, if we had a Sinit value of 1.49, 
+		 * and probabilistically round up or down depending on the
+		 * value. For example, if we had a Sinit value of 1.49,
 		 * this would always be rounded to 1.0 if the flag is false,
 		 * and would be rounded to 1.0 and 2.0 in the ratio 51:49 if
 		 * the flag is true.

@@ -57,12 +57,12 @@ protected:
  * \brief Base class for all steppers with algebra and operations.
  *
  * This class serves a base class for all steppers with algebra and operations. It holds the
- * algebra and provides access to the algebra.  The operations are not instantiated, since they are 
+ * algebra and provides access to the algebra.  The operations are not instantiated, since they are
  * static classes inside the operations class.
  *
  * \tparam Algebra The type of the algebra. Must fulfill the Algebra Concept, at least partially to work
  * with the stepper.
- * \tparam Operations The type of the operations. Must fulfill the Operations Concept, at least partially 
+ * \tparam Operations The type of the operations. Must fulfill the Operations Concept, at least partially
  * to work with the stepper.
  */
 

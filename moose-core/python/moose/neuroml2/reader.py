@@ -1,47 +1,48 @@
-# reader.py --- 
-# 
+# -*- coding: utf-8 -*-
+# reader.py ---
+#
 # Filename: reader.py
-# Description: 
+# Description:
 # Author: Subhasis Ray
-# Maintainer: 
+# Maintainer:
 # Created: Wed Jul 24 15:55:54 2013 (+0530)
-# Version: 
+# Version:
 # Last-Updated: Sun Apr 17 16:32:59 2016 (-0400)
 #           By: subha
 #     Update #: 455
-# URL: 
-# Keywords: 
-# Compatibility: 
-# 
-# 
+# URL:
+# Keywords:
+# Compatibility:
+#
+#
 
-# Commentary: 
-# 
-# 
-# 
-# 
+# Commentary:
+#
+#
+#
+#
 
 # Change log:
-# 
-# 
-# 
-# 
+#
+#
+#
+#
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
 # published by the Free Software Foundation; either version 3, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program; see the file COPYING.  If not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 # Floor, Boston, MA 02110-1301, USA.
-# 
-# 
+#
+#
 
 # Code:
 """Implementation of reader for NeuroML 2 models.
@@ -87,8 +88,8 @@ def sarea(comp):
     Returns
     -------
     s : float
-        surface area of `comp`. 
-    
+        surface area of `comp`.
+
     """
     if comp.length > 0:
         return comp.length * comp.diameter * np.pi
@@ -111,7 +112,7 @@ def setRa(comp, resistivity):
 def setRm(comp, resistivity):
     """Set membrane resistance"""
     comp.Rm = resistivity / sarea(comp)
-    
+
 
 def getSegments(nmlcell, component, sg_to_segments):
     """Get the list of segments the `component` is applied to"""
@@ -132,7 +133,7 @@ rate_fn_map = {
     'HHExpRate': hhfit.exponential,
     'HHSigmoidRate': hhfit.sigmoid,
     'HHExpLinearRate': hhfit.linoid }
-    
+
 def calculateRateFn(ratefn, vmin, vmax, tablen=3000):
     """Returns A / B table from ngate."""
     midpoint, rate, scale = map(SI, (ratefn.midpoint, ratefn.rate, ratefn.scale))
@@ -140,7 +141,7 @@ def calculateRateFn(ratefn, vmin, vmax, tablen=3000):
     return rate_fn_map[ratefn.type_](tab, rate, scale, midpoint)
 
 class NML2Reader(object):
-    """Reads NeuroML2 and creates MOOSE model. 
+    """Reads NeuroML2 and creates MOOSE model.
 
     NML2Reader.read(filename) reads an NML2 model under `/library`
     with the toplevel name defined in the NML2 file.
@@ -150,14 +151,14 @@ class NML2Reader(object):
     >>> from moose import neuroml2 as nml
     >>> reader = nml.NML2Reader()
     >>> reader.read('moose/neuroml2/test_files/Purk2M9s.nml')
-    
+
     creates a passive neuronal morphology `/library/Purk2M9s`.
     """
     def __init__(self, verbose=False):
         self.lunit = 1e-6 # micron is the default length unit
         self.verbose = verbose
         self.doc = None
-        self.filename = None        
+        self.filename = None
         self.nml_to_moose = {} # NeuroML object to MOOSE object
         self.moose_to_nml = {} # Moose object to NeuroML object
         self.proto_cells = {} # map id to prototype cell in moose
@@ -167,7 +168,7 @@ class NML2Reader(object):
         self.lib = moose.Neutral('/library')
         self.id_to_ionChannel = {}
         self._cell_to_sg = {} # nml cell to dict - the dict maps segment groups to segments
-        
+
     def read(self, filename):
         self.doc = nml.parse(filename, silence=True)
         if self.verbose:
@@ -188,7 +189,7 @@ class NML2Reader(object):
         self.createMorphology(cell, nrn, symmetric=symmetric)
         self.importBiophysics(cell, nrn)
         return cell, nrn
-    
+
     def createMorphology(self, nmlcell, moosecell, symmetric=False):
         """Create the MOOSE compartmental morphology in `moosecell` using the
         segments in NeuroML2 cell `nmlcell`. Create symmetric
@@ -197,7 +198,7 @@ class NML2Reader(object):
         """
         morphology = nmlcell.morphology
         segments = morphology.segment
-        id_to_segment = dict([(seg.id, seg) for seg in segments])    
+        id_to_segment = dict([(seg.id, seg) for seg in segments])
         if symmetric:
             compclass = moose.SymCompartment
         else:
@@ -223,8 +224,8 @@ class NML2Reader(object):
             except AttributeError:
                 parent = None
             self.moose_to_nml[comp] = segment
-            self.nml_to_moose[segment] = comp            
-            p0 = segment.proximal            
+            self.nml_to_moose[segment] = comp
+            p0 = segment.proximal
             if p0 is None:
                 if parent:
                     p0 = parent.distal
@@ -243,12 +244,12 @@ class NML2Reader(object):
             if parent:
                 pcomp = id_to_comp[parent.id]
                 moose.connect(comp, src, pcomp, dst)
-        sg_to_segments = {}        
+        sg_to_segments = {}
         for sg in morphology.segmentGroup:
             sg_to_segments[sg.id] = [id_to_segment[str(m.segment)] for m in sg.member]
         self._cell_to_sg[nmlcell] = sg_to_segments
         return id_to_comp, id_to_segment, sg_to_segments
-            
+
     def importBiophysics(self, nmlcell, moosecell):
         """Create the biophysical components in moose Neuron `moosecell`
         according to NeuroML2 cell `nmlcell`."""
@@ -272,7 +273,7 @@ class NML2Reader(object):
             cm = SI(specific_cm.value)
             for seg in sg_to_segments[specific_cm.segmentGroup]:
                 comp = self.nml_to_moose[seg]
-                comp.Cm = np.pi * sarea(comp) 
+                comp.Cm = np.pi * sarea(comp)
 
     def importIntracellularProperties(self, nmlcell, moosecell, properties):
         self.importAxialResistance(nmlcell, properties)
@@ -286,7 +287,7 @@ class NML2Reader(object):
                 continue
             segments = getSegments(nmlcell, species, sg_to_segments)
             for seg in segments:
-                comp = self.nml_to_moose[seg]    
+                comp = self.nml_to_moose[seg]
                 self.copySpecies(species, comp)
 
     def copySpecies(self, species, compartment):
@@ -304,16 +305,16 @@ class NML2Reader(object):
             raise Exception('No prototype pool for %s referred to by %s' % (species.concentrationModel, species.id))
         pool_id = moose.copy(proto_pool, comp, species.id)
         pool = moose.element(pool_id)
-        pool.B = pool.B / (np.pi * compartment.length * (0.5 * compartment.diameter + pool.thickness) * (0.5 * compartment.diameter - pool.thickness))        
+        pool.B = pool.B / (np.pi * compartment.length * (0.5 * compartment.diameter + pool.thickness) * (0.5 * compartment.diameter - pool.thickness))
         return pool
-        
+
     def importAxialResistance(self, nmlcell, intracellularProperties):
         sg_to_segments = self._cell_to_sg[nmlcell]
         for r in intracellularProperties.resistivity:
             segments = getSegments(nmlcell, r, sg_to_segments)
             for seg in segments:
                 comp = self.nml_to_moose[seg]
-                setRa(comp, SI(r.value))                    
+                setRa(comp, SI(r.value))
 
     def importChannelsToCell(self, nmlcell, moosecell, membraneProperties):
         sg_to_segments = self._cell_to_sg[nmlcell]
@@ -323,7 +324,7 @@ class NML2Reader(object):
             try:
                 ionChannel = self.id_to_ionChannel[chdens.ionChannel]
             except KeyError:
-                print('No channel with id', chdens.ionChannel)                
+                print('No channel with id', chdens.ionChannel)
                 continue
             if ionChannel.type_ == 'ionChannelPassive':
                 for seg in segments:
@@ -331,7 +332,7 @@ class NML2Reader(object):
             else:
                 for seg in segments:
                     self.copyChannel(chdens, self.nml_to_moose[seg], condDensity)
-                
+
     def copyChannel(self, chdens, comp, condDensity):
         """Copy moose prototype for `chdens` condutcance density to `comp`
         compartment.
@@ -351,9 +352,9 @@ class NML2Reader(object):
         chan = moose.element(chid)
         chan.Gbar = sarea(comp) * condDensity
         moose.connect(chan, 'channel', comp, 'channel')
-        return chan    
+        return chan
 
-    def importIncludes(self, doc):        
+    def importIncludes(self, doc):
         for include in doc.include:
             if self.verbose:
                 print(self.filename, 'Loading include', include)
@@ -362,7 +363,7 @@ class NML2Reader(object):
             paths = [include.href, os.path.join(os.path.dirname(self.filename), include.href)]
             for path in paths:
                 try:
-                    inner.read(path)                    
+                    inner.read(path)
                     if self.verbose:
                         print(self.filename, 'Loaded', path, '... OK')
                 except IOError as e:
@@ -448,7 +449,7 @@ class NML2Reader(object):
             proto = self.createDecayingPoolConcentrationModel(concModel)
 
     def createDecayingPoolConcentrationModel(self, concModel):
-        """Create prototype for concentration model"""        
+        """Create prototype for concentration model"""
         if concModel.name is not None:
             name = concModel.name
         else:
@@ -466,9 +467,9 @@ class NML2Reader(object):
         self.nml_to_moose[concModel.id] = ca
         self.moose_to_nml[ca] = concModel
         logger.debug('Created moose element: %s for nml conc %s' % (ca.path, concModel.id))
-        
-                    
-            
 
-# 
+
+
+
+#
 # reader.py ends here

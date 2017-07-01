@@ -24,7 +24,7 @@ using namespace std;
 
 namespace cnpy2 {
 
-// Check the endian-ness of machine at run-time. This is from library 
+// Check the endian-ness of machine at run-time. This is from library
 // https://github.com/rogersce/cnpy
 char BigEndianTest() {
     unsigned char x[] = {1,0};
@@ -60,7 +60,7 @@ char map_type(const std::type_info& t)
     else return '?';
 }
 
-void split(vector<string>& strs, string& input, const string& pat) 
+void split(vector<string>& strs, string& input, const string& pat)
 {
     char* pch;
     pch = strtok( &input[0], pat.c_str() );
@@ -75,7 +75,7 @@ void split(vector<string>& strs, string& input, const string& pat)
 /**
  * @brief Check if a numpy file is sane or not.
  *
- * Read first 8 bytes and compare with standard header. 
+ * Read first 8 bytes and compare with standard header.
  *
  * @param npy_file Path to file.
  *
@@ -119,12 +119,12 @@ void parse_header( FILE* fp, string& header )
 /**
  * @brief Change shape in numpy header.
  *
- * @param 
+ * @param
  * @param data_len
- * @param 
+ * @param
  */
 void change_shape_in_header( const string& filename
-        , const size_t data_len, const size_t numcols 
+        , const size_t data_len, const size_t numcols
         )
 {
     string header;
@@ -154,7 +154,7 @@ void change_shape_in_header( const string& filename
     split( tokens, shapeStr, "," );
 
     string newShape = "";
-    for (size_t i = 0; i < tokens.size(); i++) 
+    for (size_t i = 0; i < tokens.size(); i++)
         newShape += moose::toString( atoi( tokens[i].c_str() ) + data_len/numcols ) + ",";
 
     string newHeader = prefixHeader + newShape + postfixHeader + "\n";

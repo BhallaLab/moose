@@ -39,7 +39,7 @@ class BoostSys
         ~BoostSys();
 
         /* Operator is called by boost ode-solver */
-        void operator()( const vector_type_ y , vector_type_& dydt, const double t ); 
+        void operator()( const vector_type_ y , vector_type_& dydt, const double t );
 
         /* Pointer to the arbitrary parameters of the system */
         VoxelPools* vp;

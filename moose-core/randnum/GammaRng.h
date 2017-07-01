@@ -1,6 +1,6 @@
 /*******************************************************************
  * File:            GammaRng.h
- * Description:      
+ * Description:
  * Author:          Subhasis Ray
  * E-mail:          ray.subhasis@gmail.com
  * Created:         2007-11-08 11:53:29
@@ -35,17 +35,17 @@ class GammaRng: public RandGenerator
     double getTheta() const;
     void setAlpha(double alpha);
     void setTheta(double theta);
-    
+
     virtual void vReinit( const Eref& e, ProcPtr p);
 
     static const Cinfo * initCinfo();
-    
+
   private:
     double alpha_;
     double theta_;
-    
+
     bool isAlphaSet_;
-    bool isThetaSet_;    
+    bool isThetaSet_;
 };
 
 

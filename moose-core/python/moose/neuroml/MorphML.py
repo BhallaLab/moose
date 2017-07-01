@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 ## Description: class MorphML for loading MorphML from file or xml element into MOOSE
 ## Version 1.0 by Aditya Gilra, NCBS, Bangalore, India, 2011 for serial MOOSE
 ## Version 1.5 by Niraj Dudani, NCBS, Bangalore, India, 2012, ported to parallel MOOSE
@@ -127,7 +128,7 @@ class MorphML():
             self.cablegroupsInhomoparamsDict[cablegroupname] = []
             for cable in cablegroup.findall(".//{"+self.mml+"}cable"):
                 cableid = cable.attrib['id']
-                self.cablegroupsDict[cablegroupname].append(cableid)   
+                self.cablegroupsDict[cablegroupname].append(cableid)
             # parse inhomogenous_params
             for inhomogeneous_param in cablegroup.findall(".//{"+self.mml+"}inhomogeneous_param"):
                 metric = inhomogeneous_param.find(".//{"+self.mml+"}metric")
@@ -140,7 +141,7 @@ class MorphML():
                     _logger.warning('Only "Path Length from root" metric is '
                             ' supported currently, ignoring %s ' % metric.text
                             )
-                    
+
         ## <cable>s with list of <meta:group>s
         cables = cell.findall(".//{"+self.mml+"}cable")
         for cable in cables:
@@ -164,7 +165,7 @@ class MorphML():
             if "passive_conductance" in mechanism.attrib:
                 if mechanism.attrib['passive_conductance'] in ["true",'True','TRUE']:
                     passive = True
-            if not passive:            
+            if not passive:
                 ## if channel does not exist in library load it from xml file
                 if not moose.exists("/library/"+mechanismname):
                     _logger.info("Loading mechanism %s into library." % mechanismname)
@@ -178,7 +179,7 @@ class MorphML():
                             'For mechanism {0}: files {1} not found under {2}.'.format(
                                 mechanismname, model_filename, self.model_dir)
                         )
-                        
+
                     ## set those compartments to be LIF for which
                     ## any integrate_and_fire parameter is set
                     if not moose.exists( "/library/"+mechanismname):
@@ -205,7 +206,7 @@ class MorphML():
                                                 self.intFireCableIds[cableid] = mechanismname
                                 if 'all' in self.intFireCableIds:
                                     break
-        
+
         ############################################################
         #### load morphology and connections between compartments
         ## Many neurons exported from NEURON have multiple segments in a section
@@ -340,13 +341,13 @@ class MorphML():
             if running_comp.length == 0.0:
                 running_comp.length = running_comp.diameter
             ## Set the segDict
-            ## the empty list at the end below will get populated 
+            ## the empty list at the end below will get populated
             ## with the potential synapses on this segment, in function set_compartment_param(..)
             self.segDict[running_segid] = [running_comp.name,\
                 (running_comp.x0,running_comp.y0,running_comp.z0),\
                 (running_comp.x,running_comp.y,running_comp.z),\
                 running_comp.diameter,running_comp.length,[]]
-            if neuroml_utils.neuroml_debug: 
+            if neuroml_utils.neuroml_debug:
                 _logger.info('Set up compartment/section %s' % running_comp.name)
 
         ###############################################
@@ -404,7 +405,7 @@ class MorphML():
                 if len(mech_params) == 0:
                     for compartment_list in self.cellDictByCableId[cellname][1].values():
                         for compartment in compartment_list:
-                            self.set_compartment_param(compartment,None,'default',mechanismname)  
+                            self.set_compartment_param(compartment,None,'default',mechanismname)
                 ## if params are present, apply params to specified cable/compartment groups
                 for parameter in mech_params:
                     parametername = parameter.attrib['name']
@@ -420,8 +421,8 @@ class MorphML():
                              'inject', Ifactor*float(parameter.attrib["value"]), self.bio)
                         else:
                             _logger.warning(["Yo programmer of MorphML! You didn't"
-                                , " implement parameter %s " % parametername 
-                                , " in mechanism %s " % mechanismname 
+                                , " implement parameter %s " % parametername
+                                , " in mechanism %s " % mechanismname
                                 ]
                                 )
                     else:
@@ -453,10 +454,10 @@ class MorphML():
                                     , " implement parameter %s " % parametername
                                     , " in mechanism %s " % mechanismname ]
                                     )
-                
+
                 ## variable parameters:
                 ##  varying with:
-                ##  p, g, L, len, dia 
+                ##  p, g, L, len, dia
                 ##	p: path distance from soma, measured along dendrite, in metres.
                 ##	g: geometrical distance from soma, in metres.
                 ##	L: electrotonic distance (# of lambdas) from soma, along dend. No units.
@@ -505,7 +506,7 @@ class MorphML():
             for compartment_list in self.cellDictByCableId[cellname][1].values():
                 moose_utils.connect_CaConc(compartment_list,\
                     self.temperature+neuroml_utils.ZeroCKelvin) # temperature should be in Kelvin for Nernst
-        
+
         ##########################################################
         #### load connectivity / synapses into the compartments
         connectivity = cell.find(".//{"+self.neuroml+"}connectivity")
@@ -571,7 +572,7 @@ class MorphML():
             compartment.initVm = value
         elif name == 'inject':
             # this reader converts to SI
-            _logger.info("Comparment %s inject %s A." % (compartment.name, value)) 
+            _logger.info("Comparment %s inject %s A." % (compartment.name, value))
             compartment.inject = value
         elif name == 'v_reset':
             compartment.vReset = value # compartment is a moose.LIF instance (intfire)
@@ -662,5 +663,5 @@ class MorphML():
                 ## Later, when calling connect_CaConc,
                 ## B is set for caconc based on thickness of Ca shell and compartment l and dia.
                 ## OR based on the Mstring phi under CaConc path.
-        if neuroml_utils.neuroml_debug: 
+        if neuroml_utils.neuroml_debug:
             _logger.info("Setting %s  for comparment %s to %s" % (name, compartment.path, value))

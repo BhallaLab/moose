@@ -14,7 +14,7 @@ DestFinfo::~DestFinfo() {
 	delete func_;
 }
 
-DestFinfo::DestFinfo( const string& name, const string& doc, 
+DestFinfo::DestFinfo( const string& name, const string& doc,
 	OpFunc* func )
 	: Finfo( name, doc ), func_( func )
 {
@@ -47,15 +47,15 @@ FuncId DestFinfo::getFid() const
 	return fid_;
 }
 
-bool DestFinfo::strSet( 
-	const Eref& tgt, const string& field, const string& arg ) const 
+bool DestFinfo::strSet(
+	const Eref& tgt, const string& field, const string& arg ) const
 {
 	assert( 0 );
 	return false;
 }
 
-bool DestFinfo::strGet( 
-	const Eref& tgt, const string& field, string& returnValue ) const 
+bool DestFinfo::strGet(
+	const Eref& tgt, const string& field, string& returnValue ) const
 {
 	assert( 0 );
 	return false;

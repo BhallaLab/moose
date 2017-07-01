@@ -24,7 +24,7 @@ template < class T, class L, class F > class LookupElementValueFinfo: public Loo
 			delete get_;
 		}
 
-		LookupElementValueFinfo( const string& name, const string& doc, 
+		LookupElementValueFinfo( const string& name, const string& doc,
 			void ( T::*setFunc )( const Eref&, L, F ),
 			F ( T::*getFunc )( const Eref&, L ) const )
 			: LookupValueFinfoBase( name, doc )
@@ -51,19 +51,19 @@ template < class T, class L, class F > class LookupElementValueFinfo: public Loo
 			c->registerFinfo( get_ );
 		}
 
-		bool strSet( const Eref& tgt, const string& field, 
+		bool strSet( const Eref& tgt, const string& field,
 			const string& arg ) const {
 			string fieldPart = field.substr( 0, field.find( "[" ) );
 			string indexPart = field.substr( field.find( "[" ) + 1, field.find( "]" ) );
-			return LookupField< L, F >::innerStrSet( 
+			return LookupField< L, F >::innerStrSet(
 							tgt.objId(), fieldPart, indexPart, arg );
 		}
 
-		bool strGet( const Eref& tgt, const string& field, 
+		bool strGet( const Eref& tgt, const string& field,
 			string& returnValue ) const {
 			string fieldPart = field.substr( 0, field.find( "[" ) );
 			string indexPart = field.substr( field.find( "[" ) + 1, field.find( "]" ) );
-			return LookupField< L, F >::innerStrGet( 
+			return LookupField< L, F >::innerStrGet(
 				tgt.objId(), fieldPart, indexPart, returnValue );
 		}
 
@@ -76,7 +76,7 @@ template < class T, class L, class F > class LookupElementValueFinfo: public Loo
 		DestFinfo* get_;
 };
 
-template < class T, class L, class F > 
+template < class T, class L, class F >
 	class ReadOnlyLookupElementValueFinfo: public LookupValueFinfoBase
 {
 	public:
@@ -84,8 +84,8 @@ template < class T, class L, class F >
 			delete get_;
 		}
 
-		ReadOnlyLookupElementValueFinfo( 
-			const string& name, const string& doc, 
+		ReadOnlyLookupElementValueFinfo(
+			const string& name, const string& doc,
 			F ( T::*getFunc )( const Eref& e, L ) const )
 			: LookupValueFinfoBase( name, doc )
 		{
@@ -103,16 +103,16 @@ template < class T, class L, class F >
 			c->registerFinfo( get_ );
 		}
 
-		bool strSet( const Eref& tgt, const string& field, 
+		bool strSet( const Eref& tgt, const string& field,
 			const string& arg ) const {
 			return 0;
 		}
 
-		bool strGet( const Eref& tgt, const string& field, 
+		bool strGet( const Eref& tgt, const string& field,
 			string& returnValue ) const {
 			string fieldPart = field.substr( 0, field.find( "[" ) );
 			string indexPart = field.substr( field.find( "[" ) + 1, field.find( "]" ) );
-			return LookupField< L, F >::innerStrGet( 
+			return LookupField< L, F >::innerStrGet(
 					tgt.objId(), fieldPart, indexPart, returnValue );
 		}
 

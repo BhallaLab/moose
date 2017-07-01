@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import moose
 import numpy as np
 import matplotlib.pyplot as plt
@@ -52,7 +53,7 @@ def add_difshells_and_buffers(comp,difshell_no,difbuff_no):
     if difshell_no < 1:
         return [], []
 
-    difshell = [] 
+    difshell = []
     shell_thickness = comp.diameter / difshell_no / 2.
     difbuffer = []
     for i in range(difshell_no):
@@ -120,14 +121,14 @@ if __name__ == '__main__':
     pulse.width[0] = 500e-3
     pulse.level[0] = inject
     pulse.delay[1] = 1e9
-    
+
     chan = chan_proto.chan_proto('/library/CaL12',param_chan.Cal)
-    
+
     m = moose.connect(pulse, 'output', dend, 'injectMsg')
 
     moose.connect(vmtab, 'requestOut', dend, 'getVm')
 
-    
+
     chan = addOneChan('CaL12', gbar, dend)
 
     moose.connect(gktab, 'requestOut', chan, 'getGk')

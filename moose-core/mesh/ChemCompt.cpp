@@ -40,14 +40,14 @@ const Cinfo* ChemCompt::initCinfo()
 			&ChemCompt::getEntireVolume
 		);
 
-		static ReadOnlyValueFinfo< ChemCompt, vector< double > > 
+		static ReadOnlyValueFinfo< ChemCompt, vector< double > >
 				voxelVolume(
 			"voxelVolume",
 			"Vector of volumes of each of the voxels.",
 			&ChemCompt::getVoxelVolume
 		);
 
-		static ReadOnlyValueFinfo< ChemCompt, vector< double > > 
+		static ReadOnlyValueFinfo< ChemCompt, vector< double > >
 				voxelMidpoint(
 			"voxelMidpoint",
 			"Vector of midpoint coordinates of each of the voxels. The "
@@ -56,8 +56,8 @@ const Cinfo* ChemCompt::initCinfo()
 			&ChemCompt::getVoxelMidpoint
 		);
 
-		static LookupElementValueFinfo< 
-				ChemCompt, unsigned int, double > 
+		static LookupElementValueFinfo<
+				ChemCompt, unsigned int, double >
 			oneVoxelVolume(
 			"oneVoxelVolume",
 			"Volume of specified voxel.",
@@ -86,7 +86,7 @@ const Cinfo* ChemCompt::initCinfo()
 			"The diffusion rates into the coupled voxels is given by the "
 			"partner field 'stencilRate'."
 			"Returns an empty vector for non-voxelized compartments.",
-			&ChemCompt::getStencilIndex 
+			&ChemCompt::getStencilIndex
 		);
 
 		//////////////////////////////////////////////////////////////
@@ -96,7 +96,7 @@ const Cinfo* ChemCompt::initCinfo()
 		static DestFinfo buildDefaultMesh( "buildDefaultMesh",
 			"Tells ChemCompt derived class to build a default mesh with the"
 			"specified volume and number of meshEntries.",
-			new EpFunc2< ChemCompt, double, unsigned int >( 
+			new EpFunc2< ChemCompt, double, unsigned int >(
 				&ChemCompt::buildDefaultMesh )
 		);
 
@@ -106,7 +106,7 @@ const Cinfo* ChemCompt::initCinfo()
 			"This function will invalidate any concentration term in"
 			"the model. If you don't know why you would want to do this,"
 			"then you shouldn't use this function.",
-			new OpFunc1< ChemCompt, double >( 
+			new OpFunc1< ChemCompt, double >(
 				&ChemCompt::setVolumeNotRates )
 		);
 
@@ -130,8 +130,8 @@ const Cinfo* ChemCompt::initCinfo()
 		// Field Elements
 		//////////////////////////////////////////////////////////////
 
-		static FieldElementFinfo< ChemCompt, MeshEntry > entryFinfo( 
-			"mesh", 
+		static FieldElementFinfo< ChemCompt, MeshEntry > entryFinfo(
+			"mesh",
 			"Field Element for mesh entries",
 			MeshEntry::initCinfo(),
 			&ChemCompt::lookupEntry,
@@ -183,14 +183,14 @@ const Cinfo* ChemCompt::initCinfo()
 static const Cinfo* chemMeshCinfo = ChemCompt::initCinfo();
 
 ChemCompt::ChemCompt()
-	: 
+	:
 		entry_( this )
 {
 	;
 }
 
 ChemCompt::~ChemCompt()
-{ 
+{
 		/*
 	for ( unsigned int i = 0; i < stencil_.size(); ++i ) {
 		if ( stencil_[i] )
@@ -228,7 +228,7 @@ void ChemCompt::resetStencil()
 void ChemCompt::setEntireVolume( const Eref& e, double volume )
 {
 	// If the reac system is not solved, then explicitly do scaling
-	vector< ObjId > tgtVec = 
+	vector< ObjId > tgtVec =
 			e.element()->getMsgTargets( e.dataIndex(), voxelVolOut() );
 	if ( tgtVec.size() == 0 ) {
 		vector< double > childConcs;
@@ -271,7 +271,7 @@ void ChemCompt::getChildConcs( const Eref& e, vector< double >& childConcs )
 	}
 }
 
-unsigned int ChemCompt::setChildConcs( const Eref& e, 
+unsigned int ChemCompt::setChildConcs( const Eref& e,
 		const vector< double >& conc, unsigned int start ) const
 {
 	vector< Id > kids;
@@ -311,8 +311,8 @@ double ChemCompt::getOneVoxelVolume( const Eref& e, unsigned int dataIndex ) con
 	return this->getMeshEntryVolume( dataIndex );
 }
 
-void ChemCompt::setOneVoxelVolume( const Eref& e, unsigned int dataIndex, 
-				double volume ) 
+void ChemCompt::setOneVoxelVolume( const Eref& e, unsigned int dataIndex,
+				double volume )
 {
 	this->setMeshEntryVolume( dataIndex, volume );
 }
@@ -395,7 +395,7 @@ void ChemCompt::flipRet( vector< VoxelJunction >& ret ) const
 ////////////////////////////////////////////////////////////////////////
 // Utility function
 
-double ChemCompt::distance( double x, double y, double z ) 
+double ChemCompt::distance( double x, double y, double z )
 {
 	return sqrt( x * x + y * y + z * z );
 }

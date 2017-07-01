@@ -42,11 +42,11 @@ const Cinfo* MMenz::initCinfo()
 
 static const Cinfo* mmEnzCinfo = MMenz::initCinfo();
 
-static const SrcFinfo2< double, double >* subOut = 
+static const SrcFinfo2< double, double >* subOut =
     dynamic_cast< const SrcFinfo2< double, double >* >(
 	mmEnzCinfo->findFinfo( "subOut" ) );
 
-static const SrcFinfo2< double, double >* prdOut = 
+static const SrcFinfo2< double, double >* prdOut =
 	dynamic_cast< const SrcFinfo2< double, double >* >(
 	mmEnzCinfo->findFinfo( "prdOut" ) );
 
@@ -84,7 +84,7 @@ void MMenz::vProcess( const Eref& e, ProcPtr p )
 	double rate = kcat_ * enz_ * sub_ / ( numKm_ + sub_ );
 	subOut->send( e, 0, rate );
 	prdOut->send( e, rate, 0 );
-	
+
 	sub_ = 1.0;
 }
 

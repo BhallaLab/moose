@@ -17,14 +17,14 @@
 #endif     /* -----  CYMOOSE  ----- */
 
 /**
- * This set of classes define Message Sources. Their main job is to supply 
+ * This set of classes define Message Sources. Their main job is to supply
  * a type-safe send operation, and to provide typechecking for it.
  */
 
 class SrcFinfo: public Finfo
 {
 	public:
-		SrcFinfo( const string& name, const string& doc ); 
+		SrcFinfo( const string& name, const string& doc );
 
 		~SrcFinfo() {;}
 
@@ -32,12 +32,12 @@ class SrcFinfo: public Finfo
 
 		///////////////////////////////////////////////////////////////
 
-		bool strSet( const Eref& tgt, const string& field, 
+		bool strSet( const Eref& tgt, const string& field,
 			const string& arg ) const {
 			return 0; // always fails
 		}
 
-		bool strGet( const Eref& tgt, const string& field, 
+		bool strGet( const Eref& tgt, const string& field,
 			string& returnValue ) const {
 			return 0; // always fails
 		}
@@ -59,7 +59,7 @@ class SrcFinfo: public Finfo
 		 * Sends contents of buffer on to msg targets
 		 * Buffer has a header with the TgtInfo.
 		 */
-		virtual void sendBuffer( const Eref& e, double* buf ) 
+		virtual void sendBuffer( const Eref& e, double* buf )
 				const = 0;
 
 		static const BindIndex BadBindIndex;
@@ -79,7 +79,7 @@ class SrcFinfo0: public SrcFinfo
 
 		SrcFinfo0( const string& name, const string& doc );
 		~SrcFinfo0() {;}
-		
+
 		void send( const Eref& e ) const;
 
 		void sendBuffer( const Eref& e, double* buf ) const;
@@ -103,12 +103,12 @@ template < class T > class SrcFinfo1: public SrcFinfo
 			: SrcFinfo( name, doc )
 			{ ; }
 
-		void send( const Eref& er, T arg ) const 
+		void send( const Eref& er, T arg ) const
 		{
 			const vector< MsgDigest >& md = er.msgDigest( getBindIndex() );
 			for ( vector< MsgDigest >::const_iterator
 				i = md.begin(); i != md.end(); ++i ) {
-				const OpFunc1Base< T >* f = 
+				const OpFunc1Base< T >* f =
 					dynamic_cast< const OpFunc1Base< T >* >( i->func );
 				assert( f );
 				for ( vector< Eref >::const_iterator
@@ -121,22 +121,22 @@ template < class T > class SrcFinfo1: public SrcFinfo
 							f->op( Eref( e, k ), arg );
 					} else  {
 						f->op( *j, arg );
-						// Need to send stuff offnode too here. The 
+						// Need to send stuff offnode too here. The
 						// target in this case is just the src Element.
 						// Its ObjId gets stuffed into the send buf.
 						// On the other node it will execute
-						// its own send command with the passed in args. 
+						// its own send command with the passed in args.
 					}
 				}
 			}
 		}
 
-		void sendTo( const Eref& er, Id tgt, T arg ) const 
+		void sendTo( const Eref& er, Id tgt, T arg ) const
 		{
 			const vector< MsgDigest >& md = er.msgDigest( getBindIndex() );
 			for ( vector< MsgDigest >::const_iterator
 				i = md.begin(); i != md.end(); ++i ) {
-				const OpFunc1Base< T >* f = 
+				const OpFunc1Base< T >* f =
 					dynamic_cast< const OpFunc1Base< T >* >( i->func );
 				assert( f );
 				for ( vector< Eref >::const_iterator
@@ -151,11 +151,11 @@ template < class T > class SrcFinfo1: public SrcFinfo
 							f->op( Eref( e, k ), arg );
 					} else  {
 						f->op( *j, arg );
-						// Need to send stuff offnode too here. The 
+						// Need to send stuff offnode too here. The
 						// target in this case is just the src Element.
 						// Its ObjId gets stuffed into the send buf.
 						// On the other node it will execute
-						// its own send command with the passed in args. 
+						// its own send command with the passed in args.
 					}
 				}
 			}
@@ -166,7 +166,7 @@ template < class T > class SrcFinfo1: public SrcFinfo
 		 * Rolls over if the # of targets exceeds vector size.
 		 * Fails totally if the targets are off-node.
 		 */
-		void sendVec( const Eref& er, const vector< T >& arg ) const 
+		void sendVec( const Eref& er, const vector< T >& arg ) const
 		{
 			if ( arg.size() == 0 )
 				return;
@@ -174,7 +174,7 @@ template < class T > class SrcFinfo1: public SrcFinfo
 			unsigned int argPos = 0;
 			for ( vector< MsgDigest >::const_iterator
 				i = md.begin(); i != md.end(); ++i ) {
-				const OpFunc1Base< T >* f = 
+				const OpFunc1Base< T >* f =
 					dynamic_cast< const OpFunc1Base< T >* >( i->func );
 				assert( f );
 				for ( vector< Eref >::const_iterator
@@ -192,11 +192,11 @@ template < class T > class SrcFinfo1: public SrcFinfo
 						f->op( *j, arg[ argPos++ ] );
 							if ( argPos >= arg.size() )
 								argPos = 0;
-						// Need to send stuff offnode too here. The 
+						// Need to send stuff offnode too here. The
 						// target in this case is just the src Element.
 						// Its ObjId gets stuffed into the send buf.
 						// On the other node it will execute
-						// its own send command with the passed in args. 
+						// its own send command with the passed in args.
 					}
 				}
 			}
@@ -221,7 +221,7 @@ template < class T1, class T2 > class SrcFinfo2: public SrcFinfo
 	public:
 		~SrcFinfo2() {;}
 
-		SrcFinfo2( const string& name, const string& doc ) 
+		SrcFinfo2( const string& name, const string& doc )
 			: SrcFinfo( name, doc )
 			{ ; }
 
@@ -230,7 +230,7 @@ template < class T1, class T2 > class SrcFinfo2: public SrcFinfo
 			const vector< MsgDigest >& md = e.msgDigest( getBindIndex() );
 			for ( vector< MsgDigest >::const_iterator
 				i = md.begin(); i != md.end(); ++i ) {
-				const OpFunc2Base< T1, T2 >* f = 
+				const OpFunc2Base< T1, T2 >* f =
 					dynamic_cast< const OpFunc2Base< T1, T2 >* >( i->func );
 				assert( f );
 				for ( vector< Eref >::const_iterator
@@ -248,13 +248,13 @@ template < class T1, class T2 > class SrcFinfo2: public SrcFinfo
 			}
 		}
 
-		void sendTo( const Eref& e, Id tgt, 
+		void sendTo( const Eref& e, Id tgt,
 						const T1& arg1, const T2& arg2 ) const
 		{
 			const vector< MsgDigest >& md = e.msgDigest( getBindIndex() );
 			for ( vector< MsgDigest >::const_iterator
 				i = md.begin(); i != md.end(); ++i ) {
-				const OpFunc2Base< T1, T2 >* f = 
+				const OpFunc2Base< T1, T2 >* f =
 					dynamic_cast< const OpFunc2Base< T1, T2 >* >( i->func );
 				assert( f );
 				for ( vector< Eref >::const_iterator
@@ -298,18 +298,18 @@ template < class T1, class T2, class T3 > class SrcFinfo3: public SrcFinfo
 	public:
 		~SrcFinfo3() {;}
 
-		SrcFinfo3( const string& name, const string& doc ) 
+		SrcFinfo3( const string& name, const string& doc )
 			: SrcFinfo( name, doc )
 			{ ; }
 
-		void send( const Eref& e, 
+		void send( const Eref& e,
 			const T1& arg1, const T2& arg2, const T3& arg3 ) const
 		{
 			const vector< MsgDigest >& md = e.msgDigest( getBindIndex() );
 			for ( vector< MsgDigest >::const_iterator
 				i = md.begin(); i != md.end(); ++i ) {
-				const OpFunc3Base< T1, T2, T3 >* f = 
-					dynamic_cast< const OpFunc3Base< T1, T2, T3 >* >( 
+				const OpFunc3Base< T1, T2, T3 >* f =
+					dynamic_cast< const OpFunc3Base< T1, T2, T3 >* >(
 									i->func );
 				assert( f );
 				for ( vector< Eref >::const_iterator
@@ -348,20 +348,20 @@ template < class T1, class T2, class T3, class T4 > class SrcFinfo4: public SrcF
 	public:
 		~SrcFinfo4() {;}
 
-		SrcFinfo4( const string& name, const string& doc ) 
+		SrcFinfo4( const string& name, const string& doc )
 			: SrcFinfo( name, doc )
 			{ ; }
 
 		// Will need to specialize for strings etc.
 		void send( const Eref& e,
-			const T1& arg1, const T2& arg2, 
+			const T1& arg1, const T2& arg2,
 			const T3& arg3, const T4& arg4 ) const
 		{
 			const vector< MsgDigest >& md = e.msgDigest( getBindIndex() );
 			for ( vector< MsgDigest >::const_iterator
 				i = md.begin(); i != md.end(); ++i ) {
-				const OpFunc4Base< T1, T2, T3, T4 >* f = 
-					dynamic_cast< const OpFunc4Base< T1, T2, T3, T4 >* >( 
+				const OpFunc4Base< T1, T2, T3, T4 >* f =
+					dynamic_cast< const OpFunc4Base< T1, T2, T3, T4 >* >(
 									i->func );
 				assert( f );
 				for ( vector< Eref >::const_iterator
@@ -395,14 +395,14 @@ template < class T1, class T2, class T3, class T4 > class SrcFinfo4: public SrcF
 	private:
 };
 
-template< class A1, class A2, class A3, class A4, class A5 > 
+template< class A1, class A2, class A3, class A4, class A5 >
 	class OpFunc5Base;
 template < class T1, class T2, class T3, class T4, class T5 > class SrcFinfo5: public SrcFinfo
 {
 	public:
 		~SrcFinfo5() {;}
 
-		SrcFinfo5( const string& name, const string& doc ) 
+		SrcFinfo5( const string& name, const string& doc )
 			: SrcFinfo( name, doc )
 			{ ; }
 
@@ -414,8 +414,8 @@ template < class T1, class T2, class T3, class T4, class T5 > class SrcFinfo5: p
 			const vector< MsgDigest >& md = e.msgDigest( getBindIndex() );
 			for ( vector< MsgDigest >::const_iterator
 				i = md.begin(); i != md.end(); ++i ) {
-				const OpFunc5Base< T1, T2, T3, T4, T5 >* f = 
-					dynamic_cast< 
+				const OpFunc5Base< T1, T2, T3, T4, T5 >* f =
+					dynamic_cast<
 					const OpFunc5Base< T1, T2, T3, T4, T5 >* >( i->func );
 				assert( f );
 				for ( vector< Eref >::const_iterator
@@ -425,7 +425,7 @@ template < class T1, class T2, class T3, class T4, class T5 > class SrcFinfo5: p
 						unsigned int start = e->localDataStart();
 						unsigned int end = start + e->numData();
 						for ( unsigned int k = start; k < end; ++k )
-							f->op( Eref( e, k ), 
+							f->op( Eref( e, k ),
 											arg1, arg2, arg3, arg4, arg5 );
 					} else  {
 						f->op( *j, arg1, arg2, arg3, arg4, arg5 );
@@ -453,14 +453,14 @@ template < class T1, class T2, class T3, class T4, class T5 > class SrcFinfo5: p
 };
 
 
-template< class A1, class A2, class A3, class A4, class A5, class A6 > 
+template< class A1, class A2, class A3, class A4, class A5, class A6 >
 	class OpFunc6Base;
 template < class T1, class T2, class T3, class T4, class T5, class T6 > class SrcFinfo6: public SrcFinfo
 {
 	public:
 		~SrcFinfo6() {;}
 
-		SrcFinfo6( const string& name, const string& doc ) 
+		SrcFinfo6( const string& name, const string& doc )
 			: SrcFinfo( name, doc )
 			{ ; }
 
@@ -471,9 +471,9 @@ template < class T1, class T2, class T3, class T4, class T5, class T6 > class Sr
 			const vector< MsgDigest >& md = e.msgDigest( getBindIndex() );
 			for ( vector< MsgDigest >::const_iterator
 				i = md.begin(); i != md.end(); ++i ) {
-				const OpFunc6Base< T1, T2, T3, T4, T5, T6 >* f = 
-					dynamic_cast< 
-					const OpFunc6Base< T1, T2, T3, T4, T5, T6 >* >( 
+				const OpFunc6Base< T1, T2, T3, T4, T5, T6 >* f =
+					dynamic_cast<
+					const OpFunc6Base< T1, T2, T3, T4, T5, T6 >* >(
 									i->func );
 				assert( f );
 				for ( vector< Eref >::const_iterator
@@ -483,7 +483,7 @@ template < class T1, class T2, class T3, class T4, class T5, class T6 > class Sr
 						unsigned int start = e->localDataStart();
 						unsigned int end = start + e->numData();
 						for ( unsigned int k = start; k < end; ++k )
-							f->op( Eref( e, k ), 
+							f->op( Eref( e, k ),
 									arg1, arg2, arg3, arg4, arg5, arg6 );
 					} else  {
 						f->op( *j, arg1, arg2, arg3, arg4, arg5, arg6 );

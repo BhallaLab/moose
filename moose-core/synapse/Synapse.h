@@ -30,11 +30,11 @@ class Synapse
 		void setHandler( SynHandlerBase* h );
 
 		///////////////////////////////////////////////////////////////
-		static void addMsgCallback( 
-					const Eref& e, const string& finfoName, 
+		static void addMsgCallback(
+					const Eref& e, const string& finfoName,
 					ObjId msg, unsigned int msgLookup );
-		static void dropMsgCallback( 
-					const Eref& e, const string& finfoName, 
+		static void dropMsgCallback(
+					const Eref& e, const string& finfoName,
 					ObjId msg, unsigned int msgLookup );
 		static const Cinfo* initCinfo();
 	private:

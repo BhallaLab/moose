@@ -96,8 +96,8 @@ Time integrate_n_steps(
      * This function is similar to integrate_const. The observer is called at
      * equidistant time intervals t0 + n*dt.
      * If the Stepper is a normal stepper without step size control, dt is also
-     * used for the numerical scheme. If a ControlledStepper is provided, the 
-     * algorithm might reduce the step size to meet the error bounds, but it is 
+     * used for the numerical scheme. If a ControlledStepper is provided, the
+     * algorithm might reduce the step size to meet the error bounds, but it is
      * ensured that the observer is always called at equidistant time points
      * t0 + n*dt. If a DenseOutputStepper is used, the step size also may vary
      * and the dense output is used to call the observer at equidistant time
@@ -107,7 +107,7 @@ Time integrate_n_steps(
      * \param system Function/Functor defining the rhs of the ODE.
      * \param start_state The initial condition x0.
      * \param start_time The initial time t0.
-     * \param dt The time step between observer calls, _not_ necessarily the 
+     * \param dt The time step between observer calls, _not_ necessarily the
      * time step of the integration.
      * \param num_of_steps Number of steps to be performed
      * \param observer Function/Functor called at equidistant time intervals.

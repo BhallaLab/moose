@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from __future__ import print_function
 import sys
 try:
@@ -28,7 +29,7 @@ class TestVec(unittest.TestCase):
         em = moose.vec('testIndexError', n=3, g=1, dtype='Neutral')
         with self.assertRaises(IndexError):
             el = em[5]
-        
+
     def testSlice(self):
         em = moose.vec('/testSlice', n=10, g=1, dtype='Neutral')
         sl = em[5:8]
@@ -70,7 +71,7 @@ class TestNeutral(unittest.TestCase):
         else:
             for oid in oidlist:
                 self.assertEqual(hash(oid), oid.vec.value  >> 48 | oid.dindex >> 16 | oid.findex)
-            
+
 
 class TestNeutral1(unittest.TestCase):
     def setUp(self):
@@ -85,7 +86,7 @@ class TestNeutral1(unittest.TestCase):
         print(self.a_path, self.b_path)
         print(self.a.path, self.b.path)
         print(len(self.c.vec), self.c_len)
-                
+
     def testNew(self):
         self.assertTrue(moose.exists(self.a_path))
 
@@ -93,7 +94,7 @@ class TestNeutral1(unittest.TestCase):
         self.assertTrue(moose.exists(self.b_path))
 
     def testNewChildWithSingleDim(self):
-        self.assertTrue(moose.exists(self.c_path))    
+        self.assertTrue(moose.exists(self.c_path))
 
     def testDimension(self):
         self.assertEqual(self.c.vec.shape[0], self.c_len)
@@ -147,7 +148,7 @@ class TestNeutral1(unittest.TestCase):
         self.assertTrue(id2 > id1)
         self.assertTrue(id2 >= id1)
         self.assertTrue(id1 <= id2)
-    
+
     def testRename(self):
         """Rename an element in a Id and check if that was effective. This
         tests for setting values also."""
@@ -188,10 +189,10 @@ class TestWildcardFind(unittest.TestCase):
         # This causes a lot of error message from SetGet::strGet - can
         # we combine conditions with logical operators?
         # '/x[]/##[(ISA=IntFire) AND (FIELD(Vm)<0)]'
-        yless = moose.wildcardFind('/x[]/##[FIELD(Vm)<0]') 
+        yless = moose.wildcardFind('/x[]/##[FIELD(Vm)<0]')
         self.assertEqual(set(yless), set(self.y.vec[:5]))
-        
-        
+
+
 # class TestPyMooseGlobals(unittest.TestCase):
 #     def setUp(self):
 #         path1 = 'neutral%d' % (uuid.uuid4().int)
@@ -219,14 +220,14 @@ class TestWildcardFind(unittest.TestCase):
 #         self.assertTrue(isinstance(x, moose.Neutral))
 #         self.assertEqual(x.path, self.src1.path)
 #         self.assertRaises(NameError, moose.element, 'abracadabra')
-        
+
 
 class TestMessages(unittest.TestCase):
     def setUp(self):
         path1 = '/comp%d' % (uuid.uuid4().int)
         path2 = '/comp%d' % (uuid.uuid4().int)
         self.src1 = moose.Compartment(path1)
-        self.dest1 = moose.Compartment(path2)        
+        self.dest1 = moose.Compartment(path2)
 
     def testConnect(self):
         print('Testing connect ...', end=' ')
@@ -257,7 +258,7 @@ class TestMessages(unittest.TestCase):
     #     print 'Testing getInMessageDict ...',
     #     indict = self.src1.getInMessageDict()
     #     self.assertTrue('parentMsg' in indict)
-        
+
 
 # class TestNeighbors(unittest.TestCase):
 #     def setUp(self):
@@ -266,7 +267,7 @@ class TestMessages(unittest.TestCase):
 #         self.table = moose.Table('table')
 #         moose.connect(self.table, 'requestData', self.compartment, 'get_Im')
 #         moose.connect(self.pulsegen, 'output', self.compartment, 'injectMsg')
-        
+
 #     def testNeighborDict(self):
 #         print 'Testing neighbour dict ...'
 #         neighbors = self.compartment.neighborDict
@@ -275,7 +276,7 @@ class TestMessages(unittest.TestCase):
 #         self.assertTrue(self.compartment.oid_ in [n.oid_ for n in self.pulsegen.neighborDict['output']])
 #         self.assertTrue(self.compartment.oid_ in [n.oid_ for n in self.table.neighborDict['requestData']])
 #         print 'OK'
-                      
+
 class TestDelete(unittest.TestCase):
     def setUp(self):
         self.oid = moose.Neutral('testDelete')
@@ -307,11 +308,11 @@ class TestFieldAccess(unittest.TestCase):
 #         cwe = moose.getCwe()
 #         self.model = moose.loadModel('../Demos/Genesis_files/Kholodenko.g', '%s/kholodenko' % (self.container.path))
 #         moose.setCwe(cwe)
-    
+
 #     def testVecUnsigned(self):
 #         x = moose.element('%s/kinetics' % (self.model.path))
 #         self.assertTrue(len(x.meshToSpace) > 0)
-        
+
 if __name__ == '__main__':
     print('PyMOOSE Regression Tests:')
     unittest.main()

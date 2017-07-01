@@ -10,15 +10,15 @@
 #ifndef _HOP_FUNC_H
 #define _HOP_FUNC_H
 
-double* addToBuf( 
+double* addToBuf(
 			const Eref& e, HopIndex hopIndex, unsigned int size );
 void dispatchBuffers( const Eref& e, HopIndex hopIndex );
 double* remoteGet( const Eref& e , unsigned int bindIndex );
-void remoteGetVec( const Eref& e, unsigned int bindIndex, 
-				vector< vector< double > >& getRecvBuf, 
+void remoteGetVec( const Eref& e, unsigned int bindIndex,
+				vector< vector< double > >& getRecvBuf,
 				vector< unsigned int >& numOnNode );
-void remoteFieldGetVec( const Eref& e, unsigned int bindIndex, 
-				vector< double >& getRecvBuf ); 
+void remoteFieldGetVec( const Eref& e, unsigned int bindIndex,
+				vector< double >& getRecvBuf );
 unsigned int mooseNumNodes();
 unsigned int mooseMyNode();
 
@@ -56,7 +56,7 @@ template < class A > class HopFunc1: public OpFunc1Base< A >
 		}
 
 		/// Executes the local vector assignment. Returns current arg index
-		unsigned int localOpVec( Element* elm, 
+		unsigned int localOpVec( Element* elm,
 					const vector< A >& arg,
 					const OpFunc1Base< A >* op,
 					unsigned int k ) const
@@ -75,7 +75,7 @@ template < class A > class HopFunc1: public OpFunc1Base< A >
 		}
 
 		/// Executes the local vector assignment. Returns number of entries
-		unsigned int localFieldOpVec( const Eref& er, 
+		unsigned int localFieldOpVec( const Eref& er,
 					const vector< A >& arg,
 					const OpFunc1Base< A >* op )
 				const
@@ -83,7 +83,7 @@ template < class A > class HopFunc1: public OpFunc1Base< A >
 			assert( er.getNode() == mooseMyNode() );
 			unsigned int di = er.dataIndex();
 			Element* elm = er.element();
-			unsigned int numField = 
+			unsigned int numField =
 					elm->numField( di - er.element()->localDataStart()  );
 			for ( unsigned int q = 0; q < numField; ++q ) {
 				Eref temp( elm, di, q );
@@ -93,7 +93,7 @@ template < class A > class HopFunc1: public OpFunc1Base< A >
 		}
 
 		/// Dispatches remote vector assignment. start and end are arg index
-		unsigned int remoteOpVec( const Eref& er, 
+		unsigned int remoteOpVec( const Eref& er,
 					const vector< A >& arg,
 					const OpFunc1Base< A >* op,
 					unsigned int start, unsigned int end ) const
@@ -101,7 +101,7 @@ template < class A > class HopFunc1: public OpFunc1Base< A >
 			unsigned int k = start;
 			unsigned int nn = end - start;
 			if ( mooseNumNodes() > 1 && nn > 0 ) {
-				// nn includes dataIndices. FieldIndices are handled by 
+				// nn includes dataIndices. FieldIndices are handled by
 				// other functions.
 					vector< A > temp( nn );
 				// Have to do the insertion entry by entry because the
@@ -111,10 +111,10 @@ template < class A > class HopFunc1: public OpFunc1Base< A >
 					temp[j] = arg[x];
 					k++;
 				}
-				double* buf = addToBuf( er, hopIndex_, 
+				double* buf = addToBuf( er, hopIndex_,
 						Conv< vector< A > >::size( temp ) );
 				Conv< vector< A > >::val2buf( temp, &buf );
-				dispatchBuffers( er, hopIndex_ ); 
+				dispatchBuffers( er, hopIndex_ );
 				// HopIndex says that it is a SetVec call.
 			}
 			return k;
@@ -157,7 +157,7 @@ template < class A > class HopFunc1: public OpFunc1Base< A >
 				 const OpFunc1Base< A >* op ) const
 		{
 			Element* elm = er.element();
-			if ( elm->hasFields() ) { 
+			if ( elm->hasFields() ) {
 				if ( er.getNode() == mooseMyNode() ) {
 			// True for globals as well as regular objects on current node
 					localFieldOpVec( er, arg, op );
@@ -176,10 +176,10 @@ template < class A > class HopFunc1: public OpFunc1Base< A >
 };
 
 /**
- * Deferred specification of function from OpFunc1Base, so it is after 
+ * Deferred specification of function from OpFunc1Base, so it is after
  * the declaration of the HopFunc class to which it refers.
  */
-template< class A > 
+template< class A >
 const OpFunc* OpFunc1Base< A >::makeHopFunc( HopIndex hopIndex ) const
 {
 	return new HopFunc1< A >( hopIndex );
@@ -196,7 +196,7 @@ template < class A1, class A2 > class HopFunc2: public OpFunc2Base< A1, A2 >
 		{;}
 		void op( const Eref& e, A1 arg1, A2 arg2 ) const
 		{
-			double* buf = addToBuf( e, hopIndex_, 
+			double* buf = addToBuf( e, hopIndex_,
 				Conv< A1 >::size( arg1 ) + Conv< A2 >::size( arg2 ) );
 			/*
 			Conv< A1 >::val2buf( arg1, buf );
@@ -204,14 +204,14 @@ template < class A1, class A2 > class HopFunc2: public OpFunc2Base< A1, A2 >
 			or
 			buf = Conv< A1 >.val2buf( arg1, buf );
 			Conv< A2 >::val2buf( arg2, buf );
-			or 
+			or
 			*/
 			Conv< A1 >::val2buf( arg1, &buf );
 			Conv< A2 >::val2buf( arg2, &buf );
 			dispatchBuffers( e, hopIndex_ );
 		}
 
-		void opVec( const Eref& e, 
+		void opVec( const Eref& e,
 						const vector< A1 >& arg1,
 						const vector< A1 >& arg2,
 				 		const OpFunc2Base< A1, A2 >* op ) const
@@ -251,12 +251,12 @@ template < class A1, class A2 > class HopFunc2: public OpFunc2Base< A1, A2 >
 						temp2[j] = arg2[y];
 						k++;
 					}
-					double* buf = addToBuf( e, hopIndex_, 
+					double* buf = addToBuf( e, hopIndex_,
 							Conv< vector< A1 > >::size( temp1 ) +
 						   Conv< vector< A2 > >::size( temp2 ) );
 					Conv< vector< A1 > >::val2buf( temp1, &buf );
 					Conv< vector< A2 > >::val2buf( temp2, &buf );
-					dispatchBuffers( Eref( elm, dataIndex ), hopIndex_ ); 
+					dispatchBuffers( Eref( elm, dataIndex ), hopIndex_ );
 					// HopIndex says that it is a SetVec call.
 				}
 			}
@@ -265,15 +265,15 @@ template < class A1, class A2 > class HopFunc2: public OpFunc2Base< A1, A2 >
 		HopIndex hopIndex_;
 };
 
-template< class A1, class A2 > 
-const OpFunc* OpFunc2Base< A1, A2 >::makeHopFunc( 
-				HopIndex hopIndex) const 
+template< class A1, class A2 >
+const OpFunc* OpFunc2Base< A1, A2 >::makeHopFunc(
+				HopIndex hopIndex) const
 {
 	return new HopFunc2< A1, A2 >( hopIndex );
 }
 
 // Function to hop across nodes, with three arguments.
-template < class A1, class A2, class A3 > class HopFunc3: 
+template < class A1, class A2, class A3 > class HopFunc3:
 		public OpFunc3Base< A1, A2, A3 >
 {
 	public:
@@ -283,7 +283,7 @@ template < class A1, class A2, class A3 > class HopFunc3:
 
 		void op( const Eref& e, A1 arg1, A2 arg2, A3 arg3 ) const
 		{
-			double* buf = addToBuf( e, hopIndex_, 
+			double* buf = addToBuf( e, hopIndex_,
 				Conv< A1 >::size( arg1 ) + Conv< A2 >::size( arg2 ) +
 				Conv< A3 >::size( arg3 ) );
 			Conv< A1 >::val2buf( arg1, &buf );
@@ -295,15 +295,15 @@ template < class A1, class A2, class A3 > class HopFunc3:
 		HopIndex hopIndex_;
 };
 
-template< class A1, class A2, class A3 > 
-const OpFunc* OpFunc3Base< A1, A2, A3 >::makeHopFunc( 
-				HopIndex hopIndex) const 
+template< class A1, class A2, class A3 >
+const OpFunc* OpFunc3Base< A1, A2, A3 >::makeHopFunc(
+				HopIndex hopIndex) const
 {
 	return new HopFunc3< A1, A2, A3 >( hopIndex );
 }
 
 // Function to hop across nodes, with three arguments.
-template < class A1, class A2, class A3, class A4 > class HopFunc4: 
+template < class A1, class A2, class A3, class A4 > class HopFunc4:
 		public OpFunc4Base< A1, A2, A3, A4 >
 {
 	public:
@@ -313,7 +313,7 @@ template < class A1, class A2, class A3, class A4 > class HopFunc4:
 
 		void op( const Eref& e, A1 arg1, A2 arg2, A3 arg3, A4 arg4 ) const
 		{
-			double* buf = addToBuf( e, hopIndex_, 
+			double* buf = addToBuf( e, hopIndex_,
 				Conv< A1 >::size( arg1 ) + Conv< A2 >::size( arg2 ) +
 				Conv< A3 >::size( arg3 ) + Conv< A4 >::size( arg4 ) );
 			Conv< A1 >::val2buf( arg1, &buf );
@@ -326,9 +326,9 @@ template < class A1, class A2, class A3, class A4 > class HopFunc4:
 		HopIndex hopIndex_;
 };
 
-template< class A1, class A2, class A3, class A4 > 
-const OpFunc* OpFunc4Base< A1, A2, A3, A4 >::makeHopFunc( 
-				HopIndex hopIndex) const 
+template< class A1, class A2, class A3, class A4 >
+const OpFunc* OpFunc4Base< A1, A2, A3, A4 >::makeHopFunc(
+				HopIndex hopIndex) const
 {
 	return new HopFunc4< A1, A2, A3, A4 >( hopIndex );
 }
@@ -342,10 +342,10 @@ template < class A1, class A2, class A3, class A4, class A5 >
 				: hopIndex_( hopIndex )
 		{;}
 
-		void op( const Eref& e, A1 arg1, A2 arg2, A3 arg3, 
+		void op( const Eref& e, A1 arg1, A2 arg2, A3 arg3,
 						A4 arg4, A5 arg5 ) const
 		{
-			double* buf = addToBuf( e, hopIndex_, 
+			double* buf = addToBuf( e, hopIndex_,
 				Conv< A1 >::size( arg1 ) + Conv< A2 >::size( arg2 ) +
 				Conv< A3 >::size( arg3 ) + Conv< A4 >::size( arg4 ) +
 				Conv< A5 >::size( arg5 ) );
@@ -360,9 +360,9 @@ template < class A1, class A2, class A3, class A4, class A5 >
 		HopIndex hopIndex_;
 };
 
-template< class A1, class A2, class A3, class A4, class A5 > 
-const OpFunc* OpFunc5Base< A1, A2, A3, A4, A5 >::makeHopFunc( 
-				HopIndex hopIndex) const 
+template< class A1, class A2, class A3, class A4, class A5 >
+const OpFunc* OpFunc5Base< A1, A2, A3, A4, A5 >::makeHopFunc(
+				HopIndex hopIndex) const
 {
 	return new HopFunc5< A1, A2, A3, A4, A5 >( hopIndex );
 }
@@ -376,10 +376,10 @@ template < class A1, class A2, class A3, class A4, class A5, class A6 >
 				: hopIndex_( hopIndex )
 		{;}
 
-		void op( const Eref& e, A1 arg1, A2 arg2, A3 arg3, 
+		void op( const Eref& e, A1 arg1, A2 arg2, A3 arg3,
 						A4 arg4, A5 arg5, A6 arg6 ) const
 		{
-			double* buf = addToBuf( e, hopIndex_, 
+			double* buf = addToBuf( e, hopIndex_,
 				Conv< A1 >::size( arg1 ) + Conv< A2 >::size( arg2 ) +
 				Conv< A3 >::size( arg3 ) + Conv< A4 >::size( arg4 ) +
 				Conv< A5 >::size( arg5 ) + Conv< A6 >::size( arg6 ) );
@@ -395,9 +395,9 @@ template < class A1, class A2, class A3, class A4, class A5, class A6 >
 		HopIndex hopIndex_;
 };
 
-template< class A1, class A2, class A3, class A4, class A5, class A6 > 
-const OpFunc* OpFunc6Base< A1, A2, A3, A4, A5, A6 >::makeHopFunc( 
-				HopIndex hopIndex) const 
+template< class A1, class A2, class A3, class A4, class A5, class A6 >
+const OpFunc* OpFunc6Base< A1, A2, A3, A4, A5, A6 >::makeHopFunc(
+				HopIndex hopIndex) const
 {
 	return new HopFunc6< A1, A2, A3, A4, A5, A6 >( hopIndex );
 }
@@ -417,12 +417,12 @@ template < class A > class GetHopFunc: public OpFunc1Base< A* >
 			*ret = Conv< A >::buf2val( &buf );
 		}
 
-		void getLocalFieldVec( const Eref& er, vector< A >& ret, 
+		void getLocalFieldVec( const Eref& er, vector< A >& ret,
 				 const GetOpFuncBase< A >* op ) const
 		{
 			unsigned int p = er.dataIndex();
 			Element* elm = er.element();
-			unsigned int numField = elm->numField( 
+			unsigned int numField = elm->numField(
 							p - elm->localDataStart() );
 			for ( unsigned int q = 0; q < numField; ++q ) {
 				Eref temp( elm, p, q );
@@ -430,7 +430,7 @@ template < class A > class GetHopFunc: public OpFunc1Base< A* >
 			}
 		}
 
-		void getRemoteFieldVec( const Eref& e, vector< A >& ret, 
+		void getRemoteFieldVec( const Eref& e, vector< A >& ret,
 				 const GetOpFuncBase< A >* op ) const
 		{
 			vector< double > buf;
@@ -443,7 +443,7 @@ template < class A > class GetHopFunc: public OpFunc1Base< A* >
 			}
 		}
 
-		void getLocalVec( Element *elm, vector< A >& ret, 
+		void getLocalVec( Element *elm, vector< A >& ret,
 				 const GetOpFuncBase< A >* op ) const
 		{
 			unsigned int start = elm->localDataStart();
@@ -454,7 +454,7 @@ template < class A > class GetHopFunc: public OpFunc1Base< A* >
 			}
 		}
 
-		void getMultiNodeVec( const Eref& e, vector< A >& ret, 
+		void getMultiNodeVec( const Eref& e, vector< A >& ret,
 				 const GetOpFuncBase< A >* op ) const
 		{
 			Element* elm = e.element();
@@ -481,7 +481,7 @@ template < class A > class GetHopFunc: public OpFunc1Base< A* >
 			}
 		}
 
-		void opGetVec( const Eref& e, vector< A >& ret, 
+		void opGetVec( const Eref& e, vector< A >& ret,
 				 const GetOpFuncBase< A >* op ) const
 		{
 			Element* elm = e.element();
@@ -506,10 +506,10 @@ template < class A > class GetHopFunc: public OpFunc1Base< A* >
 };
 
 /**
- * Deferred specification of function from OpFunc1Base, so it is after 
+ * Deferred specification of function from OpFunc1Base, so it is after
  * the declaration of the HopFunc class to which it refers.
  */
-template< class A > 
+template< class A >
 const OpFunc* GetOpFuncBase< A >::makeHopFunc( HopIndex hopIndex ) const
 {
 	return new GetHopFunc< A >( hopIndex );

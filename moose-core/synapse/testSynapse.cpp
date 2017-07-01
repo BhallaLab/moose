@@ -26,7 +26,7 @@ void testRollingMatrix()
 	int ncol = 10;
 	RollingMatrix rm;
 	rm.resize( 5, 10 );
-	
+
 	for ( int i = 0; i < nr; ++i ) {
 		rm.sumIntoEntry( i + 1, i, i );
 	}
@@ -38,7 +38,7 @@ void testRollingMatrix()
 	cout << "." << flush;
 
 	// Old row0 becomes row1 and so on. Old row4 (now 0) should be cleared.
-	rm.rollToNextRow(); 
+	rm.rollToNextRow();
 	for ( int i = 0; i < nr; ++i ) {
 		for ( int j = 0; j < ncol; ++j ) {
 			// cout << rm.get( i, j );
@@ -135,10 +135,10 @@ void testSeqSynapse()
 	for ( int i = 0; i < numSyn-4; ++i )
 		assert( doubleEq( wts[i], 2.0 ) );
 	assert( doubleEq( wts[6], 3 ) ); // Edge effects. Last -1 vanishes.
-	assert( doubleEq( wts[7], 4 ) ); // Edge effects. 
+	assert( doubleEq( wts[7], 4 ) ); // Edge effects.
 	assert( doubleEq( wts[8], 5 ) ); // Edge effects.
 	assert( doubleEq( wts[9], 4 ) ); // Edge effects.
-		
+
 	cout << "." << flush;
 	shell->doDelete( sid );
 }

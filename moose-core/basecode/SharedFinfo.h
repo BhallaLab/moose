@@ -12,22 +12,22 @@
 /**
  * This is a SharedFinfo, which wraps an arbitrary set of regular
  * Src and Dest Messages. Its main job is to do typechecking for setting
- * up multiple data streams to go across the same Msg. 
+ * up multiple data streams to go across the same Msg.
  */
 
 class SharedFinfo: public Finfo
 {
 	public:
-		SharedFinfo( const string& name, const string& doc, 
+		SharedFinfo( const string& name, const string& doc,
 			Finfo** entries, unsigned int numEntries );
 
 		~SharedFinfo() {;}
 
 		void registerFinfo( Cinfo* c );
 
-		bool strSet( const Eref& tgt, const string& field, 
+		bool strSet( const Eref& tgt, const string& field,
 			const string& arg ) const;
-		bool strGet( const Eref& tgt, const string& field, 
+		bool strGet( const Eref& tgt, const string& field,
 			string& returnValue ) const;
 
 		/**
@@ -49,8 +49,8 @@ class SharedFinfo: public Finfo
 		///////////////////////////////////////////////////////////////////
 		// Override the default virtual function for the set/get destfinfos
 		///////////////////////////////////////////////////////////////////
-		vector< string > innerSrc() const;	
-		vector< string > innerDest() const;	
+		vector< string > innerSrc() const;
+		vector< string > innerDest() const;
 
 		/// This always returns void. We need to check the subsidiary Finfos
 		string rttiType() const;

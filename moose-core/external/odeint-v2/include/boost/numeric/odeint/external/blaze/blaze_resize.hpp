@@ -29,8 +29,8 @@ namespace numeric {
 namespace odeint {
 
 template< typename T , bool TF >
-struct is_resizeable< blaze::DynamicVector< T , TF > > 
-{ 
+struct is_resizeable< blaze::DynamicVector< T , TF > >
+{
     typedef boost::true_type type;
     const static bool value = type::value;
 };

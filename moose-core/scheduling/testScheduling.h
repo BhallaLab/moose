@@ -10,7 +10,7 @@
 class TestSched
 {
 	public:
-		/** 
+		/**
 		 * This may be created as an array, but only on one thread
 		 */
 		TestSched()

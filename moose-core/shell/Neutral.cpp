@@ -19,41 +19,41 @@ const Cinfo* Neutral::initCinfo()
 	// Element Value Finfos
 	/////////////////////////////////////////////////////////////////
 
-	static ElementValueFinfo< Neutral, string > name( 
+	static ElementValueFinfo< Neutral, string > name(
 		"name",
-		"Name of object", 
-		&Neutral::setName, 
+		"Name of object",
+		&Neutral::setName,
 		&Neutral::getName );
 
 	// Should be renamed to myId
-	static ReadOnlyElementValueFinfo< Neutral, ObjId > me( 
+	static ReadOnlyElementValueFinfo< Neutral, ObjId > me(
 		"me",
-		"ObjId for current object", 
+		"ObjId for current object",
 			&Neutral::getObjId );
 
-	static ReadOnlyElementValueFinfo< Neutral, ObjId > parent( 
+	static ReadOnlyElementValueFinfo< Neutral, ObjId > parent(
 		"parent",
-		"Parent ObjId for current object", 
+		"Parent ObjId for current object",
 			&Neutral::getParent );
 
-	static ReadOnlyElementValueFinfo< Neutral, vector< Id > > children( 
+	static ReadOnlyElementValueFinfo< Neutral, vector< Id > > children(
 		"children",
-		"vector of ObjIds listing all children of current object", 
+		"vector of ObjIds listing all children of current object",
 			&Neutral::getChildren );
 
-	static ReadOnlyElementValueFinfo< Neutral, string > path( 
+	static ReadOnlyElementValueFinfo< Neutral, string > path(
 		"path",
-		"text path for object", 
+		"text path for object",
 			&Neutral::getPath );
 
 	/*
 			*/
-	static ReadOnlyElementValueFinfo< Neutral, string > className( 
+	static ReadOnlyElementValueFinfo< Neutral, string > className(
 		"className",
-		"Class Name of object", 
+		"Class Name of object",
 			&Neutral::getClass );
 
-	static ElementValueFinfo< Neutral, unsigned int > numData( 
+	static ElementValueFinfo< Neutral, unsigned int > numData(
 		"numData",
 		"# of Data entries on Element."
 		"Note that on a FieldElement this does NOT refer to field entries,"
@@ -62,7 +62,7 @@ const Cinfo* Neutral::initCinfo()
 			&Neutral::setNumData,
 			&Neutral::getNumData );
 
-	static ElementValueFinfo< Neutral, unsigned int > numField( 
+	static ElementValueFinfo< Neutral, unsigned int > numField(
 		"numField",
 		"For a FieldElement: number of entries of self."
 		"For a regular Element: One.",
@@ -74,20 +74,20 @@ const Cinfo* Neutral::initCinfo()
 		"Object id of self, converted to an unsigned int.",
 			&Neutral::getId );
 
-	static ReadOnlyElementValueFinfo< Neutral, unsigned int > index( 
+	static ReadOnlyElementValueFinfo< Neutral, unsigned int > index(
 		"index",
 		"For a FieldElement: Object index of parent."
 		"For a regular Element: Object index (dataId) of self.",
 			&Neutral::getIndex );
 
-	static ReadOnlyElementValueFinfo< Neutral, unsigned int > fieldIndex( 
+	static ReadOnlyElementValueFinfo< Neutral, unsigned int > fieldIndex(
 		"fieldIndex",
 		"For a FieldElement: field Index of self."
 		"For a regular Element: zero.",
 			&Neutral::getFieldIndex );
 
-	static ElementValueFinfo< Neutral, int > 
-		tick( 
+	static ElementValueFinfo< Neutral, int >
+		tick(
 		"tick",
 		"Clock tick for this Element for periodic execution in the "
 		"main simulation event loop. A default is normally assigned, "
@@ -99,14 +99,14 @@ const Cinfo* Neutral::initCinfo()
 			&Neutral::setTick,
 			&Neutral::getTick );
 
-	static ReadOnlyElementValueFinfo< Neutral, double > 
+	static ReadOnlyElementValueFinfo< Neutral, double >
 			dt(
 			"dt",
 			"Timestep used for this Element. Zero if not scheduled.",
 			&Neutral::getDt );
 
 
-	static ReadOnlyElementValueFinfo< Neutral, vector< string > > 
+	static ReadOnlyElementValueFinfo< Neutral, vector< string > >
 			valueFields(
 			"valueFields",
 			"List of all value fields on Element."
@@ -117,7 +117,7 @@ const Cinfo* Neutral::initCinfo()
 			&Neutral::getValueFields
 	);
 
-	static ReadOnlyElementValueFinfo< Neutral, vector< string > > 
+	static ReadOnlyElementValueFinfo< Neutral, vector< string > >
 			sourceFields(
 			"sourceFields",
 			"List of all source fields on Element, that is fields that "
@@ -125,7 +125,7 @@ const Cinfo* Neutral::initCinfo()
 			&Neutral::getSourceFields
 	);
 
-	static ReadOnlyElementValueFinfo< Neutral, vector< string > > 
+	static ReadOnlyElementValueFinfo< Neutral, vector< string > >
 			destFields(
 			"destFields",
 			"List of all destination fields on Element, that is, fields"
@@ -133,36 +133,36 @@ const Cinfo* Neutral::initCinfo()
 			&Neutral::getDestFields
 	);
 
-	static ReadOnlyElementValueFinfo< Neutral, vector< ObjId > > msgOut( 
+	static ReadOnlyElementValueFinfo< Neutral, vector< ObjId > > msgOut(
 		"msgOut",
-		"Messages going out from this Element", 
+		"Messages going out from this Element",
 			&Neutral::getOutgoingMsgs );
 
-	static ReadOnlyElementValueFinfo< Neutral, vector< ObjId > > msgIn( 
+	static ReadOnlyElementValueFinfo< Neutral, vector< ObjId > > msgIn(
 		"msgIn",
-		"Messages coming in to this Element", 
+		"Messages coming in to this Element",
 			&Neutral::getIncomingMsgs );
 
-	static ReadOnlyLookupElementValueFinfo< Neutral, string, vector< Id > > neighbors( 
+	static ReadOnlyLookupElementValueFinfo< Neutral, string, vector< Id > > neighbors(
 		"neighbors",
-		"Ids of Elements connected this Element on specified field.", 
+		"Ids of Elements connected this Element on specified field.",
 			&Neutral::getNeighbors );
 
-	static ReadOnlyLookupElementValueFinfo< Neutral, string, vector< ObjId > > msgDests( 
+	static ReadOnlyLookupElementValueFinfo< Neutral, string, vector< ObjId > > msgDests(
 		"msgDests",
-		"ObjIds receiving messages from the specified SrcFinfo", 
+		"ObjIds receiving messages from the specified SrcFinfo",
 			&Neutral::getMsgDests );
 
-	static ReadOnlyLookupElementValueFinfo< Neutral, string, vector< string > > msgDestFunctions( 
+	static ReadOnlyLookupElementValueFinfo< Neutral, string, vector< string > > msgDestFunctions(
 		"msgDestFunctions",
 		"Matching function names for each ObjId receiving a msg from "
-		"the specified SrcFinfo", 
+		"the specified SrcFinfo",
 			&Neutral::getMsgDestFunctions );
 
-	static ReadOnlyLookupElementValueFinfo< Neutral, string, bool >isA( 
+	static ReadOnlyLookupElementValueFinfo< Neutral, string, bool >isA(
 		"isA",
 		"Returns true if the current object is derived from the specified "
-		"the specified class", 
+		"the specified class",
 			&Neutral::isA );
 
 	/////////////////////////////////////////////////////////////////
@@ -177,14 +177,14 @@ const Cinfo* Neutral::initCinfo()
 	/////////////////////////////////////////////////////////////////
 	// SrcFinfos
 	/////////////////////////////////////////////////////////////////
-	static SrcFinfo1< int > childOut( "childOut", 
+	static SrcFinfo1< int > childOut( "childOut",
 		"Message to child Elements");
 
 	/////////////////////////////////////////////////////////////////
 	// DestFinfos
 	/////////////////////////////////////////////////////////////////
-	static DestFinfo parentMsg( "parentMsg", 
-		"Message from Parent Element(s)", 
+	static DestFinfo parentMsg( "parentMsg",
+		"Message from Parent Element(s)",
 		new EpFunc1< Neutral, int >( &Neutral::destroy ) );
 
 	static DestFinfo blockNodeBalance( "blockNodeBalance",
@@ -209,7 +209,7 @@ const Cinfo* Neutral::initCinfo()
 		"Arguments are: myNode, nodeAssignment",
 		new EpFunc2< Neutral, unsigned int, vector< unsigned int > >(
 			&Neutral::generalNodeBalance ) );
-			
+
 	/////////////////////////////////////////////////////////////////
 	// Setting up the Finfo list.
 	/////////////////////////////////////////////////////////////////
@@ -294,12 +294,12 @@ Neutral Neutral::getThis() const
 void Neutral::setName( const Eref& e, string name )
 {
 	if ( e.id().value() <= 3 ) {
-		cout << "Warning: Neutral::setName on '" << e.id().path() << 
+		cout << "Warning: Neutral::setName on '" << e.id().path() <<
 			   "'. Cannot rename core objects\n";
 		return;
 	}
 	if ( !Shell::isNameValid( name ) ) {
-		cout << "Warning: Neutral::setName on '" << e.id().path() << 
+		cout << "Warning: Neutral::setName on '" << e.id().path() <<
 			   "'. Illegal character in name.\n";
 		return;
 	}
@@ -357,7 +357,7 @@ void Neutral::children( const Eref& e, vector< Id >& ret )
 	static const Finfo* cf = neutralCinfo->findFinfo( "childOut" );
 	static const SrcFinfo* cf2 = dynamic_cast< const SrcFinfo* >( cf );
 	static const BindIndex bi = cf2->getBindIndex();
-	
+
 	const vector< MsgFuncBinding >* bvec = e.element()->getMsgAndFunc( bi );
 
 	for ( vector< MsgFuncBinding >::const_iterator i = bvec->begin();
@@ -447,7 +447,7 @@ void Neutral::setTick( const Eref& e, int num )
 double Neutral::getDt( const Eref& e ) const
 {
 	int tick = e.element()->getTick();
-	if ( tick < 0 ) 
+	if ( tick < 0 )
 		return 0.0;
 	Id clockId( 1 );
 	return LookupField< unsigned int, double >::get(
@@ -496,7 +496,7 @@ vector< ObjId > Neutral::getOutgoingMsgs( const Eref& e ) const
 	unsigned int numBindIndex = e.element()->cinfo()->numBindIndex();
 
 	for ( unsigned int i = 0; i < numBindIndex; ++i ) {
-		const vector< MsgFuncBinding >* v = 
+		const vector< MsgFuncBinding >* v =
 			e.element()->getMsgAndFunc( i );
 		if ( v ) {
 			for ( vector< MsgFuncBinding >::const_iterator mb = v->begin();
@@ -529,7 +529,7 @@ vector< Id > Neutral::getNeighbors( const Eref& e, string field ) const
 	if ( finfo )
 		e.element()->getNeighbors( ret, finfo );
 	else
-		cout << "Warning: Neutral::getNeighbors: Id.Field '" << 
+		cout << "Warning: Neutral::getNeighbors: Id.Field '" <<
 				e.id().path() << "." << field <<
 				"' not found\n";
 	return ret;
@@ -546,7 +546,7 @@ vector< ObjId > Neutral::getMsgDests( const Eref& e, string field ) const
 			tgt, func );
 		return tgt;
 	} else {
-		cout << "Warning: Neutral::getMsgDests: Id.Field '" << 
+		cout << "Warning: Neutral::getMsgDests: Id.Field '" <<
 				e.id().path() << "." << field <<
 				"' not found or not a SrcFinfo\n";
 	}
@@ -566,7 +566,7 @@ vector< string > Neutral::getMsgDestFunctions( const Eref& e, string field ) con
 			tgt, func );
 		return func;
 	} else {
-		cout << "Warning: Neutral::getMsgDestFunctions: Id.Field '" << 
+		cout << "Warning: Neutral::getMsgDestFunctions: Id.Field '" <<
 				e.id().path() << "." << field <<
 				"' not found or not a SrcFinfo\n";
 	}
@@ -581,7 +581,7 @@ bool Neutral::isA( const Eref& e, string className ) const
 //////////////////////////////////////////////////////////////////////////
 
 unsigned int Neutral::buildTree( const Eref& e, vector< Id >& tree )
-	const 
+	const
 {
 	unsigned int ret = 1;
 	Eref er( e.element(), ALLDATA );
@@ -601,7 +601,7 @@ unsigned int Neutral::buildTree( const Eref& e, vector< Id >& tree )
 // Stage 0: Check if it is a Msg. This is deleted by Msg::deleteMsg( ObjId )
 // Stage 1: mark for deletion. This is done by setting cinfo = 0
 // Stage 2: Clear out outside-going msgs
-// Stage 3: delete self and attached msgs, 
+// Stage 3: delete self and attached msgs,
 void Neutral::destroy( const Eref& e, int stage )
 {
 	if ( e.element()->cinfo()->isA( "Msg" ) ) {
@@ -612,7 +612,7 @@ void Neutral::destroy( const Eref& e, int stage )
 	Eref er( e.element(), ALLDATA );
 	unsigned int numDescendants = buildTree( er, tree );
 	/*
-	cout << "Neutral::destroy: id = " << e.id() << 
+	cout << "Neutral::destroy: id = " << e.id() <<
 		", name = " << e.element()->getName() <<
 		", numDescendants = " << numDescendants << endl;
 		*/
@@ -624,7 +624,7 @@ void Neutral::destroy( const Eref& e, int stage )
  * Request conversion of data into a blockDataHandler subclass,
  * and to carry out node balancing of data as per args.
  */
-void Neutral::blockNodeBalance( const Eref& e, 
+void Neutral::blockNodeBalance( const Eref& e,
 	unsigned int, unsigned int, unsigned int )
 {
 }
@@ -633,7 +633,7 @@ void Neutral::blockNodeBalance( const Eref& e,
  * Request conversion of data into a generalDataHandler subclass,
  * and to carry out node balancing of data as per args.
  */
-void Neutral::generalNodeBalance( const Eref& e, 
+void Neutral::generalNodeBalance( const Eref& e,
 	unsigned int myNode, vector< unsigned int > nodeAssignment )
 {
 }
@@ -651,7 +651,7 @@ bool Neutral::isDescendant( Id me, Id ancestor )
 	static const FuncId pafid = pf2->getFid();
 
 	Eref e = me.eref();
-	
+
 	while ( e.element()->id() != Id() && e.element()->id() != ancestor ) {
 		ObjId mid = e.element()->findCaller( pafid );
 		assert( mid != ObjId() );
@@ -662,7 +662,7 @@ bool Neutral::isDescendant( Id me, Id ancestor )
 }
 
 // static function
-Id Neutral::child( const Eref& e, const string& name ) 
+Id Neutral::child( const Eref& e, const string& name )
 {
 	static const Finfo* pf = neutralCinfo->findFinfo( "parentMsg" );
 	static const DestFinfo* pf2 = dynamic_cast< const DestFinfo* >( pf );
@@ -670,7 +670,7 @@ Id Neutral::child( const Eref& e, const string& name )
 	static const Finfo* cf = neutralCinfo->findFinfo( "childOut" );
 	static const SrcFinfo* cf2 = dynamic_cast< const SrcFinfo* >( cf );
 	static const BindIndex bi = cf2->getBindIndex();
-	
+
 	const vector< MsgFuncBinding >* bvec = e.element()->getMsgAndFunc( bi );
 
 	vector< Id > ret;
@@ -721,7 +721,7 @@ ObjId Neutral::parent( ObjId oid )
 	return pa;
 }
 
-// Static function 
+// Static function
 string Neutral::path( const Eref& e )
 {
 	static const Finfo* pf = neutralCinfo->findFinfo( "parentMsg" );

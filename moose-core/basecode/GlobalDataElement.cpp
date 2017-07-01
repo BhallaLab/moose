@@ -11,9 +11,9 @@
 #include "FuncOrder.h"
 #include "../shell/Shell.h"
 
-GlobalDataElement::GlobalDataElement( Id id, const Cinfo* c, 
+GlobalDataElement::GlobalDataElement( Id id, const Cinfo* c,
 	const string& name, unsigned int numData )
-	:	
+	:
 		DataElement( id, c, name, numData )
 {;}
 
@@ -25,9 +25,9 @@ GlobalDataElement::GlobalDataElement( Id id, const Cinfo* c,
  * retain info from the originals.
  * Note that n is the number of individual  dataEntries that are made.
  */
-GlobalDataElement::GlobalDataElement( Id id, const Element* orig, 
+GlobalDataElement::GlobalDataElement( Id id, const Element* orig,
 				unsigned int n )
-	:	
+	:
 		DataElement( id, orig, n, 0 )
 {;}
 
@@ -35,12 +35,12 @@ GlobalDataElement::GlobalDataElement( Id id, const Element* orig,
 GlobalDataElement::~GlobalDataElement()
 {;}
 
-Element* GlobalDataElement::copyElement( 
+Element* GlobalDataElement::copyElement(
 		Id newParent, Id newId, unsigned int n, bool toGlobal ) const
 {
 	if ( toGlobal )
 		return new GlobalDataElement( newId, this, n );
-	else 
+	else
 		return new LocalDataElement( newId, this, n );
 }
 

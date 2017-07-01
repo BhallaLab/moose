@@ -14,16 +14,16 @@
 #include "SymCompartment.h"
 
 static SrcFinfo2< double, double > *distalOut() {
-	static SrcFinfo2< double, double > distalOut( "distalOut", 
+	static SrcFinfo2< double, double > distalOut( "distalOut",
 			"Sends out Ra and Vm on each timestep, on the distal end"
 			" of a compartment. This end should be pointed away from the"
-			" soma. Mathematically the same as proximalOut, but gives" 
+			" soma. Mathematically the same as proximalOut, but gives"
 			" an orientation to the dendrite and helps traversal.");
 	return &distalOut;
 }
 
 static SrcFinfo2< double, double > *proximalOut() {
-	static SrcFinfo2< double, double > proximalOut( "proximalOut", 
+	static SrcFinfo2< double, double > proximalOut( "proximalOut",
 			"Sends out Ra and Vm on each timestep, on the proximal"
 		   " end of a compartment. That is, this end should be "
 		   " pointed toward the soma. Mathematically the same as raxialOut"
@@ -33,7 +33,7 @@ static SrcFinfo2< double, double > *proximalOut() {
 }
 
 static SrcFinfo2< double, double > *cylinderOut() {
-	static SrcFinfo2< double, double > cylinderOut( "cylinderOut", 
+	static SrcFinfo2< double, double > cylinderOut( "cylinderOut",
 			" Sends out Ra and Vm to compartments (typically spines) on the"
 			" curved surface of a cylinder. Ra is set to nearly zero,"
 			" since we assume that the resistance from axis to surface is"
@@ -53,13 +53,13 @@ const Cinfo* SymCompartment::initCinfo()
 	/////////////////////////////////////////////////////////////////////
 	// Dest Finfos
 	/////////////////////////////////////////////////////////////////////
-                                                        
+
         static DestFinfo raxialSphere( "raxialSphere",
                 "Expects Ra and Vm from other compartment. This is a special case when"
                 " other compartments are evenly distributed on a spherical compartment.",
                 new OpFunc2< SymCompartment, double, double >(
                 &SymCompartment::raxialSphere)
-        );    
+        );
         static DestFinfo raxialCylinder( "raxialCylinder",
                 "Expects Ra and Vm from other compartment. This is a special case when"
                 " other compartments are evenly distributed on the curved surface"
@@ -67,15 +67,15 @@ const Cinfo* SymCompartment::initCinfo()
                 " cylinder does not add any further resistance.",
                 new OpFunc2< SymCompartment, double, double >(
                 &SymCompartment::raxialCylinder)
-        );    
-	static DestFinfo raxialSym( "raxialSym", 
+        );
+	static DestFinfo raxialSym( "raxialSym",
 		"Expects Ra and Vm from other compartment.",
-		new OpFunc2< SymCompartment, double, double >( 
+		new OpFunc2< SymCompartment, double, double >(
 			&SymCompartment::raxialSym )
 	);
-	static DestFinfo sumRaxial( "sumRaxial", 
+	static DestFinfo sumRaxial( "sumRaxial",
 		"Expects Ra from other compartment.",
-		new OpFunc1< SymCompartment, double >( 
+		new OpFunc1< SymCompartment, double >(
 		&SymCompartment::sumRaxial )
 	);
 	/////////////////////////////////////////////////////////////////////
@@ -86,7 +86,7 @@ const Cinfo* SymCompartment::initCinfo()
 
 	static Finfo* distalShared[] =
 	{
-            &raxialSym, &sumRaxial,// &handleSumRaxialRequest, 
+            &raxialSym, &sumRaxial,// &handleSumRaxialRequest,
             distalOut(), sumRaxialOut(), //requestSumAxial()
 	};
 
@@ -103,7 +103,7 @@ const Cinfo* SymCompartment::initCinfo()
 		proximalShared, sizeof( proximalShared ) / sizeof( Finfo* )
 	);
 
-	static SharedFinfo distal( "distal", 
+	static SharedFinfo distal( "distal",
        "This is a shared message between symmetric compartments.\n"
        "It goes from the distal end of the current compartment to the \n"
        "proximal end of one further from the soma. \n"
@@ -115,7 +115,7 @@ const Cinfo* SymCompartment::initCinfo()
 		distalShared, sizeof( distalShared ) / sizeof( Finfo* )
 	);
 
-	static SharedFinfo sibling( "sibling", 
+	static SharedFinfo sibling( "sibling",
 		"This is a shared message between symmetric compartments.\n"
 		"Conceptually, this goes from the proximal end of the current \n"
 		"compartment to the proximal end of a sibling compartment \n"
@@ -132,7 +132,7 @@ const Cinfo* SymCompartment::initCinfo()
             &raxialSphere,
             distalOut(),
         };
-        
+
     static SharedFinfo sphere( "sphere",
 		"This is a shared message between a spherical compartment \n"
         "(typically soma) and a number of evenly spaced cylindrical \n"
@@ -177,7 +177,7 @@ const Cinfo* SymCompartment::initCinfo()
     );
 
 	//////////////////////////////////////////////////////////////////
-	static Finfo* symCompartmentFinfos[] = 
+	static Finfo* symCompartmentFinfos[] =
 	{
 
 	//////////////////////////////////////////////////////////////////
@@ -191,7 +191,7 @@ const Cinfo* SymCompartment::initCinfo()
         &sphere,
         &cylinder,
 		&proximalOnly
-                
+
 	///////////////////////////////////////////////////////
 	// MsgSrc definitions
 	///////////////////////////////////////////////////////
@@ -202,7 +202,7 @@ const Cinfo* SymCompartment::initCinfo()
 	};
 
 	// static SchedInfo schedInfo[] = { { process, 0, 0 }, { init, 0, 1 } };
-	
+
 	static string doc[] =
 	{
 		"Name", "SymCompartment",
@@ -212,7 +212,7 @@ const Cinfo* SymCompartment::initCinfo()
                 "the node. The equivalent circuit of the passive compartment becomes:\n"
                 "(NOTE: you must use a fixed-width font like Courier for correct rendition of the diagrams below)::\n"
                 "                                       \n"
-                "         Ra/2    B    Ra/2               \n"                       
+                "         Ra/2    B    Ra/2               \n"
                 "       A-/\\/\\/\\_____/\\/\\/\\-- C           \n"
                 "                 |                      \n"
                 "             ____|____                  \n"
@@ -227,12 +227,12 @@ const Cinfo* SymCompartment::initCinfo()
                 "            |_________|                 \n"
                 "                |                       \n"
                 "              __|__                     \n"
-                "              /////                     \n" 
+                "              /////                     \n"
                 "                                       \n"
                 "                                       \n\n"
                 "In case of branching, the B-C part of the parent's axial resistance\n"
                 "forms a Y with the A-B part of the children::\n\n"
-                "                               B'              \n"                        
+                "                               B'              \n"
                 "                               |               \n"
                 "                               /               \n"
                 "                               \\              \n"
@@ -240,7 +240,7 @@ const Cinfo* SymCompartment::initCinfo()
                 "                               \\              \n"
                 "                               /               \n"
                 "                               |A'             \n"
-                "                B              |               \n"            
+                "                B              |               \n"
                 "  A-----/\\/\\/\\-----/\\/\\/\\------|C        \n"
                 "                               |               \n"
                 "                               |A\"            \n"
@@ -344,7 +344,7 @@ void SymCompartment::raxialSym( double Ra, double Vm)
 	B_ += 1.0 / Ra;
 	Im_ += ( Vm - Vm_ ) / Ra;
 	*/
-    
+
     double R = Ra * coeff_;
     // cout << "raxialSym:R=" << R << endl;
     A_ += Vm / R;

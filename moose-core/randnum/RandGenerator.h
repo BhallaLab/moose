@@ -1,6 +1,6 @@
 /*******************************************************************
  * File:            RandGenerator.h
- * Description:      
+ * Description:
  * Author:          Subhasis Ray
  * E-mail:          ray.subhasis@gmail.com
  * Created:         2007-11-07 16:25:08
@@ -27,22 +27,22 @@
    generators (which is an instance of Probability class).
  */
 class RandGenerator
-{    
+{
   public:
     RandGenerator();
     virtual ~RandGenerator();
-    double getMean() const;    
+    double getMean() const;
     double getVariance() const;
     double getSample() const;
     void process( const Eref& e, ProcPtr info);
     void reinit( const Eref& e, ProcPtr info);
     virtual void vReinit( const Eref& e, ProcPtr info);
-    
+
     static const Cinfo * initCinfo();
   protected:
     Probability* rng_;
     double sample_;
 };
 
-    
+
 #endif

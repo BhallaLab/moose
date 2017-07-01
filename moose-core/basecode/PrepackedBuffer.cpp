@@ -10,7 +10,7 @@
 #include <cstring>
 #include "PrepackedBuffer.h"
 
-PrepackedBuffer::PrepackedBuffer( 
+PrepackedBuffer::PrepackedBuffer(
 	const char* data, unsigned int dataSize, unsigned int numEntries )
 	: dataSize_( dataSize ), numEntries_( numEntries )
 {
@@ -18,13 +18,13 @@ PrepackedBuffer::PrepackedBuffer(
 		individualDataSize_ = dataSize_;
 	else
 		individualDataSize_ = dataSize_ / numEntries_;
-	
+
 	data_ = new char[ dataSize ];
 	memcpy( data_, data, dataSize );
 }
 
 PrepackedBuffer::PrepackedBuffer( const PrepackedBuffer& other )
-	: dataSize_( other.dataSize_ ), 
+	: dataSize_( other.dataSize_ ),
 		numEntries_( other.numEntries_ )
 {
 	if ( numEntries_ == 0 )
@@ -37,7 +37,7 @@ PrepackedBuffer::PrepackedBuffer( const PrepackedBuffer& other )
 
 PrepackedBuffer::PrepackedBuffer( const char* buf )
 	: dataSize_( *reinterpret_cast< const unsigned int * >( buf ) ),
-		numEntries_( *reinterpret_cast< const unsigned int * >( 
+		numEntries_( *reinterpret_cast< const unsigned int * >(
 			buf + sizeof( unsigned int ) ) )
 {
 	if ( numEntries_ == 0 )

@@ -1,4 +1,4 @@
-// test_moosemodule.cpp --- 
+// test_moosemodule.cpp ---
 //
 // Filename: test_moosemodule.cpp
 // Description:

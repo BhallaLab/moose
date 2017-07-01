@@ -13,7 +13,7 @@
  * This ring buffer handles incoming spikes. It spans an interval equal to
  * the longest arrival delay. When a spike event is notified it puts it into
  * the slot defined by the arrival time. It just adds the weight onto the
- * existing value in this slot, assuming a linear summation of the 
+ * existing value in this slot, assuming a linear summation of the
  * weights of coincident inputs.
  */
 class SpikeRingBuffer

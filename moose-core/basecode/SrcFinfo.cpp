@@ -9,7 +9,7 @@
 #include "header.h"
 
 /**
- * This set of classes define Message Sources. Their main job is to supply 
+ * This set of classes define Message Sources. Their main job is to supply
  * a type-safe send operation, and to provide typechecking for it.
  */
 
@@ -25,7 +25,7 @@ void SrcFinfo::registerFinfo( Cinfo* c )
 }
 
 
-BindIndex SrcFinfo::getBindIndex() const 
+BindIndex SrcFinfo::getBindIndex() const
 {
 	// Treat this assertion as a warning that the SrcFinfo is being used
 	// without initialization.
@@ -71,7 +71,7 @@ void SrcFinfo0::send( const Eref& e ) const {
 	const vector< MsgDigest >& md = e.msgDigest( getBindIndex() );
 	for ( vector< MsgDigest >::const_iterator
 		i = md.begin(); i != md.end(); ++i ) {
-		const OpFunc0Base* f = 
+		const OpFunc0Base* f =
 			dynamic_cast< const OpFunc0Base* >( i->func );
 		assert( f );
 		for ( vector< Eref >::const_iterator

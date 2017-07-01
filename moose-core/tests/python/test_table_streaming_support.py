@@ -1,9 +1,10 @@
-"""test_table_streaming_support.py: 
+# -*- coding: utf-8 -*-
+"""test_table_streaming_support.py:
 
 Test the streaming support in moose.Table.
 
 """
-    
+
 __author__           = "Dilawar Singh"
 __copyright__        = "Copyright 2016, Dilawar Singh"
 __credits__          = ["NCBS Bangalore"]
@@ -21,9 +22,9 @@ print( '[INFO] Using moose form %s' % moose.__file__ )
 
 def print_table( table ):
     msg = ""
-    msg += " outfile : %s" % table.outfile 
-    msg += " useStreamer: %s" % table.useStreamer 
-    msg += ' Path: %s' % table.path 
+    msg += " outfile : %s" % table.outfile
+    msg += " useStreamer: %s" % table.useStreamer
+    msg += ' Path: %s' % table.path
     print( msg )
 
 def test( ):

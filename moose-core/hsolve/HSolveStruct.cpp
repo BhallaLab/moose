@@ -19,10 +19,10 @@ void ChannelStruct::setPowers(
 {
 	Xpower_ = Xpower;
 	takeXpower_ = selectPower( Xpower );
-	
+
 	Ypower_ = Ypower;
 	takeYpower_ = selectPower( Ypower );
-	
+
 	Zpower_ = Zpower;
 	takeZpower_ = selectPower( Zpower );
 }
@@ -53,28 +53,28 @@ PFDD ChannelStruct::selectPower( double power )
 void ChannelStruct::process( double*& state, CurrentStruct& current )
 {
 	double fraction = modulation_;
-	
+
 	if( Xpower_ > 0.0 )
 		fraction *= takeXpower_( *( state++ ), Xpower_ );
 	if( Ypower_ > 0.0 )
 		fraction *= takeYpower_( *( state++ ), Ypower_ );
 	if( Zpower_ > 0.0 )
 		fraction *= takeZpower_( *( state++ ), Zpower_ );
-	
+
 	current.Gk = Gbar_ * fraction;
 }
 
 void SpikeGenStruct::reinit( ProcPtr info  )
 {
 	SpikeGen* spike = reinterpret_cast< SpikeGen* >( e_.data() );
-	
+
 	spike->reinit( e_, info );
 }
 
 void SpikeGenStruct::send( ProcPtr info  )
 {
 	SpikeGen* spike = reinterpret_cast< SpikeGen* >( e_.data() );
-	
+
 	spike->handleVm( *Vm_ );
 	spike->process( e_, info );
 }
@@ -114,16 +114,16 @@ void CaConcStruct::setCaBasal( double CaBasal ) {
 	 * Also updating 'c_' here, so that only 'CaBasal' changes, and 'Ca'
 	 * remains the same. This is good because otherwise one has to bother about
 	 * the order in which 'setCa()' and 'setCaBasal()' are called.
-	 * 
+	 *
 	 * 'Ca' is:
 	 *         Ca = CaBasal_ + c_
-	 * 
+	 *
 	 * if:
 	 *         Ca_new = Ca_old
-	 * 
+	 *
 	 * then:
 	 *         CaBasal_new + c_new = CaBasal_old + c_old
-	 * 
+	 *
 	 * so:
 	 *         c_new = c_old + CaBasal_old - CaBasal_new
 	 */
@@ -138,18 +138,18 @@ void CaConcStruct::setTauB( double tau, double B, double dt ) {
 
 double CaConcStruct::process( double activation ) {
 	c_ = factor1_ * c_ + factor2_ * activation;
-	
+
 	double ca = CaBasal_ + c_;
-	
+
 	if ( ceiling_ > 0 && ca > ceiling_ ) {
 		ca = ceiling_;
 		setCa( ca );
 	}
-	
+
 	if ( ca < floor_ ) {
 		ca = floor_;
 		setCa( ca );
 	}
-	
+
 	return ca;
 }

@@ -19,34 +19,34 @@ const Cinfo * MMPump::initCinfo()
   static DestFinfo reinit( "reinit",
 			   "Reinit happens only in stage 0",
 			   new ProcOpFunc< MMPump>( &MMPump::reinit ));
-    
+
   static Finfo* processShared[] = {
     &process, &reinit
   };
 
   static SharedFinfo proc(
-			  "proc", 
+			  "proc",
 			  "Shared message to receive Process message from scheduler",
 			  processShared, sizeof( processShared ) / sizeof( Finfo* ));
-    
+
 
   ////////////////////////////
   // Field defs
   ////////////////////////////
-  
 
-  
+
+
   static ElementValueFinfo<MMPump, double> Vmax("Vmax",
 						  "maximum pump velocity, scaled by mebrane"
 						    "surface area. i.e., max ion flux in moles/sec",
 						  &MMPump::setVmax,
 						  &MMPump::getVmax);
- 
+
   static ElementValueFinfo<MMPump, double> Kd("Kd",
 						 "half-maximal activating concentration in mM",
 						 &MMPump::setKd,
 						 &MMPump::getKd);
-  
+
   ////
   // DestFinfo
   ////
@@ -54,14 +54,14 @@ const Cinfo * MMPump::initCinfo()
     //////////////////////////////////////////////////////////////////
     // Field definitions
     //////////////////////////////////////////////////////////////////
-    
-   
+
+
     &Vmax,
     &Kd,
     //////////////////////////////////////////////////////////////////
     // SharedFinfo definitions
     /////////////////////////////////////////////////////////////////
-   
+
     &proc,
     PumpOut(),
     //////////////////////////////////////////////////////////////////
@@ -132,7 +132,7 @@ if ( value  < 0.0 ) {
 
 void MMPump::process(const Eref& e, ProcPtr p)
 {
-  PumpOut()->send(e,Vmax_,Kd_); 
+  PumpOut()->send(e,Vmax_,Kd_);
 }
 
 void MMPump::reinit(const Eref& e, ProcPtr p)

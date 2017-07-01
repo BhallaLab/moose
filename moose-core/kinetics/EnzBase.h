@@ -17,7 +17,7 @@
  */
 class EnzBase
 {
-	public: 
+	public:
 		EnzBase();
 		virtual ~EnzBase();
 
@@ -65,7 +65,7 @@ class EnzBase
 		//////////////////////////////////////////////////////////////////
 		// Zombification functions.
 		//////////////////////////////////////////////////////////////////
-		static void zombify( Element* original, const Cinfo* zClass, 
+		static void zombify( Element* original, const Cinfo* zClass,
 						Id solver );
 		/// Assign solver info
 		virtual void setSolver( Id solver, Id orig );

@@ -22,7 +22,7 @@
 namespace boost {
 namespace numeric {
 namespace odeint {
-    
+
 template< class StateType , class Enabler = void >
 struct operations_dispatcher_sfinae
 {

@@ -22,11 +22,11 @@ const Cinfo* SynChan::initCinfo()
 	///////////////////////////////////////////////////////
 	// Shared message definitions
 	///////////////////////////////////////////////////////
-		
+
 ///////////////////////////////////////////////////////
 // Field definitions
 ///////////////////////////////////////////////////////
-	static ValueFinfo< SynChan, double > tau1( "tau1", 
+	static ValueFinfo< SynChan, double > tau1( "tau1",
 		"Decay time constant for the synaptic conductance, tau1 >= tau2.",
         &SynChan::setTau1,
 		&SynChan::getTau1
@@ -36,8 +36,8 @@ const Cinfo* SynChan::initCinfo()
         &SynChan::setTau2,
 		&SynChan::getTau2
 	);
-	static ValueFinfo< SynChan, bool > normalizeWeights( 
-		"normalizeWeights", 
+	static ValueFinfo< SynChan, bool > normalizeWeights(
+		"normalizeWeights",
 		"Flag. If true, the overall conductance is normalized by the "
 		"number of individual synapses in this SynChan object.",
         &SynChan::setNormalizeWeights,
@@ -47,7 +47,7 @@ const Cinfo* SynChan::initCinfo()
 	///////////////////////////////////////////////////////
 	// MsgDest definitions
 	///////////////////////////////////////////////////////
-	static DestFinfo activation( "activation", 
+	static DestFinfo activation( "activation",
 		"Sometimes we want to continuously activate the channel",
 		new OpFunc1< SynChan, double >( &SynChan::activation )
 	);
@@ -83,7 +83,7 @@ const Cinfo* SynChan::initCinfo()
 		SynChanFinfos,
 		sizeof( SynChanFinfos )/sizeof(Finfo *),
                 &dinfo,
-		doc, 
+		doc,
 		sizeof( doc )/sizeof( string )
 	);
 
@@ -93,7 +93,7 @@ const Cinfo* SynChan::initCinfo()
 static const Cinfo* synChanCinfo = SynChan::initCinfo();
 
 SynChan::SynChan()
-	: 
+	:
 	tau1_( 1.0e-3 ), tau2_( 1.0e-3 ),
 	normalizeWeights_( 0 ),
         xconst1_(0.0),
@@ -177,10 +177,10 @@ void SynChan::normalizeGbar()
                 if ( doubleEq( tau1_, tau2_ ) ) {
                     norm_ = ChanCommon::getGbar() * SynE() / tau1_;
                 } else {
-                    double tpeak = tau1_ * tau2_ * log( tau1_ / tau2_ ) / 
+                    double tpeak = tau1_ * tau2_ * log( tau1_ / tau2_ ) /
                             ( tau1_ - tau2_ );
-                    norm_ = ChanCommon::getGbar() * ( tau1_ - tau2_ ) / 
-                            ( tau1_ * tau2_ * ( 
+                    norm_ = ChanCommon::getGbar() * ( tau1_ - tau2_ ) /
+                            ( tau1_ * tau2_ * (
                             exp( -tpeak / tau1_ ) - exp( -tpeak / tau2_ )
                                                 ));
                 }

@@ -18,7 +18,7 @@
  */
 class CylMesh: public MeshCompt
 {
-	public: 
+	public:
 		CylMesh();
 		~CylMesh();
 		//////////////////////////////////////////////////////////////////
@@ -91,7 +91,7 @@ class CylMesh: public MeshCompt
 		unsigned int innerGetNumEntries() const;
 		/// Inherited virtual func.
 		void innerSetNumEntries( unsigned int n );
-		
+
 		/// Inherited virtual, do nothing for now.
 		vector< unsigned int > getParentVoxel() const;
 		const vector< double >& vGetVoxelVolume() const;
@@ -119,29 +119,29 @@ class CylMesh: public MeshCompt
 		);
 
 		void innerHandleNodeInfo(
-			const Eref& e, 
+			const Eref& e,
 			unsigned int numNodes, unsigned int numThreads );
 
 		void transmitChange( const Eref& e );
 
 		void buildStencil();
-		
+
 		//////////////////////////////////////////////////////////////////
 		// inherited virtual funcs for Boundary
 		//////////////////////////////////////////////////////////////////
-		
-		void matchMeshEntries( const ChemCompt* other, 
+
+		void matchMeshEntries( const ChemCompt* other,
 			vector< VoxelJunction > & ret ) const;
 
-		double nearest( double x, double y, double z, 
+		double nearest( double x, double y, double z,
 						unsigned int& index ) const;
-	
-		double nearest( double x, double y, double z, 
+
+		double nearest( double x, double y, double z,
 						double& linePos, double& r ) const;
-	
-		void indexToSpace( unsigned int index, 
+
+		void indexToSpace( unsigned int index,
 						double& x, double& y, double& z ) const;
-		
+
 		//////////////////////////////////////////////////////////////////
 		// Inner specific functions needed by matchMeshEntries.
 		//////////////////////////////////////////////////////////////////
@@ -178,11 +178,11 @@ class CylMesh: public MeshCompt
 		double diffLength_;	/// Length constant for diffusion. Equal to dx.
 
 		/**
-		 * surfaceGranularity_ decides how finely to subdivide DiffLength 
+		 * surfaceGranularity_ decides how finely to subdivide DiffLength
 		 * or cubic mesh side, when computing surface area of intersections
 		 * between them when diffusing. Defaults to 0.1
 		 */
-		double surfaceGranularity_; 
+		double surfaceGranularity_;
 
 		double totLen_;	/// Utility value: Total length of cylinder
 		double rSlope_;	/// Utility value: dr/dx

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import moose
 
 def moosedeleteChemSolver(modelRoot):

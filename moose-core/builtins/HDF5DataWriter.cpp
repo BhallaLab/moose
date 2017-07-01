@@ -1,7 +1,7 @@
-// HDF5DataWriter.cpp --- 
-// 
+// HDF5DataWriter.cpp ---
+//
 // Filename: HDF5DataWriter.cpp
-// Description: 
+// Description:
 // Author: Subhasis Ray
 // Maintainer:  Dilawar Singh
 // Created: Sat Feb 25 16:03:59 2012 (+0530)
@@ -43,7 +43,7 @@ const Cinfo * HDF5DataWriter::initCinfo()
     static Finfo * processShared[] = {
         &process, &reinit
     };
-    
+
     static SharedFinfo proc(
         "proc",
         "Shared message to receive process and reinit",
@@ -62,7 +62,7 @@ const Cinfo * HDF5DataWriter::initCinfo()
         &proc,
     };
 
-    
+
 
     static string doc[] = {
         "Name", "HDF5DataWriter",
@@ -137,19 +137,19 @@ void HDF5DataWriter::flush()
                 "Filehandle invalid. Cannot write data." << endl;
         return;
     }
-    
+
     for (unsigned int ii = 0; ii < datasets_.size(); ++ii){
         herr_t status = appendToDataset(datasets_[ii], data_[ii]);
         data_[ii].clear();
         if (status < 0){
             cerr << "Warning: appending data for object " << src_[ii]
-                 << " returned status " << status << endl;                
-        }        
+                 << " returned status " << status << endl;
+        }
     }
     HDF5WriterBase::flush();
     H5Fflush(filehandle_, H5F_SCOPE_LOCAL);
 }
-        
+
 /**
    Write data to datasets in HDF5 file. Clear all data in the table
    objects associated with this object. */
@@ -158,7 +158,7 @@ void HDF5DataWriter::process(const Eref & e, ProcPtr p)
     if (filehandle_ < 0){
         return;
     }
-    
+
     vector <double> dataBuf;
         requestOut()->send(e, &dataBuf);
     for (unsigned int ii = 0; ii < dataBuf.size(); ++ii){
@@ -172,7 +172,7 @@ void HDF5DataWriter::process(const Eref & e, ProcPtr p)
             data_[ii].clear();
             if (status < 0){
                 cerr << "Warning: appending data for object " << src_[ii]
-                     << " returned status " << status << endl;                
+                     << " returned status " << status << endl;
             }
         }
     }
@@ -255,7 +255,7 @@ hid_t HDF5DataWriter::getDataset(string path)
             // If that fails, try to create a group
             id = H5Gcreate2(prev_id, pathTokens[ii].c_str(),
                             H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
-        } 
+        }
         if ((exists < 0) || (id < 0)){
             // Failed to open/create a group, print the
             // offending path (for debugging; the error is
@@ -265,7 +265,7 @@ hid_t HDF5DataWriter::getDataset(string path)
                 cerr << "/" << pathTokens[jj];
             }
             cerr << endl;
-            prev_id = -1;            
+            prev_id = -1;
         }
         if (prev_id >= 0  && prev_id != filehandle_){
             // Successfully opened/created new group, close the old group
@@ -298,7 +298,7 @@ unsigned int HDF5DataWriter::getFlushLimit() const
 {
     return flushLimit_;
 }
-        
+
 #endif // USE_HDF5
-// 
+//
 // HDF5DataWriter.cpp ends here

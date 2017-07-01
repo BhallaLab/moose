@@ -1,6 +1,6 @@
 /*******************************************************************
  * File:            NormalRng.h
- * Description:      
+ * Description:
  * Author:          Subhasis Ray
  * E-mail:          ray.subhasis@gmail.com
  * Created:         2007-11-05 10:19:18
@@ -40,5 +40,5 @@ class NormalRng: public RandGenerator
     static const Cinfo * initCinfo();
 };
 
-    
+
 #endif

@@ -1,6 +1,6 @@
 /*******************************************************************
  * File:            BinomialRng.h
- * Description:      
+ * Description:
  * Author:          Subhasis Ray
  * E-mail:          ray.subhasis@gmail.com
  * Created:         2007-11-08 10:48:59
@@ -27,10 +27,10 @@ class BinomialRng: public RandGenerator
 {
   public:
     BinomialRng();
-    void setN(double n);    
-    double getN() const;    
+    void setN(double n);
+    double getN() const;
     void setP(double p);
-    double getP() const;    
+    double getP() const;
     virtual void vReinit( const Eref& e, ProcPtr p);
 
     static const Cinfo * initCinfo();
@@ -39,7 +39,7 @@ class BinomialRng: public RandGenerator
     unsigned long n_;
     bool isPSet_;
     double p_;
-    bool isModified_;    
+    bool isModified_;
 };
 
 #endif

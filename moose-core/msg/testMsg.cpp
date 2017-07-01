@@ -60,27 +60,27 @@ void testAssortedMsg()
 	// Set up messaging
 	///////////////////////////////////////////////////////////
 	// Should give 04000
-	ObjId m1 = shell->doAddMsg( "Single", 
+	ObjId m1 = shell->doAddMsg( "Single",
 		ObjId( a1, 3 ), "output", ObjId( a2, 1 ), "arg1" );
 	assert( !m1.bad() );
 
 	// Should give 33333
-	ObjId m2 = shell->doAddMsg( "OneToAll", 
+	ObjId m2 = shell->doAddMsg( "OneToAll",
 		ObjId( b1, 2 ), "output", ObjId( b2, 0 ), "arg1" );
 	assert( !m2.bad() );
 
 	// Should give 12345
-	ObjId m3 = shell->doAddMsg( "OneToOne", 
+	ObjId m3 = shell->doAddMsg( "OneToOne",
 		ObjId( c1, 0 ), "output", ObjId( c2, 0 ), "arg1" );
 	assert( !m3.bad() );
 
 	// Should give 01234
-	ObjId m4 = shell->doAddMsg( "Diagonal", 
+	ObjId m4 = shell->doAddMsg( "Diagonal",
 		ObjId( d1, 0 ), "output", ObjId( d2, 0 ), "arg1" );
 	assert( !m4.bad() );
 
 	// Should give 54321
-	ObjId m5 = shell->doAddMsg( "Sparse", 
+	ObjId m5 = shell->doAddMsg( "Sparse",
 		ObjId( e1, 0 ), "output", ObjId( e2, 0 ), "arg1" );
 	assert( !m5.bad() );
 
@@ -236,19 +236,19 @@ void testMsgElementListing()
 	///////////////////////////////////////////////////////////
 	// Set up messaging
 	///////////////////////////////////////////////////////////
-	ObjId m1 = shell->doAddMsg( "Single", 
+	ObjId m1 = shell->doAddMsg( "Single",
 		ObjId( a1, 3 ), "output", ObjId( a2, 1 ), "arg1" );
 	assert( !m1.bad() );
-	ObjId m2 = shell->doAddMsg( "OneToAll", 
+	ObjId m2 = shell->doAddMsg( "OneToAll",
 		ObjId( b1, 2 ), "output", ObjId( b2, 0 ), "arg1" );
 	assert( !m2.bad() );
-	ObjId m3 = shell->doAddMsg( "OneToOne", 
+	ObjId m3 = shell->doAddMsg( "OneToOne",
 		ObjId( c1, 0 ), "output", ObjId( c2, 0 ), "arg1" );
 	assert( !m3.bad() );
-	ObjId m4 = shell->doAddMsg( "Diagonal", 
+	ObjId m4 = shell->doAddMsg( "Diagonal",
 		ObjId( d1, 0 ), "output", ObjId( d2, 0 ), "arg1" );
 	assert( !m4.bad() );
-	ObjId m5 = shell->doAddMsg( "Sparse", 
+	ObjId m5 = shell->doAddMsg( "Sparse",
 		ObjId( e1, 0 ), "output", ObjId( e2, 0 ), "arg1" );
 	assert( !m5.bad() );
 
@@ -257,7 +257,7 @@ void testMsgElementListing()
 	///////////////////////////////////////////////////////////
 	Id manager( "/Msgs" );
 	assert( manager != Id() );
-	vector< Id > children = 
+	vector< Id > children =
 		Field< vector< Id > >::get( manager, "children" );
 	assert( children.size() == 5 );
 	assert( children[0].element()->getName() == "singleMsg" );
@@ -271,13 +271,13 @@ void testMsgElementListing()
 	// OneToAll which are used by parent-child messages. I thought they
 	// were cleaned out as the tests proceed.
 	for ( unsigned int i = 0; i < children.size(); ++i ) {
-		cout << "\nlocalEntries[" << i << "] = " << 
+		cout << "\nlocalEntries[" << i << "] = " <<
 			children[i].element()->dataHandler()->localEntries() << endl;
 	}
 	*/
 	/*
 	string path = children[0].path();
-	cout << "\nlocalEntries = " << 
+	cout << "\nlocalEntries = " <<
 		children[0].element()->dataHandler()->localEntries() << endl;
 	assert( path == "/Msgs/singleMsg[0]" );
 	*/
@@ -315,36 +315,36 @@ void benchmarkMsg( unsigned int n, string msgType )
 	if ( msgType == "Single" ) {
 		for ( unsigned int i = 0; i < n; ++i ) {
 			for ( unsigned int j = 0; j < n; ++j ) {
-				ObjId m1 = shell->doAddMsg( "Single", 
+				ObjId m1 = shell->doAddMsg( "Single",
 					ObjId( a1, i ), "output", ObjId( a1, j ), "arg3" );
 				assert( !m1.bad() );
 			}
 		}
 	} else if ( msgType == "OneToAll" ) {
 		for ( unsigned int i = 0; i < n; ++i ) {
-			ObjId m1 = shell->doAddMsg( "OneToAll", 
+			ObjId m1 = shell->doAddMsg( "OneToAll",
 				ObjId( a1, i ), "output", ObjId( a1, 0 ), "arg3" );
 			assert( !m1.bad() );
 		}
 	} else if ( msgType == "OneToOne" ) {
 		for ( unsigned int i = 0; i < n; ++i ) { // just repeat it n times
-			ObjId m1 = shell->doAddMsg( "OneToOne", 
+			ObjId m1 = shell->doAddMsg( "OneToOne",
 				ObjId( a1, 0 ), "output", ObjId( a1, 0 ), "arg3" );
 			assert( !m1.bad() );
 		}
 	} else if ( msgType == "Diagonal" ) {
 		for ( unsigned int i = 0; i < 2 * n; ++i ) { // Set up all offsets
-			ObjId m1 = shell->doAddMsg( "Diagonal", 
+			ObjId m1 = shell->doAddMsg( "Diagonal",
 				ObjId( a1, 0 ), "output", ObjId( a1, 0 ), "arg3" );
 			Field< int >::set( m1, "stride", n - i );
 		}
 	} else if ( msgType == "Sparse" ) {
-		ObjId m1 = shell->doAddMsg( "Sparse", 
+		ObjId m1 = shell->doAddMsg( "Sparse",
 			ObjId( a1, 0 ), "output", ObjId( a1, 0 ), "arg3" );
-	
-		SetGet2< double, long >::set( m1, 
+
+		SetGet2< double, long >::set( m1,
 			"setRandomConnectivity", 1.0, 1234 );
-	} 
+	}
 
 	shell->doUseClock( "/a1", "proc", 0 );
 	for ( unsigned int i = 0; i < 10; ++i )

@@ -1,6 +1,4 @@
-from __future__ import print_function, division
-from __future__ import absolute_import
-
+# -*- coding: utf-8 -*-
 """
 utils.py:
 
@@ -9,6 +7,9 @@ Utility functions for moose.
 NOTE: Some function might break because unicode is default string in python3.
 
 """
+
+from __future__ import print_function, division
+from __future__ import absolute_import
 
 __author__           = 'Subhasis Ray, Aditya Gilra, Dilawar Singh'
 __copyright__        = "Copyright 2013, NCBS Bangalore"
@@ -78,7 +79,7 @@ def create_table(tablePath, element, field,tableType):
         table = moose.element(tablePath)
     else:
         if tableType == "Table2":
-            table = moose.Table2(tablePath)            
+            table = moose.Table2(tablePath)
         elif tableType == "Table":
             table = moose.Table(tablePath)
         moose.connect(table, 'requestOut', element, 'get%s' % (field))

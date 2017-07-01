@@ -18,14 +18,14 @@
  * The SpineMesh can further generate a PSD mesh with the info for the
  * PSD geometries.
  * This assumes that the each spine is a single voxel: single diffusive
- * compartment, well-stirred. The shaft is treated as zero volume 
+ * compartment, well-stirred. The shaft is treated as zero volume
  * diffusion barrier to the dendrite.
  * The PSD is a separate compt with its own diffusion coupling to the
  * spine head.
  */
 class SpineMesh: public MeshCompt
 {
-	public: 
+	public:
 		SpineMesh();
 		SpineMesh( const SpineMesh& other );
 		~SpineMesh();
@@ -44,22 +44,22 @@ class SpineMesh: public MeshCompt
 		// Field assignment stuff
 		//////////////////////////////////////////////////////////////////
 		/**
-		 * This function returns the diffusively connected parent voxel 
-		 * within the current (spine) mesh. Since each spine is treated 
-		 * as an independed voxel, there is no such voxel, so we return 
-		 * -1U for each spine. Note that there is a separate function 
-		 * that returns the parentVoxel referred to the NeuroMesh that 
+		 * This function returns the diffusively connected parent voxel
+		 * within the current (spine) mesh. Since each spine is treated
+		 * as an independed voxel, there is no such voxel, so we return
+		 * -1U for each spine. Note that there is a separate function
+		 * that returns the parentVoxel referred to the NeuroMesh that
 		 * this spine sits on.
 		 */
 		vector< unsigned int > getParentVoxel() const;
 		/**
- 		 * Returns index of voxel on NeuroMesh to which this spine is 
+ 		 * Returns index of voxel on NeuroMesh to which this spine is
 		 * connected.
 		 */
 		vector< unsigned int > getNeuronVoxel() const;
 
 		/**
-		 * Returns vector of Ids of electrical compts that map to 
+		 * Returns vector of Ids of electrical compts that map to
 		 * respective voxels in SpineMesh
 		 */
 		vector< Id > getElecComptMap() const;
@@ -106,7 +106,7 @@ class SpineMesh: public MeshCompt
 
 		/// Inherited virtual func
 		bool vSetVolumeNotRates( double volume );
-		
+
 		//////////////////////////////////////////////////////////////////
 		// Dest funcs
 		//////////////////////////////////////////////////////////////////
@@ -124,12 +124,12 @@ class SpineMesh: public MeshCompt
 			*/
 
 		void innerHandleNodeInfo(
-			const Eref& e, 
+			const Eref& e,
 			unsigned int numNodes, unsigned int numThreads );
 
 		void handleSpineList(
 			const Eref& e,
-			vector< Id > shaft, vector< Id > head, 
+			vector< Id > shaft, vector< Id > head,
 			vector< unsigned int > parentVoxel );
 
 		void transmitChange( const Eref& e );
@@ -139,17 +139,17 @@ class SpineMesh: public MeshCompt
 		//////////////////////////////////////////////////////////////////
 		// inherited virtual funcs for Boundary
 		//////////////////////////////////////////////////////////////////
-		
-		void matchMeshEntries( const ChemCompt* other, 
+
+		void matchMeshEntries( const ChemCompt* other,
 			vector< VoxelJunction > & ret ) const;
 
-		void matchNeuroMeshEntries( const ChemCompt* other, 
+		void matchNeuroMeshEntries( const ChemCompt* other,
 			vector< VoxelJunction > & ret ) const;
 
-		void matchCubeMeshEntries( const ChemCompt* other, 
+		void matchCubeMeshEntries( const ChemCompt* other,
 			vector< VoxelJunction > & ret ) const;
 
-		void matchSpineMeshEntries( const ChemCompt* other, 
+		void matchSpineMeshEntries( const ChemCompt* other,
 			vector< VoxelJunction > & ret ) const;
 
 		/**
@@ -160,12 +160,12 @@ class SpineMesh: public MeshCompt
 		 * Doesn't worry about whether this distance is inside or outside
 		 * cell.
 		 */
-		double nearest( double x, double y, double z, 
+		double nearest( double x, double y, double z,
 						unsigned int& index ) const;
-	
-		void indexToSpace( unsigned int index, 
+
+		void indexToSpace( unsigned int index,
 						double& x, double& y, double& z ) const;
-		
+
 		const vector< double >& vGetVoxelVolume() const;
 		const vector< double >& vGetVoxelMidpoint() const;
 		const vector< double >& getVoxelArea() const;
@@ -184,13 +184,13 @@ class SpineMesh: public MeshCompt
 
 		/**
 		 * Decides how finely to subdivide diffLength_ or radius or cubic
-		 * mesh side when computing surfacearea of intersections with 
+		 * mesh side when computing surfacearea of intersections with
 		 * CubeMesh. Defaults to 0.1.
 		 */
 		double surfaceGranularity_;
 
 		/**
-		 * Volscale pre-calculations for each MeshEntry. 
+		 * Volscale pre-calculations for each MeshEntry.
 		 * vs = #molecules / vol
 		 * where vol is expressed in m^3.
 		 */
@@ -201,7 +201,7 @@ class SpineMesh: public MeshCompt
 		 * This is the cross-section area of the middle of each voxel.
 		 */
 		vector< double > area_;
-		
+
 		/// Pre-calculation of length of each MeshEntry
 		vector< double > length_;
 };

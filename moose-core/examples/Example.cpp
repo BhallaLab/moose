@@ -5,15 +5,15 @@
 #include <stdio.h>
 
 static SrcFinfo1< double > *output() {
-    static SrcFinfo1< double > output( 
-            "output", 
+    static SrcFinfo1< double > output(
+            "output",
             "Sends out the computed value"
             );
     return &output;
 }
 
 const Cinfo* Example::initCinfo(){
-    
+
     //Value Field Definitions
     static ValueFinfo< Example, double > x(
         "x",
@@ -33,25 +33,25 @@ const Cinfo* Example::initCinfo(){
     static DestFinfo handleX( "handleX",
             "Saves arg value to x_",
             new OpFunc1< Example, double >( &Example::handleX )
-    ); 
+    );
     static DestFinfo handleY( "handleY",
             "Saves arg value to y_",
             new OpFunc1< Example, double >( &Example::handleY )
-    ); 
+    );
 
     static DestFinfo process( "process",
         "Handles process call",
-        new ProcOpFunc< Example >( &Example::process ) 
+        new ProcOpFunc< Example >( &Example::process )
     );
     static DestFinfo reinit( "reinit",
         "Handles reinit call",
-        new ProcOpFunc< Example >( &Example::reinit ) 
+        new ProcOpFunc< Example >( &Example::reinit )
     );
-        
-    
-    static ReadOnlyLookupElementValueFinfo< Example, string, vector< Id > > fieldNeighbors( 
+
+
+    static ReadOnlyLookupElementValueFinfo< Example, string, vector< Id > > fieldNeighbors(
 		"fieldNeighbors",
-		"Ids of Elements connected this Element on specified field.", 
+		"Ids of Elements connected this Element on specified field.",
 			&Example::getNeighbors );
 
     //////////////////////////////////////////////////////////////
@@ -66,8 +66,8 @@ const Cinfo* Example::initCinfo(){
     );
 
 
-    static Finfo *exampleFinfos[] = 
-    { 
+    static Finfo *exampleFinfos[] =
+    {
         &x,         //Value
         &y,         //Value
         &handleX,   //DestFinfo
@@ -90,7 +90,7 @@ const Cinfo* Example::initCinfo(){
 static const Cinfo* exampleCinfo = Example::initCinfo();
 
 Example::Example()
-	: 
+	:
 	output_( 0.0 ),
 	x_( 0.0 ), y_( 0.0 )
 {
@@ -106,7 +106,7 @@ void Example::process( const Eref& e, ProcPtr p )
 
 void Example::reinit( const Eref& e, ProcPtr p )
 {
-    
+
 }
 
 void Example::handleX(double arg )
@@ -146,7 +146,7 @@ vector< Id > Example::getNeighbors( const Eref& e, string field ) const
 	if ( finfo )
 		e.element()->getNeighbors( ret, finfo );
 	else
-		cout << "Warning: Example::getNeighbors: Id.Field '" << 
+		cout << "Warning: Example::getNeighbors: Id.Field '" <<
 				e.id().path() << "." << field <<
 				"' not found\n";
 	return ret;

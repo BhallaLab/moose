@@ -1,30 +1,30 @@
-// PIDController.h --- 
-// 
+// PIDController.h ---
+//
 // Filename: PIDController.h
-// Description: 
+// Description:
 // Author: subhasis ray
-// Maintainer: 
+// Maintainer:
 // Created: Tue Dec 30 23:14:00 2008 (+0530)
-// Version: 
+// Version:
 // Last-Updated: Wed Feb 22 18:34:37 2012 (+0530)
 //           By: Subhasis Ray
 //     Update #: 57
-// URL: 
-// Keywords: 
-// Compatibility: 
-// 
-// 
+// URL:
+// Keywords:
+// Compatibility:
+//
+//
 
-// Commentary: 
-// 
-// 
-// 
-// 
+// Commentary:
+//
+//
+//
+//
 
 // Change log:
-// 
+//
 // 2012-02-22 17:14:29 (+0530) subha - started porting to dh_branch
-// 
+//
 //
 /**********************************************************************
 ** This program is part of 'MOOSE', the
@@ -44,7 +44,7 @@
 class PIDController{
   public:
     PIDController();
-    
+
     void setCommand( double command );
     double getCommand() const;
     void setSensed(double sensed );
@@ -65,21 +65,21 @@ class PIDController{
     void process(const Eref&e, ProcPtr process );
     void reinit(const Eref& e, ProcPtr process );
     static const Cinfo * initCinfo();
-    
+
   private:
     double command_;
     double saturation_;
     double gain_;
     double tau_i_;
     double tau_d_;
-    double sensed_;    
+    double sensed_;
     double output_;
     double error_; // e of PIDController in GENESIS ( error = command - sensed )
     double e_integral_; // integral of error dt
-    double e_derivative_; // derivative of error 
+    double e_derivative_; // derivative of error
     double e_previous_;
 };
-  
+
 #endif
 
 // Code:
@@ -87,5 +87,5 @@ class PIDController{
 
 
 
-// 
+//
 // PIDController.h ends here

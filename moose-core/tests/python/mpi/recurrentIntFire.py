@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from __future__ import print_function
 
 import random
@@ -50,7 +51,7 @@ def make_network():
 	numTotSyn = sum( numSynVec )
 	for item in network.vec:
 		neuron = moose.element( item )
-		neuron.synapse.delay = [ (delayMin + random.random() * delayMax) for r in range( len( neuron.synapse ) ) ] 
+		neuron.synapse.delay = [ (delayMin + random.random() * delayMax) for r in range( len( neuron.synapse ) ) ]
 		neuron.synapse.weight = nprand.rand( len( neuron.synapse ) ) * weightMax
 	print('after setup, t = ', time.time() - t0, ", numTotSyn = ", numTotSyn)
 
@@ -59,8 +60,8 @@ def make_network():
 	netvec = network.vec
 	for i in range( size ):
 		synvec = netvec[i].synapse.vec
-		synvec.weight = [ (random.random() * weightMax) for r in range( synvec.len )] 
-		synvec.delay = [ (delayMin + random.random() * delayMax) for r in range( synvec.len )] 
+		synvec.weight = [ (random.random() * weightMax) for r in range( synvec.len )]
+		synvec.delay = [ (delayMin + random.random() * delayMax) for r in range( synvec.len )]
 	"""
 
 	#moose.useClock( 9, '/postmaster', 'process' )

@@ -1,4 +1,5 @@
-# Test scripts are always called from BUILD directory by cmake. 
+# -*- coding: utf-8 -*-
+# Test scripts are always called from BUILD directory by cmake.
 
 import os
 import sys
@@ -31,7 +32,7 @@ if __name__ =='__main__':
     for tick in range(0, 7):
         moose.setClock(tick,10e-6)
     moose.setClock(8, 0.005)
-    
+
     lib = moose.Neutral('/library')
     model = moose.loadModel(p_file,'neuron')
     pulse = moose.PulseGen('/neuron/pulse')
@@ -42,7 +43,7 @@ if __name__ =='__main__':
     pulse.width[0] = 500e-12
     pulse.level[0] = inject
     pulse.delay[1] = 1e9
-   
+
     for comp in moose.wildcardFind('/neuron/#[TYPE=Compartment]'):
         new_comp = moose.element(comp)
         new_comp.initVm = -.08
@@ -53,10 +54,8 @@ if __name__ =='__main__':
                 moose.connect(chan, "IkOut", difs[0], "influx")
 
             if 'SK' in name:
-                moose.connect(difs[0], 'concentrationOut', chan, 'concen')   
-                
-                
-    
+                moose.connect(difs[0], 'concentrationOut', chan, 'concen')
+
     data = moose.Neutral('/data')
     vmtab = moose.Table('/data/Vm')
     shelltab = moose.Table('/data/Ca')
@@ -66,7 +65,7 @@ if __name__ =='__main__':
     moose.connect(shelltab, 'requestOut', difs[0], 'getC')
     moose.connect(caltab,'requestOut',moose.element('/neuron/soma/CaL12') ,'getGk')
     moose.connect(sktab,'requestOut', moose.element('/neuron/soma/SK'),'getGk')
-   
+
     hsolve = moose.HSolve('/neuron/hsolve')
     hsolve.dt = 10e-6
     hsolve.target = ('/neuron/soma')
@@ -79,4 +78,3 @@ if __name__ =='__main__':
     assert_stat( vec2, [ 5.0e-5, 5.075007e-5, 5.036985e-5, 2.1950117e-7] )
     assert len(np.where(sktab.vector<1e-19)[0]) == 2001
     assert len(np.where(shelltab.vector>50e-6)[0]) == 2000
-    

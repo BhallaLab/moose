@@ -19,7 +19,7 @@ WHITE='\033[01;37m'
 
 function colorPrint
 {
-    case $1 in 
+    case $1 in
         "WARN")
             echo -e "[WARN] ${LRED} $2 ${RESTORE} $3"
             ;;

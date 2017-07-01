@@ -41,12 +41,12 @@ class DiffPoolVec
 
 		/////////////////////////////////////////////////
 		/// Used by parent solver to manipulate 'n'
-		const vector< double >& getNvec() const; 
+		const vector< double >& getNvec() const;
 		/// Used by parent solver to manipulate 'n'
-		void setNvec( const vector< double >& n ); 
-		void setNvec( unsigned int start, unsigned int num, 
-						vector< double >::const_iterator q ); 
-		void setOps( const vector< Triplet< double > >& ops_, 
+		void setNvec( const vector< double >& n );
+		void setNvec( unsigned int start, unsigned int num,
+						vector< double >::const_iterator q );
+		void setOps( const vector< Triplet< double > >& ops_,
 				const vector< double >& diagVal_ ); /// Assign operations.
 
 		// static const Cinfo* initCinfo();

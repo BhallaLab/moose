@@ -3,9 +3,9 @@
  *
  *       Filename:  cnpy.h
  *
- *    Description:  Write a stl vector to numpy format 2. 
+ *    Description:  Write a stl vector to numpy format 2.
  *
- *      This program is part of MOOSE simulator. 
+ *      This program is part of MOOSE simulator.
  *
  *        Version:  1.0
  *        Created:  05/04/2016 10:36:19 AM
@@ -47,7 +47,7 @@ using namespace std;
 
 namespace cnpy2 {
 
-// Check the endian-ness of machine at run-time. This is from library 
+// Check the endian-ness of machine at run-time. This is from library
 // https://github.com/rogersce/cnpy
 char BigEndianTest();
 
@@ -59,7 +59,7 @@ void split(vector<string>& strs, string& input, const string& pat);
 /**
  * @brief Check if a numpy file is sane or not.
  *
- * Read first 8 bytes and compare with standard header. 
+ * Read first 8 bytes and compare with standard header.
  *
  * @param npy_file Path to file.
  *
@@ -77,12 +77,12 @@ void parse_header( FILE* fp, string& header );
 /**
  * @brief Change shape in numpy header.
  *
- * @param 
+ * @param
  * @param data_len
- * @param 
+ * @param
  */
 void change_shape_in_header( const string& filename
-        , const size_t data_len, const size_t numcols 
+        , const size_t data_len, const size_t numcols
         );
 
 static const unsigned int __pre__size__ = 8;
@@ -92,7 +92,7 @@ static char __pre__[__pre__size__] = {
 };
 
 template< typename T>
-void write_header( 
+void write_header(
         FILE* fp
         , const vector<string>& colnames
         , vector<unsigned int>shape ,  char version
@@ -111,7 +111,7 @@ void write_header(
 
     dict += "], 'fortran_order': False, 'shape': (";
     dict += moose::toString(shape[0]);
-    for(size_t i = 1; i < shape.size(); i++) 
+    for(size_t i = 1; i < shape.size(); i++)
     {
         dict += ",";
         dict += moose::toString(shape[i]);
@@ -127,7 +127,7 @@ void write_header(
     // memory.
     dict += string(11, ' ');                    /* 32 bit number is fit */
 
-    // pad with spaces so that preamble+headerlen+dict is modulo 16 bytes. 
+    // pad with spaces so that preamble+headerlen+dict is modulo 16 bytes.
     // preamble is 8 bytes, header len is 4 bytes, total 12.
     // dict needs to end with \n
     unsigned int remainder = 16 - (12 + dict.size()) % 16;
@@ -156,11 +156,11 @@ void write_header(
 
 // write to version 1 or version 2.
 template<typename T>
-void save_numpy( 
-        const string& outfile 
+void save_numpy(
+        const string& outfile
         , const vector<double>& vec
         , vector<string> colnames
-        , const string openmode 
+        , const string openmode
         , const char version = '1'
         )
 {
@@ -199,7 +199,7 @@ void save_numpy(
         }
         else if(! is_valid_numpy_file( fp ) )
         {
-            moose::showWarn( outfile + " is not a valid numpy file" 
+            moose::showWarn( outfile + " is not a valid numpy file"
                     + " I am not goind to write to it"
                     );
             return;

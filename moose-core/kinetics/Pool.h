@@ -11,14 +11,14 @@
 #define _POOL_H
 #include "PoolBase.h"
 /**
- * The Pool class is a molecular pool. This is a set of molecules of a 
+ * The Pool class is a molecular pool. This is a set of molecules of a
  * given species, in a uniform chemical context. Note that the same
  * species might be present in other compartments, or be handled by
  * other solvers.
  */
 class Pool: public PoolBase
 {
-	public: 
+	public:
 		Pool();
 		~Pool();
 
@@ -61,7 +61,7 @@ class Pool: public PoolBase
 		bool getIsBuffered( const Eref& e ) const;
 
 		//////////////////////////////////////////////////////////////////
-		// Dest funcs. These too override virtual funcs in the Pool base 
+		// Dest funcs. These too override virtual funcs in the Pool base
 		// class.
 		//////////////////////////////////////////////////////////////////
 
@@ -91,7 +91,7 @@ class Pool: public PoolBase
 		 * System wide identifier for all mol pools that are chemically
 		 * the same species.
 		 */
-		unsigned int species_; 
+		unsigned int species_;
 };
 
 #endif	// _POOL_H

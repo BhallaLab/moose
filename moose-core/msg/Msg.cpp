@@ -239,11 +239,11 @@ unsigned int Msg::initMsgManagers()
 
 	// This is to be the parent of all the msg managers.
 	msgManagerId_ = Id::nextId();
-	new GlobalDataElement( 
+	new GlobalDataElement(
 					msgManagerId_, Neutral::initCinfo(), "Msgs", 1 );
 
 	SingleMsg::managerId_ = Id::nextId();
-	new MsgElement( SingleMsg::managerId_, SingleMsg::initCinfo(), 
+	new MsgElement( SingleMsg::managerId_, SingleMsg::initCinfo(),
 		"singleMsg", &SingleMsg::numMsg, &SingleMsg::lookupMsg );
 
 	OneToOneMsg::managerId_ = Id::nextId();
@@ -255,18 +255,18 @@ unsigned int Msg::initMsgManagers()
 		"oneToAllMsg", &OneToAllMsg::numMsg, &OneToAllMsg::lookupMsg );
 
 	DiagonalMsg::managerId_ = Id::nextId();
-	new MsgElement( DiagonalMsg::managerId_, DiagonalMsg::initCinfo(), 
+	new MsgElement( DiagonalMsg::managerId_, DiagonalMsg::initCinfo(),
 		"diagonalMsg", &DiagonalMsg::numMsg, &DiagonalMsg::lookupMsg );
 
 	SparseMsg::managerId_ = Id::nextId();
-	new MsgElement( SparseMsg::managerId_, SparseMsg::initCinfo(), 
+	new MsgElement( SparseMsg::managerId_, SparseMsg::initCinfo(),
 		"sparseMsg", &SparseMsg::numMsg, &SparseMsg::lookupMsg );
 
 	OneToOneDataIndexMsg::managerId_ = Id::nextId();
-	new MsgElement( OneToOneDataIndexMsg::managerId_, 
+	new MsgElement( OneToOneDataIndexMsg::managerId_,
 					OneToOneDataIndexMsg::initCinfo(),
-					"oneToOneDataIndexMsg", 
-					&OneToOneDataIndexMsg::numMsg, 
+					"oneToOneDataIndexMsg",
+					&OneToOneDataIndexMsg::numMsg,
 					&OneToOneDataIndexMsg::lookupMsg );
 
 	// Do the 'adopt' only after all the message managers exist - we need

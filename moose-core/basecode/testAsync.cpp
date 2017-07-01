@@ -91,7 +91,7 @@ void testSendMsg()
 	assert( ver[55].size() == 1 );
 	assert( ver[55][0].element() == e2.element() );
 	assert( ver[55][0].dataIndex() == 55 );
-	
+
 	SrcFinfo1<double> s( "test", "" );
 	s.setBindIndex( 0 );
 	e1.element()->addMsgAndFunc( m->mid(), fid, s.getBindIndex() );
@@ -142,7 +142,7 @@ void testCreateMsg()
 	const Finfo* f2 = ac->findFinfo( "arg1" );
 	assert( f2 );
 	bool ret = f1->addMsg( f2, m->mid(), e1.element() );
-	
+
 	assert( ret );
 	// e1.element()->digestMessages();
 
@@ -174,7 +174,7 @@ void testSetGet()
 	Element* ret = new GlobalDataElement( i2, ac, "test2", size );
 	assert( ret );
 	ProcInfo p;
-	
+
 	for ( unsigned int i = 0; i < size; ++i ) {
 		ObjId oid( i2, i );
 		double x = i * 3.14;
@@ -213,7 +213,7 @@ void testStrSet()
 	bool ok = SetGet::strSet( ObjId( i2, 0 ), "name", "NewImprovedTest" );
 	assert( ok );
 	assert( ret->getName() == "NewImprovedTest" );
-	
+
 	for ( unsigned int i = 0; i < size; ++i ) {
 		double x = sqrt((double) i );
 		// Eref dest( e2.element(), i );
@@ -227,7 +227,7 @@ void testStrSet()
 
 	for ( unsigned int i = 0; i < size; ++i ) {
 		double temp = sqrt((double) i );
-		double val = reinterpret_cast< Arith* >( 
+		double val = reinterpret_cast< Arith* >(
 						Eref( i2.element(), i ).data() )->getOutput();
 		assert( fabs( val - temp ) < 1e-5 );
 		// DoubleEq won't work here because string is truncated.
@@ -256,7 +256,7 @@ void testGet()
 	ret->setName( "HupTwoThree" );
 	val = Field< string >::get( oid, "name" );
 	assert( val == "HupTwoThree" );
-	
+
 	for ( unsigned int i = 0; i < size; ++i ) {
 		double temp = i * 3;
 		reinterpret_cast< Arith* >(oid.element()->data( i ))->setOutput( temp );
@@ -296,7 +296,7 @@ void testStrGet()
 	ok = SetGet::strGet( oid, "name", val );
 	assert( ok );
 	assert( val == "HupTwoThree" );
-	
+
 	for ( unsigned int i = 0; i < size; ++i ) {
 		double temp = i * 3;
 		reinterpret_cast< Arith* >( ObjId( i2, i ).data() )->setOutput( temp );
@@ -336,7 +336,7 @@ void testSetGetDouble()
 		double temp = i;
 		bool ret = Field< double >::set( oid, "Vm", temp );
 		assert( ret );
-		assert( 
+		assert(
 			doubleEq ( reinterpret_cast< IntFire* >(oid.data())->getVm() , temp ) );
 	}
 
@@ -384,7 +384,7 @@ void testSetGetSynapse()
 
 	for ( unsigned int i = 0; i < size; ++i ) {
 		assert( syns.element()->numField( i ) == i );
-		SimpleSynHandler* s = 
+		SimpleSynHandler* s =
 				reinterpret_cast< SimpleSynHandler* >( temp->data( i ) );
 		assert( s->getNumSynapses() == i );
 		for ( unsigned int j = 0; j < i; ++j ) {
@@ -415,7 +415,7 @@ void testSetGetVec()
 	vector< unsigned int > numSyn( size, 0 );
 	for ( unsigned int i = 0; i < size; ++i )
 		numSyn[i] = i;
-	
+
 	Eref e2( i2.element(), 0 );
 	// Here we test setting a 1-D vector
 	bool ret = Field< unsigned int >::setVec( i2, "numSynapse", numSyn );
@@ -497,7 +497,7 @@ void printSparseMatrix( const SparseMatrix< unsigned int >& m)
 {
 	unsigned int nRows = m.nRows();
 	unsigned int nCols = m.nColumns();
-	
+
 	for ( unsigned int i = 0; i < nRows; ++i ) {
 		cout << "[	";
 		for ( unsigned int j = 0; j < nCols; ++j ) {
@@ -529,7 +529,7 @@ void testSparseMatrix()
 	static unsigned int postN[] = { 1, 3, 4, 5, 6, 2, 7 };
 	static unsigned int preColIndex[] = { 0, 4, 0, 1, 2, 3, 4 };
 	static unsigned int postColIndex[] = { 0, 1, 1, 1, 2, 0, 2 };
-	
+
 	static unsigned int dropN[] = { 1, 6, 2, 7 };
 	static unsigned int dropColIndex[] = { 0, 1, 0, 1 };
 
@@ -624,7 +624,7 @@ void testSparseMatrix2()
 		for ( unsigned int j = 0; j < 10; ++j )
 			if ( m[i][j] != 0 )
 				n.set( i, j, m[i][j] );
-				
+
 	n.transpose();
 	for ( unsigned int i = 0; i < 10; ++i )
 		for ( unsigned int j = 0; j < 10; ++j )
@@ -638,7 +638,7 @@ void testSparseMatrix2()
 	// Drop columns 2 and 7.
 	///////////////////////////////////////////////////////////////
 	static unsigned int init[] = {0, 1, 3, 4, 5, 6, 8, 9};
-	vector< unsigned int > keepCols( 
+	vector< unsigned int > keepCols(
 					init, init + sizeof( init ) / sizeof( unsigned int ) );
 	n.reorderColumns( keepCols );
 	for ( unsigned int i = 0; i < 10; ++i ) {
@@ -778,7 +778,7 @@ void printGrid( Element* e, const string& field, double min, double max )
 	unsigned int xside = e->numData() / yside;
 	if ( e->numData() % yside > 0 )
 		xside++;
-	
+
 	for ( unsigned int i = 0; i < e->numData(); ++i ) {
 		if ( ( i % xside ) == 0 )
 			cout << endl;
@@ -856,7 +856,7 @@ void testSparseMsg()
 	vector< double > delay( size * fieldSize, 0.0 );
 	for ( unsigned int i = 0; i < size; ++i ) {
 		ObjId id( sshid, i );
-		unsigned int numSyn = 
+		unsigned int numSyn =
 				Field< unsigned int >::get( id, "numSynapse" );
 		unsigned int k = i * fieldSize;
 		for ( unsigned int j = 0; j < numSyn; ++j ) {
@@ -903,7 +903,7 @@ void test2ArgSetVec()
 	}
 
 	SetGet2< double, double >::setVec( i2, "arg1x2", arg1, arg2 );
-	
+
 	for ( unsigned int i = 0; i < size; ++i ) {
 		ObjId oid( i2, i );
 		double x = i * 100 * ( 100 - i );
@@ -960,11 +960,11 @@ void testSetRepeat()
 	vector< unsigned int > numSyn( size, 0 );
 	for ( unsigned int i = 0; i < size; ++i )
 		numSyn[i] = i;
-	
+
 	// Here we test setting a 1-D vector
 	bool ret = Field< unsigned int >::setVec( cell, "numSynapse", numSyn);
 	assert( ret );
-	
+
 	Id synapse( cell.value() + 1 );
 	// Here we test setting a 2-D array with different dims on each axis.
 	for ( unsigned int i = 0; i < size; ++i ) {
@@ -1037,7 +1037,7 @@ class Test
 				sizeof( testFinfos ) / sizeof( Finfo* ),
 				&dinfo
 			);
-	
+
 			return &testCinfo;
 		}
 
@@ -1055,9 +1055,9 @@ void testSharedMsg()
 	static SrcFinfo2< int, int > s2( "s2", "" );
 	static DestFinfo d0( "d0", "",
 		new OpFunc0< Test >( & Test::handleS0 ) );
-	static DestFinfo d1( "d1", "", 
+	static DestFinfo d1( "d1", "",
 		new EpFunc1< Test, string >( &Test::handleS1 ) );
-	static DestFinfo d2( "d2", "", 
+	static DestFinfo d2( "d2", "",
 		new EpFunc2< Test, int, int >( &Test::handleS2 ) );
 
 	Test::sharedVec[0] = &s0;
@@ -1066,7 +1066,7 @@ void testSharedMsg()
 	Test::sharedVec[3] = &d1;
 	Test::sharedVec[4] = &s2;
 	Test::sharedVec[5] = &d2;
-	
+
 	Id t1 = Id::nextId();
 	Id t2 = Id::nextId();
 	// bool ret = Test::initCinfo()->create( t1, "test1", 1 );
@@ -1090,7 +1090,7 @@ void testSharedMsg()
 
 	// Set up message. The actual routine is in Shell.cpp, but here we
 	// do it independently.
-	
+
 	const Finfo* shareFinfo = Test::initCinfo()->findFinfo( "shared" );
 	assert( shareFinfo != 0 );
 	Msg* m = new OneToOneMsg( t1.eref(), t2.eref(), 0 );
@@ -1115,15 +1115,15 @@ void testSharedMsg()
 	s2.send( t2.eref(), 500, 600 );
 
 	/*
-	cout << "data1: s=" << tdata1->s_ << 
-		", i1=" << tdata1->i1_ << ", i2=" << tdata1->i2_ << 
+	cout << "data1: s=" << tdata1->s_ <<
+		", i1=" << tdata1->i1_ << ", i2=" << tdata1->i2_ <<
 		", numAcks=" << tdata1->numAcks_ << endl;
-	cout << "data2: s=" << tdata2->s_ << 
+	cout << "data2: s=" << tdata2->s_ <<
 		", i1=" << tdata2->i1_ << ", i2=" << tdata2->i2_ <<
 		", numAcks=" << tdata2->numAcks_ << endl;
 	*/
 	// Check results
-	
+
 	assert( tdata1->s_ == " goodbye tdata1" );
 	assert( tdata2->s_ == " hello TDATA2" );
 	assert( tdata1->i1_ == 5001  );
@@ -1132,7 +1132,7 @@ void testSharedMsg()
 	assert( tdata2->i2_ == 2006  );
 	assert( tdata1->numAcks_ == 2  );
 	assert( tdata2->numAcks_ == 2  );
-	
+
 	t1.destroy();
 	t2.destroy();
 
@@ -1144,7 +1144,7 @@ void testConvVector()
 	vector< unsigned int > intVec;
 	for ( unsigned int i = 0; i < 5; ++i )
 		intVec.push_back( i * i );
-	
+
 	double buf[500];
 	double* tempBuf = buf;
 
@@ -1179,9 +1179,9 @@ void testConvVector()
 	assert( sz == 1 + 2 + ( strVec[2].length() + 8) /8 + ( strVec[3].length() + 8 )/8 );
 	assert( buf[0] == 4 );
 	assert( strcmp( reinterpret_cast< char* >( buf + 1 ), "one" ) == 0 );
-	
+
 	tempBuf = buf;
-	const vector< string >& tgtStr = 
+	const vector< string >& tgtStr =
 			Conv< vector< string > >::buf2val( &tempBuf );
 	assert( tgtStr.size() == 4 );
 	for ( unsigned int i = 0; i < 4; ++i )
@@ -1207,7 +1207,7 @@ void testConvVectorOfVectors()
 	vec[4].insert( vec[4].end(), row4, row4 + 4 );
 	vec[5].insert( vec[5].end(), row5, row5 + 5 );
 
-	double expected[] = { 
+	double expected[] = {
 		6,  // Number of sub-vectors
    		0,		// No entries on first sub-vec
 		1,		1,
@@ -1227,10 +1227,10 @@ void testConvVectorOfVectors()
 	assert( buf == 22 + origBuf );
 	for ( unsigned int i = 0; i < 22; ++i )
 		assert( doubleEq( origBuf[i], expected[i] ) );
-	
+
 	double* buf2 = origBuf;
 	const vector< vector< short > >& rc = conv.buf2val( &buf2 );
-	
+
 	assert( rc.size() == 6 );
 	for ( unsigned int i = 0; i < 6; ++i ) {
 		assert( rc[i].size() == i );
@@ -1270,7 +1270,7 @@ void testMsgField()
 	assert ( sm == m );
 	assert( sm->getI1() == 5 );
 	assert( sm->getI2() == 3 );
-	
+
 	SrcFinfo1<double> s( "test", "" );
 	s.setBindIndex( 0 );
 	e1.element()->addMsgAndFunc( m->mid(), fid, s.getBindIndex() );
@@ -1381,7 +1381,7 @@ void testSetGetExtField()
 		double temp2  = temp * temp;
 		double ret = Field< double >::get( a, "x" );
 		assert( doubleEq( temp, ret ) );
-		
+
 		ret = Field< double >::get( b, "y" );
 		assert( doubleEq( temp2, ret ) );
 
@@ -1446,7 +1446,7 @@ void testLookupSetGet()
 
 	ret = LookupField< unsigned int, double >::get( obj, "anyValue", 3 );
 	assert( doubleEq( ret, 54 ) );
-	
+
 	cout << "." << flush;
 	i2.destroy();
 }
@@ -1497,7 +1497,7 @@ void testFinfoFields()
 	assert( procFinfo.dest()[1] == "reinit" );
 	 // cout << "proc " << procFinfo.type() << endl;
 	assert( procFinfo.type() == "void" );
-	
+
 	assert( processFinfo.getName() == "process" );
 	assert( processFinfo.docs() == "Handles process call" );
 	assert( processFinfo.src().size() == 0 );
@@ -1600,10 +1600,10 @@ void testCinfoElements()
 
 	assert( intFireCinfoId != Id() );
 	assert( Field< string >::get( intFireCinfoId, "name" ) == "IntFire" );
-	assert( Field< string >::get( intFireCinfoId, "baseClass" ) == 
+	assert( Field< string >::get( intFireCinfoId, "baseClass" ) ==
 					"Neutral" );
 	Id intFireValueFinfoId( "/classes/IntFire/valueFinfo" );
-	unsigned int n = Field< unsigned int >::get( 
+	unsigned int n = Field< unsigned int >::get(
 		intFireValueFinfoId, "numData" );
 	assert( n == 4 );
 	Id intFireSrcFinfoId( "/classes/IntFire/srcFinfo" );
@@ -1614,7 +1614,7 @@ void testCinfoElements()
 	assert( intFireDestFinfoId != Id() );
 	n = Field< unsigned int >::get( intFireDestFinfoId, "numData" );
 	assert( n == 11 );
-	
+
 	ObjId temp( intFireSrcFinfoId, 0 );
 	string foo = Field< string >::get( temp, "fieldName" );
 	assert( foo == "spikeOut" );
@@ -1644,9 +1644,9 @@ void testMsgSrcDestFields()
 	static SrcFinfo2< int, int > s2( "s2", "" );
 	static DestFinfo d0( "d0", "",
 		new OpFunc0< Test >( & Test::handleS0 ) );
-	static DestFinfo d1( "d1", "", 
+	static DestFinfo d1( "d1", "",
 		new EpFunc1< Test, string >( &Test::handleS1 ) );
-	static DestFinfo d2( "d2", "", 
+	static DestFinfo d2( "d2", "",
 		new EpFunc2< Test, int, int >( &Test::handleS2 ) );
 
 	Test::sharedVec[0] = &s0;
@@ -1656,7 +1656,7 @@ void testMsgSrcDestFields()
 	Test::sharedVec[4] = &s2;
 	Test::sharedVec[5] = &d2;
 	*/
-	
+
 	Id t1 = Id::nextId();
 	Id t2 = Id::nextId();
 	// bool ret = Test::initCinfo()->create( t1, "test1", 1 );
@@ -1741,7 +1741,7 @@ void testMsgSrcDestFields()
 	//////////////////////////////////////////////////////////////
 	vector< ObjId > tgt;
 	vector< string > func;
-	unsigned int numTgt = e1->getMsgTargetAndFunctions( 0, 
+	unsigned int numTgt = e1->getMsgTargetAndFunctions( 0,
 					dynamic_cast< SrcFinfo* >(Test::sharedVec[0] ),
 					tgt, func );
 	assert( numTgt == tgt.size() );
@@ -1750,7 +1750,7 @@ void testMsgSrcDestFields()
 	assert( func[0] == "d0" );
 
 	// Note that the srcFinfo #2 is in sharedVec[4]
-	numTgt = e2->getMsgTargetAndFunctions( 0, 
+	numTgt = e2->getMsgTargetAndFunctions( 0,
 					dynamic_cast< SrcFinfo* >(Test::sharedVec[4] ),
 					tgt, func );
 	assert( numTgt == tgt.size() );
@@ -1763,9 +1763,9 @@ void testMsgSrcDestFields()
 	//////////////////////////////////////////////////////////////
 	vector< ObjId > source;
 	vector< string > sender;
-	FuncId fid = 
+	FuncId fid =
 		static_cast< const DestFinfo* >( Test::sharedVec[5] )->getFid();
-	unsigned int numSrc = t2.element()->getMsgSourceAndSender( 
+	unsigned int numSrc = t2.element()->getMsgSourceAndSender(
 					fid, source, sender );
 	assert( numSrc == 1 );
 	assert( source.size() == 1 );
@@ -1793,7 +1793,7 @@ void testHopFunc()
 	const TgtInfo* tgt = reinterpret_cast< const TgtInfo* >( buf );
 	assert( tgt->bindIndex() == 1234 );
 	assert( tgt->dataSize() == 2 );
-	const char* c = reinterpret_cast< const char* >( 
+	const char* c = reinterpret_cast< const char* >(
 					buf + TgtInfo::headerSize );
 	assert( strcmp( c, "two" ) == 0 );
 	assert( doubleEq( buf[TgtInfo::headerSize + 1], 2468.0 ) );

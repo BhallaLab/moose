@@ -128,7 +128,7 @@ void ZombiePool::vSetConcInit( const Eref& e, double conc )
 
 // Do not get concInit from ZombiePool, the PoolBase handles it.
 // Reconsider this, since for arrays of ZombiePools we end up with problems
-// in that there is just  a single PoolBase so all the concInits are 
+// in that there is just  a single PoolBase so all the concInits are
 // the same. Here is a reimplementation.
 double ZombiePool::vGetConcInit( const Eref& e ) const
 {
@@ -185,7 +185,7 @@ double ZombiePool::vGetVolume( const Eref& e ) const
 
 void ZombiePool::vSetSolver( Id ksolve, Id dsolve )
 {
-	// Nasty unsafe typecast. I would have preferred to pass in a 
+	// Nasty unsafe typecast. I would have preferred to pass in a
 	// safely typed pointer but that would have exposed a low-level
 	// class for the ZombiePoolInterface.
 	if ( ksolve.element()->cinfo()->isA( "Ksolve" ) ||
@@ -195,20 +195,20 @@ void ZombiePool::vSetSolver( Id ksolve, Id dsolve )
 	} else if ( ksolve == Id() ) {
 			ksolve_ = 0;
 	} else {
-			cout << "Warning:ZombiePool::vSetSolver: solver class " << 
-					ksolve.element()->cinfo()->name() << 
+			cout << "Warning:ZombiePool::vSetSolver: solver class " <<
+					ksolve.element()->cinfo()->name() <<
 					" not known.\nShould be Ksolve or Gsolve\n";
 			ksolve_ = 0;
 	}
-	
+
 	if ( dsolve.element()->cinfo()->isA( "Dsolve" ) ) {
 			dsolve_= reinterpret_cast< ZombiePoolInterface *>(
 					ObjId( dsolve, 0 ).data() );
 	} else if ( dsolve == Id() ) {
 			dsolve_ = 0;
 	} else {
-			cout << "Warning:ZombiePool::vSetSolver: solver class " << 
-					dsolve.element()->cinfo()->name() << 
+			cout << "Warning:ZombiePool::vSetSolver: solver class " <<
+					dsolve.element()->cinfo()->name() <<
 					" not known.\nShould be Dsolve\n";
 			dsolve_ = 0;
 	}

@@ -1,31 +1,31 @@
-// PulseGen.h --- 
-// 
+// PulseGen.h ---
+//
 // Filename: PulseGen.h
-// Description: 
+// Description:
 // Author: Subhasis Ray
-// Maintainer: 
+// Maintainer:
 // Created: Mon Feb 20 01:21:32 2012 (+0530)
-// Version: 
+// Version:
 // Last-Updated: Mon Feb 20 16:42:41 2012 (+0530)
 //           By: Subhasis Ray
 //     Update #: 60
-// URL: 
-// Keywords: 
-// Compatibility: 
-// 
-// 
+// URL:
+// Keywords:
+// Compatibility:
+//
+//
 
-// Commentary: 
-// 
-// 
-// 
-// 
+// Commentary:
+//
+//
+//
+//
 
 // Change log:
-// 
+//
 // 2012-02-20 01:22:01 (+0530) Subha - started porting old moose code
 // to dh_branch.
-// 
+//
 
 // Code:
 
@@ -42,7 +42,7 @@ class PulseGen
     /**
        With trigMode = FREE_RUN the pulse generator will create a
        train of pulses determined by the firstDealy, firstWidth,
-       firstLevel, secondDelay, secondWidth and secondLevel.       
+       firstLevel, secondDelay, secondWidth and secondLevel.
     */
     static const int FREE_RUN = 0;
     /**
@@ -65,19 +65,19 @@ class PulseGen
        With trigMode = EXT_GATE, the pulse occurs firstDelay later
        from the leading edge of the input.
      */
-    static const int EXT_GATE = 2;    
-    
+    static const int EXT_GATE = 2;
+
 #ifdef DO_UNIT_TESTS
     friend void testPulseGen();
 #endif
   public:
     PulseGen();
     ~PulseGen();
-    
+
     /////////////////////////////////////////////////////////////
     // Value field access function definitions
     /////////////////////////////////////////////////////////////
-    
+
     void setFirstDelay(double value );
     double getFirstDelay() const;
     void setFirstWidth(double value );
@@ -101,19 +101,19 @@ class PulseGen
     unsigned int getCount() const;
     void setLevel(unsigned int pulseNo, double level);
     void setWidth(unsigned int pulseNo, double width);
-    void setDelay(unsigned int pulseNo, double delay);    
+    void setDelay(unsigned int pulseNo, double delay);
     double getWidth(unsigned int index) const;
     double getDelay(unsigned int index) const;
     double getLevel(unsigned int index) const;
-    
+
     /////////////////////////////////////////////////////////////
     // Dest function definitions
     /////////////////////////////////////////////////////////////
-    
+
     void input(double input);
 
     void process( const Eref& e, ProcPtr p );
-    
+
     void reinit( const Eref& e, ProcPtr p );
 
     /////////////////////////////////////////////////////////////
@@ -123,17 +123,17 @@ class PulseGen
     vector <double> delay_;
     vector <double> level_;
     vector <double> width_;
-    
+
     double output_;
     double baseLevel_;
     double trigTime_;
     unsigned int trigMode_;
     bool secondPulse_;
-    
+
     int prevInput_;
-    int input_;    
+    int input_;
 };
 
 #endif // _PULSEGEN_H
-// 
+//
 // PulseGen.h ends here

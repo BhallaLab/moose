@@ -1,9 +1,10 @@
-"""test_streamer.py: 
+# -*- coding: utf-8 -*-
+"""test_streamer.py:
 
 Test script for Streamer class.
 
 """
-    
+
 __author__           = "Dilawar Singh"
 __copyright__        = "Copyright 2016, Dilawar Singh"
 __credits__          = ["NCBS Bangalore"]
@@ -25,7 +26,7 @@ def sanity_test( ):
     b = moose.Table( '/t1/t1' )
     c = moose.Table( '/t1/t1/t1' )
     print(a)
-    print(b) 
+    print(b)
     print(c)
 
     st = moose.Streamer( '/s' )
@@ -111,8 +112,8 @@ def test( ):
     # Total rows should be 58 (counting zero as well).
     # print(data)
     # print( data.dtype )
-    time = data['time'] 
-    print( time ) 
+    time = data['time']
+    print( time )
     assert data.shape >= (58,), data.shape
     print( '[INFO] Test 2 passed' )
     return 0

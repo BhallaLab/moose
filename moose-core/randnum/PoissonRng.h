@@ -1,6 +1,6 @@
 /*******************************************************************
  * File:            PoissonRng.h
- * Description:      
+ * Description:
  * Author:          Subhasis Ray
  * E-mail:          ray.subhasis@gmail.com
  * Created:         2007-11-07 16:22:35

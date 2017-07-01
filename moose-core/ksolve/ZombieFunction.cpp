@@ -31,7 +31,7 @@ const Cinfo* ZombieFunction::initCinfo()
 		//////////////////////////////////////////////////////////////
 		// Field Definitions: mostly inherited from Function
 		//////////////////////////////////////////////////////////////
-	
+
 		//////////////////////////////////////////////////////////////
 		// MsgDest Definitions: All inherited from Function
 		//////////////////////////////////////////////////////////////
@@ -51,7 +51,7 @@ const Cinfo* ZombieFunction::initCinfo()
             {
 				&process, &reinit
             };
-    
+
     static SharedFinfo proc( "proc",
              "This is a shared message to receive Process messages "
              "from the scheduler objects."
@@ -153,20 +153,20 @@ void ZombieFunction::setSolver( Id ksolve, Id dsolve )
 	} else if ( ksolve == Id() ) {
 			_stoich = 0;
 	} else {
-			cout << "Warning:ZombieFunction::setSolver: solver class " << 
-					ksolve.element()->cinfo()->name() << 
+			cout << "Warning:ZombieFunction::setSolver: solver class " <<
+					ksolve.element()->cinfo()->name() <<
 					" not known.\nShould be Ksolve or Gsolve\n";
 			_stoich = 0;
 	}
-	
+
 	/*
 	if ( dsolve.element()->cinfo()->isA( "Dsolve" ) ) {
 			dsolve_= ObjId( dsolve, 0 ).data();
 	} else if ( dsolve == Id() ) {
 			dsolve_ = 0;
 	} else {
-			cout << "Warning:ZombieFunction::vSetSolver: solver class " << 
-					dsolve.element()->cinfo()->name() << 
+			cout << "Warning:ZombieFunction::vSetSolver: solver class " <<
+					dsolve.element()->cinfo()->name() <<
 					" not known.\nShould be Dsolve\n";
 			dsolve_ = 0;
 	}
@@ -196,13 +196,13 @@ void ZombieFunction::zombify( Element* orig, const Cinfo* zClass,
 		*zf = *static_cast< ZombieFunction* >(&temp);
 		zf->setSolver( ksolve, dsolve );
 	} else {
-		Function* nf = 
+		Function* nf =
 					reinterpret_cast< Function *>(Eref( orig, 0 ).data());
 		*nf = temp;
 	}
 
 	/*
-	// We can swap the class because the class data is identical, just 
+	// We can swap the class because the class data is identical, just
 	// the moose expr and process handlers are different.
 	if ( orig->cinfo() == ZombieFunction::initCinfo() ) { // unzombify
 		orig->replaceCinfo( Function::initCinfo() );

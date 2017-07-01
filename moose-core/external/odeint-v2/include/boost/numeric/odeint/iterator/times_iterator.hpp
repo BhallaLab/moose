@@ -61,7 +61,7 @@ namespace odeint {
     template< class Stepper , class System , class State , class TimeIterator >
     times_iterator< Stepper , System, State , TimeIterator > make_times_iterator_begin(
         Stepper stepper ,
-        System system , 
+        System system ,
         State &x ,
         TimeIterator t_start ,
         TimeIterator t_end ,
@@ -74,7 +74,7 @@ namespace odeint {
     template< class TimeIterator , class Stepper , class System , class State >
     times_iterator< Stepper , System , State , TimeIterator > make_times_iterator_end(
         Stepper stepper ,
-        System system , 
+        System system ,
         State &x )
         //TimeIterator t_end )
     {
@@ -86,7 +86,7 @@ namespace odeint {
                times_iterator< Stepper , System , State , TimeIterator > >
     make_times_range(
         Stepper stepper ,
-        System system , 
+        System system ,
         State &x ,
         TimeIterator t_start ,
         TimeIterator t_end ,

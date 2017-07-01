@@ -21,7 +21,7 @@ template< class T > class OpFunc0: public OpFunc0Base
 			(reinterpret_cast< T* >( e.data() )->*func_)();
 		}
 	private:
-		void ( T::*func_ )( ); 
+		void ( T::*func_ )( );
 };
 
 template< class T, class A > class OpFunc1: public OpFunc1Base<A>
@@ -34,10 +34,10 @@ template< class T, class A > class OpFunc1: public OpFunc1Base<A>
 			(reinterpret_cast< T* >( e.data() )->*func_)( arg );
 		}
 	private:
-		void ( T::*func_ )( A ); 
+		void ( T::*func_ )( A );
 };
 
-template< class T, class A1, class A2 > class OpFunc2: 
+template< class T, class A1, class A2 > class OpFunc2:
 		public OpFunc2Base< A1, A2 >
 {
 	public:
@@ -50,10 +50,10 @@ template< class T, class A1, class A2 > class OpFunc2:
 		}
 
 	private:
-		void ( T::*func_ )( A1, A2 ); 
+		void ( T::*func_ )( A1, A2 );
 };
 
-template< class T, class A1, class A2, class A3 > class OpFunc3: 
+template< class T, class A1, class A2, class A3 > class OpFunc3:
 	public OpFunc3Base< A1, A2, A3 >
 {
 	public:
@@ -64,10 +64,10 @@ template< class T, class A1, class A2, class A3 > class OpFunc3:
 			(reinterpret_cast< T* >( e.data() )->*func_)( arg1, arg2, arg3);
 		}
 	private:
-		void ( T::*func_ )( A1, A2, A3 ); 
+		void ( T::*func_ )( A1, A2, A3 );
 };
 
-template< class T, class A1, class A2, class A3, class A4 > class OpFunc4: 
+template< class T, class A1, class A2, class A3, class A4 > class OpFunc4:
 	public OpFunc4Base< A1, A2, A3, A4 >
 {
 	public:
@@ -76,15 +76,15 @@ template< class T, class A1, class A2, class A3, class A4 > class OpFunc4:
 			{;}
 
 		void op( const Eref& e, A1 arg1, A2 arg2, A3 arg3, A4 arg4 ) const {
-			(reinterpret_cast< T* >( e.data() )->*func_)( 
+			(reinterpret_cast< T* >( e.data() )->*func_)(
 				arg1, arg2, arg3, arg4 );
 		}
 
 	private:
-		void ( T::*func_ )( A1, A2, A3, A4 ); 
+		void ( T::*func_ )( A1, A2, A3, A4 );
 };
 
-template< class T, class A1, class A2, class A3, class A4, class A5 > 
+template< class T, class A1, class A2, class A3, class A4, class A5 >
 	class OpFunc5: public OpFunc5Base< A1, A2, A3, A4, A5 >
 {
 	public:
@@ -92,19 +92,19 @@ template< class T, class A1, class A2, class A3, class A4, class A5 >
 			: func_( func )
 			{;}
 
-		void op( const Eref& e, 
+		void op( const Eref& e,
 				A1 arg1, A2 arg2, A3 arg3, A4 arg4, A5 arg5 ) const {
-			(reinterpret_cast< T* >( e.data() )->*func_)( 
+			(reinterpret_cast< T* >( e.data() )->*func_)(
 				arg1, arg2, arg3, arg4, arg5 );
 		}
 
 	private:
-		void ( T::*func_ )( A1, A2, A3, A4, A5 ); 
+		void ( T::*func_ )( A1, A2, A3, A4, A5 );
 };
 
 
-template< class T, 
-		class A1, class A2, class A3, class A4, class A5, class A6 > 
+template< class T,
+		class A1, class A2, class A3, class A4, class A5, class A6 >
 		class OpFunc6: public OpFunc6Base< A1, A2, A3, A4, A5, A6 >
 {
 	public:
@@ -112,14 +112,14 @@ template< class T,
 			: func_( func )
 			{;}
 
-		void op( const Eref& e, A1 arg1, A2 arg2, A3 arg3, A4 arg4, 
+		void op( const Eref& e, A1 arg1, A2 arg2, A3 arg3, A4 arg4,
 						A5 arg5, A6 arg6 ) const {
-			(reinterpret_cast< T* >( e.data() )->*func_)( 
+			(reinterpret_cast< T* >( e.data() )->*func_)(
 				arg1, arg2, arg3, arg4, arg5, arg6 );
 		}
 
 	private:
-		void ( T::*func_ )( A1, A2, A3, A4, A5, A6 ); 
+		void ( T::*func_ )( A1, A2, A3, A4, A5, A6 );
 };
 
 
@@ -154,14 +154,14 @@ template< class T, class A > class GetOpFunc: public GetOpFuncBase< A >
  * This specialized OpFunc is for looking up a single field value
  * using a single argument.
  * It generates an opFunc that takes two arguments:
- * 1. FuncId of the function on the object that requested the value. 
+ * 1. FuncId of the function on the object that requested the value.
  * 2. Index or other identifier to do the look up.
  * The OpFunc then sends back a message with the info.
  * Here T is the class that owns the function.
  * A is the return type
  * L is the lookup index.
  */
-template< class T, class L, class A > class GetOpFunc1: 
+template< class T, class L, class A > class GetOpFunc1:
 		public LookupGetOpFuncBase< L, A >
 {
 	public:
@@ -180,7 +180,7 @@ template< class T, class L, class A > class GetOpFunc1:
 		 * Finally, the data is copied back-and-forth about 3 times.
 		 * Wasteful, but the 'get' function is not to be heavily used.
 		 */
-		void op( const Eref& e, L index, ObjId recipient, FuncId fid ) 
+		void op( const Eref& e, L index, ObjId recipient, FuncId fid )
 			const {
 			const OpFunc *f = recipient.element()->cinfo()->getOpFunc( fid);
 			const OpFunc1Base< A >* recvOpFunc =

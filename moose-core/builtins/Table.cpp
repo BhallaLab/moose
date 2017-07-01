@@ -129,7 +129,7 @@ const Cinfo* Table::initCinfo()
         &threshold,		// Value
         &format,                // Value
         &columnName,            // Value
-        &outfile,               // Value 
+        &outfile,               // Value
         &useStreamer,           // Value
         handleInput(),		// DestFinfo
         &spike,			// DestFinfo
@@ -241,7 +241,7 @@ void Table::process( const Eref& e, ProcPtr p )
     vec().insert( vec().end(), ret.begin(), ret.end() );
 
     /*  If we are streaming to a file, let's write to a file. And clean the
-     *  vector.  
+     *  vector.
      *  Write at every 5 seconds or whenever size of vector is more than 10k.
      */
     if( useStreamer_ )
@@ -281,7 +281,7 @@ void Table::reinit( const Eref& e, ProcPtr p )
         // with rootdit as path.
         if( ! outfileIsSet_ )
             setOutfile( rootdir_ +
-                    moose::moosePathToUserPath(tablePath_) + '.' + format_ 
+                    moose::moosePathToUserPath(tablePath_) + '.' + format_
                     );
     }
 
@@ -338,7 +338,7 @@ void Table::setFormat( string format )
         format_ = format;
     else
         LOG( moose::warning
-                , "Unsupported format " << format 
+                , "Unsupported format " << format
                 << " only npy and csv are supported"
            );
 }
@@ -404,11 +404,11 @@ double Table::getDt( void ) const
  */
 void Table::zipWithTime( const vector<double>& v
         , vector<double>& tvec
-        , const double& currTime 
+        , const double& currTime
         )
 {
     size_t N = v.size();
-    for (size_t i = 0; i < N; i++) 
+    for (size_t i = 0; i < N; i++)
     {
         tvec.push_back( currTime - (N - i - 1 ) * dt_ );
         tvec.push_back( v[i] );

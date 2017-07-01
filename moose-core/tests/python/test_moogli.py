@@ -1,9 +1,10 @@
-"""test_moogli.py: 
+# -*- coding: utf-8 -*-
+"""test_moogli.py:
 
     Some sanity tests on moogli
 
 """
-    
+
 __author__           = "Dilawar Singh"
 __copyright__        = "Copyright 2015, Dilawar Singh and NCBS Bangalore"
 __credits__          = ["NCBS Bangalore"]

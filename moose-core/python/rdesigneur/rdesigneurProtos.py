@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # rdesignerProtos.py ---
 #
 # Filename: rdesignerProtos.py

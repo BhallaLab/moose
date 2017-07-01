@@ -27,7 +27,7 @@ const Cinfo* ZombieCaConc::initCinfo()
 		"Description", "ZombieCaConc: Calcium concentration pool. Takes current from a "
 				"channel and keeps track of calcium buildup and depletion by a "
 				"single exponential process. ",
-	};	
+	};
 	static Dinfo< ZombieCaConc > dinfo;
 	static Cinfo zombieCaConcCinfo(
 		"ZombieCaConc",
@@ -38,7 +38,7 @@ const Cinfo* ZombieCaConc::initCinfo()
 		doc,
 		sizeof( doc )/ sizeof( string )
 	);
-	
+
 	return &zombieCaConcCinfo;
 }
 ///////////////////////////////////////////////////

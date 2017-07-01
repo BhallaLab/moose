@@ -65,12 +65,12 @@ class SynChan: public ChanCommon
 
 		static const Cinfo* initCinfo();
 	protected: // Used by NMDAChan
-    
+
 ///////////////////////////////////////////////////
 // Utility function
 ///////////////////////////////////////////////////
     // virtual unsigned int updateNumSynapse( Eref e );
-		
+
 		double tau1_;
 		double tau2_;
 		int normalizeWeights_;
@@ -80,8 +80,8 @@ class SynChan: public ChanCommon
 		double yconst2_;
 		double norm_;
 		double activation_;
-		double X_;	
-		double Y_;	
+		double X_;
+		double Y_;
 		double dt_; /// Tracks the timestep assigned at reinit.
 };
 

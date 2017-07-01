@@ -56,7 +56,7 @@ namespace detail {
         typedef typename unwrapped_stepper_type::value_type ode_value_type;
 
     public:
-   
+
         ode_iterator_base( stepper_type stepper , system_type sys , time_type t , time_type dt )
             : m_stepper( stepper ) , m_system( sys ) ,
               m_t( t ) , m_dt( dt ) , m_at_end( false )
@@ -73,7 +73,7 @@ namespace detail {
             return (
                 //( static_cast<Iterator>(*this).get_state() ==
                 //  static_cast<Iterator>(iter).get_state ) &&
-                ( m_t == iter.m_t ) && 
+                ( m_t == iter.m_t ) &&
                 ( m_dt == iter.m_dt ) &&
                 ( m_at_end == iter.m_at_end )
                 );

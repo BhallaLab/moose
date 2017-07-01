@@ -1,32 +1,32 @@
-// types.cpp --- 
-// 
+// types.cpp ---
+//
 // Filename: types.cpp
-// Description: 
+// Description:
 // Author: Subhasis Ray
-// Maintainer: 
+// Maintainer:
 // Copyright (C) 2010 Subhasis Ray, all rights reserved.
 // Created: Wed Mar 23 10:10:45 2011 (+0530)
-// Version: 
+// Version:
 // Last-Updated: Tue Jul 23 12:47:59 2013 (+0530)
 //           By: subha
 //     Update #: 93
-// URL: 
-// Keywords: 
-// Compatibility: 
-// 
-// 
+// URL:
+// Keywords:
+// Compatibility:
+//
+//
 
-// Commentary: 
-// 
+// Commentary:
+//
 // Some utility functions to give short character representations for
 // particular type names.
-// 
-// 
+//
+//
 
 // Change log:
-// 
-// 
-// 
+//
+//
+//
 
 // Code:
 #include <string>
@@ -65,7 +65,7 @@ char shortType(string name)
         typemap.insert(pair<string, char>("vector<long long>", 'A')); // moose
         typemap.insert(pair<string, char>("vector<unsigned long long>", 'B')); // moose
         typemap.insert(pair<string, char>("vector<unsigned int>", 'N')); // moose
-        typemap.insert(pair<string, char>("vector<unsigned long>", 'P')); // moose       
+        typemap.insert(pair<string, char>("vector<unsigned long>", 'P')); // moose
         typemap.insert(pair<string, char>("vector<float>", 'F')); // moose
         typemap.insert(pair<string, char>("vector<double>", 'D')); // moose
         typemap.insert(pair<string, char>("vector<string>", 'S')); // moose
@@ -127,7 +127,7 @@ char innerType(char typecode){
     }
     return iter->second;
 }
-        
 
-// 
+
+//
 // types.cpp ends here

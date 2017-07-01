@@ -19,9 +19,9 @@ vector< SingleMsg* > SingleMsg::msg_;
 /////////////////////////////////////////////////////////////////////
 
 SingleMsg::SingleMsg( const Eref& e1, const Eref& e2, unsigned int msgIndex)
-	: Msg( ObjId( managerId_, (msgIndex != 0 ) ? msgIndex: msg_.size() ), 
+	: Msg( ObjId( managerId_, (msgIndex != 0 ) ? msgIndex: msg_.size() ),
 					e1.element(), e2.element() ),
-	i1_( e1.dataIndex() ), 
+	i1_( e1.dataIndex() ),
 	i2_( e2.dataIndex() ),
 	f2_( e2.fieldIndex() )
 {
@@ -40,7 +40,7 @@ SingleMsg::~SingleMsg()
 	msg_[ mid_.dataIndex ] = 0; // ensure deleted ptr isn't reused.
 }
 
-Eref SingleMsg::firstTgt( const Eref& src ) const 
+Eref SingleMsg::firstTgt( const Eref& src ) const
 {
 	if ( src.element() == e1_ )
 		return Eref( e2_, i2_, f2_ );
@@ -85,7 +85,7 @@ DataId SingleMsg::i2() const
 	return i2_;
 }
 
-Id SingleMsg::managerId() const 
+Id SingleMsg::managerId() const
 {
 	return SingleMsg::managerId_;
 }
@@ -109,11 +109,11 @@ Msg* SingleMsg::copy( Id origSrc, Id newSrc, Id newTgt,
 	if ( n <= 1 ) {
 		SingleMsg* ret = 0;
 		if ( orig == e1() ) {
-			ret = new SingleMsg( Eref( newSrc.element(), i1_ ), 
+			ret = new SingleMsg( Eref( newSrc.element(), i1_ ),
 				Eref( newTgt.element(), i2_, f2_ ), 0 );
 			ret->e1()->addMsgAndFunc( ret->mid(), fid, b );
 		} else if ( orig == e2() ) {
-			ret = new SingleMsg( Eref( newTgt.element(), i1_ ), 
+			ret = new SingleMsg( Eref( newTgt.element(), i1_ ),
 				Eref( newSrc.element(), i2_, f2_ ), 0 );
 			ret->e2()->addMsgAndFunc( ret->mid(), fid, b );
 		} else {

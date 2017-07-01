@@ -32,8 +32,8 @@ const short SwcSegment::AXON_END = 11;
 const short SwcSegment::APICAL_FORK = 12;
 const short SwcSegment::APICAL_END = 13;
 
-const string SwcSegment::typeName[] = { 
-	"undef", "soma", "axon", "dend", "apical", "dend_f", "dend_e", 
+const string SwcSegment::typeName[] = {
+	"undef", "soma", "axon", "dend", "apical", "dend_f", "dend_e",
 	"custom", "bad", "undef",
 	"axon_f", "axon_e", "apical_f", "apical_e" };
 
@@ -66,10 +66,10 @@ SwcSegment::SwcSegment( const string& line )
 	}
 }
 
-SwcSegment::SwcSegment( int i,  short type, 
-				double x, double y, double z, 
+SwcSegment::SwcSegment( int i,  short type,
+				double x, double y, double z,
 				double r, int parent )
-				: 
+				:
 						myIndex_( i ),
 						type_( type ),
 						v_( x, y, z ),
@@ -93,17 +93,17 @@ void SwcSegment::figureOutType()
 		if ( kids_.size() > 1 )
 			type_ = FORK; // Dend fork point
 		else if ( kids_.size() == 0 )
-			type_ = END; // end point 
+			type_ = END; // end point
 	} else if ( type_ == APICAL ) {
 		if ( kids_.size() > 1 )
 			type_ = APICAL_FORK; // apical Dend fork point
 		else if ( kids_.size() == 0 )
-			type_ = APICAL_END; // apical end point 
+			type_ = APICAL_END; // apical end point
 	} else if ( type_ == AXON ) {
 		if ( kids_.size() > 1 )
 			type_ = AXON_FORK; // apical Dend fork point
 		else if ( kids_.size() == 0 )
-			type_ = AXON_END; // apical end point 
+			type_ = AXON_END; // apical end point
 	}
 }
 
@@ -131,7 +131,7 @@ SwcBranch::SwcBranch( int i,  const SwcSegment& start, double len, double L,
 void SwcBranch::printDiagnostics() const
 {
 	cout << myIndex() << ":  " << segs_[0] << " -> " << segs_.back() <<
-			" = " << segs_.size() << 
-			" :	pa = " << parent() << " ,	length=( " << 
+			" = " << segs_.size() <<
+			" :	pa = " << parent() << " ,	length=( " <<
 			geomLength << ", " << electroLength << " )\n";
 }

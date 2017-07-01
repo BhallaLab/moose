@@ -11,13 +11,13 @@
 
 class Annotator
 {
-	public: 
+	public:
 		Annotator();
-		
+
 		////////////////////////////////////////////////////////////////
 		// Field assignment stuff.
 		////////////////////////////////////////////////////////////////
-		
+
 		double getX() const;
 		void setX( double v );
 		double getY() const;

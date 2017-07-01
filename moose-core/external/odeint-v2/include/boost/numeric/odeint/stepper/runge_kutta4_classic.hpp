@@ -127,13 +127,13 @@ public :
         time_type dt3 = dt / static_cast< value_type >( 3 );
         stepper_base_type::m_algebra.for_each6( out , in , dxdt , m_dxt.m_v , m_dxm.m_v , m_dxh.m_v ,
                                              typename operations_type::template scale_sum5< value_type , time_type , time_type , time_type , time_type >( 1.0 , dt6 , dt3 , dt3 , dt6 ) );
-        
+
         // x += dt/6 * m_dxdt + dt/3 * m_dxt )
-        // stepper_base_type::m_algebra.for_each4( out , in , dxdt , m_dxt.m_v , 
-        //                                         typename operations_type::template scale_sum3< value_type , time_type , time_type >( 1.0 , dt6 , dt3 ) ); 
+        // stepper_base_type::m_algebra.for_each4( out , in , dxdt , m_dxt.m_v ,
+        //                                         typename operations_type::template scale_sum3< value_type , time_type , time_type >( 1.0 , dt6 , dt3 ) );
         // // x += dt/3 * m_dxm + dt/6 * m_dxh )
-        // stepper_base_type::m_algebra.for_each4( out , out , m_dxm.m_v , m_dxh.m_v , 
-        //                                         typename operations_type::template scale_sum3< value_type , time_type , time_type >( 1.0 , dt3 , dt6 ) ); 
+        // stepper_base_type::m_algebra.for_each4( out , out , m_dxm.m_v , m_dxh.m_v ,
+        //                                         typename operations_type::template scale_sum3< value_type , time_type , time_type >( 1.0 , dt3 , dt6 ) );
 
     }
 
@@ -178,9 +178,9 @@ private:
  * solving ordinary differential equations and is widely used, see also
  * <a href="http://en.wikipedia.org/wiki/Runge%E2%80%93Kutta_methods">en.wikipedia.org/wiki/Runge-Kutta_methods</a>
  * The method is explicit and fulfills the Stepper concept. Step size control
- * or continuous output are not provided.  This class implements the method directly, hence the 
+ * or continuous output are not provided.  This class implements the method directly, hence the
  * generic Runge-Kutta algorithm is not used.
- * 
+ *
  * This class derives from explicit_stepper_base and inherits its interface via
  * CRTP (current recurring template pattern). For more details see
  * explicit_stepper_base.
@@ -197,7 +197,7 @@ private:
     /**
      * \fn runge_kutta4_classic::runge_kutta4_classic( const algebra_type &algebra )
      * \brief Constructs the runge_kutta4_classic class. This constructor can be used as a default
-     * constructor if the algebra has a default constructor. 
+     * constructor if the algebra has a default constructor.
      * \param algebra A copy of algebra is made and stored inside explicit_stepper_base.
      */
 
@@ -206,7 +206,7 @@ private:
      * \fn runge_kutta4_classic::do_step_impl( System system , const StateIn &in , const DerivIn &dxdt , time_type t , StateOut &out , time_type dt )
      * \brief This method performs one step. The derivative `dxdt` of `in` at the time `t` is passed to the method.
      * The result is updated out of place, hence the input is in `in` and the output in `out`.
-     * Access to this step functionality is provided by explicit_stepper_base and 
+     * Access to this step functionality is provided by explicit_stepper_base and
      * `do_step_impl` should not be called directly.
      *
      * \param system The system function to solve, hence the r.h.s. of the ODE. It must fulfill the

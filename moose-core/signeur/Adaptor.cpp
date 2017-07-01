@@ -20,7 +20,7 @@
 ///////////////////////////////////////////////////////
 static SrcFinfo1< double > *output()
 {
-	static SrcFinfo1< double > output( "output", 
+	static SrcFinfo1< double > output( "output",
 			"Sends the output value every timestep."
 	);
 	return &output;
@@ -29,7 +29,7 @@ static SrcFinfo1< double > *output()
 /*
 static SrcFinfo0 *requestInput()
 {
-	static SrcFinfo0 requestInput( "requestInput", 
+	static SrcFinfo0 requestInput( "requestInput",
 			"Sends out the request. Issued from the process call."
 	);
 	return &requestInput;
@@ -38,7 +38,7 @@ static SrcFinfo0 *requestInput()
 
 static SrcFinfo1< vector< double >* >  *requestOut()
 {
-	static SrcFinfo1< vector< double >* > requestOut( "requestOut", 
+	static SrcFinfo1< vector< double >* > requestOut( "requestOut",
 			"Sends out a request to a field with a double or array of doubles. "
 			"Issued from the process call."
 			"Works for any number of targets."
@@ -48,7 +48,7 @@ static SrcFinfo1< vector< double >* >  *requestOut()
 
 /*
 static DestFinfo* handleInput() {
-	static DestFinfo handleInput( "handleInput", 
+	static DestFinfo handleInput( "handleInput",
 			"Handle the returned value, which is in a prepacked buffer.",
 			new OpFunc1< Adaptor, PrepackedBuffer >( &Adaptor::handleBufInput )
 	);
@@ -61,25 +61,25 @@ const Cinfo* Adaptor::initCinfo()
 	///////////////////////////////////////////////////////
 	// Field definitions
 	///////////////////////////////////////////////////////
-	static ValueFinfo< Adaptor, double > inputOffset( 
+	static ValueFinfo< Adaptor, double > inputOffset(
 			"inputOffset",
 			"Offset to apply to input message, before scaling",
 			&Adaptor::setInputOffset,
 			&Adaptor::getInputOffset
 		);
-	static ValueFinfo< Adaptor, double > outputOffset( 
+	static ValueFinfo< Adaptor, double > outputOffset(
 			"outputOffset",
 			"Offset to apply at output, after scaling",
 			&Adaptor::setOutputOffset,
 			&Adaptor::getOutputOffset
 		);
-	static ValueFinfo< Adaptor, double > scale( 
+	static ValueFinfo< Adaptor, double > scale(
 			"scale",
 			"Scaling factor to apply to input",
 			&Adaptor::setScale,
 			&Adaptor::getScale
 		);
-	static ReadOnlyValueFinfo< Adaptor, double > outputValue( 
+	static ReadOnlyValueFinfo< Adaptor, double > outputValue(
 			"outputValue",
 			"This is the linearly transformed output.",
 			&Adaptor::getOutput
@@ -88,15 +88,15 @@ const Cinfo* Adaptor::initCinfo()
 	///////////////////////////////////////////////////////
 	// MsgDest definitions
 	///////////////////////////////////////////////////////
-	static DestFinfo input( 
+	static DestFinfo input(
 			"input",
 			"Input message to the adaptor. If multiple inputs are "
 			"received, the system averages the inputs.",
 		   	new OpFunc1< Adaptor, double >( &Adaptor::input )
 		);
 	/*
-		new DestFinfo( "setup", 
-			Ftype4< string, double, double, double >::global(), 
+		new DestFinfo( "setup",
+			Ftype4< string, double, double, double >::global(),
 			RFCAST( &Adaptor::setup ),
 			"Sets up adaptor in placeholder mode."
 			"This is done when the kinetic model is yet to be built, "
@@ -107,7 +107,7 @@ const Cinfo* Adaptor::initCinfo()
 			"Note that the direction of the adaptor operation is given "
 			"by whether the channel/Ca is connected as input or output."
 		),
-		new DestFinfo( "build", Ftype0::global(), 
+		new DestFinfo( "build", Ftype0::global(),
 			RFCAST( &Adaptor::build ),
 			"Completes connection to previously specified molecule "
 			"on kinetic model."
@@ -117,11 +117,11 @@ const Cinfo* Adaptor::initCinfo()
 	///////////////////////////////////////////////////////
 	// Shared definitions
 	///////////////////////////////////////////////////////
-	static  DestFinfo process( "process", 
+	static  DestFinfo process( "process",
 				"Handles 'process' call",
 			new ProcOpFunc< Adaptor>( &Adaptor::process )
 	);
-	static  DestFinfo reinit( "reinit", 
+	static  DestFinfo reinit( "reinit",
 				"Handles 'reinit' call",
 			new ProcOpFunc< Adaptor>( &Adaptor::reinit )
 	);
@@ -130,7 +130,7 @@ const Cinfo* Adaptor::initCinfo()
 	{
 			&process, &reinit
 	};
-	static SharedFinfo proc( "proc", 
+	static SharedFinfo proc( "proc",
 		"This is a shared message to receive Process message "
 		"from the scheduler. ",
 		processShared, sizeof( processShared ) / sizeof( Finfo* )
@@ -139,7 +139,7 @@ const Cinfo* Adaptor::initCinfo()
 	//////////////////////////////////////////////////////////////////////
 	// Now set it all up.
 	//////////////////////////////////////////////////////////////////////
-	static Finfo* adaptorFinfos[] = 
+	static Finfo* adaptorFinfos[] =
 	{
 		&inputOffset,				// Value
 		&outputOffset,				// Value
@@ -150,7 +150,7 @@ const Cinfo* Adaptor::initCinfo()
 		requestOut(),				// SrcFinfo
 		&proc,						// SharedFinfo
 	};
-	
+
 	static string doc[] =
 	{
 		"Name", "Adaptor",
@@ -291,23 +291,23 @@ static const Cinfo* adaptorCinfo = Adaptor::initCinfo();
 // Here we set up Adaptor class functions
 ////////////////////////////////////////////////////////////////////
 Adaptor::Adaptor()
-	:	
-		output_( 0.0 ), 
-		inputOffset_( 0.0 ), 
+	:
+		output_( 0.0 ),
+		inputOffset_( 0.0 ),
 		outputOffset_( 0.0 ),
 		scale_( 1.0 ),
 		molName_( "" ),
-		sum_( 0.0 ), 
+		sum_( 0.0 ),
 		counter_( 0 ),
 		numRequestOut_( 0 )
-{ 
+{
 	;
 }
 ////////////////////////////////////////////////////////////////////
 // Here we set up Adaptor value fields
 ////////////////////////////////////////////////////////////////////
 
-void Adaptor::setInputOffset( double value ) 
+void Adaptor::setInputOffset( double value )
 {
 	inputOffset_ = value;
 }
@@ -316,7 +316,7 @@ double Adaptor::getInputOffset() const
 	return inputOffset_;
 }
 
-void Adaptor::setOutputOffset( double value ) 
+void Adaptor::setOutputOffset( double value )
 {
 	outputOffset_ = value;
 }
@@ -325,7 +325,7 @@ double Adaptor::getOutputOffset() const
 	return outputOffset_;
 }
 
-void Adaptor::setScale( double value ) 
+void Adaptor::setScale( double value )
 {
 	scale_ = value;
 }
@@ -353,10 +353,10 @@ void Adaptor::input( double v )
 // separated out to help with unit tests.
 void Adaptor::innerProcess()
 {
-	if ( counter_ == 0 ) { 
+	if ( counter_ == 0 ) {
 		output_ = outputOffset_;
 	} else {
-		output_ = outputOffset_ + 
+		output_ = outputOffset_ +
 			scale_ * ( ( sum_ / counter_ ) - inputOffset_ );
 	}
 	sum_ = 0.0;
@@ -365,7 +365,7 @@ void Adaptor::innerProcess()
 
 void Adaptor::process( const Eref& e, ProcPtr p )
 {
-	// static FuncId fid = handleInput()->getFid(); 
+	// static FuncId fid = handleInput()->getFid();
 	if ( numRequestOut_ > 0 ) {
 		vector< double > ret;
 		requestOut()->send( e, &ret );

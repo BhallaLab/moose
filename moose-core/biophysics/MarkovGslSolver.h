@@ -16,10 +16,10 @@
 //
 // The GslIntegrator class in ksolve deals with a system whose coefficients stay
 // constant. In the case of a Markov channel, the coefficients of the system
-// vary with time. 
+// vary with time.
 //
 // This makes it necessary for the system to keep track of changes in the system
-// matrix, which is implemented by the message handler. 
+// matrix, which is implemented by the message handler.
 ///////////////////////////////////////////////////
 
 class MarkovGslSolver
@@ -75,4 +75,4 @@ class MarkovGslSolver
 
 		static int evalSystem( double, const double*, double*, void* );
 };
-#endif 
+#endif

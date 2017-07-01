@@ -59,7 +59,7 @@ static const SrcFinfo2< double, double >* subOut =
 //////////////////////////////////////////////////////////////
 
 ZombieEnz::ZombieEnz( )
-		: 
+		:
 				stoich_( 0 ),
 				concK1_( 1.0 )
 { ; }
@@ -73,9 +73,9 @@ ZombieEnz::~ZombieEnz( )
 
 /*
 void ZombieEnz::vRemesh( const Eref& e )
-{   
+{
 	stoich_->setEnzK1( e, concK1_ );
-}   
+}
 */
 
 
@@ -86,7 +86,7 @@ void ZombieEnz::vRemesh( const Eref& e )
 // v is in number units.
 void ZombieEnz::vSetK1( const Eref& e, double v )
 {
-	double volScale = 
+	double volScale =
 		convertConcToNumRateUsingMesh( e, subOut, true );
 
 	concK1_ = v * volScale;
@@ -97,7 +97,7 @@ void ZombieEnz::vSetK1( const Eref& e, double v )
 double ZombieEnz::vGetK1( const Eref& e ) const
 {
 	// return stoich_->getEnzNumK1( e );
-	double volScale = 
+	double volScale =
 		convertConcToNumRateUsingMesh( e, subOut, true );
 
 	return concK1_ / volScale;
@@ -154,7 +154,7 @@ void ZombieEnz::vSetNumKm( const Eref& e, double v )
 {
 	double k2 = getK2( e );
 	double k3 = getKcat( e );
-	double volScale = 
+	double volScale =
 		convertConcToNumRateUsingMesh( e, subOut, 1 );
 	concK1_ = ( k2 + k3 ) / ( v * volScale );
 
@@ -165,7 +165,7 @@ double ZombieEnz::vGetNumKm( const Eref& e ) const
 {
 	double k2 = vGetK2( e );
 	double k3 = vGetKcat( e );
-	double volScale = 
+	double volScale =
 		convertConcToNumRateUsingMesh( e, subOut, 1 );
 
 	return volScale * ( k2 + k3 ) / concK1_;
@@ -223,15 +223,15 @@ void ZombieEnz::setSolver( Id stoich, Id enz )
 	vector< Id > cplxMols;
 	bool isOK = true;
 	unsigned int numReactants;
-	numReactants = enz.element()->getNeighbors( enzMols, enzFinfo ); 
+	numReactants = enz.element()->getNeighbors( enzMols, enzFinfo );
 	isOK &= ( numReactants == 1 );
 	vector< Id > subs;
-	numReactants = enz.element()->getNeighbors( subs, subFinfo ); 
+	numReactants = enz.element()->getNeighbors( subs, subFinfo );
 	isOK &= ( numReactants > 0 );
-	numReactants = enz.element()->getNeighbors( cplxMols, cplxFinfo ); 
+	numReactants = enz.element()->getNeighbors( cplxMols, cplxFinfo );
 	isOK &= ( numReactants == 1 );
 	vector< Id > prds;
-	numReactants = enz.element()->getNeighbors( prds, prdFinfo ); 
+	numReactants = enz.element()->getNeighbors( prds, prdFinfo );
 	isOK &= ( numReactants > 0 );
 	assert( stoich.element()->cinfo()->isA( "Stoich" ) );
 	stoich_ = reinterpret_cast< Stoich* >( stoich.eref().data() );
@@ -240,6 +240,6 @@ void ZombieEnz::setSolver( Id stoich, Id enz )
 		stoich_->installEnzyme( enz, enzMols[0], cplxMols[0], subs, prds );
 	} else {
 		stoich_->installDummyEnzyme( enz, Id() );
-		cout << "Warning: ZombieEnz:setSolver: Dangling Enz, missing a substrate or product\n"; 
+		cout << "Warning: ZombieEnz:setSolver: Dangling Enz, missing a substrate or product\n";
 	}
 }

@@ -1,4 +1,5 @@
-# Issue #93 on moose-core 
+# -*- coding: utf-8 -*-
+# Issue #93 on moose-core
 
 import numpy as np
 import pylab as pl
@@ -25,7 +26,7 @@ def loadAndRun(solver=True):
     stim.delay[0] = 50e-3
     stim.delay[1] = 1e9
     stim.level[0] = 1e-9
-    stim.width[0] = 2e-3    
+    stim.width[0] = 2e-3
     moose.connect(stim, 'output', comp, 'injectMsg')
     tab = moose.Table('/cell/Vm')
     moose.connect(tab, 'requestOut', comp, 'getVm')
@@ -34,7 +35,7 @@ def loadAndRun(solver=True):
     moose.reinit()
     print('[INFO] Running for %s' % simtime)
     moose.start(simtime )
-    vec = tab_soma.vector 
+    vec = tab_soma.vector
     moose.delete( '/cell' )
     return vec
 
@@ -45,10 +46,10 @@ def main( ):
     hsolveVec = loadAndRun( True )
     clk = moose.Clock( '/clock' )
     print( '[DEBUG] Total entries %s' % len( eeVec ))
-    t = pl.linspace(0, clk.currentTime, len( eeVec )) 
+    t = pl.linspace(0, clk.currentTime, len( eeVec ))
     pl.plot(t, eeVec, label = 'ee' )
     pl.plot( t, hsolveVec, label = 'hsolve' )
-    outfile = '%s.png' % sys.argv[0] 
+    outfile = '%s.png' % sys.argv[0]
     pl.legend( )
     pl.savefig( outfile )
     print( '[INFO] Wrote results to %s' % outfile )

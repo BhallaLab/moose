@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 '''
 *******************************************************************
  * File:            writeSBML.py
@@ -42,10 +43,10 @@ except Exception as e:
     pass
 
 def mooseWriteSBML(modelpath, filename, sceneitems={}):
-    global foundLibSBML_ 
+    global foundLibSBML_
     msg = " "
     if not foundLibSBML_:
-        print('No python-libsbml found.' 
+        print('No python-libsbml found.'
             '\nThis module can be installed by following command in terminal:'
             '\n\t easy_install python-libsbml'
             )
@@ -96,7 +97,7 @@ def mooseWriteSBML(modelpath, filename, sceneitems={}):
         setupItem(modelpath,srcdesConnection)
         if not positionInfoexist:
             autoCoordinates(meshEntry,srcdesConnection)
-    
+
     writeUnits(cremodel_)
     modelAnno = writeSimulationAnnotation(modelpath)
     if modelAnno:
@@ -921,7 +922,7 @@ if __name__ == "__main__":
                 modelpath = filepath[filepath.rfind('/'):filepath.find('.')]
             else:
                 modelpath = sys.argv[2]
-    
+
             moose.loadModel(filepath, modelpath, "gsl")
 
             written, c, writtentofile = mooseWriteSBML(modelpath, filepath)

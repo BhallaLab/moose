@@ -21,12 +21,12 @@ void permute(
 	const vector< unsigned int >& permutation )
 {
 	assert( g.size() == permutation.size() );
-	
+
 	vector< T > copy( g.size() );
-	
+
 	for ( unsigned int i = 0; i < g.size(); i++ )
 		copy[ permutation[ i ] ] = g[ i ];
-	
+
 	for ( unsigned int i = 0; i < g.size(); i++ )
 		g[ i ] = copy[ i ];
 }

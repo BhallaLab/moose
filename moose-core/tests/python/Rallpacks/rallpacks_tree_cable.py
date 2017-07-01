@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 """tree_cable.py: A depth 10 binary tree like cable with following properties.
 
@@ -25,7 +26,7 @@ Last modified: Sat Jan 18, 2014  05:01PM
 
 """
 from __future__ import print_function
-    
+
 __author__           = "Dilawar Singh"
 __copyright__        = "Copyright 2013, NCBS Bangalore"
 __credits__          = ["NCBS Bangalore", "Bhalla Lab"]
@@ -68,7 +69,7 @@ class BinaryCable( ):
         self.tablePath = '/data'
         moose.Neutral(self.tablePath)
         self.stimTables = []
-    
+
     def buildParameterLists(self):
         ''' Build list of parameters in moose '''
         while len(self.compDiamList) < self.depth:
@@ -122,7 +123,7 @@ class BinaryCable( ):
 
         # Inject the current from stim to first compartment.
         moose.connect( stim, 'output', self.cable[0][0], 'injectMsg' )
-        
+
         # Fill the data from stim into table.
         inputTable = moose.Table( '{}/inputTable'.format( self.tablePath ) )
         self.stimTables.append( inputTable )
@@ -130,7 +131,7 @@ class BinaryCable( ):
 
     def recordAt( self, depth, index ):
         ''' Parameter index is python list-like index. Index -1 is the last
-        elements in the list 
+        elements in the list
         '''
         utils.dump( "RECORD"
                 , "Adding probe at index {} and depth {}".format(index, depth)
@@ -149,12 +150,12 @@ class BinaryCable( ):
         hsolve.target = self.cablePath
 
     def simulate(self, simTime, simDt, plotDt=None):
-        '''Simulate the cable 
+        '''Simulate the cable
         '''
         self.simDt = simDt
         self.setupDUT( )
- 
-        # Setup clocks 
+
+        # Setup clocks
         moose.setClock( 0, self.simDt )
 
         # Use clocks
@@ -172,7 +173,7 @@ class BinaryCable( ):
         moose.start( simTime )
 
 def main( args ):
-    # d is depth of cable. 
+    # d is depth of cable.
     d = args['tree_depth']
     assert d > 0, "Cable depth can not be nagative"
     binCable = BinaryCable( depth = d )
@@ -223,7 +224,7 @@ if __name__ == '__main__':
     parser.add_argument( '--x'
             , default = 1e-3
             , help = 'You should record membrane potential somewhere, right?'
-            ) 
+            )
     parser.add_argument( '--length'
             , default = 1e-3
             , help = 'Length of the cable'

@@ -12,7 +12,7 @@
 
 class BufPool: public Pool
 {
-	public: 
+	public:
 		BufPool();
 		~BufPool();
 

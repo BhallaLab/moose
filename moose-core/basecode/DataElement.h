@@ -30,7 +30,7 @@ class DataElement: public Element
 		 * name is its name
 		 * numData is the number of data entries, defaults to a singleton.
 		 * The isGlobal flag specifies whether the created objects should
-		 * be replicated on all nodes, or partitioned without replication. 
+		 * be replicated on all nodes, or partitioned without replication.
 		 */
 		DataElement( Id id, const Cinfo* c, const string& name,
 			unsigned int numData = 1 );
@@ -39,7 +39,7 @@ class DataElement: public Element
 		 * This constructor copies over the original n times. It is
 		 * used for doing all copies, in Shell::innerCopyElements.
 		 */
-		DataElement( Id id, const Element* orig, unsigned int n, 
+		DataElement( Id id, const Element* orig, unsigned int n,
 						unsigned int startEntry );
 
 		/**
@@ -47,7 +47,7 @@ class DataElement: public Element
 		 */
 		~DataElement();
 
-		/** 
+		/**
 		 * copyElement function is defined only in derived classes.
 		 */
 
@@ -66,7 +66,7 @@ class DataElement: public Element
 		unsigned int numField( unsigned int rawIndex ) const;
 
 		/**
-		 * Inherited virtual: Returns number of field entries on 
+		 * Inherited virtual: Returns number of field entries on
 		 * current node, same as numLocalData().
 		 */
 		unsigned int totNumLocalField() const;
@@ -75,7 +75,7 @@ class DataElement: public Element
 
 		/**
 		 * Inherited virtual
-		 * True if this is a FieldElement having an array of fields 
+		 * True if this is a FieldElement having an array of fields
 		 * on each data entry. Clearly not true for the base Element.
 		 */
 		bool hasFields() const {
@@ -89,7 +89,7 @@ class DataElement: public Element
 		/**
 		 * Inherited virtual.
 		 * Looks up specified field data entry. On regular objects just
-		 * returns the data entry specified by the rawIndex. 
+		 * returns the data entry specified by the rawIndex.
 		 * On FieldElements like synapses, does a second lookup on the
 		 * field index.
 		 * Note that the index is NOT a
@@ -102,7 +102,7 @@ class DataElement: public Element
 		 *
 		 * Returns 0 if either index is out of range.
 		 */
-		char* data( unsigned int rawIndex, 
+		char* data( unsigned int rawIndex,
 						unsigned int fieldIndex = 0 ) const;
 
 		/**
@@ -118,8 +118,8 @@ class DataElement: public Element
 		 * Changes the number of fields on the specified data entry.
 		 * Doesn't do anything for the regular Element.
 		 */
-		void resizeField( 
-				unsigned int rawIndex, unsigned int newNumField ) 
+		void resizeField(
+				unsigned int rawIndex, unsigned int newNumField )
 			{;}
 
 		/////////////////////////////////////////////////////////////////
@@ -142,7 +142,7 @@ class DataElement: public Element
 
 		/**
 		 * This is the size of the data. Can get from cinfo()->dinfo(),
-		 * but this is called so often than it makes a measurable 
+		 * but this is called so often than it makes a measurable
 		 * difference.
 		 */
 		unsigned int size_;

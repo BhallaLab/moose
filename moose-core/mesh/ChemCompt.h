@@ -16,13 +16,13 @@
  * The ChemCompt represents a chemically identified compartment.
  * This may be spatially extended, and may even be discontinuous.
  * The same set of reactions and molecules populates any given compartment.
- * Examples of compartments might be: nucleus, cell membrane, 
+ * Examples of compartments might be: nucleus, cell membrane,
  * early endosomes, spine heads.
  * Connects to one or more 'Geometry' elements to define its boundaries.
  */
 class ChemCompt
 {
-	public: 
+	public:
 		ChemCompt();
 		virtual ~ChemCompt();
 		//////////////////////////////////////////////////////////////////
@@ -39,7 +39,7 @@ class ChemCompt
 		virtual double vGetEntireVolume() const = 0;
 
 		/**
-		 * This is a little nasty. It calls buildDefaultMesh with the 
+		 * This is a little nasty. It calls buildDefaultMesh with the
 		 * current numEntries. Should not be used if the mesh has been
 		 * changed to something more interesting.
 		 * Perhaps I need to do something like changeVolOfExistingMesh.
@@ -50,12 +50,12 @@ class ChemCompt
 		 * Returns volume of specified voxel
 		 */
 		double getOneVoxelVolume( const Eref& e, unsigned int voxel ) const;
-		void setOneVoxelVolume( const Eref& e, unsigned int voxel, 
+		void setOneVoxelVolume( const Eref& e, unsigned int voxel,
 						double volume );
 
 		/**
-		 * Returns # of dimensions of mesh. 
-		 * This is 3 for cube, and 1 for cylinder or neurons. 
+		 * Returns # of dimensions of mesh.
+		 * This is 3 for cube, and 1 for cylinder or neurons.
 		 */
 		unsigned int getDimensions() const;
 		virtual unsigned int innerGetDimensions() const = 0;
@@ -98,14 +98,14 @@ class ChemCompt
 		//////////////////////////////////////////////////////////////////
 		// Dest Finfo
 		//////////////////////////////////////////////////////////////////
-		
+
 		/**
 		 * Returns true on success.
 		 * Changes volume but does not notify any child objects.
-		 * For some classes, this only works if the ChemCompt has 
+		 * For some classes, this only works if the ChemCompt has
 		 * just one voxel. It will return false if it can't handle it.
-		 * This function will invalidate any concentration term in 
-		 * the model. If you don't know why you would want to do this, 
+		 * This function will invalidate any concentration term in
+		 * the model. If you don't know why you would want to do this,
 		 * then you shouldn't use this function.",
 		 */
 		void setVolumeNotRates( double volume);
@@ -114,7 +114,7 @@ class ChemCompt
 		virtual bool vSetVolumeNotRates( double volume) = 0;
 
 		/**
-		 * buildDefaultMesh tells the ChemCompt to make a standard mesh 
+		 * buildDefaultMesh tells the ChemCompt to make a standard mesh
 		 * partitioning with the specified total volume
 		 * and the specified number of subdivisions. For example, a
 		 * CubeMesh of volume 8 and subdivisions 8 would make a 2x2x2 mesh.
@@ -135,10 +135,10 @@ class ChemCompt
 		) = 0;
 		*/
 
-		void handleNodeInfo( const Eref& e, 
+		void handleNodeInfo( const Eref& e,
 			unsigned int numNodes, unsigned int numThreads );
 		virtual void innerHandleNodeInfo(
-			const Eref& e, 
+			const Eref& e,
 			unsigned int numNodes, unsigned int numThreads ) = 0;
 
 		/**
@@ -168,7 +168,7 @@ class ChemCompt
 		 * Returns the matched lookupEntry
 		 */
 		MeshEntry* lookupEntry( unsigned int index );
-		
+
 		//////////////////////////////////////////////////////////////////
 		// Generic utility function
 		//////////////////////////////////////////////////////////////////
@@ -178,25 +178,25 @@ class ChemCompt
 		// Utility function for volume rescaling
 		//////////////////////////////////////////////////////////////////
 		/**
-		 * Recursively traverses all children, depth_first, scooping up 
-		 * concentration terms: 
+		 * Recursively traverses all children, depth_first, scooping up
+		 * concentration terms:
 		 * conc and concInit for pools, Kf and Kb for Reacs, and
 		 * Km for enzymes. These are inserted in order into the vector
 		 * of childConcs. Does not traverse into children of other
 		 * ChemCompts
 		 */
-		void getChildConcs( const Eref& e, vector< double >& childConcs ) 
+		void getChildConcs( const Eref& e, vector< double >& childConcs )
 				const;
 
 		/**
 		 * Recursively traverses all children, depth_first, restoring
-		 * concentration terms as scooped up by getChildConcs. Does 
+		 * concentration terms as scooped up by getChildConcs. Does
 		 * conc and concInit for pools, Kf and Kb for Reacs, and
 		 * Km for enzymes. These are restored in order into the vector
 		 * of childConcs. Does not traverse into children of other
-		 * ChemCompts. 
+		 * ChemCompts.
 		 */
-		unsigned int setChildConcs( const Eref& e, 
+		unsigned int setChildConcs( const Eref& e,
 			const vector< double >& childConcs, unsigned int start ) const;
 
 		//////////////////////////////////////////////////////////////////
@@ -222,31 +222,31 @@ class ChemCompt
 		 * of pools.
 		 * spatialIndices are (iz * ny + iy) * nx + ix, that is, a linear
 		 * conversion of cartesian spatial indices.
-		 * So, for two touching cubes, the return vector is the paired 
+		 * So, for two touching cubes, the return vector is the paired
 		 * meshIndices on either side of the plane of contact. If one mesh
 		 * has a finer mesh than the other, or if there are more than one
 		 * contact points from self to other (for example, at a corner),
 		 * then we just have multiple pairs using the same meshIndex of
 		 * the repeated voxel.
 		 */
-		virtual void matchMeshEntries( const ChemCompt* other, 
+		virtual void matchMeshEntries( const ChemCompt* other,
 			vector< VoxelJunction > & ret ) const = 0;
 
 
 		/**
 		 * Returns distance and index of nearest mesh entry. Computes
-		 * each mesh entry position as its geometric centre. 
-		 * If the current location is not inside a valid mesh entry, 
+		 * each mesh entry position as its geometric centre.
+		 * If the current location is not inside a valid mesh entry,
 		 * distance returned is negative.
 		 */
-		virtual double nearest( double x, double y, double z, 
+		virtual double nearest( double x, double y, double z,
 						unsigned int& index ) const = 0;
-	
+
 		/**
 		 * Converts specified index to xyz coords of middle of voxel
 		 * Values out of range return original xyz
 		 */
-		virtual void indexToSpace( unsigned int index, 
+		virtual void indexToSpace( unsigned int index,
 						double& x, double& y, double& z ) const = 0;
 
 		/// Utility function for swapping first and second in VoxelJunctions
@@ -262,7 +262,7 @@ class ChemCompt
 		virtual unsigned int getMeshDimensions( unsigned int fid )
 			const = 0;
 		/// Virtual function to return volume of mesh Entry.
-		virtual double getMeshEntryVolume( unsigned int fid ) 
+		virtual double getMeshEntryVolume( unsigned int fid )
 			const = 0;
 		//
 		/// Virtual function to assign volume of mesh Entry. Does nothing
@@ -270,20 +270,20 @@ class ChemCompt
 		virtual void setMeshEntryVolume( unsigned int fid, double volume );
 
 		/// Virtual function to return coords of mesh Entry.
-		virtual vector< double > getCoordinates( unsigned int fid ) 
+		virtual vector< double > getCoordinates( unsigned int fid )
 			const = 0;
 		/// Virtual function to return info on Entries connected to this one
-		virtual vector< unsigned int > getNeighbors( unsigned int fid ) 
+		virtual vector< unsigned int > getNeighbors( unsigned int fid )
 			const = 0;
 		/// Virtual function to return diffusion X-section area per neighbor
 		virtual vector< double > getDiffusionArea( unsigned int fid )
 			const = 0;
 		/// Virtual function to return scale factor for diffusion. 1 here.
-		virtual vector< double > getDiffusionScaling( unsigned int fid ) 
+		virtual vector< double > getDiffusionScaling( unsigned int fid )
 			const = 0;
 
 		/// Volume of mesh Entry including abutting diff-coupled voxels
-		virtual double extendedMeshEntryVolume( unsigned int fid ) 
+		virtual double extendedMeshEntryVolume( unsigned int fid )
 			const = 0;
 
 		/// clear out extended mesh entries for rebuilding.
@@ -292,7 +292,7 @@ class ChemCompt
 		/**
 		 * Function to look up scale factor derived from area and length
 		 * of compartment junction, for all the mesh entries connected to
-		 * the specified one. 
+		 * the specified one.
 		 * Modeled on equivalent function in SparseMatrix.
 		 * meshIndex: index of reference mesh entry
 		 * entry: array of values of scale factor
@@ -318,7 +318,7 @@ class ChemCompt
 		 * It uses these to stitch together the computations that span
 		 * multiple solvers and compartments.
 		 */
-		virtual void extendStencil( 
+		virtual void extendStencil(
 			const ChemCompt* other, const vector< VoxelJunction >& vj ) = 0;
 
 		//////////////////////////////////////////////////////////////////
@@ -338,7 +338,7 @@ class ChemCompt
 		 * different compartments can talk to each other.
 		 * All boundaries have a message to a Geometry. The Geometries
 		 * may be shared, which is why the boundary isn't a Geometry itself.
-		 * If it is an interface (diffusive or other) then the boundary 
+		 * If it is an interface (diffusive or other) then the boundary
 		 * also contains a message to the adjacent compartment.
 		 */
 		vector< Boundary > boundaries_;
@@ -351,11 +351,11 @@ class ChemCompt
 		string method_;
 };
 
-extern SrcFinfo5< 
+extern SrcFinfo5<
 	double,
-	vector< double >, 
-	vector< unsigned int>, 
-	vector< vector< unsigned int > >, 
+	vector< double >,
+	vector< unsigned int>,
+	vector< vector< unsigned int > >,
 	vector< vector< unsigned int > >
 	>* meshSplit();
 

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 PYTHON_EXECUTABLE=${1:-/usr/bin/python}
-if [ $2 ]; then 
+if [ $2 ]; then
     export PYTHONPATH="$2"
 fi
 FAILED=0
@@ -36,7 +36,7 @@ else
     FAILED=1
 fi
 
-if [ $FAILED -eq 1 ]; then 
+if [ $FAILED -eq 1 ]; then
     exit 1
 else
     exit 0;

@@ -11,8 +11,8 @@
 
 /**
  *  This defines a single segment in an SWC file used in NeuroMorpho
- *  Note that this is not going to work well for dendritic spines which 
- *  come off in the middle of a parent compartment, and which have to be 
+ *  Note that this is not going to work well for dendritic spines which
+ *  come off in the middle of a parent compartment, and which have to be
  *  started from the surface rather than the axis of the dendrite.
  */
 class SwcSegment
@@ -21,15 +21,15 @@ class SwcSegment
 		SwcSegment()
 				: myIndex_( 0 ), type_( 0 ), radius_( 0.0 ),
 				length_( 0.0 ), L_( 0.0 ),
-				parent_( ~0U ), 
+				parent_( ~0U ),
 				geometricalDistanceFromSoma_( 0.0 ),
 				electrotonicDistanceFromSoma_( 0.0 )
 		{;}
 
 		SwcSegment( const string& line );
 
-		SwcSegment( int i,  short type, 
-						double x, double y, double z, 
+		SwcSegment( int i,  short type,
+						double x, double y, double z,
 						double r, int parent );
 		bool OK() const
 		{
@@ -109,11 +109,11 @@ class SwcSegment
 		double getPathDistFromSoma() const  {
 			return pathDistanceFromSoma_;
 		}
-		
+
 		double getGeomDistFromSoma() const  {
 			return geometricalDistanceFromSoma_;
 		}
-		
+
 		double getElecDistFromSoma() const  {
 			return electrotonicDistanceFromSoma_;
 		}
@@ -150,7 +150,7 @@ class SwcSegment
 		 * 6 = end point
 		 * 7 = custom
 		 */
-		short type_; 
+		short type_;
 		Vec v_;	/// coordinates of end of segment
 		double radius_; /// Radius of segment
 		double length_; /// Length of segment
@@ -158,13 +158,13 @@ class SwcSegment
 		unsigned int parent_; /// Index of parent. Is ~0 for soma.
 
 		/// dist from soma: not direct, but threaded along dend
-		double pathDistanceFromSoma_; 
+		double pathDistanceFromSoma_;
 
 		/// geometrical distance from soma.
-		double geometricalDistanceFromSoma_; 
+		double geometricalDistanceFromSoma_;
 
 		/// electrotonic dist from soma, summed along dend.
-		double electrotonicDistanceFromSoma_; 
+		double electrotonicDistanceFromSoma_;
 
 		vector< int > kids_; // Indices of all children of segment.
 };
@@ -199,7 +199,7 @@ class SwcBranch: public SwcSegment
 		 * entry is the one _after_ the fork point. The last entry is
 		 * either a fork or an end point.
 		 */
-		vector< int > segs_; 
+		vector< int > segs_;
 };
 
 #endif // SWC_SEGMENT_H

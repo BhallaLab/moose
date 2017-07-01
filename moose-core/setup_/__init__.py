@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 sources = [
 	'basecode/consts.cpp',
 	'basecode/Element.cpp',
@@ -34,7 +35,7 @@ sources = [
 	'basecode/ReduceBase.cpp',
 	'basecode/main.cpp',
 	'basecode/testAsync.cpp',
-	
+
 	'biophysics/SynBase.cpp',
 	'biophysics/IntFire.cpp',
 	'biophysics/IzhikevichNrn.cpp',
@@ -64,7 +65,7 @@ sources = [
 	'biophysics/MarkovSolver.cpp',
 	'biophysics/ReadCell.cpp',
 	'biophysics/testBiophysics.cpp',
-	
+
 	'builtins/Arith.cpp',
 	'builtins/Group.cpp',
 	'builtins/Mdouble.cpp',
@@ -78,12 +79,12 @@ sources = [
 	'builtins/HDF5WriterBase.cpp',
 	'builtins/HDF5DataWriter.cpp',
 	'builtins/testBuiltins.cpp',
-	
+
 	'device/PulseGen.cpp',
 	'device/DiffAmp.cpp',
 	'device/PIDController.cpp',
 	'device/RC.cpp',
-	
+
 	'geom/Geometry.cpp',
 	'geom/Surface.cpp',
 	'geom/Panel.cpp',
@@ -94,7 +95,7 @@ sources = [
 	'geom/RectPanel.cpp',
 	'geom/TriPanel.cpp',
 	'geom/testGeom.cpp',
-	
+
 	'hsolve/HSolveStruct.cpp',
 	'hsolve/HinesMatrix.cpp',
 	'hsolve/HSolvePassive.cpp',
@@ -108,7 +109,7 @@ sources = [
 	'hsolve/ZombieCompartment.cpp',
 	'hsolve/ZombieCaConc.cpp',
 	'hsolve/ZombieHHChannel.cpp',
-	
+
 	'kinetics/PoolBase.cpp',
 	'kinetics/Pool.cpp',
 	'kinetics/BufPool.cpp',
@@ -123,7 +124,7 @@ sources = [
 	'kinetics/SumFunc.cpp',
 	'kinetics/lookupSizeFromMesh.cpp',
 	'kinetics/testKinetics.cpp',
-	
+
 	'ksolve/Port.cpp',
 	'ksolve/Stoich.cpp',
 	'ksolve/KinSparseMatrix.cpp',
@@ -138,10 +139,10 @@ sources = [
 	'ksolve/FuncTerm.cpp',
 	'ksolve/GssaStoich.cpp',
 	'ksolve/testKsolve.cpp',
-	
+
 	'manager/SimManager.cpp',
 	'manager/testSimManager.cpp',
-	
+
 	'mesh/ChemMesh.cpp',
 	'mesh/MeshEntry.cpp',
 	'mesh/CylMesh.cpp',
@@ -149,7 +150,7 @@ sources = [
 	'mesh/Boundary.cpp',
 	'mesh/Stencil.cpp',
 	'mesh/testMesh.cpp',
-	
+
 	'msg/Msg.cpp',
 	'msg/DiagonalMsg.cpp',
 	'msg/OneToAllMsg.cpp',
@@ -158,11 +159,11 @@ sources = [
 	'msg/SparseMsg.cpp',
 	'msg/ReduceMsg.cpp',
 	'msg/testMsg.cpp',
-	
+
 	'pymoose/moosemodule.cpp',
-	
+
 	'randnum/mt19937ar.cpp',
-	
+
 	'regressionTests/regressionTest.cpp',
 	'regressionTests/rtTable.cpp',
 	'regressionTests/rtReadKkit.cpp',
@@ -170,12 +171,12 @@ sources = [
 	'regressionTests/rtReacDiff.cpp',
 	'regressionTests/perfTestMarkovSolver.cpp',
 	'regressionTests/benchmarkTests.cpp',
-	
+
 	'scheduling/Clock.cpp',
 	'scheduling/Tick.cpp',
 	'scheduling/TickMgr.cpp',
 	'scheduling/testScheduling.cpp',
-	
+
 	'shell/Shell.cpp',
 	'shell/ShellCopy.cpp',
 	'shell/ShellSetGet.cpp',
@@ -185,7 +186,7 @@ sources = [
 	'shell/Neutral.cpp',
 	'shell/Wildcard.cpp',
 	'shell/testShell.cpp',
-	
+
 	#~ 'smol/SmolSim.cpp',
 	#~ 'smol/SmolPool.cpp',
 	#~ 'smol/SmolMol.cpp',
@@ -193,7 +194,7 @@ sources = [
 	#~ 'smol/SmolEnz.cpp',
 	#~ 'smol/SmolMMenz.cpp',
 	#~ 'smol/testSmol.cpp',
-	
+
 	'utility/strutil.cpp',
 	'utility/types.cpp',
 	'utility/setupenv.cpp',

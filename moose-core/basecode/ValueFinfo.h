@@ -10,7 +10,7 @@
 #define _VALUE_FINFO_H
 
 /**
- * This is the base class for all ValueFinfo classes. Used for doing 
+ * This is the base class for all ValueFinfo classes. Used for doing
  * inspection using dynamic casts.
  */
 class ValueFinfoBase: public Finfo
@@ -41,7 +41,7 @@ template < class T, class F > class ValueFinfo: public ValueFinfoBase
 			delete get_;
 		}
 
-		ValueFinfo( const string& name, const string& doc, 
+		ValueFinfo( const string& name, const string& doc,
 			void ( T::*setFunc )( F ),
 			F ( T::*getFunc )() const )
 			: ValueFinfoBase( name, doc )
@@ -68,12 +68,12 @@ template < class T, class F > class ValueFinfo: public ValueFinfoBase
 			c->registerFinfo( get_ );
 		}
 
-		bool strSet( const Eref& tgt, const string& field, 
+		bool strSet( const Eref& tgt, const string& field,
 			const string& arg ) const {
 			return Field< F >::innerStrSet( tgt.objId(), field, arg );
 		}
 
-		bool strGet( const Eref& tgt, const string& field, 
+		bool strGet( const Eref& tgt, const string& field,
 			string& returnValue ) const {
 			return Field< F >::innerStrGet( tgt.objId(), field, returnValue );
 		}
@@ -91,7 +91,7 @@ template < class T, class F > class ReadOnlyValueFinfo: public ValueFinfoBase
 			delete get_;
 		}
 
-		ReadOnlyValueFinfo( const string& name, const string& doc, 
+		ReadOnlyValueFinfo( const string& name, const string& doc,
 			F ( T::*getFunc )() const )
 			: ValueFinfoBase( name, doc )
 		{
@@ -109,14 +109,14 @@ template < class T, class F > class ReadOnlyValueFinfo: public ValueFinfoBase
 			c->registerFinfo( get_ );
 		}
 
-		bool strSet( const Eref& tgt, const string& field, 
+		bool strSet( const Eref& tgt, const string& field,
 			const string& arg ) const {
 			return 0;
 		}
 
-		bool strGet( const Eref& tgt, const string& field, 
+		bool strGet( const Eref& tgt, const string& field,
 			string& returnValue ) const {
-			return Field< F >::innerStrGet( 
+			return Field< F >::innerStrGet(
 							tgt.objId(), field, returnValue );
 		}
 

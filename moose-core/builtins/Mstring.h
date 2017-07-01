@@ -11,14 +11,14 @@
 
 class Mstring
 {
-	public: 
+	public:
 		Mstring();
 		Mstring( string other );
-		
+
 		////////////////////////////////////////////////////////////////
 		// Field assignment stuff.
 		////////////////////////////////////////////////////////////////
-		
+
 		void setThis( string v );
 		string getThis() const;
 
@@ -28,7 +28,7 @@ class Mstring
 		// const Mstring& operator=( const Mstring& other );
 		// string operator=( const Mstring& other );
 		// string operator=( const string& other );
-	
+
 		////////////////////////////////////////////////////////////////
 
 		static const Cinfo* initCinfo();

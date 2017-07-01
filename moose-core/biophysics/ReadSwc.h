@@ -29,7 +29,7 @@ class ReadSwc
 		void parseBranches();
 		void traverseBranch( const SwcSegment& s, double &len, double& L,
 					   vector< int >& cable	) const;
-		bool build( Id parent, 
+		bool build( Id parent,
 					double lambda, double RM, double RA, double CM );
 		void diagnostics() const;
 
@@ -37,12 +37,12 @@ class ReadSwc
 		vector< SwcSegment > segs_;
 
 		/**
-		 * branches holds the NeuroMorpho index of the end segment of 
+		 * branches holds the NeuroMorpho index of the end segment of
 		 * each branch. Note that NeuroMorph index starts from 1.
 		 * To traverse the branch, go to the end segment, and traverse
 		 * through all parents till you get to a fork.
 		 */
-		vector< SwcBranch > branches_; 
+		vector< SwcBranch > branches_;
 };
 
 #endif // READSWC_H

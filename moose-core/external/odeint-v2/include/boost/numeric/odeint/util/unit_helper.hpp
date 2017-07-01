@@ -43,7 +43,7 @@ namespace detail {
         }
         typedef T result_type;
     };
-    
+
 #ifndef __CUDACC__
     template<class Unit , class T>
     struct get_unit_value_impl< boost::units::quantity< Unit , T> >

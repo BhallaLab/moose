@@ -15,10 +15,10 @@
  * The SymCompartment class sets up a symmetric compartment for
  * branched nerve calculations. Handles electronic structure and
  * also channels. This version splits the Ra between either end of the
- * compartment and is hence slightly cleaner than the asymmetric 
+ * compartment and is hence slightly cleaner than the asymmetric
  * compartment.
  * The default EE method is not a particularly efficient way of doing
- * the calculations, so we should use a solver for any substantial 
+ * the calculations, so we should use a solver for any substantial
  * calculations.
  */
 class SymCompartment: public moose::Compartment
@@ -41,7 +41,7 @@ class SymCompartment: public moose::Compartment
 			void vInitProc( const Eref& e, ProcPtr p );
 			void vInitReinit( const Eref& e, ProcPtr p );
 	private:
-            // used for storing multiplicative coefficient computed from 
+            // used for storing multiplicative coefficient computed from
 			// adjacent nodes in star-mesh transformation
 			double coeff_;
 			double RaSum_;

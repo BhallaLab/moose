@@ -1,6 +1,6 @@
 /*******************************************************************
  * File:            UniformRng.h
- * Description:      
+ * Description:
  * Author:          Subhasis Ray
  * E-mail:          ray.subhasis@gmail.com
  * Created:         2008-02-01 11:52:48
@@ -35,9 +35,9 @@ class UniformRng: public RandGenerator
     static const Cinfo * initCinfo();
   private:
     double min_;
-    double max_;    
+    double max_;
 };
 
-    
-    
+
+
 #endif

@@ -16,23 +16,23 @@
 //functions for getting and setting up the table, along with a lookup function.
 //This class is to be used while supplying lookup tables to the MarkovChannel
 //class, in cases where the transition rate varies with either membrane voltage
-//or ligand concentration. 
+//or ligand concentration.
 
-class VectorTable 
+class VectorTable
 {
-	public : 
+	public :
 	VectorTable();
 
 	double lookupByValue( double ) const;
 	double lookupByIndex( unsigned int ) const;
 
-	//All members except table_ are read-only. Avoids the hassle of recomputing the table when one of the terms are changed. 
+	//All members except table_ are read-only. Avoids the hassle of recomputing the table when one of the terms are changed.
 	vector< double > getTable() const;
 
-	//Setting up the lookup table. 
+	//Setting up the lookup table.
 	void setTable( vector< double > );
 
-	unsigned int getDiv() const;	
+	unsigned int getDiv() const;
 	void setDiv( unsigned int );
 	double getMin() const;
 	void setMin( double );
@@ -44,9 +44,9 @@ class VectorTable
 
 	static const Cinfo* initCinfo();
 
-	friend istream& operator>>( istream&, VectorTable& ); 
+	friend istream& operator>>( istream&, VectorTable& );
 
-	private : 
+	private :
 	unsigned int xDivs_;
 	double xMin_;
 	double xMax_;

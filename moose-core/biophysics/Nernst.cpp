@@ -17,7 +17,7 @@ const double Nernst::ZERO_CELSIUS = 273.15;
 	// MsgSrc definitions
 	///////////////////////////////////////////////////////
 static SrcFinfo1< double > *Eout() {
-	static SrcFinfo1< double > Eout( "Eout", 
+	static SrcFinfo1< double > Eout( "Eout",
 			"Computed reversal potential"
 			);
 	return &Eout;
@@ -25,7 +25,7 @@ static SrcFinfo1< double > *Eout() {
 
 const Cinfo* Nernst::initCinfo()
 {
-	static ReadOnlyValueFinfo< Nernst, double > E( "E", 
+	static ReadOnlyValueFinfo< Nernst, double > E( "E",
 		"Computed reversal potential",
 			&Nernst::getE
 	);
@@ -64,11 +64,11 @@ const Cinfo* Nernst::initCinfo()
 	// These differ from field assignments because they trigger an
 	// outgoing msg with the updated E.
 	///////////////////////////////////////////////////////
-	static DestFinfo ci( "ci", 
+	static DestFinfo ci( "ci",
 		"Set internal conc of ion, and immediately send out the updated E",
 		new EpFunc1< Nernst, double >( &Nernst::handleCin )
 	);
-	static DestFinfo co( "co", 
+	static DestFinfo co( "co",
 		"Set external conc of ion, and immediately send out the updated E",
 		new EpFunc1< Nernst, double >( &Nernst::handleCout )
 	);
@@ -97,7 +97,7 @@ const Cinfo* Nernst::initCinfo()
 				"Cin and Cout, the inside and outside concentrations. "
 				"Immediately sends out the potential to all targets.",
 	};
-	
+
 	static Dinfo< Nernst > dinfo;
 	static const Cinfo NernstCinfo(
 		"Nernst",
@@ -228,4 +228,4 @@ void testNernst()
 
 	cout << "." << flush;
 }
-#endif 
+#endif

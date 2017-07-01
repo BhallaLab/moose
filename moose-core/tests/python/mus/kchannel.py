@@ -1,47 +1,48 @@
-# kchannel.py --- 
-# 
+# -*- coding: utf-8 -*-
+# kchannel.py ---
+#
 # Filename: kchannel.py
-# Description: 
+# Description:
 # Author: Subhasis Ray
-# Maintainer: 
+# Maintainer:
 # Created: Wed Jun  4 12:30:31 2014 (+0530)
-# Version: 
-# Last-Updated: 
-#           By: 
+# Version:
+# Last-Updated:
+#           By:
 #     Update #: 0
-# URL: 
-# Keywords: 
-# Compatibility: 
-# 
-# 
+# URL:
+# Keywords:
+# Compatibility:
+#
+#
 
-# Commentary: 
-# 
-# 
-# 
-# 
+# Commentary:
+#
+#
+#
+#
 
 # Change log:
-# 
-# 
-# 
-# 
+#
+#
+#
+#
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
 # published by the Free Software Foundation; either version 3, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program; see the file COPYING.  If not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 # Floor, Boston, MA 02110-1301, USA.
-# 
-# 
+#
+#
 
 # Code:
 
@@ -49,7 +50,7 @@ import numpy as np
 import moose
 from settings import *
 
-def rates_kv(v, Ra, Rb, tha, qa): 
+def rates_kv(v, Ra, Rb, tha, qa):
     a = Ra * (v - tha) / (1 - np.exp(-(v - tha)/qa))
     b = -Rb * (v - tha) / (1 - np.exp((v - tha)/qa))
     ntau = 1e-3/tadj/(a+b)
@@ -60,26 +61,26 @@ def make_kv():
     """Translated to pymoose from original model by Zach Mainen. - Subhasis Ray 2014-06-04
 
     Original comment:
-    
+
     COMMENT
     26 Ago 2002 Modification of original channel to allow variable time step and to correct an initialization error.
     Done by Michael Hines(michael.hines@yale.e) and Ruggero Scorcioni(rscorcio@gmu.edu) at EU Advance Course in Computational Neuroscience. Obidos, Portugal
-    
+
     kv.mod
-    
+
     Potassium channel, Hodgkin-Huxley style kinetics
     Kinetic rates based roughly on Sah et al. and Hamill et al. (1991)
-    
+
     Author: Zach Mainen, Salk Institute, 1995, zach@salk.edu
-    
+
     ENDCOMMENT
     """
 
     gbar = 5 * tadj  	# (pS/um2)	: 0.03 mho/cm2
     tha  = 25	# (mV)		: v 1/2 for inf
-    qa   = 9	# (mV)		: inf slope		
+    qa   = 9	# (mV)		: inf slope
     Ra   = 0.02	# (/ms)		: max act rate
-    Rb   = 0.002	# (/ms)		: max deact rate	
+    Rb   = 0.002	# (/ms)		: max deact rate
     vmin = -120	# (mV)
     vmax = 100	# (mV)
     v = np.linspace(vmin, vmax, 3000)
@@ -102,26 +103,26 @@ def make_km():
     COMMENT
     26 Ago 2002 Modification of original channel to allow variable time step and to correct an initialization error.
     Done by Michael Hines(michael.hines@yale.e) and Ruggero Scorcioni(rscorcio@gmu.edu) at EU Advance Course in Computational Neuroscience. Obidos, Portugal
-    
+
     km.mod
-    
+
     Potassium channel, Hodgkin-Huxley style kinetics
     Based on I-M (muscarinic K channel)
     Slow, noninactivating
-    
+
     Author: Zach Mainen, Salk Institute, 1995, zach@salk.edu
-    
+
     ENDCOMMENT
 
     """
     gbar = 10   	# (pS/um2) = S/m2	: 0.03 mho/cm2
     tha  = -30	# (mV)		: v 1/2 for inf
-    qa   = 9	# (mV)		: inf slope		
+    qa   = 9	# (mV)		: inf slope
     Ra   = 0.001	# (/ms)		: max act rate  (slow)
     Rb   = 0.001	# (/ms)		: max deact rate  (slow)
     vmin = -120	# (mV)
     vmax = 100	# (mV)
-    v = np.linspace(vmin, vmax, 3000)        
+    v = np.linspace(vmin, vmax, 3000)
     a = Ra * (v - tha) / (1 - np.exp(-(v - tha)/qa))
     b = -Rb * (v - tha) / (1 - np.exp((v - tha)/qa))
     ntau = 1 / tadj /(a + b)
@@ -146,21 +147,21 @@ def make_kca():
     Done by Michael Hines(michael.hines@yale.e) and Ruggero Scorcioni(rscorcio@gmu.edu) at EU Advance Course in Computational Neuroscience. Obidos, Portugal
 
     kca.mod
-    
+
     Calcium-dependent potassium channel
     Based on
     Pennefather (1990) -- sympathetic ganglion cells
     taken from
     Reuveni et al (1993) -- neocortical cells
-    
+
     Author: Zach Mainen, Salk Institute, 1995, zach@salk.edu
-    
+
     ENDCOMMENT
     """
     gbar = 10   	# (pS/um2)	: 0.03 mho/cm2
-    caix = 1	# 
-    Ra   = 0.01	# (/ms)		: max act rate  
-    Rb   = 0.02	# (/ms)		: max deact rate 
+    caix = 1	#
+    Ra   = 0.01	# (/ms)		: max act rate
+    Rb   = 0.02	# (/ms)		: max deact rate
     vmin = -120	# (mV)
     vmax = 100	# (mV)
     # In MOOSE we set up lookup tables beforehand
@@ -187,8 +188,8 @@ def make_kca():
                     # floating point though, but I am using it for
                     # conc, because only nOut src msg is available
     moose.connect(capool, 'nOut', channel, 'concen')
-    
 
 
-# 
+
+#
 # kchannel.py ends here

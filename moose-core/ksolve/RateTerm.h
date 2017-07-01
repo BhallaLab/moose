@@ -47,12 +47,12 @@ class RateTerm
 		 * Note that it does NOT find products for unidirectional
 		 * reactions, which is a bit of a problem.
 		 */
-		virtual unsigned int  getReactants( 
+		virtual unsigned int  getReactants(
 			vector< unsigned int >& molIndex ) const = 0;
 		static const double EPSILON;
 
 		/**
-		 * This is used to rescale the RateTerm kinetics when the 
+		 * This is used to rescale the RateTerm kinetics when the
 		 * compartment volume changes. This is needed because the kinetics
 		 * are in extensive units, that is, mol numbers, rather than in
 		 * intensive units like concentration. So when the volume changes
@@ -60,19 +60,19 @@ class RateTerm
 		 * reactant molecules are affected, and if so, rescales.
 		 * Ratio is newVol / oldVol
 		 */
-		virtual void rescaleVolume( short comptIndex, 
+		virtual void rescaleVolume( short comptIndex,
 			const vector< short >& compartmentLookup, double ratio ) = 0;
 
 		/**
 		 * Duplicates rate term and then applies volume scaling.
-		 * Arguments are volume of reference voxel, 
+		 * Arguments are volume of reference voxel,
 		 * product of vol/refVol for all substrates: applied to R1
 		 * product of vol/refVol for all products: applied to R2
 		 *
-		 * Note that unless the reaction is cross-compartment, the 
+		 * Note that unless the reaction is cross-compartment, the
 		 * vol/refVol will be one.
 		 */
-		virtual RateTerm* copyWithVolScaling( 
+		virtual RateTerm* copyWithVolScaling(
 				double vol, double sub, double prd ) const = 0;
 };
 
@@ -118,7 +118,7 @@ class MMEnzymeBase: public RateTerm
 			return kcat_;
 		}
 
-		void rescaleVolume( short comptIndex, 
+		void rescaleVolume( short comptIndex,
 			const vector< short >& compartmentLookup, double ratio )
 		{
 			Km_ *= ratio;
@@ -139,7 +139,7 @@ class MMEnzymeBase: public RateTerm
 class MMEnzyme1: public MMEnzymeBase
 {
 	public:
-		MMEnzyme1( double Km, double kcat, 
+		MMEnzyme1( double Km, double kcat,
 			unsigned int enz, unsigned int sub )
 			: MMEnzymeBase( Km, kcat, enz ), sub_( sub )
 		{
@@ -158,7 +158,7 @@ class MMEnzyme1: public MMEnzymeBase
 			return 2;
 		}
 
-		RateTerm* copyWithVolScaling( 
+		RateTerm* copyWithVolScaling(
 				double vol, double sub, double prd ) const
 		{
 			double ratio = vol * sub * NA;
@@ -172,7 +172,7 @@ class MMEnzyme1: public MMEnzymeBase
 class MMEnzyme: public MMEnzymeBase
 {
 	public:
-		MMEnzyme( double Km, double kcat, 
+		MMEnzyme( double Km, double kcat,
 			unsigned int enz, RateTerm* sub )
 			: MMEnzymeBase( Km, kcat, enz ), substrates_( sub )
 		{
@@ -236,7 +236,7 @@ class ExternReac: public RateTerm
 			return 0;
 		}
 
-		void rescaleVolume( short comptIndex, 
+		void rescaleVolume( short comptIndex,
 			const vector< short >& compartmentLookup, double ratio )
 		{
 			return; // Need to figure out what to do here.
@@ -290,13 +290,13 @@ class ZeroOrder: public RateTerm
 		double getR2() const {
 			return 0.0;
 		}
-		
+
 		unsigned int getReactants( vector< unsigned int >& molIndex ) const{
 			molIndex.resize( 0 );
 			return 0;
 		}
 
-		void rescaleVolume( short comptIndex, 
+		void rescaleVolume( short comptIndex,
 			const vector< short >& compartmentLookup, double ratio )
 		{
 			return; // Nothing needs to be scaled.
@@ -334,7 +334,7 @@ class Flux: public ZeroOrder
 			return 0;
 		}
 
-		void rescaleVolume( short comptIndex, 
+		void rescaleVolume( short comptIndex,
 			const vector< short >& compartmentLookup, double ratio )
 		{
 			return; // Nothing needs to be scaled.
@@ -368,7 +368,7 @@ class FirstOrder: public ZeroOrder
 			return 1;
 		}
 
-		void rescaleVolume( short comptIndex, 
+		void rescaleVolume( short comptIndex,
 			const vector< short >& compartmentLookup, double ratio )
 		{
 			return; // Nothing needs to be scaled.
@@ -404,10 +404,10 @@ class SecondOrder: public ZeroOrder
 			return 2;
 		}
 
-		void rescaleVolume( short comptIndex, 
+		void rescaleVolume( short comptIndex,
 			const vector< short >& compartmentLookup, double ratio )
 		{
-			if ( comptIndex == compartmentLookup[ y1_ ] || 
+			if ( comptIndex == compartmentLookup[ y1_ ] ||
 				comptIndex == compartmentLookup[ y2_ ] )
 			k_ /= ratio;
 		}
@@ -451,7 +451,7 @@ class StochSecondOrderSingleSubstrate: public ZeroOrder
 			return 2;
 		}
 
-		void rescaleVolume( short comptIndex, 
+		void rescaleVolume( short comptIndex,
 			const vector< short >& compartmentLookup, double ratio )
 		{
 			if ( comptIndex == compartmentLookup[ y_ ] )
@@ -491,7 +491,7 @@ class NOrder: public ZeroOrder
 			return v_.size();
 		}
 
-		void rescaleVolume( short comptIndex, 
+		void rescaleVolume( short comptIndex,
 			const vector< short >& compartmentLookup, double ratio )
 		{
 			for ( unsigned int i = 1; i < v_.size(); ++i ) {
@@ -516,7 +516,7 @@ class NOrder: public ZeroOrder
  * This is an unpleasant case, like the StochSecondOrderSingleSubstrate.
  * Here we deal with the possibility that one or more of the substrates
  * may be of order greater than one. If so, we need to diminish the N
- * of each substrate by one for each time the substrate is factored 
+ * of each substrate by one for each time the substrate is factored
  * into the rate.
  */
 class StochNOrder: public NOrder
@@ -535,14 +535,14 @@ class StochNOrder: public NOrder
 		}
 };
 
-extern class ZeroOrder* 
+extern class ZeroOrder*
 	makeHalfReaction( double k, vector< unsigned int > v );
 
 class BidirectionalReaction: public RateTerm
 {
 	public:
 		BidirectionalReaction(
-			ZeroOrder* forward, ZeroOrder* backward) 
+			ZeroOrder* forward, ZeroOrder* backward)
 			: forward_( forward ), backward_( backward )
 		{ // Here we allocate internal forward and backward terms
 		// with the correct number of args.
@@ -588,7 +588,7 @@ class BidirectionalReaction: public RateTerm
 			return ret;
 		}
 
-		void rescaleVolume( short comptIndex, 
+		void rescaleVolume( short comptIndex,
 			const vector< short >& compartmentLookup, double ratio )
 		{
 			forward_->rescaleVolume( comptIndex, compartmentLookup, ratio );
@@ -597,9 +597,9 @@ class BidirectionalReaction: public RateTerm
 		RateTerm* copyWithVolScaling(
 				double vol, double sub, double prd ) const
 		{
-			ZeroOrder* f = static_cast< ZeroOrder* >( 
+			ZeroOrder* f = static_cast< ZeroOrder* >(
 							forward_->copyWithVolScaling( vol, sub, 1 ) );
-			ZeroOrder* b = static_cast< ZeroOrder* >( 
+			ZeroOrder* b = static_cast< ZeroOrder* >(
 							backward_->copyWithVolScaling( vol, prd, 1 ) );
 			return new BidirectionalReaction( f, b );
 		}

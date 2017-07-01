@@ -10,10 +10,10 @@
 #include <math.h>
 #include "doubleEq.h"
 #include <iostream>
-#include "MatrixOps.h" 
+#include "MatrixOps.h"
 
-using std::cerr; 
-using std::endl; 
+using std::cerr;
+using std::endl;
 using std::cout;
 
 void matPrint( Matrix* A )
@@ -99,7 +99,7 @@ void matPermMul( Matrix* A, vector< unsigned int >* swaps )
 		j = (index / 10 ) % 10;
 
 		//Swapping the columns.
-		for( unsigned int l = 0; l < n; ++l ) 
+		for( unsigned int l = 0; l < n; ++l )
 		{
 			temp = (*A)[l][i];
 			(*A)[l][i] = (*A)[l][j];
@@ -108,7 +108,7 @@ void matPermMul( Matrix* A, vector< unsigned int >* swaps )
 	}
 }
 
-Matrix* matMatAdd( const Matrix* A, const Matrix* B, double alpha, double beta ) 
+Matrix* matMatAdd( const Matrix* A, const Matrix* B, double alpha, double beta )
 {
 	unsigned int n = A->size();
 	Matrix *C = matAlloc( n );
@@ -122,8 +122,8 @@ Matrix* matMatAdd( const Matrix* A, const Matrix* B, double alpha, double beta )
 	return C;
 }
 
-void matMatAdd( Matrix* A, Matrix* B, double alpha, double beta, 
-								unsigned int resIndex ) 
+void matMatAdd( Matrix* A, Matrix* B, double alpha, double beta,
+								unsigned int resIndex )
 {
 	Matrix *C;
 	unsigned int n = A->size();
@@ -165,7 +165,7 @@ void matEyeAdd( Matrix* A, double k, unsigned int dummy )
 {
 	unsigned int n = A->size();
 	dummy = 0;
-	
+
 	for( unsigned int i = 0; i < n; ++i )
 		(*A)[i][i] += k;
 }
@@ -244,7 +244,7 @@ Vector* matVecMul( Matrix* A, Vector* v )
 	return w;
 }
 
-Vector* vecVecScalAdd( const Vector* v1, const Vector* v2, 
+Vector* vecVecScalAdd( const Vector* v1, const Vector* v2,
 											 double alpha, double beta )
 {
 	unsigned int n = v1->size();
@@ -256,7 +256,7 @@ Vector* vecVecScalAdd( const Vector* v1, const Vector* v2,
 	return w;
 }
 
-void vecVecScalAdd( Vector* v1, Vector* v2, double alpha, double beta, 
+void vecVecScalAdd( Vector* v1, Vector* v2, double alpha, double beta,
 	 									unsigned int dummy )
 {
 	unsigned int n = v1->size();
@@ -274,7 +274,7 @@ double matTrace( Matrix* A )
 	for ( unsigned int i = 0; i < n; ++i )
 		trace += (*A)[i][i];
 
-	return trace;	
+	return trace;
 }
 
 double matColNorm( Matrix* A )
@@ -286,8 +286,8 @@ double matColNorm( Matrix* A )
 	{
 		colSum = 0;
 		for( unsigned int j = 0; j < n; ++j )
-			colSum += fabs( (*A)[j][i] );	
-		
+			colSum += fabs( (*A)[j][i] );
+
 		if ( colSum > norm )
 			norm = colSum;
 	}
@@ -313,8 +313,8 @@ double doPartialPivot( Matrix* A, unsigned int row, unsigned int col,
 											 vector< unsigned int >* swaps )
 {
 	unsigned int n = A->size(), pivotRow = row;
-	double pivot = (*A)[row][col];		
-	
+	double pivot = (*A)[row][col];
+
 	for( unsigned i = row; i < n; ++i )
 	{
 		if( fabs( (*A)[i][col] ) > pivot )
@@ -327,17 +327,17 @@ double doPartialPivot( Matrix* A, unsigned int row, unsigned int col,
 	//If pivot is non-zero, do the row swap.
 	if ( !doubleEq(pivot,0.0) && pivotRow != row )
 	{
-		Matrix::iterator pivotRowItr = (A->begin() + pivotRow); 
-		Matrix::iterator currRowItr = (A->begin() + row); 
+		Matrix::iterator pivotRowItr = (A->begin() + pivotRow);
+		Matrix::iterator currRowItr = (A->begin() + row);
 		swap( *pivotRowItr, *currRowItr );
 
 		//The row numbers interchanged are stored as a 2-digit number and pushed
-		//into this vector. This information is later used in creating the 
+		//into this vector. This information is later used in creating the
 		//permutation matrices.
-		swaps->push_back( 10 * pivotRow + row ); 
+		swaps->push_back( 10 * pivotRow + row );
 		return pivot;
 	}
-	else if ( !doubleEq(pivot, 0.0) && pivotRow == row )	
+	else if ( !doubleEq(pivot, 0.0) && pivotRow == row )
 		return (*A)[row][col];			//Choice of pivot is unchanged.
 	else
 		return 0;										//Matrix is singular!
@@ -345,17 +345,17 @@ double doPartialPivot( Matrix* A, unsigned int row, unsigned int col,
 
 void matInv( Matrix* A, vector< unsigned int >* swaps, Matrix* invA )
 {
-	Matrix *L, *invL;		
+	Matrix *L, *invL;
 	unsigned int n = A->size(), i, j, diagPos;
 	double pivot, rowMultiplier1, rowMultiplier2;
 
-	L = matAlloc( n );   
+	L = matAlloc( n );
 	invL = matAlloc( n );
 	*invA = *A;
 
 	//The upper triangular portion is stored and inverted in invA
 
-	//Creating a copy of the input matrix, as well as initializing the 
+	//Creating a copy of the input matrix, as well as initializing the
 	//lower triangular matrix L.
 	for (i = 0; i < n; ++i)
 		(*L)[i][i] = 1;
@@ -377,13 +377,13 @@ void matInv( Matrix* A, vector< unsigned int >* swaps, Matrix* invA )
 
 		(*invA)[i][j] = 0;
 		for( unsigned int k = j + 1; k < n; ++k )
-			(*invA)[i][k] = ( (*invA)[i][k] * rowMultiplier1 - 
+			(*invA)[i][k] = ( (*invA)[i][k] * rowMultiplier1 -
 									   (*invA)[diagPos][k] *rowMultiplier2 ) / rowMultiplier1;
 
 
 		(*L)[i][j] = rowMultiplier2 / rowMultiplier1;
 
-		if ( i != n - 1 ) 
+		if ( i != n - 1 )
 			++i;
 		else
 		{
@@ -395,23 +395,23 @@ void matInv( Matrix* A, vector< unsigned int >* swaps, Matrix* invA )
 			{
 				cerr << "Warning : Singularity detected. Proceeding with computation"
 								"anyway.\n";
-				(*invA)[diagPos][diagPos] = EPSILON; 
+				(*invA)[diagPos][diagPos] = EPSILON;
 			}
 
-			i = diagPos + 1;	
+			i = diagPos + 1;
 		}
 	}
 	//End of computation of L and U (which is stored in invA).
 	////////////////////////////
-	
+
 	////////////////////////////
-	//Obtaining the inverse of invA and L, which is obtained by solving the 
+	//Obtaining the inverse of invA and L, which is obtained by solving the
 	//simple systems Ux = I and Lx= I.
 	///////////////////////////
 
 	double sum = 0;
 
-	//We serially solve for the equations Ux = e_n, Ux=e_{n-1} ..., Ux = e1. 
+	//We serially solve for the equations Ux = e_n, Ux=e_{n-1} ..., Ux = e1.
 	//where, e_k is the k'th elementary basis vector.
 	for( int k = n - 1; k >= 0; --k )
 	{
@@ -426,7 +426,7 @@ void matInv( Matrix* A, vector< unsigned int >* swaps, Matrix* invA )
 			}
 
 			if ( l == k )
-				(*invA)[l][k] = (1 - sum)/(*invA)[l][l]; 
+				(*invA)[l][k] = (1 - sum)/(*invA)[l][l];
 			else
 				(*invA)[l][k] = -sum/(*invA)[l][l];
 		}
@@ -443,7 +443,7 @@ void matInv( Matrix* A, vector< unsigned int >* swaps, Matrix* invA )
 
 	for( unsigned int k = 0; k <= n - 1; ++k )
 	{
-		for( unsigned int l = k + 2; l <= n - 1; ++l )  
+		for( unsigned int l = k + 2; l <= n - 1; ++l )
 		{
 			invTemp = 0;
 			for ( unsigned int m = k + 1; m <= n - 1; ++m )
@@ -456,15 +456,15 @@ void matInv( Matrix* A, vector< unsigned int >* swaps, Matrix* invA )
 	//End of computation of invL and invU. Note that they have been computed in
 	//place, which means the original copies of L and U are now gone.
 	/////////////////////////////
-	
+
 	/////////////////////////////
-	//Constructing the inverse of the permutation matrix P. 
+	//Constructing the inverse of the permutation matrix P.
 	//P is calculated only if there was any pivoting carried out.
-	//At this stage, L^(-1) has already been calculated. 
-	//P^(-1) = P^T. 
-	//Since we have computed PA = LU, 
-	//the final inverse is given by U^(-1)*L^(-1)*P^(-1).	
-	//If P was not calculated i.e. there were no exchanges, then the 
+	//At this stage, L^(-1) has already been calculated.
+	//P^(-1) = P^T.
+	//Since we have computed PA = LU,
+	//the final inverse is given by U^(-1)*L^(-1)*P^(-1).
+	//If P was not calculated i.e. there were no exchanges, then the
 	//inverse is just U^(-1) * L^(-1).
 	////////////////////////
 	triMatMul( invA, invL );
@@ -493,4 +493,4 @@ Vector* vecAlloc( unsigned int n )
 	vec->resize( n );
 
 	return vec;
-}	
+}

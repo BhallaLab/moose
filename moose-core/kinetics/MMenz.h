@@ -17,7 +17,7 @@
  */
 class MMenz: public EnzBase
 {
-	public: 
+	public:
 		MMenz();
 		virtual ~MMenz();
 

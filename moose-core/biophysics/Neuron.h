@@ -44,11 +44,11 @@ class Neuron
 		vector< ObjId > getCompartments() const;
 		vector< ObjId > getExprElist( const Eref& e, string line ) const;
 		vector< double > getExprVal( const Eref& e, string line ) const;
-		vector< ObjId > getSpinesFromExpression( 
+		vector< ObjId > getSpinesFromExpression(
 							const Eref& e, string line ) const;
-		vector< ObjId > getSpinesOnCompartment( 
+		vector< ObjId > getSpinesOnCompartment(
 				const Eref& e, ObjId compt ) const;
-		ObjId getParentCompartmentOfSpine( const Eref& e, ObjId compt ) 
+		ObjId getParentCompartmentOfSpine( const Eref& e, ObjId compt )
 				const;
 		void setChannelDistribution( const Eref& e, vector< string > v );
 		vector< string > getChannelDistribution( const Eref& e ) const;
@@ -67,10 +67,10 @@ class Neuron
 		void updateSegmentLengths();
 		void installSpines( const vector< ObjId >& elist,
 			const vector< double >& val, const vector< string >& line );
-		void makeSpacingDistrib( 
+		void makeSpacingDistrib(
 			const vector< ObjId >& elist, const vector< double >& val,
-			vector< unsigned int >& seglistIndex, 
-			vector< unsigned int >& elistIndex, 
+			vector< unsigned int >& seglistIndex,
+			vector< unsigned int >& elistIndex,
 			vector< double >& pos,
 			const vector< string >& line ) const;
 		void parseMechSpec( const Eref& e );
@@ -93,11 +93,11 @@ class Neuron
 		unsigned int getNumSpines() const;
 
 		const vector< Id >& spineIds( unsigned int index ) const;
-		void scaleBufAndRates( unsigned int spineNum, 
+		void scaleBufAndRates( unsigned int spineNum,
 				double lenScale, double diaScale ) const;
-		void scaleShaftDiffusion( unsigned int spineNum, 
+		void scaleShaftDiffusion( unsigned int spineNum,
 						double len, double dia) const;
-		void scaleHeadDiffusion( unsigned int spineNum, 
+		void scaleHeadDiffusion( unsigned int spineNum,
 						double len, double dia) const;
 
 		/**
@@ -122,30 +122,30 @@ class Neuron
 		vector< string > spineDistribution_;
 
 		/// Map to look up Seg index from Id of associated compt.
-		map< Id, unsigned int > segIndex_; 
+		map< Id, unsigned int > segIndex_;
 		/// Look up seg index of parent compartment, from index of spine.
-		vector< unsigned int > spineParentSegIndex_; 
+		vector< unsigned int > spineParentSegIndex_;
 		vector< vector< Id > > spines_; /// Id of each compt in each spine.
 
 		/// Ids of all spines on each compt, looked up by segIndex of compt.
 		vector< vector< Id > > allSpinesPerCompt_;
 
 		/// Id of stoich associated with each spine. Typically all the same.
-		vector< Id > spineStoich_; 
+		vector< Id > spineStoich_;
 		/// Id of stoich associated with each PSD. Typically all the same.
-		vector< Id > psdStoich_; 
+		vector< Id > psdStoich_;
 		/// looks up spine/psd mesh index from FieldIndex of selected spine.
 		vector< unsigned int > spineToMeshOrdering_;
 
 		Id headDsolve_; /// Id of the Dsolve for the head compt.
 		Id psdDsolve_; /// Id of the Dsolve for the PSD compt.
-		// looks up spine/psd Dsolve::DiffJunction::VoxelJunction index 
+		// looks up spine/psd Dsolve::DiffJunction::VoxelJunction index
 		//from FieldIndex of selected spine.
 		// Turns out this is the same as spineToMeshOrdering.
 		//vector< unsigned int > spineToVoxelJunctionOrdering_;
 
 		/// Holder for spine operations. Contains pointer to current Neuron.
-		Spine spineEntry_; 
+		Spine spineEntry_;
 
 		vector< Id > segId_; /// Id of compartment in each Seg entry, below.
 		vector< SwcSegment > segs_;
@@ -155,4 +155,4 @@ class Neuron
 
 //
 
-#endif // 
+#endif //

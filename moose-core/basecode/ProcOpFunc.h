@@ -67,7 +67,7 @@ template< class T > class ProcOpFunc: public ProcOpFuncBase
 		}
 
 	private:
-		void ( T::*func_ )( const Eref& e, ProcPtr ); 
+		void ( T::*func_ )( const Eref& e, ProcPtr );
 };
 */
 template< class T > class ProcOpFunc: public EpFunc1< T, ProcPtr >

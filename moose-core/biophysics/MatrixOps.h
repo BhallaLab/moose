@@ -13,7 +13,7 @@
 //Few functions for performing simple matrix operations.
 //Note that all matrices here are square, which is the type encountered in
 //solving the differential equations associated with first-order kinetics of
-//the Markov channel model. 
+//the Markov channel model.
 //
 //Author : Vishaka Datta S, 2011, NCBS
 ////////////////////////////
@@ -22,7 +22,7 @@ using std::vector;
 typedef vector< vector< double > > Matrix;
 typedef vector< double > Vector;
 
-//Idea taken from the implementation of the DGETRF method in LAPACK. When 
+//Idea taken from the implementation of the DGETRF method in LAPACK. When
 //the pivot is zero, we divide by a small number instead of simply throwing up
 //an error and not returning a result.
 #define EPSILON 1e-15
@@ -37,9 +37,9 @@ void matPrint( Matrix* );
 
 void vecPrint( Vector* );
 
-//Computes product of two square matrices.  
+//Computes product of two square matrices.
 //Version 1 : Returns the result in a new matrix.
-Matrix* matMatMul( Matrix*, Matrix* ); 
+Matrix* matMatMul( Matrix*, Matrix* );
 
 //Version 2 : Returns the result in either of the matrices passed in.
 //The third parameter determines which matrix to destroy in order to return
@@ -102,13 +102,13 @@ double matTrace( Matrix* );
 double matColNorm( Matrix* );
 
 //Plain old matrix transpose i.e. done out-of-place.
-Matrix* matTrans( Matrix* ); 
+Matrix* matTrans( Matrix* );
 
 //Matrix inverse implemented using LU-decomposition (Doolittle algorithm)
-//Returns NULL if matrix is singular.  
+//Returns NULL if matrix is singular.
 void matInv( Matrix*, vector< unsigned int >*, Matrix* );
 
-//Carry out partial pivoting. 
+//Carry out partial pivoting.
 double doPartialPivot( Matrix*, unsigned int, unsigned int, vector< unsigned int >*);
 
 /////////

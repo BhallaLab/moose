@@ -55,8 +55,8 @@ class dense_output_runge_kutta;
  * The dense-output functionality allows to interpolate the solution between
  * subsequent integration points using intermediate results obtained during the
  * computation. This version works based on a normal stepper without step-size
- * control. 
- * 
+ * control.
+ *
  *
  * \tparam Stepper The stepper type of the underlying algorithm.
  */
@@ -90,13 +90,13 @@ public:
      */
     dense_output_runge_kutta( const stepper_type &stepper = stepper_type() )
     : m_stepper( stepper ) , m_resizer() ,
-      m_x1() , m_x2() , m_current_state_x1( true ) , 
+      m_x1() , m_x2() , m_current_state_x1( true ) ,
       m_t() , m_t_old() , m_dt()
-    { } 
+    { }
 
 
     /**
-     * \brief Initializes the stepper. Has to be called before do_step can be 
+     * \brief Initializes the stepper. Has to be called before do_step can be
      * used to set the initial conditions and the step size.
      * \param x0 The initial state of the ODE which should be solved.
      * \param t0 The initial time, at which the step should be performed.
@@ -132,7 +132,7 @@ public:
     /*
      * The next two overloads are needed to solve the forwarding problem
      */
-    
+
     /**
      * \brief Calculates the solution at an intermediate point.
      * \param t The time at which the solution should be calculated, has to be
@@ -224,22 +224,22 @@ private:
     {
         return m_current_state_x1 ? m_x1.m_v : m_x2.m_v ;
     }
-    
+
     const state_type& get_current_state( void ) const
     {
         return m_current_state_x1 ? m_x1.m_v : m_x2.m_v ;
     }
-    
+
     state_type& get_old_state( void )
     {
         return m_current_state_x1 ? m_x2.m_v : m_x1.m_v ;
     }
-    
+
     const state_type& get_old_state( void ) const
     {
         return m_current_state_x1 ? m_x2.m_v : m_x1.m_v ;
     }
-    
+
     void toggle_current_state( void )
     {
         m_current_state_x1 = ! m_current_state_x1;
@@ -272,8 +272,8 @@ private:
  * \brief The class representing dense-output Runge-Kutta steppers with FSAL property.
  *
  * The interface is the same as for dense_output_runge_kutta< Stepper , stepper_tag >.
- * This class provides dense output functionality based on methods with step size controlled 
- * 
+ * This class provides dense output functionality based on methods with step size controlled
+ *
  *
  * \tparam Stepper The stepper type of the underlying algorithm.
  */
@@ -414,17 +414,17 @@ private:
     {
         return m_current_state_x1 ? m_x1.m_v : m_x2.m_v ;
     }
-    
+
     const state_type& get_current_state( void ) const
     {
         return m_current_state_x1 ? m_x1.m_v : m_x2.m_v ;
     }
-    
+
     state_type& get_old_state( void )
     {
         return m_current_state_x1 ? m_x2.m_v : m_x1.m_v ;
     }
-    
+
     const state_type& get_old_state( void ) const
     {
         return m_current_state_x1 ? m_x2.m_v : m_x1.m_v ;
@@ -434,23 +434,23 @@ private:
     {
         return m_current_state_x1 ? m_dxdt1.m_v : m_dxdt2.m_v ;
     }
-    
+
     const deriv_type& get_current_deriv( void ) const
     {
         return m_current_state_x1 ? m_dxdt1.m_v : m_dxdt2.m_v ;
     }
-    
+
     deriv_type& get_old_deriv( void )
     {
         return m_current_state_x1 ? m_dxdt2.m_v : m_dxdt1.m_v ;
     }
-    
+
     const deriv_type& get_old_deriv( void ) const
     {
         return m_current_state_x1 ? m_dxdt2.m_v : m_dxdt1.m_v ;
     }
 
-    
+
     void toggle_current_state( void )
     {
         m_current_state_x1 = ! m_current_state_x1;

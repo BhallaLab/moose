@@ -12,7 +12,7 @@
 
 class ReacBase
 {
-	public: 
+	public:
 		ReacBase();
 		virtual ~ReacBase();
 
@@ -58,7 +58,7 @@ class ReacBase
 		/**
 		 * Zombification functions.
 		 */
-		static void zombify( Element* original, const Cinfo* zClass, 
+		static void zombify( Element* original, const Cinfo* zClass,
 						Id solver );
 		/// Assign solver info
 		virtual void setSolver( Id solver, Id orig );

@@ -57,11 +57,11 @@ const Cinfo* ZombieMMenz::initCinfo()
 
 static const Cinfo* zombieMMenzCinfo = ZombieMMenz::initCinfo();
 
-static const SrcFinfo2< double, double >* subOut = 
+static const SrcFinfo2< double, double >* subOut =
     dynamic_cast< const SrcFinfo2< double, double >* >(
 	zombieMMenzCinfo->findFinfo( "subOut" ) );
 
-static const SrcFinfo2< double, double >* prdOut = 
+static const SrcFinfo2< double, double >* prdOut =
 	dynamic_cast< const SrcFinfo2< double, double >* >(
 	zombieMMenzCinfo->findFinfo( "prdOut" ) );
 

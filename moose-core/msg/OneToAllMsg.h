@@ -11,7 +11,7 @@
 #define _ONE_TO_ALL_MSG_H
 
 /**
- * Manages projection from a single entry in e1 to all 
+ * Manages projection from a single entry in e1 to all
  * array entries in e2.
  */
 

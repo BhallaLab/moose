@@ -12,22 +12,22 @@
  *
  *         Author:  Dilawar Singh (), dilawars@ncbs.res.in
  *   Organization:  NCBS Bangalore
- *  
+ *
  *  Copyright (C) 2014, Dilawar Singh, NCBS Bangalore
- * 
+ *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
  *  (at your option) any later version.
- * 
+ *
  *  This program is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  *  GNU General Public License for more details.
- * 
+ *
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  * ==============================================================================
  */
 
@@ -84,7 +84,7 @@ class SimpleLogger {
             logSS << "\t<start_time>" << startTime << "</start_time>" << endl;
             logSS << "\t<messages>" << endl;
 
-#ifdef OS_WINDOWS 
+#ifdef OS_WINDOWS
             outputFile = homeDir + "\\.moose\\log";
 #else
             outputFile = homeDir + "/.moose/log";
@@ -101,7 +101,7 @@ class SimpleLogger {
          *
          * @return  A string represeting current timestamp.
          */
-        const std::string timeStamp() 
+        const std::string timeStamp()
         {
             time_t     now = time(0);
             struct tm  tstruct;
@@ -133,7 +133,7 @@ class SimpleLogger {
             stringstream ss;
 
             ss << title;
-            for(unsigned i = 0; i < width - title.size(); ++i) 
+            for(unsigned i = 0; i < width - title.size(); ++i)
                 ss << "~";
             ss << endl;
 
@@ -141,7 +141,7 @@ class SimpleLogger {
             for( it = m.begin(); it != m.end(); it++)
                 ss << setw(width/2) << it->first << setw(width/2) << it->second << endl;
 
-            for(unsigned i = 0; i < width; ++i) 
+            for(unsigned i = 0; i < width; ++i)
                 ss << "=";
 
             ss << endl;
@@ -210,9 +210,9 @@ class SimpleLogger {
             typename map<A, B>::const_iterator it;
             for(it = m.begin(); it != m.end(); it++)
             {
-                ss << prefix << prefix 
-                    << "<" << it->first << ">" 
-                    << it->second 
+                ss << prefix << prefix
+                    << "<" << it->first << ">"
+                    << it->second
                     << "</" << it->first << ">" << endl;
             }
 
@@ -246,7 +246,7 @@ class SimpleLogger {
             logF.close();
             return logSS.str();
         }
-        
+
         /**
          * @brief Checks if given directory path exists on system.
          *
@@ -304,7 +304,7 @@ class SimpleLogger {
             {
                 if('`' == msg[i])
                 {
-                    if(!set and reset) 
+                    if(!set and reset)
                     {
                         set = true;
                         reset = false;
@@ -339,18 +339,18 @@ class SimpleLogger {
          * @param msg
          * @param level
          *
-         * @return 
+         * @return
          */
         std::string log(string type, const string& msg)
         {
-#ifdef ENABLE_LOGGER 
+#ifdef ENABLE_LOGGER
             stringstream ss;
             string time = timeStamp();
             fstream logF;
             logF.open(outputFile.c_str(), std::fstream::out | std::fstream::app);
             ss << "<" << type << " time=\"" << time << "\">";
             ss << msg << "</" << type << ">" << endl;
-            logF << ss.str(); 
+            logF << ss.str();
             logF.close();
             string newmsg = ss.str();
             return newmsg;

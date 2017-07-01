@@ -34,8 +34,8 @@ int main(int argc, char **argv)
   double tot = 0.0;
   double tc = totCalls;
   double ne = numEntries;
-  double expectedTot = 
-		tc * ( ( ne * (ne - 1.0) )/2.0 ) + 
+  double expectedTot =
+		tc * ( ( ne * (ne - 1.0) )/2.0 ) +
 		ne * ( tc * (tc - 1.0) )/2.0;
   int myrank;
   int numNodes;
@@ -82,7 +82,7 @@ int main(int argc, char **argv)
 		tot += doWork( work );
 	} else { // Ship it out to work; and handle shipments that come in.
 			 /*
-    	MPI_Send(work,             // message buffer 
+    	MPI_Send(work,             // message buffer
              numEntries,                 // one data item
              MPI_DOUBLE,           // data item is an integer
              targetNode, 		// Where to send to
@@ -90,7 +90,7 @@ int main(int argc, char **argv)
              MPI_COMM_WORLD   // default communicator
 		);
 		*/
-    	MPI_Isend(work,             // message buffer 
+    	MPI_Isend(work,             // message buffer
              numEntries,                 // one data item
              MPI_DOUBLE,           // data item is an integer
              targetNode, 		// Where to send to
@@ -102,7 +102,7 @@ int main(int argc, char **argv)
 	if ( targetNode == numNodes - 1 ) {
 		int numDone = 1;
 		while ( numDone < numNodes ) // Ensure we clear all once a cycle
-			numDone += clearPending( numNodes, myrank, recvReq, tot ); 
+			numDone += clearPending( numNodes, myrank, recvReq, tot );
 	}
   }
   // One last send with the consolidated result. Irecvs should have
@@ -111,7 +111,7 @@ int main(int argc, char **argv)
 	work[0] = tot;
   for ( int i = 0; i < numNodes; ++i ) {
 		 if ( i == myrank ) continue;
-    	MPI_Send(&work[0],             // message buffer 
+    	MPI_Send(&work[0],             // message buffer
              numEntries,                 // one data item
              MPI_DOUBLE,           // data item is an integer
              i, 		// Where to send to
@@ -122,10 +122,10 @@ int main(int argc, char **argv)
 
 	int numDone = 1;
 	while ( numDone < numNodes ) // Ensure we clear all once a cycle
-			numDone += clearPending( numNodes, myrank, recvReq, tot ); 
+			numDone += clearPending( numNodes, myrank, recvReq, tot );
 
-  cout << myrank << ": Tot = " << tot << 
-		  ", expected = " << expectedTot << 
+  cout << myrank << ": Tot = " << tot <<
+		  ", expected = " << expectedTot <<
 		  ", subtot = " << work[0] << endl;
 
   /* Shut down MPI */
@@ -147,7 +147,7 @@ int clearPending( int numNodes, int myrank, MPI_Request *recvReq, double& tot )
 		ds.MPI_SOURCE = ds.MPI_TAG = ds.MPI_ERROR = ds._count = ds._cancelled = 0;
 	}
 
-	int numDone = MPI_Testsome( numNodes - 1, recvReq, &done, 
+	int numDone = MPI_Testsome( numNodes - 1, recvReq, &done,
 					doneIndices, doneStatus );
 	// cout << "numDone = " << numDone << ", " << done << ", numNodes = " << numNodes << ", myrank = " << myrank << endl << flush;
 	if ( done == MPI_UNDEFINED )
@@ -168,7 +168,7 @@ int clearPending( int numNodes, int myrank, MPI_Request *recvReq, double& tot )
              MPI_COMM_WORLD,    /* default communicator */
              &recvReq[doneIndices[i]]);  /* info about the received message */
 	}
-	return done; 
+	return done;
 }
 
 

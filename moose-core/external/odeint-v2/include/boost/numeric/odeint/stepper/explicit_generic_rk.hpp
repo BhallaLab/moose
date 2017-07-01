@@ -122,7 +122,7 @@ public:
 
     #ifndef DOXYGEN_SKIP
     typedef explicit_generic_rk< StageCount , Order , State , Value , Deriv ,Time , Algebra , Operations , Resizer > stepper_type;
-    #endif 
+    #endif
 
     typedef detail::generic_rk_algorithm< StageCount , Value , Algebra , Operations > rk_algorithm_type;
 
@@ -195,7 +195,7 @@ private:
  * This class implements the explicit Runge-Kutta algorithms without error estimation in a generic way.
  * The Butcher tableau is passed to the stepper which constructs the stepper scheme with the help of a
  * template-metaprogramming algorithm. ToDo : Add example!
- * 
+ *
  * This class derives explicit_stepper_base which provides the stepper interface.
  *
  * \tparam StageCount The number of stages of the Runge-Kutta algorithm.
@@ -216,12 +216,12 @@ private:
      * \param c Parameters to calculate the time points in the Butcher tableau.
      * \param algebra A copy of algebra is made and stored inside explicit_stepper_base.
      */
-    
+
     /**
      * \fn explicit_generic_rk::do_step_impl( System system , const StateIn &in , const DerivIn &dxdt , time_type t , StateOut &out , time_type dt )
      * \brief This method performs one step. The derivative `dxdt` of `in` at the time `t` is passed to the method.
      * The result is updated out of place, hence the input is in `in` and the output in `out`.
-     * Access to this step functionality is provided by explicit_stepper_base and 
+     * Access to this step functionality is provided by explicit_stepper_base and
      * `do_step_impl` should not be called directly.
      *
      * \param system The system function to solve, hence the r.h.s. of the ODE. It must fulfill the

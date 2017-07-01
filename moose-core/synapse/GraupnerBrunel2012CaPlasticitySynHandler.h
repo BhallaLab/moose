@@ -72,12 +72,12 @@ struct weightFactors {
 
 /**
  * This handles simple synapses without plasticity. It uses a priority
- * queue to manage them. This gets inefficient for large numbers of 
+ * queue to manage them. This gets inefficient for large numbers of
  * synapses but is pretty robust.
  */
 class GraupnerBrunel2012CaPlasticitySynHandler: public SynHandlerBase
 {
-	public: 
+	public:
 		GraupnerBrunel2012CaPlasticitySynHandler();
 		~GraupnerBrunel2012CaPlasticitySynHandler();
 		GraupnerBrunel2012CaPlasticitySynHandler& operator \

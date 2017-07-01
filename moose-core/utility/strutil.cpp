@@ -1,6 +1,6 @@
 /*******************************************************************
  * File:            StringUtil.cpp
- * Description:      
+ * Description:
  * Author:          Subhasis Ray
  * E-mail:          ray.subhasis@gmail.com
  * Created:         2007-09-25 12:12:10
@@ -16,7 +16,7 @@ namespace moose {
 
 // Adapted from code available on oopweb.com
 void tokenize(
-	const string& str,	
+	const string& str,
 	const string& delimiters,
         vector< string >& tokens )
 {
@@ -28,7 +28,7 @@ void tokenize(
 	{
 		// Found a token, add it to the vector.
 		tokens.push_back( str.substr( begin, end - begin ) );
-		
+
 		// Update boundaries
 		begin = str.find_first_not_of( delimiters, end );
 		end = str.find_first_of( delimiters, begin );
@@ -53,9 +53,9 @@ std::string trim(const std::string myString, const string& delimiters)
 {
     if (myString.length() == 0 )
     {
-        return myString;        
+        return myString;
     }
-    
+
     string::size_type  end = myString.find_last_not_of(delimiters);
     string::size_type begin = myString.find_first_not_of(delimiters);
 
@@ -63,8 +63,8 @@ std::string trim(const std::string myString, const string& delimiters)
     {
         return std::string(myString, begin, end-begin+1);
     }
-    
-    return "";    
+
+    return "";
 }
 
 std::string fix(const std::string userPath, const string& delimiters)
@@ -93,7 +93,7 @@ std::string fix(const std::string userPath, const string& delimiters)
 int testTrim()
 {
 
-    std::string testStrings [] = 
+    std::string testStrings [] =
         {
             " space at beginning",
             "space at end ",
@@ -108,8 +108,8 @@ int testTrim()
             "space and tab at end \t",
             "   \rtab and return at both sides \r"
         };
-    
-    std::string results[] = 
+
+    std::string results[] =
         {
             "space at beginning",
             "space at end",
@@ -124,17 +124,17 @@ int testTrim()
             "space and tab at end",
             "tab and return at both sides"
         };
-    
+
     bool success = true;
-    
+
     for (unsigned int i = 0; i < sizeof(testStrings)/sizeof(*testStrings); ++i )
     {
         std::string trimmed = trim(testStrings[i]);
         success = (results[i].compare(trimmed)==0);
-        
+
         cout << "'" << trimmed << "'" << (success ?" SUCCESS":"FAILED") << endl;
     }
-    return success?1:0;    
+    return success?1:0;
 }
 
 
@@ -155,7 +155,7 @@ int strncasecmp( const string& a, const string& b, size_t n)
 
     if( b.size() < n )
         return a.size() - b.size();
-    
+
     return 0;
 }
 

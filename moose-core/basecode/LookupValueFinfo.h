@@ -39,7 +39,7 @@ template < class T, class L, class F > class LookupValueFinfo: public LookupValu
 			delete get_;
 		}
 
-		LookupValueFinfo( const string& name, const string& doc, 
+		LookupValueFinfo( const string& name, const string& doc,
 			void ( T::*setFunc )( L, F ),
 			F ( T::*getFunc )( L ) const )
 			: LookupValueFinfoBase( name, doc )
@@ -66,19 +66,19 @@ template < class T, class L, class F > class LookupValueFinfo: public LookupValu
 			c->registerFinfo( get_ );
 		}
 
-		bool strSet( const Eref& tgt, const string& field, 
+		bool strSet( const Eref& tgt, const string& field,
 			const string& arg ) const {
 			string fieldPart = field.substr( 0, field.find( "[" ) );
 			string indexPart = field.substr( field.find( "[" ) + 1, field.find( "]" ) );
-			return LookupField< L, F >::innerStrSet( 
+			return LookupField< L, F >::innerStrSet(
 							tgt.objId(), fieldPart, indexPart, arg );
 		}
 
-		bool strGet( const Eref& tgt, const string& field, 
+		bool strGet( const Eref& tgt, const string& field,
 			string& returnValue ) const {
 			string fieldPart = field.substr( 0, field.find( "[" ) );
 			string indexPart = field.substr( field.find( "[" ) + 1, field.find( "]" ) );
-			return LookupField< L, F >::innerStrGet( tgt.objId(), 
+			return LookupField< L, F >::innerStrGet( tgt.objId(),
 							fieldPart, indexPart, returnValue );
 		}
 
@@ -98,7 +98,7 @@ template < class T, class L, class F > class ReadOnlyLookupValueFinfo: public Lo
 			delete get_;
 		}
 
-		ReadOnlyLookupValueFinfo( const string& name, const string& doc, 
+		ReadOnlyLookupValueFinfo( const string& name, const string& doc,
 			F ( T::*getFunc )( L ) const )
 			: LookupValueFinfoBase( name, doc )
 		{
@@ -116,16 +116,16 @@ template < class T, class L, class F > class ReadOnlyLookupValueFinfo: public Lo
 			c->registerFinfo( get_ );
 		}
 
-		bool strSet( const Eref& tgt, const string& field, 
+		bool strSet( const Eref& tgt, const string& field,
 			const string& arg ) const {
 			return 0;
 		}
 
-		bool strGet( const Eref& tgt, const string& field, 
+		bool strGet( const Eref& tgt, const string& field,
 			string& returnValue ) const {
 			string fieldPart = field.substr( 0, field.find( "[" ) );
 			string indexPart = field.substr( field.find( "[" ) + 1, field.find( "]" ) );
-			return LookupField< L, F >::innerStrGet( tgt.objId(), 
+			return LookupField< L, F >::innerStrGet( tgt.objId(),
 						fieldPart, indexPart, returnValue );
 		}
 

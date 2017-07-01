@@ -15,7 +15,7 @@
 const Cinfo* STDPSynapse::initCinfo()
 {
 
-	static string doc[] = 
+	static string doc[] =
 	{
 		"Name", "STDPSynapse",
 		"Author", "Aditya Gilra",
@@ -23,7 +23,7 @@ const Cinfo* STDPSynapse::initCinfo()
 	};
 
     static ValueFinfo< STDPSynapse, double > aPlus(
-        "aPlus", 
+        "aPlus",
         "aPlus is a pre-synaptic variable that keeps a decaying 'history' of previous pre-spike(s)"
         "and is used to update the synaptic weight when a post-synaptic spike appears."
         "It determines the t_pre < t_post (pre before post) part of the STDP window.",

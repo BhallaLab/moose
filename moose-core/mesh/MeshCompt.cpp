@@ -95,7 +95,7 @@ vector< double > MeshCompt::innerGetStencilRate( unsigned int row ) const
 	return ret;
 }
 
-void MeshCompt::addRow( unsigned int index, 
+void MeshCompt::addRow( unsigned int index,
 	const vector< double >& entry,
 	const vector< unsigned int >& colIndex
 	)
@@ -111,20 +111,20 @@ void MeshCompt::setStencilSize( unsigned int numRows, unsigned int numCols )
 
 
 /**
- * extendStencil adds voxels to the current stencil m_, to build up a 
- * monolithic stencil that also handles the entries just past all the 
+ * extendStencil adds voxels to the current stencil m_, to build up a
+ * monolithic stencil that also handles the entries just past all the
  * boundaries.
  * This function may be called many times to deal with the addition of
  * multiple junctions. Before the first of these calls, the m_ matrix
  * should be set to the coreStencil_.
  */
-void MeshCompt::extendStencil( 
-	const ChemCompt* other, const vector< VoxelJunction >& vj ) 
+void MeshCompt::extendStencil(
+	const ChemCompt* other, const vector< VoxelJunction >& vj )
 {
 	// Maps from remote meshIndex (in vj) to local index of proxy voxel.
 	map< unsigned int, unsigned int > meshMap;
 	map< unsigned int, unsigned int >::iterator mmi;
-	
+
 	// Maps from local index of proxy voxel back to remote meshIndex.
 	vector< unsigned int > meshBackMap;
 
@@ -136,7 +136,7 @@ void MeshCompt::extendStencil(
 	/// Organizes vj by voxel, that is, by row.
 	vector< vector< VoxelJunction > > vvj( coreSize );
 
-	for ( vector< VoxelJunction >::const_iterator 
+	for ( vector< VoxelJunction >::const_iterator
 					i = vj.begin(); i != vj.end(); ++i ) {
 		mmi = meshMap.find( i->second );
 		if ( mmi == meshMap.end() ) {
@@ -170,7 +170,7 @@ void MeshCompt::extendStencil(
 				assert( row == i );
 				unsigned int col = meshMap[j->second];
 				assert( col >= oldSize );
-				temp.push_back( 
+				temp.push_back(
 						VoxelJunction( col, EMPTY, j->diffScale ) );
 				vvjCol[col].push_back(
 						VoxelJunction( row, EMPTY, j->diffScale ) );
@@ -195,7 +195,7 @@ void MeshCompt::extendStencil(
 	}
 
 	// Fill in the volumes of the external mesh entries
-	for ( vector< unsigned int>::const_iterator  
+	for ( vector< unsigned int>::const_iterator
 			i = meshBackMap.begin(); i != meshBackMap.end(); ++i ) {
 		extendedMeshEntryVolume_.push_back( other->getMeshEntryVolume( *i ) );
 	}

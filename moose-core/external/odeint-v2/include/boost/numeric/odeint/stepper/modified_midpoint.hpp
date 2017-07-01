@@ -291,7 +291,7 @@ private:
 /**
  * \class modified_midpoint
  *
- * Implementation of the modified midpoint method with a configurable 
+ * Implementation of the modified midpoint method with a configurable
  * number of intermediate steps. This class is used by the Bulirsch-Stoer
  * algorithm and is not meant for direct usage.
  */
@@ -300,10 +300,10 @@ private:
 /**
  * \class modified_midpoint_dense_out
  *
- * Implementation of the modified midpoint method with a configurable 
+ * Implementation of the modified midpoint method with a configurable
  * number of intermediate steps. This class is used by the dense output
  * Bulirsch-Stoer algorithm and is not meant for direct usage.
- * \note This stepper is for internal use only and does not meet 
+ * \note This stepper is for internal use only and does not meet
  * any stepper concept.
  */
 

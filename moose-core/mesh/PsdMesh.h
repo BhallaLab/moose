@@ -19,14 +19,14 @@
  * do for now. Later can fine-tune the cap geometry.
  *
  * In either case, the PsdMesh is filled by a message that contains
- * information about the matching voxel index (either on spineMesh or 
+ * information about the matching voxel index (either on spineMesh or
  * NeuroMesh), the coordinates, the radial vector, and the diameter.
  * The PsdMesh does not have any internal diffusion, and it
  * expects to pass only N to the parent dendrite or spine.
  */
 class PsdMesh: public MeshCompt
 {
-	public: 
+	public:
 		PsdMesh();
 		PsdMesh( const PsdMesh& other );
 		~PsdMesh();
@@ -48,9 +48,9 @@ class PsdMesh: public MeshCompt
 		//////////////////////////////////////////////////////////////////
 		// Field assignment stuff
 		//////////////////////////////////////////////////////////////////
-		/** 
+		/**
 		 * An assumed thickness for PSD. The volume is computed as the
-		 * PSD area passed in to each PSD, times this value. 
+		 * PSD area passed in to each PSD, times this value.
 		 * Defaults to 50 nanometres. For reference, membranes are 5 nm.
 		 */
 		double getThickness() const;
@@ -95,7 +95,7 @@ class PsdMesh: public MeshCompt
 
 		/// Returns # of dimensions, always 3 here. Inherited pure virt func
 		unsigned int innerGetDimensions() const;
-		
+
 		vector< unsigned int > getParentVoxel() const;
 		const vector< double >& vGetVoxelVolume() const;
 		const vector< double >& vGetVoxelMidpoint() const;
@@ -122,7 +122,7 @@ class PsdMesh: public MeshCompt
 		);
 
 		void innerHandleNodeInfo(
-			const Eref& e, 
+			const Eref& e,
 			unsigned int numNodes, unsigned int numThreads );
 
 		void handlePsdList(
@@ -138,17 +138,17 @@ class PsdMesh: public MeshCompt
 		//////////////////////////////////////////////////////////////////
 		// inherited virtual funcs for Boundary
 		//////////////////////////////////////////////////////////////////
-		
-		void matchMeshEntries( const ChemCompt* other, 
+
+		void matchMeshEntries( const ChemCompt* other,
 			vector< VoxelJunction > & ret ) const;
 
-		void matchNeuroMeshEntries( const ChemCompt* other, 
+		void matchNeuroMeshEntries( const ChemCompt* other,
 			vector< VoxelJunction > & ret ) const;
 
-		void matchCubeMeshEntries( const ChemCompt* other, 
+		void matchCubeMeshEntries( const ChemCompt* other,
 			vector< VoxelJunction > & ret ) const;
 
-		void matchSpineMeshEntries( const ChemCompt* other, 
+		void matchSpineMeshEntries( const ChemCompt* other,
 			vector< VoxelJunction > & ret ) const;
 
 		/**
@@ -159,12 +159,12 @@ class PsdMesh: public MeshCompt
 		 * Doesn't worry about whether this distance is inside or outside
 		 * cell.
 		 */
-		double nearest( double x, double y, double z, 
+		double nearest( double x, double y, double z,
 						unsigned int& index ) const;
-	
-		void indexToSpace( unsigned int index, 
+
+		void indexToSpace( unsigned int index,
 						double& x, double& y, double& z ) const;
-		
+
 		//////////////////////////////////////////////////////////////////
 		static const Cinfo* initCinfo();
 
@@ -183,7 +183,7 @@ class PsdMesh: public MeshCompt
 
 		/**
 		 * Decides how finely to subdivide diffLength_ or radius or cubic
-		 * mesh side when computing surfacearea of intersections with 
+		 * mesh side when computing surfacearea of intersections with
 		 * CubeMesh. Defaults to 0.1.
 		 */
 		double surfaceGranularity_;

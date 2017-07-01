@@ -1,47 +1,47 @@
-// VClamp.cpp --- 
-// 
+// VClamp.cpp ---
+//
 // Filename: VClamp.cpp
-// Description: 
-// Author: 
-// Maintainer: 
+// Description:
+// Author:
+// Maintainer:
 // Created: Fri Feb  1 19:30:45 2013 (+0530)
-// Version: 
+// Version:
 // Last-Updated: Tue Jun 11 17:33:16 2013 (+0530)
 //           By: subha
 //     Update #: 297
-// URL: 
-// Keywords: 
-// Compatibility: 
-// 
-// 
+// URL:
+// Keywords:
+// Compatibility:
+//
+//
 
-// Commentary: 
-// 
+// Commentary:
+//
 // Implementation of Voltage Clamp
-// 
-// 
+//
+//
 
 // Change log:
-// 
-// 
-// 
-// 
+//
+//
+//
+//
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
 // published by the Free Software Foundation; either version 3, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // Lesser General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU Lesser General Public License
 // along with this program; see the file COPYING.  If not, write to
 // the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 // Floor, Boston, MA 02110-1301, USA.
-// 
-// 
+//
+//
 
 // Code:
 
@@ -102,7 +102,7 @@ const Cinfo * VClamp::initCinfo()
                                           " action is negligibly small.",
                                           &VClamp::setTi,
                                           &VClamp::getTi);
-    
+
     static ValueFinfo< VClamp, double> td("td",
                                           "Derivative time of the PID controller. This defaults to 0,"
                                           "i.e. derivative action is unused.",
@@ -117,7 +117,7 @@ const Cinfo * VClamp::initCinfo()
     static ValueFinfo< VClamp, double> gain("gain",
                                           "Proportional gain of the PID controller.",
                                           &VClamp::setGain,
-                                          &VClamp::getGain);    
+                                          &VClamp::getGain);
     static ReadOnlyValueFinfo< VClamp, double> current("current",
                                             "The amount of current injected by the clamp into the membrane.",
                                             &VClamp::getCurrent);
@@ -130,7 +130,7 @@ const Cinfo * VClamp::initCinfo()
                               "The `VmOut` message of the Compartment object should be connected"
                               " here.",
                               new OpFunc1<VClamp, double>( &VClamp::setVin));
-                                              
+
     static DestFinfo commandIn("commandIn",
                               "  The command voltage source should be connected to this.",
                               new OpFunc1<VClamp, double>( &VClamp::setCommand));
@@ -176,7 +176,7 @@ const Cinfo * VClamp::initCinfo()
         "    derivative time  of PID, td = 0\n"
         "\n",
     };
-    
+
     static Dinfo< VClamp > dinfo;
     static Cinfo vclampCinfo(
         "VClamp",
@@ -187,7 +187,7 @@ const Cinfo * VClamp::initCinfo()
         doc,
         sizeof(doc)/sizeof(string));
 
-    return &vclampCinfo;            
+    return &vclampCinfo;
 }
 
 static const Cinfo * vclampCinfo = VClamp::initCinfo();
@@ -292,7 +292,7 @@ void VClamp::process(const Eref& e, ProcPtr p)
     assert(tau_ > 0);
     double dCmd = cmdIn_ - oldCmdIn_;
     command_ = cmdIn_ + dCmd * ( 1 - tauByDt_) + (command_ - cmdIn_ + dCmd * tauByDt_) * expt_;
-    oldCmdIn_ = cmdIn_;                           
+    oldCmdIn_ = cmdIn_;
     e_ = command_ - vIn_;
     if (mode_ == 0){
         current_ +=  Kp_ * ((1 + dtByTi_ + tdByDt_) * e_ - ( 1 + 2 * tdByDt_) * e1_ + tdByDt_ * e2_);
@@ -302,7 +302,7 @@ void VClamp::process(const Eref& e, ProcPtr p)
         current_ +=  Kp_ * ((1 + dtByTi_) * e_ - e1_ + tdByDt_ * ( vIn_ - 2 * v1_ + e2_));
         e2_ = v1_;
         v1_ = vIn_;
-        e1_ = e_;        
+        e1_ = e_;
     } else if (mode_ == PROPORTIONAL_ON_PV){ // Here the proportional as well as the derivative error term is replaced by process variable
         current_ +=  Kp_ * (vIn_ - v1_ + dtByTi_ * e_ + tdByDt_ * ( vIn_ - 2 * v1_ + e2_));
         e2_ = v1_;
@@ -344,5 +344,5 @@ void VClamp::reinit(const Eref& e, ProcPtr p)
     }
 }
 
-// 
+//
 // VClamp.cpp ends here

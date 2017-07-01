@@ -12,9 +12,9 @@
 
 /**
  * Clock now uses integral scheduling. The Clock has an array of child
- * Ticks, each of which controls the process and reinit calls of its 
+ * Ticks, each of which controls the process and reinit calls of its
  * targets. The Clock has a minimum dt.
- * All ticks operate with (positive) integral multiples of this, 
+ * All ticks operate with (positive) integral multiples of this,
  * from 1 to anything. If multiple Ticks are due to go off in a given
  * cycle, the order is from lowest to highest. Within a Tick the order
  * of execution of target objects is undefined.
@@ -52,7 +52,7 @@ class Clock
     //  Dest functions
     //////////////////////////////////////////////////////////
     /**
-     * Halts running simulation gracefully, letting it restart 
+     * Halts running simulation gracefully, letting it restart
      * wherever it left off from.
      */
     void stop();
@@ -97,7 +97,7 @@ class Clock
     /// Utility func to range-check when Ticks are being changed.
     bool checkTickNum( const string& funcName, unsigned int i ) const;
 
-    /** 
+    /**
      * Look up the default Tick number for the specified class.
      * Note that for objects having an 'init' action as well as process,
      * the assigned tick is for 'init' and the next number will be
@@ -147,17 +147,17 @@ class Clock
     /**
      * Ticks are sub-elements and send messages to sets of target
      * Elements that handle calculations in which update order does
-     * not matter. 
+     * not matter.
      */
     vector< unsigned int > ticks_;
 
     /**
-     * Array of active ticks. Drops out ticks lacking targets or with 
+     * Array of active ticks. Drops out ticks lacking targets or with
      * a zero step. Sorted in increasing order of tick index.
      */
     vector< unsigned int > activeTicks_;
     /**
-     * Maps the activeTicks_ array to the ticks index so 
+     * Maps the activeTicks_ array to the ticks index so
      * we can trigger the appropriate message.
      */
     vector< unsigned int > activeTicksMap_;

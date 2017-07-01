@@ -30,7 +30,7 @@ void Shell::launchParser()
 	Id shellId;
 	Shell* s = reinterpret_cast< Shell* >( shellId.eref().data() );
 	bool quit = 0;
-	
+
 	cout << "moose : " << flush;
 	while ( !quit ) {
 		string temp;

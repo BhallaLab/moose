@@ -1,47 +1,48 @@
-# rc19.py --- 
-# 
+# -*- coding: utf-8 -*-
+# rc19.py ---
+#
 # Filename: rc19.py
-# Description: 
+# Description:
 # Author: Subhasis Ray
-# Maintainer: 
+# Maintainer:
 # Created: Sat May 24 14:10:22 2014 (+0530)
-# Version: 
-# Last-Updated: 
-#           By: 
+# Version:
+# Last-Updated:
+#           By:
 #     Update #: 0
-# URL: 
-# Keywords: 
-# Compatibility: 
-# 
-# 
+# URL:
+# Keywords:
+# Compatibility:
+#
+#
 
-# Commentary: 
-# 
-# 
-# 
-# 
+# Commentary:
+#
+#
+#
+#
 
 # Change log:
-# 
-# 
-# 
-# 
+#
+#
+#
+#
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
 # published by the Free Software Foundation; either version 3, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program; see the file COPYING.  If not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 # Floor, Boston, MA 02110-1301, USA.
-# 
-# 
+#
+#
 
 # Code:
 """Cell morphology and passive properties from Branco et al 2010."""
@@ -118,7 +119,7 @@ def make_prototype(passive=True):
         make_cat()
         make_cahva()
         make_h()
-    try:        
+    try:
         proto = moose.element(path)
     except ValueError:
         print('Loading model %s to %s' % (pfile, path))
@@ -135,7 +136,7 @@ def setup_model(model_path, synapse_locations, passive=False, solver='hsolve'):
 
 
     `model_path` - location where the model should be created.
-    
+
     `synapse_locations`: compartment names for the synapses.
 
     """
@@ -176,7 +177,7 @@ def setup_recording(data_path, neuron, syninfo_list):
     nmda_data = moose.Neutral('%s/G_NMDA' % (data_path))
     ampa_gk = []
     nmda_gk = []
-    
+
     # Record synaptic conductances
     for syninfo in syninfo_list:
         compname = syninfo['spike'].parent.name
@@ -193,10 +194,10 @@ def setup_recording(data_path, neuron, syninfo_list):
 
 def setup_experiment(name, stim_order, onset, interval, passive=False, solver='hsolve'):
     """Setup an experiment with specified stimulation order. `stim_order` is a
-    series of integers specifying the compartment numbers along dendritic 
-    branch dend_13. `onset` is time of onset of stimulation protocol. 
-    `inteval` is the interval between stimulation time of 
-    successive synapses."""    
+    series of integers specifying the compartment numbers along dendritic
+    branch dend_13. `onset` is time of onset of stimulation protocol.
+    `inteval` is the interval between stimulation time of
+    successive synapses."""
     model_container = moose.Neutral('/model/%s' % (name))
     model_info = setup_model(model_container.path, synloc, passive=passive, solver=solver)
     data_container = moose.Neutral('/data/%s' % (name))
@@ -212,7 +213,7 @@ def setup_experiment(name, stim_order, onset, interval, passive=False, solver='h
     print('Stimulus onset:', onset)
     print('Inter stimulus interval:', interval)
     return (data_info, model_info)
-        
+
 
 tstop = 200e-3
 tonset = 50e-3
@@ -285,5 +286,5 @@ if __name__ == '__main__':
     run_sim_parallel(passive=passive, solver=solver)
 
 
-# 
+#
 # rc19.py ends here

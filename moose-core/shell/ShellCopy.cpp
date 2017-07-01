@@ -13,7 +13,7 @@
 #include "../scheduling/Clock.h"
 
 /// Returns the Id of the root of the copied tree upon success.
-Id Shell::doCopy( Id orig, ObjId newParent, string newName, 
+Id Shell::doCopy( Id orig, ObjId newParent, string newName,
 	unsigned int n, bool toGlobal, bool copyExtMsg )
 {
 	if ( newName.length() > 0 && !isNameValid( newName ) ) {
@@ -26,13 +26,13 @@ Id Shell::doCopy( Id orig, ObjId newParent, string newName,
 		return Id();
 	}
 	if ( n < 1 ) {
-		cout << "Warning: Shell::doCopy( " << orig.path() << " to " << 
+		cout << "Warning: Shell::doCopy( " << orig.path() << " to " <<
 			newParent.path() << " ) : numCopies must be > 0, using 1 \n";
 		return Id();
 	}
 	if ( Neutral::child( newParent.eref(), newName ) != Id() ) {
 		cout << "Error: Shell::doCopy: Cannot copy object '" << newName <<
-			   "' onto '" << newParent.path() << 
+			   "' onto '" << newParent.path() <<
 			   "' since object with same name already present.\n";
 		return Id();
 	}
@@ -59,12 +59,12 @@ Id Shell::doCopy( Id orig, ObjId newParent, string newName,
  * Note that 'n' is the number of complete duplicates. If there were
  * 10 dataEntries in the original, there will now be 10 x n.
  */
-Element* innerCopyElements( Id orig, ObjId newParent, Id newId, 
+Element* innerCopyElements( Id orig, ObjId newParent, Id newId,
 	unsigned int n, bool toGlobal, map< Id, Id >& tree )
 {
 	// Element* e = new Element( newId, orig.element(), n, toGlobal );
 	unsigned int newNumData = orig.element()->numData() * n;
-	Element* e = orig.element()->copyElement( 
+	Element* e = orig.element()->copyElement(
 				newParent, newId, newNumData, toGlobal );
 	assert( e );
 	Shell::adopt( newParent, newId, 0 );
@@ -89,27 +89,27 @@ Element* innerCopyElements( Id orig, ObjId newParent, Id newId,
 void innerCopyMsgs( map< Id, Id >& tree, unsigned int n, bool copyExtMsgs )
 {
 	static const Finfo* cf = Neutral::initCinfo()->findFinfo( "childOut" );
-	static const SrcFinfo1< int >* cf2 = 
+	static const SrcFinfo1< int >* cf2 =
 		dynamic_cast< const SrcFinfo1< int >* >( cf );
 	assert( cf );
 	assert( cf2 );
 
 	/*
 	cout << endl << Shell::myNode() << ": innerCopyMsg ";
-	for ( map< Id, Id >::const_iterator i = tree.begin(); 
+	for ( map< Id, Id >::const_iterator i = tree.begin();
 		i != tree.end(); ++i ) {
 		cout << " (" << i->first << "," << i->second << ") ";
 	}
 	cout << endl;
 	*/
-	for ( map< Id, Id >::const_iterator i = tree.begin(); 
+	for ( map< Id, Id >::const_iterator i = tree.begin();
 		i != tree.end(); ++i ) {
 		Element *e = i->first.element();
 		unsigned int j = 0;
 		const vector< MsgFuncBinding >* b = e->getMsgAndFunc( j );
 		while ( b ) {
 			if ( j != cf2->getBindIndex() ) {
-				for ( vector< MsgFuncBinding >::const_iterator k = 
+				for ( vector< MsgFuncBinding >::const_iterator k =
 					b->begin();
 					k != b->end(); ++k ) {
 					ObjId mid = k->mid;
@@ -131,7 +131,7 @@ void innerCopyMsgs( map< Id, Id >& tree, unsigned int n, bool copyExtMsgs )
 						assert( 0 );
 					}
 					if ( tgt != tree.end() )
-						m->copy( e->id(), i->second, tgt->second, 
+						m->copy( e->id(), i->second, tgt->second,
 							k->fid, j, n );
 				}
 			}
@@ -147,7 +147,7 @@ bool Shell::innerCopy( const vector< ObjId >& args, const string& newName,
 	map< Id, Id > tree;
 	// args are orig, newParent, newElm.
 	assert( args.size() == 3 );
-	Element* e = innerCopyElements( args[0], args[1], args[2], 
+	Element* e = innerCopyElements( args[0], args[1], args[2],
 					n, toGlobal, tree );
 	if ( !e ) {
 		return 0;
@@ -159,7 +159,7 @@ bool Shell::innerCopy( const vector< ObjId >& args, const string& newName,
 	return 1;
 }
 
-void Shell::handleCopy( const Eref& er, vector< ObjId > args, 
+void Shell::handleCopy( const Eref& er, vector< ObjId > args,
 	string newName, unsigned int n, bool toGlobal, bool copyExtMsgs )
 {
 	if ( !innerCopy( args, newName, n, toGlobal, copyExtMsgs ) ) {
@@ -167,9 +167,9 @@ void Shell::handleCopy( const Eref& er, vector< ObjId > args,
 				newName << ", " << n << endl;
 	}
 	/*
-	static const Finfo* ackf = 
+	static const Finfo* ackf =
 		Shell::initCinfo()->findFinfo( "ack" );
-	static const SrcFinfo2< unsigned int, unsigned int >* 
+	static const SrcFinfo2< unsigned int, unsigned int >*
 		ack = dynamic_cast< const SrcFinfo2< unsigned int, unsigned int >* >( ackf );
 	assert( ackf );
 	assert( ack );

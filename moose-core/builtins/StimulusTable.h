@@ -15,7 +15,7 @@
  */
 class StimulusTable: public TableBase
 {
-	public: 
+	public:
 		StimulusTable();
 		//////////////////////////////////////////////////////////////////
 		// Field assignment stuff

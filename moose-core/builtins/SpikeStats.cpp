@@ -46,7 +46,7 @@ const Cinfo* SpikeStats::initCinfo()
 		&Vm,	// DestFinfo
 	};
 
-	static string doc[] = 
+	static string doc[] =
 	{
 		"Name", "SpikeStats",
 		"Author", "Upi Bhalla Aug 2014",

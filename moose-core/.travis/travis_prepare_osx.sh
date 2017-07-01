@@ -1,12 +1,12 @@
-#!/bin/bash - 
+#!/bin/bash -
 #===============================================================================
 #
 #          FILE: travis_prepare_osx.sh
-# 
-#         USAGE: ./travis_prepare_osx.sh 
-# 
+#
+#         USAGE: ./travis_prepare_osx.sh
+#
 #   DESCRIPTION: Script to prepare OSX build on Travis CI.
-# 
+#
 #       OPTIONS: ---
 #  REQUIREMENTS: ---
 #          BUGS: ---
@@ -19,6 +19,7 @@
 
 set -o nounset                              # Treat unset variables as an error
 set +e
+rvm get head
 brew update
 #brew outdated cmake || brew install cmake
 brew install gsl

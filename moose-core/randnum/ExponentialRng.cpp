@@ -1,6 +1,6 @@
 /*******************************************************************
  * File:            ExponentialRng.cpp
- * Description:      
+ * Description:
  * Author:          Subhasis Ray
  * E-mail:          ray.subhasis@gmail.com
  * Created:         2007-11-08 11:33:45
@@ -28,7 +28,7 @@ const Cinfo* ExponentialRng::initCinfo()
         "Mean of the exponential distribution.",
         &ExponentialRng::setMean,
         &ExponentialRng::getMean);
-    
+
     static ValueFinfo< ExponentialRng, int > method(
         "method",
         "The algorithm to use for computing the sample. Two methods are"
@@ -38,12 +38,12 @@ const Cinfo* ExponentialRng::initCinfo()
         " 3.4.1 : Algorithm S.",
         &ExponentialRng::setMethod,
         &ExponentialRng::getMethod);
-    
+
     static Finfo* exponentialRngFinfos[] = {
         &mean,
         &method,
     };
-    
+
     static string doc[] = {
         "Name", "ExponentialRng",
         "Author", "Subhasis Ray",
@@ -65,14 +65,14 @@ const Cinfo* ExponentialRng::initCinfo()
     return &exponentialRngCinfo;
 }
 
-    
+
 static const Cinfo* exponentialRngCinfo = ExponentialRng::initCinfo();
 
 ExponentialRng::ExponentialRng()
 {
-    mean_ = 0;    
+    mean_ = 0;
     isMeanSet_ = false;
-    method_ = RANDOM_MINIMIZATION;    
+    method_ = RANDOM_MINIMIZATION;
 }
 /**
    Replaces the same method in base class.  Returns the mean as
@@ -80,7 +80,7 @@ ExponentialRng::ExponentialRng()
  */
 double ExponentialRng::getMean() const
 {
-    return mean_;    
+    return mean_;
 }
 /**
    Sets the mean. Since exponential distribution is defined in terms
@@ -91,8 +91,8 @@ void ExponentialRng::setMean(double mean)
 {
     if ( !rng_ ){
         rng_ = new Exponential(mean);
-        isMeanSet_ = true;        
-    }  
+        isMeanSet_ = true;
+    }
 }
 
 /**
@@ -102,7 +102,7 @@ void ExponentialRng::vReinit(const Eref& e, ProcPtr p)
 {
     Exponential * erng = static_cast<Exponential *>(rng_);
     if (!erng){
-        cerr << "ERROR: ExponentialRng::vReinit - mean must be set before using the Exponential distribution generator." << endl;                
+        cerr << "ERROR: ExponentialRng::vReinit - mean must be set before using the Exponential distribution generator." << endl;
     }
 }
 
@@ -113,7 +113,7 @@ void ExponentialRng::vReinit(const Eref& e, ProcPtr p)
  */
 int ExponentialRng::getMethod() const
 {
-   return method_;    
+   return method_;
 }
 
 /**
@@ -131,7 +131,7 @@ void ExponentialRng::setMethod(int method)
                 method_ = LOGARITHMIC;
                 break;
             default:
-                method_ = RANDOM_MINIMIZATION;                
+                method_ = RANDOM_MINIMIZATION;
                 break;
         }
     } else {

@@ -45,7 +45,7 @@ template< class Stepper , class System , class State , class Time , class Observ
 size_t integrate_const(
         Stepper stepper , System system , State &start_state ,
         Time start_time , Time end_time , Time dt ,
-        Observer observer , stepper_tag 
+        Observer observer , stepper_tag
 )
 {
     size_t obs_calls = 0;
@@ -65,15 +65,15 @@ template< class Stepper , class System , class State , class Time , class Observ
 size_t integrate_const(
         Stepper stepper , System system , State &start_state ,
         Time start_time , Time end_time , Time dt ,
-        Observer observer , controlled_stepper_tag 
+        Observer observer , controlled_stepper_tag
 )
 {
     typename odeint::unwrap_reference< Observer >::type &obs = observer;
-    
+
     Time time = start_time;
     const Time time_step = dt;
     int step = 0;
-    
+
     while( less_eq_with_sign( static_cast<Time>(time+time_step) , end_time , dt ) )
     {
         obs( start_state , time );
@@ -85,7 +85,7 @@ size_t integrate_const(
         time = start_time + static_cast< typename unit_value_type<Time>::type >(step) * time_step;
     }
     obs( start_state , time );
-    
+
     return step;
 }
 
@@ -94,7 +94,7 @@ template< class Stepper , class System , class State , class Time , class Observ
 size_t integrate_const(
         Stepper stepper , System system , State &start_state ,
         Time start_time , Time end_time , Time dt ,
-        Observer observer , dense_output_stepper_tag 
+        Observer observer , dense_output_stepper_tag
 )
 {
     size_t obs_calls = 0;

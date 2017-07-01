@@ -184,14 +184,14 @@ size_t integrate_times(
      * \brief Integrates the ODE with observer calls at given time points.
      *
      * Integrates the ODE given by system using the given stepper. This function
-     * does observer calls at the subsequent time points given by the range 
-     * times_start, times_end. If the stepper has not step size control, the 
+     * does observer calls at the subsequent time points given by the range
+     * times_start, times_end. If the stepper has not step size control, the
      * step size might be reduced occasionally to ensure observer calls exactly
-     * at the time points from the given sequence. If the stepper is a 
-     * ControlledStepper, the step size is adjusted to meet the error bounds, 
+     * at the time points from the given sequence. If the stepper is a
+     * ControlledStepper, the step size is adjusted to meet the error bounds,
      * but also might be reduced occasionally to ensure correct observer calls.
      * If a DenseOutputStepper is provided, the dense output functionality is
-     * used to call the observer at the given times. The end time of the 
+     * used to call the observer at the given times. The end time of the
      * integration is always *(end_time-1).
      * If a max_step_checker is provided as StepOverflowChecker, a
      * no_progress_error is thrown if too many steps (default: 500) are
@@ -203,7 +203,7 @@ size_t integrate_times(
      * \param start_state The initial condition x0.
      * \param times_start Iterator to the start time
      * \param times_end Iterator to the end time
-     * \param dt The time step between observer calls, _not_ necessarily the 
+     * \param dt The time step between observer calls, _not_ necessarily the
      * time step of the integration.
      * \param observer Function/Functor called at equidistant time intervals.
      * \param checker [optional] Functor to check for step count overflows, if no

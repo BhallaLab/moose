@@ -87,7 +87,7 @@ void Cinfo::init( Finfo** finfoArray, unsigned int nFinfos )
 		finfoMap_ = baseCinfo_->finfoMap_;
 		funcs_ = baseCinfo_->funcs_;
 		postCreationFinfos_ = baseCinfo_->postCreationFinfos_;
-	} 
+	}
 	for ( unsigned int i = 0; i < nFinfos; i++ ) {
 		registerFinfo( finfoArray[i] );
 	}
@@ -153,7 +153,7 @@ void buildFinfoElement( Id parent, vector< Finfo* >& f, const string& name )
 	if ( f.size() > 0 ) {
 		char* data = reinterpret_cast< char* >( &f[0] );
 		Id id = Id::nextId();
-		Element* e = new GlobalDataElement( 
+		Element* e = new GlobalDataElement(
 						id, Finfo::initCinfo(), name, f.size() );
 		Finfo::initCinfo()->dinfo()->assignData( e->data( 0 ), f.size(), data, f.size());
 		Shell::adopt( parent, id, 0 );
@@ -167,11 +167,11 @@ void Cinfo::makeCinfoElements( Id parent )
 	vector< unsigned int > dims( 1, 0 );
 
 	vector< Id > cinfoElements;
-	for ( map< string, Cinfo* >::iterator i = cinfoMap().begin(); 
+	for ( map< string, Cinfo* >::iterator i = cinfoMap().begin();
 		i != cinfoMap().end(); ++i ) {
 		Id id = Id::nextId();
 		char* data = reinterpret_cast< char* >( i->second );
-		Element* e = new GlobalDataElement( 
+		Element* e = new GlobalDataElement(
 						id, Cinfo::initCinfo(), i->first );
 		Cinfo::initCinfo()->dinfo()->assignData( e->data( 0 ), 1, data, 1 );
 		// Cinfo* temp = reinterpret_cast< Cinfo* >( e->data( 0 ) );
@@ -181,7 +181,7 @@ void Cinfo::makeCinfoElements( Id parent )
 		// cout << "Cinfo::makeCinfoElements: parent= " << parent << ", Id = " << id << ", name = " << i->first << endl;
 	}
 	vector< Id >::iterator j = cinfoElements.begin();
-	for ( map< string, Cinfo* >::iterator i = cinfoMap().begin(); 
+	for ( map< string, Cinfo* >::iterator i = cinfoMap().begin();
 		i != cinfoMap().end(); ++i ) {
 		buildFinfoElement( *j, i->second->srcFinfos_, "srcFinfo" );
 		buildFinfoElement( *j, i->second->destFinfos_, "destFinfo" );
@@ -361,7 +361,7 @@ const Cinfo* Cinfo::initCinfo()
 		sizeof( cinfoFinfos ) / sizeof ( Finfo* ),
 		&dinfo,
         doc,
-        sizeof(doc)/sizeof(string)        
+        sizeof(doc)/sizeof(string)
 	);
 
 	return &cinfoCinfo;
@@ -383,12 +383,12 @@ string Cinfo::getDocs() const
 }
 
 
-static DestFinfo dummy( 
-		"dummy", 
-		"This Finfo is a dummy. If you are reading this you have used an invalid index", 
+static DestFinfo dummy(
+		"dummy",
+		"This Finfo is a dummy. If you are reading this you have used an invalid index",
 0 );
 
-string Cinfo::getBaseClass() const 
+string Cinfo::getBaseClass() const
 {
 	if ( baseCinfo_ )
 		return baseCinfo_->name();
@@ -398,9 +398,9 @@ string Cinfo::getBaseClass() const
 
 ////////////////////////////////////////////////////////////////////
 // Below we have a set of functions for getting various categories of
-// Finfos. These also return the base class finfos. The baseclass finfos 
+// Finfos. These also return the base class finfos. The baseclass finfos
 // come first, then the new finfos. This is a bit messy because it changes
-// the indices of the new finfos, but I shouldn't be looking them up 
+// the indices of the new finfos, but I shouldn't be looking them up
 // by index anyway.
 ////////////////////////////////////////////////////////////////////
 Finfo* Cinfo::getSrcFinfo( unsigned int i ) const
@@ -422,7 +422,7 @@ unsigned int Cinfo::getNumSrcFinfo() const
 {
 	if ( baseCinfo_ )
 		return srcFinfos_.size() + baseCinfo_->getNumSrcFinfo();
-	else 
+	else
 		return srcFinfos_.size();
 }
 
@@ -445,7 +445,7 @@ unsigned int Cinfo::getNumDestFinfo() const
 {
 	if ( baseCinfo_ )
 		return destFinfos_.size() + baseCinfo_->getNumDestFinfo();
-	else 
+	else
 		return destFinfos_.size();
 }
 
@@ -468,7 +468,7 @@ unsigned int Cinfo::getNumValueFinfo() const
 {
 	if ( baseCinfo_ )
 		return valueFinfos_.size() + baseCinfo_->getNumValueFinfo();
-	else 
+	else
 		return valueFinfos_.size();
 }
 
@@ -492,7 +492,7 @@ unsigned int Cinfo::getNumLookupFinfo() const
 {
 	if ( baseCinfo_ )
 		return lookupFinfos_.size() + baseCinfo_->getNumLookupFinfo();
-	else 
+	else
 		return lookupFinfos_.size();
 }
 
@@ -515,7 +515,7 @@ unsigned int Cinfo::getNumSharedFinfo() const
 {
 	if ( baseCinfo_ )
 		return sharedFinfos_.size() + baseCinfo_->getNumSharedFinfo();
-	else 
+	else
 		return sharedFinfos_.size();
 }
 
@@ -538,7 +538,7 @@ unsigned int Cinfo::getNumFieldElementFinfo() const
 {
 	if ( baseCinfo_ )
 		return fieldElementFinfos_.size() + baseCinfo_->getNumFieldElementFinfo();
-	else 
+	else
 		return fieldElementFinfos_.size();
 }
 
@@ -552,7 +552,7 @@ void Cinfo::setNumFinfo( unsigned int val ) // Dummy function
 const string& Cinfo::srcFinfoName( BindIndex bid ) const
 {
 	static const string err = "";
-	for ( vector< Finfo* >::const_iterator i = srcFinfos_.begin(); 
+	for ( vector< Finfo* >::const_iterator i = srcFinfos_.begin();
 		i != srcFinfos_.end(); ++i ) {
 		const SrcFinfo* sf = dynamic_cast< const SrcFinfo* >( *i );
 		assert( sf );
@@ -569,7 +569,7 @@ const string& Cinfo::srcFinfoName( BindIndex bid ) const
 const string& Cinfo::destFinfoName( FuncId fid ) const
 {
 	static const string err = "";
-	for ( vector< Finfo* >::const_iterator i = destFinfos_.begin(); 
+	for ( vector< Finfo* >::const_iterator i = destFinfos_.begin();
 		i != destFinfos_.end(); ++i ) {
 		const DestFinfo* df = dynamic_cast< const DestFinfo* >( *i );
 		assert( df );

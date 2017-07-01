@@ -66,7 +66,7 @@ public:
     typedef implicit_euler< ValueType , Resizer > stepper_type;
 
     implicit_euler( value_type epsilon = 1E-6 )
-    : m_epsilon( epsilon ) 
+    : m_epsilon( epsilon )
     { }
 
 

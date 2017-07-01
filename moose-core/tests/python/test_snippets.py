@@ -1,10 +1,11 @@
-"""test_snippets.py: 
+# -*- coding: utf-8 -*-
+"""test_snippets.py:
 
     This script tests all the snippets.
 
 """
 from __future__ import print_function
-    
+
 __author__           = "Dilawar Singh"
 __copyright__        = "Copyright 2015, Dilawar Singh and NCBS Bangalore"
 __credits__          = ["NCBS Bangalore"]
