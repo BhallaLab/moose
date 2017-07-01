@@ -53,7 +53,7 @@ class DifShellBase
   /////////////////////////////////////////////////////////////
   // Field access functions
   /////////////////////////////////////////////////////////////
-  
+
   void setC(const Eref& e,double C);
   double getC( const Eref& e) const;
 
@@ -92,7 +92,7 @@ class DifShellBase
 
   virtual void vSetC(const Eref& e,double C) = 0;
   virtual double vGetC( const Eref& e) const = 0;
-  
+
   virtual void vSetCeq(const Eref& e,double Ceq ) = 0;
   virtual double vGetCeq(const Eref& e) const = 0;
 
@@ -104,7 +104,7 @@ class DifShellBase
 
   virtual void vSetLeak(const Eref& e, double leak ) = 0;
   virtual double vGetLeak(const Eref& e) const = 0;
-  
+
   virtual void vSetShapeMode(const Eref& e, unsigned int shapeMode ) = 0;
   virtual unsigned int vGetShapeMode(const Eref& e) const = 0;
 
@@ -126,13 +126,13 @@ class DifShellBase
   virtual void vSetInnerArea(const Eref& e, double innerArea ) = 0;
   virtual double vGetInnerArea(const Eref& e) const = 0;
 
-  
-  
+
+
   static SrcFinfo1< double >* concentrationOut();
   static SrcFinfo2< double, double >* innerDifSourceOut();
   static SrcFinfo2< double, double >* outerDifSourceOut();
   static const Cinfo * initCinfo();
-  
+
  private:
 
 

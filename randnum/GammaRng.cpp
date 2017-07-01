@@ -1,6 +1,6 @@
 /*******************************************************************
  * File:            GammaRng.cpp
- * Description:      
+ * Description:
  * Author:          Subhasis Ray
  * E-mail:          ray.subhasis@gmail.com
  * Created:         2007-11-08 11:56:00
@@ -37,7 +37,7 @@ const Cinfo* GammaRng::initCinfo()
         &alpha,
         &theta,
     };
-    
+
     static string doc[] = {
         "Name", "GammaRng",
         "Author", "Subhasis Ray",
@@ -56,7 +56,7 @@ const Cinfo* GammaRng::initCinfo()
     return &gammaRngCinfo;
 }
 
-    
+
 static const Cinfo* gammaRngCinfo = GammaRng::initCinfo();
 
 GammaRng::GammaRng()
@@ -64,21 +64,21 @@ GammaRng::GammaRng()
     isAlphaSet_ = false;
     isThetaSet_ = false;
     alpha_ = 1;
-    theta_ = 1;    
+    theta_ = 1;
 }
 /**
    returns the shape parameter.
 */
 double GammaRng::getAlpha() const
 {
-    return alpha_;    
+    return alpha_;
 }
 /**
    Sets parameter alpha. Also known as the shape parameter.
 */
 void GammaRng::setAlpha(double alpha)
 {
-    
+
     if (fabs(alpha) < DBL_MIN)
     {
         cerr << "ERROR: Shape parameter alpha must be non-zero." << endl;
@@ -100,7 +100,7 @@ void GammaRng::setAlpha(double alpha)
 */
 double GammaRng::getTheta()const
 {
-    return theta_;    
+    return theta_;
 }
 
 /**
@@ -108,7 +108,7 @@ double GammaRng::getTheta()const
 */
 void GammaRng::setTheta(double theta)
 {
-    
+
     if (fabs(theta) < DBL_MIN)
     {
         cerr << "ERROR: Scale parameter theta must be non-zero." << endl;
@@ -132,7 +132,7 @@ void GammaRng::vReinit(const Eref& e, ProcPtr p)
 {
     if (! rng_ )
     {
-        cerr << "ERROR: GammaRng::vReinit - parameters alpha and theta must be set before using the Gamma distribution generator." << endl;                
+        cerr << "ERROR: GammaRng::vReinit - parameters alpha and theta must be set before using the Gamma distribution generator." << endl;
     }
 }
 

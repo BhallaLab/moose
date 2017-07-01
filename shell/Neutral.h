@@ -31,7 +31,7 @@ class Neutral
 		/////////////////////////////////////////////////////////////////
 
 		/**
-		 * Field access functions for the entire object. For Neutrals 
+		 * Field access functions for the entire object. For Neutrals
 		 * the setThis function is a dummy: it doesn't do anything because
 		 * the Neutral has no data to set. However, the function name acts
 		 * as a placeholder and derived objects can override the function
@@ -41,7 +41,7 @@ class Neutral
 		void setThis( Neutral v );
 
 		/**
-		 * Field access functions for the entire object. For Neutrals 
+		 * Field access functions for the entire object. For Neutrals
 		 * the getThis function does return the Neutral object, but it
 		 * has no data to set. However, the function name acts
 		 * as a placeholder and derived objects can override the function
@@ -86,7 +86,7 @@ class Neutral
 		 * of the specified SrcFinfo, by the current object.
 		 * Twin function to getMsgDests.
 		 */
-		vector< string > getMsgDestFunctions( 
+		vector< string > getMsgDestFunctions(
 						const Eref& e, string src ) const;
 
 		/**
@@ -131,7 +131,7 @@ class Neutral
 		unsigned int getNumData( const Eref& e ) const;
 
 		/**
-		 * numField is the size of the field array on the FieldElement 
+		 * numField is the size of the field array on the FieldElement
 		 * specified by the Eref including its data index.
 		 */
 		void setNumField( const Eref& e, unsigned int num );
@@ -146,7 +146,7 @@ class Neutral
 
 		/**
 		 * The clock Tick specifies the timing and order of execution
-		 * of the 'process' action of this object in the simulation. 
+		 * of the 'process' action of this object in the simulation.
 		 * The timing is set by assigning the appropriate dt to
 		 * this tick in the Clock object.
 		 * A value of -1 means that the object is disabled.
@@ -177,7 +177,7 @@ class Neutral
 		 * Request conversion of data into a blockDataHandler subclass,
 		 * and to carry out node balancing of data as per args.
 		 */
-		void blockNodeBalance( const Eref& e, 
+		void blockNodeBalance( const Eref& e,
 			unsigned int, unsigned int, unsigned int );
 
 		/**
@@ -186,7 +186,7 @@ class Neutral
 		 */
 		void generalNodeBalance( const Eref& e,
 			unsigned int myNode, vector< unsigned int > nodeAssignment );
-		
+
 
 		////////////////////////////////////////////////////////////
 		// Static utility functions

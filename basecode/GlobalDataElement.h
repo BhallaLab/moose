@@ -30,7 +30,7 @@ class GlobalDataElement: public DataElement
 		 * name is its name
 		 * numData is the number of data entries, defaults to a singleton.
 		 * The isGlobal flag specifies whether the created objects should
-		 * be replicated on all nodes, or partitioned without replication. 
+		 * be replicated on all nodes, or partitioned without replication.
 		 */
 		GlobalDataElement( Id id, const Cinfo* c, const string& name,
 			unsigned int numData = 1 );
@@ -46,10 +46,10 @@ class GlobalDataElement: public DataElement
 		 */
 		~GlobalDataElement();
 
-		/** 
+		/**
 		 * Virtual copier. Makes a copy of self.
 		 */
-		Element* copyElement( Id newParent, Id newId, unsigned int n, 
+		Element* copyElement( Id newParent, Id newId, unsigned int n,
 			bool toGlobal ) const;
 
 		/////////////////////////////////////////////////////////////////
@@ -67,7 +67,7 @@ class GlobalDataElement: public DataElement
 		/// Inherited virtual. Returns node location of specified object
 		unsigned int getNode( unsigned int dataIndex ) const;
 
-		/// Inherited virtual. Returns start dataIndex on specified node 
+		/// Inherited virtual. Returns start dataIndex on specified node
 		unsigned int startDataIndex( unsigned int node ) const
 		{
 			return 0;

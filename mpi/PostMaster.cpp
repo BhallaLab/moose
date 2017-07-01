@@ -11,7 +11,7 @@
 #include "PostMaster.h"
 #include "../shell/Shell.h"
 
-const unsigned int TgtInfo::headerSize = 
+const unsigned int TgtInfo::headerSize =
 		1 + ( sizeof( TgtInfo ) - 1 )/sizeof( double );
 
 const unsigned int PostMaster::reserveBufSize = 1048576;
@@ -23,7 +23,7 @@ const int PostMaster::RETURNTAG = 4;
 const int PostMaster::CONTROLTAG = 5;
 const int PostMaster::DIETAG = 100;
 PostMaster::PostMaster()
-		: 
+		:
 				recvBufSize_( reserveBufSize ),
 				setSendBuf_( setRecvBufSize, 0 ),
 				setRecvBuf_( setRecvBufSize, 0 ),
@@ -67,8 +67,8 @@ PostMaster::PostMaster()
 			recvBuf_[i].resize( recvBufSize_, 0 );
 			MPI_Irecv( &recvBuf_[i][0], recvBufSize_, MPI_DOUBLE,
 				i, MSGTAG, MPI_COMM_WORLD,
-				&recvReq_[k++] 
-				// Need to be careful about contiguous indexing for 
+				&recvReq_[k++]
+				// Need to be careful about contiguous indexing for
 				// the MPI_request array.
 			);
 		}
@@ -171,7 +171,7 @@ void PostMaster::reinit( const Eref& e, ProcPtr p )
 		if ( i == Shell::myNode() ) continue;
 		// MPI_scatter would have been better but it doesn't allow
 		// one to post larger recvs than the actual data sent.
-		MPI_Isend( 
+		MPI_Isend(
 			&sendBuf_[i][0], sendSize_[i], MPI_DOUBLE,
 			i, 		// Where to send to.
 			MSGTAG, MPI_COMM_WORLD,
@@ -196,7 +196,7 @@ void PostMaster::process( const Eref& e, ProcPtr p )
 		if ( i == Shell::myNode() ) continue;
 		// MPI_scatter would have been better but it doesn't allow
 		// one to post larger recvs than the actual data sent.
-		MPI_Isend( 
+		MPI_Isend(
 			&sendBuf_[i][0], sendSize_[i], MPI_DOUBLE,
 			i, 		// Where to send to.
 			MSGTAG, MPI_COMM_WORLD,
@@ -220,7 +220,7 @@ void PostMaster::clearPending()
 	clearPendingRecv();
 }
 
-void PostMaster::handleRemoteGet( 
+void PostMaster::handleRemoteGet(
 				const Eref& e, const OpFunc* op, int requestingNode )
 {
 #ifdef USE_MPI
@@ -228,7 +228,7 @@ void PostMaster::handleRemoteGet(
 	op->opBuffer( e, &getReturnBuf[0] ); // stuff return value into buf.
 	// Send out the data. Blocking. Don't want any other gets till done
 	int size = getReturnBuf[0];
-	MPI_Send( 
+	MPI_Send(
 		&getReturnBuf[1], size, MPI_DOUBLE,
 		requestingNode, 		// Where to send to.
 		RETURNTAG, MPI_COMM_WORLD
@@ -241,12 +241,12 @@ void PostMaster::handleRemoteGet(
  * Returns size of all contents of getReturnBuf, in doubles.
  * Puts number of returned values in getReturnBuf[0]. Note that these
  * are likely to differ if the values returned are not doubles.
- * Examines the eref to decide if this is a DataElement or a 
+ * Examines the eref to decide if this is a DataElement or a
  * FieldElement. If a DataElement, scans through all data entries to fill
  * the returnBuf. If a FieldElement, fills in field entries only of the
  * one specified DataId on this eref.
  */
-int innerGetVec( const Eref& e, const OpFunc* op, 
+int innerGetVec( const Eref& e, const OpFunc* op,
 			   double* getReturnBuf	)
 {
 	static double buf[PostMaster::reserveBufSize];
@@ -261,7 +261,7 @@ int innerGetVec( const Eref& e, const OpFunc* op,
 		for ( unsigned int j = 0; j < numField; ++j ) {
 			Eref er( elm, di, j );
 			// stuff return value into buf.
-			op->opBuffer( er, buf ); 
+			op->opBuffer( er, buf );
 			unsigned int size = buf[0];
 			memcpy( &getReturnBuf[k], &buf[1], size * sizeof( double ) );
 			k += size;
@@ -272,7 +272,7 @@ int innerGetVec( const Eref& e, const OpFunc* op,
 		for ( unsigned int i = start; i < end; ++i ) {
 			Eref er( elm, i, 0 );
 			// stuff return value into buf.
-			op->opBuffer( er, buf ); 
+			op->opBuffer( er, buf );
 			unsigned int size = buf[0];
 			memcpy( &getReturnBuf[k], &buf[1], size * sizeof( double ) );
 			k += size;
@@ -281,14 +281,14 @@ int innerGetVec( const Eref& e, const OpFunc* op,
 	return k;
 }
 
-void PostMaster::handleRemoteGetVec( 
+void PostMaster::handleRemoteGetVec(
 				const Eref& e, const OpFunc* op, int requestingNode )
 {
 #ifdef USE_MPI
 	static double getReturnBuf[reserveBufSize];
 	int k = innerGetVec( e, op, getReturnBuf );
 	// Send out the data. Blocking. Don't want any other gets till done
-	MPI_Send( 
+	MPI_Send(
 		&getReturnBuf[0], k, MPI_DOUBLE,
 		requestingNode, 		// Where to send to.
 		RETURNTAG, MPI_COMM_WORLD
@@ -314,9 +314,9 @@ void PostMaster::clearPendingSetGet()
 		int count = 0;
 		MPI_Get_count( &setRecvStatus_, MPI_DOUBLE, &count );
 		// Immediately post another Recv. Needed because we may call
-		// the clearPendingSetGet() function recursively. So copy 
+		// the clearPendingSetGet() function recursively. So copy
 		// data to another buffer first.
-		vector< double > temp( setRecvBuf_.begin(), 
+		vector< double > temp( setRecvBuf_.begin(),
 						setRecvBuf_.begin() + count );
 		MPI_Irecv( &setRecvBuf_[0], setRecvBufSize, MPI_DOUBLE,
 						MPI_ANY_SOURCE,
@@ -370,7 +370,7 @@ void PostMaster::clearPendingGet()
 
 		// Send out the data. Blocking. Don't want any other gets till done
 		int size = getReturnBuf[0];
-		MPI_Send( 
+		MPI_Send(
 			&getReturnBuf[1], size, MPI_DOUBLE,
 			requestingNode, 		// Where to send to.
 			RETURNTAG, MPI_COMM_WORLD
@@ -385,7 +385,7 @@ void PostMaster::clearPendingRecv()
 #ifdef USE_MPI
 	int done = 0;
 	bool report = false; // for debugging
-	MPI_Testsome( Shell::numNodes() -1, &recvReq_[0], &done, 
+	MPI_Testsome( Shell::numNodes() -1, &recvReq_[0], &done,
 					&doneIndices_[0], &doneStatus_[0] );
 	if ( done == MPI_UNDEFINED )
 		return;
@@ -409,7 +409,7 @@ void PostMaster::clearPendingRecv()
 		while ( j < recvSize ) {
 			const TgtInfo* tgt = reinterpret_cast< const TgtInfo * >( buf );
 			const Eref& e = tgt->eref();
-			const Finfo *f = 
+			const Finfo *f =
 				e.element()->cinfo()->getSrcFinfo( tgt->bindIndex() );
 			buf += TgtInfo::headerSize;
 			const SrcFinfo* sf = dynamic_cast< const SrcFinfo* >( f );
@@ -421,13 +421,13 @@ void PostMaster::clearPendingRecv()
 		}
 		// Post the next Irecv.
 		unsigned int k = recvNode;
-		if ( recvNode > Shell::myNode() ) 
+		if ( recvNode > Shell::myNode() )
 			k--;
 		MPI_Irecv( &recvBuf_[recvNode][0],
-						recvBufSize_, MPI_DOUBLE, 
+						recvBufSize_, MPI_DOUBLE,
 						recvNode,
 						MSGTAG, MPI_COMM_WORLD,
-						&recvReq_[ k ] 
+						&recvReq_[ k ]
 						// Ensure we have contiguous entries in recvReq_
 				 );
 	}
@@ -448,8 +448,8 @@ double* PostMaster::addToSendBuf( const Eref& e, unsigned int bindIndex,
 		// Here we need to activate the fallback second send which will
 		// deal with the big block. Also various routines for tracking
 		// send size so we don't get too big or small.
-		cerr << "Error: PostMaster::addToSendBuf on node " << 
-				Shell::myNode() << 
+		cerr << "Error: PostMaster::addToSendBuf on node " <<
+				Shell::myNode() <<
 				": Data size (" << size << ") goes past end of buffer\n";
 		assert( 0 );
 	}
@@ -460,15 +460,15 @@ double* PostMaster::addToSendBuf( const Eref& e, unsigned int bindIndex,
 	return &sendBuf_[node][end];
 }
 
-double* PostMaster::addToSetBuf( const Eref& e, unsigned int opIndex, 
+double* PostMaster::addToSetBuf( const Eref& e, unsigned int opIndex,
 						unsigned int size, unsigned int hopType )
 {
 	if ( TgtInfo::headerSize + size > setRecvBufSize ) {
 		// Here we need to activate the fallback second send which will
 		// deal with the big block. Also various routines for tracking
 		// send size so we don't get too big or small.
-		cerr << "Error: PostMaster::addToSetBuf on node " << 
-				Shell::myNode() << 
+		cerr << "Error: PostMaster::addToSetBuf on node " <<
+				Shell::myNode() <<
 				": Data size (" << size << ") goes past end of buffer\n";
 		assert( 0 );
 	}
@@ -494,18 +494,18 @@ void PostMaster::dispatchSetBuf( const Eref& e )
 			// A bcast would be marginally more efficient, but would need
 			// us to inform all target nodes to expect one. So just do
 			// multiple sends.
-				MPI_Isend( 
+				MPI_Isend(
 					&setSendBuf_[0], setSendSize_, MPI_DOUBLE,
 					i, 		// Where to send to.
 					SETTAG, MPI_COMM_WORLD,
 					&setSendReq_
-		// Need to monitor all the sends to make sure they all complete 
+		// Need to monitor all the sends to make sure they all complete
 		// before permitting another 'set'
 				);
 			}
 		}
 	} else {
-		MPI_Isend( 
+		MPI_Isend(
 			&setSendBuf_[0], setSendSize_, MPI_DOUBLE,
 				e.getNode(), 		// Where to send to.
 				SETTAG, MPI_COMM_WORLD,
@@ -526,8 +526,8 @@ double* PostMaster::remoteGet( const Eref& e, unsigned int bindIndex )
 	static MPI_Request getRecvReq;
 	static MPI_Status getSendStatus;
 
-	while ( isSetSent_ == 0 ) { 
-			// Can't request a 'get' while old set is 
+	while ( isSetSent_ == 0 ) {
+			// Can't request a 'get' while old set is
 			// pending, lest the 'get' depend on the 'set'.
 		clearPending();
 	}
@@ -536,13 +536,13 @@ double* PostMaster::remoteGet( const Eref& e, unsigned int bindIndex )
 	assert ( !e.element()->isGlobal() && e.getNode() != Shell::myNode() );
 	// Post receive for return value.
 	MPI_Irecv( 		&getRecvBuf[0],
-					setRecvBufSize, MPI_DOUBLE, 
+					setRecvBufSize, MPI_DOUBLE,
 					e.getNode(),
 					RETURNTAG, MPI_COMM_WORLD,
-					&getRecvReq 
+					&getRecvReq
 			 );
 	// Now post send to request the data
-	MPI_Isend( 
+	MPI_Isend(
 		&getSendBuf[0], TgtInfo::headerSize, MPI_DOUBLE,
 			e.getNode(), 		// Where to send to.
 			SETTAG, MPI_COMM_WORLD,
@@ -561,12 +561,12 @@ double* PostMaster::remoteGet( const Eref& e, unsigned int bindIndex )
 	return &getRecvBuf[0];
 }
 
-/// This is a blocking call. However, it must still handle other 
+/// This is a blocking call. However, it must still handle other
 //requests that come into the current node.
 //  Here we request data only from the one node that holds the data,
 //  since all field data is on a single DataEntry.
 void PostMaster::remoteFieldGetVec( const Eref& e, unsigned int bindIndex,
-	vector< double >& getRecvBuf )	
+	vector< double >& getRecvBuf )
 {
 #ifdef USE_MPI
 	static double getSendBuf[TgtInfo::headerSize];
@@ -580,8 +580,8 @@ void PostMaster::remoteFieldGetVec( const Eref& e, unsigned int bindIndex,
 	getRecvBuf.resize( reserveBufSize );
 
 #ifdef USE_MPI
-	while ( isSetSent_ == 0 ) { 
-			// Can't request a 'get' while old set is 
+	while ( isSetSent_ == 0 ) {
+			// Can't request a 'get' while old set is
 			// pending, lest the 'get' depend on the 'set'.
 		clearPending();
 	}
@@ -591,13 +591,13 @@ void PostMaster::remoteFieldGetVec( const Eref& e, unsigned int bindIndex,
 
 	// Post receive for return value.
 	MPI_Irecv( 	&getRecvBuf[0],
-				reserveBufSize, MPI_DOUBLE, 
+				reserveBufSize, MPI_DOUBLE,
 				targetNode,
 				RETURNTAG, MPI_COMM_WORLD,
-				&getRecvReq 
+				&getRecvReq
 			);
 	// Now post send to request the data
-	MPI_Isend( 
+	MPI_Isend(
 				&getSendBuf[0], TgtInfo::headerSize, MPI_DOUBLE,
 				targetNode, 			// Where to send to.
 				SETTAG, MPI_COMM_WORLD,
@@ -616,12 +616,12 @@ void PostMaster::remoteFieldGetVec( const Eref& e, unsigned int bindIndex,
 #endif
 }
 
-/// This is a blocking call. However, it must still handle other 
+/// This is a blocking call. However, it must still handle other
 //requests that come into the current node.
 // getRecvBuf and size are already sized at numNodes.
 // But getRecvBuf individual entries need to be sized.
 void PostMaster::remoteGetVec( const Eref& e, unsigned int bindIndex,
-	vector< vector< double > >& getRecvBuf, 
+	vector< vector< double > >& getRecvBuf,
 	vector< unsigned int >& numOnNode )
 {
 #ifdef USE_MPI
@@ -637,8 +637,8 @@ void PostMaster::remoteGetVec( const Eref& e, unsigned int bindIndex,
 	getRecvBuf.resize( Shell::numNodes(), temp );
 
 #ifdef USE_MPI
-	while ( isSetSent_ == 0 ) { 
-			// Can't request a 'get' while old set is 
+	while ( isSetSent_ == 0 ) {
+			// Can't request a 'get' while old set is
 			// pending, lest the 'get' depend on the 'set'.
 		clearPending();
 	}
@@ -651,13 +651,13 @@ void PostMaster::remoteGetVec( const Eref& e, unsigned int bindIndex,
 		if ( i != Shell::myNode() ) {
 			// Post receive for return value.
 			MPI_Irecv( 	&getRecvBuf[i][0],
-					reserveBufSize, MPI_DOUBLE, 
+					reserveBufSize, MPI_DOUBLE,
 					i,
 					RETURNTAG, MPI_COMM_WORLD,
-					&getRecvReq[k] 
+					&getRecvReq[k]
 			);
 			// Now post send to request the data
-			MPI_Isend( 
+			MPI_Isend(
 				&getSendBuf[0], TgtInfo::headerSize, MPI_DOUBLE,
 				i, 			// Where to send to.
 				SETTAG, MPI_COMM_WORLD,
@@ -673,7 +673,7 @@ void PostMaster::remoteGetVec( const Eref& e, unsigned int bindIndex,
 	unsigned int received = 0;
 	vector< int > getDoneIndices( Shell::numNodes(), 0 );
 	while( received < Shell::numNodes() - 1 ) {
-		MPI_Testsome( Shell::numNodes() -1, &getRecvReq[0], &done, 
+		MPI_Testsome( Shell::numNodes() -1, &getRecvReq[0], &done,
 					&getDoneIndices[0], &doneStatus[0] );
 		if ( done == MPI_UNDEFINED )
 			continue;
@@ -685,7 +685,7 @@ void PostMaster::remoteGetVec( const Eref& e, unsigned int bindIndex,
 				recvNode += 1; // Skip myNode
 			/*
 			int recvSize = 0;
-			MPI_Get_count( &doneStatus[doneIndex], 
+			MPI_Get_count( &doneStatus[doneIndex],
 							MPI_DOUBLE, &recvSize );
 			size[recvNode] = recvSize;
 							*/

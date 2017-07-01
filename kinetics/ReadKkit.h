@@ -27,7 +27,7 @@
  */
 class ReadKkit
 {
-	public: 
+	public:
 		enum ParseMode {
 			DATA,
 			INIT,
@@ -51,10 +51,10 @@ class ReadKkit
 		//////////////////////////////////////////////////////////////////
 		// Undump operations
 		//////////////////////////////////////////////////////////////////
-		
+
 		void innerRead( ifstream& fin );
 		ParseMode readInit( const string& line );
-		Id read( const string& filename, const string& cellname, 
+		Id read( const string& filename, const string& cellname,
 			Id parent, const string& solverClass = "Stoich" );
 		void readData( const string& line );
 		void undump( const vector< string >& args );
@@ -62,7 +62,7 @@ class ReadKkit
 		/**
 		 * This function sets up the kkit model for a run using the GSL,
 		 * which means numerical integration using the GSL, all the plots
-		 * specified by the kkit file, and the timestep for plots as 
+		 * specified by the kkit file, and the timestep for plots as
 		 * specified by the kkit file.
 		 */
 		// void setupGslRun();
@@ -86,7 +86,7 @@ class ReadKkit
 		Id buildGeometry( const vector< string >& args );
 		Id buildStim( const vector< string >& args );
 		Id buildChan( const vector< string >& args );
-		Id buildInfo( Id parent, map< string, int >& m, 
+		Id buildInfo( Id parent, map< string, int >& m,
 			const vector< string >& args );
 		void buildSumTotal( const string& src, const string& dest );
 		/**
@@ -100,10 +100,10 @@ class ReadKkit
 		//////////////////////////////////////////////////////////////////
 		void addmsg( const vector< string >& args );
 		void setupSlaveMsg( const string& src, const string& dest );
-		void innerAddMsg( 
-			const string& src, const map< string, Id >& m1, 
+		void innerAddMsg(
+			const string& src, const map< string, Id >& m1,
 				const string& srcMsg,
-			const string& dest, const map< string, Id >& m2, 
+			const string& dest, const map< string, Id >& m2,
 				const string& destMsg,
 			bool isBackward = 0 );
 		void call( const vector< string >& args );
@@ -117,7 +117,7 @@ class ReadKkit
 		 * compartments in which one or more of their reactants resides.
 		 * Thus, if any of these compartments changes volume, the Reac will
 		 * be informed.
-		 */     
+		 */
 		void assignReacCompartments();
 		void assignEnzCompartments();
 		void assignMMenzCompartments();
@@ -148,7 +148,7 @@ class ReadKkit
 		void convertMMenzRatesToConcUnits();
 
 		/**
-		 * Convert regular Enz rates. Binding step k1 has similar issues 
+		 * Convert regular Enz rates. Binding step k1 has similar issues
 		 * as reac rates. k2 and k3 are both in units of 1/time, so OK.
 		 */
 		void convertEnzRatesToConcUnits();
@@ -156,9 +156,9 @@ class ReadKkit
 		//////////////////////////////////////////////////////////////////
 		// Utility functions
 		//////////////////////////////////////////////////////////////////
-		
+
 		/**
-		 * Splits up kkit path into head and tail portions, 
+		 * Splits up kkit path into head and tail portions,
 		 * tail is returned.
 		 * Note that this prepends the basePath to the head.
 		 */
@@ -168,7 +168,7 @@ class ReadKkit
 		 * Utility function. Cleans up path strings. In most cases, it
 		 * replaces things with underscores.
 		 * Replaces square braces with underscores.
-		 * Replaces '*' with 'p' 
+		 * Replaces '*' with 'p'
 		 *         as it is usually there to indicate phosphorylation
 		 * Replaces '-' with underscore
 		 * Replaces '@' with underscore
@@ -198,7 +198,7 @@ class ReadKkit
 		 * just go onto same compt as substrate.
 		 * Defaults to false.
 		 */
-		bool moveOntoCompartment_;	
+		bool moveOntoCompartment_;
 
 		unsigned int numCompartments_;
 		unsigned int numPools_;

@@ -40,7 +40,7 @@ void makeFullMatrix(
 	vector< vector< double > >& matrix )
 {
 	unsigned int size = tree.size();
-	
+
 	/*
 	 * Some convenience variables
 	 */
@@ -50,7 +50,7 @@ void makeFullMatrix(
 		CmByDt.push_back( tree[ i ].Cm / ( dt / 2.0 ) );
 		Ga.push_back( 2.0 / tree[ i ].Ra );
 	}
-	
+
 	/* Each entry in 'coupled' is a list of electrically coupled compartments.
 	 * These compartments could be linked at junctions, or even in linear segments
 	 * of the cell.
@@ -61,45 +61,45 @@ void makeFullMatrix(
 			coupled.push_back( tree[ i ].children );
 			coupled.back().push_back( i );
 		}
-	
+
 	matrix.clear();
 	matrix.resize( size );
 	for ( unsigned int i = 0; i < size; ++i )
 		matrix[ i ].resize( size );
-	
+
 	// Setting diagonal elements
 	for ( unsigned int i = 0; i < size; i++ )
 		matrix[ i ][ i ] = CmByDt[ i ] + 1.0 / tree[ i ].Rm;
-	
+
 	double gi;
 	vector< vector< unsigned int > >::iterator group;
 	vector< unsigned int >::iterator ic;
 	for ( group = coupled.begin(); group != coupled.end(); ++group ) {
 		double gsum = 0.0;
-		
+
 		for ( ic = group->begin(); ic != group->end(); ++ic )
 			gsum += Ga[ *ic ];
-		
+
 		for ( ic = group->begin(); ic != group->end(); ++ic ) {
 			gi = Ga[ *ic ];
-			
+
 			matrix[ *ic ][ *ic ] += gi * ( 1.0 - gi / gsum );
 		}
 	}
-	
+
 	// Setting off-diagonal elements
 	double gij;
 	vector< unsigned int >::iterator jc;
 	for ( group = coupled.begin(); group != coupled.end(); ++group ) {
 		double gsum = 0.0;
-		
+
 		for ( ic = group->begin(); ic != group->end(); ++ic )
 			gsum += Ga[ *ic ];
-		
+
 		for ( ic = group->begin(); ic != group->end() - 1; ++ic ) {
 			for ( jc = ic + 1; jc != group->end(); ++jc ) {
 				gij = Ga[ *ic ] * Ga[ *jc ] / gsum;
-				
+
 				matrix[ *ic ][ *jc ] = -gij;
 				matrix[ *jc ][ *ic ] = -gij;
 			}

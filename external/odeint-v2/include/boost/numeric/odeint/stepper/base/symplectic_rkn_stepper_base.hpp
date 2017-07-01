@@ -77,11 +77,11 @@ public:
     typedef Time time_type;
     typedef Resizer resizer_type;
     typedef stepper_tag stepper_category;
-    
+
     #ifndef DOXYGEN_SKIP
     typedef symplectic_nystroem_stepper_base< NumOfStages , Order , Coor , Momentum , Value ,
             CoorDeriv , MomentumDeriv , Time , Algebra , Operations , Resizer > internal_stepper_base_type;
-    #endif 
+    #endif
     typedef unsigned short order_type;
 
     static const order_type order_value = Order;
@@ -90,7 +90,7 @@ public:
 
     symplectic_nystroem_stepper_base( const coef_type &coef_a , const coef_type &coef_b , const algebra_type &algebra = algebra_type() )
         : algebra_stepper_base_type( algebra ) , m_coef_a( coef_a ) , m_coef_b( coef_b ) ,
-          m_dqdt_resizer() , m_dpdt_resizer() , m_dqdt() , m_dpdt() 
+          m_dqdt_resizer() , m_dpdt_resizer() , m_dqdt() , m_dpdt()
     { }
 
 
@@ -311,14 +311,14 @@ private:
  *
  * This class is the base class for the symplectic Runge-Kutta-Nystroem steppers. Symplectic steppers are usually
  * used to solve Hamiltonian systems and they conserve the phase space volume, see
- * <a href="http://en.wikipedia.org/wiki/Symplectic_integrator">en.wikipedia.org/wiki/Symplectic_integrator</a>. 
+ * <a href="http://en.wikipedia.org/wiki/Symplectic_integrator">en.wikipedia.org/wiki/Symplectic_integrator</a>.
  * Furthermore, the energy is conserved
  * in average. In detail this class of steppers can be used to solve separable Hamiltonian systems which can be written
  * in the form H(q,p) = H1(p) + H2(q). q is usually called the coordinate, while p is the momentum. The equations of motion
  * are dq/dt = dH1/dp, dp/dt = -dH2/dq.
  *
  * ToDo : add formula for solver and explanation of the coefficients
- * 
+ *
  * symplectic_nystroem_stepper_base uses odeints algebra and operation system. Step size and error estimation are not
  * provided for this class of solvers. It derives from algebra_stepper_base. Several `do_step` variants are provided:
  *
@@ -410,7 +410,7 @@ private:
      * \note This method NOT solve the forwarding problem.
      *
      * \param system The system, can be represented as a pair of two function object or one function object. See above.
-     * \param in The state of the ODE, which is a pair of coordinate and momentum. The state is updated out-of-place, therefore the 
+     * \param in The state of the ODE, which is a pair of coordinate and momentum. The state is updated out-of-place, therefore the
      * new value is written into out
      * \param t The time of the ODE. It is not advanced by this method.
      * \param out The new state of the ODE.

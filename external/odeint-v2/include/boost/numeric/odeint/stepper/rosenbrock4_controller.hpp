@@ -76,7 +76,7 @@ public:
         BOOST_USING_STD_MAX();
         using std::abs;
         using std::sqrt;
-        
+
         const size_t n = x.size();
         value_type err = 0.0 , sk = 0.0;
         for( size_t i=0 ; i<n ; ++i )

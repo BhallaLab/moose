@@ -17,7 +17,7 @@
  */
 class CplxEnzBase: public EnzBase
 {
-	public: 
+	public:
 		CplxEnzBase();
 		virtual ~CplxEnzBase();
 

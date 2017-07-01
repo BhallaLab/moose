@@ -16,7 +16,7 @@
  * in dest array.
  * If there is a mismatch in number of entries, the overhang is ignored.
  * If the dest array is a FieldElement, then it uses its internal DataId
- * i2_ to fill in the DataIndex for the dest. The OneToOne matching is 
+ * i2_ to fill in the DataIndex for the dest. The OneToOne matching is
  * assumed to be between DataIndex on e1 and FieldIndex on e2.
  */
 class OneToOneMsg: public Msg

@@ -13,8 +13,8 @@
 
 /**
  * The HHChannel class sets up a Hodkin-Huxley type ion channel.
- * The form used here is quite general and can handle up to 3 
- * gates, named X, Y and Z. The Z gate can be a function of 
+ * The form used here is quite general and can handle up to 3
+ * gates, named X, Y and Z. The Z gate can be a function of
  * concentration as well as voltage. The gates are normally computed
  * using the form
  *
@@ -24,7 +24,7 @@
  *
  * where the rates for the transition are alpha and beta, and both
  * are functions of V.
- * The state variables for each gate (X_, Y_, and Z_) are 
+ * The state variables for each gate (X_, Y_, and Z_) are
  * the fraction in the open state.
  *
  * Gates can also be computed instantaneously, giving the instantaneous
@@ -32,13 +32,13 @@
  * process.
  * The actual functions alpha and beta are provided by an auxiliary
  * class, the HHGate. The idea is that all copies of a channel share the
- * same gate, thus saving a great deal of space. It also makes it 
+ * same gate, thus saving a great deal of space. It also makes it
  * possible to cleanly change the parameters of all the channels of
  * a give class, all at once. Should one want to mutate a subset
  * of channels, they just need to set up separate gates.
  *
  * HHGates are implemented as a special category of FieldElement, so that
- * they can be accessed as readonly pointers available to the HHChannel. 
+ * they can be accessed as readonly pointers available to the HHChannel.
  * The FieldElement containing the HHGate appears as a child Element of
  * the HHChannel. The HHChannel Element can be an array; the associated
  * HHGate is a singleton. So there has to be a local copy of the HHGate
@@ -86,12 +86,12 @@ class HHChannel: public HHChannelBase, public ChanCommon
 		 * processFunc handles the update and calculations every
 		 * clock tick. It first sends the request for evaluation of
 		 * the gate variables to the respective gate objects and
-		 * recieves their response immediately through a return 
+		 * recieves their response immediately through a return
 		 * message. This is done so that many channel instances can
 		 * share the same gate lookup tables, but do so cleanly.
 		 * Such messages should never go to a remote node.
 		 * Then the function does its own little calculations to
-		 * send back to the parent compartment through regular 
+		 * send back to the parent compartment through regular
 		 * messages.
 		 */
 		void vProcess( const Eref& e, ProcPtr p );
@@ -99,8 +99,8 @@ class HHChannel: public HHChannelBase, public ChanCommon
 		/**
 		 * Reinitializes the values for the channel. This involves
 		 * computing the steady-state value for the channel gates
-		 * using the provided Vm from the parent compartment. It 
-		 * involves a similar cycle through the gates and then 
+		 * using the provided Vm from the parent compartment. It
+		 * involves a similar cycle through the gates and then
 		 * updates to the parent compartment as for the processFunc.
 		 */
 		void vReinit( const Eref& e, ProcPtr p );
@@ -147,7 +147,7 @@ class HHChannel: public HHChannelBase, public ChanCommon
 		void vCreateGate( const Eref& e, string gateType );
 		/**
 		 * Utility function for destroying gate. Works only on original
-		 * HHChannel. Somewhat dangerous, should never be used after a 
+		 * HHChannel. Somewhat dangerous, should never be used after a
 		 * copy has been made as the pointer of the gate will be in use
 		 * elsewhere.
 		 */
@@ -199,10 +199,10 @@ class HHChannel: public HHChannelBase, public ChanCommon
 		 */
 		HHGate* xGate_;
 
-		/// HHGate data structure for the yGate. 
+		/// HHGate data structure for the yGate.
 		HHGate* yGate_;
 
-		/// HHGate data structure for the yGate. 
+		/// HHGate data structure for the yGate.
 		HHGate* zGate_;
 
 		Id myId_;

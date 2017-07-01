@@ -14,7 +14,7 @@
 typedef vector< double > SparseVector;
 
 class RollingMatrix {
-	public: 
+	public:
 		// Specify empty matrix.
 		RollingMatrix();
 		~RollingMatrix();
@@ -34,13 +34,13 @@ class RollingMatrix {
 		// Row index is relative to current zero.
 		void sumIntoRow( const vector< double >& input, unsigned int row );
 
-		// Return dot product of input with internal vector at specified 
+		// Return dot product of input with internal vector at specified
 		// row, starting at specified column.
 		double dotProduct( const vector< double >& input, unsigned int row,
 					   	unsigned int startColumn ) const;
 
 		// Return correlation found by summing dotProduct across all columns
-		void correl( vector< double >& ret, const vector< double >& input, 
+		void correl( vector< double >& ret, const vector< double >& input,
 						unsigned int row ) const;
 
 		// Zero out contents of row.
@@ -48,7 +48,7 @@ class RollingMatrix {
 
 		// Roll the matrix by one row. What was row 0 becomes row 1, etc.
 		// Last row vanishes.
-		void rollToNextRow(); // 
+		void rollToNextRow(); //
 
 	private:
 		unsigned int nrows_;

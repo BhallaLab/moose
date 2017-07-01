@@ -1,30 +1,30 @@
-// DiffAmp.cpp --- 
-// 
+// DiffAmp.cpp ---
+//
 // Filename: DiffAmp.cpp
-// Description: 
+// Description:
 // Author: subhasis ray
-// Maintainer: 
+// Maintainer:
 // Created: Mon Dec 29 16:01:22 2008 (+0530)
-// Version: 
+// Version:
 // Last-Updated: Tue Jun 11 17:00:33 2013 (+0530)
 //           By: subha
 //     Update #: 290
-// URL: 
-// Keywords: 
-// Compatibility: 
-// 
-// 
+// URL:
+// Keywords:
+// Compatibility:
+//
+//
 
-// Commentary: 
+// Commentary:
 // This implements an equivalent of the diffamp object in GENESIS.
-// 
-// 
-// 
+//
+//
+//
 
 // Change log:
 // 2008-12-30 16:21:19 (+0530) - Initial version.
 // 2012-02-22 03:05:40 (+0530) - Ported to dh_branch
-// 
+//
 /**********************************************************************
  ** This program is part of 'MOOSE', the
  ** Messaging Object Oriented Simulation Environment,
@@ -63,24 +63,24 @@ const Cinfo* DiffAmp::initCinfo()
                                                     " number representable on the system." ,
                                                     &DiffAmp::setSaturation,
                                                     &DiffAmp::getSaturation);
-    
+
     static ReadOnlyValueFinfo<DiffAmp, double> output( "outputValue",
                                                "Output of the amplifier, i.e. gain * (plus - minus)." ,
                                                &DiffAmp::getOutput);
     ///////////////////////////////////////////////////////////////
     // Dest messages
     ///////////////////////////////////////////////////////////////
-    
+
     static DestFinfo gainIn( "gainIn",
-                             "Destination message to control gain dynamically.",                                 
+                             "Destination message to control gain dynamically.",
                              new OpFunc1<DiffAmp, double> (&DiffAmp::setGain));
-    
-    static DestFinfo plusIn( "plusIn", 
+
+    static DestFinfo plusIn( "plusIn",
                       "Positive input terminal of the amplifier. All the messages connected"
-                      " here are summed up to get total positive input.",                          
+                      " here are summed up to get total positive input.",
                       new OpFunc1<DiffAmp, double> (&DiffAmp::plusFunc));
-    
-    static DestFinfo minusIn( "minusIn", 
+
+    static DestFinfo minusIn( "minusIn",
                       "Negative input terminal of the amplifier. All the messages connected"
                       " here are summed up to get total positive input.",
                       new OpFunc1<DiffAmp, double> (&DiffAmp::minusFunc));
@@ -97,7 +97,7 @@ const Cinfo* DiffAmp::initCinfo()
             {
 		&process, &reinit
             };
-    
+
     static SharedFinfo proc( "proc",
                              "This is a shared message to receive Process messages "
                              "from the scheduler objects."
@@ -109,7 +109,7 @@ const Cinfo* DiffAmp::initCinfo()
                              processShared, sizeof( processShared ) / sizeof( Finfo* )
                              );
 
-    
+
     static Finfo * diffAmpFinfos[] = {
         &gain,
         &saturation,
@@ -139,8 +139,8 @@ const Cinfo* DiffAmp::initCinfo()
             doc,
             sizeof(doc)/sizeof(string)
 );
-    
-    return &diffAmpCinfo;    
+
+    return &diffAmpCinfo;
 }
 
 static const Cinfo* diffAmpCinfo = DiffAmp::initCinfo();
@@ -195,7 +195,7 @@ void DiffAmp::process(const Eref& e, ProcPtr p)
     }
     if ( output < -saturation_ ) {
 	output = -saturation_;
-    }    
+    }
     output_ = output;
     outputOut()->send(e, output_);
 }
@@ -208,5 +208,5 @@ void DiffAmp::reinit(const Eref& e, ProcPtr p)
     minus_ = 0.0;
 }
 
-// 
+//
 // DiffAmp.cpp ends here

@@ -190,9 +190,9 @@ CylMesh::~CylMesh()
  */
 void CylMesh::updateCoords( const Eref& e, const vector< double >& concs )
 {
-	double temp = sqrt( 
-		( x1_ - x0_ ) * ( x1_ - x0_ ) + 
-		( y1_ - y0_ ) * ( y1_ - y0_ ) + 
+	double temp = sqrt(
+		( x1_ - x0_ ) * ( x1_ - x0_ ) +
+		( y1_ - y0_ ) * ( y1_ - y0_ ) +
 		( z1_ - z0_ ) * ( z1_ - z0_ )
 	);
 
@@ -442,7 +442,7 @@ unsigned int CylMesh::getMeshDimensions( unsigned int fid ) const
  * => k/3 * ( r1^3 - r0^3) = totLen
  * => k = 3 * totLen / (r1^3 - r0^3);
  * This is bad if r1 == r0, and is generally unpleasant.
- * 
+ *
  * Simple definition of rSlope:
  * rSlope is measured per meshEntry, not per length:
  * rSlope = ( r1 - r0 ) / numEntries;
@@ -456,7 +456,7 @@ unsigned int CylMesh::getMeshDimensions( unsigned int fid ) const
  * // To linearize, let 2r = r0 + r1.
  * // so dlen/dx = ( (r1-r0)/len ) * k * ( r0 + r1 )
  * // len(i) = len0 + i * dlen/dx
- * // len0 = totLen/numEntries - ( numEntries/2 ) * dlen/dx 
+ * // len0 = totLen/numEntries - ( numEntries/2 ) * dlen/dx
  */
 
 /// Virtual function to return volume of mesh Entry.
@@ -481,7 +481,7 @@ vector< double > CylMesh::getCoordinates( unsigned int fid ) const
 
 	double axialStart = fid * lenStart + ( ( fid * (fid - 1 ) )/2 ) * lenSlope_;
 		// fid * totLen_/numEntries_ + (fid - frac ) * lenSlope_;
-	double axialEnd = 
+	double axialEnd =
 		(fid + 1) * lenStart + ( ( fid * (fid + 1 ) )/2 ) * lenSlope_;
 		// (fid + 1) * totLen_/numEntries_ + (fid - frac + 1.0) * lenSlope_;
 
@@ -498,7 +498,7 @@ vector< double > CylMesh::getCoordinates( unsigned int fid ) const
 
 	ret[8] = 0;
 	ret[9] = 0;
-	
+
 	return ret;
 }
 
@@ -628,7 +628,7 @@ void CylMesh::innerBuildDefaultMesh( const Eref& e,
 	double volume, unsigned int numEntries )
 {
 	/// Single voxel cylinder with diameter = length.
-	/// vol = volume = pi.r^2.len. 
+	/// vol = volume = pi.r^2.len.
 	/// So len = 2r, volume = pi*r^2*2r = 2pi*r^3 so r = (volume/2pi)^(1/3)
 	double r = pow( ( volume / ( PI * 2 ) ), 1.0 / 3 );
 	vector< double > coords( 9, 0 );
@@ -682,7 +682,7 @@ const vector< double >& CylMesh::getVoxelArea() const
 	static vector< double > area;
 	area.resize( numEntries_ );
 	for ( unsigned int i = 0; i < numEntries_; ++i ) {
-		double frac = ( 0.5 + static_cast< double >( i ) ) / 
+		double frac = ( 0.5 + static_cast< double >( i ) ) /
 			static_cast< double >( numEntries_ );
 		double r = r0_ * ( 1.0 - frac ) + r1_ * frac;
 		area[i] = r * r * PI;
@@ -716,7 +716,7 @@ bool CylMesh::vSetVolumeNotRates( double volume )
 	r1_ *= linScale;
 	totLen_ *= linScale;
 	// Have to scale this so numEntries remains the same.
-	diffLength_ = totLen_ / numEntries_; 
+	diffLength_ = totLen_ / numEntries_;
 	return true;
 }
 
@@ -728,7 +728,7 @@ void CylMesh::transmitChange( const Eref& e )
 {
 		/*
 	Id meshEntry( e.id().value() + 1 );
-	assert( 
+	assert(
 		meshEntry.eref().data() == reinterpret_cast< char* >( lookupEntry( 0 ) )
 	);
 	double oldvol = getMeshEntryVolume( 0 );
@@ -742,7 +742,7 @@ void CylMesh::transmitChange( const Eref& e )
 	vector< vector< unsigned int > > outgoingEntries; // [node#][Entry#]
 	vector< vector< unsigned int > > incomingEntries; // [node#][Entry#]
 
-	// This function updates the size of the FieldDataHandler for the 
+	// This function updates the size of the FieldDataHandler for the
 	// MeshEntries.
 	DataHandler* dh = meshEntry.element()->dataHandler();
 	FieldDataHandlerBase* fdh = dynamic_cast< FieldDataHandlerBase* >( dh );
@@ -755,12 +755,12 @@ void CylMesh::transmitChange( const Eref& e )
 	// how it communicates with other nodes.
 	meshSplit()->fastSend( e,
 		oldvol,
-		vols, localIndices, 
+		vols, localIndices,
 		outgoingEntries, incomingEntries );
 
 	// This func goes down to the MeshEntry to tell all the pools and
 	// Reacs to deal with the new mesh. They then update the stoich.
-	lookupEntry( 0 )->triggerRemesh( meshEntry.eref(), 
+	lookupEntry( 0 )->triggerRemesh( meshEntry.eref(),
 		oldvol, startEntry, localIndices, vols );
 		*/
 }
@@ -842,7 +842,7 @@ vector< VoxelJunction >& ret ) const
 {
 	const double EPSILON = 1e-3;
 	ret.clear();
-	// Should really estimate the distance from the centre of the smaller 
+	// Should really estimate the distance from the centre of the smaller
 	// cylinder cap disk to the plane of the larger disk, provided it is
 	// within the radius of the disk. The subsequent calculations are the
 	// same though.
@@ -860,8 +860,8 @@ vector< VoxelJunction >& ret ) const
 			double xda;
 			if ( r0_ < other->r0_ )
 				xda = 2 * r0_ * r0_ * PI / ( diffLength_ + other->diffLength_ );
-			else 
-				xda = 2 * other->r0_ * other->r0_ * PI / 
+			else
+				xda = 2 * other->r0_ * other->r0_ * PI /
 						( diffLength_ + other->diffLength_ );
 			ret.push_back( VoxelJunction( 0, 0, xda ) );
 			ret.back().first = 0;
@@ -874,10 +874,10 @@ vector< VoxelJunction >& ret ) const
 			double xda;
 			if ( r1_ < other->r1_ )
 				xda = 2 * r1_ * r1_ * PI / ( diffLength_ + other->diffLength_ );
-			else 
-				xda = 2 * other->r1_ * other->r1_ * PI / 
+			else
+				xda = 2 * other->r1_ * other->r1_ * PI /
 						( diffLength_ + other->diffLength_ );
-			ret.push_back( VoxelJunction( numEntries_ - 1, 
+			ret.push_back( VoxelJunction( numEntries_ - 1,
 						other->numEntries_ - 1, xda ) );
 			ret.back().first = numEntries_;
 			ret.back().second = other->numEntries_ - 1;
@@ -889,8 +889,8 @@ vector< VoxelJunction >& ret ) const
 			double xda;
 			if ( r1_ < other->r0_ )
 				xda = 2 * r1_ * r1_ * PI / ( diffLength_ + other->diffLength_ );
-			else 
-				xda = 2 * other->r0_ * other->r0_ * PI / 
+			else
+				xda = 2 * other->r0_ * other->r0_ * PI /
 						( diffLength_ + other->diffLength_ );
 			ret.push_back( VoxelJunction( numEntries_ - 1, 0, xda ) );
 			ret.back().first = numEntries_ - 1;
@@ -903,8 +903,8 @@ vector< VoxelJunction >& ret ) const
 			double xda;
 			if ( r0_ < other->r1_ )
 				xda = 2 * r0_ * r0_ * PI / ( diffLength_ + other->diffLength_ );
-			else 
-				xda = 2 * other->r1_ * other->r1_ * PI / 
+			else
+				xda = 2 * other->r1_ * other->r1_ * PI /
 						( diffLength_ + other->diffLength_ );
 			ret.push_back( VoxelJunction( 0, other->numEntries_ - 1, xda ));
 			ret.back().first = 0;
@@ -931,7 +931,7 @@ double CylMesh::selectGridVolume( double h ) const
 	return h;
 }
 
-void fillPointsOnCircle( 
+void fillPointsOnCircle(
 				const Vec& u, const Vec& v, const Vec& q,
 				double h, double r, vector< double >& area,
 				const CubeMesh* other
@@ -986,8 +986,8 @@ vector< VoxelJunction >& ret ) const
 			fillPointsOnCircle( u, v, Vec( q0, q1, q2 ),
 						h, r, area, other );
 			}
-		// Go through all cubeMesh entries and compute diffusion 
-		// cross-section. Assume this is through a membrane, so the 
+		// Go through all cubeMesh entries and compute diffusion
+		// cross-section. Assume this is through a membrane, so the
 		// only factor relevant is area. Not the distance.
 		for ( unsigned int k = 0; k < area.size(); ++k ) {
 			if ( area[k] > EPSILON ) {
@@ -1003,9 +1003,9 @@ vector< VoxelJunction >& ret ) const
 }
 
 void CylMesh::indexToSpace( unsigned int index,
-			double& x, double& y, double& z ) const 
+			double& x, double& y, double& z ) const
 {
-	if ( index < numEntries_ ) { 
+	if ( index < numEntries_ ) {
 		double k = ( index + 0.5 ) / static_cast< double >( numEntries_ );
 		x = ( x1_ - x0_ ) * k + x0_;
 		y = ( y1_ - y0_ ) * k + y0_;
@@ -1013,7 +1013,7 @@ void CylMesh::indexToSpace( unsigned int index,
 	}
 }
 
-static double dotprd ( double x0, double y0, double z0, 
+static double dotprd ( double x0, double y0, double z0,
 				double x1, double y1, double z1 )
 {
 		return x0 * x1 + y0 * y1 + z0 * z1;
@@ -1021,7 +1021,7 @@ static double dotprd ( double x0, double y0, double z0,
 
 
 // this is the function that does the actual calculation.
-double CylMesh::nearest( double x, double y, double z, 
+double CylMesh::nearest( double x, double y, double z,
 				double& linePos, double& r ) const
 {
 	// Consider r0 = x0,y0,z0 and r1 = x1, y1, z1, and r = x,y,z.
@@ -1033,9 +1033,9 @@ double CylMesh::nearest( double x, double y, double z,
 	// Solving,
 	// k = (r0 - r1).(r - r1) / (|r0-r1|^2)
 	//
-	
+
 	double dist = distance( x1_ - x0_, y1_ - y0_, z1_ - z0_ );
-	double k = dotprd( 
+	double k = dotprd(
 		x1_ - x0_, y1_ - y0_, z1_ - z0_,
 		x - x0_, y - y0_, z - z0_ ) / ( dist * dist );
 
@@ -1051,7 +1051,7 @@ double CylMesh::nearest( double x, double y, double z,
 }
 
 // This function returns the index.
-double CylMesh::nearest( double x, double y, double z, 
+double CylMesh::nearest( double x, double y, double z,
 				unsigned int& index ) const
 {
 	double k = 0.0;
@@ -1079,7 +1079,7 @@ bool isOnSurface( double x, double y, double z,
 					unsigned int &index, double& adx )
 {
 	double len = distance( x1_ - x0_, y1_ - y0_, z1_ - z0_ );
-	double k = dotprd( 
+	double k = dotprd(
 		x1_ - x0_, y1_ - y0_, z1_ - z0_,
 		x - x0_, y - y0_, z - z0_ ) / len;
 
@@ -1104,7 +1104,7 @@ bool isOnSurface( double x, double y, double z,
 
 	// OK, now we need to find the plane of intersection of the cylinder
 	// with the cuboid. To make it easier, assume it is flat. We already
-	// know the vector from the middle of the cuboid to the nearest 
+	// know the vector from the middle of the cuboid to the nearest
 	// cylinder point. Treat it as the normal to the intersection plane.
 	// We need: : is the plane inside the cube?
 	// What is the area of the plane till its intersection with the cube?

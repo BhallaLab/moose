@@ -16,19 +16,19 @@ class Synapse;
  * This is a pure virtual base class for accessing and handling synapses.
  * It provides a uniform interface so that all classes that use synapses
  * can do so without duplication.
- * The derived classes have the responsibility of handling the 
+ * The derived classes have the responsibility of handling the
  * synaptic events as well as possible return events from the parent.
  */
 class SynHandlerBase
 {
-	public: 
+	public:
 		SynHandlerBase();
 		virtual ~SynHandlerBase();
-		
+
 		////////////////////////////////////////////////////////////////
 		// Field assignment stuff.
 		////////////////////////////////////////////////////////////////
-		
+
 		/**
 		 * Resizes the synapse storage
 		 */
@@ -55,8 +55,8 @@ class SynHandlerBase
         bool rangeWarning( const string& field, double value );
 
 		////////////////////////////////////////////////////////////////
-		/** 
-		 * Adds a new synapse, returns its index. This is 
+		/**
+		 * Adds a new synapse, returns its index. This is
 		 * triggered by addMsg of inputs to the child synapse. The
 		 * SynHandler has to ensure that we have enough synapses allocated
 		 * to handle the new message, and the return value is used so that
@@ -77,7 +77,7 @@ class SynHandlerBase
 		 * eventual arrival of the spike, and is typically well in the
 		 * future. The index specifies which synapse the spike came to.
 		 */
-		virtual void addSpike( 
+		virtual void addSpike(
 			unsigned int index, double time, double weight ) = 0;
 		////////////////////////////////////////////////////////////////
 		// Virtual func definitions for fields.

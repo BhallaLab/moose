@@ -1,6 +1,6 @@
 /*******************************************************************
  * File:            Binomial.cpp
- * Description:      
+ * Description:
  * Author:          Subhasis Ray
  * E-mail:          ray.subhasis@gmail.com
  * Created:         2007-10-28 13:44:46
@@ -45,7 +45,7 @@ const double fc[] = {
 const vector <double> initializeLookupTable()
 {
     static vector <double> table;
-    
+
     for ( int i = 0; i < 10; ++i )
     {
         table.push_back(fc[i]);
@@ -54,12 +54,12 @@ const vector <double> initializeLookupTable()
     {
         double denom = 1.0/(i+1);
         double value = (0.083333333333333333 -  (0.002777777777777778 -  0.0007936508*denom*denom)*denom*denom)*denom;
-        table.push_back(value);            
+        table.push_back(value);
     }
-    return table;    
+    return table;
 }
-static const vector <double> lookupTable = initializeLookupTable();    
-    
+static const vector <double> lookupTable = initializeLookupTable();
+
 
 
 /**
@@ -75,7 +75,7 @@ inline double getFc(unsigned int k)
     else
     {
         return lookupTable[k];
-    }    
+    }
 }
 
 /**
@@ -84,31 +84,31 @@ inline double getFc(unsigned int k)
  */
 Binomial::Binomial( long n, double p):n_(n), p_(p)
 {
-    
+
     if (( p < 0 ) || ( p > 1 ))
     {
         cerr << "ERROR: p must be in [0,1] range." << endl;
-        p = 0.0;        
+        p = 0.0;
         return;
     }
     if ( n < 1 )
     {
         cerr << "ERROR: n must be >= 1" << endl;
-        return;        
+        return;
     }
-    
-    
+
+
     double tmpMean;
     double tmp;
     isInverted_ = false;
-    
+
 //     tmpMean = n*((p < 0.5)? p : (1-p));
-    
+
 //     if ((tmpMean > 10.0))
 //     {
     // the above can be simplified as: ( saves one floating point comparison, aesthetically pleasing :D )
     if ( n > 20 )
-    {        
+    {
         if( p < 0.5 )
         {
             p_ = p;
@@ -119,7 +119,7 @@ Binomial::Binomial( long n, double p):n_(n), p_(p)
             isInverted_ = true;
         }
         tmpMean = n*p_;
-        
+
         tmp = sqrt(tmpMean*(1.0 - p_));
         paramC_ = tmpMean + 0.5;
         paramB_ = 1.15 + 2.53*tmp;
@@ -127,18 +127,18 @@ Binomial::Binomial( long n, double p):n_(n), p_(p)
         paramAlpha_ = (2.83 + 5.1/paramB_)*tmp;
         paramUr_ = 0.43;
         paramVr_ = 0.92 - 4.2/paramB_;
-        paramUrVr_ = 0.86*paramVr_;        
+        paramUrVr_ = 0.86*paramVr_;
         paramM_ = floor(tmpMean+p_);
         paramR_ = floor(p_/(1-p_));
         paramNr_ = (n+1)*paramR_;
-        paramNpq_ = tmpMean*(1-p_);        
+        paramNpq_ = tmpMean*(1-p_);
     }
     mean_ = n_*p_;
 }
 
 long Binomial::getN() const
 {
-    return n_;    
+    return n_;
 }
 
 double Binomial::getP() const
@@ -150,7 +150,7 @@ double Binomial::getP() const
     else
     {
         return p_;
-    }    
+    }
 }
 
 double Binomial::getMean() const
@@ -159,13 +159,13 @@ double Binomial::getMean() const
     {
         return (n_ - mean_);
     }else{
-        return mean_;    
-    }    
+        return mean_;
+    }
 }
 
 double Binomial::getVariance() const
 {
-    static double variance = sqrt(n_*p_*(1.0-p_));    
+    static double variance = sqrt(n_*p_*(1.0-p_));
     return variance;
 }
 
@@ -187,13 +187,13 @@ double Binomial::getNextSample() const
     {
         sample = (double)n_;
     }
-    else 
+    else
     {
         if ( mean_ > 10 )
         {
             sample = isInverted_? n_ - generateTrd(): generateTrd();
         }
-        else 
+        else
         {
             for ( unsigned int i = 0; i < n_; ++i)
             {
@@ -201,13 +201,13 @@ double Binomial::getNextSample() const
                 if ( myRand < p_ )
                 {
                     sample+=1;
-                }     
-            }    
+                }
+            }
         }
-//        cerr << "Sample value: " << sample << " " << isInverted_<< endl;            
+//        cerr << "Sample value: " << sample << " " << isInverted_<< endl;
     }
-    
-    return sample;    
+
+    return sample;
 }
 
 /**
@@ -230,7 +230,7 @@ double Binomial::generateTrd() const
     double varI;
     double varRho;
     double varT;
-    
+
     while ( true )
     {
         // 1a: generate a uniform random number v
@@ -256,7 +256,7 @@ double Binomial::generateTrd() const
             // 2b(iii) generate a uniform random number v in (0,vr)
             varV = mtrand()*paramVr_;
         }
-        // 3.0a: us = 0.5 - |u|        
+        // 3.0a: us = 0.5 - |u|
         varUs = (varU < 0) ? 0.5 + varU : 0.5 - varU;
         // 3.0b: k = floor( ( 2*a/us + b )*u + c )
         varK = floor( (2*paramA_/varUs+paramB_)*varU + paramC_);
@@ -265,7 +265,7 @@ double Binomial::generateTrd() const
         {
             continue;
         }
-        
+
         // 3.0d: v = v*alpha/(a/(us*us)+b)
         varV = varV*paramAlpha_/(paramA_/(varUs*varUs) + paramB_ );
         // 3.0e: km = | k - m |
@@ -276,7 +276,7 @@ double Binomial::generateTrd() const
             // 3.1: recursive evaluation of f(k)
             // 3.1a: f = 1
             varF = 1;
-            // 3.1b: if (m < k) 
+            // 3.1b: if (m < k)
             if ( paramM_ < varK )
             {
                 // 3.1b(i): set i = m
@@ -339,7 +339,7 @@ double Binomial::generateTrd() const
         {
             return varK;
         }
-        // 3.4c: otherwise goto (1)        
+        // 3.4c: otherwise goto (1)
     }
 }
 
@@ -354,10 +354,10 @@ void testBinomial()
 
     int trialMin = 2;
     int trialMax = trialMin*1000;
-    
+
     double tmp;
 
-    
+
     for ( int i = trialMin; i < trialMax; i =(int)( i* 1.5) )
     {
         for ( double p = 0.1; p < .95; p += 0.1)
@@ -366,20 +366,20 @@ void testBinomial()
             tmp = 0;
             for ( int j = 0; j < i; ++j )
             {
-                tmp += b.getNextSample();            
+                tmp += b.getNextSample();
             }
             cerr << "Diff( " << i << "," << p << ") "
                  << tmp/i - b.getMean()
                  << " [ " << tmp/i << " - " << b.getMean() <<" ]"
-                 << endl;   
-        }        
+                 << endl;
+        }
     }
 }
 #if 0 // test main
 int main(void)
 {
-    testBinomial(); 
-    return 0;    
+    testBinomial();
+    return 0;
 }
 
 #endif // test main

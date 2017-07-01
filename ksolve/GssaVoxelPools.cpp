@@ -97,7 +97,7 @@ void GssaVoxelPools::updateDependentRates(
     }
 }
 
-unsigned int GssaVoxelPools::pickReac() 
+unsigned int GssaVoxelPools::pickReac()
 {
     double r = rng_.uniform( ) * atot_;
     double sum = 0.0;
@@ -203,7 +203,7 @@ void GssaVoxelPools::advance( const ProcInfo* p, const GssaSystem* g )
         double sign = double(v_[rindex] >= 0) - double(0 > v_[rindex] );
         g->transposeN.fireReac( rindex, Svec(), sign );
 		numFire_[rindex]++;
-		
+
         double r = rng_.uniform();
         while ( r <= 0.0 )
         {

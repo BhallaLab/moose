@@ -1,31 +1,31 @@
-// utility.h --- 
-// 
+// utility.h ---
+//
 // Filename: utility.h
-// Description: 
+// Description:
 // Author: Subhasis Ray
-// Maintainer: 
+// Maintainer:
 // Copyright (C) 2010 Subhasis Ray, all rights reserved.
 // Created: Wed Mar 23 10:25:58 2011 (+0530)
-// Version: 
+// Version:
 // Last-Updated: Tue Jul 23 12:48:17 2013 (+0530)
 //           By: subha
 //     Update #: 19
-// URL: 
-// Keywords: 
-// Compatibility: 
-// 
-// 
+// URL:
+// Keywords:
+// Compatibility:
+//
+//
 
-// Commentary: 
-// 
-// 
-// 
-// 
+// Commentary:
+//
+//
+//
+//
 
 // Change log:
-// 
-// 
-// 
+//
+//
+//
 
 // Code:
 
@@ -43,7 +43,7 @@ namespace moose {
      * @brief Givem path of MOOSE element, return its name. It's behaviour is
      * like `basename` of unix command e.g. /a/b/c --> c
      *
-     * @return 
+     * @return
      */
     inline string basename( const string& path )
     {
@@ -56,5 +56,5 @@ namespace moose {
 #endif // !_UTILITY_H
 
 
-// 
+//
 // utility.h ends here

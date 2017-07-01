@@ -1,4 +1,5 @@
-# test_nsdf.py --- 
+# -*- coding: utf-8 -*-
+# test_nsdf.py ---
 # Changed from nsdf.py from
 # https://github.com/BhallaLab/moose-examples/snippets/nsdf.py
 
@@ -64,7 +65,7 @@ def setup_model():
 this simulation we generate square pules from a PulseGen object and
 use a SpikeGen to detect the threshold crossing events of rising
 edges. We store the pulsegen output as Uniform data and the threshold
-crossing times as Event data. '''    
+crossing times as Event data. '''
     nsdf.stringAttr['creator'] = getpass.getuser()
     nsdf.stringVecAttr['software'] = ['python2.7', 'moose3' ]
     nsdf.stringVecAttr['method'] = ['']
@@ -75,7 +76,7 @@ crossing times as Event data. '''
     nsdf.stringAttr['/data/uniform/PulseGen/outputValue/tunit'] = 's'
     nsdf.stringAttr['/data/uniform/PulseGen/outputValue/unit'] = 'A'
     eventDataPath = '/data/event/SpikeGen/spikeOut/{}_{}_{}/unit'.format(t_lead.vec.value,
-                                                                         t_lead.getDataIndex(), 
+                                                                         t_lead.getDataIndex(),
                                                                          t_lead.fieldIndex)
     nsdf.stringAttr[eventDataPath] = 's'
 

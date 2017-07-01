@@ -1,5 +1,5 @@
 // To compile:
-// g++  standaloneTestFastElim.cpp -lgsl -lgslcblas 
+// g++  standaloneTestFastElim.cpp -lgsl -lgslcblas
 
 
 #include <vector>
@@ -17,7 +17,7 @@ const unsigned int SM_MAX_ROWS = 200000;
 const unsigned int SM_MAX_COLUMNS = 200000;
 const unsigned int SM_RESERVE = 8;
 
-void sortByColumn( 
+void sortByColumn(
 			vector< unsigned int >& col, vector< double >& entry );
 void testSorting();
 
@@ -25,7 +25,7 @@ class Unroll
 {
 	public:
 		Unroll( double diag, double off, unsigned int i, unsigned int j )
-			: 
+			:
 				diagVal( diag ),
 				offDiagVal( off ),
 				row( i ),
@@ -42,7 +42,7 @@ class FastElim: public SparseMatrix< double >
 	public:
 		void makeTestMatrix( const double* test, unsigned int numCompts );
 		/*
-		void rowElim( unsigned int row1, unsigned int row2, 
+		void rowElim( unsigned int row1, unsigned int row2,
 						vector< double >& rhs );
 						*/
 		void buildForwardElim( vector< unsigned int >& diag,
@@ -54,17 +54,17 @@ class FastElim: public SparseMatrix< double >
 		/////////////////////////////////////////////////////////////
 		bool hinesReorder( const vector< unsigned int >& parentVoxel );
 		const double* allEntries() const;
-		void shuffleRows( 
+		void shuffleRows(
 				const vector< unsigned int >& lookupOldRowFromNew );
 		/*
 		bool hinesReorder();
-		void extractTwig( unsigned int i, 
+		void extractTwig( unsigned int i,
 						vector< unsigned int >& rowReorder,
 						vector< bool >& extracted );
 		void findClosedEnds(
 						vector< unsigned int >& rowReorder,
 						vector< bool >& extracted );
-		void extractClosedEnds( unsigned int i, 
+		void extractClosedEnds( unsigned int i,
 						vector< unsigned int >& rowReorder,
 						vector< bool >& extracted );
 						*/
@@ -74,17 +74,17 @@ const double* FastElim::allEntries() const {
 	return &N_[0];
 }
 
-// 	
+//
 //	static unsigned int parents[] = { 1,6,3,6,5,8,7,8,9,10,-1};
 //	unsigned int numKids[] = {0,1,0,1,0,2,
 
 /**
- * Reorders rows and columns to put the matrix in the form suitable for 
+ * Reorders rows and columns to put the matrix in the form suitable for
  * rapid single-pass inversion. Returns 0 on failure.
  */
 bool FastElim::hinesReorder( const vector< unsigned int >& parentVoxel )
 {
-	// First we fill in the vector that specifies the old row number 
+	// First we fill in the vector that specifies the old row number
 	// assigned to each row of the reordered matrix.
 	assert( parentVoxel.size() == nrows_ );
 	vector< unsigned int > numKids( nrows_, 0 );
@@ -129,7 +129,7 @@ bool FastElim::hinesReorder( const vector< unsigned int >& parentVoxel )
 }
 
 // Fill in the reordered matrix. Note we need to reorder columns too.
-void FastElim::shuffleRows( 
+void FastElim::shuffleRows(
 				const vector< unsigned int >& lookupOldRowFromNew )
 {
 	vector< unsigned int > lookupNewRowFromOld( nrows_ );
@@ -163,7 +163,7 @@ void sortByColumn( vector< unsigned int >& col, vector< double >& entry )
 {
 	unsigned int num = col.size();
 	assert( num == entry.size() );
-	// Stupid bubble sort, as we only have up to 5 entries and need to 
+	// Stupid bubble sort, as we only have up to 5 entries and need to
 	// sort both the col and reorder the entries by the same sequence.
 	for ( unsigned int i = 0; i < num; ++i ) {
 		for ( unsigned int j = 1; j < num; ++j ) {
@@ -189,11 +189,11 @@ bool FastElim::hinesReorder()
 			extractTwig( i, rowReorder, extracted );
 	}
 	// List of rows that now have all sub-branches extracted
-	vector< unsigned int > closedEnds; 
+	vector< unsigned int > closedEnds;
 	do {
 		closedEnds.resize( 0 );
 		findClosedEnds( closedEnds, extracted );
-		for ( vector< unsigned int >::iterator 
+		for ( vector< unsigned int >::iterator
 					i = closedEnds.begin(); i != closedEnds.end(); ++i ) {
 			extractClosedEnds( *i, rowReorder, extracted );
 		}
@@ -203,7 +203,7 @@ bool FastElim::hinesReorder()
 
 /**
  * Finds the 'twigs' of the matrix: Only one end connected.
-void FastElim::extractTwig( unsigned int i, 
+void FastElim::extractTwig( unsigned int i,
 						vector< unsigned int >& rowReorder,
 						vector< bool >& extracted )
 {
@@ -217,7 +217,7 @@ void FastElim::findClosedEnds(
 		;
 }
 
-void FastElim::extractClosedEnds( unsigned int i, 
+void FastElim::extractClosedEnds( unsigned int i,
 						vector< unsigned int >& rowReorder,
 						vector< bool >& extracted )
 {
@@ -226,7 +226,7 @@ void FastElim::extractClosedEnds( unsigned int i,
  */
 
 /*
-void FastElim::rowElim( unsigned int row1, unsigned int row2, 
+void FastElim::rowElim( unsigned int row1, unsigned int row2,
 						vector< double >& rhs )
 {
 	unsigned int rs1 = rowStart_[row1];
@@ -239,14 +239,14 @@ void FastElim::rowElim( unsigned int row1, unsigned int row2,
 	double r = temp/diag1;
 
 	const double* p1 = &(N_[ diagIndex_[row1] + 1 ] );
-	double* p2 = N_ + 
-	for ( unsigned int i = 
+	double* p2 = N_ +
+	for ( unsigned int i =
 	N_[rs2+1]
 
 	double* v1 = N_ + rs1;
 	double* v2 = N_ + rs2;
-	
-	
+
+
 			v2' - v1'*v2/v1
 
 }
@@ -277,10 +277,10 @@ back-substitution.
 */
 
 /**
- * Builds the vector of forward ops: ratio, i, j 
- * RHS[i] = RHS[i] - RHS[j] * ratio 
+ * Builds the vector of forward ops: ratio, i, j
+ * RHS[i] = RHS[i] - RHS[j] * ratio
  * This vec tells the routine which rows below have to be eliminated.
- * This includes the rows if any in the tridiagonal band and also 
+ * This includes the rows if any in the tridiagonal band and also
  * rows, if any, on branches.
  */
 void FastElim::buildForwardElim( vector< unsigned int >& diag,
@@ -333,27 +333,27 @@ void FastElim::buildForwardElim( vector< unsigned int >& diag,
 		cout << endl;
 	}
 	for ( unsigned int i = 0; i < fops.size(); ++i ) {
-		cout << "fops[" << i << "]=		" << fops[i].b_ << "	" << fops[i].c_ << 
+		cout << "fops[" << i << "]=		" << fops[i].b_ << "	" << fops[i].c_ <<
 				"	" << fops[i].a_ << endl;
 	}
 	/*
 	*/
 }
 
-/** 
+/**
  * Operations to be done on the RHS for the back sub are generated and
- * put into the bops (backward ops) vector. 
- * col > row here, row is the entry being operated on, and col is given by 
+ * put into the bops (backward ops) vector.
+ * col > row here, row is the entry being operated on, and col is given by
  * rowsToSub.
- * offDiagVal is the value on the off-diagonal at row,col.  
- * diagVal is the value on the diagonal at [row][row].  
+ * offDiagVal is the value on the off-diagonal at row,col.
+ * diagVal is the value on the diagonal at [row][row].
  * RHS[row] = ( RHS[row] - offDiagVal * RHS[col] ) / diagVal
  */
 void FastElim::buildBackwardSub( vector< unsigned int >& diag,
 	vector< Triplet< double > >& bops, vector< double >& diagVal )
 {
 	// This vec tells the routine which rows below have to be back-subbed.
-	// This includes the rows if any in the tridiagonal band and also 
+	// This includes the rows if any in the tridiagonal band and also
 	// rows, if any, on branches.
 	vector< vector< unsigned int > > rowsToSub( nrows_ );
 
@@ -391,7 +391,7 @@ void FastElim::buildBackwardSub( vector< unsigned int >& diag,
 	}
 
 	for ( unsigned int i = 0; i < bops.size(); ++i ) {
-		cout << i << ":		" << bops[i].a_ << "	" << 
+		cout << i << ":		" << bops[i].a_ << "	" <<
 				bops[i].b_ << "	" <<  // diagonal index
 				bops[i].c_ << "	" <<  // off-diagonal index
 				1.0 / diagVal[bops[i].b_] << // diagonal value.
@@ -414,8 +414,8 @@ void advance( vector< double >& y,
 		*iy++ *= *i;
 }
 
-double checkAns( 
-	const double* m, unsigned int numCompts, 
+double checkAns(
+	const double* m, unsigned int numCompts,
 	const double* ans, const double* rhs )
 {
 	vector< double > check( numCompts, 0.0 );
@@ -446,15 +446,15 @@ main()
 
         1 2 3 4 5 6 7 8 9 10 11
 1       x x x x
-2       x x          
+2       x x
 3       x   x x         x
 4       x   x x              x
 5               x x     x x
 6               x x x   x
 7                 x x x
-8                   x x  
-9           x   x x     x  
-10              x         x   
+8                   x x
+9           x   x x     x
+10              x         x
 11            x              x
 	static double test[] = {
 		1,  2,  3,  4,  0,  0,  0,  0,  0,  0,  0,
@@ -601,14 +601,14 @@ Linear cable, 12 segments.
 		cout << "y" << i << "]=	" << y[i] << endl;
 
 	// Here we verify the answer
-	
+
 	vector< double > alle;
 	for( unsigned int i = 0; i < numCompts; ++i ) {
 		for( unsigned int j = 0; j < numCompts; ++j ) {
 			alle.push_back( foo.get( i, j ) );
 		}
 	}
-	cout << "myCode: " << 
+	cout << "myCode: " <<
 			checkAns( &alle[0], numCompts, &y[0], &ones[0] ) << endl;
 
 
@@ -649,7 +649,7 @@ void testSorting()
 	sortByColumn( col, entry );
 	cout << "testing sorting\n";
 	for ( int i = 0; i < col.size(); ++i ) {
-		cout << "d[" << i << "]=	" << k[i] << 
+		cout << "d[" << i << "]=	" << k[i] <<
 		   ", col[" << i << "]= " <<	col[i] << ", e=" << entry[i] << endl;
 	}
 	cout << endl;

@@ -12,7 +12,7 @@
 const double PI = 3.141592653589793;
 
 // There is experimental error in the last sig fig here.
-const double NA = 6.0221415e23; 
+const double NA = 6.0221415e23;
 
 const double FaradayConst =  96485.3415; // s A / mol
 

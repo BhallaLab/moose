@@ -12,8 +12,8 @@
 #include "Arith.h"
 
 static SrcFinfo1< double > *output() {
-	static SrcFinfo1< double > output( 
-			"output", 
+	static SrcFinfo1< double > output(
+			"output",
 			"Sends out the computed value"
 			);
 	return &output;
@@ -114,7 +114,7 @@ const Cinfo* Arith::initCinfo()
 static const Cinfo* arithCinfo = Arith::initCinfo();
 
 Arith::Arith()
-	: function_( "sum" ), 
+	: function_( "sum" ),
 	output_( 0.0 ),
 	arg1_( 0.0 ), arg2_( 0.0 ), arg3_( 0.0 )
 {
@@ -128,7 +128,7 @@ void Arith::process( const Eref& e, ProcPtr p )
 	// cout << "process: " << e.element()->getName() << ", " << e.objId() << arg3_ << ", " << &arg3_ << endl;
 	if ( doReport ) {
 		cout <<
-			e.element()->getName() << ", " << e.objId() << "		" << 
+			e.element()->getName() << ", " << e.objId() << "		" <<
 			arg3_ << "	" << &arg3_ << endl;
 	}
 	output()->send( e, output_ );

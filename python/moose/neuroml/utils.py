@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 ## Description: utility functions used while loading NeuroML L1,2,3 files.
 ## Version 1.0 by Aditya Gilra, NCBS, Bangalore, India, 2011 for serial MOOSE
 ## Version 1.5 by Niraj Dudani, NCBS, Bangalore, India, 2012, modified for parallel MOOSE
@@ -189,7 +190,7 @@ def keepOnlyInclude(network, onlyInclude):
     ## to have only unique cell_ids and save time below.
     for key in includeCellsDict:
         includeCellsDict[key] = set(includeCellsDict[key])
-    
+
     print("removing extra cells ... ")
     ### remove the cells that are not in includeCellsDict
     populations = network.find(".//{"+nml_ns+"}populations")

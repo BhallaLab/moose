@@ -1,12 +1,13 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
-"""profile_rallapck.py: 
+"""profile_rallapck.py:
 
 Last modified: Sat Jan 18, 2014  05:01PM
 
 """
 from __future__ import print_function
-    
+
 __author__           = "Dilawar Singh"
 __copyright__        = "Copyright 2013, NCBS Bangalore"
 __credits__          = ["NCBS Bangalore", "Bhalla Lab"]
@@ -34,10 +35,10 @@ def runRallpack3( startN = 10, stepSize = 50):
     pass
 
 def simResult( elemXml ):
-    """ Get a single simXML and return a plottable entity 
+    """ Get a single simXML and return a plottable entity
     """
     timeStamp = elemXml.get("time_stamp")
-    global simclockList 
+    global simclockList
     global xvec
     global yvecs
     yvecs = []
@@ -72,7 +73,7 @@ def plotProfile(results, plots = []):
         plots.append(p)
 
 def processProfile ( profileFile ):
-    """ This function process the profile file given in xml format 
+    """ This function process the profile file given in xml format
     """
     print("[STEP] Processing profile file {}".format( profileFile ))
     with open( profileFile, "r") as f:
@@ -101,7 +102,7 @@ def main( args ):
             pylab.savefig(output)
     else:
         print("[TODO] Profile rallpack3")
-    
+
 if __name__ == '__main__':
     import argparse
     # Argument parser.

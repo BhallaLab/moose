@@ -1,6 +1,6 @@
 /*******************************************************************
  * File:            Exponential.cpp
- * Description:      
+ * Description:
  * Author:          Subhasis Ray
  * E-mail:          ray.subhasis@gmail.com
  * Created:         2007-11-01 09:03:51
@@ -38,7 +38,7 @@ Exponential::Exponential(ExponentialGenerator method, double mean):mean_(mean)
             break;
         default:
             generator_ = &(Exponential::randomMinimization);
-            break;            
+            break;
     }
 }
 
@@ -49,12 +49,12 @@ double Exponential::getMean() const
 
 double Exponential::getVariance() const
 {
-    return mean_*mean_;    
+    return mean_*mean_;
 }
 
 double Exponential::getNextSample() const
 {
-    return generator_(mean_);    
+    return generator_(mean_);
 }
 
 
@@ -65,8 +65,8 @@ double Exponential::logarithmic(double mean)
     {
         uniform = 1.0e-6;
     }
-    
-    return - mean*log(uniform);    
+
+    return - mean*log(uniform);
 }
 
 extern unsigned long genrand_int32(void);
@@ -76,7 +76,7 @@ extern unsigned long genrand_int32(void);
    {Qk} = {(ln2/1! + (ln2)^2/2! + (ln2)^3/3! + ... + (ln2)^k/k!)}
    used in the random minimization algorithm.
  */
-static const double q[] = 
+static const double q[] =
 {
     1.0, // dummy for q[0]
     0.69314718055994528622676,
@@ -99,7 +99,7 @@ static const double q[] =
 double Exponential::randomMinimization(double mean)
 {
     double result;
-    
+
     unsigned long uniform = genrand_int32(); // 1) generate t+1 (=32) bit uniform random binary fraction .b0..bt
     int j = 0;
 
@@ -107,29 +107,29 @@ double Exponential::randomMinimization(double mean)
     {
         uniform = 1;
     }
-    
+
     while (0x80000000 & uniform ) // 1) detect the first 0 bit
     {
         uniform = uniform << 1; // 1a) shift off leading j+1 bits, setting u = .b(j+1) .. b(t)
-        ++j;        
+        ++j;
     }
     uniform = uniform << 1; // 1a)shift off leading j+1 bits, setting u = .b(j+1) .. b(t)
     double uniform_frac = uniform / 4294967296.0;
-    
+
     if ( uniform_frac < LN2 ) // 2) u < ln2?
     {
-        result = mean*(j*LN2 + uniform_frac); // x <- mean * ( j * ln2 + u )        
+        result = mean*(j*LN2 + uniform_frac); // x <- mean * ( j * ln2 + u )
     }
-    else 
+    else
     {
         // 3) minimize
         unsigned int k = 2;
         unsigned long v = ~0UL;
         unsigned long u;
-        
+
         while ( ( uniform_frac >= q[k] ))
         {
-            k++;  
+            k++;
         }
         for ( unsigned int i = 0; i < k; ++i )
         {
@@ -139,11 +139,11 @@ double Exponential::randomMinimization(double mean)
                 v = u;
             }
         }
-        
+
         result = mean*( j + v/4294967296.0 )*LN2;
     }
-    
-    return result;    
+
+    return result;
 }
 #if 0 // test main
 #include <vector>
@@ -151,35 +151,35 @@ int main(void)
 {
     double mean = .25;
     double sum = 0.0;
-    double sd = 0.0;    
+    double sd = 0.0;
     vector <unsigned> classes;
     Exponential ex(mean);
     int MAX_SAMPLE = 100000;
     int MAX_CLASSES = 1000;
-    
-    
+
+
     for ( int i = 0; i < MAX_CLASSES; ++i )
     {
-        classes.push_back(0);        
+        classes.push_back(0);
     }
-    
+
     for ( int i = 0; i < MAX_SAMPLE; ++i )
     {
         double p = ex.getNextSample();//aliasMethod();
         int index = (int)(p*MAX_CLASSES);
 //        cout << index << " ] " << p << endl;
-        
+
         if ( index < MAX_CLASSES){
             classes[index]++;
         }
-        else 
+        else
         {
-            classes[MAX_CLASSES-1]++;            
+            classes[MAX_CLASSES-1]++;
         }
-        
-        
+
+
         sum += p;
-        sd += (p - mean)*(p - mean);        
+        sd += (p - mean)*(p - mean);
     }
     mean = sum/MAX_SAMPLE;
     sd = sqrt(sd/MAX_SAMPLE);
@@ -188,7 +188,7 @@ int main(void)
     {
         cout << classes[i] << endl;
     }
-    
+
     return 0;
 }
 #endif // test main

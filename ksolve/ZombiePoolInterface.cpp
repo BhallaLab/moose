@@ -37,7 +37,7 @@ ZombiePoolInterface::ZombiePoolInterface()
 //////////////////////////////////////////////////////////////////////////
 // cross-compartment reaction stuff.
 //////////////////////////////////////////////////////////////////////////
-// void ZombiePoolInterface::xComptIn( const Eref& e, const ObjId& src, 
+// void ZombiePoolInterface::xComptIn( const Eref& e, const ObjId& src,
 // vector< double > values )
 void ZombiePoolInterface::xComptIn( const Eref& e, Id srcZombiePoolInterface,
 	vector< double > values )
@@ -79,7 +79,7 @@ void ZombiePoolInterface::assignXferVoxels( unsigned int xferCompt )
  * Figures out indexing of the array of transferred pool n's used to fill
  * out proxies on each timestep.
  */
-void ZombiePoolInterface::assignXferIndex( unsigned int numProxyMols, 
+void ZombiePoolInterface::assignXferIndex( unsigned int numProxyMols,
 		unsigned int xferCompt,
 		const vector< vector< unsigned int > >& voxy )
 {
@@ -99,7 +99,7 @@ void ZombiePoolInterface::assignXferIndex( unsigned int numProxyMols,
 /**
  * This function sets up the information about the pool transfer for
  * cross-compartment reactions. It consolidates the transfer into a
- * distinct vector for each direction of the transfer between each coupled 
+ * distinct vector for each direction of the transfer between each coupled
  * pair of ZombiePoolInterfaces.
  * This one call sets up the information about transfer on both sides
  * of the junction(s) between current ZombiePoolInterface and otherZombiePoolInterface.
@@ -109,13 +109,13 @@ void ZombiePoolInterface::assignXferIndex( unsigned int numProxyMols,
  * 	first, second: VoxelIndex for the first and second compartments.
  * 	firstVol, secondVol: VoxelVolume for the first and second compartments.
  */
-void ZombiePoolInterface::setupXfer( Id myZombiePoolInterface, Id otherZombiePoolInterface, 
+void ZombiePoolInterface::setupXfer( Id myZombiePoolInterface, Id otherZombiePoolInterface,
 	unsigned int numProxyMols, const vector< VoxelJunction >& vj )
 {
 	const ChemCompt *myCompt = reinterpret_cast< const ChemCompt* >(
 			compartment_.eref().data() );
-	ZombiePoolInterface* otherZombiePoolInterfacePtr = 
-			reinterpret_cast< ZombiePoolInterface* >( 
+	ZombiePoolInterface* otherZombiePoolInterfacePtr =
+			reinterpret_cast< ZombiePoolInterface* >(
 					otherZombiePoolInterface.eref().data() );
 	const ChemCompt *otherCompt = reinterpret_cast< const ChemCompt* >(
 			otherZombiePoolInterfacePtr->compartment_.eref().data() );
@@ -129,18 +129,18 @@ void ZombiePoolInterface::setupXfer( Id myZombiePoolInterface, Id otherZombiePoo
 		unsigned int j = vj[i].first;
 		assert( j < getNumLocalVoxels() ); // Check voxel indices.
 		proxyVoxy[j].push_back( vj[i].second );
-		pools(j)->addProxyVoxy( myZombiePoolInterfaceIndex, 
+		pools(j)->addProxyVoxy( myZombiePoolInterfaceIndex,
 						otherZombiePoolInterfacePtr->compartment_, vj[i].second);
 		unsigned int k = vj[i].second;
 		assert( k < otherCompt->getNumEntries() );
 		reverseProxyVoxy[k].push_back( vj[i].first );
-		otherZombiePoolInterfacePtr->pools(k)->addProxyVoxy( 
+		otherZombiePoolInterfacePtr->pools(k)->addProxyVoxy(
 			otherZombiePoolInterfaceIndex, compartment_, vj[i].first );
 	}
 
 	// Build the indexing for the data values to transfer on each timestep
 	assignXferIndex( numProxyMols, myZombiePoolInterfaceIndex, reverseProxyVoxy );
-	otherZombiePoolInterfacePtr->assignXferIndex( 
+	otherZombiePoolInterfacePtr->assignXferIndex(
 			numProxyMols, otherZombiePoolInterfaceIndex, proxyVoxy );
 	// Figure out which voxels participate in data transfer.
 	assignXferVoxels( myZombiePoolInterfaceIndex );
@@ -157,16 +157,16 @@ unsigned int ZombiePoolInterface::assignProxyPools( const map< Id, vector< Id > 
 {
 	map< Id, vector< Id > >::const_iterator i = xr.find( otherComptId );
 	vector< Id > proxyMols;
-	if ( i != xr.end() ) 
+	if ( i != xr.end() )
 		proxyMols = i->second;
-	ZombiePoolInterface* otherZombiePoolInterfacePtr = 
-			reinterpret_cast< ZombiePoolInterface* >( 
+	ZombiePoolInterface* otherZombiePoolInterfacePtr =
+			reinterpret_cast< ZombiePoolInterface* >(
 					otherZombiePoolInterface.eref().data() );
-		
-	vector< Id > otherProxies = LookupField< Id, vector< Id > >::get( 
+
+	vector< Id > otherProxies = LookupField< Id, vector< Id > >::get(
 			otherZombiePoolInterfacePtr->stoich_, "proxyPools", stoich_ );
 
-	proxyMols.insert( proxyMols.end(), 
+	proxyMols.insert( proxyMols.end(),
 					otherProxies.begin(), otherProxies.end() );
 	// if ( proxyMols.size() == 0 )
 		// return 0;
@@ -180,14 +180,14 @@ unsigned int ZombiePoolInterface::assignProxyPools( const map< Id, vector< Id > 
 	oxfi.resize( proxyMols.size() );
 	for ( unsigned int i = 0; i < xfi.size(); ++i ) {
 		xfi[i] = getPoolIndex( proxyMols[i].eref() );
-		oxfi[i] = otherZombiePoolInterfacePtr->getPoolIndex( 
+		oxfi[i] = otherZombiePoolInterfacePtr->getPoolIndex(
 						proxyMols[i].eref() );
 	}
 	return proxyMols.size();
 }
 
 
-// This function cleans out the RateTerms of cross reactions that 
+// This function cleans out the RateTerms of cross reactions that
 // don't have anything to connect to.
 // It should be called after all cross reacs have been assigned.
 void ZombiePoolInterface::filterCrossRateTerms( const vector< Id >& xreacs,
@@ -199,7 +199,7 @@ void ZombiePoolInterface::filterCrossRateTerms( const vector< Id >& xreacs,
 }
 
 /**
- * This function builds cross-solver reaction calculations. For the 
+ * This function builds cross-solver reaction calculations. For the
  * specified pair of stoichs (this->stoich_, otherStoich) it identifies
  * interacting molecules, finds where the junctions are, sets up the
  * info to build the data transfer vector, and sets up the transfer
@@ -215,18 +215,18 @@ void ZombiePoolInterface::setupCrossSolverReacs( const map< Id, vector< Id > >& 
 	if ( myZombiePoolInterface == Id() )
 		return;
 	Id otherZombiePoolInterface = Field< Id >::get( otherStoich, "ksolve" );
-	if ( otherZombiePoolInterface == Id() ) 
+	if ( otherZombiePoolInterface == Id() )
 		return;
 
 	// Establish which molecules will be exchanged.
-	unsigned int numPools = assignProxyPools( xr, myZombiePoolInterface, otherZombiePoolInterface, 
+	unsigned int numPools = assignProxyPools( xr, myZombiePoolInterface, otherZombiePoolInterface,
 					otherComptId );
 	if ( numPools == 0 ) return;
 
 	// Then, figure out which voxels do the exchange.
-	// Note that vj has a list of pairs of voxels on either side of a 
+	// Note that vj has a list of pairs of voxels on either side of a
 	// junction. If one voxel on self touches 5 voxels on other, then
-	// there will be five entries in vj for this contact. 
+	// there will be five entries in vj for this contact.
 	// If one voxel on self touches two different compartments, then
 	// a distinct vj vector must be built for those contacts.
 	const ChemCompt *otherCompt = reinterpret_cast< const ChemCompt* >(
@@ -241,7 +241,7 @@ void ZombiePoolInterface::setupCrossSolverReacs( const map< Id, vector< Id > >& 
 	setupXfer( myZombiePoolInterface, otherZombiePoolInterface, numPools, vj );
 
 	/// This sets up the volume scaling from cross reac terms
-	// Deprecated. Handled by setupCrossSolverReacVols. 
+	// Deprecated. Handled by setupCrossSolverReacVols.
 	// buildCrossReacVolScaling( otherZombiePoolInterface, vj );
 
 	// Here we set up the messaging.
@@ -249,13 +249,13 @@ void ZombiePoolInterface::setupCrossSolverReacs( const map< Id, vector< Id > >& 
 	shell->doAddMsg( "Single", myZombiePoolInterface, "xCompt", otherZombiePoolInterface, "xCompt" );
 }
 
-/** 
- * This fills the vols vector with the volume of the abutting 
+/**
+ * This fills the vols vector with the volume of the abutting
  * voxel on compt. If there are no abutting voxels on a given
  * voxel then that entry of the vols vector is filled with a zero.
  * There is exactly one vols entry for each voxel of the local compt.
  */
-void ZombiePoolInterface::matchJunctionVols( vector< double >& vols, Id otherComptId ) 
+void ZombiePoolInterface::matchJunctionVols( vector< double >& vols, Id otherComptId )
 		const
 {
 	vols.resize( getNumLocalVoxels() );
@@ -275,7 +275,7 @@ void ZombiePoolInterface::matchJunctionVols( vector< double >& vols, Id otherCom
 	myCompt->matchMeshEntries( otherCompt, vj );
 	if ( vj.size() == 0 )
 		return;
-	for ( vector< VoxelJunction >::const_iterator 
+	for ( vector< VoxelJunction >::const_iterator
 			i = vj.begin(); i != vj.end(); ++i ) {
 		assert( i->first < vols.size() );
 		/*
@@ -287,16 +287,16 @@ void ZombiePoolInterface::matchJunctionVols( vector< double >& vols, Id otherCom
 }
 
 /**
- * This function builds cross-solver reaction volume scaling. 
+ * This function builds cross-solver reaction volume scaling.
  */
-void ZombiePoolInterface::setupCrossSolverReacVols( 
-	const vector< vector< Id > >& subCompts, 
+void ZombiePoolInterface::setupCrossSolverReacVols(
+	const vector< vector< Id > >& subCompts,
 	const vector< vector< Id > >& prdCompts )
 {
 	map< Id, vector< double > > comptVolMap;
-	const Stoich* stoichPtr = reinterpret_cast< const Stoich* >( 
+	const Stoich* stoichPtr = reinterpret_cast< const Stoich* >(
 					stoich_.eref().data() );
-	unsigned int numOffSolverReacs = 
+	unsigned int numOffSolverReacs =
 			stoichPtr->getNumRates() - stoichPtr->getNumCoreRates();
 	assert( subCompts.size() == numOffSolverReacs );
 	assert( prdCompts.size() == numOffSolverReacs );
@@ -345,7 +345,7 @@ void ZombiePoolInterface::setCompartment( Id compt )
 	isBuilt_ = false; // We will have to now rebuild the whole thing.
 	if ( compt.element()->cinfo()->isA( "ChemCompt" ) ) {
 		compartment_ = compt;
-		vector< double > vols = 
+		vector< double > vols =
 			Field< vector < double > >::get( compt, "voxelVolume" );
 		if ( vols.size() > 0 ) {
 			setNumAllVoxels( vols.size() );

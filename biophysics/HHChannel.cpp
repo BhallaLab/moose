@@ -32,9 +32,9 @@ const Cinfo* HHChannel::initCinfo()
 		"like the old tabchannel from GENESIS, but also presents "
 		"a similar interface as hhchan from GENESIS. ",
 	};
-        
+
         static  Dinfo< HHChannel > dinfo;
-        
+
 	static Cinfo HHChannelCinfo(
 		"HHChannel",
 		HHChannelBase::initCinfo(),
@@ -72,13 +72,13 @@ HHChannel::HHChannel()
 
 HHChannel::~HHChannel()
 {
-	// if ( xGate_ && reinterpret_cast< char* >( this ) == 
+	// if ( xGate_ && reinterpret_cast< char* >( this ) ==
 	// 	ObjId( xGate_->originalChannelId(), 0 ).data() )
 	// 	delete xGate_;
-	// if ( yGate_ && reinterpret_cast< char* >( this ) == 
+	// if ( yGate_ && reinterpret_cast< char* >( this ) ==
 	// 	ObjId( yGate_->originalChannelId(), 0 ).data() )
 	// 	delete yGate_;
-	// if ( zGate_ && reinterpret_cast< char* >( this ) == 
+	// if ( zGate_ && reinterpret_cast< char* >( this ) ==
 	// 	ObjId( zGate_->originalChannelId(), 0 ).data() )
 	// 	delete zGate_;
 }
@@ -95,7 +95,7 @@ bool HHChannel::setGatePower( const Eref& e, double power,
 		// destroyGate( e, gateType );
 	}
 	*assignee = power;
-	
+
 	return true;
 }
 
@@ -140,7 +140,7 @@ void HHChannel::vSetZpower( const Eref& e, double power )
  * an existing one.
  * \todo: May need to convert to handling arrays and Erefs.
  */
-// Assuming that the elements are simple elements. Use Eref for 
+// Assuming that the elements are simple elements. Use Eref for
 // general case
 
 bool HHChannel::checkOriginal( Id chanId ) const
@@ -156,7 +156,7 @@ bool HHChannel::checkOriginal( Id chanId ) const
 	return isOriginal;
 }
 
-void HHChannel::innerCreateGate( const string& gateName, 
+void HHChannel::innerCreateGate( const string& gateName,
 	HHGate** gatePtr, Id chanId, Id gateId )
 {
 	//Shell* shell = reinterpret_cast< Shell* >( ObjId( Id(), 0 ).data() );
@@ -168,7 +168,7 @@ void HHChannel::innerCreateGate( const string& gateName,
 	*gatePtr = new HHGate( chanId, gateId );
 }
 
-void HHChannel::vCreateGate( const Eref& e, 
+void HHChannel::vCreateGate( const Eref& e,
 	string gateType )
 {
 	if ( !checkOriginal( e.id() ) ) {
@@ -187,7 +187,7 @@ void HHChannel::vCreateGate( const Eref& e,
 			gateType << "'. Ignored\n";
 }
 
-void HHChannel::innerDestroyGate( const string& gateName, 
+void HHChannel::innerDestroyGate( const string& gateName,
 	HHGate** gatePtr, Id chanId )
 {
 	if ( *gatePtr == 0 ) {
@@ -206,7 +206,7 @@ void HHChannel::destroyGate( const Eref& e,
 		cout << "Warning: HHChannel::destroyGate: Not allowed from copied channel:\n" << e.id().path() << "\n";
 		return;
 	}
-	
+
 	if ( gateType == "X" )
 		innerDestroyGate( "xGate", &xGate_, e.id() );
 	else if ( gateType == "Y" )
@@ -235,7 +235,7 @@ int HHChannel::vGetInstant( const Eref& e ) const
 void HHChannel::vSetX( const Eref& e, double X )
 {
         X_ = X;
-        xInited_ = true;        
+        xInited_ = true;
 }
 double HHChannel::vGetX( const Eref& e ) const
 {
@@ -245,7 +245,7 @@ double HHChannel::vGetX( const Eref& e ) const
 void HHChannel::vSetY( const Eref& e, double Y )
 {
         Y_ = Y;
-        yInited_ = true;        
+        yInited_ = true;
 }
 double HHChannel::vGetY( const Eref& e ) const
 {
@@ -255,7 +255,7 @@ double HHChannel::vGetY( const Eref& e ) const
 void HHChannel::vSetZ( const Eref& e, double Z )
 {
         Z_ = Z;
-        zInited_ = true;        
+        zInited_ = true;
 }
 double HHChannel::vGetZ( const Eref& e ) const
 {
@@ -293,7 +293,7 @@ void HHChannel::vProcess( const Eref& e, ProcPtr info )
 		xGate_->lookupBoth( Vm_, &A, &B );
 		if ( instant_ & INSTANT_X )
 			X_ = A/B;
-		else 
+		else
 			X_ = integrate( X_, info->dt, A, B );
 		g_ *= takeXpower_( X_, Xpower_ );
 	}
@@ -302,7 +302,7 @@ void HHChannel::vProcess( const Eref& e, ProcPtr info )
 		yGate_->lookupBoth( Vm_, &A, &B );
 		if ( instant_ & INSTANT_Y )
 			Y_ = A/B;
-		else 
+		else
 			Y_ = integrate( Y_, info->dt, A, B );
 
 		g_ *= takeYpower_( Y_, Ypower_ );
@@ -315,7 +315,7 @@ void HHChannel::vProcess( const Eref& e, ProcPtr info )
 			zGate_->lookupBoth( Vm_, &A, &B );
 		if ( instant_ & INSTANT_Z )
 			Z_ = A/B;
-		else 
+		else
 			Z_ = integrate( Z_, info->dt, A, B );
 
 		g_ *= takeZpower_( Z_, Zpower_ );
@@ -328,7 +328,7 @@ void HHChannel::vProcess( const Eref& e, ProcPtr info )
 
 	// Send out the relevant channel messages.
 	ChanCommon::sendProcessMsgs( e, info );
-	
+
 	g_ = 0.0;
 }
 
@@ -393,7 +393,7 @@ void HHChannel::vReinit( const Eref& er, ProcPtr info )
 	// Send out the relevant channel messages.
 	// Same for reinit as for process.
 	ChanCommon::sendReinitMsgs( er, info );
-	
+
 	g_ = 0.0;
 }
 

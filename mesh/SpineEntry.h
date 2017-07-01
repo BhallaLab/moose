@@ -53,7 +53,7 @@ class SpineEntry
 				double granularity, vector< VoxelJunction >& ret ) const;
 
 		/**
-		 * Find the matching matching NeuroMesh entry index to the 
+		 * Find the matching matching NeuroMesh entry index to the
 		 * root of the shaft of this spine. Also compute the area and
 		 * diffusion length of the shaft.
 		 */
@@ -70,7 +70,7 @@ class SpineEntry
 		/// Return coords of middle of PSD.
 		void apex( double& x, double& y, double& z ) const;
 
-		void matchCubeMeshEntries( const ChemCompt* other, 
+		void matchCubeMeshEntries( const ChemCompt* other,
 			unsigned int myIndex,
 			double granularity, vector< VoxelJunction >& ret );
 
@@ -82,7 +82,7 @@ class SpineEntry
 		 * Resizes SpineEntry. Takes original shaft base and scales up
 		 * from there. Retains original shaft dimensions, only the
 		 * head is scaled.
-		 */ 
+		 */
 		void setVolume( double volume );
 
 		/**
@@ -92,10 +92,10 @@ class SpineEntry
 
 		/**
 		 * psdCoords is used to build the PsdMesh. The function returns 8
-		 * coords to define the psd: 
+		 * coords to define the psd:
 		 * 	centre xyz
 		 * 	direction xyz
-		 * 	dia, 
+		 * 	dia,
 		 * 	diffusion distance to middle of spine Head.
 		 */
 		vector< double > psdCoords() const;
@@ -107,11 +107,11 @@ class SpineEntry
 		/**
 		 * Index of parent entry on NeuroMesh.
 		 */
-		unsigned int parent_; 
+		unsigned int parent_;
 
 		/// Id of electrical compartment in which this diffusive compt lives
-		Id shaftId_; 
-		Id headId_; 
+		Id shaftId_;
+		Id headId_;
 };
 
 #endif	// _SPINE_ENTRY_H

@@ -57,7 +57,7 @@ const Cinfo * RandGenerator::initCinfo()
     //////////////////////////////////////////////////////////////
     // ValueFinfo Definitions
     //////////////////////////////////////////////////////////////
-    
+
     static ReadOnlyValueFinfo<RandGenerator, double> sample(
         "sample",
         "Generated pseudorandom number.",
@@ -78,7 +78,7 @@ const Cinfo * RandGenerator::initCinfo()
         output(),
         &proc,
     };
-    
+
     static string doc[] = {
         "Name", "RandGenerator",
         "Author", "Subhasis Ray",
@@ -87,7 +87,7 @@ const Cinfo * RandGenerator::initCinfo()
         " directly. Instead, its subclasses named after specific distributions"
         " should be used.",
     };
-    
+
     static Dinfo< RandGenerator > dinfo;
     static Cinfo randGeneratorCinfo(
         "RandGenerator",
@@ -97,7 +97,7 @@ const Cinfo * RandGenerator::initCinfo()
         &dinfo,
         doc,
         sizeof( doc ) / sizeof( string ));
-    
+
     return &randGeneratorCinfo;
 }
 
@@ -106,7 +106,7 @@ static const Cinfo * randGeneratorCinfo = RandGenerator::initCinfo();
 RandGenerator::RandGenerator()
 {
     sample_ = 0.0;
-    rng_ = NULL;    
+    rng_ = NULL;
 }
 
 RandGenerator::~RandGenerator()
@@ -124,16 +124,16 @@ double RandGenerator::getMean() const
     {
         return rng_->getMean();
     }
-    return 0.0;        
+    return 0.0;
 }
 
 double RandGenerator::getVariance() const
 {
     if (rng_)
     {
-        return rng_->getVariance();    
+        return rng_->getVariance();
     }
-    return 0.0;    
+    return 0.0;
 }
 
 double RandGenerator::getSample() const
@@ -151,7 +151,7 @@ void RandGenerator::process( const Eref& e, ProcPtr p )
 
 void RandGenerator::reinit(const Eref& e, ProcPtr p)
 {
-    vReinit(e, p);    
+    vReinit(e, p);
 }
 
 void RandGenerator::vReinit(const Eref& e, ProcPtr p)

@@ -26,8 +26,8 @@ using namespace std;
 
 
 
-double checkAns( 
-	const double* m, unsigned int numCompts, 
+double checkAns(
+	const double* m, unsigned int numCompts,
 	const double* ans, const double* rhs )
 {
 	vector< double > check( numCompts, 0.0 );
@@ -58,15 +58,15 @@ void testFastMatrixElim()
 
         1 2 3 4 5 6 7 8 9 10 11
 1       x x x x
-2       x x          
+2       x x
 3       x   x x         x
 4       x   x x              x
 5               x x     x x
 6               x x x   x
 7                 x x x
-8                   x x  
-9           x   x x     x  
-10              x         x   
+8                   x x
+9           x   x x     x
+10              x         x
 11            x              x
 	static double test[] = {
 		1,  2,  3,  4,  0,  0,  0,  0,  0,  0,  0,
@@ -213,7 +213,7 @@ Linear cable, 12 segments.
 		*/
 
 	// Here we verify the answer
-	
+
 	vector< double > alle;
 	for( unsigned int i = 0; i < numCompts; ++i ) {
 		for( unsigned int j = 0; j < numCompts; ++j ) {
@@ -277,7 +277,7 @@ void testSorting()
 	/*
 	cout << "testing sorting\n";
 	for ( unsigned int i = 0; i < col.size(); ++i ) {
-		cout << "d[" << i << "]=	" << k[i] << 
+		cout << "d[" << i << "]=	" << k[i] <<
 		   ", col[" << i << "]= " <<	col[i] << ", e=" << entry[i] << endl;
 	}
 	cout << endl;
@@ -330,7 +330,7 @@ void testSetDiffusionAndTransport()
 					assert( doubleEq( fm.get( i, j ), 0.8 ) );
 				else if ( i == numCompts - 1 )
 					assert( doubleEq( fm.get( i, j ), -0.1 ) );
-				else 
+				else
 					assert( doubleEq( fm.get( i, j ), -0.3 ) );
 			}
 		}
@@ -347,7 +347,7 @@ void testCylDiffn()
 	double diffLength = 1e-6; // 1e-6 is the highest dx for which error is OK
 	double runtime = 10.0;
 	double dt = 0.1; // 0.2 is the highest dt for which the error is in bounds
-	double diffConst = 1.0e-12; 
+	double diffConst = 1.0e-12;
 	Id model = s->doCreate( "Neutral", Id(), "model", 1 );
 	Id cyl = s->doCreate( "CylMesh", model, "cyl", 1 );
 	Field< double >::set( cyl, "r0", r0 );
@@ -374,15 +374,15 @@ void testCylDiffn()
 	assert( doubleEq( poolVec[0], 1.0 ) );
 	assert( doubleEq( poolVec[1], 0.0 ) );
 
-	vector< double > nvec = 
-		LookupField< unsigned int, vector< double > >::get( 
+	vector< double > nvec =
+		LookupField< unsigned int, vector< double > >::get(
 						dsolve, "nVec", 0);
 	assert( nvec.size() == ndc );
 
 	s->doReinit();
 	s->doStart( runtime );
 
-	nvec = LookupField< unsigned int, vector< double > >::get( 
+	nvec = LookupField< unsigned int, vector< double > >::get(
 						dsolve, "nVec", 0);
    	Field< double >::getVec( pool, "n", poolVec );
 	assert( nvec.size() == poolVec.size() );
@@ -403,13 +403,13 @@ void testCylDiffn()
 		double x = i * dx + dx * 0.5;
 		// This part is the solution as a func of x,t.
 		double y = dx *  // This part represents the init n of 1 in dx
-			( 1.0 / sqrt( PI * diffConst * runtime ) ) * 
-			exp( -x * x / ( 4 * diffConst * runtime ) ); 
+			( 1.0 / sqrt( PI * diffConst * runtime ) ) *
+			exp( -x * x / ( 4 * diffConst * runtime ) );
 		err += ( y - nvec[i] ) * ( y - nvec[i] );
 		//cout << i << "	" << x << "	" << y << "	" << conc[i] << endl;
 		analyticTot += y;
 		myTot += nvec[i];
-	} 
+	}
 	assert( doubleEq( myTot, 1.0 ) );
 	// cout << "analyticTot= " << analyticTot << ", myTot= " << myTot << endl;
 	assert( err < 1.0e-5 );
@@ -428,9 +428,9 @@ void testTaperingCylDiffn()
 	double diffLength = 1e-6; // 1e-6 is the highest dx for which error is OK
 	double runtime = 10.0;
 	double dt = 0.1; // 0.2 is the highest dt for which the error is in bounds
-	double diffConst = 1.0e-12; 
+	double diffConst = 1.0e-12;
 	// Should set explicitly, currently during creation of DiffPoolVec
-	//double diffConst = 1.0e-12; 
+	//double diffConst = 1.0e-12;
 	Id model = s->doCreate( "Neutral", Id(), "model", 1 );
 	Id cyl = s->doCreate( "CylMesh", model, "cyl", 1 );
 	Field< double >::set( cyl, "r0", r0 );
@@ -461,7 +461,7 @@ void testTaperingCylDiffn()
    	Field< double >::getVec( pool, "n", poolVec );
 	for ( unsigned int i = 0; i < poolVec.size(); ++i ) {
 		myTot += poolVec[i];
-	} 
+	}
 	assert( doubleEq( myTot, 1.0 ) );
 
 	s->doDelete( model );
@@ -493,7 +493,7 @@ void testTaperingCylDiffn()
  * t21	0	0	0	0	0	0	0	1	#	0	0
  * b20	0	0	1	c	0	0	0	0	0	#	1
  * b21	0	0	0	0	0	0	0	0	0	1	#
- *                
+ *
  */
 void testSmallCellDiffn()
 {
@@ -505,7 +505,7 @@ void testSmallCellDiffn()
 	double diffLength = 10e-6;
 	double dt = 1.0e-1;
 	double runtime = 100.0;
-	double diffConst = 1.0e-12; 
+	double diffConst = 1.0e-12;
 	Id model = s->doCreate( "Neutral", Id(), "model", 1 );
 	Id soma = makeCompt( Id(), model, "soma", dia, dia, 90 );
 	Id dend = makeCompt( soma, model, "dend", len, 3e-6, 0 );
@@ -537,8 +537,8 @@ void testSmallCellDiffn()
 	// Next: build diffusion by setting path
 	Field< string >::set( dsolve, "path", "/model/neuromesh/pool#" );
 
-	vector< double > nvec = 
-		LookupField< unsigned int, vector< double > >::get( 
+	vector< double > nvec =
+		LookupField< unsigned int, vector< double > >::get(
 						dsolve, "nVec", 0);
 	assert( nvec.size() == ndc );
 	assert( pool1.element()->numData() == ndc );
@@ -547,13 +547,13 @@ void testSmallCellDiffn()
 	Field< double >::set( ObjId( pool3, 0 ), "nInit", 3.0 );
 
 	s->doReinit();
-	nvec = LookupField< unsigned int, vector< double > >::get( 
+	nvec = LookupField< unsigned int, vector< double > >::get(
 						dsolve, "nVec", 0);
 	assert( doubleEq( nvec[0], 1.0 ) );
 	assert( doubleEq( nvec[1], 0.0 ) );
 	s->doStart( runtime );
 
-	nvec = LookupField< unsigned int, vector< double > >::get( 
+	nvec = LookupField< unsigned int, vector< double > >::get(
 						dsolve, "nVec", 0);
 	vector< double > pool1Vec;
 	Field< double >::getVec( pool1, "n", pool1Vec );
@@ -602,7 +602,7 @@ void testCellDiffn()
 	double diffLength = 1e-6;
 	double dt = 1.0e-1;
 	double runtime = 100.0;
-	double diffConst = 1.0e-12; 
+	double diffConst = 1.0e-12;
 	Id model = s->doCreate( "Neutral", Id(), "model", 1 );
 	Id soma = makeCompt( Id(), model, "soma", dia, dia, 90 );
 	Id dend = makeCompt( soma, model, "dend", len, 3e-6, 0 );
@@ -632,8 +632,8 @@ void testCellDiffn()
 	// Next: build by setting path
 	Field< string >::set( dsolve, "path", "/model/neuromesh/pool#" );
 
-	vector< double > nvec = 
-		LookupField< unsigned int, vector< double > >::get( 
+	vector< double > nvec =
+		LookupField< unsigned int, vector< double > >::get(
 						dsolve, "nVec", 0);
 	assert( nvec.size() == ndc );
 	assert( pool1.element()->numData() == ndc );
@@ -643,7 +643,7 @@ void testCellDiffn()
 	s->doReinit();
 	s->doStart( runtime );
 
-	nvec = LookupField< unsigned int, vector< double > >::get( 
+	nvec = LookupField< unsigned int, vector< double > >::get(
 						dsolve, "nVec", 0);
 	vector< double > pool1Vec;
 	Field< double >::getVec( pool1, "n", pool1Vec );
@@ -685,7 +685,7 @@ void testCylDiffnWithStoich()
 	double runtime = 10.0;
 	double dt0 = 0.1; // Used for diffusion. 0.2 is the highest dt for which the error is in bounds
 	double dt1 = 1; // Used for chem.
-	double diffConst = 1.0e-12; 
+	double diffConst = 1.0e-12;
 	Id model = s->doCreate( "Neutral", Id(), "model", 1 );
 	Id cyl = s->doCreate( "CylMesh", model, "cyl", 1 );
 	Field< double >::set( cyl, "r0", r0 );
@@ -718,8 +718,8 @@ void testCylDiffnWithStoich()
 	assert( doubleEq( poolVec[0], 1.0 ) );
 	assert( doubleEq( poolVec[1], 0.0 ) );
 
-	vector< double > nvec = 
-		LookupField< unsigned int, vector< double > >::get( 
+	vector< double > nvec =
+		LookupField< unsigned int, vector< double > >::get(
 						dsolve, "nVec", 0);
 	assert( nvec.size() == ndc );
 
@@ -731,7 +731,7 @@ void testCylDiffnWithStoich()
 	s->doReinit();
 	s->doStart( runtime );
 
-	nvec = LookupField< unsigned int, vector< double > >::get( 
+	nvec = LookupField< unsigned int, vector< double > >::get(
 						dsolve, "nVec", 0);
    	Field< double >::getVec( pool1, "n", poolVec );
 	assert( nvec.size() == poolVec.size() );
@@ -752,13 +752,13 @@ void testCylDiffnWithStoich()
 		double x = i * dx + dx * 0.5;
 		// This part is the solution as a func of x,t.
 		double y = dx *  // This part represents the init n of 1 in dx
-			( 1.0 / sqrt( PI * diffConst * runtime ) ) * 
-			exp( -x * x / ( 4 * diffConst * runtime ) ); 
+			( 1.0 / sqrt( PI * diffConst * runtime ) ) *
+			exp( -x * x / ( 4 * diffConst * runtime ) );
 		err += ( y - nvec[i] ) * ( y - nvec[i] );
 		//cout << i << "	" << x << "	" << y << "	" << conc[i] << endl;
 		analyticTot += y;
 		myTot += nvec[i];
-	} 
+	}
 	assert( doubleEq( myTot, 1.0 ) );
 	// cout << "analyticTot= " << analyticTot << ", myTot= " << myTot << endl;
 	assert( err < 1.0e-5 );
@@ -890,7 +890,7 @@ void testCalcJunction()
 	assert( Field< unsigned int >::get( dendsolve, "numPools" ) == 3 );
 	assert( Field< unsigned int >::get( spinesolve, "numPools" ) == 3 );
 	assert( Field< unsigned int >::get( psdsolve, "numPools" ) == 3 );
-	SetGet2< Id, Id >::set( dendsolve, "buildNeuroMeshJunctions", 
+	SetGet2< Id, Id >::set( dendsolve, "buildNeuroMeshJunctions",
 					spinesolve, psdsolve );
 	s->doSetClock( 0, 0.01 );
 	s->doUseClock( "/model/#solve", "process", 0 );

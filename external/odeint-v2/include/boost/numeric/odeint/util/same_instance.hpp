@@ -24,7 +24,7 @@ namespace odeint {
 
 template< class T1 , class T2 , class Enabler=void >
 struct same_instance_impl
-{ 
+{
     static bool same_instance( const T1& /* x1 */ , const T2& /* x2 */ )
     {
         return false;
@@ -33,7 +33,7 @@ struct same_instance_impl
 
 template< class T >
 struct same_instance_impl< T , T >
-{ 
+{
     static bool same_instance( const T &x1 , const T &x2 )
     {
         // check pointers

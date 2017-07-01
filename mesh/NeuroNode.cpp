@@ -25,12 +25,12 @@
  * neuron.
  */
 
-NeuroNode::NeuroNode( const CylBase& cb, 
+NeuroNode::NeuroNode( const CylBase& cb,
 		unsigned int parent, const vector< unsigned int >& children,
 		unsigned int startFid, Id elecCompt, bool isSphere
    	)
 		:
-				CylBase( cb ), 
+				CylBase( cb ),
 				parent_( parent ),
 				children_( children ),
 				startFid_( startFid ),
@@ -136,7 +136,7 @@ static void bruteForceFind( const vector< NeuroNode >& nodes, Id id )
 {
 	for ( unsigned int i = 0; i < nodes.size(); ++i ) {
 		if ( nodes[i].elecCompt() == id ) {
-			cout << "bruteForceFind: nodes[" << i << "] has " << 
+			cout << "bruteForceFind: nodes[" << i << "] has " <<
 					id.path() << endl;
 		}
 	}
@@ -195,7 +195,7 @@ static vector< Id > findAllConnectedCompartments( Id  compt )
  * the 'children' vector even if they may be 'parent' by the messaging.
  * This is because this function has to be robust enough to sort this out
  */
-void NeuroNode::findConnectedCompartments( 
+void NeuroNode::findConnectedCompartments(
 				const map< Id, unsigned int >& nodeMap,
 				const vector< NeuroNode >& nodes )
 {
@@ -224,7 +224,7 @@ void NeuroNode::findConnectedCompartments(
  *
  * static func
  */
-unsigned int NeuroNode::removeDisconnectedNodes( 
+unsigned int NeuroNode::removeDisconnectedNodes(
 				vector< NeuroNode >& nodes )
 {
 	vector< NeuroNode > temp;
@@ -242,7 +242,7 @@ unsigned int NeuroNode::removeDisconnectedNodes(
 	}
 	for ( unsigned int i = 0; i < temp.size(); ++i ) {
 		vector< unsigned int >& c = temp[i].children_;
-		for ( vector< unsigned int >::iterator 
+		for ( vector< unsigned int >::iterator
 						j = c.begin(); j != c.end(); ++j ) {
 			assert( nodeMap[ *j ] != ~0U );
 			*j = nodeMap[ *j ];
@@ -292,10 +292,10 @@ unsigned int NeuroNode::findStartNode( const vector< NeuroNode >& nodes )
 	return somaIndex;
 }
 
-/** 
+/**
  * static func
  */
-void diagnoseTree( const vector< NeuroNode >& tree, 
+void diagnoseTree( const vector< NeuroNode >& tree,
 			   const vector< NeuroNode >& nodes )
 {
 	map< Id , const NeuroNode* > m;
@@ -310,7 +310,7 @@ void diagnoseTree( const vector< NeuroNode >& tree,
 			Id pa;
 			if ( i->parent() != ~0U && i->parent() < nodes.size() )
 				pa = nodes[ i->parent() ].elecCompt();
-			cout << "diagnoseTree:" << j++ << "	" << i->elecCompt().path() << 
+			cout << "diagnoseTree:" << j++ << "	" << i->elecCompt().path() <<
 					",	pa = " << i->parent() << ",	" << pa.path() << endl;
 		}
 	}
@@ -318,7 +318,7 @@ void diagnoseTree( const vector< NeuroNode >& tree,
 
 /**
  * Traverses the nodes list starting from the 'start' node, and sets up
- * correct parent-child information. This involves removing the 
+ * correct parent-child information. This involves removing the
  * identified 'parent' node from the 'children_' vector and assigning it
  * to the parent_ field.
  * Then it redoes the entire nodes vector (with due care for indexing of
@@ -348,16 +348,16 @@ void NeuroNode::traverse( vector< NeuroNode >& nodes, unsigned int start )
 	nodes = tree;
 }
 
-void NeuroNode::innerTraverse( 
-				vector< NeuroNode >& tree, 
+void NeuroNode::innerTraverse(
+				vector< NeuroNode >& tree,
 				const vector< NeuroNode >& nodes,
-				vector< unsigned int >& seen 
+				vector< unsigned int >& seen
 				) const
 {
 	unsigned int pa = tree.size() - 1;
 	tree.back().children_.clear();
 
-	for ( vector< unsigned int >::const_iterator i = 
+	for ( vector< unsigned int >::const_iterator i =
 					children_.begin(); i != children_.end(); ++i ) {
 		assert( *i < nodes.size() );
 
@@ -378,7 +378,7 @@ bool isPartOfDend( ObjId i )
 	if ( i.element()->cinfo()->isA( "CompartmentBase" ) ) {
 		string name = i.element()->getName();
 		if ( name.find( "shaft" ) == string::npos &&
-			name.find( "neck" ) == string::npos && 
+			name.find( "neck" ) == string::npos &&
 			name.find( "spine" ) == string::npos &&
 			name.find( "head" ) == string::npos )
 	   	{
@@ -399,7 +399,7 @@ static bool checkForSpine( unsigned int dendIndex, Id compt,
 		shaftId.push_back( compt );
 		vector< Id > conn = findAllConnectedCompartments( compt );
 		bool foundHead = false;
-		for ( vector< Id >::iterator i = 
+		for ( vector< Id >::iterator i =
 						conn.begin(); i != conn.end(); ++i ) {
 			const string& n2 = i->element()->getName();
 			if ( n2.find( "spine" ) != string::npos ||
@@ -418,7 +418,7 @@ static bool checkForSpine( unsigned int dendIndex, Id compt,
 }
 
 /**
- * spinyTraverse goes takes current dend entry and finds everything 
+ * spinyTraverse goes takes current dend entry and finds everything
  * connected to it, recursively. Paints the 'seen' entries with the
  * latest index for the number seen so we keep track of which subgroup
  * the dend set belongs to.
@@ -426,7 +426,7 @@ static bool checkForSpine( unsigned int dendIndex, Id compt,
  * on every dend compt found.
  *
  */
-static void spinyTraverse( unsigned int dendIndex, 
+static void spinyTraverse( unsigned int dendIndex,
 	vector< Id >& dend, const map< Id, unsigned int >& dendMap,
 	vector< int >& seen, unsigned int numSeen,
 	vector< Id >& shaftId, vector< Id >& headId,
@@ -436,12 +436,12 @@ static void spinyTraverse( unsigned int dendIndex,
 	vector< Id > conn = findAllConnectedCompartments( dend[dendIndex] );
 	seen[ dendIndex ] = numSeen;
 	for ( vector< Id >::iterator i = conn.begin(); i != conn.end(); ++i ) {
-		map< Id, unsigned int >::const_iterator idLookup = 
+		map< Id, unsigned int >::const_iterator idLookup =
 				dendMap.find( *i );
 		if ( idLookup != dendMap.end() ) {
 			if ( !seen[ idLookup->second ] ) {
 				dendParent[ idLookup->second ] = dendIndex;
-				spinyTraverse( idLookup->second, dend, dendMap, 
+				spinyTraverse( idLookup->second, dend, dendMap,
 					seen, numSeen,
 					shaftId, headId, dendParent, spineParent );
 			}
@@ -453,17 +453,17 @@ static void spinyTraverse( unsigned int dendIndex,
 
 /**
  * This function takes a list of elements and builds a tree.
- * Info on any attached spines are placed in the 
+ * Info on any attached spines are placed in the
  * shaft_, head_, and parent_ vectors.
  * The list of elements can be discontiguous.
  * This is meant to be insensitive to vagaries
- * in how the user has set up the compartment messaging, provided that 
+ * in how the user has set up the compartment messaging, provided that
  * there is at least one recognized message between connected compartments.
  *
  * static function.
  */
-void NeuroNode::buildSpinyTree( 
-	vector< ObjId >& elist, vector< NeuroNode >& nodes, 
+void NeuroNode::buildSpinyTree(
+	vector< ObjId >& elist, vector< NeuroNode >& nodes,
 	vector< Id >& shaftId, vector< Id >& headId,
 	vector< unsigned int >& spineParent )
 {
@@ -471,7 +471,7 @@ void NeuroNode::buildSpinyTree(
 	sort( elist.begin(), elist.end() );
 	map< Id, unsigned int > dendMap;
 	vector< Id > dend;
-	for ( vector< ObjId >::iterator 
+	for ( vector< ObjId >::iterator
 		i = elist.begin(); i != elist.end(); ++i ) {
 		if ( isPartOfDend( *i ) ) {
 			dendMap[ *i ] = dend.size();
@@ -483,8 +483,8 @@ void NeuroNode::buildSpinyTree(
 	int numSeen = 0;
 	for ( unsigned int i = 0; i < dend.size(); ++i ) {
 		if ( !seen[i] )
-			spinyTraverse( i, dend, dendMap, seen, ++numSeen, 
-			shaftId, headId, 
+			spinyTraverse( i, dend, dendMap, seen, ++numSeen,
+			shaftId, headId,
 			dendParent, spineParent );
 	}
 	if ( numSeen == 0 )
@@ -515,20 +515,20 @@ void NeuroNode::setParentAndChildren( unsigned int index, int dendParent,
 
 /**
  * This function takes a list of elements that include connected
- * compartments, and constructs a tree of nodes out of them. The 
+ * compartments, and constructs a tree of nodes out of them. The
  * generated nodes vector starts with the soma, and is a depth-first
  * sequence of nodes. This is meant to be insensitive to vagaries
- * in how the user has set up the compartment messaging, provided that 
+ * in how the user has set up the compartment messaging, provided that
  * there is at least one recognized message between connected compartments.
  *
  * static function.
  */
-void NeuroNode::buildTree( 
+void NeuroNode::buildTree(
 				vector< NeuroNode >& nodes, vector< ObjId > elist )
 {
 	nodes.clear();
 	map< Id, unsigned int > nodeMap;
-	for ( vector< ObjId >::iterator 
+	for ( vector< ObjId >::iterator
 		i = elist.begin(); i != elist.end(); ++i ) {
 		if ( i->element()->cinfo()->isA( "CompartmentBase" ) )
 			nodes.push_back( NeuroNode( *i ) );
@@ -556,10 +556,10 @@ void NeuroNode::buildTree(
 }
 
 // Utility function to clean up node indices for parents and children.
-void reassignNodeIndices( vector< NeuroNode >& temp, 
+void reassignNodeIndices( vector< NeuroNode >& temp,
 				const vector< unsigned int >& nodeToTempMap )
 {
-	for ( vector< NeuroNode >::iterator 
+	for ( vector< NeuroNode >::iterator
 			i = temp.begin(); i != temp.end(); ++i ) {
 		unsigned int pa = i->parent();
 		if ( pa != ~0U ) {
@@ -580,12 +580,12 @@ void reassignNodeIndices( vector< NeuroNode >& temp,
 /**
  * Trims off all spines from tree. Does so by identifying a set of
  * reasonable names: shaft, head, spine, and variants in capitals.
- * Having done this it builds two matching vectors of vector of shafts 
+ * Having done this it builds two matching vectors of vector of shafts
  * and heads, which is a hack that assumes that there are no sub-branches
  * in spines. Then there is an index for parent NeuroNode entry.
  * Static function
  */
-void NeuroNode::filterSpines( vector< NeuroNode >& nodes, 
+void NeuroNode::filterSpines( vector< NeuroNode >& nodes,
 				vector< Id >& shaftId, vector< Id >& headId,
 				vector< unsigned int >& parent )
 {

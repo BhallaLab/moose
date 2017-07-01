@@ -33,14 +33,14 @@ const Cinfo* HHGate2D::initCinfo()
 			"lookupB: Look up B gate value from two doubles in a vector.",
 			&HHGate2D::lookupB );
 
-		static ElementValueFinfo< HHGate2D, vector< vector< double > > > tableA( 
+		static ElementValueFinfo< HHGate2D, vector< vector< double > > > tableA(
 			"tableA",
 			"Table of A entries",
                         &HHGate2D::setTableA,
 			&HHGate2D::getTableA
 		);
 
-		static ElementValueFinfo< HHGate2D, vector< vector< double > > > tableB( 
+		static ElementValueFinfo< HHGate2D, vector< vector< double > > > tableB(
 			"tableB",
 			"Table of B entries",
 			&HHGate2D::setTableB,
@@ -62,7 +62,7 @@ const Cinfo* HHGate2D::initCinfo()
 			"Divisions for lookup. Zero means to use linear interpolation",
 			&HHGate2D::setXdivsA,
 			&HHGate2D::getXdivsA);
-                
+
 		static ElementValueFinfo< HHGate2D, double > yminA( "yminA",
 			"Minimum range for lookup",
 			&HHGate2D::setYminA,
@@ -95,7 +95,7 @@ const Cinfo* HHGate2D::initCinfo()
 			&HHGate2D::setXdivsB,
 			&HHGate2D::getXdivsB
 		);
-                
+
 		static ElementValueFinfo< HHGate2D, double > yminB( "yminB",
 			"Minimum range for lookup",
 			&HHGate2D::setYminB,
@@ -167,7 +167,7 @@ HHGate2D::HHGate2D()
 {;}
 
 HHGate2D::HHGate2D( Id originalChanId, Id originalGateId )
-	: 
+	:
 		originalChanId_( originalChanId ),
 		originalGateId_( originalGateId )
 {;}
@@ -181,12 +181,12 @@ double HHGate2D::lookupA( vector< double > v ) const
 		cerr << "Error: HHGate2D::getAValue: 2 real numbers needed to lookup 2D table.\n";
 		return 0.0;
 	}
-	
+
 	if ( v.size() > 2 ) {
 		cerr << "Error: HHGate2D::getAValue: Only 2 real numbers needed to lookup 2D table. "
 			"Using only first 2.\n";
 	}
-	
+
 	return A_.innerLookup( v[ 0 ], v[ 1 ] );
 }
 
@@ -196,12 +196,12 @@ double HHGate2D::lookupB( vector< double > v ) const
 		cerr << "Error: HHGate2D::getAValue: 2 real numbers needed to lookup 2D table.\n";
 		return 0.0;
 	}
-	
+
 	if ( v.size() > 2 ) {
 		cerr << "Error: HHGate2D::getAValue: Only 2 real numbers needed to lookup 2D table. "
 			"Using only first 2.\n";
 	}
-	
+
 	return B_.innerLookup( v[ 0 ], v[ 1 ] );
 }
 
@@ -395,16 +395,16 @@ void HHGate2D::createInterpols( const Conn* c, IdGenerator idGen )
 {
 	HHGate2D* h = static_cast< HHGate2D *>( c->data() );
 	Eref e = c->target();
-	
+
 	const Cinfo* ic = initInterpol2DCinfo();
-	
+
 	// Here we must set the noDelFlag to 1 because these data
 	// parts belong to the parent HHGate2D structure.
-	Element* A = ic->create( 
+	Element* A = ic->create(
 		idGen.next(), "A", static_cast< void* >( &h->A_ ), 1 );
 	e.add( "childSrc", A, "child" );
 
-	Element* B = ic->create( 
+	Element* B = ic->create(
 		idGen.next(), "B", static_cast< void* >( &h->B_), 1 );
 	e.add( "childSrc", B, "child" );
 }

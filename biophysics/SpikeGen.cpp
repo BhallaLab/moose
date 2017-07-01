@@ -14,7 +14,7 @@
 	// MsgSrc definitions
 	///////////////////////////////////////////////////////
 static SrcFinfo1< double > *spikeOut() {
-	static SrcFinfo1< double > spikeOut( "spikeOut", 
+	static SrcFinfo1< double > spikeOut( "spikeOut",
 			"Sends out a trigger for an event.");
 	return &spikeOut;
 }
@@ -24,10 +24,10 @@ const Cinfo* SpikeGen::initCinfo()
 	///////////////////////////////////////////////////////
 	// Shared message definitions
 	///////////////////////////////////////////////////////
-	static DestFinfo process( "process", 
+	static DestFinfo process( "process",
 		"Handles process call",
 		new ProcOpFunc< SpikeGen >( &SpikeGen::process ) );
-	static DestFinfo reinit( "reinit", 
+	static DestFinfo reinit( "reinit",
 		"Handles reinit call",
 		new ProcOpFunc< SpikeGen >( &SpikeGen::reinit ) );
 
@@ -36,10 +36,10 @@ const Cinfo* SpikeGen::initCinfo()
 		&process, &reinit
 	};
 
-	static SharedFinfo proc( "proc", 
+	static SharedFinfo proc( "proc",
 		"Shared message to receive Process message from scheduler",
 		processShared, sizeof( processShared ) / sizeof( Finfo* ) );
-		
+
 	//////////////////////////////////////////////////////////////////
 	// Dest Finfos.
 	//////////////////////////////////////////////////////////////////
@@ -50,7 +50,7 @@ const Cinfo* SpikeGen::initCinfo()
 	//////////////////////////////////////////////////////////////////
 	// Value Finfos.
 	//////////////////////////////////////////////////////////////////
-	
+
 	static ValueFinfo< SpikeGen, double > threshold( "threshold",
 		"Spiking threshold, must cross it going up",
 		&SpikeGen::setThreshold,
@@ -82,7 +82,7 @@ const Cinfo* SpikeGen::initCinfo()
 		&SpikeGen::getEdgeTriggered
 	);
 
-	static Finfo* spikeGenFinfos[] = 
+	static Finfo* spikeGenFinfos[] =
 	{
 		spikeOut(),	// SrcFinfo
 		&proc,		// Shared
@@ -111,7 +111,7 @@ const Cinfo* SpikeGen::initCinfo()
 		spikeGenFinfos, sizeof( spikeGenFinfos ) / sizeof( Finfo* ),
 		&dinfo,
                 doc,
-                sizeof(doc)/sizeof(string)                
+                sizeof(doc)/sizeof(string)
 	);
 
 	return &spikeGenCinfo;
@@ -197,7 +197,7 @@ void SpikeGen::process( const Eref& e, ProcPtr p )
 			if ( !( edgeTriggered_ && fired_ ) ) {
 				spikeOut()->send( e, t );
 				lastEvent_ = t;
-				fired_ = true;                    
+				fired_ = true;
 			}
 		}
 	} else {

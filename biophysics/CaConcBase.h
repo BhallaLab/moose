@@ -30,7 +30,7 @@
  * compartment.  Otherwise, it scales as a true shell, with the
  * volume of a shell having thickness thick.  A negative value of
  * the "density" parameter may be used to indicate that it should
- * be taken as an absolute value of B, without scaling. 
+ * be taken as an absolute value of B, without scaling.
  *
  * This is a base class to provide the interface functions.
  */
@@ -99,7 +99,7 @@ class CaConcBase
 		///////////////////////////////////////////////////////////////
 		// Utility function in case length, dia or thickness is updated
 		void updateDimensions( const Eref& e );
-		
+
 		/// Used to set up the solver. Dummy for regular classes.
 		virtual void vSetSolver( const Eref& e, Id hsolve );
 
@@ -111,7 +111,7 @@ class CaConcBase
 
 		/*
 		 * This Finfo is used to send out Ca concentration to channels.
-		 * 
+		 *
 		 * It is exposed here so that HSolve can also use it to send out
 		 * Ca concentration to the recipients.
 		 */

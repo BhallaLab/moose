@@ -169,7 +169,7 @@ public:
         BOOST_USING_STD_MIN();
         BOOST_USING_STD_MAX();
         using std::pow;
-        
+
         static const value_type val1( 1.0 );
 
         bool reject( true );
@@ -472,7 +472,7 @@ private:
 
     template< class StateIn1 , class DerivIn1 , class StateIn2 , class DerivIn2 >
     value_type prepare_dense_output( int k , const StateIn1 &x_start , const DerivIn1 &dxdt_start ,
-                                     const StateIn2 & /* x_end */ , const DerivIn2 & /*dxdt_end */ , time_type dt )  
+                                     const StateIn2 & /* x_end */ , const DerivIn2 & /*dxdt_end */ , time_type dt )
     /* k is the order to which the result was approximated */
     {
 
@@ -620,17 +620,17 @@ private:
     {
         return m_current_state_x1 ? m_x1.m_v : m_x2.m_v ;
     }
-    
+
     const state_type& get_current_state( void ) const
     {
         return m_current_state_x1 ? m_x1.m_v : m_x2.m_v ;
     }
-    
+
     state_type& get_old_state( void )
     {
         return m_current_state_x1 ? m_x2.m_v : m_x1.m_v ;
     }
-    
+
     const state_type& get_old_state( void ) const
     {
         return m_current_state_x1 ? m_x2.m_v : m_x1.m_v ;
@@ -640,23 +640,23 @@ private:
     {
         return m_current_state_x1 ? m_dxdt1.m_v : m_dxdt2.m_v ;
     }
-    
+
     const deriv_type& get_current_deriv( void ) const
     {
         return m_current_state_x1 ? m_dxdt1.m_v : m_dxdt2.m_v ;
     }
-    
+
     deriv_type& get_old_deriv( void )
     {
         return m_current_state_x1 ? m_dxdt2.m_v : m_dxdt1.m_v ;
     }
-    
+
     const deriv_type& get_old_deriv( void ) const
     {
         return m_current_state_x1 ? m_dxdt2.m_v : m_dxdt1.m_v ;
     }
 
-    
+
     void toggle_current_state( void )
     {
         m_current_state_x1 = ! m_current_state_x1;
@@ -718,7 +718,7 @@ private:
 /**
  * \class bulirsch_stoer_dense_out
  * \brief The Bulirsch-Stoer algorithm.
- * 
+ *
  * The Bulirsch-Stoer is a controlled stepper that adjusts both step size
  * and order of the method. The algorithm uses the modified midpoint and
  * a polynomial extrapolation compute the solution. This class also provides
@@ -735,14 +735,14 @@ private:
 
     /**
      * \fn bulirsch_stoer_dense_out::bulirsch_stoer_dense_out( value_type eps_abs , value_type eps_rel , value_type factor_x , value_type factor_dxdt , bool control_interpolation )
-     * \brief Constructs the bulirsch_stoer class, including initialization of 
+     * \brief Constructs the bulirsch_stoer class, including initialization of
      * the error bounds.
      *
      * \param eps_abs Absolute tolerance level.
      * \param eps_rel Relative tolerance level.
      * \param factor_x Factor for the weight of the state.
      * \param factor_dxdt Factor for the weight of the derivative.
-     * \param control_interpolation Set true to additionally control the error of 
+     * \param control_interpolation Set true to additionally control the error of
      * the interpolation.
      */
 
@@ -751,13 +751,13 @@ private:
      * \brief Tries to perform one step.
      *
      * This method tries to do one step with step size dt. If the error estimate
-     * is to large, the step is rejected and the method returns fail and the 
+     * is to large, the step is rejected and the method returns fail and the
      * step size dt is reduced. If the error estimate is acceptably small, the
-     * step is performed, success is returned and dt might be increased to make 
+     * step is performed, success is returned and dt might be increased to make
      * the steps as large as possible. This method also updates t if a step is
      * performed. Also, the internal order of the stepper is adjusted if required.
      *
-     * \param system The system function to solve, hence the r.h.s. of the ODE. 
+     * \param system The system function to solve, hence the r.h.s. of the ODE.
      * It must fulfill the Simple System concept.
      * \param in The state of the ODE which should be solved.
      * \param dxdt The derivative of state.
@@ -778,7 +778,7 @@ private:
 
     /**
      * \fn bulirsch_stoer_dense_out::do_step( System system )
-     * \brief Does one time step. This is the main method that should be used to 
+     * \brief Does one time step. This is the main method that should be used to
      * integrate an ODE with this stepper.
      * \note initialize has to be called before using this method to set the
      * initial conditions x,t and the stepsize.

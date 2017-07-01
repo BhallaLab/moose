@@ -39,18 +39,18 @@ class FuncTerm
 		void setTarget( unsigned int tgt );
 		void setVolScale( double vs );
 		double getVolScale() const;
-	private: 
+	private:
 		double* args_;
 		// Look up reactants in the S vec.
-		vector< unsigned int > reactantIndex_; 
+		vector< unsigned int > reactantIndex_;
 		mu::Parser parser_;
 		string expr_;
 		/**
 		 * Scale factor to account for pool volume if we are assigning conc
-		 * rather than N. Note that this conc will not be further updated 
+		 * rather than N. Note that this conc will not be further updated
 		 * so this is an undesirable option.
 		 */
-		double volScale_; 
+		double volScale_;
 		unsigned int target_; /// Index of the entity to be updated by Func
 };
 

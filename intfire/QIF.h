@@ -23,7 +23,7 @@ class QIF: public IntFireBase
 	public:
 			QIF();
 			virtual ~QIF();
-            
+
 			void setVCritical( const Eref& e,  double val );
 			double getVCritical( const Eref& e  ) const;
 			void setA0( const Eref& e,  double val );

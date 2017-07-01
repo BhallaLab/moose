@@ -49,7 +49,7 @@ class IntFireBase: public Compartment
 			 * to the intFire.
 			 */
 			void activation( double val );
-			
+
 			/// Message src for outgoing spikes.
 			static SrcFinfo1< double >* spikeOut();
 

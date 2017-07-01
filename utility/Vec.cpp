@@ -52,16 +52,16 @@ void Vec::orthogonalAxes( Vec& u, Vec& v ) const {
 
 Vec Vec::pointOnLine( const Vec& end, double k )
 {
-	return Vec( 
+	return Vec(
 					a0_ + k * ( end.a0_ - a0_ ),
 					a1_ + k * ( end.a1_ - a1_ ),
 					a2_ + k * ( end.a2_ - a2_ ) );
 }
 
 bool Vec::operator==( const Vec& other ) const {
-	return 
-		doubleEq( a0_, other.a0_) && 
-		doubleEq( a1_, other.a1_) && 
+	return
+		doubleEq( a0_, other.a0_) &&
+		doubleEq( a1_, other.a1_) &&
 		doubleEq( a2_, other.a2_);
 }
 

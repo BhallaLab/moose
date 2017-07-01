@@ -1,6 +1,6 @@
 /*******************************************************************
  * File:            Uniform.cpp
- * Description:      
+ * Description:
  * Author:          Subhasis Ray
  * E-mail:          ray.subhasis@gmail.com
  * Created:         2008-02-21 17:12:55
@@ -30,7 +30,7 @@ using namespace std;
 Uniform::Uniform()
 {
     min_ = 0.0;
-    max_ = 1.0;    
+    max_ = 1.0;
 }
 Uniform::Uniform(double min, double max)
 {
@@ -41,7 +41,7 @@ Uniform::Uniform(double min, double max)
         max_ = 1.0;
         return;
     }
-    
+
     min_ = min;
     max_ = max;
 }
@@ -79,15 +79,15 @@ double Uniform::getNextSample() const
 void doTest(double min, double max, unsigned count)
 {
     Uniform rng;
-    
+
     rng.setMin(min);
     rng.setMax(max);
     assert(isClose<double>(min, rng.getMin(), DBL_EPSILON));
     assert(isClose<double>(max, rng.getMax(), DBL_EPSILON));
     vector <double> seq;
     double mean = 0.0;
-    
-    
+
+
     for (unsigned ii = 0; ii < count; ++ii )
     {
         double sample;
@@ -103,7 +103,7 @@ void doTest(double min, double max, unsigned count)
     }
     var = var / count;
     cout << "theoretical mean: " << rng.getMean() << ", sample mean: " << mean << ", theoretical var: " << rng.getVariance() << ", sample var: " << var << ", sample size: " << count << endl;
-    
+
 }
 
 void testUniform()
@@ -117,7 +117,7 @@ void testUniform()
 #if defined( TEST_MAIN ) && defined(DO_UNIT_TESTS)
 int main(void)
 {
-    testUniform();    
+    testUniform();
 }
 
 #endif // !defined( TEST_MAIN ) && defined(DO_UNIT_TESTS)

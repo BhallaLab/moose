@@ -10,7 +10,7 @@
  *       Revision:  0.1
  *       Compiler:  gcc/g++
  *
- *         Author:  Dilawar Singh 
+ *         Author:  Dilawar Singh
  *   Organization:  Bhalla's lab, NCBS Bangalore
  *
  * ==============================================================================
@@ -85,7 +85,7 @@ namespace moose {
     /**
      * @brief Set the global seed or all rngs.
      *
-     * @param x 
+     * @param x
      */
     void mtseed( unsigned int x )
     {
@@ -115,7 +115,7 @@ namespace moose {
     }
 
     /**
-     * @brief Create directories recursively needed to open the given file p. 
+     * @brief Create directories recursively needed to open the given file p.
      *
      * @param path When successfully created, returns created path, else
      * convert path to a filename by replacing '/' by '_'.
@@ -135,7 +135,7 @@ namespace moose {
             return true;
 
 #ifdef  USE_BOOST
-        try 
+        try
         {
             boost::filesystem::path pdirs( p );
             boost::filesystem::create_directories( pdirs );
@@ -152,14 +152,15 @@ namespace moose {
 #else      /* -----  not USE_BOOST  ----- */
         string command( "mkdir -p ");
         command += p;
-        system( command.c_str() );
+        int ret = system( command.c_str() );
+        cout << "+ Return code " << ret << endl;
         struct stat info;
         if( stat( p.c_str(), &info ) != 0 )
         {
             LOG( moose::warning, "cannot access " << p );
             return false;
         }
-        else if( info.st_mode & S_IFDIR )  
+        else if( info.st_mode & S_IFDIR )
         {
             LOG( moose::info, "Created directory " <<  p );
             return true;
@@ -210,7 +211,7 @@ namespace moose {
         return createMOOSEPath( path );
     }
 
-    /*  Return formatted string 
+    /*  Return formatted string
      *  Precision is upto 17 decimal points.
      */
     string toString( double x )
@@ -219,4 +220,5 @@ namespace moose {
         sprintf(buffer, "%.17g", x );
         return string( buffer );
     }
+
 }

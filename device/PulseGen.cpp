@@ -305,7 +305,7 @@ double PulseGen::getOutput() const
 
 int PulseGen::getPreviousInput() const
 {
-    return prevInput_;    
+    return prevInput_;
 }
 
 void PulseGen::setCount(unsigned int count)

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # FindSIP.py
 #
 # Copyright (c) 2007, Simon Edwards <simon@simonzone.com>

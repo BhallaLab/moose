@@ -24,35 +24,35 @@ const Cinfo* MarkovGslSolver::initCinfo()
 		///////////////////////////////////////////////////////
 		// Field definitions
 		///////////////////////////////////////////////////////
-		static ReadOnlyValueFinfo< MarkovGslSolver, bool > isInitialized( 
-			"isInitialized", 
+		static ReadOnlyValueFinfo< MarkovGslSolver, bool > isInitialized(
+			"isInitialized",
 			"True if the message has come in to set solver parameters.",
 			&MarkovGslSolver::getIsInitialized
 		);
-		static ValueFinfo< MarkovGslSolver, string > method( "method", 
+		static ValueFinfo< MarkovGslSolver, string > method( "method",
 			"Numerical method to use.",
 			&MarkovGslSolver::setMethod,
-			&MarkovGslSolver::getMethod 
+			&MarkovGslSolver::getMethod
 		);
-		static ValueFinfo< MarkovGslSolver, double > relativeAccuracy( 
-			"relativeAccuracy", 
+		static ValueFinfo< MarkovGslSolver, double > relativeAccuracy(
+			"relativeAccuracy",
 			"Accuracy criterion",
 			&MarkovGslSolver::setRelativeAccuracy,
 			&MarkovGslSolver::getRelativeAccuracy
 		);
-		static ValueFinfo< MarkovGslSolver, double > absoluteAccuracy( 
-			"absoluteAccuracy", 
+		static ValueFinfo< MarkovGslSolver, double > absoluteAccuracy(
+			"absoluteAccuracy",
 			"Another accuracy criterion",
 			&MarkovGslSolver::setAbsoluteAccuracy,
 			&MarkovGslSolver::getAbsoluteAccuracy
 		);
-		static ValueFinfo< MarkovGslSolver, double > internalDt( 
-			"internalDt", 
+		static ValueFinfo< MarkovGslSolver, double > internalDt(
+			"internalDt",
 			"internal timestep to use.",
 			&MarkovGslSolver::setInternalDt,
 			&MarkovGslSolver::getInternalDt
 		);
-		
+
 		///////////////////////////////////////////////////////
 		// DestFinfo definitions
 		///////////////////////////////////////////////////////
@@ -92,16 +92,16 @@ const Cinfo* MarkovGslSolver::initCinfo()
 		&absoluteAccuracy,	// ValueFinfo
 		&internalDt,				// ValueFinfo
 		&init,							// DestFinfo
-		&handleQ,						// DestFinfo	
+		&handleQ,						// DestFinfo
 		&proc,							// SharedFinfo
 		stateOut(),  				// SrcFinfo
 	};
-	
-	static string doc[] = 
+
+	static string doc[] =
 	{
 		"Name", "MarkovGslSolver",
 		"Author", "Vishaka Datta S, 2011, NCBS",
-		"Description", "Solver for Markov Channel." 
+		"Description", "Solver for Markov Channel."
 	};
 
 	static Dinfo< MarkovGslSolver > dinfo;
@@ -147,7 +147,7 @@ MarkovGslSolver::~MarkovGslSolver()
 		gsl_odeiv_control_free( gslControl_ );
 	if ( gslStep_ )
 		gsl_odeiv_step_free( gslStep_ );
-	
+
 	if ( stateGsl_ )
 		delete[] stateGsl_;
 }
@@ -263,7 +263,7 @@ void MarkovGslSolver::init( vector< double > initialState )
 	Q_.resize( nVars_ );
 
 	for ( unsigned int i = 0; i < nVars_; ++i )
-		Q_[i].resize( nVars_, 0.0 );	
+		Q_[i].resize( nVars_, 0.0 );
 
 	isInitialized_ = 1;
 
@@ -283,11 +283,11 @@ void MarkovGslSolver::init( vector< double > initialState )
 
 	if ( !gslControl_ )
 		gslControl_ = gsl_odeiv_control_y_new( absAccuracy_, relAccuracy_ );
-	else 
+	else
 		gsl_odeiv_control_init(gslControl_,absAccuracy_, relAccuracy_, 1, 0);
 
 	assert(gslControl_!= 0);
-        
+
 	gslSys_.function = &MarkovGslSolver::evalSystem;
 	gslSys_.jacobian = 0;
 	gslSys_.dimension = nVars_;
@@ -307,8 +307,8 @@ void MarkovGslSolver::process( const Eref& e, ProcPtr info )
 		stateGsl_[i] = state_[i];
 
 	while ( t < nextt ) {
-		int status = gsl_odeiv_evolve_apply ( 
-			gslEvolve_, gslControl_, gslStep_, &gslSys_, 
+		int status = gsl_odeiv_evolve_apply (
+			gslEvolve_, gslControl_, gslStep_, &gslSys_,
 			&t, nextt,
 			&internalStepSize_, stateGsl_);
 
@@ -340,7 +340,7 @@ void MarkovGslSolver::reinit( const Eref& e, ProcPtr info )
 				 "Initial state has not been set. Solver has not been initialized."
 				 "Call init() before running.\n";
 	}
-				
+
 	stateOut()->send( e, state_ );
 }
 

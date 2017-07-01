@@ -12,12 +12,12 @@
 #include "../shell/Shell.h"
 #include "../shell/Neutral.h"
 
-const OpFunc* SetGet::checkSet( 
+const OpFunc* SetGet::checkSet(
 	const string& field, ObjId& tgt, FuncId& fid )
 {
 	// string field = "set_" + destField;
 	const Finfo* f = tgt.element()->cinfo()->findFinfo( field );
-	if ( !f ) { // Could be a child element? Note that field name will 
+	if ( !f ) { // Could be a child element? Note that field name will
 		// change from set_<name> to just <name>
 		string f2 = field.substr( 3 );
 		Id child = Neutral::child( tgt.eref(), f2 );
@@ -48,7 +48,7 @@ const OpFunc* SetGet::checkSet(
 	const DestFinfo* df = dynamic_cast< const DestFinfo* >( f );
 	if ( !df )
 		return 0;
-	
+
 	fid = df->getFid();
 	const OpFunc* func = df->getOpFunc();
 	assert( func );

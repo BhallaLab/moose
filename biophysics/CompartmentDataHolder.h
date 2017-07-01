@@ -16,7 +16,7 @@
 namespace moose
 {
 
-class CompartmentDataHolder 
+class CompartmentDataHolder
 {
 	public:
 			CompartmentDataHolder();
@@ -29,7 +29,7 @@ class CompartmentDataHolder
 			double Em_;
 			double initVm_;
 			double inject_;
-					
+
 			double diameter_;
 			double length_;
 			double x0_;

@@ -20,7 +20,7 @@ static SrcFinfo1< double > *eventOut() {
         "Sends out spike time if it falls in current timestep.");
     return &eventOut;
 }
-        
+
 const Cinfo* TimeTable::initCinfo()
 {
     ///////////////////////////////////////////////////////
@@ -31,13 +31,13 @@ const Cinfo* TimeTable::initCinfo()
                                             "separated by any space character.",
                                             &TimeTable::setFilename,
                                             &TimeTable::getFilename);
-                      
+
     static ValueFinfo< TimeTable, int > method( "method",
                                                 "Method to use for filling up the entries. Currently only method 4\n"
                                                 "(loading from file) is supported.",
                                                 &TimeTable::setMethod ,
                                                 &TimeTable::getMethod);
-    
+
     static ReadOnlyValueFinfo <TimeTable, double> state( "state",
                                                          "Current state of the time table.",
                                                          &TimeTable::getState );
@@ -52,7 +52,7 @@ const Cinfo* TimeTable::initCinfo()
     static DestFinfo reinit("reinit",
                             "Handles reinit call",
                             new ProcOpFunc< TimeTable > ( &TimeTable::reinit));
-    
+
     //////////////////////////////////////////////////////////////
     // SharedMsg Definitions
     //////////////////////////////////////////////////////////////
@@ -71,14 +71,14 @@ const Cinfo* TimeTable::initCinfo()
         eventOut(),
         &proc,
     };
-    
+
     static string doc[] = {
         "Name", "TimeTable",
         "Author", "Johannes Hjorth, 2008, KTH, Stockholm. Ported to buildQ branch using new API by Subhasis Ray, NCBS, Bangalore, 2013.",
         "Description", "TimeTable: Read in spike times from file and send out eventOut messages\n"
         "at the specified times.",
     };
-    
+
 	static Dinfo< TimeTable > dinfo;
     static Cinfo timeTableCinfo(
         "TimeTable",
@@ -88,7 +88,7 @@ const Cinfo* TimeTable::initCinfo()
 		&dinfo,
         doc,
         sizeof(doc)/sizeof(string));
-    
+
     return &timeTableCinfo;
 }
 
@@ -122,21 +122,21 @@ string TimeTable::getFilename() const
 void TimeTable::setFilename( string filename )
 {
   filename_ = filename;
-  
+
   std::ifstream fin( filename_.c_str() );
   string line;
-  
+
   if( !fin.good()) {
-    cout << "Error: TimeTable::innerload: Unable to open file" 
+    cout << "Error: TimeTable::innerload: Unable to open file"
          << filename_ << endl;
   }
-  
+
   //~ If lines need to be skipped:
   //~ for(unsigned int i = 0; (i < skipLines) & fin.good() ; i++)
     //~ getline( fin, line );
-  
+
   vec().clear();
-  
+
   double dataPoint, dataPointOld = -1000;
   while( fin >> dataPoint ) {
       vec().push_back(dataPoint);
@@ -159,7 +159,7 @@ void TimeTable::setMethod(int method )
       "Error: TimeTable::setMethod: "
       "Currently only method 4 (loading from file) supported.\n";
     return;
-  }  
+  }
   method_ = method;
 }
 

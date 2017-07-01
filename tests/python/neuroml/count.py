@@ -1,9 +1,10 @@
-"""count.py: 
+# -*- coding: utf-8 -*-
+"""count.py:
 
 Counting related function goes here.
 
 """
-    
+
 __author__           = "Dilawar Singh"
 __copyright__        = "Copyright 2015, Dilawar Singh and NCBS Bangalore"
 __credits__          = ["NCBS Bangalore"]
@@ -51,7 +52,7 @@ def spike_train_simple_stat( vec, threshold = 0.0, **kwargs ):
         meanSteps = -1
         varSteps = -1
     result['number of spikes'] = nSpikes
-    result['mean spike-interval'] = meanSteps 
+    result['mean spike-interval'] = meanSteps
     result['variance spike-interval'] = varSteps
     result['min'] = vec.min()
     result['max'] = vec.max()

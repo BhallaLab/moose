@@ -40,11 +40,11 @@ const Cinfo* Reac::initCinfo()
 
 static const Cinfo* reacCinfo = Reac::initCinfo();
 
-static const SrcFinfo2< double, double >* subOut = 
+static const SrcFinfo2< double, double >* subOut =
  	dynamic_cast< const SrcFinfo2< double, double >* >(
 					reacCinfo->findFinfo( "subOut" ) );
 
-static const SrcFinfo2< double, double >* prdOut = 
+static const SrcFinfo2< double, double >* prdOut =
  	dynamic_cast< const SrcFinfo2< double, double >* >(
 					reacCinfo->findFinfo( "prdOut" ) );
 
@@ -86,7 +86,7 @@ void Reac::vProcess( const Eref& e, ProcPtr p )
 {
 	prdOut->send( e, sub_, prd_ );
 	subOut->send( e, prd_, sub_ );
-	
+
 	sub_ = kf_;
 	prd_ = kb_;
 }
@@ -95,7 +95,7 @@ void Reac::vReinit( const Eref& e, ProcPtr p )
 {
 	sub_ = kf_ = concKf_ /
 		convertConcToNumRateUsingMesh( e, subOut, 0 );
-	prd_ = kb_ = concKb_ / 
+	prd_ = kb_ = concKb_ /
 		convertConcToNumRateUsingMesh( e, prdOut, 0 );
 }
 

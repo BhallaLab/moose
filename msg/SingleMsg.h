@@ -11,7 +11,7 @@
 #define _SINGLE_MSG_H
 
 /**
- * This is a message from a single source object to a single target 
+ * This is a message from a single source object to a single target
  * object. The source object must be a DataEntry. The target object
  * may be on a FieldElement, and the target specification includes the
  * index of the field object.
@@ -39,7 +39,7 @@ class SingleMsg: public Msg
 
 		Msg* copy( Id origSrc, Id newSrc, Id newTgt,
 			FuncId fid, unsigned int b, unsigned int n ) const;
-		
+
 		void setI1( DataId di );
 		DataId getI1() const;
 

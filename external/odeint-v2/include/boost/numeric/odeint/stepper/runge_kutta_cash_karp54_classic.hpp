@@ -55,7 +55,7 @@ class runge_kutta_cash_karp54_classic
   5 , 5 , 4 , State , Value , Deriv , Time , Algebra , Operations , Resizer >
 #else
 class runge_kutta_cash_karp54_classic : public explicit_error_stepper_base
-#endif 
+#endif
 {
 
 
@@ -221,7 +221,7 @@ private:
  * <a href="http://en.wikipedia.org/wiki/Cash%E2%80%93Karp_method">en.wikipedia.org/wiki/Cash-Karp_method</a>.
  * The method is explicit and fulfills the Error Stepper concept. Step size control
  * is provided but continuous output is not available for this method.
- * 
+ *
  * This class derives from explicit_error_stepper_base and inherits its interface via CRTP (current recurring
  * template pattern). This class implements the method directly, hence the generic Runge-Kutta algorithm is not used.
  *
@@ -248,8 +248,8 @@ private:
      * \brief This method performs one step. The derivative `dxdt` of `in` at the time `t` is passed to the method.
      *
      * The result is updated out-of-place, hence the input is in `in` and the output in `out`. Futhermore, an
-     * estimation of the error is stored in `xerr`. 
-     * Access to this step functionality is provided by explicit_error_stepper_base and 
+     * estimation of the error is stored in `xerr`.
+     * Access to this step functionality is provided by explicit_error_stepper_base and
      * `do_step_impl` should not be called directly.
 
      *
@@ -267,7 +267,7 @@ private:
      * \fn runge_kutta_cash_karp54_classic::do_step_impl( System system , const StateIn &in , const DerivIn &dxdt , time_type t , StateOut &out , time_type dt )
      * \brief This method performs one step. The derivative `dxdt` of `in` at the time `t` is passed to the method.
      * The result is updated out-of-place, hence the input is in `in` and the output in `out`.
-     * Access to this step functionality is provided by explicit_error_stepper_base and 
+     * Access to this step functionality is provided by explicit_error_stepper_base and
      * `do_step_impl` should not be called directly.
      *
      * \param system The system function to solve, hence the r.h.s. of the ODE. It must fulfill the

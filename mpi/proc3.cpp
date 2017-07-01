@@ -35,8 +35,8 @@ int main(int argc, char **argv)
   double tot = 0.0;
   double tc = totCalls;
   double ne = numEntries;
-  double expectedTot = 
-		tc * ( ( ne * (ne - 1.0) )/2.0 ) + 
+  double expectedTot =
+		tc * ( ( ne * (ne - 1.0) )/2.0 ) +
 		ne * ( tc * (tc - 1.0) )/2.0;
   int myrank;
   int numNodes;
@@ -71,15 +71,15 @@ int main(int argc, char **argv)
 			MPI_Scatter( sendBuf, numEntries, MPI_DOUBLE,
 				recvBuf, numEntries, MPI_DOUBLE, j,
 				MPI_COMM_WORLD
-			); 
+			);
 			tot += doWork( recvBuf );
 		}
 	}
   }
   // Final pass to consolidate all the data
   double totBuf[ numNodes ];
-  MPI_Allgather( &tot, 1, MPI_DOUBLE, 
-				  totBuf, 1, MPI_DOUBLE, 
+  MPI_Allgather( &tot, 1, MPI_DOUBLE,
+				  totBuf, 1, MPI_DOUBLE,
 				  MPI_COMM_WORLD
 			   );
   double subtot = tot;
@@ -89,8 +89,8 @@ int main(int argc, char **argv)
 		 tot += totBuf[i];
   }
 
-  cout << myrank << ": Tot = " << tot << 
-		  ", expected = " << expectedTot << 
+  cout << myrank << ": Tot = " << tot <<
+		  ", expected = " << expectedTot <<
 		  ", subtot = " << subtot << endl;
 
   /* Shut down MPI */

@@ -19,7 +19,7 @@ class VoxelJunction
 {
 	public:
 		VoxelJunction( unsigned int f, unsigned int s, double d = 1.0 )
-				: first( f ), second( s ), 
+				: first( f ), second( s ),
 			   firstVol( 0 ), secondVol( 0 ),
 			   diffScale( d )
 		{;}

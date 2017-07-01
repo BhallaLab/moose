@@ -1,47 +1,47 @@
-// Leakage.cpp --- 
-// 
+// Leakage.cpp ---
+//
 // Filename: Leakage.cpp
-// Description: 
+// Description:
 // Author: subhasis ray
-// Maintainer: 
+// Maintainer:
 // Created: Mon Aug  3 02:32:29 2009 (+0530)
-// Version: 
+// Version:
 // Last-Updated: Mon Aug 10 11:15:39 2009 (+0530)
 //           By: subhasis ray
 //     Update #: 71
-// URL: 
-// Keywords: 
-// Compatibility: 
-// 
-// 
+// URL:
+// Keywords:
+// Compatibility:
+//
+//
 
 // Commentary: Reimplementation of leakage class of GENESIS
-// 
-// 
-// 
-// 
+//
+//
+//
+//
 
 // Change log:
-// 
-// 
-// 
-// 
+//
+//
+//
+//
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License as
 // published by the Free Software Foundation; either version 3, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; see the file COPYING.  If not, write to
 // the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 // Floor, Boston, MA 02110-1301, USA.
-// 
-// 
+//
+//
 
 // Code:
 
@@ -59,7 +59,7 @@ const Cinfo* Leakage::initCinfo()
     };
 
     static Dinfo< Leakage > dinfo;
-    
+
     static Cinfo LeakageCinfo(
         "Leakage",
         ChanBase::initCinfo(),
@@ -106,5 +106,5 @@ void Leakage::vSetGbar( const Eref& e, double gbar )
 		ChanCommon::vSetGbar( e, gbar );
 }
 
-// 
+//
 // Leakage.cpp ends here

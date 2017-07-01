@@ -15,7 +15,7 @@ class IntFire
 {
 	friend void testStandaloneIntFire();
 	friend void testSynapse();
-	public: 
+	public:
 		IntFire();
 		IntFire( double thresh, double tau );
 
@@ -24,11 +24,11 @@ class IntFire
  		 * Inserts an event into the pendingEvents queue for spikes.
  		 */
 		void innerAddSpike( unsigned int synIndex, double time );
-		
+
 		////////////////////////////////////////////////////////////////
 		// Field assignment stuff.
 		////////////////////////////////////////////////////////////////
-		
+
 		void setVm( double v );
 		double getVm() const;
 		void setTau( double v );

@@ -33,14 +33,14 @@ class DifShell: public DifShellBase{
   void vEqTauPump(const Eref& e, double kP );
   void vMMPump(const Eref& e, double vMax, double Kd );
   void vHillPump(const Eref& e, double vMax, double Kd, unsigned int hill );
-  
+
   /////////////////////////////////////////////////////////////
   // Field access functions
   /////////////////////////////////////////////////////////////
-  
+
   void vSetC(const Eref& e,double C);
   double vGetC( const Eref& e) const;
-  
+
   void vSetCeq(const Eref& e,double Ceq );
   double vGetCeq(const Eref& e) const;
 
@@ -75,14 +75,14 @@ class DifShell: public DifShellBase{
   double vGetInnerArea(const Eref& e) const;
 
   void calculateVolumeArea(const Eref& e);
-  
+
   static const Cinfo * initCinfo();
-  
-                
+
+
  private:
 
   double integrate( double state, double dt, double A, double B );
-  
+
   double dCbyDt_;
   double Cmultiplier_;
   double C_;
@@ -102,7 +102,7 @@ class DifShell: public DifShellBase{
   static const double EPSILON;
   /// Faraday's constant (Coulomb / Mole)
   static const double F;
-  
+
 };
 
 #endif // _DIFSHELL_H

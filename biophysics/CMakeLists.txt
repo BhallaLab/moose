@@ -6,47 +6,47 @@ if(WITH_GSL)
 endif(WITH_GSL)
 
 set(BIOPHYSICS_SRCS
-	IntFire.cpp	
-	SpikeGen.cpp	
+	IntFire.cpp
+	SpikeGen.cpp
         RandSpike.cpp
-	CompartmentDataHolder.cpp	
-	CompartmentBase.cpp	
-	Compartment.cpp	
-	SymCompartment.cpp	
+	CompartmentDataHolder.cpp
+	CompartmentBase.cpp
+	Compartment.cpp
+	SymCompartment.cpp
         GapJunction.cpp
-	ChanBase.cpp	
+	ChanBase.cpp
         ChanCommon.cpp
-	HHChannel.cpp	
+	HHChannel.cpp
         HHChannelBase.cpp
         HHChannel2D.cpp
-	HHGate.cpp	
-	HHGate2D.cpp	
-	HHChannel2D.cpp	
+	HHGate.cpp
+	HHGate2D.cpp
+	HHChannel2D.cpp
         CaConcBase.cpp
-	CaConc.cpp	
-	MgBlock.cpp	
+	CaConc.cpp
+	MgBlock.cpp
         Nernst.cpp
-	Neuron.cpp	
-	ReadCell.cpp	
+	Neuron.cpp
+	ReadCell.cpp
         SwcSegment.cpp
         ReadSwc.cpp
-	SynChan.cpp	
+	SynChan.cpp
         NMDAChan.cpp
-	testBiophysics.cpp	
+	testBiophysics.cpp
 	IzhikevichNrn.cpp
 	DifShellBase.cpp
 	DifShell.cpp
 	DifBufferBase.cpp
 	DifBuffer.cpp
 	MMPump.cpp
-	Leakage.cpp	
-	VectorTable.cpp	
-	MarkovRateTable.cpp	
-	MarkovChannel.cpp	
-	MatrixOps.cpp	
-	MarkovSolverBase.cpp	
-	MarkovSolver.cpp	
-	VClamp.cpp	
+	Leakage.cpp
+	VectorTable.cpp
+	MarkovRateTable.cpp
+	MarkovChannel.cpp
+	MatrixOps.cpp
+	MarkovSolverBase.cpp
+	MarkovSolver.cpp
+	VClamp.cpp
         Spine.cpp
     )
 

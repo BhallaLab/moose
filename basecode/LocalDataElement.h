@@ -43,10 +43,10 @@ class LocalDataElement: public DataElement
 		 */
 		~LocalDataElement();
 
-		/** 
+		/**
 		 * Virtual copier. Makes a copy of self.
 		 */
-		Element* copyElement( Id newParent, Id newId, unsigned int n, 
+		Element* copyElement( Id newParent, Id newId, unsigned int n,
 			bool toGlobal ) const;
 
 		/////////////////////////////////////////////////////////////////
@@ -62,9 +62,9 @@ class LocalDataElement: public DataElement
 		/// Inherited virtual. Returns node location of specified object
 		unsigned int getNode( unsigned int dataId ) const;
 
-		/// Inherited virtual. Returns start DataIndex on specified node 
+		/// Inherited virtual. Returns start DataIndex on specified node
 		unsigned int startDataIndex( unsigned int node ) const;
-		
+
 		/// Converts dataId to index on current node.
 		unsigned int rawIndex( unsigned int dataId ) const;
 
@@ -102,7 +102,7 @@ class LocalDataElement: public DataElement
 	private:
 		/**
 		 * This is the total number of data entries on this Element, in
-		 * the entire simulation. Note that these 
+		 * the entire simulation. Note that these
 		 * entries do not have to be on this node, some may be farmed out
 		 * to other nodes.
 		 */

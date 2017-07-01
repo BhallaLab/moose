@@ -1,6 +1,6 @@
 /*******************************************************************
  * File:            ExponentialRng.h
- * Description:      
+ * Description:
  * Author:          Subhasis Ray
  * E-mail:          ray.subhasis@gmail.com
  * Created:         2007-11-08 11:27:50
@@ -30,19 +30,19 @@ class ExponentialRng: public RandGenerator
 {
   public:
     ExponentialRng();
-    double getMean() const;     
+    double getMean() const;
     void setMean(double mean);
-    int getMethod() const;    
-    void setMethod(int method); 
+    int getMethod() const;
+    void setMethod(int method);
     virtual void vReinit( const Eref& e, ProcPtr p);
 
     static const Cinfo* initCinfo();
-    
+
   private:
-    double mean_;    
+    double mean_;
     bool isMeanSet_;
     int method_;
-    
+
 };
 
 

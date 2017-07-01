@@ -36,13 +36,13 @@ struct InjectStruct
 		injectVarying( 0.0 ),
 		injectBasal( 0.0 )
 	{ ; }
-	
+
 	double injectVarying;
 	double injectBasal;
 };
 
 /**
- * Channel-specific current struct. Used as the structure for the vector 
+ * Channel-specific current struct. Used as the structure for the vector
  * current_ (in HSolveActive).
  */
 struct CurrentStruct
@@ -75,22 +75,22 @@ public:
 	 * other multiscale modulation of conductance.
 	 */
 	double modulation_;
-	
+
 	/**
 	 * Sets the powers and accordingly sets the takePower_ functions.
 	 */
 	void setPowers( double Xpower, double Ypower, double Zpower );
-	
+
 	/**
 	 * Finds the fraction for each gate by raising the "state" to the
 	 * appropriate power. current.Gk is then set to Gbar_ times the
 	 * calculated fraction. Note, "current" is a parameter.
 	 */
 	void process( double*& state, CurrentStruct& current );
-	
+
 private:
 	static PFDD selectPower( double power );
-	
+
 	/** The aforementioned clever stuff. */
 	static double power1( double x, double p ) {
 		return x;
@@ -118,10 +118,10 @@ struct SpikeGenStruct
 		Vm_( Vm ),
 		e_( e )
 	{ ; }
-	
+
 	double* Vm_;
 	Eref e_;
-	
+
 	/** Finds the spikegen object using e_ and calls reinit on the spikegen */
 	void reinit( ProcPtr info );
 	void send( ProcPtr info );
@@ -142,7 +142,7 @@ struct CaConcStruct
 	double factor2_;
 	double ceiling_;	///> Ceiling and floor for lookup tables
 	double floor_;
-	
+
 	CaConcStruct();
 	CaConcStruct(
 		double Ca,

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 ## Description: class ChannelML for loading ChannelML from file or xml element into MOOSE
 ## Version 1.0 by Aditya Gilra, NCBS, Bangalore, India, 2011 for serial MOOSE
 ## Version 1.5 by Niraj Dudani, NCBS, Bangalore, India, 2012, ported to parallel MOOSE
@@ -51,7 +52,7 @@ class ChannelML():
         if 'Physiological Units' in units: # see pg 219 (sec 13.2) of Book of Genesis
             Vfactor = 1e-3 # V from mV
             Tfactor = 1e-3 # s from ms
-            Gfactor = 1e-3 # S from mS       
+            Gfactor = 1e-3 # S from mS
         elif 'SI Units' in units:
             Vfactor = 1.0
             Tfactor = 1.0
@@ -61,7 +62,7 @@ class ChannelML():
             sys.exit(1)
         moose.Neutral('/library') # creates /library in MOOSE tree; elif present, wraps
         synname = synapseElement.attrib['name']
-        if utils.neuroml_debug: 
+        if utils.neuroml_debug:
            pu.info("Loading synapse : %s into /library" % synname)
         moosesynapse = moose.SynChan('/library/'+synname)
         doub_exp_syn = synapseElement.find('./{'+self.cml+'}doub_exp_syn')
@@ -92,7 +93,7 @@ class ChannelML():
             moosesynhandler.weightMin = 0.0
         ## connect the SimpleSynHandler or the STDPSynHandler to the SynChan (double exp)
         moose.connect( moosesynhandler, 'activationOut', moosesynapse, 'activation' )
-      
+
     def readChannelML(self,channelElement,params={},units="SI units"):
         ## I first calculate all functions assuming a consistent system of units.
         ## While filling in the A and B tables, I just convert to SI.
@@ -100,8 +101,8 @@ class ChannelML():
         if 'Physiological Units' in units: # see pg 219 (sec 13.2) of Book of Genesis
             Vfactor = 1e-3 # V from mV
             Tfactor = 1e-3 # s from ms
-            Gfactor = 1e1 # S/m^2 from mS/cm^2  
-            concfactor = 1e6 # Mol = mol/m^-3 from mol/cm^-3      
+            Gfactor = 1e1 # S/m^2 from mS/cm^2
+            concfactor = 1e6 # Mol = mol/m^-3 from mol/cm^-3
         elif 'SI Units' in units:
             Vfactor = 1.0
             Tfactor = 1.0
@@ -112,7 +113,7 @@ class ChannelML():
             sys.exit(1)
         moose.Neutral('/library') # creates /library in MOOSE tree; elif present, wraps
         channel_name = channelElement.attrib['name']
-        if utils.neuroml_debug: 
+        if utils.neuroml_debug:
            pu.info("Loading channel %s into /library" % channel_name)
 
         IVrelation = channelElement.find('./{'+self.cml+'}current_voltage_relation')
@@ -142,7 +143,7 @@ class ChannelML():
             moosechannel = moose.HHChannel('/library/'+channel_name)
         else:
             moosechannel = moose.HHChannel2D('/library/'+channel_name)
-        
+
         if IVrelation.attrib['cond_law']=="ohmic":
             moosechannel.Gbar = float(IVrelation.attrib['default_gmax']) * Gfactor
             moosechannel.Ek = float(IVrelation.attrib['default_erev']) * Vfactor
@@ -160,7 +161,7 @@ class ChannelML():
                 nernstMstring = moose.Mstring(moosechannel.path+'/nernst_str')
                 nernstMstring.value = str( float(nernst_params[1].split('=')[1]) * concfactor ) + \
                                         ',' + str( int(nernst_params[2].split('=')[1]) )
-        
+
         gates = IVrelation.findall('./{'+self.cml+'}gate')
         if len(gates)>3:
             pu.fatal("Sorry! Maximum x, y, and z (three) gates are possible in MOOSE/Genesis")
@@ -189,7 +190,7 @@ class ChannelML():
         self.parameters = []
         for parameter in channelElement.findall('.//{'+self.cml+'}parameter'):
             self.parameters.append( (parameter.attrib['name'],float(parameter.attrib['value'])) )
-        
+
         for num,gate in enumerate(gates):
             # if no q10settings tag, the q10factor remains 1.0
             # if present but no gate attribute, then set q10factor
@@ -221,7 +222,7 @@ class ChannelML():
             elif num == 2:
                 moosechannel.Zpower = gate_power
                 if concdep is not None: moosechannel.Zindex = "VOLT_C1_INDEX"
-            
+
             ## Getting handle to gate using the gate's path.
             gate_path = moosechannel.path + '/' + gate_full_name[ num ]
             if concdep is None:
@@ -235,7 +236,7 @@ class ChannelML():
                 moosegate.useInterpolation = True
             else:
                 moosegate = moose.HHGate2D( gate_path )
-                        
+
             ##### If alpha and beta functions exist, make them here
             for transition in gate.findall('./{'+self.cml+'}transition'):
                 ## make python functions with names of transitions...
@@ -247,7 +248,7 @@ class ChannelML():
                 else:
                     pu.fatal("Unsupported transition %s" % fn_name)
                     sys.exit()
-            
+
             time_course = gate.find('./{'+self.cml+'}time_course')
             ## tau is divided by self.q10factor in make_function()
             ## thus, it gets divided irrespective of <time_course> tag present or not.
@@ -259,13 +260,13 @@ class ChannelML():
 
             if concdep is None: ca_name = ''                        # no Ca dependence
             else: ca_name = ','+concdep.attrib['variable_name']     # Ca dependence
-            
+
             ## Create tau() and inf() if not present, from alpha() and beta()
             for fn_element,fn_name,fn_expr in [(time_course,'tau',"1/(alpha+beta)"),\
                                                 (steady_state,'inf',"alpha/(alpha+beta)")]:
                 ## put in args for alpha and beta, could be v and Ca dep.
                 expr_string = fn_expr.replace('alpha', 'self.alpha(v'+ca_name+')')
-                expr_string = expr_string.replace('beta', 'self.beta(v'+ca_name+')')                
+                expr_string = expr_string.replace('beta', 'self.beta(v'+ca_name+')')
                 ## if time_course/steady_state are not present,
                 ## then alpha annd beta transition elements should be present, and fns created.
                 if fn_element is None:
@@ -281,17 +282,17 @@ class ChannelML():
                 tableB = [ 0.0 ] * n_entries
                 for i in range(n_entries):
                     v = v0 + i * dv_here
-                    
+
                     inf = self.inf(v)
-                    tau = self.tau(v)                    
+                    tau = self.tau(v)
                     ## convert to SI before writing to table
                     ## qfactor is already in inf and tau
                     tableA[i] = inf/tau / Tfactor
                     tableB[i] = 1.0/tau / Tfactor
-                
+
                 moosegate.tableA = tableA
                 moosegate.tableB = tableB
-            
+
             ## Ca dependent channel
             else:
                 ## UNITS: while calculating, use the units used in xml defn,
@@ -390,7 +391,7 @@ class ChannelML():
             caPool.thick = float(volInfo.attrib['shell_thickness']) * Lfactor
         fixedPoolInfo = poolModel.find('./{'+self.cml+'}fixed_pool_info')
         if fixedPoolInfo is not None:
-            ## Put in phi under the caPool, so that it can 
+            ## Put in phi under the caPool, so that it can
             ## be used instead of thickness to set B (see section 19.2 in Book of Genesis)
             caPool_phi = moose.Mstring(caPool.path+'/phi')
             caPool_phi.value = str( float(fixedPoolInfo.attrib['phi']) * concfactor/Ifactor/Tfactor )
@@ -413,12 +414,12 @@ class ChannelML():
             if concdep is None: ca_name = ''                        # no Ca dependence
             else: ca_name = ','+concdep.attrib['variable_name']     # Ca dependence
             expr_string = expr_string.replace( 'alpha', 'self.alpha(v'+ca_name+')')
-            expr_string = expr_string.replace( 'beta', 'self.beta(v'+ca_name+')')                
+            expr_string = expr_string.replace( 'beta', 'self.beta(v'+ca_name+')')
             fn = self.make_function( fn_name, fn_type, expr_string=expr_string, concdep=concdep )
         else:
             pu.fatal("Unsupported function type %s "% fn_type)
             sys.exit()
-                
+
     def make_function(self, fn_name, fn_type, **kwargs):
         """ This dynamically creates a function called fn_name
         If fn_type is exponential, sigmoid or exp_linear,

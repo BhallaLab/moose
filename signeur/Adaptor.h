@@ -20,24 +20,24 @@
  * cases such as mechanical models.
  *
  *
- * The API for interfacing between solution engines rests on 
+ * The API for interfacing between solution engines rests on
  * the following capabilities of MOOSE.
  * 1. The object-oriented interface with classes mapped to biological
  * and modeling concepts such as electrical and chemical compartments,
  * ion channels and molecular pools.
  * 2. The invisible mapping of Solvers (Objects implementing numerical
- * engines) to the object-oriented interface. Solvers work behind the 
+ * engines) to the object-oriented interface. Solvers work behind the
  * scenes to update the objects.
- * 3. The messaging interface which allows any visible field to be 
- * accessed and updated from any other object. 
+ * 3. The messaging interface which allows any visible field to be
+ * accessed and updated from any other object.
  * 4. The clock-based scheduler which drives operations of any subset of
  * objects at any interval. For example, this permits the operations of
- * field access and update to take place at quite different timescales 
+ * field access and update to take place at quite different timescales
  * from the numerical engines.
  * 5. The implementation of Adaptor classes. These perform a linear
  * transformation::
  *
- * 	(y = scale * (x + inputOffset) + outputOffset ) 
+ * 	(y = scale * (x + inputOffset) + outputOffset )
  *
  * where y is output and x is the input. The input is the average of
  * any number of sources (through messages) and any number of timesteps.
@@ -46,29 +46,29 @@
  * It is worth adding that messages can transport arbitrary data structures,
  * so it would also be possible to devise a complicated opaque message
  * directly between solvers. The implementation of Adaptors working on
- * visible fields does this much more transparently and gives the user 
+ * visible fields does this much more transparently and gives the user
  * facile control over the scaling transformatoin.
  *
  * These adaptors are used especially in the rdesigneur framework of MOOSE,
  * which enables multiscale reaction-diffusion and electrical signaling
  * models.
- * As an example of this API in operation, I consider two mappings: 
+ * As an example of this API in operation, I consider two mappings:
  * 1. Calcium mapped from electrical to chemical computations.
  * 2. phosphorylation state of a channel mapped to the channel conductance.
  *
  * 1. Calcium mapping.
  * Problem statement.
  * Calcium is computed in the electrical solver as one or more pools that
- * are fed by calcium currents, and is removed by an exponential 
- * decay process. This calcium pool is non-diffusive in the current 
+ * are fed by calcium currents, and is removed by an exponential
+ * decay process. This calcium pool is non-diffusive in the current
  * electrical solver. It has to be mapped to chemical calcium pools at a
  * different spatial discretization, which do diffuse.
  * In terms of the list of capabilities described above, this is how the
  * API works.
  * 	1. The electrical model is partitioned into a number of electrical
  * 		compartments, some of which have the 'electrical' calcium pool
- * 		as child object in a UNIX filesystem-like tree. Thus the 
- * 		'electrical' calcium is represented as an object with 
+ * 		as child object in a UNIX filesystem-like tree. Thus the
+ * 		'electrical' calcium is represented as an object with
  * 		concentration, location and so on.
  * 	2. The Solver computes the time-course of evolution of the calcium
  * 		concentration. Whenever any function queries the 'concentration'
@@ -82,8 +82,8 @@
  *  	ticking away, but it also can drive the operations of the adaptor.
  *  	Thus the rate of updates to and from the adaptor can be controlled.
  *  5. The adaptor averages its inputs. Say the electrical solver is
- *  	going at a timestep of 50 usec, and the chemical solver at 5000 
- *  	usec. The adaptor will take 100 samples of the electrical 
+ *  	going at a timestep of 50 usec, and the chemical solver at 5000
+ *  	usec. The adaptor will take 100 samples of the electrical
  *  	concentration, and average them to compute the 'input' to the
  *  	linear scaling. Suppose that the electrical model has calcium units
  *  	of micromolar, but has a zero baseline. The chemical model has
@@ -93,10 +93,10 @@
  *  	its output to the chemical solver. Here we have similar situation
  *  	to item (1), where the chemical entities are calcium pools in
  *  	space, each with their own calcium concentration.
- *  	The messaging (3) determines another aspect of the mapping here: 
- *  	the fan in or fan out. In this case, a single electrical 
+ *  	The messaging (3) determines another aspect of the mapping here:
+ *  	the fan in or fan out. In this case, a single electrical
  *  	compartment may house 10 chemical compartments. Then the output
- *  	message from the adaptor goes to update the calcium pool 
+ *  	message from the adaptor goes to update the calcium pool
  *  	concentration on the appropriate 10 objects representing calcium
  *  	in each of the compartments.
  *
@@ -120,11 +120,11 @@
  *  5. The adaptor averages the spatially distributed inputs from calcium,
  *  	and now does a different linear transform. In this case it converts
  *  	chemical concentration into the channel conductance. As before,
- *  	the 'electrical' channel is an object (point 1) with a field for 
- *  	conductance, and this term is mapped into the internal data 
+ *  	the 'electrical' channel is an object (point 1) with a field for
+ *  	conductance, and this term is mapped into the internal data
  *  	structures of the solver (point 2) invisibly to the user.
  *
- * 
+ *
  *
  */
 class Adaptor
@@ -152,8 +152,8 @@ class Adaptor
 		void process( const Eref& e, ProcPtr p );
 		void reinit( const Eref& e, ProcPtr p );
 		/*
-		static void setup( const Eref& e, const Qinfo* q, 
-			string molName, double scale, 
+		static void setup( const Eref& e, const Qinfo* q,
+			string molName, double scale,
 			double inputOffset, double outputOffset );
 		static void build( const Eref& e, const Qinfo* q);
 		*/
@@ -171,7 +171,7 @@ class Adaptor
 		unsigned int counter_; /// Counts number of inputs received.
 
 		/// Counts number of targets of requestField message
-		unsigned int numRequestOut_; 
+		unsigned int numRequestOut_;
 };
 
 #endif // _Adaptor_h

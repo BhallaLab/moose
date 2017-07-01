@@ -21,7 +21,7 @@ class SrcFinfo1;
 
 /**
  * The CompartmentBase class sets up the interface for all the
- * derived Compartment classes, used in 
+ * derived Compartment classes, used in
  * branched nerve calculations. Handles electronic structure and
  * also channels.
  */
@@ -82,8 +82,8 @@ class CompartmentBase
 			 * The initProc function is for a second phase of 'process'
 			 * operations. It sends the axial and raxial messages
 			 * to other compartments. It has to be executed out of phase
-			 * with the main process so that all compartments are 
-			 * equivalent and there is no calling order dependence in 
+			 * with the main process so that all compartments are
+			 * equivalent and there is no calling order dependence in
 			 * the results.
 			 */
 			void initProc( const Eref& e, ProcPtr p );
@@ -137,7 +137,7 @@ class CompartmentBase
 			void displace( double dx, double dy, double dz );
 
 			/// Scales electrical values along with setting length, dia
-			void setGeomAndElec( const Eref& e, 
+			void setGeomAndElec( const Eref& e,
 							double length, double dia );
 			/////////////////////////////////////////////////////////////
 			// Here we define the virtual functions for each of the above
@@ -176,8 +176,8 @@ class CompartmentBase
 			 * The initProc function is for a second phase of 'process'
 			 * operations. It sends the axial and raxial messages
 			 * to other compartments. It has to be executed out of phase
-			 * with the main process so that all compartments are 
-			 * equivalent and there is no calling order dependence in 
+			 * with the main process so that all compartments are
+			 * equivalent and there is no calling order dependence in
 			 * the results.
 			 */
 			virtual void vInitProc( const Eref& e, ProcPtr p ) = 0;
@@ -224,9 +224,9 @@ class CompartmentBase
 			/////////////////////////////////////////////////////////////
 			// Required for solver setup
 			/////////////////////////////////////////////////////////////
-			
+
 			virtual void vSetSolver( const Eref& e, Id hsolve );
-			
+
 			/////////////////////////////////////////////////////////////
 			/**
 			 * A utility function to check for assignment to fields that
@@ -246,7 +246,7 @@ class CompartmentBase
 
 			/**
 			 * This Finfo is used to send out Vm to channels, spikegens, etc
-			 * 
+			 *
 			 * It is exposed here so that HSolve can also use it to send out
 			 * the Vm to the recipients.
 			 */

@@ -143,7 +143,7 @@ double SpineEntry::volume() const
 }
 
 void SpineEntry::matchCubeMeshEntriesToHead( const ChemCompt* compt,
-	unsigned int myIndex, 
+	unsigned int myIndex,
 	double granularity, vector< VoxelJunction >& ret ) const
 {
 	head_.matchCubeMeshEntries( compt, shaft_, myIndex,
@@ -160,11 +160,11 @@ void SpineEntry::matchCubeMeshEntriesToPSD( const ChemCompt* compt,
 }
 
 		/**
-		 * Find the matching NeuroMesh entry index to the 
+		 * Find the matching NeuroMesh entry index to the
 		 * root of the shaft of this spine. Also compute the area and
 		 * diffusion length of the shaft.
 		 */
-unsigned int SpineEntry::matchNeuroMeshEntriesToShaft( 
+unsigned int SpineEntry::matchNeuroMeshEntriesToShaft(
 				const ChemCompt* compt, unsigned int myIndex,
   		double& area, double& length ) const
 {

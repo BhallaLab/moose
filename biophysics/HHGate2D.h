@@ -14,12 +14,12 @@ class HHGate2D
 	public:
 		HHGate2D();
 		HHGate2D( Id originalChanId, Id originalGateId );
-		
+
 		double lookupA( vector< double > v ) const;
 		double lookupB( vector< double > v ) const;
-		
+
 		// void gateFunc( const Conn* c, double v1, double v2 );
-		
+
 		/**
 		 * Single call to get both A and B values in a single
 		 * lookup
@@ -90,7 +90,7 @@ class HHGate2D
                 void setYmaxB(const Eref& e, double value);
                 unsigned int getYdivsB(const Eref& e) const;
                 void setYdivsB(const Eref& e, unsigned int value);
-                                
+
 		static const Cinfo* initCinfo();
 	private:
 		Interpol2D A_;

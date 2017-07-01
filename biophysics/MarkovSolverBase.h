@@ -17,26 +17,26 @@
 //
 //After the setup of the MarkovRateTable class, where the user has entered
 //the lookup tables for the various transition rates, we have enough
-//information to compute all the exponential matrices that correspond to the 
-//solution of the kinetic equation at each time step. 
+//information to compute all the exponential matrices that correspond to the
+//solution of the kinetic equation at each time step.
 //
 //Before the channel simulation is run, the setup of the MarkovSolver requires
-//that a table of matrix exponentials be computed and stored. In general, 
+//that a table of matrix exponentials be computed and stored. In general,
 //this would require a 2D lookup table where each exponential is index by
-//([L],V) where [L] = ligand concentration and V = membrane voltage.  
+//([L],V) where [L] = ligand concentration and V = membrane voltage.
 //In the case all rates are either ligand or voltage dependent, not both, a 1D
-//lookup table of exponentials suffices. 
+//lookup table of exponentials suffices.
 //
-//The above computations are achieved by going through the lookup tables 
-//of the MarkovRateTable class. In a general case, the number of divisions 
+//The above computations are achieved by going through the lookup tables
+//of the MarkovRateTable class. In a general case, the number of divisions
 //i.e. step sizes in each lookup table will be different. We choose the smallest
 //such step size, and assume that rates with bigger step sizes stay constant
 //over this time interval. By iterating over the whole range, we setup the
-//exponential table. 
+//exponential table.
 //
 //The MarkovSolverBase class handles all the bookkeeping for the table of matrix
-//exponentials. It also handles all the above-mentioned interactions with the 
-//remaining MOOSE classes.  
+//exponentials. It also handles all the above-mentioned interactions with the
+//remaining MOOSE classes.
 //
 //Any MarkovSolver class that derives from this one only need implement
 //a ComputeMatrixExponential() function, which handles the actual computation
@@ -49,7 +49,7 @@
 ///////////////////////////////
 
 class MarkovSolverBase {
-	public : 
+	public :
 	MarkovSolverBase();
 
 	virtual ~MarkovSolverBase();
@@ -79,26 +79,26 @@ class MarkovSolverBase {
 	void setYdivs( unsigned int );
 	unsigned int getYdivs() const;
 	double getInvDy() const;
-	
+
 	/////////////////////////
 	//Lookup table related stuff.
 	////////////////////////
-	
+
 	//Fills up lookup table of matrix exponentials.
-	void innerFillupTable( vector< unsigned int >, string, 
+	void innerFillupTable( vector< unsigned int >, string,
 											   unsigned int, unsigned int );
 	void fillupTable();
 
 	//This returns the pointer to the exponential of the Q matrix.
 	virtual Matrix* computeMatrixExponential();
-	
+
 	//State space interpolation routines.
 	Vector* bilinearInterpolate() const;
 	Vector* linearInterpolate() const;
 
 	//Computes the updated state of the system. Is called from the process
 	//function.
-	void computeState();	
+	void computeState();
 
 	///////////////////////////
 	//MsgDest functions.
@@ -106,18 +106,18 @@ class MarkovSolverBase {
 	void reinit( const Eref&, ProcPtr );
 	void process( const Eref&, ProcPtr );
 
-	//Handles information about Vm from the compartment. 
-	void handleVm( double ); 
+	//Handles information about Vm from the compartment.
+	void handleVm( double );
 
 	//Handles concentration information.
 	void handleLigandConc( double );
 
 	//Takes the Id of a MarkovRateTable object to initialize the table of matrix
-	//exponentials. 
+	//exponentials.
 	void init( Id, double );
 
 	static const Cinfo* initCinfo();
-	
+
 	/////////////////
 	//Unit test
 	////////////////
@@ -125,7 +125,7 @@ class MarkovSolverBase {
 	friend void testMarkovSolverBase();
 	#endif
 
-	protected : 
+	protected :
 	//The instantaneous rate matrix.
 	Matrix *Q_;
 
@@ -140,7 +140,7 @@ class MarkovSolverBase {
 	//////////////
 	//Helper functions.
 	/////////////
-	
+
 	//Sets the values of xMin, xMax, xDivs, yMin, yMax, yDivs.
 	void setLookupParams();
 
@@ -148,12 +148,12 @@ class MarkovSolverBase {
 	//Lookup table related stuff.
 	/////////////
 	/*
-	* Exponentials of all rate matrices that are generated over the 
+	* Exponentials of all rate matrices that are generated over the
 	* duration of the simulation. The idea is that when copies of the channel
-	* are made, they will all refer this table to get the appropriate 
-	* exponential matrix. 
+	* are made, they will all refer this table to get the appropriate
+	* exponential matrix.
 	*
-	* The exponential matrices are computed over a range of voltage levels 
+	* The exponential matrices are computed over a range of voltage levels
 	* and/or ligand concentrations and stored in the appropriate lookup table.
 	*
 	* Depending on whether
@@ -162,8 +162,8 @@ class MarkovSolverBase {
 	* 3) Some rates are 2D i.e. vary with two parameters,
 	* we store the table of exponentials in the appropriate pointers below.
 	*
-	* If a system contains both 2D and 1D rates, then, only the 2D pointer 
-	* is used. 
+	* If a system contains both 2D and 1D rates, then, only the 2D pointer
+	* is used.
 	*/
 	//Used for storing exponentials when at least one of the rates are 1D and
 	//none are 2D.
@@ -186,7 +186,7 @@ class MarkovSolverBase {
 	////////////
 	//Miscallenous stuff
 	///////////
-	
+
 	//Pointer to the MarkovRateTable object. Necessary to glean information
 	//about the properties of all the transition rates.
 	MarkovRateTable* rateTable_;
@@ -197,7 +197,7 @@ class MarkovSolverBase {
 	//Initial state of the system.
 	Vector initialState_;
 
-	//Stands for a lot of things. The dimension of the Q matrix, the number of 
+	//Stands for a lot of things. The dimension of the Q matrix, the number of
 	//states in the rate table, etc which all happen to be the same.
 	unsigned int size_;
 

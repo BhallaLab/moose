@@ -16,16 +16,16 @@
 
 const Cinfo* SimpleSynHandler::initCinfo()
 {
-	static string doc[] = 
+	static string doc[] =
 	{
 		"Name", "SimpleSynHandler",
 		"Author", "Upi Bhalla",
-		"Description", 
+		"Description",
 		"The SimpleSynHandler handles simple synapses without plasticity. "
 		"It uses a priority queue to manage them."
 	};
 
-	static FieldElementFinfo< SynHandlerBase, Synapse > synFinfo( 
+	static FieldElementFinfo< SynHandlerBase, Synapse > synFinfo(
 		"synapse",
 		"Sets up field Elements for synapse",
 		Synapse::initCinfo(),
@@ -63,7 +63,7 @@ SimpleSynHandler::~SimpleSynHandler()
 SimpleSynHandler& SimpleSynHandler::operator=( const SimpleSynHandler& ssh)
 {
 	synapses_ = ssh.synapses_;
-	for ( vector< Synapse >::iterator 
+	for ( vector< Synapse >::iterator
 					i = synapses_.begin(); i != synapses_.end(); ++i )
 			i->setHandler( this );
 
@@ -97,14 +97,14 @@ Synapse* SimpleSynHandler::vGetSynapse( unsigned int i )
 	return &dummy;
 }
 
-void SimpleSynHandler::addSpike( 
+void SimpleSynHandler::addSpike(
 				unsigned int index, double time, double weight )
 {
 	assert( index < synapses_.size() );
 	events_.push( SynEvent( time, weight ) );
 }
 
-void SimpleSynHandler::vProcess( const Eref& e, ProcPtr p ) 
+void SimpleSynHandler::vProcess( const Eref& e, ProcPtr p )
 {
 	double activation = 0.0;
 	while( !events_.empty() && events_.top().time <= p->currTime ) {
@@ -121,7 +121,7 @@ void SimpleSynHandler::vProcess( const Eref& e, ProcPtr p )
 		SynHandlerBase::activationOut()->send( e, activation );
 }
 
-void SimpleSynHandler::vReinit( const Eref& e, ProcPtr p ) 
+void SimpleSynHandler::vReinit( const Eref& e, ProcPtr p )
 {
 	// For no apparent reason, priority queues don't have a clear operation.
 	while( !events_.empty() )

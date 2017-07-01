@@ -91,7 +91,7 @@ public :
 
     adams_bashforth_moulton( const algebra_type &algebra )
     : m_adams_bashforth( algebra ) , m_adams_moulton( m_adams_bashforth.algebra() )
-    , m_x() , m_resizer()    
+    , m_x() , m_resizer()
     { }
 
     order_type order( void ) const { return order_value; }
@@ -158,7 +158,7 @@ public :
 
 
 private:
-    
+
     template< typename System , typename StateInOut >
     void do_step_impl1( System system , StateInOut &x , time_type t , time_type dt )
     {
@@ -173,13 +173,13 @@ private:
             m_adams_bashforth.do_step( system , x , t , dt );
         }
     }
-    
+
     template< typename System , typename StateIn , typename StateInOut >
     void do_step_impl2( System system , StateIn const &in , time_type t , StateInOut & out , time_type dt )
     {
         if( m_adams_bashforth.is_initialized() )
         {
-            m_resizer.adjust_size( in , detail::bind( &stepper_type::template resize_impl< StateInOut > , detail::ref( *this ) , detail::_1 ) );        
+            m_resizer.adjust_size( in , detail::bind( &stepper_type::template resize_impl< StateInOut > , detail::ref( *this ) , detail::_1 ) );
             m_adams_bashforth.do_step( system , in , t , m_x.m_v , dt );
             m_adams_moulton.do_step( system , in , m_x.m_v , t+dt , out , dt , m_adams_bashforth.step_storage() );
         }
@@ -189,7 +189,7 @@ private:
         }
     }
 
-    
+
     template< class StateIn >
     bool resize_impl( const StateIn &x )
     {
@@ -209,15 +209,15 @@ private:
  * \class adams_bashforth_moulton
  * \brief The Adams-Bashforth-Moulton multistep algorithm.
  *
- * The Adams-Bashforth method is a multi-step predictor-corrector algorithm 
- * with configurable step number. The step number is specified as template 
- * parameter Steps and it then uses the result from the previous Steps steps. 
+ * The Adams-Bashforth method is a multi-step predictor-corrector algorithm
+ * with configurable step number. The step number is specified as template
+ * parameter Steps and it then uses the result from the previous Steps steps.
  * See also
  * <a href="http://en.wikipedia.org/wiki/Linear_multistep_method">en.wikipedia.org/wiki/Linear_multistep_method</a>.
  * Currently, a maximum of Steps=8 is supported.
  * The method is explicit and fulfills the Stepper concept. Step size control
  * or continuous output are not provided.
- * 
+ *
  * This class derives from algebra_base and inherits its interface via
  * CRTP (current recurring template pattern). For more details see
  * algebra_stepper_base.
@@ -236,7 +236,7 @@ private:
     /**
      * \fn adams_bashforth_moulton::adams_bashforth_moulton( const algebra_type &algebra )
      * \brief Constructs the adams_bashforth class. This constructor can be used as a default
-     * constructor if the algebra has a default constructor. 
+     * constructor if the algebra has a default constructor.
      * \param algebra A copy of algebra is made and stored.
      */
 
@@ -290,7 +290,7 @@ private:
 
     /**
      * \fn adams_bashforth_moulton::initialize( System system , StateIn &x , time_type &t , time_type dt )
-     * \brief Initialized the stepper. Does Steps-1 steps using the standard initializing stepper 
+     * \brief Initialized the stepper. Does Steps-1 steps using the standard initializing stepper
      * of the underlying adams_bashforth stepper.
      * \param system The system function to solve, hence the r.h.s. of the ordinary differential equation. It must fulfill the
      *               Simple System concept.

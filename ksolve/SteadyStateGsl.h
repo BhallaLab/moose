@@ -18,7 +18,7 @@ class SteadyState
 	public:
 		SteadyState();
 		~SteadyState();
-		
+
 		///////////////////////////////////////////////////
 		// Field function definitions
 		///////////////////////////////////////////////////
@@ -65,13 +65,13 @@ class SteadyState
 			vector< double >& y, vector< double >& tot );
 		*/
 #ifdef USE_GSL
-		void fitConservationRules( 
-			gsl_matrix* U, 
+		void fitConservationRules(
+			gsl_matrix* U,
 			const vector< double >& eliminatedTotal,
 			vector< double >&yi
 		);
 #endif
-		
+
 		////////////////////////////////////////////////////
 		// funcs to handle externally imposed changes in mol N
 		////////////////////////////////////////////////////
@@ -87,7 +87,7 @@ class SteadyState
 
 	private:
 		void setupSSmatrix();
-		
+
 		///////////////////////////////////////////////////
 		// Internal fields.
 		///////////////////////////////////////////////////

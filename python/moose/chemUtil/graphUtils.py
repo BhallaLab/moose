@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import moose
 
 pygraphvizFound_ = True
@@ -7,7 +8,7 @@ except Exception as e:
     pygraphvizFound_ = False
 
 def autoCoordinates(meshEntry,srcdesConnection):
-    global pygraphvizFound_ 
+    global pygraphvizFound_
     positionInfo = {}
 
     if not pygraphvizFound_:
@@ -34,7 +35,7 @@ def autoCoordinates(meshEntry,srcdesConnection):
             for reaObj in find_index(memb,'reaction'):
                 #G.add_node(reaObj.path)
                 G.add_node(reaObj.path,label='',shape='circle',color='')
-            
+
         for inn,out in list(srcdesConnection.items()):
             if (inn.className =='ZombieReac'): arrowcolor = 'green'
             elif(inn.className =='ZombieEnz'): arrowcolor = 'red'
@@ -56,18 +57,18 @@ def autoCoordinates(meshEntry,srcdesConnection):
                 else:
                     for items in (items for items in out ):
                         G.add_edge(moose.element(items[0]).path,inn.path)
-        
+
         # if int( nx.__version__.split( '.' )[-1] ) >= 11:
         #     position = nx.spring_layout( G )
         # else:
-        #     position = nx.graphviz_layout(G, prog = 'dot')    
+        #     position = nx.graphviz_layout(G, prog = 'dot')
         # for item in position.items():
         #     xy = item[1]
         #     ann = moose.Annotator(item[0]+'/info')
         #     ann.x = xy[0]
         #     ann.y = xy[1]
         #     positioninfo[(moose.element(item[0]))] ={'x':float(xy[0]),'y':float(xy[1])}
-        
+
         G.layout()
         for n in G.nodes():
             value = str(n.attr['pos'])

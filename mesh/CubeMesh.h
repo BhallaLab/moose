@@ -18,7 +18,7 @@
  */
 class CubeMesh: public MeshCompt
 {
-	public: 
+	public:
 		CubeMesh();
 		~CubeMesh();
 
@@ -109,7 +109,7 @@ class CubeMesh: public MeshCompt
 		unsigned int innerGetNumEntries() const;
 		/// Inherited virtual func.
 		void innerSetNumEntries( unsigned int n );
-			
+
 		void innerHandleRequestMeshStats(
 			const Eref& e,
 			const SrcFinfo2< unsigned int, vector< double > >*
@@ -117,7 +117,7 @@ class CubeMesh: public MeshCompt
 		);
 
 		void innerHandleNodeInfo(
-			const Eref& e, 
+			const Eref& e,
 			unsigned int numNodes, unsigned int numThreads );
 
 		/// Virtual func to get volume of entire compartment.
@@ -147,7 +147,7 @@ class CubeMesh: public MeshCompt
 		 */
 		void updateCoords();
 
-		unsigned int neighbor( unsigned int spaceIndex, 
+		unsigned int neighbor( unsigned int spaceIndex,
 			int dx, int dy, int dz ) const;
 
 		void transmitChange( const Eref& e, double oldvol );
@@ -193,9 +193,9 @@ class CubeMesh: public MeshCompt
 
 		/// Utility function for returning # of dimensions in mesh
 		unsigned int numDims() const;
-		
+
 		/// Converts the integer meshIndex to spatial coords.
-		void indexToSpace( unsigned int index, 
+		void indexToSpace( unsigned int index,
 						double& x, double& y, double& z ) const;
 
 		/// Converts the 3-D coords to an index. EMPTY if out of range.
@@ -207,7 +207,7 @@ class CubeMesh: public MeshCompt
 		 */
 		double nearest( double x, double y, double z, unsigned int& index )
 			   	const;
-		
+
 		/// Return 0 if spacing same, -1 if self smaller, +1 if self bigger
 		int compareMeshSpacing( const CubeMesh* other ) const;
 
@@ -216,7 +216,7 @@ class CubeMesh: public MeshCompt
 			double& xmin, double &xmax,
 			double& ymin, double &ymax,
 			double& zmin, double &zmax ) const;
-		
+
 		/// Fills surface_ vector with spatial meshIndices for a rectangle
 		void fillTwoDimSurface();
 
@@ -251,27 +251,27 @@ class CubeMesh: public MeshCompt
 		void buildStencil();
 		void fillSpaceToMeshLookup();
 
-		/** 
-		 * Updates the m2s_ vector after s2m_ has been changed, 
+		/**
+		 * Updates the m2s_ vector after s2m_ has been changed,
 		 * and rebuilds the Stencil too. Any earlier junction information
 		 * is lost.
 		 */
 		void deriveM2sFromS2m();
 
-		/** 
-		 * Updates the s2m_ vector after m2s_ has been changed, 
+		/**
+		 * Updates the s2m_ vector after m2s_ has been changed,
 		 * and rebuilds the Stencil too. Any earlier junction information
 		 * is lost.
 		 */
 		void deriveS2mFromM2s();
 
-		void assignVoxels( 
+		void assignVoxels(
 				vector< pair< unsigned int, unsigned int > >& intersect,
-				double xmin, double xmax, 
-				double ymin, double ymax, 
+				double xmin, double xmax,
+				double ymin, double ymax,
 				double zmin, double zmax
 		   	   ) const;
-		
+
 		/// Assigns diffusion scaling info for the voxel junctions.
 		void setDiffScale( const CubeMesh* other,
 			vector< VoxelJunction >& ret ) const;
@@ -322,7 +322,7 @@ class CubeMesh: public MeshCompt
 
 		/**
 		 * Mesh to Space lookup. Indexed by linear mesh index, from 0 to
-		 * number of actual mesh entries (occupied cuboids). Returns 
+		 * number of actual mesh entries (occupied cuboids). Returns
 		 * spatial index, from 0 to nx * ny * nz - 1.
 		 * Needed whenever the cuboid mesh is not filling the entire volume
 		 * of the cube, that is, in most cases.
@@ -333,13 +333,13 @@ class CubeMesh: public MeshCompt
 		 * Space to Mesh lookup. Indexed by spatial index, from
 		 * 0 to nx * ny * nz - 1. Specifically, point x y z is indexed as
 		 * ( z * ny + y ) * nx + x. Returns mesh index to look up molecules
-		 * etc in the specific volume. In case the spatial location is 
+		 * etc in the specific volume. In case the spatial location is
 		 * outside the included volume of the mesh, returns ~0.
 		 */
 		vector< unsigned int > s2m_;
 
 		/**
-		 * Vector of spatial meshIndices comprising surface of volume in 
+		 * Vector of spatial meshIndices comprising surface of volume in
 		 * CubeMesh.
 		 */
 		vector< unsigned int > surface_;

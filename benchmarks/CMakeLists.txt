@@ -1,14 +1,14 @@
 include_directories(../msg)
 include_directories(../basecode)
-add_library(benchmarks 
+add_library(benchmarks
     benchmarks.cpp
     kineticMarks.cpp
     )
 
 if(ENABLE_BENCHMARKS)
     # This target run benchmarks. Not a part of moose distribution
-    add_executable( 
-        randnum_benchmark 
+    add_executable(
+        randnum_benchmark
         ${CMAKE_CURRENT_SOURCE_DIR}/benchmark_random_numbers.cpp
         )
     target_link_libraries(randnum_benchmark randnum  )

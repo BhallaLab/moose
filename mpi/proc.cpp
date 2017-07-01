@@ -16,7 +16,7 @@ vector< vector< double > > inBuf_;// inbuf[srcnode][data]
 
 
 // Things to monitor:
-// - The send happens with a standard buf size, and if the contents 
+// - The send happens with a standard buf size, and if the contents
 // 	exceed it there is a signal to this effect and the rest of it is sent
 // 	right away as a big block.
 // - The Recv likewise
@@ -26,7 +26,7 @@ vector< vector< double > > inBuf_;// inbuf[srcnode][data]
 //
 
 // Assumes we already have an irecv out for all the nodes.
-// 
+//
 void checkIncoming()
 {
 	MPI_request* array_of_requests;
@@ -36,9 +36,9 @@ void checkIncoming()
 	int MPI_Testsome(int incount, MPI_Request array_of_requests[],
 	int *outcount, int array_of_indices[], MPI_Status array_of_statuses[])
 
-	for ( unsigned int 
+	for ( unsigned int
 
-	MPI_Irecv (&buf,count,datatype,source,tag,comm,&request) 
+	MPI_Irecv (&buf,count,datatype,source,tag,comm,&request)
 }
 
 
@@ -62,7 +62,7 @@ static void master(void);
 static void slave(void);
 static double* get_next_work_item()
 {
-	
+
 	static vector< double > ret( numEntries );
 	static unsigned int numCalls = 0;
 	for ( unsigned int i = 0; i < numEntries; ++i )
@@ -183,7 +183,7 @@ master(void)
 }
 
 
-static void 
+static void
 slave(void)
 {
   double work[numEntries];

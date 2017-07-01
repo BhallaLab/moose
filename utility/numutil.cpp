@@ -1,6 +1,6 @@
 /*******************************************************************
  * File:            numutil.cpp
- * Description:      
+ * Description:
  * Author:          Subhasis Ray
  * E-mail:          ray dot subhasis at gmail dot com
  * Created:         2007-11-02 11:46:40
@@ -29,7 +29,7 @@ bool almostEqual(float x, float y, float epsilon)
     if (x == 0.0 && y == 0.0) {
         return true;
     }
-    
+
     if (fabs(x) > fabs(y)) {
         return fabs((x - y) / x) < epsilon;
     } else {

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """ Chemical Signalling model loaded into moose can be save into Genesis-Kkit format """
 
 __author__           = "Harsha Rani"
@@ -49,7 +50,7 @@ def mooseWriteKkit( modelpath, filename, sceneitems={}):
     global cmin,cmax,xmin,xmax,ymin,ymax
     cmin, xmin, ymin = 0, 0, 0
     cmax, xmax, ymax = 1, 1, 1
-    
+
     compt = moose.wildcardFind(modelpath+'/##[ISA=ChemCompt]')
     maxVol = estimateDefaultVol(compt)
     positionInfoExist = True
@@ -64,7 +65,7 @@ def mooseWriteKkit( modelpath, filename, sceneitems={}):
                 #cmin,cmax,sceneitems = autoCoordinates(meshEntry,srcdesConnection)
                 sceneitems = autoCoordinates(meshEntry,srcdesConnection)
 
-        if not positionInfoExist:        
+        if not positionInfoExist:
             # if position are not from kkit, then zoom factor is applied while
             # writing to genesis. Like if position is from pyqtSceneItem or auto-coordinates
             cmin,cmax,xmin1,xmax1,ymin1,ymax1 = findMinMax(sceneitems)
@@ -290,7 +291,7 @@ def writeReac(modelpath,f,sceneitems):
 
             textcolor = moose.Annotator(rinfo).getField('textColor')
             textcolor = getColorCheck(textcolor,GENESIS_COLOR_SEQUENCE)
-        
+
         if color == "" or color == " ":
             color = getRandColor()
         if textcolor == ""  or textcolor == " ":
@@ -298,7 +299,7 @@ def writeReac(modelpath,f,sceneitems):
         f.write("simundump kreac /kinetics/" + trimPath(reac) + " " +str(0) +" "+ str(kf) + " " + str(kb) + " \"\" " +
                 str(color) + " " + str(textcolor) + " " + str(int(x)) + " " + str(int(y)) + " 0\n")
     return reacList
- 
+
 def trimPath(mobj):
     original = mobj
     mobj = moose.element(mobj)
@@ -342,7 +343,7 @@ def storePlotMsgs( tgraphs,f):
             if slash > -1:
                 foundConc = True
                 if not ( (graph.path.find('conc1') > -1 ) or
-                            (graph.path.find('conc2') > -1 ) or 
+                            (graph.path.find('conc2') > -1 ) or
                             (graph.path.find('conc3') > -1 ) or
                             (graph.path.find('conc4') > -1) ):
                     foundConc = False
@@ -381,7 +382,7 @@ def writeplot( tgraphs,f ):
             if slash > -1:
                 foundConc = True
                 if not ( (graphs.path.find('conc1') > -1 ) or
-                            (graphs.path.find('conc2') > -1 ) or 
+                            (graphs.path.find('conc2') > -1 ) or
                             (graphs.path.find('conc3') > -1 ) or
                             (graphs.path.find('conc4') > -1) ):
                     foundConc = False
@@ -390,7 +391,7 @@ def writeplot( tgraphs,f ):
                 else:
                     slash1 = graphs.path.find('/',slash)
                     tabPath = "/graphs/conc1" +graphs.path[slash1:len(graphs.path)]
-                    
+
 
                 if len(moose.element(graphs).msgOut):
                     poolPath = (moose.element(graphs).msgOut)[0].e2.path
@@ -429,14 +430,14 @@ def writePool(modelpath,f,volIndex,sceneitems):
             #     value = sceneitems[p]
             #     x = calPrime(value['x'])
             #     y = calPrime(value['y'])
-                
+
             pinfo = p.path+'/info'
             if moose.exists(pinfo):
                 color = moose.Annotator(pinfo).getField('color')
                 color = getColorCheck(color,GENESIS_COLOR_SEQUENCE)
                 textcolor = moose.Annotator(pinfo).getField('textColor')
                 textcolor = getColorCheck(textcolor,GENESIS_COLOR_SEQUENCE)
-            
+
             geometryName = volIndex[p.volume]
             volume = p.volume * NA * 1e-3
             if color == "" or color == " ":
@@ -455,7 +456,7 @@ def writePool(modelpath,f,volIndex,sceneitems):
                     str(slave_enable) +
                     " /kinetics"+ geometryName + " " +
                     str(color) +" " + str(textcolor) + " " + str(int(x)) + " " + str(int(y)) + " "+ str(0)+"\n")
-            
+
 def getColorCheck(color,GENESIS_COLOR_SEQUENCE):
     if isinstance(color, str):
         if color.startswith("#"):

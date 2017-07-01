@@ -43,16 +43,16 @@ void testAdaptorRequestField()
 	Id onepool = shell->doCreate( "Pool", model, "onepool", 1 );
 	Id twopool = shell->doCreate( "Pool", model, "twopool", 2 );
 	Id tenpool = shell->doCreate( "Pool", model, "tenpool", 10 );
-	ObjId mid = shell->doAddMsg( "Single", adaptor, "requestOut", 
+	ObjId mid = shell->doAddMsg( "Single", adaptor, "requestOut",
 					onepool, "getNInit" );
 	assert( !mid.bad() );
-	mid = shell->doAddMsg( "Single", adaptor, "requestOut", 
+	mid = shell->doAddMsg( "Single", adaptor, "requestOut",
 					ObjId( twopool, 0 ), "getNInit" );
 	assert( !mid.bad() );
-	mid = shell->doAddMsg( "Single", adaptor, "requestOut", 
+	mid = shell->doAddMsg( "Single", adaptor, "requestOut",
 					ObjId( twopool, 1 ), "getNInit" );
 	assert( !mid.bad() );
-	mid = shell->doAddMsg( "OneToAll", adaptor, "requestOut", 
+	mid = shell->doAddMsg( "OneToAll", adaptor, "requestOut",
 					tenpool, "getNInit" );
 	assert( !mid.bad() );
 	Field< double >::set( onepool, "nInit", 1.0 );
@@ -91,9 +91,9 @@ void testAdaptorRequestField()
 // 		Ca pool in spine head fed by GluR.
 // Chem:
 // 		PSD: GluR pool.
-//    	Head: Ca pool. GluR pool. 'Enz' to take to PSD. 
+//    	Head: Ca pool. GluR pool. 'Enz' to take to PSD.
 //    		Reac balances with PSD.
-// 		Dend: Ca pool binds to 'kinase'. Kinase phosph K chan. 
+// 		Dend: Ca pool binds to 'kinase'. Kinase phosph K chan.
 // 			Dephosph by reac.
 //			Ca is pumped out into a buffered non-reactive pool
 //
@@ -111,7 +111,7 @@ void testAdaptorRequestField()
 // Defined in testBiophysics.cpp
 extern Id makeSquid();
 // Defined in testMesh.cpp
-extern Id makeSpine( Id compt, Id cell, unsigned int index, double frac, 
+extern Id makeSpine( Id compt, Id cell, unsigned int index, double frac,
 			double len, double dia, double theta );
 
 Id makeSpineWithReceptor( Id compt, Id cell, unsigned int index, double frac )
@@ -119,7 +119,7 @@ Id makeSpineWithReceptor( Id compt, Id cell, unsigned int index, double frac )
 	Shell* shell = reinterpret_cast< Shell* >( ObjId( Id(), 0 ).data() );
 	double spineLength = 5.0e-6;
 	double spineDia = 4.0e-6;
-	Id spineCompt = makeSpine( compt, cell, index, frac, 
+	Id spineCompt = makeSpine( compt, cell, index, frac,
 					spineLength, spineDia, 0.0 );
 
 	Id gluR = shell->doCreate( "SynChan", spineCompt, "gluR", 1 );
@@ -135,7 +135,7 @@ Id makeSpineWithReceptor( Id compt, Id cell, unsigned int index, double frac )
 	Id caPool = shell->doCreate( "CaConc", spineCompt, "ca", 1 );
 	Field< double >::set( caPool, "CaBasal", 1e-4 ); // millimolar
 	Field< double >::set( caPool, "tau", 0.01 ); // seconds
-	double B = 1.0 / ( 
+	double B = 1.0 / (
 		FaradayConst *  spineLength * spineDia * spineDia * 0.25 * PI );
 	B = B / 20.0;
 	Field< double >::set( caPool, "B", B ); // Convert from current to conc
@@ -316,12 +316,12 @@ void buildSigNeurChem( Id nid, Id neuroMesh, Id spineMesh, Id psdMesh )
 
 
 	Id dendTurnOnKinase = shell->doCreate( "Reac", neuroMesh, "turnOnKinase", 1);
-	mid = shell->doAddMsg( 
+	mid = shell->doAddMsg(
 		"OneToOne", dendTurnOnKinase, "sub", dendCa, "reac" );
-	mid = shell->doAddMsg( 
+	mid = shell->doAddMsg(
 		"OneToOne", dendTurnOnKinase, "sub", dendKinaseInact, "reac" );
 	assert( ! mid.bad() );
-	mid = shell->doAddMsg( 
+	mid = shell->doAddMsg(
 		"OneToOne", dendTurnOnKinase, "prd", dendKinase, "reac" );
 	assert( ! mid.bad() );
 	Field< double >::set( dendTurnOnKinase, "Kf", 0.5e3 );
@@ -412,10 +412,10 @@ void makeChemInNeuroMesh()
 	const unsigned int numComptsInDend = 100;
 	const unsigned int numSpines = 5;
 	unsigned int size;
-	
+
 	// 25 Apr 2013: this doesn't work, though it should. Need to clean up.
 	//size = psdMeshEntries.element()->dataHandler()->totalEntries();
-	
+
 	Id psdMeshEntries( "/n/psdMesh/mesh" );
 	size = Id( "/n/spineMesh/mesh" ).element()->numData();
 	assert( size == numSpines );
@@ -460,7 +460,7 @@ void makeChemInNeuroMesh()
 	Shell* shell = reinterpret_cast< Shell* >( ObjId( Id(), 0 ).data() );
 	shell->doDelete( nid );
 	cout << "." << flush;
-} 
+}
 
 Id makeChemInCubeMesh()
 {
@@ -468,8 +468,8 @@ Id makeChemInCubeMesh()
 	vector< int > dims( 1, 1 );
 	double dendSide = 10.8e-6;	// Matches vol cylinder of 100x4 microns.
 	double spineSide = 6.8e-6;	// Matches vol of 5 spines of 5x4 microns.
-	double psdSide = 8.565e-7;	// Matches 'vol' of 5 psds of 4 microns 
-			// diameter. Assume thickness of 0.01 micron, since area not 
+	double psdSide = 8.565e-7;	// Matches 'vol' of 5 psds of 4 microns
+			// diameter. Assume thickness of 0.01 micron, since area not
 			// comparable otherwise.
 
 	Id nid( "/n" );
@@ -510,7 +510,7 @@ Id makeChemInCubeMesh()
 	// Check that stuff has been built
 	///////////////////////////////////////////////////////////////////
 	unsigned int size;
-	
+
 	Id psdMeshEntries( "/n/psdMesh/mesh" );
 	size = Id( "/n/spineMesh/mesh" ).element()->numData();
 	assert( size == 1 );
@@ -602,7 +602,7 @@ void testChemInCubeMesh()
 	vector< Id > ids;
 	simpleWildcardFind( "/n/##[ISA=PoolBase]", ids );
 	for( vector< Id >::iterator i = ids.begin(); i != ids.end(); ++i ) {
-		cout << i->path() << 
+		cout << i->path() <<
 			" :	concInit = " << Field< double >::get( *i, "concInit" ) <<
 			";	nInit = " << Field< double >::get( *i, "nInit" ) <<
 			";	volume = " << Field< double >::get( *i, "volume" )
@@ -611,7 +611,7 @@ void testChemInCubeMesh()
 	ids.clear();
 	simpleWildcardFind( "/n/##[ISA=ReacBase]", ids );
 	for( vector< Id >::iterator i = ids.begin(); i != ids.end(); ++i ) {
-		cout << i->element()->getName() << 
+		cout << i->element()->getName() <<
 			":	Kf = " << Field< double >::get( *i, "Kf" ) <<
 			";	Kb = " << Field< double >::get( *i, "Kb" ) <<
 			":	kf = " << Field< double >::get( *i, "kf" ) <<
@@ -621,7 +621,7 @@ void testChemInCubeMesh()
 	ids.clear();
 	simpleWildcardFind( "/n/##[ISA=EnzBase]", ids );
 	for( vector< Id >::iterator i = ids.begin(); i != ids.end(); ++i ) {
-		cout << i->path() << 
+		cout << i->path() <<
 			":	Km = " << Field< double >::get( *i, "Km" ) <<
 			";	kcat = " << Field< double >::get( *i, "kcat" ) <<
 			";	k1 = " << Field< double >::get( *i, "k1" ) <<
@@ -635,26 +635,26 @@ void testChemInCubeMesh()
 	// Run it
 	/////////////////////////////////////////////////////////////////////
 	Id tab = shell->doCreate( "Table", nid, "tab", dims.size() );
-	ObjId mid = shell->doAddMsg( "Single", tab, "requestData", 
+	ObjId mid = shell->doAddMsg( "Single", tab, "requestData",
 		Id( "/n/psdMesh/psdGluR" ), "get_n" );
 	assert( ! mid.bad() );
 	Id tabCa = shell->doCreate( "Table", nid, "tabCa", dims.size() );
-	mid = shell->doAddMsg( "Single", tabCa, "requestData", 
+	mid = shell->doAddMsg( "Single", tabCa, "requestData",
 		Id( "/n/spineMesh/Ca" ), "get_conc" );
 
 	assert( ! mid.bad() );
 	Id tab2 = shell->doCreate( "Table", nid, "tab2", dims.size() );
-	mid = shell->doAddMsg( "Single", tab2, "requestData", 
+	mid = shell->doAddMsg( "Single", tab2, "requestData",
 		Id( "/n/neuroMesh/kChan_p" ), "get_conc" );
 
 	assert( ! mid.bad() );
 	Id tab4 = shell->doCreate( "Table", nid, "tab4", dims.size() );
-	mid = shell->doAddMsg( "Single", tab4, "requestData", 
+	mid = shell->doAddMsg( "Single", tab4, "requestData",
 		Id( "/n/neuroMesh/Ca.kinase" ), "get_conc" );
 
 	assert( ! mid.bad() );
 	Id tab3 = shell->doCreate( "Table", nid, "tab3", dims.size() );
-	mid = shell->doAddMsg( "Single", tab3, "requestData", 
+	mid = shell->doAddMsg( "Single", tab3, "requestData",
 		Id( "/n/spineMesh/toPsd" ), "get_conc" );
 
 	assert( ! mid.bad() );
@@ -682,7 +682,7 @@ void testChemInCubeMesh()
 	//////////////////////////////////////////////////////////////////////
 	// Build a solver, reset and run
 	//////////////////////////////////////////////////////////////////////
-	
+
 	Id solver = shell->doCreate( "GslStoich", nid, "solver", dims.size() );
 	assert( solver != Id() );
 	Field< string >::set( solver, "path", "/n/##" );
@@ -722,7 +722,7 @@ void testSigNeurElec()
 		double Em = Field< double >::get( *i, "Em" );
 		double Cm = Field< double >::get( *i, "Cm" );
 		string name = i->element()->getName();
-		cout << name << ": Ra = " << Ra << ", Rm = " << Rm << 
+		cout << name << ": Ra = " << Ra << ", Rm = " << Rm <<
 				", Cm = " << Cm << ", Em = " << Em << endl;
 	}
 	*/
@@ -788,7 +788,7 @@ void testSigNeurElec()
 	cout << "." << flush;
 }
 
-Id addPlot( const string& objPath, const string& field, 
+Id addPlot( const string& objPath, const string& field,
 				const string& plotname )
 {
 	Shell* shell = reinterpret_cast< Shell* >( ObjId( Id(), 0 ).data() );
@@ -852,36 +852,36 @@ Id buildAdaptorsInCubeMesh( vector< Id >& plots )
 	// Adaptors
 	///////////////////////////////////////////////////////////////////
 	Id adaptCa = shell->doCreate( "Adaptor", nid, "adaptCa", dims.size() );
-	mid = shell->doAddMsg( "OneToAll", 
+	mid = shell->doAddMsg( "OneToAll",
 					elecCa, "concOut", adaptCa, "input" );
 	assert( ! mid.bad() );
 	/*
-	mid = shell->doAddMsg( "OneToAll", 
+	mid = shell->doAddMsg( "OneToAll",
 					adaptCa, "requestOut", elecCa, "get_Ca" );
 	assert( ! mid.bad() );
 	*/
 
-	mid = shell->doAddMsg( "OneToAll", 
+	mid = shell->doAddMsg( "OneToAll",
 					adaptCa, "output", chemCa, "set_conc" );
 	assert( ! mid.bad() );
 	Field< double >::set( adaptCa, "outputOffset", 0.0001 ); // 100 nM
 	Field< double >::set( adaptCa, "scale", 0.05 ); // .06 to .003 mM
 
 	Id adaptGluR = shell->doCreate( "Adaptor", nid, "adaptGluR", dims.size() );
-	mid = shell->doAddMsg( "OneToAll", 
+	mid = shell->doAddMsg( "OneToAll",
 					adaptGluR, "requestOut", chemGluR, "get_n" );
 	assert( ! mid.bad() );
-	mid = shell->doAddMsg( "OneToAll", 
+	mid = shell->doAddMsg( "OneToAll",
 					adaptGluR, "output", elecGluR, "set_Gbar" );
 	assert( ! mid.bad() );
-	// max n = 100, max Gar = 
+	// max n = 100, max Gar =
 	Field< double >::set( adaptGluR, "scale", 1e-4/100 ); // from n to pS
 
 	Id adaptK = shell->doCreate( "Adaptor", nid, "adaptK", dims.size() );
-	mid = shell->doAddMsg( "OneToAll", 
+	mid = shell->doAddMsg( "OneToAll",
 					adaptK, "requestOut", chemK, "get_conc" );
 	assert( ! mid.bad() );
-	mid = shell->doAddMsg( "OneToAll", 
+	mid = shell->doAddMsg( "OneToAll",
 					adaptK, "output", elecK, "set_Gbar" );
 	assert( ! mid.bad() );
 	Field< double >::set( adaptK, "scale", 0.3 ); // from mM to Siemens
@@ -1001,11 +1001,11 @@ void testSigNeur()
 void testSigNeurProcess()
 {
 	testAdaptorRequestField();
-	// After 2 June 2013, checkin 4579, the tests in 
+	// After 2 June 2013, checkin 4579, the tests in
 	// testSigNeurElec
-	// testChemInCubeMesh 
+	// testChemInCubeMesh
 	// testAdaptorsInCubeMesh() // Does a chem+elec model with adaptors
-	// have been moved to a 
+	// have been moved to a
 	// separate Python snippet called testSigNeur.py. These tests take
 	// too long to run in unit tests and anyway it does not test as much
 	// as generate an output that I can compare with the expected one.

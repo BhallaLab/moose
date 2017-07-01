@@ -154,7 +154,7 @@ public:
     /*
      * named Version 2: do_step_dxdt_impl( sys , in , dxdt , t , dt )
      *
-     * this version is needed when this stepper is used for initializing 
+     * this version is needed when this stepper is used for initializing
      * multistep stepper like adams-bashforth. Hence we provide an explicitely
      * named version that is not disabled. Meant for internal use only.
      */
@@ -197,11 +197,11 @@ public:
     {
         this->stepper().do_step_impl( system , in , dxdt , t , out , dt );
     }
-    
+
     /*
      * named Version 4: do_step_dxdt_impl( sys , in , dxdt , t , out, dt )
      *
-     * this version is needed when this stepper is used for initializing 
+     * this version is needed when this stepper is used for initializing
      * multistep stepper like adams-bashforth. Hence we provide an explicitely
      * named version that is not disabled. Meant for internal use only.
      */
@@ -334,7 +334,7 @@ protected:
 
 /**
  * \class explicit_error_stepper_base
- * \brief Base class for explicit steppers with error estimation. This class can used with 
+ * \brief Base class for explicit steppers with error estimation. This class can used with
  * controlled steppers for step size control.
  *
  * This class serves as the base class for all explicit steppers with algebra and operations. In contrast to
@@ -342,12 +342,12 @@ protected:
  * step size control.
  *
  * \note This stepper provides `do_step` methods with and without error estimation. It has therefore three orders,
- * one for the order of a step if the error is not estimated. The other two orders are the orders of the step and 
+ * one for the order of a step if the error is not estimated. The other two orders are the orders of the step and
  * the error step if the error estimation is performed.
  *
  * explicit_error_stepper_base  is used as the interface in a CRTP (currently recurring template
  * pattern). In order to work correctly the parent class needs to have a method
- * `do_step_impl( system , in , dxdt_in , t , out , dt , xerr )`. 
+ * `do_step_impl( system , in , dxdt_in , t , out , dt , xerr )`.
  * explicit_error_stepper_base derives from algebra_stepper_base.
  *
  * explicit_error_stepper_base provides several overloaded `do_step` methods, see the list below. Only two of them
@@ -382,7 +382,7 @@ protected:
  * \tparam Stepper The stepper on which this class should work. It is used via CRTP, hence explicit_stepper_base
  * provides the interface for the Stepper.
  * \tparam Order The order of a stepper if the stepper is used without error estimation.
- * \tparam StepperOrder The order of a step if the stepper is used with error estimation. Usually Order and StepperOrder have 
+ * \tparam StepperOrder The order of a step if the stepper is used with error estimation. Usually Order and StepperOrder have
  * the same value.
  * \tparam ErrorOrder The order of the error step if the stepper is used with error estimation.
  * \tparam State The state type for the stepper.
@@ -446,7 +446,7 @@ protected:
      *
      * The result is updated in place in x. This method is disabled if Time and Deriv are of the same type. In this
      * case the method could not be distinguished from other `do_step` versions.
-     * 
+     *
      * \note This method does not solve the forwarding problem.
      *
      * \param system The system function to solve, hence the r.h.s. of the ODE. It must fulfill the
@@ -462,7 +462,7 @@ protected:
      * \brief The method performs one step with the stepper passed by Stepper. The state of the ODE is updated out-of-place.
      * This method is disabled if StateIn and Time are the same type. In this case the method can not be distinguished from
      * other `do_step` variants.
-     * \note This method does not solve the forwarding problem. 
+     * \note This method does not solve the forwarding problem.
      *
      * \param system The system function to solve, hence the r.h.s. of the ODE. It must fulfill the
      *               Simple System concept.
@@ -521,7 +521,7 @@ protected:
      *
      * The result is updated in place in x. This method is disabled if Time and DerivIn are of the same type. In this
      * case the method could not be distinguished from other `do_step` versions.
-     * 
+     *
      * \note This method does not solve the forwarding problem.
      *
      * \param system The system function to solve, hence the r.h.s. of the ODE. It must fulfill the
@@ -538,7 +538,7 @@ protected:
      * \brief The method performs one step with the stepper passed by Stepper. The state of the ODE is updated out-of-place.
      * Furthermore, the error is estimated.
      *
-     * \note This method does not solve the forwarding problem. 
+     * \note This method does not solve the forwarding problem.
      *
      * \param system The system function to solve, hence the r.h.s. of the ODE. It must fulfill the
      *               Simple System concept.

@@ -12,7 +12,7 @@
 
 class ZombieReac: public ReacBase
 {
-	public: 
+	public:
 		ZombieReac();
 		~ZombieReac();
 
@@ -38,7 +38,7 @@ class ZombieReac: public ReacBase
 		// utility funcs
 		//////////////////////////////////////////////////////////////////
 		/*
-		ZeroOrder* makeHalfReaction( 
+		ZeroOrder* makeHalfReaction(
 			Element* orig, double rate, const SrcFinfo* finfo ) const;
 			*/
 

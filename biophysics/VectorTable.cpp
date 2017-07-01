@@ -21,13 +21,13 @@ const Cinfo* VectorTable::initCinfo()
 	static ValueFinfo< VectorTable, unsigned int > xdivs("xdivs",
 			"Number of divisions.",
 			&VectorTable::setDiv,
-			&VectorTable::getDiv 
+			&VectorTable::getDiv
 			);
 
 	static ValueFinfo< VectorTable, double > xmin("xmin",
 			"Minimum value in table.",
 			&VectorTable::setMin,
-			&VectorTable::getMin 
+			&VectorTable::getMin
 			);
 
 	static ValueFinfo< VectorTable, double > xmax("xmax",
@@ -47,21 +47,21 @@ const Cinfo* VectorTable::initCinfo()
 			&VectorTable::getTable
 			);
 
-	static ReadOnlyLookupValueFinfo< VectorTable, double, double > 
+	static ReadOnlyLookupValueFinfo< VectorTable, double, double >
 			lookupvalue(
 			"lookupvalue",
 			"Lookup function that performs interpolation to return a value.",
 			&VectorTable::lookupByValue
 			);
 
-	static ReadOnlyLookupValueFinfo< VectorTable, unsigned int, double > 
+	static ReadOnlyLookupValueFinfo< VectorTable, unsigned int, double >
 			lookupindex(
 			"lookupindex",
 			"Lookup function that returns value by index.",
 			&VectorTable::lookupByIndex
 			);
 
-	static Finfo* vectorTableFinfos[] = 
+	static Finfo* vectorTableFinfos[] =
 	{
 		&xdivs,
 		&xmin,
@@ -99,8 +99,8 @@ const Cinfo* VectorTable::initCinfo()
 
 static const Cinfo* vectorTableCinfo = VectorTable::initCinfo();
 
-VectorTable::VectorTable() : xDivs_(INIT_XDIV), xMin_(INIT_XMIN), xMax_(INIT_XMAX), 
-														 invDx_(-1), table_(0) 
+VectorTable::VectorTable() : xDivs_(INIT_XDIV), xMin_(INIT_XMIN), xMax_(INIT_XMAX),
+														 invDx_(-1), table_(0)
 { ; }
 
 //Implementation identical to that of HHGate::lookupTable.
@@ -109,7 +109,7 @@ double VectorTable::lookupByValue( double x ) const
 	if ( table_.size() == 1 )
 		return table_[0];
 
-	if ( x < xMin_ || doubleEq( x, xMin_ ) ) 
+	if ( x < xMin_ || doubleEq( x, xMin_ ) )
 		return table_[0];
 	if ( x > xMax_ || doubleEq( x, xMax_ ) )
 		return table_.back();
@@ -128,7 +128,7 @@ double VectorTable::lookupByIndex( unsigned int index ) const
      *  index is unsigned int, can't be less than zero.
     */
 #if 0
-    //Applying similar wrapping as is done in lookupByValue. 
+    //Applying similar wrapping as is done in lookupByValue.
     if ( index < 0 )
         index = 0;
 #endif
@@ -149,7 +149,7 @@ vector< double > VectorTable::getTable() const
 	return table_;
 }
 
-//Function to set up the lookup table. 
+//Function to set up the lookup table.
 //All parameters except xMin_ and xMax_ can be set based on the table that is
 //passed in.
 void VectorTable::setTable( vector< double > table )
@@ -170,7 +170,7 @@ void VectorTable::setTable( vector< double > table )
 	table_ = table;
 	xDivs_ = table.size() - 1;
 
-	//This is in case the lookup table has only one entry, in which case, 
+	//This is in case the lookup table has only one entry, in which case,
 	//the transition rate being considered is assumed to be constant.
 	if ( table.size() > 1 )
 		invDx_ = xDivs_ / ( xMax_ - xMin_ );
@@ -227,27 +227,27 @@ istream& operator>>( istream& in, VectorTable& vecTable )
 
 	for ( unsigned int i = 0; i < vecTable.table_.size(); ++i )
 		in >> vecTable.table_[i];
-	
+
 	return in;
 }
 
 #ifdef DO_UNIT_TESTS
 void testVectorTable()
 {
-	VectorTable unInitedTable;	
+	VectorTable unInitedTable;
 
 	vector< double > data;
-				
+
 	double arr[11] = {0.0, 0.23, 0.41, 0.46, 0.42, 0.52, 0.49, 0.43, 0.38, 0.43, 0.44};
 
 	data.reserve( 11 );
 	//Filling up user table.
-	for ( int i = 0; i < 11; i++ )	
+	for ( int i = 0; i < 11; i++ )
 		data.push_back( arr[i] );
 
 	unInitedTable.setMin( -0.5 );
 	unInitedTable.setMax( 0.5 );
-	unInitedTable.setTable( data ); 
+	unInitedTable.setTable( data );
 
 	assert( doubleEq(unInitedTable.getInvDx(), 10 ) );
 

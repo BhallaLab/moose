@@ -30,7 +30,7 @@
  * compartment.  Otherwise, it scales as a true shell, with the
  * volume of a shell having thickness thick.  A negative value of
  * the "density" parameter may be used to indicate that it should
- * be taken as an absolute value of B, without scaling. 
+ * be taken as an absolute value of B, without scaling.
  */
 
 class CaConc: public CaConcBase

@@ -45,7 +45,7 @@ const Cinfo* NormalRng::initCinfo()
         &variance,
         &method,
     };
-    
+
     static string doc[] = {
         "Name", "NormalRng",
         "Author", "Subhasis Ray",
@@ -63,11 +63,11 @@ const Cinfo* NormalRng::initCinfo()
     return &normalRngCinfo;
 }
 
-    
+
 static const Cinfo* normalRngCinfo = NormalRng::initCinfo();
 
 /**
-   Set the mean of the internal generator object.   
+   Set the mean of the internal generator object.
  */
 void NormalRng::setMean(double mean)
 {
@@ -79,7 +79,7 @@ void NormalRng::setMean(double mean)
 
 /**
    Since normal distribution is defined in terms of mean and variance, we
-   want to store them in order to create the internal generator object.   
+   want to store them in order to create the internal generator object.
  */
 void NormalRng::setVariance(double variance)
 {
@@ -114,7 +114,7 @@ int NormalRng::getMethod() const
  */
 void NormalRng::setMethod(int method)
 {
-    Normal* nrng = static_cast <Normal*> (rng_);    
+    Normal* nrng = static_cast <Normal*> (rng_);
     if ( nrng ){
         cout << "Warning: Changing method after generator object has been created. Current method: " << nrng->getMethod() << ". New method: " << method << endl;
         nrng->setMethod((NormalGenerator)method);

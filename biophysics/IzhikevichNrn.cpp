@@ -1,30 +1,30 @@
-// IzhikevichNrn.cpp --- 
-// 
+// IzhikevichNrn.cpp ---
+//
 // Filename: IzhikevichNrn.cpp
-// Description: 
+// Description:
 // Author: Subhasis Ray
-// Maintainer: 
+// Maintainer:
 // Created: Fri Jul  8 10:00:33 2011 (+0530)
-// Version: 
+// Version:
 // Last-Updated: Mon Nov  5 16:58:20 2012 (+0530)
 //           By: subha
 //     Update #: 110
-// URL: 
-// Keywords: 
-// Compatibility: 
-// 
-// 
+// URL:
+// Keywords:
+// Compatibility:
+//
+//
 
-// Commentary: 
-// 
-// 
-// 
-// 
+// Commentary:
+//
+//
+//
+//
 
 // Change log:
-// 
-// 
-// 
+//
+//
+//
 
 // Code:
 
@@ -41,7 +41,7 @@ static SrcFinfo1< double >* spikeOut()
 
 static SrcFinfo1< double >* VmOut()
 {
-    static SrcFinfo1< double > VmOut("VmOut", 
+    static SrcFinfo1< double > VmOut("VmOut",
                                "Sends out Vm");
     return &VmOut;
 }
@@ -67,7 +67,7 @@ const Cinfo* IzhikevichNrn::initCinfo()
             "proc",
             "Shared message to receive Process message from scheduler",
             processShared, sizeof( processShared ) / sizeof( Finfo* ) );
-		
+
     ///////////////////////////////////////////////////////
     // Field definitions
     ///////////////////////////////////////////////////////
@@ -129,7 +129,7 @@ const Cinfo* IzhikevichNrn::initCinfo()
             "Initial value of u.",
             &IzhikevichNrn::setInitU,
             &IzhikevichNrn::getInitU);
-    
+
     static ValueFinfo<IzhikevichNrn, double> alpha(
             "alpha",
             "Coefficient of v^2 in Izhikevich equation. Defaults to 0.04 in "
@@ -161,14 +161,14 @@ const Cinfo* IzhikevichNrn::initCinfo()
             " variable u is special in this case.",
             &IzhikevichNrn::setAccommodating,
             &IzhikevichNrn::getAccommodating);
-    
+
     static ValueFinfo<IzhikevichNrn, double> u0(
             "u0",
             "This is used for accommodating neurons where recovery variables u is"
             " computed as: u += tau*a*(b*(Vm-u0))",
             &IzhikevichNrn::setU0,
             &IzhikevichNrn::getU0);
-    
+
     ///////////////////////////////
     // MsgDest definition
     ///////////////////////////////
@@ -176,27 +176,27 @@ const Cinfo* IzhikevichNrn::initCinfo()
             "injectMsg",
             "Injection current into the neuron.",
             new OpFunc1<IzhikevichNrn, double>( &IzhikevichNrn::setInject));
-    
+
     static DestFinfo cDest(
             "cDest",
             "Destination message to modify parameter c at runtime.",
             new OpFunc1<IzhikevichNrn, double>(&IzhikevichNrn::setC));
-                          
+
     static DestFinfo dDest(
             "dDest",
-            "Destination message to modify parameter d at runtime.",                    
+            "Destination message to modify parameter d at runtime.",
             new OpFunc1<IzhikevichNrn, double>(&IzhikevichNrn::setD));
-    
+
     static DestFinfo aDest(
             "aDest",
             "Destination message modify parameter a at runtime.",
             new OpFunc1<IzhikevichNrn, double>(&IzhikevichNrn::setA));
-            
+
     static DestFinfo bDest(
             "bDest",
-            "Destination message to modify parameter b at runtime",            
+            "Destination message to modify parameter b at runtime",
             new OpFunc1<IzhikevichNrn, double>(&IzhikevichNrn::setB));
-    
+
 
     static DestFinfo handleChannel("handleChannel",
                                    "Handles conductance and reversal potential arguments from Channel",
@@ -213,7 +213,7 @@ const Cinfo* IzhikevichNrn::initCinfo()
 			"the channel. It expects Gk and Ek from the channel "
 			"as args. The second entry is a MsgSrc sending Vm ",
                                channelShared, sizeof( channelShared ) / sizeof( Finfo* )
-	);                               
+	);
     static Finfo* IzhikevichNrnFinfos[] = {
         &proc,
         &Vmax,
@@ -240,9 +240,9 @@ const Cinfo* IzhikevichNrn::initCinfo()
         &aDest,
         VmOut(),
         spikeOut(),
-        &channel,        
+        &channel,
     };
-    
+
     static string doc[] = {
         "Name", "IzhikevichNrn",
         "Author", "Subhasis Ray",
@@ -276,7 +276,7 @@ IzhikevichNrn::IzhikevichNrn():
         gamma_(140.0), // 140 physiological unit
         RmByTau_(1e6), // Assuming Izhikevich was using nA as unit of
         // current, 1e6 Ohm will be the scaling term for SI
-        a_(20.0), 
+        a_(20.0),
         b_(200.0),
         c_(-0.065), // -65 mV
         d_(2.0), // assuming u is in mV/ms
@@ -284,7 +284,7 @@ IzhikevichNrn::IzhikevichNrn():
         u_(-13.0),
         Vmax_(0.03), // 30 mV
         initVm_(-0.065),// -65 mV
-        initU_(-13.0), 
+        initU_(-13.0),
         sum_inject_(0.0),
         Im_(0.0),
         savedVm_(-0.065),
@@ -318,7 +318,7 @@ double IzhikevichNrn::getB() const
 {
     return b_;
 }
-void IzhikevichNrn::setC( double value)      
+void IzhikevichNrn::setC( double value)
 {
     c_ = value;
 }
@@ -326,9 +326,9 @@ void IzhikevichNrn::setC( double value)
 double IzhikevichNrn::getC() const
 {
     return c_;
-}                             
+}
 
-void IzhikevichNrn::setD( double value)       
+void IzhikevichNrn::setD( double value)
 {
     d_ = value;
 }
@@ -346,22 +346,22 @@ void IzhikevichNrn::setRmByTau( double value)
 double IzhikevichNrn::getRmByTau() const
 {
     return RmByTau_;
-}                             
-void IzhikevichNrn::setVm( double value)       
+}
+void IzhikevichNrn::setVm( double value)
 {
     Vm_ = value;
 }
 double IzhikevichNrn::getU() const
 {
     return u_;
-}                             
+}
 
 double IzhikevichNrn::getVm() const
 {
     return savedVm_;
-}                             
+}
 
-void IzhikevichNrn::setVmax( double value) 
+void IzhikevichNrn::setVmax( double value)
 {
     Vmax_ = value;
 }
@@ -371,7 +371,7 @@ double IzhikevichNrn::getVmax() const
     return Vmax_;
 }
 
-void IzhikevichNrn::setAlpha( double value)   
+void IzhikevichNrn::setAlpha( double value)
 {
     alpha_ = value;
 }
@@ -389,9 +389,9 @@ void IzhikevichNrn::setBeta( double value)
 double IzhikevichNrn::getBeta() const
 {
     return beta_;
-}                          
+}
 
-void IzhikevichNrn::setGamma( double value)   
+void IzhikevichNrn::setGamma( double value)
 {
     gamma_ = value;
 }
@@ -399,7 +399,7 @@ void IzhikevichNrn::setGamma( double value)
 double IzhikevichNrn::getGamma() const
 {
     return gamma_;
-}                         
+}
 
 void IzhikevichNrn::setInject( double value)
 {
@@ -409,14 +409,14 @@ void IzhikevichNrn::setInject( double value)
 double IzhikevichNrn::getInject() const
 {
     return inject_;
-}                        
+}
 
 double IzhikevichNrn::getIm() const
 {
     return Im_;
-}                        
+}
 
-void IzhikevichNrn::setInitVm( double value)    
+void IzhikevichNrn::setInitVm( double value)
 {
     initVm_ = value;
 }
@@ -426,7 +426,7 @@ double IzhikevichNrn::getInitVm() const
     return initVm_;
 }
 
-void IzhikevichNrn::setInitU( double value)    
+void IzhikevichNrn::setInitU( double value)
 {
     initU_ = value;
 }
@@ -436,7 +436,7 @@ double IzhikevichNrn::getInitU() const
     return initU_;
 }
 
-void IzhikevichNrn::setAccommodating( bool value)    
+void IzhikevichNrn::setAccommodating( bool value)
 {
     accommodating_ = value;
 }
@@ -446,7 +446,7 @@ bool IzhikevichNrn::getAccommodating() const
     return accommodating_;
 }
 
-void IzhikevichNrn::setU0( double value)    
+void IzhikevichNrn::setU0( double value)
 {
     u0_ = value;
 }
@@ -483,7 +483,7 @@ void IzhikevichNrn::process(const Eref& eref, ProcPtr proc)
     } else {
         savedVm_ = Vm_;
         VmOut()->send(eref, Vm_);
-    } 
+    }
 }
 
 void IzhikevichNrn::reinit(const Eref& eref, ProcPtr proc)
@@ -493,8 +493,8 @@ void IzhikevichNrn::reinit(const Eref& eref, ProcPtr proc)
     u_ = initU_;
     Im_ = 0.0;
     savedVm_ = Vm_;
-    VmOut()->send(eref, Vm_);    
+    VmOut()->send(eref, Vm_);
 }
 
-// 
+//
 // IzhikevichNrn.cpp ends here

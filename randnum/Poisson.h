@@ -1,6 +1,6 @@
 /*******************************************************************
  * File:            Poisson.h
- * Description:      
+ * Description:
  * Author:          Subhasis Ray
  * E-mail:          ray.subhasis@gmail.com
  * Created:         2007-11-02 09:43:47
@@ -33,7 +33,7 @@ class Poisson:public Probability
   public:
     Poisson(double mean=1.0);
     ~Poisson();
-    
+
     void setMean(double mean);
     double getMean() const;
     double getVariance() const;
@@ -47,5 +47,5 @@ class Poisson:public Probability
     double (*generator_)(const Poisson&);
     double mValue_;
 };
-    
+
 #endif

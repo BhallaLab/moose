@@ -1,30 +1,30 @@
-// DiffAmp.h --- 
-// 
+// DiffAmp.h ---
+//
 // Filename: DiffAmp.h
-// Description: 
+// Description:
 // Author: Subhasis Ray
-// Maintainer: 
+// Maintainer:
 // Created: Wed Feb 22 02:28:54 2012 (+0530)
-// Version: 
+// Version:
 // Last-Updated: Wed Feb 22 03:03:01 2012 (+0530)
 //           By: Subhasis Ray
 //     Update #: 15
-// URL: 
-// Keywords: 
-// Compatibility: 
-// 
-// 
+// URL:
+// Keywords:
+// Compatibility:
+//
+//
 
-// Commentary: 
-// 
-// 
-// 
-// 
+// Commentary:
+//
+//
+//
+//
 
 // Change log:
-// 
-// 
-// 
+//
+//
+//
 
 // Code:
 
@@ -47,7 +47,7 @@ class DiffAmp
     void minusFunc(double input);
     void process(const Eref& e, ProcPtr p);
     void reinit(const Eref& e, ProcPtr p);
-    
+
     static const Cinfo* initCinfo();
 
   protected:
@@ -57,8 +57,8 @@ class DiffAmp
     double minus_;
     double output_;
 };
-    
+
 #endif
 
-// 
+//
 // DiffAmp.h ends here

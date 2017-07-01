@@ -1,12 +1,12 @@
-/* 
+/*
    A C-program for MT19937, with initialization improved 2002/1/26.
    Coded by Takuji Nishimura and Makoto Matsumoto.
 
-   Before using, initialize the state by using init_genrand(seed)  
+   Before using, initialize the state by using init_genrand(seed)
    or init_by_array(init_key, key_length).
 
    Copyright (C) 1997 - 2002, Makoto Matsumoto and Takuji Nishimura,
-   All rights reserved.                          
+   All rights reserved.
 
    Redistribution and use in source and binary forms, with or without
    modification, are permitted provided that the following conditions
@@ -19,8 +19,8 @@
         notice, this list of conditions and the following disclaimer in the
         documentation and/or other materials provided with the distribution.
 
-     3. The names of its contributors may not be used to endorse or promote 
-        products derived from this software without specific prior written 
+     3. The names of its contributors may not be used to endorse or promote
+        products derived from this software without specific prior written
         permission.
 
    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -50,7 +50,7 @@
 #endif
 #include <stdlib.h>
 #include "randnum.h"
-/* Period parameters */  
+/* Period parameters */
 #define N 624
 #define M 397
 #define MATRIX_A 0x9908b0dfUL   /* constant vector a */
@@ -65,8 +65,8 @@ void init_genrand(unsigned long s)
 {
     mt[0]= s & 0xffffffffUL;
     for (mti=1; mti<N; mti++) {
-        mt[mti] = 
-	    (1812433253UL * (mt[mti-1] ^ (mt[mti-1] >> 30)) + mti); 
+        mt[mti] =
+	    (1812433253UL * (mt[mti-1] ^ (mt[mti-1] >> 30)) + mti);
         /* See Knuth TAOCP Vol2. 3rd Ed. P.106 for multiplier. */
         /* In the previous versions, MSBs of the seed affect   */
         /* only MSBs of the array mt[].                        */
@@ -81,21 +81,21 @@ void init_genrand(unsigned long s)
 	int gettimeofday( struct timeval* tv, void* timezone ) {
      FILETIME time;
      double   timed;
- 
+
      GetSystemTimeAsFileTime( &time );
- 
+
      // Apparently Win32 has units of 1e-7 sec (tenths of microsecs)
      // 4294967296 is 2^32, to shift high word over
      // 11644473600 is the number of seconds between
      // the Win32 epoch 1601-Jan-01 and the Unix epoch 1970-Jan-01
      // Tests found floating point to be 10x faster than 64bit int math.
- 
+
      timed = ((time.dwHighDateTime * 4294967296e-7) - 11644473600.0) +
              (time.dwLowDateTime  * 1e-7);
- 
+
      tv->tv_sec  = (long) timed;
      tv->tv_usec = (long) ((timed - tv->tv_sec) * 1e6);
- 
+
      return 0;
  }
 #endif
@@ -130,7 +130,7 @@ void init_by_array(long int init_key[], int key_length)
         if (i>=N) { mt[0] = mt[N-1]; i=1; }
     }
 
-    mt[0] = 0x80000000UL; /* MSB is 1; assuring non-zero initial array */ 
+    mt[0] = 0x80000000UL; /* MSB is 1; assuring non-zero initial array */
 }
 
 /* generates a random number on [0,0xffffffff]-interval */
@@ -159,7 +159,7 @@ unsigned long genrand_int32(void)
 
         mti = 0;
     }
-  
+
     y = mt[mti++];
 
     /* Tempering */
@@ -180,30 +180,30 @@ long genrand_int31(void)
 /* generates a random number on [0,1]-real-interval */
 double genrand_real1(void)
 {
-    return genrand_int32()*(1.0/4294967295.0); 
-    /* divided by 2^32-1 */ 
+    return genrand_int32()*(1.0/4294967295.0);
+    /* divided by 2^32-1 */
 }
 
 /* generates a random number on [0,1)-real-interval */
 double genrand_real2(void)
 {
-    return genrand_int32()*(1.0/4294967296.0); 
+    return genrand_int32()*(1.0/4294967296.0);
     /* divided by 2^32 */
 }
 
 /* generates a random number on (0,1)-real-interval */
 double genrand_real3(void)
 {
-    return (((double)genrand_int32()) + 0.5)*(1.0/4294967296.0); 
+    return (((double)genrand_int32()) + 0.5)*(1.0/4294967296.0);
     /* divided by 2^32 */
 }
 
 /* generates a random number on [0,1) with 53-bit resolution*/
-double genrand_res53(void) 
-{ 
-    unsigned long a=genrand_int32()>>5, b=genrand_int32()>>6; 
-    return(a*67108864.0+b)*(1.0/9007199254740992.0); 
-} 
+double genrand_res53(void)
+{
+    unsigned long a=genrand_int32()>>5, b=genrand_int32()>>6;
+    return(a*67108864.0+b)*(1.0/9007199254740992.0);
+}
 /* These real versions are due to Isaku Wada, 2002/01/09 added */
 
 /*
@@ -253,6 +253,6 @@ void mtseed(long seed = 0)
 /* generates a random number on [0,1)-real-interval */
 double mtrand(void)
 {
-    return genrand_int32()*(1.0/4294967296.0); 
+    return genrand_int32()*(1.0/4294967296.0);
     /* divided by 2^32 */
 }

@@ -13,12 +13,12 @@
 class DifBuffer: public DifBufferBase{
  public:
   DifBuffer();
-  
+
   void vBuffer(const Eref& e,double C);
   void vReinit( const Eref & e, ProcPtr p );
   void vProcess(const Eref & e, ProcPtr p );
   void vFluxFromOut(const Eref& e,double outerC, double outerThickness );
-  void vFluxFromIn( const Eref& e,double innerC, double innerThickness );  
+  void vFluxFromIn( const Eref& e,double innerC, double innerThickness );
   //Field access functions
 
   double vGetActivation(const Eref& e) const;
@@ -38,7 +38,7 @@ class DifBuffer: public DifBufferBase{
 
   double vGetKb(const Eref& e) const;         // backward rate constant in 1/sec
   void vSetKb(const Eref& e,double value);
-  
+
   double vGetD(const Eref& e) const;          // diffusion constant of buffer molecules, m^2/sec
   void vSetD(const Eref& e,double value);
   void vSetShapeMode(const Eref& e, unsigned int shapeMode );
@@ -52,10 +52,10 @@ class DifBuffer: public DifBufferBase{
 
   void vSetThickness(const Eref& e, double thickness );
   double vGetThickness(const Eref& e) const;
-  
+
   void vSetVolume(const Eref& e, double volume );
   double vGetVolume(const Eref& e) const;
-  
+
   void vSetOuterArea(const Eref& e, double outerArea );
   double vGetOuterArea(const Eref& e) const;
 
@@ -66,10 +66,10 @@ class DifBuffer: public DifBufferBase{
   static const Cinfo * initCinfo();
 
  private:
-  
- 
+
+
   double integrate(double state, double dt, double A, double B );
-  
+
   double activation_; //ion concentration from incoming CONCEN message
   double Af_;
   double Bf_;

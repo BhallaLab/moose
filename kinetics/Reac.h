@@ -12,7 +12,7 @@
 
 class Reac: public ReacBase
 {
-	public: 
+	public:
 		Reac();
 		// Reac( double kf, double kb );
 

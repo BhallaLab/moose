@@ -15,7 +15,7 @@ class DifBufferBase
 {
 public:
   DifBufferBase();
-  
+
   void buffer(const Eref& e,double C);
   void reinit( const Eref & e, ProcPtr p );
   void process(const Eref & e, ProcPtr p );
@@ -33,10 +33,10 @@ public:
 
   double getBFree(const Eref& e) const;
   void setBFree(const Eref& e,double value);
-  
+
   double getBBound(const Eref& e) const;
   void setBBound(const Eref& e,double value);
- 
+
   double getBTot(const Eref& e) const;           //  total buffer concentration in mM (free + bound)
   void setBTot(const Eref& e,double value);
 
@@ -45,12 +45,12 @@ public:
 
   double getKb(const Eref& e) const;         // backward rate constant in 1/sec
   void setKb(const Eref& e,double value);
-  
+
   double getD(const Eref& e) const;          // diffusion constant of buffer molecules, m^2/sec
   void setD(const Eref& e,double value);
 
-  
-  unsigned int getShapeMode(const Eref& e) const; 
+
+  unsigned int getShapeMode(const Eref& e) const;
   void setShapeMode(const Eref& e,unsigned int value); // variables SHELL=0, SLICE=SLAB=1, USERDEF=3.
 
   double getLength(const Eref& e) const; //             shell length
@@ -58,29 +58,29 @@ public:
 
   double getDiameter(const Eref& e) const; //            shell diameter
   void setDiameter(const Eref& e,double value);
-  
+
   double getThickness(const Eref& e) const; //           shell thickness
   void setThickness(const Eref& e,double value);
-  
+
   void setOuterArea( const Eref& e,double outerArea );
   double getOuterArea(const Eref& e) const; //         area of upper (outer) shell surface
-  
+
   void setInnerArea( const Eref& e,double innerArea );
   double getInnerArea(const Eref& e) const; //       area of lower (inner) shell surface
 
   double getVolume(const Eref& e) const; //             shell volume
   void setVolume(const Eref& e,double volume); //
-  
+
 
   virtual double vGetActivation(const Eref& e) const = 0;
   virtual void vSetActivation(const Eref& e,double value) = 0;
 
   virtual double vGetBFree(const Eref& e) const = 0;
   virtual void vSetBFree(const Eref& e,double value) = 0;
-    
+
   virtual double vGetBBound(const Eref& e) const = 0;
   virtual void vSetBBound(const Eref& e,double value) = 0;
-    
+
 
   virtual double vGetBTot(const Eref& e) const = 0;           //  total buffer concentration in mM (free + bound)
   virtual void vSetBTot(const Eref& e,double value) = 0;
@@ -90,7 +90,7 @@ public:
 
   virtual double vGetKb(const Eref& e) const = 0;         // backward rate constant in 1/sec
   virtual void vSetKb(const Eref& e,double value) = 0;
-  
+
   virtual double vGetD(const Eref& e) const = 0;          // diffusion constant of buffer molecules, m^2/sec
   virtual void vSetD(const Eref& e,double value) = 0;
 
@@ -114,16 +114,16 @@ public:
 
   virtual void vSetInnerArea(const Eref& e, double innerArea ) = 0;
   virtual double vGetInnerArea(const Eref& e) const = 0;
-  
+
   static SrcFinfo4< double, double, double, double >* reactionOut();
   static SrcFinfo2< double, double >* innerDifSourceOut();
   static SrcFinfo2< double, double >* outerDifSourceOut();
   static const Cinfo * initCinfo();
- 
+
 private:
-  
- 
-  
+
+
+
 };
 
 

@@ -1,6 +1,6 @@
 /*
 [begin_description]
-Modification of the implicit Euler method, works with the MTL4 matrix library only. 
+Modification of the implicit Euler method, works with the MTL4 matrix library only.
 [end_description]
 
 Copyright 2012-2013 Andreas Angelopoulos
@@ -32,7 +32,7 @@ namespace odeint {
 
 template< class Value , class Parameters >
 struct is_resizeable< mtl::dense_vector< Value , Parameters > >
-{ 
+{
     typedef boost::true_type type;
     const static bool value = type::value;
 };
@@ -79,7 +79,7 @@ struct resize_impl< mtl::dense_vector< Value , Parameters > , mtl::dense_vector<
 template< class Value , class MatrixParameters , class VectorParameters >
 struct same_size_impl< mtl::dense2D< Value , MatrixParameters > , mtl::dense_vector< Value , VectorParameters > >
 {
-    static bool same_size( const mtl::dense2D< Value , MatrixParameters > &m , 
+    static bool same_size( const mtl::dense2D< Value , MatrixParameters > &m ,
                            const mtl::dense_vector< Value , VectorParameters > &v )
     {
         return ( ( mtl::size( v ) == m.num_cols() ) && ( mtl::size( v ) == m.num_rows() ) );
@@ -89,7 +89,7 @@ struct same_size_impl< mtl::dense2D< Value , MatrixParameters > , mtl::dense_vec
 template< class Value , class MatrixParameters , class VectorParameters >
 struct resize_impl< mtl::dense2D< Value , MatrixParameters > , mtl::dense_vector< Value , VectorParameters > >
 {
-    static void resize( mtl::dense2D< Value , MatrixParameters > &m , 
+    static void resize( mtl::dense2D< Value , MatrixParameters > &m ,
                         const mtl::dense_vector< Value , VectorParameters > &v )
     {
         m.change_dim( mtl::size( v ) , mtl::size( v ) , false );
@@ -102,7 +102,7 @@ struct resize_impl< mtl::dense2D< Value , MatrixParameters > , mtl::dense_vector
 template< class Value , class MatrixParameters , class VectorParameters >
 struct same_size_impl< mtl::compressed2D< Value , MatrixParameters > , mtl::dense_vector< Value , VectorParameters > >
 {
-    static bool same_size( const mtl::compressed2D< Value , MatrixParameters > &m , 
+    static bool same_size( const mtl::compressed2D< Value , MatrixParameters > &m ,
                            const mtl::dense_vector< Value , VectorParameters > &v )
     {
         return ( ( mtl::size( v ) == m.num_cols() ) && ( mtl::size( v ) == m.num_rows() ) );
@@ -112,7 +112,7 @@ struct same_size_impl< mtl::compressed2D< Value , MatrixParameters > , mtl::dens
 template< class Value , class MatrixParameters , class VectorParameters >
 struct resize_impl< mtl::compressed2D< Value , MatrixParameters > , mtl::dense_vector< Value , VectorParameters > >
 {
-    static void resize( mtl::compressed2D< Value , MatrixParameters > &m , 
+    static void resize( mtl::compressed2D< Value , MatrixParameters > &m ,
                         const mtl::dense_vector< Value , VectorParameters > &v )
     {
         m.change_dim( mtl::size( v ) , mtl::size( v ) );

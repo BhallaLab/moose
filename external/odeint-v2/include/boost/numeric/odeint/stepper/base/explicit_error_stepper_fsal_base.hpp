@@ -41,7 +41,7 @@ namespace odeint {
 /*
  * base class for explicit stepper and error steppers with the fsal property
  * models the stepper AND the error stepper fsal concept
- * 
+ *
  * this class provides the following do_step overloads
     * do_step( sys , x , t , dt )
     * do_step( sys , x , dxdt , t , dt )
@@ -85,7 +85,7 @@ public:
     typedef state_wrapper< deriv_type > wrapped_deriv_type;
     typedef explicit_error_stepper_fsal_base< Stepper , Order , StepperOrder , ErrorOrder ,
             State , Value , Deriv , Time , Algebra , Operations , Resizer > internal_stepper_base_type;
-    #endif 
+    #endif
 
 
     typedef unsigned short order_type;
@@ -153,7 +153,7 @@ public:
     /*
      * named Version 2: do_step_dxdt_impl( sys , in , dxdt , t , dt )
      *
-     * this version is needed when this stepper is used for initializing 
+     * this version is needed when this stepper is used for initializing
      * multistep stepper like adams-bashforth. Hence we provide an explicitely
      * named version that is not disabled. Meant for internal use only.
      */
@@ -170,7 +170,7 @@ public:
      * this version does not solve the forwarding problem, boost.range can not
      * be used.
      *
-     * the disable is needed to avoid ambiguous overloads if 
+     * the disable is needed to avoid ambiguous overloads if
      * state_type = time_type
      */
     template< class System , class StateIn , class StateOut >
@@ -371,16 +371,16 @@ protected:
  * of this property.
  *
  * \note This stepper provides `do_step` methods with and without error estimation. It has therefore three orders,
- * one for the order of a step if the error is not estimated. The other two orders are the orders of the step and 
+ * one for the order of a step if the error is not estimated. The other two orders are the orders of the step and
  * the error step if the error estimation is performed.
  *
  * explicit_error_stepper_fsal_base  is used as the interface in a CRTP (currently recurring template
  * pattern). In order to work correctly the parent class needs to have a method
- * `do_step_impl( system , in , dxdt_in , t , out , dxdt_out , dt , xerr )`. 
+ * `do_step_impl( system , in , dxdt_in , t , out , dxdt_out , dt , xerr )`.
  * explicit_error_stepper_fsal_base derives from algebra_stepper_base.
  *
  * This class can have an intrinsic state depending on the explicit usage of the `do_step` method. This means that some
- * `do_step` methods are expected to be called in order. For example the `do_step( sys , x , t , dt , xerr )` will keep track 
+ * `do_step` methods are expected to be called in order. For example the `do_step( sys , x , t , dt , xerr )` will keep track
  * of the derivative of `x` which is the internal state. The first call of this method is recognized such that one
  * does not explicitly initialize the internal state, so it is safe to use this method like
  *
@@ -424,7 +424,7 @@ protected:
  * \tparam Stepper The stepper on which this class should work. It is used via CRTP, hence explicit_stepper_base
  * provides the interface for the Stepper.
  * \tparam Order The order of a stepper if the stepper is used without error estimation.
- * \tparam StepperOrder The order of a step if the stepper is used with error estimation. Usually Order and StepperOrder have 
+ * \tparam StepperOrder The order of a step if the stepper is used with error estimation. Usually Order and StepperOrder have
  * the same value.
  * \tparam ErrorOrder The order of the error step if the stepper is used with error estimation.
  * \tparam State The state type for the stepper.
@@ -500,7 +500,7 @@ protected:
      * The result is updated in place in x as well as the derivative dxdt. This method is disabled if
      * Time and StateInOut are of the same type. In this case the method could not be distinguished from other `do_step`
      * versions.
-     * 
+     *
      * \note This method does not solve the forwarding problem.
      *
      * \param system The system function to solve, hence the r.h.s. of the ODE. It must fulfill the
@@ -519,7 +519,7 @@ protected:
      *
      * \note This method uses the internal state of the stepper.
      *
-     * \note This method does not solve the forwarding problem. 
+     * \note This method does not solve the forwarding problem.
      *
      * \param system The system function to solve, hence the r.h.s. of the ODE. It must fulfill the
      *               Simple System concept.
@@ -577,7 +577,7 @@ protected:
      * Time are of the same type.
      *
      * \note This method does NOT use the internal state of the stepper.
-     * 
+     *
      * \note This method does not solve the forwarding problem.
      *
      * \param system The system function to solve, hence the r.h.s. of the ODE. It must fulfill the
@@ -597,7 +597,7 @@ protected:
      *
      * \note This method uses the internal state of the stepper.
      *
-     * \note This method does not solve the forwarding problem. 
+     * \note This method does not solve the forwarding problem.
      *
      * \param system The system function to solve, hence the r.h.s. of the ODE. It must fulfill the
      *               Simple System concept.
@@ -651,7 +651,7 @@ protected:
      * \fn explicit_error_stepper_fsal_base::initialize( System system , const StateIn &x , time_type t )
      * \brief Initializes the internal state of the stepper.
      *
-     * This method is equivalent to 
+     * This method is equivalent to
      * \code
      * Deriv dxdt;
      * system( x , dxdt , t );
@@ -665,7 +665,7 @@ protected:
 
     /**
      * \fn explicit_error_stepper_fsal_base::is_initialized( void ) const
-     * \brief Returns if the stepper is already initialized. If the stepper is not initialized, the first 
+     * \brief Returns if the stepper is already initialized. If the stepper is not initialized, the first
      * call of `do_step` will initialize the state of the stepper. If the stepper is already initialized
      * the system function can not be safely exchanged between consecutive `do_step` calls.
      */

@@ -1,14 +1,12 @@
 language: cpp
 dist: trusty
-sudo: required 
-group: edge 
+sudo: required
+group: edge
 
-compiler:
-    - gcc
-    - clang
 os:
     - linux
     - osx
+
 notifications:
     email:
         recipients:
@@ -18,16 +16,9 @@ notifications:
         on_success: change
         on_failure: always
 
-env:
-    - CTEST_MODEL=Nightly
-cache: apt
-
-matrix:
-    allow_failure:
-        os: osx
-        
-before_script : 
+before_script :
     - echo "OSX related"
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then nvm get head || true; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ./.travis/travis_prepare_osx.sh; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo ./.travis/travis_prepare_linux.sh; fi
 
@@ -37,3 +28,5 @@ script:
     - if type python3 > /dev/null; then python3 -m compileall -q . ; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ./.travis/travis_build_osx.sh; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./.travis/travis_build_linux.sh; fi
+    - cd ./.travis && ./download_and_run_doqcs.sh && cd ..
+    - set +e

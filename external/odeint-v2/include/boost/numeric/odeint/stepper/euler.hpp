@@ -69,7 +69,7 @@ public :
     typedef typename stepper_base_type::stepper_type stepper_type;
     typedef typename stepper_base_type::wrapped_state_type wrapped_state_type;
     typedef typename stepper_base_type::wrapped_deriv_type wrapped_deriv_type;
-    #endif 
+    #endif
 
 
     euler( const algebra_type &algebra = algebra_type() ) : stepper_base_type( algebra )
@@ -109,7 +109,7 @@ public :
  * The Euler method is a very simply solver for ordinary differential equations. This method should not be used
  * for real applications. It is only useful for demonstration purposes. Step size control is not provided but
  * trivial continuous output is available.
- * 
+ *
  * This class derives from explicit_stepper_base and inherits its interface via CRTP (current recurring template pattern),
  * see explicit_stepper_base
  *
@@ -128,12 +128,12 @@ public :
      * constructor of the algebra has a default constructor.
      * \param algebra A copy of algebra is made and stored inside explicit_stepper_base.
      */
-    
+
     /**
      * \fn euler::do_step_impl( System system , const StateIn &in , const DerivIn &dxdt , time_type t , StateOut &out , time_type dt )
      * \brief This method performs one step. The derivative `dxdt` of `in` at the time `t` is passed to the method.
      * The result is updated out of place, hence the input is in `in` and the output in `out`.
-     * Access to this step functionality is provided by explicit_stepper_base and 
+     * Access to this step functionality is provided by explicit_stepper_base and
      * `do_step_impl` should not be called directly.
      *
      * \param system The system function to solve, hence the r.h.s. of the ODE. It must fulfill the
@@ -148,7 +148,7 @@ public :
 
     /**
      * \fn euler::calc_state( StateOut &x , time_type t ,  const StateIn1 &old_state , time_type t_old , const StateIn2 &current_state , time_type t_new ) const
-     * \brief This method is used for continuous output and it calculates the state `x` at a time `t` from the 
+     * \brief This method is used for continuous output and it calculates the state `x` at a time `t` from the
      * knowledge of two states `old_state` and `current_state` at time points `t_old` and `t_new`.
      */
 

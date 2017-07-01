@@ -96,14 +96,14 @@ public:
         do_step_v1( system , x , t , dt );
     }
 
-    
+
     template< class System , class StateInOut >
     void do_step( System system , const StateInOut & x , time_type t , time_type dt )
     {
         do_step_v1( system , x , t , dt );
     }
 
-    
+
     template< class System , class CoorIn , class VelocityIn , class AccelerationIn ,
                              class CoorOut , class VelocityOut , class AccelerationOut >
     void do_step( System system , CoorIn const & qin , VelocityIn const & pin , AccelerationIn const & ain ,
@@ -138,7 +138,7 @@ public:
         m_first_call = true;
     }
 
-    
+
     /**
      * \fn velocity_verlet::initialize( const AccelerationIn &qin )
      * \brief Initializes the internal state of the stepper.
@@ -173,7 +173,7 @@ public:
 
 
 private:
-    
+
     template< class System , class CoorIn , class VelocityIn >
     void initialize_acc( System system , const CoorIn & qin , const VelocityIn & pin , time_type t )
     {
@@ -181,14 +181,14 @@ private:
         sys( qin , pin , get_current_acc() , t );
         m_first_call = false;
     }
-    
+
     template< class System , class StateInOut >
     void do_step_v1( System system , StateInOut & x , time_type t , time_type dt )
     {
         typedef typename odeint::unwrap_reference< StateInOut >::type state_in_type;
         typedef typename odeint::unwrap_reference< typename state_in_type::first_type >::type coor_in_type;
         typedef typename odeint::unwrap_reference< typename state_in_type::second_type >::type momentum_in_type;
-        
+
         typedef typename boost::remove_reference< coor_in_type >::type xyz_type;
         state_in_type & statein = x;
         coor_in_type & qinout = statein.first;
@@ -254,7 +254,7 @@ private:
  *
  * <a href="http://en.wikipedia.org/wiki/Verlet_integration" >The Velocity-Verlet algorithm</a> is a method for simulation of molecular dynamics systems. It solves the ODE
  * a=f(r,v',t)  where r are the coordinates, v are the velocities and a are the accelerations, hence v = dr/dt, a=dv/dt.
- * 
+ *
  * \tparam Coor The type representing the coordinates.
  * \tparam Velocity The type representing the velocities.
  * \tparam Value The type value type.
@@ -270,15 +270,15 @@ private:
     /**
      * \fn velocity_verlet::velocity_verlet( const algebra_type &algebra )
      * \brief Constructs the velocity_verlet class. This constructor can be used as a default
-     * constructor if the algebra has a default constructor. 
+     * constructor if the algebra has a default constructor.
      * \param algebra A copy of algebra is made and stored.
      */
 
-    
+
     /**
      * \fn velocity_verlet::do_step( System system , StateInOut &x , time_type t , time_type dt )
      * \brief This method performs one step. It transforms the result in-place.
-     * 
+     *
      * It can be used like
      * \code
      * pair< coordinates , velocities > state;
@@ -295,7 +295,7 @@ private:
     /**
      * \fn velocity_verlet::do_step( System system , const StateInOut &x , time_type t , time_type dt )
      * \brief This method performs one step. It transforms the result in-place.
-     * 
+     *
      * It can be used like
      * \code
      * pair< coordinates , velocities > state;
@@ -307,15 +307,15 @@ private:
      * \param x The state of the ODE which should be solved. The state is pair of Coor and Velocity.
      * \param t The value of the time, at which the step should be performed.
      * \param dt The step size.
-     */    
+     */
 
-    
+
 
     /**
      * \fn velocity_verlet::do_step( System system , CoorIn const & qin , VelocityIn const & pin , AccelerationIn const & ain , CoorOut & qout , VelocityOut & pout , AccelerationOut & aout , time_type t , time_type dt )
      * \brief This method performs one step. It transforms the result in-place. Additionally to the other methods
      * the coordinates, velocities and accelerations are passed directly to do_step and they are transformed out-of-place.
-     * 
+     *
      * It can be used like
      * \code
      * coordinates qin , qout;
@@ -331,7 +331,7 @@ private:
      * \param dt The step size.
      */
 
-    
+
     /**
      * \fn void velocity_verlet::adjust_size( const StateIn &x )
      * \brief Adjust the size of all temporaries in the stepper manually.
@@ -345,13 +345,13 @@ private:
      * `do_step` method without explicitly initializing the stepper.
      */
 
-    
+
 
     /**
      * \fn velocity_verlet::initialize( System system , const CoorIn &qin , const VelocityIn &pin , time_type t )
      * \brief Initializes the internal state of the stepper.
      *
-     * This method is equivalent to 
+     * This method is equivalent to
      * \code
      * Acceleration a;
      * system( qin , pin , a , t );
@@ -363,16 +363,16 @@ private:
      * \param pin The current velocities of the ODE.
      * \param t The current time of the ODE.
      */
-    
-    
+
+
     /**
      * \fn velocity_verlet::is_initialized()
      * \returns Returns if the stepper is initialized.
     */
-    
-    
-    
-    
+
+
+
+
 } // namespace odeint
 } // namespace numeric
 } // namespace boost

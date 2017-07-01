@@ -36,14 +36,14 @@ const Cinfo* MarkovChannel::initCinfo()
 			&MarkovChannel::getVm
 			);
 
-	static ValueFinfo< MarkovChannel, unsigned int > numstates( "numStates", 
+	static ValueFinfo< MarkovChannel, unsigned int > numstates( "numStates",
 			"The number of states that the channel can occupy.",
 			&MarkovChannel::setNumStates,
-			&MarkovChannel::getNumStates 
+			&MarkovChannel::getNumStates
 			);
 
 
-	static ValueFinfo< MarkovChannel, unsigned int > numopenstates( "numOpenStates", 
+	static ValueFinfo< MarkovChannel, unsigned int > numopenstates( "numOpenStates",
 			"The number of states which are open/conducting.",
 			&MarkovChannel::setNumOpenStates,
 			&MarkovChannel::getNumOpenStates
@@ -54,7 +54,7 @@ const Cinfo* MarkovChannel::initCinfo()
 			&MarkovChannel::setStateLabels,
 			&MarkovChannel::getStateLabels
 			);
-			
+
 	static ReadOnlyValueFinfo< MarkovChannel, vector< double > > state( "state",
 			"This is a row vector that contains the probabilities of finding the channel in each state.",
 			&MarkovChannel::getState
@@ -72,8 +72,8 @@ const Cinfo* MarkovChannel::initCinfo()
 			&MarkovChannel::getGbars
 			);
 
-	//MsgDest functions		
-	static DestFinfo handleligandconc( "handleLigandConc", 
+	//MsgDest functions
+	static DestFinfo handleligandconc( "handleLigandConc",
 		"Deals with incoming messages containing information of ligand concentration",
 		new OpFunc1< MarkovChannel, double >(&MarkovChannel::handleLigandConc) );
 
@@ -82,11 +82,11 @@ const Cinfo* MarkovChannel::initCinfo()
 		new OpFunc1< MarkovChannel, vector< double > >(&MarkovChannel::handleState) );
 
 	///////////////////////////////////////////
-	static Finfo* MarkovChannelFinfos[] = 
+	static Finfo* MarkovChannelFinfos[] =
 	{
 		&ligandconc,
 		&vm,
-		&numstates,						
+		&numstates,
 		&numopenstates,
 		&state,
 		&initialstate,
@@ -96,17 +96,17 @@ const Cinfo* MarkovChannel::initCinfo()
 		&handlestate,
 	};
 
-	static string doc[] = 
+	static string doc[] =
 	{
 		"Name", "MarkovChannel",
 		"Author", "Vishaka Datta S, 2011, NCBS",
-		"Description", "MarkovChannel : Multistate ion channel class." 
+		"Description", "MarkovChannel : Multistate ion channel class."
 		"It deals with ion channels which can be found in one of multiple states, "
                 "some of which are conducting. This implementation assumes the occurence "
 		"of first order kinetics to calculate the probabilities of the channel "
                 "being found in all states. Further, the rates of transition between these "
 		"states can be constant, voltage-dependent or ligand dependent (only one "
-		"ligand species). The current flow obtained from the channel is calculated " 
+		"ligand species). The current flow obtained from the channel is calculated "
 		"in a deterministic method by solving the system of differential equations "
                 "obtained from the assumptions above."
 	};
@@ -129,11 +129,11 @@ static const Cinfo* markovChannelCinfo = MarkovChannel::initCinfo();
 
 MarkovChannel::MarkovChannel() :
 	g_(0),
-	ligandConc_(0), 
+	ligandConc_(0),
 	numStates_(0),
 	numOpenStates_(0)
 { ; }
-	
+
 MarkovChannel::MarkovChannel(unsigned int numStates, unsigned int numOpenStates) :
 	g_(0), ligandConc_(0), numStates_(numStates), numOpenStates_(numOpenStates)
 {
@@ -144,7 +144,7 @@ MarkovChannel::MarkovChannel(unsigned int numStates, unsigned int numOpenStates)
 }
 
 MarkovChannel::~MarkovChannel( )
-{	
+{
 	;
 }
 
@@ -153,7 +153,7 @@ double MarkovChannel::getVm( ) const
 	return Vm_;
 }
 
-void MarkovChannel::setVm( double Vm ) 
+void MarkovChannel::setVm( double Vm )
 {
 	Vm_ = Vm;
 }
@@ -163,7 +163,7 @@ double MarkovChannel::getLigandConc( ) const
 	return ligandConc_;
 }
 
-void MarkovChannel::setLigandConc( double ligandConc ) 
+void MarkovChannel::setLigandConc( double ligandConc )
 {
 	ligandConc_ = ligandConc;
 }
@@ -173,8 +173,8 @@ unsigned int MarkovChannel::getNumStates( ) const
 	return numStates_;
 }
 
-void MarkovChannel::setNumStates( unsigned int numStates ) 
-{	
+void MarkovChannel::setNumStates( unsigned int numStates )
+{
 	numStates_ = numStates;
 }
 
@@ -200,15 +200,15 @@ void MarkovChannel::setStateLabels( vector< string > stateLabels )
 
 vector< double > MarkovChannel::getState ( ) const
 {
-	return state_;	
+	return state_;
 }
 
-vector< double > MarkovChannel::getInitialState() const 
+vector< double > MarkovChannel::getInitialState() const
 {
 	return initialState_;
 }
 
-void MarkovChannel::setInitialState( vector< double > initialState ) 
+void MarkovChannel::setInitialState( vector< double > initialState )
 {
 	initialState_ = initialState;
 	state_ = initialState;
@@ -228,40 +228,40 @@ void MarkovChannel::setGbars( vector< double > Gbars )
 //MsgDest functions
 ////////////////////////////
 
-void MarkovChannel::vProcess( const Eref& e, const ProcPtr p ) 
+void MarkovChannel::vProcess( const Eref& e, const ProcPtr p )
 {
 	g_ = 0.0;
-	
+
 	//Cannot use the Gbar_ variable of the ChanBase class. The conductance
 	//Gk_ calculated here is the "expected conductance" of the channel due to its
-	//stochastic nature. 
+	//stochastic nature.
 
 	for( unsigned int i = 0; i < numOpenStates_; ++i )
-		g_ += Gbars_[i] * state_[i];			
+		g_ += Gbars_[i] * state_[i];
 
 	setGk( e, g_ );
 	updateIk();
 
-	sendProcessMsgs( e, p ); 
+	sendProcessMsgs( e, p );
 }
 
 void MarkovChannel::vReinit( const Eref& e, const ProcPtr p )
 {
 	g_ = 0.0;
 
-	if ( initialState_.empty() ) 
+	if ( initialState_.empty() )
 	{
 		cerr << "MarkovChannel::reinit : Initial state has not been set.!\n";
 		return;
 	}
 	state_ = initialState_;
 
-	sendReinitMsgs( e, p );	
+	sendReinitMsgs( e, p );
 }
 
 void MarkovChannel::handleLigandConc( double ligandConc )
 {
-	ligandConc_ = ligandConc;	
+	ligandConc_ = ligandConc;
 }
 
 void MarkovChannel::handleState( vector< double > state )

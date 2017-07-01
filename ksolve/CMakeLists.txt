@@ -18,21 +18,27 @@ elseif(WITH_GSL)
     include_directories( ${GSL_INCLUDE_DIRS} )
 endif(WITH_BOOST)
 
+if(PARALLELIZED_SOLVERS)
+    message( STATUS "Parallel version of KSolve and Gsolve" )
+    add_definitions( -DPARALLELIZE_KSOLVE_WITH_CPP11_ASYNC )
+    add_definitions( -DPARALLELIZE_GSOLVE_WITH_CPP11_ASYNC )
+endif(PARALLELIZED_SOLVERS)
+
 set(KSOLVE_SRCS
-	KinSparseMatrix.cpp	
-	ZombiePool.cpp 
+	KinSparseMatrix.cpp
+	ZombiePool.cpp
         ZombieFunction.cpp
-        ZombieBufPool.cpp 
-	ZombieReac.cpp 
-	ZombieEnz.cpp 
-	ZombieMMenz.cpp 
+        ZombieBufPool.cpp
+	ZombieReac.cpp
+	ZombieEnz.cpp
+	ZombieMMenz.cpp
         VoxelPoolsBase.cpp
-	VoxelPools.cpp 
+	VoxelPools.cpp
         GssaVoxelPools.cpp
-	RateTerm.cpp 
+	RateTerm.cpp
         FuncTerm.cpp
-	Stoich.cpp 
-	Ksolve.cpp 
+	Stoich.cpp
+	Ksolve.cpp
         Gsolve.cpp
         ZombiePoolInterface.cpp
         testKsolve.cpp

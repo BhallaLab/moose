@@ -37,7 +37,7 @@ const Cinfo* Synapse::initCinfo()
 		&addSpike,		// DestFinfo
 	};
 
-	static string doc[] = 
+	static string doc[] =
 	{
 		"Name", "Synapse",
 		"Author", "Upi Bhalla",
@@ -110,15 +110,15 @@ void Synapse::addSpike( const Eref& e, double time )
 // static function, executed by the Synapse Element when a message is
 // added to the Element. Expands the parent synapse array to fit.
 void Synapse::addMsgCallback(
-				const Eref& e, const string& finfoName, 
+				const Eref& e, const string& finfoName,
 			    ObjId msg, unsigned int msgLookup )
 {
 	if ( finfoName == "addSpike" ) {
 		ObjId pa = Neutral::parent( e );
-		SynHandlerBase* sh = 
+		SynHandlerBase* sh =
 				reinterpret_cast< SynHandlerBase* >( pa.data() );
 		unsigned int synapseNumber = sh->addSynapse();
-		SetGet2< unsigned int, unsigned int >::set( 
+		SetGet2< unsigned int, unsigned int >::set(
 						msg, "fieldIndex", msgLookup, synapseNumber );
 	}
 }
@@ -129,12 +129,12 @@ void Synapse::addMsgCallback(
 // unused entry. Could even reuse if a synapse is added later, but all
 // this policy is independent of the Synapse class.
 void Synapse::dropMsgCallback(
-				const Eref& e, const string& finfoName, 
+				const Eref& e, const string& finfoName,
 			    ObjId msg, unsigned int msgLookup )
 {
 	if ( finfoName == "addSpike" ) {
 		ObjId pa = Neutral::parent( e );
-		SynHandlerBase* sh = 
+		SynHandlerBase* sh =
 				reinterpret_cast< SynHandlerBase* >( pa.data() );
 		sh->dropSynapse( msgLookup );
 	}

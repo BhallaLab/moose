@@ -98,7 +98,7 @@ void testTreeTraversal()
 	////////////////////////////////////////////////////////////////
 	// Checking for child Id lists
 	////////////////////////////////////////////////////////////////
-	vector< Id > kids = 
+	vector< Id > kids =
 			Field< vector< Id > >::get( ObjId( f1, 0 ), "children" );
 	assert( kids.size() == 1 );
 	assert( kids[0] == f2a );
@@ -119,7 +119,7 @@ void testTreeTraversal()
 	assert( kids.size() == 2 );
 	assert( kids[0] == f3aa );
 	assert( kids[1] == f3ab );
-	
+
 	kids = Field< vector< Id > >::get( ObjId( f2b, 0 ), "children" );
 	assert( kids.size() == 0 );
 	kids = Field< vector< Id > >::get( ObjId( f2b, 5 ), "children" );
@@ -216,7 +216,7 @@ void testTreeTraversal()
 	assert( shell->doFind( "f3ba/../../" ) == ObjId( f1, 1 ) );
 	assert( shell->doFind( "../../f1/f2a[4]/f3ab" ) == f3ab );
 	// assert( shell->doFind( "../f2a[4]/f3ab" ) == f3ab );
-	
+
 	cout << "." << flush;
 	////////////////////////////////////////////////////////////////
 	// Checking getChild
@@ -446,7 +446,7 @@ void testCopyFieldElement()
 	Id origId = shell->doCreate( "SimpleSynHandler", Id(), "f1", size, MooseGlobal );
 	Id origSynId( origId.value() + 1 );
 	Id origChild = shell->doCreate( "Neutral", origId, "f2", size2, MooseGlobal );
-	
+
 	Element* syn = origSynId.element();
 	assert( syn != 0 );
 	assert( syn->getName() == "synapse" );
@@ -463,7 +463,7 @@ void testCopyFieldElement()
 	*/
 	bool ret;
 	for ( unsigned int i = 0; i < size; ++i ) {
-		ret = Field< unsigned int >::set( ObjId( origId, i ), 
+		ret = Field< unsigned int >::set( ObjId( origId, i ),
 						"numSynapse", i );
 		assert( ret );
 	}
@@ -504,7 +504,7 @@ void testCopyFieldElement()
 	Id copyChild = copyChildren[1];
 
 	Element* copySynElm = copySynId.element();
-	
+
 	// Element should exist even if data doesn't
 	assert ( copySynElm != 0 );
 	assert ( copySynElm->getName() == "synapse" );
@@ -512,7 +512,7 @@ void testCopyFieldElement()
 	unsigned int numSyn = 0;
 	for ( unsigned int i = 0; i < numCopy * size; ++i ) {
 		// assert( copySynElm->numField( i ) == i % size );
-		unsigned int nf = Field< unsigned int >::get( 
+		unsigned int nf = Field< unsigned int >::get(
 						ObjId( copySynId, i ), "numField" );
 		assert( nf == i % size );
 		numSyn += i % size;
@@ -521,7 +521,7 @@ void testCopyFieldElement()
 	assert ( copyChild.element() != 0 );
 	assert ( copyChild.element()->getName() == "f2" );
 	assert( copyChild.element()->numData() == numCopy * size2 );
-	
+
 	for ( unsigned int i = 0; i < numCopy * size; ++i ) {
 		unsigned int k = i % size;
 		vector< double > delay;
@@ -540,7 +540,7 @@ void testCopyFieldElement()
 			assert( doubleEq( delay[j], 3.14 * j + k * k ) );
 		}
 	}
-	
+
 	shell->doDelete( origId );
 	shell->doDelete( copyId );
 	cout << "." << flush;
@@ -572,13 +572,13 @@ void testObjIdToAndFromPath()
 	assert( doubleEq( wt, 1999.0 ) );
 	// char* origSynData = origSynId.element()->data( 7, 5 );
 	// assert( origSynData != 0 );
-	Id level2 = shell->doCreate( "Neutral", 
+	Id level2 = shell->doCreate( "Neutral",
 					ObjId( level1, index1 ), "f2", s2 );
-	Id level3 = shell->doCreate( "Neutral", 
+	Id level3 = shell->doCreate( "Neutral",
 					ObjId( level2, index2 ), "f3", s3 );
-	Id level4 = shell->doCreate( "Neutral", 
+	Id level4 = shell->doCreate( "Neutral",
 					ObjId( level3, index3 ), "f4", s4 );
-	Id level5 = shell->doCreate( "Neutral", 
+	Id level5 = shell->doCreate( "Neutral",
 					ObjId( level4, index4 ), "f5", s5 );
 
 	ObjId oi( level5, index5 );
@@ -679,17 +679,17 @@ void testShellParserStart()
 	/*
 	// No idea what FuncId to use here. Assume 0.
 	FuncId f( 0 );
-	SingleMsg m0( er0, ts ); 
+	SingleMsg m0( er0, ts );
 	er0.element()->addMsgAndFunc( m0.mid(), f, 0 );
-	SingleMsg m1( er1, ts ); 
+	SingleMsg m1( er1, ts );
 	er1.element()->addMsgAndFunc( m1.mid(), f, 1 );
-	SingleMsg m2( er2, ts ); 
+	SingleMsg m2( er2, ts );
 	er2.element()->addMsgAndFunc( m2.mid(), f, 2 );
-	SingleMsg m3( er3, ts ); 
+	SingleMsg m3( er3, ts );
 	er3.element()->addMsgAndFunc( m3.mid(), f, 3 );
-	SingleMsg m4( er4, ts ); 
+	SingleMsg m4( er4, ts );
 	er4.element()->addMsgAndFunc( m4.mid(), f, 4 );
-	SingleMsg m5( er5, ts ); 
+	SingleMsg m5( er5, ts );
 	er5.element()->addMsgAndFunc( m5.mid(), f, 5 );
 	*/
 
@@ -713,7 +713,7 @@ void testInterNodeOps() // redundant.
 	if ( shell->myNode() == 0 ) {
 		unsigned int size = 6139;
 		child = shell->doCreate( "Neutral", Id(), "test", size );
-	} 
+	}
 	// cout << shell->myNode() << ": testInterNodeOps: #entries = " << child()->dataHandler()->numData() << endl;
 
 	shell->doDelete( child );
@@ -759,7 +759,7 @@ void testShellSetGet()
 	cout << "." << flush;
 }
 
-bool checkArg1( Id id, 
+bool checkArg1( Id id,
 	double v0, double v1, double v2, double v3, double v4 )
 {
 	bool ret = 1;
@@ -792,7 +792,7 @@ bool checkArg1( Id id,
 	return ret;
 }
 
-bool checkOutput( Id e, 
+bool checkOutput( Id e,
 	double v0, double v1, double v2, double v3, double v4 )
 {
 	bool ret = true;
@@ -869,27 +869,27 @@ void testShellAddMsg()
 	// Set up messaging
 	///////////////////////////////////////////////////////////
 	// Should give 04000
-	ObjId m1 = shell->doAddMsg( "Single", 
+	ObjId m1 = shell->doAddMsg( "Single",
 		ObjId( a1, 3 ), "output", ObjId( a2, 1 ), "arg3" );
 	assert( m1 != ObjId() );
 
 	// Should give 33333
-	ObjId m2 = shell->doAddMsg( "OneToAll", 
+	ObjId m2 = shell->doAddMsg( "OneToAll",
 		ObjId( b1, 2 ), "output", ObjId( b2, 0 ), "arg3" );
 	assert( m2 != ObjId() );
 
 	// Should give 12345
-	ObjId m3 = shell->doAddMsg( "OneToOne", 
+	ObjId m3 = shell->doAddMsg( "OneToOne",
 		ObjId( c1, 0 ), "output", ObjId( c2, 0 ), "arg3" );
 	assert( m3 != ObjId() );
 
 	// Should give 01234
-	ObjId m4 = shell->doAddMsg( "Diagonal", 
+	ObjId m4 = shell->doAddMsg( "Diagonal",
 		ObjId( d1, 0 ), "output", ObjId( d2, 0 ), "arg3" );
 	assert( m4 != ObjId() );
 
 	// Should give 54321
-	ObjId m5 = shell->doAddMsg( "Sparse", 
+	ObjId m5 = shell->doAddMsg( "Sparse",
 		ObjId( e1, 0 ), "output", ObjId( e2, 0 ), "arg3" );
 	assert( m5 != ObjId() );
 
@@ -911,13 +911,13 @@ void testShellAddMsg()
 
 	// Should give 15 15 15 15 15
 	for ( unsigned int i = 0; i < 5; ++i ) {
-		ObjId m6 = shell->doAddMsg( "OneToAll", 
+		ObjId m6 = shell->doAddMsg( "OneToAll",
 			ObjId( f1, i ), "output", ObjId( f2, i ), "arg3" );
 		assert( m6 != ObjId() );
 	}
 
 	// Should give 14 13 12 11 10
-	ObjId m7 = shell->doAddMsg( "Sparse", 
+	ObjId m7 = shell->doAddMsg( "Sparse",
 		ObjId( g1, 0 ), "output", ObjId( g2, 0 ), "arg3" );
 	assert( m7 != ObjId() );
 	for ( unsigned int i = 0; i < 5; ++i ) {
@@ -952,7 +952,7 @@ void testShellAddMsg()
 	///////////////////////////////////////////////////////////
 	// Set up initial conditions
 	///////////////////////////////////////////////////////////
-	
+
 	// shell->doReinit();
 
 	vector< double > init; // 12345
@@ -1031,7 +1031,7 @@ void testShellAddMsg()
 	///////////////////////////////////////////////////////////
 	// Check output.
 	///////////////////////////////////////////////////////////
-	
+
 	ret = checkOutput( a1, 1, 2, 3, 4, 5 );
 	assert( ret );
 	ret = checkOutput( b1, 1, 2, 3, 4, 5 );
@@ -1131,27 +1131,27 @@ void testCopyMsgOps()
 	// Set up messaging
 	///////////////////////////////////////////////////////////
 	// Should give 04000
-	ObjId m1 = shell->doAddMsg( "Single", 
+	ObjId m1 = shell->doAddMsg( "Single",
 		ObjId( a1, 3 ), "output", ObjId( a2, 1 ), "arg1" );
 	assert( m1 != ObjId() );
 
 	// Should give 33333
-	ObjId m2 = shell->doAddMsg( "OneToAll", 
+	ObjId m2 = shell->doAddMsg( "OneToAll",
 		ObjId( b1, 2 ), "output", ObjId( b2, 0 ), "arg1" );
 	assert( m2 != ObjId() );
 
 	// Should give 12345
-	ObjId m3 = shell->doAddMsg( "OneToOne", 
+	ObjId m3 = shell->doAddMsg( "OneToOne",
 		ObjId( c1, 0 ), "output", ObjId( c2, 0 ), "arg1" );
 	assert( m3 != ObjId() );
 
 	// Should give 01234
-	ObjId m4 = shell->doAddMsg( "Diagonal", 
+	ObjId m4 = shell->doAddMsg( "Diagonal",
 		ObjId( d1, 0 ), "output", ObjId( d2, 0 ), "arg1" );
 	assert( m4 != ObjId() );
 
 	// Should give 54321
-	ObjId m5 = shell->doAddMsg( "Sparse", 
+	ObjId m5 = shell->doAddMsg( "Sparse",
 		ObjId( e1, 0 ), "output", ObjId( e2, 0 ), "arg1" );
 	assert( m5 != ObjId() );
 
@@ -1220,7 +1220,7 @@ void testCopyMsgOps()
 	///////////////////////////////////////////////////////////
 	// Check output.
 	///////////////////////////////////////////////////////////
-	
+
 	ret = checkOutput( kids[1], 0, 4, 0, 0, 0 );
 	assert( ret );
 	ret = checkOutput( kids[2], 1, 2, 3, 4, 5 );
@@ -1251,7 +1251,7 @@ void testShellParserQuit()
 	cout << "." << flush;
 }
 
-extern bool 
+extern bool
 	extractIndex( const string& s, unsigned int& index );
 
 void testExtractIndices()
@@ -1354,12 +1354,12 @@ void testChopPath()
 	assert( args[2] == "zod" );
 
 	assert( index.size() == 3 );
-	
+
 	assert( index[0] == 1 );
 	assert( index[1] == 2 );
 	assert( index[2] == 3 );
 
-	assert( Shell::chopPath( "/foo/bar[1]/zod[2]/zung[3]", 
+	assert( Shell::chopPath( "/foo/bar[1]/zod[2]/zung[3]",
 		args, index ) == 1 );
 	assert( args.size() == 4 );
 	assert( args[0] == "foo" );
@@ -1368,7 +1368,7 @@ void testChopPath()
 	assert( args[3] == "zung" );
 
 	assert( index.size() == 4 );
-	
+
 	assert( index[0] == 0 );
 	assert( index[1] == 1 );
 	assert( index[2] == 2 );
@@ -1445,7 +1445,7 @@ void testFindModelParent()
 	assert( ok );
 	assert( parentId == foo2 );
 	assert( modelName == "bar" );
-	
+
 	shell->doDelete( foo );
 	shell->doDelete( foo2 );
 	shell->doDelete( zod );
@@ -1468,7 +1468,7 @@ void testSyncSynapseSize()
 
 	// Element should exist even if data doesn't
 	assert ( syn != 0 );
-	assert ( syn->getName() == "synapse" ); 
+	assert ( syn->getName() == "synapse" );
 
 	assert( syn->numData() == size );
 	vector< unsigned int > ns( size, 0 );
@@ -1485,7 +1485,7 @@ void testSyncSynapseSize()
 		assert( Field< unsigned int >::get( oi, "numField" ) == i );
 
 		// low-level access only works on single node.
-		if ( Shell::numNodes() == 1 ) 
+		if ( Shell::numNodes() == 1 )
 			assert( oi.element()->numField( i ) == i );
 
 		for ( unsigned int j = 0; j < i; ++j ) {
@@ -1509,7 +1509,7 @@ void testSyncSynapseSize()
 
 /**
  * Tests message inspection fields on Neutral.
- * These include 
+ * These include
  *  msgOut: all outgoing Msgs, reported as ObjId of their managers
  *  msgIn: all incoming Msgs, reported as ObjId of their managers
  *  msgSrc: All source Ids of messages coming into specified field
@@ -1543,27 +1543,27 @@ void testGetMsgs()
 	// Set up messaging
 	///////////////////////////////////////////////////////////
 	// Should give 04000
-	ObjId m1 = shell->doAddMsg( "Single", 
+	ObjId m1 = shell->doAddMsg( "Single",
 		ObjId( a1, 3 ), "output", ObjId( a2, 1 ), "arg3" );
 	assert( m1 != ObjId() );
 
 	// Should give 33333
-	ObjId m2 = shell->doAddMsg( "OneToAll", 
+	ObjId m2 = shell->doAddMsg( "OneToAll",
 		ObjId( a1, 2 ), "output", ObjId( b2, 0 ), "arg3" );
 	assert( m2 != ObjId() );
 
 	// Should give 12345
-	ObjId m3 = shell->doAddMsg( "OneToOne", 
+	ObjId m3 = shell->doAddMsg( "OneToOne",
 		ObjId( a1, 0 ), "output", ObjId( c2, 0 ), "arg3" );
 	assert( m3 != ObjId() );
 
 	// Should give 01234
-	ObjId m4 = shell->doAddMsg( "Diagonal", 
+	ObjId m4 = shell->doAddMsg( "Diagonal",
 		ObjId( a1, 0 ), "output", ObjId( d2, 0 ), "arg3" );
 	assert( m4 != ObjId() );
 
 	// Should give 54321
-	ObjId m5 = shell->doAddMsg( "Sparse", 
+	ObjId m5 = shell->doAddMsg( "Sparse",
 		ObjId( a1, 0 ), "output", ObjId( e2, 0 ), "arg3" );
 	assert( m5 != ObjId() );
 
@@ -1573,7 +1573,7 @@ void testGetMsgs()
 	// Nov 2013: Wait till the Msg ObjIds are set up.
 	/*
 
-	vector< ObjId > msgMgrs = 
+	vector< ObjId > msgMgrs =
 		Field< vector< ObjId > >::get( a1, "msgOut" );
 	assert( msgMgrs.size() == 5 ); // 5 above.
 	for ( unsigned int i = 0; i < 5; ++i )
@@ -1640,7 +1640,7 @@ void testGetMsgs()
 	*/
 
 	////////////////////////////////////////////////////////////////
-	// Check that the MsgSrcs are OK. 
+	// Check that the MsgSrcs are OK.
 	////////////////////////////////////////////////////////////////
 	vector< Id > srcIds;
 	srcIds = LookupField< string, vector< Id > >::get( a2, "neighbors", "arg3" );
@@ -1655,7 +1655,7 @@ void testGetMsgs()
 	assert( srcIds.size() == 1 );
 	assert( srcIds[0] == a1 );
 
-	ObjId m6 = shell->doAddMsg( "Single", 
+	ObjId m6 = shell->doAddMsg( "Single",
 		ObjId( b1, 3 ), "output", ObjId( b2, 1 ), "arg3" );
 	assert( m6 != ObjId() );
 	srcIds.resize( 0 );
@@ -1666,7 +1666,7 @@ void testGetMsgs()
 	cout << "." << flush;
 
 	////////////////////////////////////////////////////////////////
-	// Check that the MsgDests are OK. 
+	// Check that the MsgDests are OK.
 	////////////////////////////////////////////////////////////////
 	vector< Id > destIds;
 	destIds = LookupField< string, vector< Id > >::get( a1, "neighbors", "output" );
@@ -1705,7 +1705,7 @@ void testGetMsgSrcAndTarget()
 }
 
 // Defined in Element.cpp.
-extern void filterOffNodeTargets( 
+extern void filterOffNodeTargets(
 				unsigned int start,
 				unsigned int end,
 				bool isSrcGlobal,
@@ -1741,7 +1741,7 @@ void testFilterOffNodeTargets()
 		vector< vector< Eref > > erefs = origErefs;
 		vector< vector< bool > > targetNodes = origTargetNodes;
 
-		filterOffNodeTargets( 
+		filterOffNodeTargets(
 						0, numSrcData,
 						false, myNode, erefs, targetNodes );
 		for ( unsigned int i = 0; i < numSrcData; ++i ) {
@@ -1781,7 +1781,7 @@ void testFilterOffNodeTargets()
 
 		unsigned int start = numPerSrcNode * myNode;
 		unsigned int end = start + 1+ (numSrcData-1) % numPerSrcNode;
-		filterOffNodeTargets( 
+		filterOffNodeTargets(
 						start, end,
 						false, myNode, erefs, targetNodes );
 		for ( unsigned int i = 0; i < numData; ++i ) {
@@ -1825,7 +1825,7 @@ void testShell( )
 	////// testShellParserQuit();
 	testGetMsgs();	// Tests getting Msg info from Neutral.
 	testGetMsgSrcAndTarget();
-	
+
 	// This is a multinode test, but only needs to run on master node.
 	testFilterOffNodeTargets();
 }

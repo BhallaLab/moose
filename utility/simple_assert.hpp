@@ -21,7 +21,7 @@
 //
 // mooseinspect:naassert_macro
 //
-// Log: 
+// Log:
 // Thursday 01 May 2014 01:18:02 PM IST
 //
 // This files is a modified version of boost/assert.hpp file. The names of
@@ -96,9 +96,9 @@ namespace moose
     #endif
 
     namespace moose
-    { 
-      namespace assertion 
-      { 
+    {
+      namespace assertion
+      {
         namespace detail
         {
           inline void assertion_failed_msg(char const * expr, char const * msg, char const * function,

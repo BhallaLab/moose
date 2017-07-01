@@ -1,9 +1,10 @@
-"""ca1_test.py: 
+# -*- coding: utf-8 -*-
+"""ca1_test.py:
 
     Testing scripts for CA1.
 
 """
-    
+
 __author__           = "Dilawar Singh"
 __copyright__        = "Copyright 2015, Dilawar Singh and NCBS Bangalore"
 __credits__          = ["NCBS Bangalore"]

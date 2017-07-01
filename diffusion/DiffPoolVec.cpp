@@ -23,7 +23,7 @@ using namespace std;
  * work on in single-compartment models.
  */
 DiffPoolVec::DiffPoolVec()
-	: id_( 0 ), n_( 1, 0.0 ), nInit_( 1, 0.0 ), 
+	: id_( 0 ), n_( 1, 0.0 ), nInit_( 1, 0.0 ),
 		diffConst_( 1.0e-12 ), motorConst_( 0.0 )
 {;}
 
@@ -91,7 +91,7 @@ void DiffPoolVec::setMotorConst( double v )
 	motorConst_ = v;
 }
 
-void DiffPoolVec::setNumVoxels( unsigned int num ) 
+void DiffPoolVec::setNumVoxels( unsigned int num )
 {
 	nInit_.resize( num, 0.0 );
 	n_.resize( num, 0.0 );
@@ -102,7 +102,7 @@ unsigned int DiffPoolVec::getNumVoxels() const
 	return n_.size();
 }
 
-void DiffPoolVec::setId( unsigned int id ) 
+void DiffPoolVec::setId( unsigned int id )
 {
 	id_ = id;
 }

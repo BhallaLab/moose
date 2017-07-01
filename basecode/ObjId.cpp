@@ -11,23 +11,23 @@
 #include "header.h"
 #include "../shell/Shell.h"
 //////////////////////////////////////////////////////////////
-//	ObjId I/O 
+//	ObjId I/O
 //////////////////////////////////////////////////////////////
 
 // Doesn't know how to deal with off-node bad fields.
 bool ObjId::bad() const
 {
 	Element* elm = id.element();
-	return ( elm == 0 || 
-		dataIndex == BADINDEX || 
+	return ( elm == 0 ||
+		dataIndex == BADINDEX ||
 		fieldIndex == BADINDEX ||
 		dataIndex >= elm->numData()
-		/* 
-		 * We have a bit of a problem here. The FieldElement can exist 
-		 * with zero fields, and is invalid for field lookups but valid 
-		 * for the element level lookups. I should rather not create the 
+		/*
+		 * We have a bit of a problem here. The FieldElement can exist
+		 * with zero fields, and is invalid for field lookups but valid
+		 * for the element level lookups. I should rather not create the
 		 * FieldElements this way.
-		|| ( 
+		|| (
 		 	elm->getNode( dataIndex ) == Shell::myNode() &&
 		 	fieldIndex >= elm->numField( dataIndex - elm->localDataStart() )
 		)
@@ -70,20 +70,20 @@ Eref ObjId::eref() const
 
 bool ObjId::operator==( const ObjId& other ) const
 {
-	return ( id == other.id && dataIndex == other.dataIndex && 
+	return ( id == other.id && dataIndex == other.dataIndex &&
 					fieldIndex == other.fieldIndex );
 }
 
 bool ObjId::operator!=( const ObjId& other ) const
 {
-	return ( id != other.id || dataIndex != other.dataIndex || 
+	return ( id != other.id || dataIndex != other.dataIndex ||
 					fieldIndex != other.fieldIndex );
 }
 
 bool ObjId::operator<( const ObjId& other ) const
 {
-	return ( id < other.id || 
-		(id == other.id && ( 
+	return ( id < other.id ||
+		(id == other.id && (
 			dataIndex < other.dataIndex  ||
 			( dataIndex == other.dataIndex &&
 					fieldIndex < other.fieldIndex )
@@ -104,15 +104,15 @@ bool ObjId::isGlobal() const
 
 bool ObjId::isOffNode() const
 {
-	return ( Shell::numNodes() > 1 && 
-		( id.element()->isGlobal() || 
+	return ( Shell::numNodes() > 1 &&
+		( id.element()->isGlobal() ||
 		  id.element()->getNode( dataIndex ) != Shell::myNode() )
 	);
 }
 
 char* ObjId::data() const
 {
-	return id.element()->data( id.element()->rawIndex( dataIndex ), 
+	return id.element()->data( id.element()->rawIndex( dataIndex ),
 					fieldIndex );
 }
 

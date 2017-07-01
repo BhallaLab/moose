@@ -229,10 +229,10 @@ void zebraConcPattern( vector< vector< double > >& S )
 
 /// Set up uniform concentrations in each voxel. Only the end voxels
 /// should see a nonzero flux.
-void uniformConcPattern( vector< vector< double > >& S, 
+void uniformConcPattern( vector< vector< double > >& S,
 				vector< double >& vs )
 {
-	// Set up uniform concs throughout. This means to scale each # by 
+	// Set up uniform concs throughout. This means to scale each # by
 	// voxel size.
 	assert( S.size() == 44 );
 	for ( unsigned int i = 0; i < S.size(); ++i )
@@ -241,7 +241,7 @@ void uniformConcPattern( vector< vector< double > >& S,
 
 /**
  * Low-level test for NeuroStencil, no MOOSE calls
- * This outlines the policy for how nodes and dummies are 
+ * This outlines the policy for how nodes and dummies are
  * organized.
  * The set of nodes represents a neuron like this:
  *
@@ -258,9 +258,9 @@ void uniformConcPattern( vector< vector< double > >& S,
  *  10 microns diameter.
  * Level 3 has 10 voxels. 3 micron at soma, 2 microns at tip
  * Level 4 has 10 voxels. 1 micron at tip.
- * We have a total of 8 full nodes, plus 3 dummy nodes for 
+ * We have a total of 8 full nodes, plus 3 dummy nodes for
  * the segments at 2 and 3, since they plug into a sphere.
-	Order is depth first: 
+	Order is depth first:
 			0: soma
 			1: basal dummy
 			2: basal segment at level 3
@@ -273,8 +273,8 @@ void uniformConcPattern( vector< vector< double > >& S,
 			9: right segment at level 2, apicalR1
 			10: right segment at level 1, apicalR2
  */
-unsigned int buildNode( vector< NeuroNode >& nodes, unsigned int parent, 
-		double x, double y, double z, double dia, 
+unsigned int buildNode( vector< NeuroNode >& nodes, unsigned int parent,
+		double x, double y, double z, double dia,
 		unsigned int numDivs, bool isDummy, unsigned int startFid )
 {
 	x *= 1e-6;
@@ -387,7 +387,7 @@ void testCylMesh()
 	// Can't check on the last coord as it is DiffLength, it changes.
 	for ( unsigned int i = 0; i < temp.size() - 1; ++i )
 		assert( doubleEq( temp[i], coords[i] + 1 ) );
-	
+
 	double totLen = sqrt( 29.0 );
 	assert( doubleEq( cm.getTotLength() , totLen ) );
 
@@ -399,7 +399,7 @@ void testCylMesh()
 	assert( doubleEq( cm.getMeshEntryVolume( 2 ), 2.5 * 2.5 * PI * totLen / 5 ) );
 
 	///////////////////////////////////////////////////////////////
-	// LenSlope/totLen = 0.016 = 
+	// LenSlope/totLen = 0.016 =
 	// 	1/numEntries * (r1-r0)/numEntries * 2/(r0+r1) = 1/25 * 1 * 2/5
 	// Here are the fractional positions
 	// part0 = 1/5 - 0.032: end= 0.2 - 0.032
@@ -469,7 +469,7 @@ void testCylMesh()
 
 	///////////////////////////////////////////////////////////////
 	dist = cm.selectGridVolume( 10.0 );
-	assert( doubleEq( dist, 0.1 * cm.getDiffLength() ) ); 
+	assert( doubleEq( dist, 0.1 * cm.getDiffLength() ) );
 	dist = cm.selectGridVolume( 0.1 );
 	assert( dist <= 0.01 );
 
@@ -494,15 +494,15 @@ void testCylMesh()
 	for ( unsigned int i = 0; i < ret.size(); ++i ) {
 		assert( ret[i].first == i );
 		assert( ret[i].second == 0 ); // Only one cube entry
-		double r = cm.getR0() + 
-				( cm.getR1() - cm.getR0() ) * 
-				cm.getDiffLength() * ( 0.5 + i ) / cm.getTotLength(); 
+		double r = cm.getR0() +
+				( cm.getR1() - cm.getR0() ) *
+				cm.getDiffLength() * ( 0.5 + i ) / cm.getTotLength();
 		double a = r * cm.getDiffLength() * 2 * PI;
 		//assert( doubleApprox( ret[i].diffScale, a ) );
 		// cout << i << ". mesh: " << ret[i].diffScale << ", calc: " << a << endl;
 		assert( fabs( ret[i].diffScale - a ) < 0.5 );
 	}
-	
+
 	///////////////////////////////////////////////////////////////
 	// We're going to set up a new cylinder to abut the old one. The
 	// coords of x1 of the new cylinder are the same x0 of the old one, but
@@ -582,7 +582,7 @@ void testMidLevelCylMesh()
 	assert( doubleEq( Field< double >::get( oid, "volume" ),
 		1.5 * 1.5 * PI * totLen / 5 ) );
 
-	vector< unsigned int > neighbors = 
+	vector< unsigned int > neighbors =
 		Field< vector< unsigned int > >::get( oid, "neighbors" );
 	assert( neighbors.size() == 2 );
 	assert( neighbors[0] = 1 );
@@ -795,7 +795,7 @@ void testReMesh()
 	Id base = s->doCreate( "Neutral", Id(), "base", 1 );
 
 	Id cube = s->doCreate( "CubeMesh", base, "cube", 1 );
-	bool ret = SetGet2< double, unsigned int >::set( 
+	bool ret = SetGet2< double, unsigned int >::set(
 		cube, "buildDefaultMesh", 1.0, 1 );
 	assert( ret );
 	unsigned int vol = Field< double >::get( cube, "volume" );
@@ -814,7 +814,7 @@ void testReMesh()
 	double n = Field< double >::get( pool, "n" );
 	assert( doubleEq( n, NA ) );
 
-	ret = SetGet2< double, unsigned int >::set( 
+	ret = SetGet2< double, unsigned int >::set(
 		cube, "buildDefaultMesh", 1.0e-3, 1 );
 	Field< double >::set( pool, "conc", 1 );
 	n = Field< double >::get( pool, "n" );
@@ -824,7 +824,7 @@ void testReMesh()
 	// Next we do the remeshing.
 	double x = 1.234;
 	Field< double >::set( pool, "concInit", x );
-	ret = SetGet2< double, unsigned int >::set( 
+	ret = SetGet2< double, unsigned int >::set(
 		cube, "buildDefaultMesh", 1, 8 );
 	// This is nasty, needs the change to propagate through messages.
 	linsize = Field< double >::get( pool, "volume" );
@@ -852,7 +852,7 @@ void testReMesh()
  * theta in degrees
  * len and dia in metres as usual
  */
-Id makeCompt( Id parentCompt, Id parentObj, 
+Id makeCompt( Id parentCompt, Id parentObj,
 		string name, double len, double dia, double theta )
 {
 	Shell* shell = reinterpret_cast< Shell* >( Id().eref().data() );
@@ -903,7 +903,7 @@ Id makeSpine( Id parentCompt, Id parentObj, unsigned int index,
 	string hname = ss2.str();
 
 	Id shaft = shell->doCreate( "Compartment", parentObj, sname, 1 );
-	ObjId mid = 
+	ObjId mid =
 		shell->doAddMsg( "Single", parentCompt, "raxial", shaft, "axial" );
 	assert( !mid.bad() );
 	double x = pax0 + frac * ( pax1 - pax0 );
@@ -951,17 +951,17 @@ Id makeSpine( Id parentCompt, Id parentObj, unsigned int index,
  * soma---->d1---->d1a---->d11---->d111
  *  |               |       +----->d112
  *  |               |
- *  |               +----->d12---->d121       
+ *  |               +----->d12---->d121
  *  |                       +----->d122
  *  |
  *  +------>d2----->d2a---->d21---->d211
  *                  |        +----->d212
  *                  |
- *                  +------>d22---->d221       
+ *                  +------>d22---->d221
  *                           +----->d222
  *
  */
-pair< unsigned int, unsigned int > buildBranchingCell( 
+pair< unsigned int, unsigned int > buildBranchingCell(
 				Id cell, double len, double dia )
 {
 	Id soma = makeCompt( Id(), cell, "soma", dia, dia, 90 );
@@ -988,7 +988,7 @@ pair< unsigned int, unsigned int > buildBranchingCell(
 	return pair< unsigned int, unsigned int >( 17, 161 );
 }
 
-	// y = initConc * dx * (0.5 / sqrt( PI * DiffConst * runtime ) ) * 
+	// y = initConc * dx * (0.5 / sqrt( PI * DiffConst * runtime ) ) *
 	//        exp( -x * x / ( 4 * DiffConst * runtime ) )
 double diffusionFunction( double D, double dx, double x, double t )
 {
@@ -1019,18 +1019,18 @@ void testNeuroMeshLinear()
 	assert( ns == 1 );
 	unsigned int ndc = Field< unsigned int >::get( nm, "numDiffCompts" );
 	assert( ndc == numCompts );
-	const vector< NeuroNode >& nodes = 
+	const vector< NeuroNode >& nodes =
 			reinterpret_cast< NeuroMesh* >( nm.eref().data() )->
 			getNodes();
 	assert( nodes.size() == 2 ); // Self plus dummy parent.
 	assert( nodes[0].children().size() == 0 );
 
-	// Insert a molecule at first subdivision of soma. I use a dummy 
+	// Insert a molecule at first subdivision of soma. I use a dummy
 	// matrix S rather than the one in the system.
 	// Field< double >::set( ObjId( soma, 0 ), "nInit", 1.0e6 );
 	vector< double > molNum( 1, 0 ); // We only have one pool
 	// S[meshIndex][poolIndex]
-	vector< vector< double > > S( ndc, molNum ); 
+	vector< vector< double > > S( ndc, molNum );
 	S[0][0] = totNum;
 	vector< double > diffConst( 1, D );
 	vector< double > temp( 1, 0.0 );
@@ -1040,8 +1040,8 @@ void testNeuroMeshLinear()
 	assert( mc->getNumEntries() == numCompts );
 	const double adx = dia * dia * PI * 0.25 / diffLength;
 	for ( unsigned int i = 0; i < numCompts; ++i ) {
-		const double* entry; 
-		const unsigned int* colIndex; 
+		const double* entry;
+		const unsigned int* colIndex;
 		unsigned int numAbut =  mc->getStencilRow( i, &entry, &colIndex );
 		if ( i == 0 ) {
 			assert( numAbut == 1 );
@@ -1077,7 +1077,7 @@ void testNeuroMeshLinear()
 	assert( doubleEq( x, diffLength * 27.5 ) );
 	assert( doubleEq( y, 0.0 ) );
 	assert( doubleEq( z, 0.0 ) );
-	
+
 	///////////////////////////////////////////////////////////////////
 	shell->doDelete( cell );
 	shell->doDelete( nm );
@@ -1097,7 +1097,7 @@ void testNeuroMeshBranching()
 	double maxt = 10.0;
 	double dt = 0.001;
 
-	pair< unsigned int, unsigned int > ret = 
+	pair< unsigned int, unsigned int > ret =
 			buildBranchingCell( cell, len, dia );
 
 	// Scan it with neuroMesh and check outcome.
@@ -1117,13 +1117,13 @@ void testNeuroMeshBranching()
      * soma---->d1---->d1a---->d11---->d111
      *  |               |       +----->d112
      *  |               |
-     *  |               +----->d12---->d121       
+     *  |               +----->d12---->d121
      *  |                       +----->d122
      *  |
      *  +------>d2----->d2a---->d21---->d211
      *                  |        +----->d212
      *                  |
-     *                  +------>d22---->d221       
+     *                  +------>d22---->d221
      *                           +----->d222
      *
      */
@@ -1149,7 +1149,7 @@ void testNeuroMeshBranching()
 	// Insert a molecule at soma
 	vector< double > molNum( 1, 0 ); // We only have one pool
 	// S[meshIndex][poolIndex]
-	vector< double > S( ndc, 0.0 ); 
+	vector< double > S( ndc, 0.0 );
 	S[0] = totNum;
 	vector< double > flux( ndc, 0.0 );
 	vector< double > vol( ndc, 0.0 );
@@ -1158,15 +1158,15 @@ void testNeuroMeshBranching()
 
 	assert( doubleEq( vol[0], dia * dia * 0.25 * PI * diffLength ) );
 	assert( doubleEq( vol[1], dia * dia * 0.125 * PI * diffLength ) );
-	// Watch diffusion using stencil and direct calls to the flux 
+	// Watch diffusion using stencil and direct calls to the flux
 	// calculations rather than going through the ksolve.
 	for ( double t = 0; t < maxt; t += dt ) {
 		flux.assign( ndc, 0.0 );
-		
+
 		for ( unsigned int i = 0; i < ndc; ++i ) {
 			const double* entry;
 			const unsigned int* colIndex;
-			unsigned int numEntries = 
+			unsigned int numEntries =
 					neuro->getStencilRow( i, &entry, &colIndex);
 			for ( unsigned int j = 0; j < numEntries; ++j ) {
 				unsigned int k = colIndex[j];
@@ -1223,10 +1223,10 @@ void testNeuroMeshBranching()
 	/*
 	for ( unsigned int i = 0; i < nn.size(); ++i ) {
 		if ( !nn[i].isDummyNode() ) {
-			cout << i << "	(" << 
-				nn[i].getX() << ", " << nn[i].getY() << ", " << 
+			cout << i << "	(" <<
+				nn[i].getX() << ", " << nn[i].getY() << ", " <<
 				nn[i].getZ() << ") on " <<
-				nn[i].elecCompt().element()->getName() << 
+				nn[i].elecCompt().element()->getName() <<
 				"\n";
 		}
 	}
@@ -1246,7 +1246,7 @@ void testNeuroMeshBranching()
 
 	///////////////////////////////////////////////////////////////////
 	// Test the area calculation
-	
+
 	CubeMesh cube;
 	cube.setPreserveNumEntries( 0 );
 	vector< double > coords( 9, 0.0 );
@@ -1270,16 +1270,16 @@ void testNeuroMeshBranching()
 		assert( vj[i].second == 0 ); // Only one cube entry
 		area += vj[i].diffScale;
 		/*
-		double r = cm.getR0() + 
-				( cm.getR1() - cm.getR0() ) * 
-				cm.getDiffLength() * ( 0.5 + i ) / cm.getTotLength(); 
+		double r = cm.getR0() +
+				( cm.getR1() - cm.getR0() ) *
+				cm.getDiffLength() * ( 0.5 + i ) / cm.getTotLength();
 		double a = r * cm.getDiffLength() * 2 * PI;
 		//assert( doubleApprox( vj[i].diffScale, a ) );
 		// cout << i << ". mesh: " << vj[i].diffScale << ", calc: " << a << endl;
 		assert( fabs( vj[i].diffScale - a ) < 0.5 );
 		*/
 	}
-	double a2 = dia * dia * PI + 
+	double a2 = dia * dia * PI +
 			4 * len * dia * PI / sqrt( 2.0 ) +
 			4 * len * dia * PI / 2.0 +
 			8 * len * dia * PI / (2.0 * sqrt( 2.0 ) );
@@ -1289,7 +1289,7 @@ void testNeuroMeshBranching()
 
 
 	///////////////////////////////////////////////////////////////////
-	
+
 	shell->doDelete( cell );
 	shell->doDelete( nm );
 	cout << "." << flush;
@@ -1302,14 +1302,14 @@ static const unsigned int SURFACE = ~1;
 static const unsigned int ABUT = ~2;
 static const unsigned int MULTI = ~3;
 typedef pair< unsigned int, unsigned int > PII;
-extern void setIntersectVoxel( 
-		vector< PII >& intersect, 
+extern void setIntersectVoxel(
+		vector< PII >& intersect,
 		unsigned int ix, unsigned int iy, unsigned int iz,
 		unsigned int nx, unsigned int ny, unsigned int nz,
 		unsigned int meshIndex );
 
-extern void checkAbut( 
-		const vector< PII >& intersect, 
+extern void checkAbut(
+		const vector< PII >& intersect,
 		unsigned int ix, unsigned int iy, unsigned int iz,
 		unsigned int nx, unsigned int ny, unsigned int nz,
 		unsigned int meshIndex,
@@ -1341,7 +1341,7 @@ void testIntersectVoxel()
 	unsigned int nx = 5;
 	unsigned int ny = 3;
 	unsigned int nz = 1;
-	vector< PII > intersect( nx * ny * nz, PII( 
+	vector< PII > intersect( nx * ny * nz, PII(
 							CubeMesh::EMPTY, CubeMesh::EMPTY ) );
 	unsigned int meshIndex = 0;
 	setIntersectVoxel( intersect, 1, 0, 0, nx, ny, nz, meshIndex++ );
@@ -1352,37 +1352,37 @@ void testIntersectVoxel()
 	setIntersectVoxel( intersect, 2, 2, 0, nx, ny, nz, meshIndex++ );
 	setIntersectVoxel( intersect, 3, 2, 0, nx, ny, nz, meshIndex++ );
 
-	assert( intersect[0].first == 0 && 
+	assert( intersect[0].first == 0 &&
 					intersect[0].second == CubeMesh::ABUTX );
-	assert( intersect[1].first == 0 && 
+	assert( intersect[1].first == 0 &&
 					intersect[1].second == CubeMesh::SURFACE );
-	assert( intersect[2].first == 1 && 
+	assert( intersect[2].first == 1 &&
 					intersect[2].second == CubeMesh::SURFACE );
-	assert( intersect[3].first == 2 && 
+	assert( intersect[3].first == 2 &&
 					intersect[3].second == CubeMesh::SURFACE );
-	assert( intersect[4].first == 2 && 
+	assert( intersect[4].first == 2 &&
 					intersect[4].second == CubeMesh::ABUTX );
 
-	assert( intersect[5].first == 3 && 
+	assert( intersect[5].first == 3 &&
 					intersect[5].second == CubeMesh::ABUTX );
-	assert( intersect[6].first == 3 && 
+	assert( intersect[6].first == 3 &&
 					intersect[6].second == CubeMesh::SURFACE );
-	assert( intersect[7].first == 1 && 
+	assert( intersect[7].first == 1 &&
 					intersect[7].second == CubeMesh::MULTI );
-	assert( intersect[8].first == 2 && 
+	assert( intersect[8].first == 2 &&
 					intersect[8].second == CubeMesh::MULTI );
-	assert( intersect[9].first == EMPTY && 
+	assert( intersect[9].first == EMPTY &&
 					intersect[9].second == CubeMesh::EMPTY );
 
-	assert( intersect[10].first == 4 && 
+	assert( intersect[10].first == 4 &&
 					intersect[10].second == CubeMesh::ABUTX );
-	assert( intersect[11].first == 4 && 
+	assert( intersect[11].first == 4 &&
 					intersect[11].second == CubeMesh::SURFACE );
-	assert( intersect[12].first == 5 && 
+	assert( intersect[12].first == 5 &&
 					intersect[12].second == CubeMesh::SURFACE );
-	assert( intersect[13].first == 6 && 
+	assert( intersect[13].first == 6 &&
 					intersect[13].second == CubeMesh::SURFACE );
-	assert( intersect[14].first == 6 && 
+	assert( intersect[14].first == 6 &&
 					intersect[14].second == CubeMesh::ABUTX );
 
 	// Next: test out checkAbut.
@@ -1421,7 +1421,7 @@ void testIntersectVoxel()
 	assert( ret[1].first == 3 && ret[1].second == 6666 );
 	assert( ret[2].first == 4 && ret[2].second == 5555 );
 	assert( ret[3].first == 6 && ret[3].second == 4444 );
-	
+
 	cout << "." << flush;
 }
 
@@ -1451,7 +1451,7 @@ void testCubeMeshFillThreeDimSurface()
 
 void testCubeMeshJunctionTwoDimSurface()
 {
-		/**					
+		/**
 		 * 						8	9
 		 * 10	11	12	13	14	6	7
 		 * 5	6	7	8	9	4	5
@@ -1486,7 +1486,7 @@ void testCubeMeshJunctionTwoDimSurface()
 
 	vector< VoxelJunction > ret;
 	cm1.matchCubeMeshEntries( &cm2, ret );
-	assert( ret.size() == 3 ); 
+	assert( ret.size() == 3 );
 
 	assert( ret[0].first == 4 );
 	assert( ret[0].second == 2 );
@@ -1506,7 +1506,7 @@ void testCubeMeshJunctionTwoDimSurface()
 		 *
 		 * So, junction should be (9,2) only.
 		 */
-	
+
 	// Trimming cm1. At this point we don't assume automatic updates of
 	// the m2s, s2m and surface vectors when any of them is changed.
 	vector< unsigned int > m2s = cm1.getMeshToSpace();
@@ -1517,7 +1517,7 @@ void testCubeMeshJunctionTwoDimSurface()
 	assert( s2m.size() == 15 );
 	s2m[14] = ~0;
 	cm1.setSpaceToMesh( s2m );
-	surface.resize( 4 ); 
+	surface.resize( 4 );
 	// As a shortcut, just assign the places near the junction
 	// Note that the indices are spaceIndices.
 	surface[0] = 3;
@@ -1525,7 +1525,7 @@ void testCubeMeshJunctionTwoDimSurface()
 	surface[2] = 9;
 	surface[3] = 13;
 	cm1.setSurface( surface );
-	
+
 	// Trimming cm2.
 	m2s = cm2.getMeshToSpace();
 	assert( m2s.size() == 10 );
@@ -1550,7 +1550,7 @@ void testCubeMeshJunctionTwoDimSurface()
 	// Now test it out.
 	ret.resize( 0 );
 	cm1.matchCubeMeshEntries( &cm2, ret );
-	assert( ret.size() == 1 ); 
+	assert( ret.size() == 1 );
 	assert( ret[0].first == 9 );
 	assert( ret[0].second == 2 );
 
@@ -1559,7 +1559,7 @@ void testCubeMeshJunctionTwoDimSurface()
 
 void testCubeMeshJunctionDiffSizeMesh()
 {
-		/**					
+		/**
 		 * 						14	15
 		 * 						12	13
 		 * 10	11	12	13	14	10	11
@@ -1599,7 +1599,7 @@ void testCubeMeshJunctionDiffSizeMesh()
 
 	vector< VoxelJunction > ret;
 	cm1.matchCubeMeshEntries( &cm2, ret );
-	assert( ret.size() == 6 ); 
+	assert( ret.size() == 6 );
 
 	assert( ret[0].first == 4 );
 	assert( ret[0].second == 2 );
@@ -1790,11 +1790,11 @@ void testSpineAndPsdMesh()
 	Field< double >::set( nm, "diffLength", diffLength );
 	Field< string >::set( nm, "geometryPolicy", "cylinder" );
 	Id sm = shell->doCreate( "SpineMesh", Id(), "spinemesh", 1 );
-	ObjId mid = shell->doAddMsg( 
+	ObjId mid = shell->doAddMsg(
 					"OneToOne", nm, "spineListOut", sm, "spineList" );
 	assert( !mid.bad() );
 	Id pm = shell->doCreate( "PsdMesh", Id(), "psdmesh", 1 );
-	mid = shell->doAddMsg( 
+	mid = shell->doAddMsg(
 					"OneToOne", nm, "psdListOut", pm, "psdList" );
 	assert( !mid.bad() );
 	Field< Id >::set( nm, "cell", cell );
@@ -1802,7 +1802,7 @@ void testSpineAndPsdMesh()
 	assert( ns == 2 ); // soma and dend
 	unsigned int ndc = Field< unsigned int >::get( nm, "numDiffCompts" );
 	assert( ndc == numCompts + floor( dia / diffLength + 0.5 ) );
-	
+
 	unsigned int sdc = Field< unsigned int >::get( sm, "num_mesh" );
 	assert( sdc == numSpines );
 
@@ -1853,7 +1853,7 @@ void testSpineAndPsdMesh()
 		assert( ret[i].second == cubeIndex );
 		assert( doubleApprox( ret[i].diffScale * 1e10, PI * 1e-12 * 1e10 ) );
 		/*
-		cout << i << " cubeIndex=" << cubeIndex << ", (" << 
+		cout << i << " cubeIndex=" << cubeIndex << ", (" <<
 				ret[i].first << ", " << ret[i].second << ") : " <<
 				ret[i].diffScale << "\n";
 				*/
@@ -1882,7 +1882,7 @@ void testSpineAndPsdMesh()
 	for ( unsigned int i = 0; i < ret.size(); ++i ) {
 		assert( ret[i].first == i );
 		assert( ret[i].second == i );
-		assert( doubleApprox( ret[i].diffScale * 1e10, 
+		assert( doubleApprox( ret[i].diffScale * 1e10,
 								1e10 * 0.25 * PI * 1e-12 / 0.5e-6 ) );
 	}
 	ret.clear();
@@ -1894,7 +1894,7 @@ void testSpineAndPsdMesh()
 		assert( ret[i].second == cubeIndex );
 		assert( doubleApprox( ret[i].diffScale * 1e10, 0.25 * PI * 1e-12 * 1e10 ) );
 	}
-	
+
 
 	shell->doDelete( cell );
 	shell->doDelete( nm );
@@ -1949,7 +1949,7 @@ void testNeuroNodeTree()
 	}
 	*/
 	//////////////////////////////////////////////////////////////////////
-	// Now to make a totally random cell, with a complete mash of 
+	// Now to make a totally random cell, with a complete mash of
 	// messaging, having circular linkage even.
 	//////////////////////////////////////////////////////////////////////
 	shell->doDelete( cell );
@@ -2039,11 +2039,11 @@ void testNeuroNodeTree()
 	for ( unsigned int i = 0; i < neck.size(); ++i ) {
 	// Just to make things interesting, add the messages staggered.
 		if ( i > 0 )
-			shell->doAddMsg( "Single", dend[i], "proximal", 
+			shell->doAddMsg( "Single", dend[i], "proximal",
 						dend[ (i-1)], "distal" );
-		shell->doAddMsg( "Single", neck[i], "proximalOnly", 
+		shell->doAddMsg( "Single", neck[i], "proximalOnly",
 						dend[ (i+7) % head.size()], "cylinder" );
-		shell->doAddMsg( "Single", neck[i], "distal", 
+		shell->doAddMsg( "Single", neck[i], "distal",
 						head[ (i+4) % neck.size() ], "proximal" );
 	}
 	nodes.clear();
@@ -2060,11 +2060,11 @@ void testNeuroNodeTree()
 	/*
 	cout << endl;
 	for ( unsigned int i = 0; i < 10; ++i ) {
-		cout << "nodes[" << i << "].pa = " << nodes[i].parent() << 
+		cout << "nodes[" << i << "].pa = " << nodes[i].parent() <<
 				", Id = " << nodes[i].elecCompt() << endl;
 	}
 	for ( unsigned int i = 0; i < 30; ++i ) {
-		cout << "orig[" << i << "].pa = " << orig[i].parent() << 
+		cout << "orig[" << i << "].pa = " << orig[i].parent() <<
 				", Id = " << orig[i].elecCompt() << endl;
 	}
 	*/
@@ -2113,11 +2113,11 @@ void testCellPortion()
 	Field< double >::set( nm, "diffLength", diffLength );
 	Field< string >::set( nm, "geometryPolicy", "cylinder" );
 	Id sm = shell->doCreate( "SpineMesh", Id(), "spinemesh", 1 );
-	ObjId mid = shell->doAddMsg( 
+	ObjId mid = shell->doAddMsg(
 					"OneToOne", nm, "spineListOut", sm, "spineList" );
 	assert( !mid.bad() );
 	Id pm = shell->doCreate( "PsdMesh", Id(), "psdmesh", 1 );
-	mid = shell->doAddMsg( 
+	mid = shell->doAddMsg(
 					"OneToOne", nm, "psdListOut", pm, "psdList" );
 	assert( !mid.bad() );
 	// SetGet2< Id, string >::set( nm, "cellPortion", cell, "/cell/dend2,/cell/shaft#,/cell/head#" );
@@ -2126,7 +2126,7 @@ void testCellPortion()
 	assert( ns == 2 ); // dend1 + dend2 only
 	unsigned int ndc = Field< unsigned int >::get( nm, "numDiffCompts" );
 	assert( ndc == numCompts * 2 );
-	
+
 	unsigned int sdc = Field< unsigned int >::get( sm, "num_mesh" );
 	assert( sdc == 11 ); // I've selected only those in the teens plus #3
 

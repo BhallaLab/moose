@@ -16,7 +16,7 @@
  */
 class Boundary
 {
-	public: 
+	public:
 		Boundary();
 
 		void setReflectivity( const double v );

@@ -10,7 +10,7 @@
 #ifndef _READCSPACE_H
 #define _READCSPACE_H
 
-class CspaceMolInfo 
+class CspaceMolInfo
 {
 	public:
 		CspaceMolInfo( char name, double conc )
@@ -37,18 +37,18 @@ class CspaceMolInfo
 		double conc_;
 };
 
-class CspaceReacInfo 
+class CspaceReacInfo
 {
 	public:
 		CspaceReacInfo( const string& name, double r1, double r2 )
 			: name_( name ), r1_( r1 ), r2_( r2 )
 		{
-			;	
+			;
 		}
 		CspaceReacInfo( )
 			: name_( "" ), r1_( 0.1 ), r2_( 0.1 )
 		{
-			;	
+			;
 		}
 
 		bool operator<( const CspaceReacInfo& other ) const
@@ -78,7 +78,7 @@ class ReadCspace
 
 		void printHeader();
 		void printFooter();
-		
+
 
 		void printMol(Id id, double conc, double concinit, double vol);
 
@@ -92,15 +92,15 @@ class ReadCspace
 		void makePlots( double plotdt );
 
 		void build( const char* name );
-		void expandEnzyme( 
+		void expandEnzyme(
 			const char* name, int e, int s, int p, int p2 = 0);
 		void expandReaction( const char* name, int nm1 );
 
 		void deployParameters();
 		void testReadModel( );
 
-		void makeMolecule( char name ); 
-		
+		void makeMolecule( char name );
+
 	private:
 		static const double SCALE;
 		static const double DEFAULT_CONC;

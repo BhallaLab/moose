@@ -27,6 +27,6 @@ class MsgFuncBinding
 
 		ObjId mid;
 		FuncId fid;
-	
+
 	private:
 };

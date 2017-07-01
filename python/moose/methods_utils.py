@@ -1,7 +1,8 @@
+# -*- coding: utf-8 -*-
 
 
-"""methods_utils.py: 
-    Some non-standard functions generic to moose. 
+"""methods_utils.py:
+    Some non-standard functions generic to moose.
 
     This library may not be exposed to end-users. Intended for development by
     the maintainer of this file.
@@ -9,7 +10,7 @@
 Last modified: Sat Jan 18, 2014  05:01PM
 
 """
-    
+
 __author__           = "Dilawar Singh"
 __copyright__        = "Copyright 2013, NCBS Bangalore"
 __credits__          = ["NCBS Bangalore", "Bhalla Lab"]
@@ -26,7 +27,7 @@ objPathPat = re.compile(r'(\/\w+\[\d+\])+?$')
 
 def idPathToObjPath( idPath ):
     """ Append a [0] if missing from idPath.
-    
+
     Id-paths do not have [0] at their end. This does not allow one to do
     algebra properly.
     """

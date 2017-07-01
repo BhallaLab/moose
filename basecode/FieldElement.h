@@ -11,7 +11,7 @@
 
 /**
  * Specialization of Element class, used to look up array fields within
- * objects when those fields each need to have independent Element 
+ * objects when those fields each need to have independent Element
  * capabilies such as messaging and subfield lookup.
  * Made automatically by Elements which have such fields.
  */
@@ -24,10 +24,10 @@ class FieldElement: public Element
 
 		~FieldElement();
 
-		/** 
+		/**
 		 * Virtual copier. Makes a copy of self.
 		 */
-		Element* copyElement( Id newParent, Id newId, unsigned int n, 
+		Element* copyElement( Id newParent, Id newId, unsigned int n,
 			bool toGlobal ) const;
 
 		/////////////////////////////////////////////////////////////////
@@ -77,8 +77,8 @@ class FieldElement: public Element
 		 * virtual.
 		 * Looks up specified field field entry. First it finds the
 		 * appropriate data entry from the rawIndex. Then it looks up
-		 * the field using the lookupField. 
-		 * Returns the data entry specified by the rawIndex, fieldIndex. 
+		 * the field using the lookupField.
+		 * Returns the data entry specified by the rawIndex, fieldIndex.
 		 *
 		 * Note that the index is NOT a
 		 * DataIndex: it is instead the raw index of the data on the current
@@ -90,7 +90,7 @@ class FieldElement: public Element
 		 *
 		 * Returns 0 if either index is out of range.
 		 */
-		char* data( unsigned int rawIndex, 
+		char* data( unsigned int rawIndex,
 						unsigned int fieldIndex = 0 ) const;
 
 		/**
@@ -104,11 +104,11 @@ class FieldElement: public Element
 		 * virtual.
 		 * Changes the number of fields on the specified data entry.
 		 */
-		void resizeField( 
+		void resizeField(
 				unsigned int rawIndex, unsigned int newNumField );
 
 		/**
-		 * Virtual: after replacing Cinfo of parent, we need to 
+		 * Virtual: after replacing Cinfo of parent, we need to
 		 * replace Cinfo and fef here. The zCinfo is the new Cinfo for this
 		 * FieldElement.
 		 */

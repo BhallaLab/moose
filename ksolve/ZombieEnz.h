@@ -12,7 +12,7 @@
 
 class ZombieEnz: public CplxEnzBase
 {
-	public: 
+	public:
 		ZombieEnz();
 		~ZombieEnz();
 
@@ -52,7 +52,7 @@ class ZombieEnz: public CplxEnzBase
 		// Utility  funcs
 		//////////////////////////////////////////////////////////////////
 		/*
-		ZeroOrder* makeHalfReaction( 
+		ZeroOrder* makeHalfReaction(
 			Element* orig, double rate, const SrcFinfo* finfo, Id enz )
 			const;
 			*/

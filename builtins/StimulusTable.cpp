@@ -136,8 +136,8 @@ const Cinfo* StimulusTable::initCinfo()
 static const Cinfo* stimulusTableCinfo = StimulusTable::initCinfo();
 
 StimulusTable::StimulusTable()
-	: start_( 0 ), stop_( 1 ), loopTime_( 1 ), 
-		stepSize_( 0 ), stepPosition_( 0 ), 
+	: start_( 0 ), stop_( 1 ), loopTime_( 1 ),
+		stepSize_( 0 ), stepPosition_( 0 ),
 	doLoop_( 0 )
 { ; }
 
@@ -202,8 +202,8 @@ void StimulusTable::setLoopTime( double v )
 {
 	if ( loopTime_ >= 0 )
 		loopTime_ = v;
-	else 
-		cout << "StimulusTable::setLoopTime: Warning: Cannot set to " << 
+	else
+		cout << "StimulusTable::setLoopTime: Warning: Cannot set to " <<
 			v << " as this value is below zero. Left unchanged at " <<
 			loopTime_ << "\n";
 }

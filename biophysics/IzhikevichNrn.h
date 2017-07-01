@@ -1,30 +1,30 @@
-// IzhikevichNrn.h --- 
-// 
+// IzhikevichNrn.h ---
+//
 // Filename: IzhikevichNrn.h
-// Description: 
+// Description:
 // Author: Subhasis Ray
-// Maintainer: 
+// Maintainer:
 // Created: Fri Jul  8 09:55:21 2011 (+0530)
-// Version: 
+// Version:
 // Last-Updated: Fri Jul  8 15:37:02 2011 (+0530)
 //           By: Subhasis Ray
 //     Update #: 13
-// URL: 
-// Keywords: 
-// Compatibility: 
-// 
-// 
+// URL:
+// Keywords:
+// Compatibility:
+//
+//
 
-// Commentary: 
-// 
+// Commentary:
+//
 // Implementation of Izhikevich Neuron model.
-// 
-// 
+//
+//
 
 // Change log:
-// 
-// 
-// 
+//
+//
+//
 
 // Code:
 
@@ -39,7 +39,7 @@ class IzhikevichNrn
     ~IzhikevichNrn();
     void setA( double value );
     double getA() const;
-    
+
     void setB( double value );
     double getB() const;
 
@@ -92,7 +92,7 @@ class IzhikevichNrn
 
     static const Cinfo * initCinfo();
 
-    
+
   private:
     double alpha_;
     double beta_;
@@ -117,5 +117,5 @@ class IzhikevichNrn
 
 #endif
 
-// 
+//
 // IzhikevichNrn.h ends here

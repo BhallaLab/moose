@@ -25,31 +25,31 @@ class Binomial:public Probability
     Binomial(){};
     Binomial( long n, double p);
     long getN() const;
-    double getP() const;        
+    double getP() const;
     double getMean() const;
     double getVariance() const;
     double getNextSample() const;
-    
+
   private:
     double generateTrd() const;
     bool isInverted_;
-    
+
     unsigned long n_;
     double p_;
     double mean_;
-    
+
     double paramC_;
     double paramB_;
     double paramA_;
     double paramAlpha_;
-    double paramUr_; 
-    double paramVr_; 
+    double paramUr_;
+    double paramVr_;
     double paramUrVr_;
-    double paramM_; 
-    double paramR_; 
+    double paramM_;
+    double paramR_;
     double paramNr_;
     double paramNpq_;
 };
 
-    
+
 #endif

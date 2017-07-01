@@ -27,14 +27,14 @@ class Probability
 {
   public:
     virtual ~Probability(){};
-    
+
     virtual double getMean() const =0;
     virtual double getVariance()const =0;
     virtual double getNextSample()const =0;
-    
+
   private:
 //     long double mean_; // TODO : do we really need this?
-//     long double variance_;// TODO : do we really need this?    
+//     long double variance_;// TODO : do we really need this?
 };
-    
+
 #endif

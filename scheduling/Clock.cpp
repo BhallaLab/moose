@@ -51,6 +51,11 @@
 #include "header.h"
 #include "Clock.h"
 #include "../utility/numutil.h"
+#include "../utility/print_function.hpp"
+
+#if PARALLELIZE_CLOCK_USING_CPP11_ASYNC
+#include <future>
+#endif
 
 // Declaration of some static variables.
 const unsigned int Clock::numTicks = 32;
@@ -698,7 +703,9 @@ void Clock::handleStart( const Eref& e, double runtime, bool notify )
     if ( stride_ == 0 || stride_ == ~0U )
         stride_ = 1;
     unsigned long n = round( runtime / ( stride_ * dt_ ) );
+
     handleStep( e, n );
+
 }
 
 void Clock::handleStep( const Eref& e, unsigned long numSteps )
@@ -725,6 +732,40 @@ void Clock::handleStep( const Eref& e, unsigned long numSteps )
         // Curr time is end of current step.
         unsigned long endStep = currentStep_ + stride_;
         currentTime_ = info_.currTime = dt_ * endStep;
+
+#if PARALLELIZE_CLOCK_USING_CPP11_ASYNC
+
+        // NOTE: It does not produce very promising results. The challenge here
+        // is doing load-balancing.
+        // TODO: To start with, we can put one solver on one thread and everything
+        // else onto 1 thread. Each Hsove, Ksolve, and Gsolve can take its own
+        // thread and rest are on different threads.
+
+        unsigned int nTasks = activeTicks_.size( );
+        unsigned int numThreads_ = 3;
+        unsigned int blockSize = 1 + (nTasks / numThreads_);
+
+        for( unsigned int i = 0; i < numThreads_; ++i  )
+        {
+            std::async( std::launch::async
+                , [this,blockSize,i,nTasks,endStep,e]
+                {
+                    unsigned int mapI = i * blockSize;
+                    // Get the block we want to run in paralle.
+                    for( unsigned int ii = i * blockSize; ii < min((i+1) * blockSize, nTasks); ii++ )
+                    {
+                        unsigned int j = activeTicks_[ ii ];
+                        if( endStep % j == 0  )
+                        {
+                             info_.dt = j * dt_;
+                             processVec( )[ activeTicksMap_[mapI] ]->send( e, &info_ );
+                        }
+                        mapI++;
+                    }
+                }
+            );
+        }
+#else
         vector< unsigned int >::const_iterator k = activeTicksMap_.begin();
         for ( vector< unsigned int>::iterator j =
                     activeTicks_.begin(); j != activeTicks_.end(); ++j )
@@ -736,6 +777,7 @@ void Clock::handleStep( const Eref& e, unsigned long numSteps )
             }
             ++k;
         }
+#endif
 
         // When 10% of simulation is over, notify user when notify_ is set to
         // true.
@@ -750,9 +792,10 @@ void Clock::handleStep( const Eref& e, unsigned long numSteps )
                     << "% of total " << runTime_ << " seconds is over." << endl;
             }
         }
+
+        if ( activeTicks_.size() == 0 )
+            currentTime_ = runTime_;
     }
-	if ( activeTicks_.size() == 0 )
-		currentTime_ = runTime_;
 
     info_.dt = dt_;
     isRunning_ = false;

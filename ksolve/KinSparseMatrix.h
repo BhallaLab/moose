@@ -12,20 +12,20 @@
 
 class KinSparseMatrix: public SparseMatrix< int >
 {
-	public: 
+	public:
 //		KinSparseMatrix();
 //		KinSparseMatrix( unsigned int nrows, unsigned int ncolumns );
 
-		/** 
-		 * Returns all non-zero column indices, for the specified row.  
-		  * This gives reac #s in orig matrix, and molecule #s in the 
+		/**
+		 * Returns all non-zero column indices, for the specified row.
+		  * This gives reac #s in orig matrix, and molecule #s in the
 		 * transposed matrix
 		 * Not needed. The getRow function does all this, more efficiently.
 		int getRowIndices(
 			unsigned int row, vector< unsigned int >& indices );
 		 */
-		
-		/** 
+
+		/**
 		 * Returns the dot product of the specified row with the
 		 * vector v. v corresponds to the vector of reaction rates.
 		 * v must have nColumns entries.
@@ -35,25 +35,25 @@ class KinSparseMatrix: public SparseMatrix< int >
 		) const;
 
 
-		/** 
+		/**
 		 * Does a special self-product of the specified row. Output
 		 * is the set of nonzero indices in the product
 		 * abs( Rij ) * neg( Rjk ) for the specified index i, where
 		 * neg( val ) is true only if val < 0.
 		 */
-  		void getGillespieDependence( 
+  		void getGillespieDependence(
   			unsigned int row, vector< unsigned int >& cols
   		) const;
 
-	    /** 
+	    /**
          * Fires a stochastic reaction: It undergoes a single transition
          * This operation updates the mol concs due to the reacn.
 		 * Direction is +1 or -1, specifies direction of reaction
          */
-        void fireReac( unsigned int reacIndex, vector< double >& S, 
+        void fireReac( unsigned int reacIndex, vector< double >& S,
 						double direction ) const;
-    
-        /** 
+
+        /**
         * This function generates a new internal list of rowEnds, such
         * that they are all less than the maxColumnIndex.
         * It is used because in fireReac we don't want to update all the

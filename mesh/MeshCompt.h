@@ -19,7 +19,7 @@
  */
 class MeshCompt: public ChemCompt
 {
-	public: 
+	public:
 		MeshCompt();
 		~MeshCompt();
 
@@ -37,7 +37,7 @@ class MeshCompt: public ChemCompt
 		void innerResetStencil();
 
 		/// Derived function to return SparseMatrix-style row info for
-		/// specified mesh entry. 
+		/// specified mesh entry.
 		unsigned int getStencilRow( unsigned int meshIndex,
 				const double** entry, const unsigned int** colIndex ) const;
 
@@ -48,7 +48,7 @@ class MeshCompt: public ChemCompt
 		vector< unsigned int > getNeighbors( unsigned int fid ) const;
 
 		/**
-		 * Looks up stencil to return vector of diffusion coupling to 
+		 * Looks up stencil to return vector of diffusion coupling to
 		 * neighbor voxels.
 		 */
 		vector< double > innerGetStencilRate( unsigned int row ) const;
@@ -71,13 +71,13 @@ class MeshCompt: public ChemCompt
 	private:
 
 		/// Handles the core stencil for own vol
-		SparseMatrix< double > coreStencil_; 
+		SparseMatrix< double > coreStencil_;
 
 		/// Handles stencil for core + abutting voxels
-		SparseMatrix< double > m_; 
+		SparseMatrix< double > m_;
 
 		/**
-		 * vector of meshEntryVolumes for abutting surfaces, 
+		 * vector of meshEntryVolumes for abutting surfaces,
 		 * needed to compute
 		 * diffusion rates across junctions.
 		 * Indexed from zero.
@@ -85,9 +85,9 @@ class MeshCompt: public ChemCompt
 		vector< double > extendedMeshEntryVolume_;
 };
 
-// Helper class for setting up and sorting rows of matrix entries. 
+// Helper class for setting up and sorting rows of matrix entries.
 class Ecol {
-	public: 
+	public:
 		Ecol( double e, unsigned int col )
 			: e_( e ), col_( col )
 		{;}
@@ -95,7 +95,7 @@ class Ecol {
 		Ecol()
 			: e_( 0 ), col_( 0 )
 		{;}
-	
+
 		bool operator<( const Ecol& other ) const
 		{
 			return col_ < other.col_;

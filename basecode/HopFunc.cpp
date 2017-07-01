@@ -12,7 +12,7 @@
 #include "../shell/Shell.h"
 
 static double testBuf[4096];
-static double* addToTestBuf( const Eref& e, unsigned int i, 
+static double* addToTestBuf( const Eref& e, unsigned int i,
 				unsigned int size )
 {
 	TgtInfo* tgt = reinterpret_cast< TgtInfo* >( &testBuf[0] );
@@ -35,7 +35,7 @@ double* addToBuf( const Eref& er, HopIndex hopIndex, unsigned int size )
 	} else if ( hopIndex.hopType() == MooseSetHop ||
 			 hopIndex.hopType() == MooseSetVecHop ) {
 		p->clearPendingSetGet(); // Cannot touch set buffer if pending.
-		return p->addToSetBuf( er, hopIndex.bindIndex(), 
+		return p->addToSetBuf( er, hopIndex.bindIndex(),
 						size, hopIndex.hopType() );
 	} else if ( hopIndex.hopType() == MooseTestHop ) {
 		return addToTestBuf( er, hopIndex.bindIndex(), size );
@@ -50,7 +50,7 @@ void dispatchBuffers( const Eref& e, HopIndex hopIndex )
 	static PostMaster* p = reinterpret_cast< PostMaster* >( oi.data() );
 	if ( Shell::numNodes() == 1 )
 		return;
-	if ( hopIndex.hopType() == MooseSetHop || 
+	if ( hopIndex.hopType() == MooseSetHop ||
 	  	hopIndex.hopType() == MooseGetHop ) {
 		p->dispatchSetBuf( e );
 	}
@@ -67,8 +67,8 @@ double* remoteGet( const Eref& e, unsigned int bindIndex )
 	return p->remoteGet( e, bindIndex );
 }
 
-void remoteGetVec( const Eref& e, unsigned int bindIndex, 
-				vector< vector< double > >& getRecvBuf, 
+void remoteGetVec( const Eref& e, unsigned int bindIndex,
+				vector< vector< double > >& getRecvBuf,
 				vector< unsigned int >& numOnNode )
 {
 	static ObjId oi( 3 );
@@ -76,8 +76,8 @@ void remoteGetVec( const Eref& e, unsigned int bindIndex,
 	p->remoteGetVec( e, bindIndex, getRecvBuf, numOnNode );
 }
 
-void remoteFieldGetVec( const Eref& e, unsigned int bindIndex, 
-				vector< double >& getRecvBuf ) 
+void remoteFieldGetVec( const Eref& e, unsigned int bindIndex,
+				vector< double >& getRecvBuf )
 {
 	static ObjId oi( 3 );
 	static PostMaster* p = reinterpret_cast< PostMaster* >( oi.data() );

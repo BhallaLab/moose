@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 t_stop = 10
 dend_diameter = 2.2627398e-6
 dend_length =  1.131369936e-6
@@ -22,5 +23,5 @@ inject = 0.1e-9
 gbar = 1
 #MMpump
 km = 0.3e-3
-kcat = 85e-22 
+kcat = 85e-22
 pumps = 1

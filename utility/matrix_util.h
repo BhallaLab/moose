@@ -38,5 +38,5 @@ void eliminateRowsBelow( ublas::matrix< value_type >& U, int start, int leftCol 
 
 unsigned int rankUsingBoost( ublas::matrix<value_type>& U );
 
-#endif 
+#endif
 #endif   /* ----- #ifndef matrix_util_INC  ----- */

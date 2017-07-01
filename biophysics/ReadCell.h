@@ -12,8 +12,8 @@ enum ParseStage { COMMENT, DATA, SCRIPT };
 
 /**
  * The ReadCell class implements the old GENESIS cellreader
- * functionality. 
- * 
+ * functionality.
+ *
  * ReadCell is partially implemented but works for most common uses and
  * will evolve to some further point.
  *
@@ -26,18 +26,18 @@ class ReadCell
 	public:
 		// ReadCell( const vector< double >& globalParms );
 		ReadCell();
-		
+
 		Id read(
-			const string& filename, 
+			const string& filename,
 			const string& cellname,
 			Id parent );
-	
+
 		static void addChannelMessage( Id chan );
 	private:
 		bool innerRead( ifstream& fin );
 		bool readData( const string& line );
 		bool readScript( const string& line );
-		Id buildCompartment( 
+		Id buildCompartment(
 			const string& name,
 			const string& parent,
 			double x0, double y0, double z0,
@@ -54,25 +54,25 @@ class ReadCell
 		Id findChannel( const string& name );
 		Id addChannel(
 			Id compt,
-			Id chan, 
+			Id chan,
 			double value,
 			double dia,
 			double length );
 		bool addCanonicalChannel(
 			Id compt,
-			Id chan, 
+			Id chan,
 			double value,
 			double dia,
 			double length );
 		bool addSpikeGen(
 			Id compt,
-			Id chan, 
+			Id chan,
 			double value,
 			double dia,
 			double length );
 		bool addCaConc(
 			Id compt,
-			Id chan, 
+			Id chan,
 			double value,
 			double dia,
 			double length );
@@ -88,20 +88,20 @@ class ReadCell
 			string method );
 		void addM2C(
 			Id compt,
-			double value, 
+			double value,
 			vector< string >::iterator args );
 		void addC2M(
 			Id compt,
-			double value, 
+			double value,
 			vector< string >::iterator args );
 */
-		
+
 		void countProtos();
-		
+
 		// For error messages
 		string fileName_;
 		unsigned int lineNum_;
-		
+
 		double RM_;
 		double CM_;
 		double RA_;
@@ -118,21 +118,21 @@ class ReadCell
 
 		bool erestFlag_;
 		bool eleakFlag_;
-		
+
 		Id cell_;
 		Id currCell_;
 		Id lastCompt_;
 		Id protoCompt_;
-		
+
 		unsigned int numCompartments_;
 		unsigned int numChannels_;
 		unsigned int numOthers_;
-		
+
 		unsigned int numProtoCompts_;
 		unsigned int numProtoChans_;
 		unsigned int numProtoOthers_;
-		
-		/** 
+
+		/**
 		 * Flag indicating if we are building the main cell, or just a freely
 		 * hanging branch which will be grafted on later.
 		 */
@@ -141,9 +141,9 @@ class ReadCell
 		bool relativeCoordsFlag_;
 		bool doubleEndpointFlag_;
 		bool symmetricFlag_;
-		
+
 		map< string, Id > chanProtos_;
-		
+
 		Shell* shell_;
 };
 #endif

@@ -128,7 +128,7 @@ const Cinfo* Spine::initCinfo()
 		&totalLength,		// Value
 	};
 
-	static string doc[] = 
+	static string doc[] =
 	{
 			"Name", "Spine",
 			"Author", "Upi Bhalla",
@@ -176,7 +176,7 @@ Spine::Spine( const Neuron* parent )
 double Spine::getShaftLength( const Eref& e ) const
 {
 	const vector< Id >& sl = parent_->spineIds( e.fieldIndex() );
-	if ( sl.size() > 0 && 
+	if ( sl.size() > 0 &&
 					sl[0].element()->cinfo()->isA( "CompartmentBase" ) )
 		return Field< double >::get( sl[0], "length" );
 	return 0.0;
@@ -189,14 +189,14 @@ void Spine::setShaftLength( const Eref& e, double len )
 	else if ( len > maximumSize_ )
 		len = maximumSize_;
 	vector< Id > sl = parent_->spineIds( e.fieldIndex() );
-	if ( sl.size() > 1 && 
-			sl[0].element()->cinfo()->isA( "CompartmentBase" ) ) 
-	{ 
+	if ( sl.size() > 1 &&
+			sl[0].element()->cinfo()->isA( "CompartmentBase" ) )
+	{
 		double origDia = Field< double >::get( sl[0], "diameter" );
 		double dx = Field< double >::get( sl[0], "x" );
 		double dy = Field< double >::get( sl[0], "y" );
 		double dz = Field< double >::get( sl[0], "z" );
-		SetGet2< double, double >::set( 
+		SetGet2< double, double >::set(
 			sl[0], "setGeomAndElec", len, origDia );
 
 		dx = Field< double >::get( sl[0], "x" ) - dx;
@@ -207,7 +207,7 @@ void Spine::setShaftLength( const Eref& e, double len )
 			dx, dy, dz );
 		// Here we've set the electrical and geometrical stuff. Now to
 		// do the diffusion. Chem doesn't come into the picture for the
-		// spine shaft.	
+		// spine shaft.
 		// Assume the scaleDiffusion function propagates changes into the
 		// VoxelJunctions used by the Dsolve.
 		parent_->scaleShaftDiffusion( e.fieldIndex(), len, origDia );
@@ -217,7 +217,7 @@ void Spine::setShaftLength( const Eref& e, double len )
 double Spine::getShaftDiameter( const Eref& e ) const
 {
 	vector< Id > sl = parent_->spineIds( e.fieldIndex() );
-	if ( sl.size() > 0 && 
+	if ( sl.size() > 0 &&
 				sl[0].element()->cinfo()->isA( "CompartmentBase" ) )
 		return Field< double >::get( sl[0], "diameter" );
 	return 0.0;
@@ -231,11 +231,11 @@ void Spine::setShaftDiameter( const Eref& e, double dia )
 		dia = maximumSize_;
 
 	vector< Id > sl = parent_->spineIds( e.fieldIndex() );
-	if ( sl.size() > 1 && 
+	if ( sl.size() > 1 &&
 					sl[0].element()->cinfo()->isA( "CompartmentBase") )
 	{
 		double origLen = Field< double >::get( sl[0], "length" );
-		SetGet2< double, double >::set( 
+		SetGet2< double, double >::set(
 			sl[0], "setGeomAndElec", origLen, dia );
 		// Dia is changing, leave the coords alone.
 		parent_->scaleShaftDiffusion( e.fieldIndex(), origLen, dia );
@@ -245,7 +245,7 @@ void Spine::setShaftDiameter( const Eref& e, double dia )
 double Spine::getHeadLength( const Eref& e ) const
 {
 	vector< Id > sl = parent_->spineIds( e.fieldIndex() );
-	if ( sl.size() > 1 && 
+	if ( sl.size() > 1 &&
 					sl[1].element()->cinfo()->isA( "CompartmentBase" ) )
 		return Field< double >::get( sl[1], "length" );
 	return 0.0;
@@ -259,12 +259,12 @@ void Spine::setHeadLength( const Eref& e, double len )
 		len = maximumSize_;
 
 	vector< Id > sl = parent_->spineIds( e.fieldIndex() );
-	if ( sl.size() > 1 && 
-					sl[1].element()->cinfo()->isA( "CompartmentBase") ) 
+	if ( sl.size() > 1 &&
+					sl[1].element()->cinfo()->isA( "CompartmentBase") )
 	{
 		double origDia = Field< double >::get( sl[1], "diameter" );
 		double origLen = Field< double >::get( sl[1], "length" );
-		SetGet2< double, double >::set( 
+		SetGet2< double, double >::set(
 			sl[1], "setGeomAndElec", len, origDia );
 		// Here we've set the electrical and geometrical stuff. Now to
 		// do the diffusion.
@@ -280,7 +280,7 @@ void Spine::setHeadLength( const Eref& e, double len )
 double Spine::getHeadDiameter( const Eref& e ) const
 {
 	vector< Id > sl = parent_->spineIds( e.fieldIndex() );
-	if ( sl.size() > 1 && 
+	if ( sl.size() > 1 &&
 			sl[1].element()->cinfo()->isA( "CompartmentBase" ) )
 		return Field< double >::get( sl[1], "diameter" );
 	return 0.0;
@@ -293,15 +293,15 @@ void Spine::setHeadDiameter( const Eref& e, double dia )
 	else if ( dia > maximumSize_ )
 		dia = maximumSize_;
 	vector< Id > sl = parent_->spineIds( e.fieldIndex() );
-	if ( sl.size() > 1 && 
+	if ( sl.size() > 1 &&
 			sl[0].element()->cinfo()->isA( "CompartmentBase") )
 	{
 		double origLen = Field< double >::get( sl[1], "length" );
 		double origDia = Field< double >::get( sl[1], "diameter" );
-		SetGet2< double, double >::set( 
+		SetGet2< double, double >::set(
 			sl[1], "setGeomAndElec", origLen, dia );
 		parent_->scaleHeadDiffusion( e.fieldIndex(), origLen, dia );
-		parent_->scaleBufAndRates( e.fieldIndex(), 
+		parent_->scaleBufAndRates( e.fieldIndex(),
 						1.0, dia/origDia );
 	}
 }
@@ -340,7 +340,7 @@ void Spine::setHeadVolume( const Eref& e, double volume )
 		volume = pow( maximumSize_, 3.0 ) * PI / 4.0;
 
 	vector< Id > sl = parent_->spineIds( e.fieldIndex() );
-	if ( sl.size() > 1 && 
+	if ( sl.size() > 1 &&
 			sl[0].element()->cinfo()->isA( "CompartmentBase") )
 	{
 		double origLen = Field< double >::get( sl[1], "length" );
@@ -348,7 +348,7 @@ void Spine::setHeadVolume( const Eref& e, double volume )
 		double oldVolume = origLen * origDia * origDia * PI / 4.0;
 		double ratio = pow( volume / oldVolume, 1.0/3.0 );
 
-		SetGet2< double, double >::set( 
+		SetGet2< double, double >::set(
 			sl[1], "setGeomAndElec", origLen * ratio, origDia * ratio );
 		parent_->scaleHeadDiffusion( e.fieldIndex(), origLen * ratio, origDia * ratio );
 		parent_->scaleBufAndRates( e.fieldIndex(), ratio, ratio );
@@ -361,7 +361,7 @@ double Spine::getTotalLength( const Eref& e ) const
 }
 
 void Spine::setTotalLength( const Eref& e, double len )
-{	
+{
 	double shaftLen = getShaftLength( e );
 	double headLen = getHeadLength( e );
 	double totLen = shaftLen + headLen;
@@ -384,7 +384,7 @@ double Spine::getAngle( const Eref& e ) const
 }
 
 void Spine::setAngle( const Eref& e, double theta )
-{	
+{
 	;
 }
 
@@ -394,7 +394,7 @@ double Spine::getInclination( const Eref& e ) const
 }
 
 void Spine::setInclination( const Eref& e, double theta )
-{	
+{
 	;
 }
 

@@ -1,6 +1,6 @@
 /*******************************************************************
  * File:            PoissonRng.cpp
- * Description:      
+ * Description:
  * Author:          Subhasis Ray
  * E-mail:          ray.subhasis@gmail.com
  * Created:         2007-11-08 09:53:32
@@ -45,16 +45,16 @@ const Cinfo* PoissonRng::initCinfo()
         &dinfo,
         doc,
         sizeof( doc ) / sizeof( string ));
-    
+
     return &poissonRngCinfo;
 }
 
-    
+
 static const Cinfo* poissonRngCinfo = PoissonRng::initCinfo();
 
 PoissonRng::PoissonRng()
 {
-    //do nothing. should not try to get mean 
+    //do nothing. should not try to get mean
 }
 
 /**
@@ -69,7 +69,7 @@ void PoissonRng::setMean(double mean)
         rng_ = new Poisson(mean);
     } else {
         prng->setMean(mean);
-    }    
+    }
 }
 /**
    reports error in case the parameter mean has not been set.
@@ -78,9 +78,9 @@ void PoissonRng::vReinit(const Eref& e, ProcPtr p)
 {
     if ( !rng_ )
     {
-        cerr << "ERROR: PoissonRng::vReinit - mean must be set before using the Poisson distribution generator." << endl;                
+        cerr << "ERROR: PoissonRng::vReinit - mean must be set before using the Poisson distribution generator." << endl;
     }
 }
 
-    
+
 #endif

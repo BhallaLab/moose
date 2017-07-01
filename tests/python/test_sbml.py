@@ -1,7 +1,8 @@
+# -*- coding: utf-8 -*-
 """
 Test SBML capabilities of PyMOOSE
 """
-    
+
 __author__           = "Dilawar Singh, HarshaRani"
 __copyright__        = "Copyright 2015, Dilawar Singh and NCBS Bangalore"
 __credits__          = ["NCBS Bangalore"]

@@ -15,8 +15,8 @@
 
 using namespace moose;
 SrcFinfo1< double >* IntFireBase::spikeOut() {
-	static SrcFinfo1< double > spikeOut( 
-			"spikeOut", 
+	static SrcFinfo1< double > spikeOut(
+			"spikeOut",
 			"Sends out spike events. The argument is the timestamp of "
 			"the spike. "
 			);

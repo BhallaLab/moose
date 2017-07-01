@@ -17,17 +17,17 @@
 
 const Cinfo* STDPSynHandler::initCinfo()
 {
-	static string doc[] = 
+	static string doc[] =
 	{
 		"Name", "STDPSynHandler",
 		"Author", "Aditya Gilra",
-		"Description", 
+		"Description",
 		"The STDPSynHandler handles synapses with spike timing dependent plasticity (STDP). "
 		"It uses two priority queues to manage pre and post spikes."
 	};
 
     static ValueFinfo< STDPSynHandler, double > aMinus(
-        "aMinus", 
+        "aMinus",
         "aMinus is a post-synaptic variable that keeps a decaying 'history' of previous post-spike(s)"
         "and is used to update the synaptic weight when a pre-synaptic spike appears."
         "It determines the t_pre > t_post (pre after post) part of the STDP window.",
@@ -36,42 +36,42 @@ const Cinfo* STDPSynHandler::initCinfo()
     );
 
     static ValueFinfo< STDPSynHandler, double > aMinus0(
-        "aMinus0", 
+        "aMinus0",
         "aMinus0 is added to aMinus on every pre-spike",
 		&STDPSynHandler::setAMinus0,
 		&STDPSynHandler::getAMinus0
     );
 
     static ValueFinfo< STDPSynHandler, double > tauMinus(
-        "tauMinus", 
+        "tauMinus",
         "aMinus decays with tauMinus time constant",
 		&STDPSynHandler::setTauMinus,
 		&STDPSynHandler::getTauMinus
     );
 
     static ValueFinfo< STDPSynHandler, double > aPlus0(
-        "aPlus0", 
+        "aPlus0",
         "aPlus0 is added to aPlus on every pre-spike",
 		&STDPSynHandler::setAPlus0,
 		&STDPSynHandler::getAPlus0
     );
 
     static ValueFinfo< STDPSynHandler, double > tauPlus(
-        "tauPlus", 
+        "tauPlus",
         "aPlus decays with tauPlus time constant",
 		&STDPSynHandler::setTauPlus,
 		&STDPSynHandler::getTauPlus
     );
 
     static ValueFinfo< STDPSynHandler, double > weightMax(
-        "weightMax", 
+        "weightMax",
         "an upper bound on the weight",
 		&STDPSynHandler::setWeightMax,
 		&STDPSynHandler::getWeightMax
     );
 
     static ValueFinfo< STDPSynHandler, double > weightMin(
-        "weightMin", 
+        "weightMin",
         "a lower bound on the weight",
 		&STDPSynHandler::setWeightMin,
 		&STDPSynHandler::getWeightMin
@@ -81,18 +81,18 @@ const Cinfo* STDPSynHandler::initCinfo()
         "Handles arriving spike messages from post-synaptic neuron, inserts into postEvent queue.",
         new EpFunc1< STDPSynHandler, double >( &STDPSynHandler::addPostSpike ) );
 
-	static FieldElementFinfo< SynHandlerBase, STDPSynapse > synFinfo( 
+	static FieldElementFinfo< SynHandlerBase, STDPSynapse > synFinfo(
 		"synapse",
 		"Sets up field Elements for synapse",
 		STDPSynapse::initCinfo(),
-        /* 
+        /*
            below SynHandlerBase::getSynapse is a function that returns Synapse*,
            but I need to cast the returned pointer to an STDPSynapse*.
            Since I take the address (&) of SynHandlerBase::getSynapse
            which is: Synapse* (SynHandlerBase::*)(unsigned int),
            I need to cast the address of the function to:
            STDPSynapse* (SynHandlerBase::*)(unsigned int).
-           
+
            This is required to put STDPSynapse in above FieldElementFinfo definition,
            see FieldElementFinfo template class in basecode/FieldElementFinfo.h
         */
@@ -130,7 +130,7 @@ const Cinfo* STDPSynHandler::initCinfo()
 static const Cinfo* STDPSynHandlerCinfo = STDPSynHandler::initCinfo();
 
 STDPSynHandler::STDPSynHandler()
-{ 
+{
     aMinus_ = 0.0;
     tauMinus_ = 1.0;
     aMinus0_ = 0.0;
@@ -146,7 +146,7 @@ STDPSynHandler::~STDPSynHandler()
 STDPSynHandler& STDPSynHandler::operator=( const STDPSynHandler& ssh)
 {
 	synapses_ = ssh.synapses_;
-	for ( vector< STDPSynapse >::iterator 
+	for ( vector< STDPSynapse >::iterator
 					i = synapses_.begin(); i != synapses_.end(); ++i )
 			i->setHandler( this );
 
@@ -183,7 +183,7 @@ STDPSynapse* STDPSynHandler::vGetSynapse( unsigned int i )
 	return &dummy;
 }
 
-void STDPSynHandler::addSpike( 
+void STDPSynHandler::addSpike(
 				unsigned int index, double time, double weight )
 {
 	assert( index < synapses_.size() );
@@ -195,7 +195,7 @@ void STDPSynHandler::addPostSpike( const Eref& e, double time )
 	postEvents_.push( PostSynEvent( time ) );
 }
 
-void STDPSynHandler::vProcess( const Eref& e, ProcPtr p ) 
+void STDPSynHandler::vProcess( const Eref& e, ProcPtr p )
 {
 	double activation = 0.0;
 
@@ -226,11 +226,11 @@ void STDPSynHandler::vProcess( const Eref& e, ProcPtr p )
         //      or to LIF as an impulse to voltage.
 		//activation += currEvent.weight / p->dt;
         activation += currSynPtr->getWeight() / p->dt;
-        
+
         // Maintain 'history' of pre-spikes in Aplus
         // Add aPlus0 to the aPlus for this synapse due to pre-spike
         currSynPtr->setAPlus( currSynPtr->getAPlus() + aPlus0_ );
-        
+
         // Change weight by aMinus_ at each pre-spike
         // clip weight within [weightMin,weightMax]
         double newWeight = currEvent.weight + aMinus_;
@@ -246,7 +246,7 @@ void STDPSynHandler::vProcess( const Eref& e, ProcPtr p )
 	while( !postEvents_.empty() && postEvents_.top().time <= p->currTime ) {
         // Add aMinus0 to the aMinus for this synapse
         aMinus_ += aMinus0_;
-        
+
         // Change weight of all synapses by aPlus_ at each post-spike
         for (unsigned int i=0; i<synapses_.size(); i++) {
             // since aPlus_, tauPlus_ are private inside STDPSynapse,
@@ -259,11 +259,11 @@ void STDPSynHandler::vProcess( const Eref& e, ProcPtr p )
             double newWeight = currSynPtr->getWeight() + currSynPtr->getAPlus();
             newWeight = std::max(weightMin_, std::min(newWeight, weightMax_));
             currSynPtr->setWeight( newWeight );
-        }        
+        }
 
 		postEvents_.pop();
 	}
-    
+
     // modify aPlus and aMinus at every time step
     // Future: I could make this event-driven. Would be faster.
     // Or have a field to set it to event-driven or continuous.
@@ -282,10 +282,10 @@ void STDPSynHandler::vProcess( const Eref& e, ProcPtr p )
     // decay aMinus for this STDPSynHandler which sits on the post-synaptic compartment
     // forward Euler
     aMinus_ -= aMinus_/tauMinus_*dt_;
-    
+
 }
 
-void STDPSynHandler::vReinit( const Eref& e, ProcPtr p ) 
+void STDPSynHandler::vReinit( const Eref& e, ProcPtr p )
 {
 	// For no apparent reason, priority queues don't have a clear operation.
 	while( !events_.empty() )

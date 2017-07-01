@@ -11,12 +11,12 @@
 #define _ZOMBIE_POOL_H
 
 /**
- * This class is used by the Dsolve and Ksolve to take over from 
+ * This class is used by the Dsolve and Ksolve to take over from
  * regular pools. Possibly other solver classes will eventually use it too.
  */
 class ZombiePool: public PoolBase
 {
-	public: 
+	public:
 		ZombiePool();
 		~ZombiePool();
 
@@ -56,15 +56,15 @@ class ZombiePool: public PoolBase
 
 		static const Cinfo* initCinfo();
 	protected:
-		/** 
-		 * The ZombiePoolInterface pointers hold the solvers for the 
+		/**
+		 * The ZombiePoolInterface pointers hold the solvers for the
 		 * ZombiePool. At least one must be assigned. Field assignments
-		 * propagate from the pool to whichever is assigned. Field 
+		 * propagate from the pool to whichever is assigned. Field
 		 * lookups first check the dsolve, then the ksolve.
 		 * The ZombiePool may be managed by the diffusion solver without
-		 * the involvement of the Stoich class at all. So instead of 
+		 * the involvement of the Stoich class at all. So instead of
 		 * routing the zombie operations through the Stoich, we have
-		 * pointers directly into the Dsolve and Ksolve. 
+		 * pointers directly into the Dsolve and Ksolve.
 		 */
 		ZombiePoolInterface* dsolve_;
 		ZombiePoolInterface* ksolve_;

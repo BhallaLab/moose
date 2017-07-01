@@ -12,7 +12,7 @@
 
 class ZombieFunction: public Function
 {
-	public: 
+	public:
 		ZombieFunction();
 		~ZombieFunction();
 

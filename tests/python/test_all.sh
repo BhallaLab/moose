@@ -1,6 +1,6 @@
 #!/bin/bash
 
-test_scripts="./test_function.py 
+test_scripts="./test_function.py
     test_function.py
     test_moose_paths.py
     test_mumbl.py

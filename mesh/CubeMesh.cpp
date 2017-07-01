@@ -319,7 +319,7 @@ void CubeMesh::fillTwoDimSurface()
 	}
 	// Ah, C++ STL. Look on my works, ye mighty, and despair.
 	sort( surface_.begin(), surface_.end() );
-	surface_.erase( unique( surface_.begin(), surface_.end() ), 
+	surface_.erase( unique( surface_.begin(), surface_.end() ),
 					surface_.end() );
 }
 
@@ -357,12 +357,12 @@ void CubeMesh::fillThreeDimSurface() // Need to fix duplicate points.
 			surface_.push_back( offset + ( i * ny_ + j ) * nx_ );
 
 	sort( surface_.begin(), surface_.end() );
-	surface_.erase( unique( surface_.begin(), surface_.end() ), 
+	surface_.erase( unique( surface_.begin(), surface_.end() ),
 					surface_.end() );
 }
 
 /**
- * This assumes that dx, dy, dz are the quantities to preserve, over 
+ * This assumes that dx, dy, dz are the quantities to preserve, over
  * numEntries.
  * So when the compartment changes volume, so does numEntries. dx, dy, dz
  * do not change, some of the sub-cuboids will partially be outside.
@@ -380,7 +380,7 @@ void CubeMesh::updateCoords()
 		nx_ = round( (x1_ - x0_) / dx_ );
 		ny_ = round( (y1_ - y0_) / dy_ );
 		nz_ = round( (z1_ - z0_) / dz_ );
-	
+
 		if ( nx_ == 0 ) nx_ = 1;
 		if ( ny_ == 0 ) ny_ = 1;
 		if ( nz_ == 0 ) nz_ = 1;
@@ -699,7 +699,7 @@ void CubeMesh::innerBuildDefaultMesh( const Eref& e,
 	unsigned int bigger = ceil( approxN );
 	unsigned int numSide;
 	if ( smaller != bigger ) {
-		numSide = smaller; 
+		numSide = smaller;
 	} else {
 		unsigned int smallerVol = smaller * smaller * smaller;
 		unsigned int biggerVol = bigger * bigger * bigger;
@@ -724,7 +724,7 @@ void CubeMesh::innerHandleRequestMeshStats( const Eref& e,
 	meshStatsFinfo->send( e, nx_ * ny_ * nz_, meshVolumes);
 }
 
-/// Generate node decomposition of mesh, send it out along 
+/// Generate node decomposition of mesh, send it out along
 /// meshSplitFinfo msg
 void CubeMesh::innerHandleNodeInfo(
 			const Eref& e,
@@ -737,7 +737,7 @@ void CubeMesh::innerHandleNodeInfo(
 	vector< vector< unsigned int > > outgoingEntries;
 	vector< vector< unsigned int > > incomingEntries;
 	double oldvol = getMeshEntryVolume( 0 );
-	meshSplit()->send( e, 
+	meshSplit()->send( e,
 		oldvol,
 		vols, localEntries,
 		outgoingEntries, incomingEntries );
@@ -805,7 +805,7 @@ vector< double > CubeMesh::getCoordinates( unsigned int fid ) const
 	return ret;
 }
 
-unsigned int CubeMesh::neighbor( unsigned int spaceIndex, 
+unsigned int CubeMesh::neighbor( unsigned int spaceIndex,
 	int dx, int dy, int dz ) const
 {
 	int ix = spaceIndex % nx_;
@@ -837,27 +837,27 @@ vector< double > CubeMesh::getDiffusionArea( unsigned int fid ) const
 	unsigned int spaceIndex = m2s_[fid];
 
 	unsigned int nIndex = neighbor( spaceIndex, 0, 0, 1 );
-	if ( nIndex != EMPTY ) 
+	if ( nIndex != EMPTY )
 		ret.push_back( dx_ * dy_ );
 
 	nIndex = neighbor( spaceIndex, 0, 0, -1 );
-	if ( nIndex != EMPTY ) 
+	if ( nIndex != EMPTY )
 		ret.push_back( dx_ * dy_ );
 
 	nIndex = neighbor( spaceIndex, 0, 1, 0 );
-	if ( nIndex != EMPTY ) 
+	if ( nIndex != EMPTY )
 		ret.push_back( dz_ * dx_ );
 
 	nIndex = neighbor( spaceIndex, 0, -1, 0 );
-	if ( nIndex != EMPTY ) 
+	if ( nIndex != EMPTY )
 		ret.push_back( dz_ * dx_ );
 
 	nIndex = neighbor( spaceIndex, 1, 0, 0 );
-	if ( nIndex != EMPTY ) 
+	if ( nIndex != EMPTY )
 		ret.push_back( dy_ * dz_ );
 
 	nIndex = neighbor( spaceIndex, -1, 0, 0 );
-	if ( nIndex != EMPTY ) 
+	if ( nIndex != EMPTY )
 		ret.push_back( dy_ * dz_ );
 
 	return ret;
@@ -932,7 +932,7 @@ const vector< double >& CubeMesh::getVoxelLength() const
 	return length;
 }
 
-bool CubeMesh::vSetVolumeNotRates( double vol ) 
+bool CubeMesh::vSetVolumeNotRates( double vol )
 {
 	// Leave x0,y0.z0 and nx,ny,nz the same. Do NOT update any rates.
 	double oldvol = vGetEntireVolume();
@@ -951,8 +951,8 @@ bool CubeMesh::vSetVolumeNotRates( double vol )
 
 bool CubeMesh::isInsideCuboid( double x, double y, double z ) const
 {
-		return ( x >= x0_ && x < x1_ && y >= y0_ && y < y1_ && 
-						z >= z0_ && z < z1_ ); 
+		return ( x >= x0_ && x < x1_ && y >= y0_ && y < y1_ &&
+						z >= z0_ && z < z1_ );
 }
 
 bool CubeMesh::isInsideSpheroid( double x, double y, double z ) const
@@ -1112,7 +1112,7 @@ unsigned int CubeMesh::numDims() const
 
 
 void CubeMesh::indexToSpace( unsigned int index,
-			double& x, double& y, double& z ) const 
+			double& x, double& y, double& z ) const
 {
 	assert ( index < nx_ * ny_ * nz_ );
 
@@ -1142,7 +1142,7 @@ unsigned int CubeMesh::spaceToIndex( double x, double y, double z ) const
 	return EMPTY;
 }
 
-double CubeMesh::nearest( double x, double y, double z, 
+double CubeMesh::nearest( double x, double y, double z,
 				unsigned int& index ) const
 {
 	if ( x > x0_ && x < x1_ && y > y0_ && y < y1_ && z > z0_ && z < z1_ )
@@ -1160,7 +1160,7 @@ double CubeMesh::nearest( double x, double y, double z,
 			return distance( x - tx, y - ty, z - tz );
 		} else { // Outside volume. Look over surface for nearest.
 			double rmin = 1e99;
-			for ( vector< unsigned int >::const_iterator 
+			for ( vector< unsigned int >::const_iterator
 				i = surface_.begin(); i != surface_.end(); ++i )
    			{
 				double tx, ty, tz;
@@ -1186,8 +1186,8 @@ int CubeMesh::compareMeshSpacing( const CubeMesh* other ) const
 		doubleApprox( dz_, other->dz_ ) )
 			return 0; // equal
 
-	if ( dx_ >= other->dx_ && 
-		dy_ >= other->dy_ && 
+	if ( dx_ >= other->dx_ &&
+		dy_ >= other->dy_ &&
 		dz_ >= other->dz_ )
 		return 1; // bigger
 
@@ -1208,12 +1208,12 @@ void CubeMesh::defineIntersection( const CubeMesh* other,
 	   	const
 {
 	const double meshSlop = 0.2;
-	xmin = ( x0_ > other->x0_ ) ? x0_ : other->x0_;	
-	xmax = ( x1_ < other->x1_ ) ? x1_ : other->x1_;	
-	ymin = ( y0_ > other->y0_ ) ? y0_ : other->y0_;	
-	ymax = ( y1_ < other->y1_ ) ? y1_ : other->y1_;	
-	zmin = ( z0_ > other->z0_ ) ? z0_ : other->z0_;	
-	zmax = ( z1_ < other->z1_ ) ? z1_ : other->z1_;	
+	xmin = ( x0_ > other->x0_ ) ? x0_ : other->x0_;
+	xmax = ( x1_ < other->x1_ ) ? x1_ : other->x1_;
+	ymin = ( y0_ > other->y0_ ) ? y0_ : other->y0_;
+	ymax = ( y1_ < other->y1_ ) ? y1_ : other->y1_;
+	zmin = ( z0_ > other->z0_ ) ? z0_ : other->z0_;
+	zmax = ( z1_ < other->z1_ ) ? z1_ : other->z1_;
 	// Align to coarser mesh
 	double temp = ( xmin - x0_) / dx_;
 	if ( temp - floor( temp ) > meshSlop )
@@ -1238,8 +1238,8 @@ void CubeMesh::defineIntersection( const CubeMesh* other,
 }
 
 /**
- * The intersect pairs are always meshIndex in first, and a flag in 
- * the second. The flag can be: 
+ * The intersect pairs are always meshIndex in first, and a flag in
+ * the second. The flag can be:
  * 	EMPTY: empty
  * 	SURFACE: on the surface
  * 	ABUT[X,Y,Z]: One place removed from the surface, only one entry
@@ -1261,8 +1261,8 @@ void setAbut( PII& voxel, unsigned int meshIndex, unsigned int axis )
 			voxel.second = CubeMesh::MULTI;
 }
 
-void setIntersectVoxel( 
-		vector< PII >& intersect, 
+void setIntersectVoxel(
+		vector< PII >& intersect,
 		unsigned int ix, unsigned int iy, unsigned int iz,
 		unsigned int nx, unsigned int ny, unsigned int nz,
 		unsigned int meshIndex )
@@ -1272,10 +1272,10 @@ void setIntersectVoxel(
 	assert( index < intersect.size() );
 	intersect[index] = PII( meshIndex, CubeMesh::SURFACE );
 	if ( ix > 0 )
-		setAbut( intersect[ (iz*ny + iy) * nx + ix-1 ], meshIndex, 
+		setAbut( intersect[ (iz*ny + iy) * nx + ix-1 ], meshIndex,
 						CubeMesh::ABUTX );
 	if ( ix + 1 < nx )
-		setAbut( intersect[ (iz*ny + iy) * nx + ix+1 ], meshIndex, 
+		setAbut( intersect[ (iz*ny + iy) * nx + ix+1 ], meshIndex,
 						CubeMesh::ABUTX );
 
 	if ( iy > 0 )
@@ -1295,7 +1295,7 @@ void setIntersectVoxel(
 
 
 /**
- * checkAbut checks the intersect vector for the current position 
+ * checkAbut checks the intersect vector for the current position
  * ix, iy, iz, to determine how many diffusion terms to extract. It
  * then puts each of the extracted terms into the ret vector. There is
  * a minor efficiency for one and two diffusion terms as they are
@@ -1305,12 +1305,12 @@ void setIntersectVoxel(
  * into the diffScale
  * field of the VoxelJunction. 0 = x; 1 = y; 2 = z.
  */
-void checkAbut( 
-		const vector< PII >& intersect, 
+void checkAbut(
+		const vector< PII >& intersect,
 		unsigned int ix, unsigned int iy, unsigned int iz,
 		unsigned int nx, unsigned int ny, unsigned int nz,
 		unsigned int meshIndex,
-		vector< VoxelJunction >& ret 
+		vector< VoxelJunction >& ret
    	)
 {
 	unsigned int index = ( iz * ny + iy ) * nx + ix;
@@ -1319,57 +1319,57 @@ void checkAbut(
 	if ( localFlag == CubeMesh::EMPTY || localFlag == CubeMesh::SURFACE )
 			return; // Nothing to put into the ret vector
 	if ( localFlag == CubeMesh::ABUTX ) {
-		ret.push_back( 
+		ret.push_back(
 				VoxelJunction( intersect[index].first, meshIndex, 0 ));
 	} else if ( localFlag == CubeMesh::ABUTY ) {
-		ret.push_back( 
+		ret.push_back(
 				VoxelJunction( intersect[index].first, meshIndex, 1 ));
 	} else if ( localFlag == CubeMesh::ABUTZ ) {
-		ret.push_back( 
+		ret.push_back(
 				VoxelJunction( intersect[index].first, meshIndex, 2 ));
 	} else if ( localFlag == CubeMesh::MULTI ) { // go through all 6 cases.
 		if ( ix > 0 ) {
 			index = ( iz * ny + iy ) * nx + ix - 1;
 			if ( intersect[index].second == CubeMesh::SURFACE )
-				ret.push_back( 
+				ret.push_back(
 					VoxelJunction( intersect[index].first, meshIndex, 0 ));
 		}
 		if ( ix + 1 < nx ) {
 			index = ( iz * ny + iy ) * nx + ix + 1;
 			if ( intersect[index].second == CubeMesh::SURFACE )
-				ret.push_back( 
+				ret.push_back(
 					VoxelJunction( intersect[index].first, meshIndex, 0 ));
 		}
 		if ( iy > 0 ) {
 			index = ( iz * ny + iy -1 ) * nx + ix;
 			if ( intersect[index].second == CubeMesh::SURFACE )
-				ret.push_back( 
+				ret.push_back(
 					VoxelJunction( intersect[index].first, meshIndex, 1 ));
 		}
 		if ( iy + 1 < ny ) {
 			index = ( iz * ny + iy + 1 ) * nx + ix;
 			if ( intersect[index].second == CubeMesh::SURFACE )
-				ret.push_back( 
+				ret.push_back(
 					VoxelJunction( intersect[index].first, meshIndex, 1 ));
 		}
 		if ( iz > 0 ) {
 			index = ( (iz-1) * ny + iy ) * nx + ix;
 			if ( intersect[index].second == CubeMesh::SURFACE )
-				ret.push_back( 
+				ret.push_back(
 					VoxelJunction( intersect[index].first, meshIndex, 2 ));
 		}
 		if ( iz + 1 < nz ) {
 			index = ( (iz+1) * ny + iy ) * nx + ix;
 			if ( intersect[index].second == CubeMesh::SURFACE )
-				ret.push_back( 
+				ret.push_back(
 					VoxelJunction( intersect[index].first, meshIndex, 2 ));
 		}
 	}
 }
 
 void CubeMesh::assignVoxels( vector< PII >& intersect,
-			   double xmin, double xmax, 
-			   double ymin, double ymax, 
+			   double xmin, double xmax,
+			   double ymin, double ymax,
 			   double zmin, double zmax
 		   	   ) const
 {
@@ -1382,14 +1382,14 @@ void CubeMesh::assignVoxels( vector< PII >& intersect,
 	int ox = round( ( xmin - x0_ ) / dx_ );
 	int oy = round( ( ymin - y0_ ) / dy_ );
 	int oz = round( ( zmin - z0_ ) / dz_ );
-	
+
 	// Scan through mesh surface using coarser grid, assign cuboid voxels
 	for ( vector< unsigned int >::const_iterator i = surface_.begin();
 					i != surface_.end(); ++i ) {
 		unsigned int index = *i;
 		double x, y, z;
 		indexToSpace( index, x, y, z );
-		if ( x >= xmin && x <= xmax && y >= ymin && y <= ymax && 
+		if ( x >= xmin && x <= xmax && y >= ymin && y <= ymax &&
 						z >= zmin && z <= zmax ) {
 			int ix = index % nx_ - ox;
 			assert( ix >= 0 );
@@ -1404,7 +1404,7 @@ void CubeMesh::assignVoxels( vector< PII >& intersect,
 			unsigned int uiz = iz;
 			unsigned int meshIndex = s2m_[ *i ];
 
-			setIntersectVoxel( intersect, uix, uiy, uiz, nx, ny, nz, 
+			setIntersectVoxel( intersect, uix, uiy, uiz, nx, ny, nz,
 							meshIndex );
 		}
 	}
@@ -1432,14 +1432,14 @@ void CubeMesh::matchCubeMeshEntries( const CubeMesh* other,
 	unsigned int nz = 0.5 + ( zmax - zmin ) / dz_;
 	vector< PII > intersect( nx * ny * nz, PII( EMPTY, EMPTY ) );
 	assignVoxels( intersect, xmin, xmax, ymin, ymax, zmin, zmax );
-	
+
 	// Scan through finer mesh surface, check for occupied voxels.
-	for ( vector< unsigned int >::const_iterator i = 
+	for ( vector< unsigned int >::const_iterator i =
 					other->surface_.begin();
 					i != other->surface_.end(); ++i ) {
 		double x, y, z;
 		other->indexToSpace( *i, x, y, z );
-		if ( x >= xmin && x <= xmax && y >= ymin && y <= ymax && 
+		if ( x >= xmin && x <= xmax && y >= ymin && y <= ymax &&
 						z >= zmin && z <= zmax ) {
 			unsigned int ix = ( x - xmin ) / dx_;
 			unsigned int iy = ( y - ymin ) / dy_;
@@ -1508,7 +1508,7 @@ void CubeMesh::setDiffScale( const CubeMesh* other,
 				i->diffScale = 2 * selfXA / ( dz_ + other->dz_ );
 			else
 				i->diffScale = 2 * otherXA / ( dz_ + other->dz_ );
-		} else {	
+		} else {
 			assert( 0 );
 		}
 	}

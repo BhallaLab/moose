@@ -1,6 +1,6 @@
 /*******************************************************************
  * File:            numutil.h
- * Description:      
+ * Description:
  * Author:          Subhasis Ray
  * E-mail:          ray dot subhasis at gmail dot com
  * Created:         2007-11-02 11:47:21
@@ -31,7 +31,7 @@ const double NATURAL_E = 2.718281828459045;
 //extern const double EPSILON;
 
 #ifndef M_PI
-#define M_PI 3.14159265358979323846             
+#define M_PI 3.14159265358979323846
 #endif
 
 #ifndef M_E
@@ -59,7 +59,7 @@ bool isInfinity( T value )
  * Algorithm (from Knuth) 'a' and 'b' are close if:
  *      | ( a - b ) / a | < e AND | ( a - b ) / b | < e
  * where 'e' is a small number.
- * 
+ *
  * In this function, 'e' is computed as:
  * 	    e = tolerance * machine-epsilon
  */

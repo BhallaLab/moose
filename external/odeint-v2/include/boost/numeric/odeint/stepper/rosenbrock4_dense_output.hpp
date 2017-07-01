@@ -55,7 +55,7 @@ public:
 
     rosenbrock4_dense_output( const controlled_stepper_type &stepper = controlled_stepper_type() )
     : m_stepper( stepper ) ,
-      m_x1() , m_x2() , 
+      m_x1() , m_x2() ,
       m_current_state_x1( true ) ,
       m_t() , m_t_old() , m_dt()
     {
@@ -150,17 +150,17 @@ private:
     {
         return m_current_state_x1 ? m_x1.m_v : m_x2.m_v ;
     }
-    
+
     const state_type& get_current_state( void ) const
     {
         return m_current_state_x1 ? m_x1.m_v : m_x2.m_v ;
     }
-    
+
     state_type& get_old_state( void )
     {
         return m_current_state_x1 ? m_x2.m_v : m_x1.m_v ;
     }
-    
+
     const state_type& get_old_state( void ) const
     {
         return m_current_state_x1 ? m_x2.m_v : m_x1.m_v ;

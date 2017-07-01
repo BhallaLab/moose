@@ -1,30 +1,30 @@
-// HDF5WriterBase.cpp --- 
-// 
+// HDF5WriterBase.cpp ---
+//
 // Filename: HDF5WriterBase.cpp
-// Description: 
+// Description:
 // Author: Subhasis Ray
-// Maintainer: 
+// Maintainer:
 // Created: Sat Feb 25 14:42:03 2012 (+0530)
-// Version: 
+// Version:
 // Last-Updated: Sun Dec 20 23:20:44 2015 (-0500)
 //           By: subha
 //     Update #: 298
-// URL: 
-// Keywords: 
-// Compatibility: 
-// 
-// 
+// URL:
+// Keywords:
+// Compatibility:
+//
+//
 
-// Commentary: 
-// 
-// 
-// 
-// 
+// Commentary:
+//
+//
+//
+//
 
 // Change log:
-// 
-// 
-// 
+//
+//
+//
 
 // Code:
 
@@ -65,7 +65,7 @@ hid_t require_attribute(hid_t file_id, string path,
         node_path = path.substr(0, attr_start);
         attr_start += 1;
     }
-    attr_name = path.substr(attr_start);   
+    attr_name = path.substr(attr_start);
     if (H5Aexists_by_name(file_id, node_path.c_str(), attr_name.c_str(),
                           H5P_DEFAULT)){
         return H5Aopen_by_name(file_id, node_path.c_str(), attr_name.c_str(),
@@ -74,7 +74,7 @@ hid_t require_attribute(hid_t file_id, string path,
         return H5Acreate_by_name(file_id, node_path.c_str(), attr_name.c_str(),
                                    data_type, data_id,
                                    H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
-    }   
+    }
 }
 
 /**
@@ -131,7 +131,7 @@ hid_t HDF5WriterBase::createDoubleDataset(hid_t parent_id, std::string name, hsi
         status = H5Pset_szip(chunk_params, sz_opt_mask,
                              HDF5WriterBase::CHUNK_SIZE);
     }
-    hid_t dataspace = H5Screate_simple(1, dims, maxdims);            
+    hid_t dataspace = H5Screate_simple(1, dims, maxdims);
     hid_t dataset_id = H5Dcreate2(parent_id, name.c_str(),
                                   H5T_NATIVE_DOUBLE, dataspace,
                                   H5P_DEFAULT, chunk_params, H5P_DEFAULT);
@@ -165,13 +165,13 @@ hid_t HDF5WriterBase::createStringDataset(hid_t parent_id, string name, hsize_t 
         status = H5Pset_szip(chunk_params, sz_opt_mask,
                              HDF5WriterBase::CHUNK_SIZE);
     }
-    hid_t dataspace = H5Screate_simple(1, dims, maxdims);            
+    hid_t dataspace = H5Screate_simple(1, dims, maxdims);
     hid_t dataset_id = H5Dcreate2(parent_id, name.c_str(),
                                   ftype, dataspace,
                                   H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
     H5Sclose(dataspace);
     H5Tclose(ftype);
-    H5Pclose(chunk_params);    
+    H5Pclose(chunk_params);
     return dataset_id;
 }
 
@@ -217,7 +217,7 @@ hid_t HDF5WriterBase::createDataset2D(hid_t parent, string name, unsigned int ro
 {
     if (parent < 0){
         return 0;
-    }    
+    }
     herr_t status;
     // we need chunking here to allow extensibility
     hsize_t chunkdims[] = {rows, chunkSize_};
@@ -258,7 +258,7 @@ herr_t writeScalarAttributesFromMap(hid_t file_id, map < string, A > path_value_
             return status;
         }
     }
-    return 0;    
+    return 0;
 }
 
 /**
@@ -278,7 +278,7 @@ herr_t writeVectorAttributesFromMap(hid_t file_id, map < string, vector < A > > 
             return status;
         }
     }
-    return 0;    
+    return 0;
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -287,7 +287,7 @@ herr_t writeVectorAttributesFromMap(hid_t file_id, map < string, vector < A > > 
 template <>
 herr_t writeScalarAttr(hid_t file_id, string path, string value)
 {
-    hid_t data_id = H5Screate(H5S_SCALAR);    
+    hid_t data_id = H5Screate(H5S_SCALAR);
     hid_t dtype = H5Tcopy(H5T_C_S1);
     H5Tset_size(dtype, value.length()+1);
     const char * data = value.c_str();
@@ -300,10 +300,10 @@ herr_t writeScalarAttr(hid_t file_id, string path, string value)
 template <>
 herr_t writeScalarAttr(hid_t file_id, string path, double value)
 {
-    hid_t data_id = H5Screate(H5S_SCALAR);    
+    hid_t data_id = H5Screate(H5S_SCALAR);
     hid_t dtype = H5T_NATIVE_DOUBLE;
     hid_t attr_id = require_attribute(file_id, path, dtype, data_id);
-    herr_t status = H5Awrite(attr_id, dtype, (void*)(&value));    
+    herr_t status = H5Awrite(attr_id, dtype, (void*)(&value));
     H5Aclose(attr_id);
     return status;
 }
@@ -311,7 +311,7 @@ herr_t writeScalarAttr(hid_t file_id, string path, double value)
 template <>
 herr_t writeScalarAttr(hid_t file_id, string path,  long value)
 {
-    hid_t data_id = H5Screate(H5S_SCALAR);    
+    hid_t data_id = H5Screate(H5S_SCALAR);
     hid_t dtype = H5T_NATIVE_LONG;
     hid_t attr_id = require_attribute(file_id, path, dtype, data_id);
     herr_t status = H5Awrite(attr_id, dtype, (void*)(&value));
@@ -322,7 +322,7 @@ herr_t writeScalarAttr(hid_t file_id, string path,  long value)
 template <>
 herr_t writeScalarAttr(hid_t file_id, string path, int value)
 {
-    hid_t data_id = H5Screate(H5S_SCALAR);    
+    hid_t data_id = H5Screate(H5S_SCALAR);
     hid_t dtype = H5T_NATIVE_INT;
     hid_t attr_id = require_attribute(file_id, path, dtype, data_id);
     herr_t status =  H5Awrite(attr_id, dtype, (void*)(&value));
@@ -340,7 +340,7 @@ herr_t writeVectorAttr(hid_t file_id, string path, vector < string > value)
     hsize_t dims[] = {value.size()};
     hid_t space = H5Screate_simple(1, dims, NULL);
     hid_t dtype = H5Tcopy(H5T_C_S1);
-    H5Tset_size(dtype, H5T_VARIABLE);    
+    H5Tset_size(dtype, H5T_VARIABLE);
     const char ** data = (const char **)calloc(value.size(),
                                    sizeof(const char*));
     for (unsigned int ii = 0; ii < value.size(); ++ii){
@@ -357,7 +357,7 @@ template <>
 herr_t writeVectorAttr(hid_t file_id, string path, vector < double > value)
 {
     hsize_t dims[] = {value.size()};
-    hid_t data_id = H5Screate_simple(1, dims, NULL);    
+    hid_t data_id = H5Screate_simple(1, dims, NULL);
     hid_t dtype = H5T_NATIVE_DOUBLE;
     H5Tset_size(dtype, value.size());
     void * data = &value[0];
@@ -371,7 +371,7 @@ template <>
 herr_t writeVectorAttr(hid_t file_id, string path, vector < long > value)
 {
     hsize_t dims[] = {value.size()};
-    hid_t data_id = H5Screate_simple(1, dims, NULL);    
+    hid_t data_id = H5Screate_simple(1, dims, NULL);
     hid_t dtype = H5T_NATIVE_LONG;
     H5Tset_size(dtype, value.size());
     void * data = &value[0];
@@ -394,7 +394,7 @@ const Cinfo* HDF5WriterBase::initCinfo()
       "Name of the file associated with this HDF5 writer object.",
       &HDF5WriterBase::setFilename,
       &HDF5WriterBase::getFilename);
-  
+
   static ReadOnlyValueFinfo < HDF5WriterBase, bool > isOpen(
       "isOpen",
       "True if this object has an open file handle.",
@@ -419,7 +419,7 @@ const Cinfo* HDF5WriterBase::initCinfo()
       "Compression type for array data. zlib and szip are supported. Defaults to zlib.",
       &HDF5WriterBase::setCompressor,
       &HDF5WriterBase::getCompressor);
-  
+
   static ValueFinfo< HDF5WriterBase, unsigned int> compression(
       "compression",
       "Compression level for array data. Defaults to 6.",
@@ -432,34 +432,34 @@ const Cinfo* HDF5WriterBase::initCinfo()
       " (string).",
       &HDF5WriterBase::setStringAttr,
       &HDF5WriterBase::getStringAttr);
-  
+
   static LookupValueFinfo< HDF5WriterBase, string, double > dattr(
       "doubleAttr",
       "Double precision floating point attributes. The key is attribute name,"
       " value is attribute value (double).",
       &HDF5WriterBase::setDoubleAttr,
       &HDF5WriterBase::getDoubleAttr);
-  
+
   static LookupValueFinfo< HDF5WriterBase, string, long > lattr(
       "longAttr",
       "Long integer attributes. The key is attribute name, value is attribute"
       " value (long).",
       &HDF5WriterBase::setLongAttr,
       &HDF5WriterBase::getLongAttr);
-  
+
   static LookupValueFinfo< HDF5WriterBase, string, vector < string >  > svecattr(
       "stringVecAttr",
       "String vector attributes. The key is attribute name, value is attribute value (string).",
       &HDF5WriterBase::setStringVecAttr,
       &HDF5WriterBase::getStringVecAttr);
-  
+
   static LookupValueFinfo< HDF5WriterBase, string, vector < double > > dvecattr(
       "doubleVecAttr",
       "Double vector attributes. The key is attribute name, value is"
       " attribute value (vector of double).",
       &HDF5WriterBase::setDoubleVecAttr,
       &HDF5WriterBase::getDoubleVecAttr);
-  
+
   static LookupValueFinfo< HDF5WriterBase, string, vector < long > > lvecattr(
       "longVecAttr",
       "Long integer vector attributes. The key is attribute name, value is"
@@ -475,7 +475,7 @@ const Cinfo* HDF5WriterBase::initCinfo()
       "close",
       "Close the underlying file. This is a safety measure so that file is not in an invalid state even if a crash happens at exit.",
       new OpFunc0< HDF5WriterBase > ( & HDF5WriterBase::close ));
-      
+
 
   static Finfo * finfos[] = {
     &fileName,
@@ -511,7 +511,7 @@ const Cinfo* HDF5WriterBase::initCinfo()
       sizeof(finfos)/sizeof(Finfo*),
 	  &dinfo,
       doc, sizeof(doc)/sizeof(string));
-  return &hdf5Cinfo;                
+  return &hdf5Cinfo;
 }
 
 const hssize_t HDF5WriterBase::CHUNK_SIZE = 1024; // default chunk size
@@ -538,7 +538,7 @@ void HDF5WriterBase::setFilename(string filename)
     if (filename_ == filename){
         return;
     }
-     
+
     // // If file is open, close it before changing filename
     // if (filehandle_ >= 0){
     //     status = H5Fclose(filehandle_);
@@ -574,7 +574,7 @@ herr_t HDF5WriterBase::openFile()
         }
     }
     hid_t fapl_id = H5Pcreate(H5P_FILE_ACCESS);
-    // Ensure that all open objects are closed before the file is closed    
+    // Ensure that all open objects are closed before the file is closed
     H5Pset_fclose_degree(fapl_id, H5F_CLOSE_STRONG);
     ifstream infile(filename_.c_str());
     bool fexists = infile.good();
@@ -640,7 +640,7 @@ unsigned int HDF5WriterBase::getCompression() const
     return compression_;
 }
 
-        
+
 // Subclasses should reimplement this for flushing data content to
 // file.
 void HDF5WriterBase::flush()
@@ -658,7 +658,7 @@ void HDF5WriterBase::flushAttributes()
 {
     if (filehandle_ < 0){
         return;
-    }    
+    }
     // Write all scalar attributes
     writeScalarAttributesFromMap< string >(filehandle_, sattr_);
     writeScalarAttributesFromMap< double >(filehandle_, dattr_);
@@ -780,5 +780,5 @@ vector < long > HDF5WriterBase::getLongVecAttr(string name) const
 
 
 #endif // USE_HDF5
-// 
+//
 // HDF5WriterBase.cpp ends here

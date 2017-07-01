@@ -1,47 +1,48 @@
-# test_gc.py --- 
-# 
+# -*- coding: utf-8 -*-
+# test_gc.py ---
+#
 # Filename: test_gc.py
-# Description: 
+# Description:
 # Author: Subhasis Ray
-# Maintainer: 
+# Maintainer:
 # Created: Mon May 19 10:25:13 2014 (+0530)
-# Version: 
-# Last-Updated: 
-#           By: 
+# Version:
+# Last-Updated:
+#           By:
 #     Update #: 0
-# URL: 
-# Keywords: 
-# Compatibility: 
-# 
-# 
+# URL:
+# Keywords:
+# Compatibility:
+#
+#
 
-# Commentary: 
-# 
-# 
-# 
-# 
+# Commentary:
+#
+#
+#
+#
 
 # Change log:
-# 
-# 
-# 
-# 
+#
+#
+#
+#
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
 # published by the Free Software Foundation; either version 3, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program; see the file COPYING.  If not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 # Floor, Boston, MA 02110-1301, USA.
-# 
-# 
+#
+#
 
 # Code:
 """Test script for memory allocation and garbage collection issues."""
@@ -69,17 +70,17 @@ classes = [
     'DiffAmp',
     'IntFire',
     'MgBlock',]
-           
+
 def allocate_large_vecs(m, n):
     """Allocate m vecs with n elements each"""
     test = moose.Neutral('/test')
-    ret = []    
+    ret = []
     for jj, mclass in zip(range(m), cycle(classes)):
         eval_str = 'moose.vec(path="%s/%s_%d", n=%d, dtype="%s")' % (test.path,
                                                                      mclass,
                                                                      jj,
                                                                      n,
-                                                                     mclass)        
+                                                                     mclass)
         mobj = eval(eval_str)
         print('Created', mobj.path)
         ret.append(mobj)
@@ -116,7 +117,7 @@ def check_vector_field(m, n):
     return tabs
 
 import numpy as np
-    
+
 if __name__ == '__main__':
     np_arrays = []
     for ii in range(3):
@@ -133,5 +134,5 @@ if __name__ == '__main__':
 
 
 
-# 
+#
 # test_gc.py ends here

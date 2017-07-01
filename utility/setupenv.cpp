@@ -1,31 +1,31 @@
-// setupenv.cpp --- 
-// 
+// setupenv.cpp ---
+//
 // Filename: setupenv.cpp
-// Description: 
+// Description:
 // Author: Subhasis Ray
-// Maintainer: 
+// Maintainer:
 // Copyright (C) 2010 Subhasis Ray, all rights reserved.
 // Created: Sat Mar 26 22:36:10 2011 (+0530)
-// Version: 
+// Version:
 // Last-Updated: Fri Aug 10 17:15:17 2012 (+0530)
 //           By: subha
 //     Update #: 31
-// URL: 
-// Keywords: 
-// Compatibility: 
-// 
-// 
+// URL:
+// Keywords:
+// Compatibility:
+//
+//
 
-// Commentary: 
-// 
-// 
-// 
-// 
+// Commentary:
+//
+//
+//
+//
 
 // Change log:
-// 
-// 
-// 
+//
+//
+//
 
 // Code:
 
@@ -70,7 +70,7 @@ namespace moose {
                 unsigned int cores = getNumCores();
                 stringstream s;
                 s << cores;
-                argmap.insert(pair<string, string>("NUMCORES", s.str()));        
+                argmap.insert(pair<string, string>("NUMCORES", s.str()));
             }
             char * numNodes = getenv("NUMNODES");
             if (numNodes != NULL){
@@ -108,5 +108,5 @@ namespace moose {
 }
 
 
-// 
+//
 // setupenv.cpp ends here

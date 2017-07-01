@@ -9,14 +9,14 @@
 #include "header.h"
 
 /**
- * This set of classes define Message Sources. Their main job is to supply 
+ * This set of classes define Message Sources. Their main job is to supply
  * a type-safe send operation, and to provide typechecking for it.
  */
 
 SharedFinfo::SharedFinfo( const string& name, const string& doc,
 	Finfo** entries, unsigned int numEntries )
 	: Finfo( name, doc )
-{ 
+{
 	for ( unsigned int i = 0; i < numEntries; ++i )
 	{
 		Finfo* foo = entries[i];
@@ -31,21 +31,21 @@ SharedFinfo::SharedFinfo( const string& name, const string& doc,
 
 void SharedFinfo::registerFinfo( Cinfo* c )
 {
-	for( vector< SrcFinfo* >::iterator i = 
+	for( vector< SrcFinfo* >::iterator i =
 		src_.begin(); i != src_.end(); ++i)
 		c->registerFinfo( *i );
-	for( vector< Finfo* >::iterator i = 
+	for( vector< Finfo* >::iterator i =
 		dest_.begin(); i != dest_.end(); ++i)
 		c->registerFinfo( *i );
 }
 
-bool SharedFinfo::strSet( 
+bool SharedFinfo::strSet(
 	const Eref& tgt, const string& field, const string& arg ) const
 {
 	return 0;
 }
 
-bool SharedFinfo::strGet( 
+bool SharedFinfo::strGet(
 	const Eref& tgt, const string& field, string& returnValue ) const
 {
 	return 0;
@@ -54,7 +54,7 @@ bool SharedFinfo::strGet(
 /**
  * It is possible that we have DestFinfos in this SharedFinfo, that have
  * not been registered. So we need to scan through.
- * Note that the register operation overwrites values if they already 
+ * Note that the register operation overwrites values if they already
  * exist. Best not to have conflicts!.
  */
 /*
@@ -75,7 +75,7 @@ bool SharedFinfo::checkTarget( const Finfo* target ) const
 {
 	const SharedFinfo* tgt = dynamic_cast< const SharedFinfo* >( target );
 	if ( tgt ) {
-		if ( src_.size() != tgt->dest_.size() && 
+		if ( src_.size() != tgt->dest_.size() &&
 			dest_.size() != tgt->src_.size() )
 			return 0;
 		for ( unsigned int i = 0; i < src_.size(); ++i ) {
@@ -92,7 +92,7 @@ bool SharedFinfo::checkTarget( const Finfo* target ) const
 	return 0;
 }
 
-bool SharedFinfo::addMsg( const Finfo* target, ObjId mid, 
+bool SharedFinfo::addMsg( const Finfo* target, ObjId mid,
 	Element* srcElm ) const
 {
 	if ( !checkTarget( target ) )
@@ -109,7 +109,7 @@ bool SharedFinfo::addMsg( const Finfo* target, ObjId mid,
 	Element* destElm = m->e2();
 	if ( srcElm == destElm && srcElm->id() != Id() ) {
 		if ( dest_.size() > 0 ) {
-			cout << "Error: SharedFinfo::addMsg: MessageId " << mid << 
+			cout << "Error: SharedFinfo::addMsg: MessageId " << mid <<
 			endl <<
 			"Source Element == DestElement == " << srcElm->getName() <<
 			endl << "Recommend that you individually set up messages for" <<
@@ -129,7 +129,7 @@ bool SharedFinfo::addMsg( const Finfo* target, ObjId mid,
 		}
 	}
 
-	
+
 	for ( unsigned int i = 0; i < tgt->src_.size(); ++i ) {
 		if ( !tgt->src_[i]->addMsg( dest_[i], mid, destElm ) ) {
 			// Should never happen. The checkTarget should preclude this.
@@ -158,7 +158,7 @@ const vector< Finfo* >& SharedFinfo::dest() const
 vector< string > SharedFinfo::innerSrc() const
 {
 	vector< string > ret;
-	for ( vector< SrcFinfo* >::const_iterator i = src_.begin(); 
+	for ( vector< SrcFinfo* >::const_iterator i = src_.begin();
 		i != src_.end(); ++i )
 		ret.push_back( (*i)->name() );
 	return ret;
@@ -167,7 +167,7 @@ vector< string > SharedFinfo::innerSrc() const
 vector< string > SharedFinfo::innerDest() const
 {
 	vector< string > ret;
-	for ( vector< Finfo* >::const_iterator i = dest_.begin(); 
+	for ( vector< Finfo* >::const_iterator i = dest_.begin();
 		i != dest_.end(); ++i )
 		ret.push_back( (*i)->name() );
 	return ret;

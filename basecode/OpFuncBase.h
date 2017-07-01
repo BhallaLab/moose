@@ -23,7 +23,7 @@ extern const unsigned char MooseTestHop;
 class HopIndex
 {
 	public:
-		HopIndex( unsigned short bindIndex, 
+		HopIndex( unsigned short bindIndex,
 				unsigned char hopType = MooseSendHop)
 				: bindIndex_( bindIndex ),
 				hopType_( hopType )
@@ -115,7 +115,7 @@ template< class A > class OpFunc1Base: public OpFunc
 			Element* elm = e.element();
 			if ( elm->hasFields() ) { // Assignment is to field array.
 				unsigned int di = e.dataIndex();
-				unsigned int nf = elm->numField( di - 
+				unsigned int nf = elm->numField( di -
 								elm->localDataStart() );
 				for ( unsigned int i = 0; i < nf; ++i) {
 					Eref er( elm, di, i );
@@ -149,14 +149,14 @@ template< class A1, class A2 > class OpFunc2Base: public OpFunc
 			return dynamic_cast< const SrcFinfo2< A1, A2 >* >( s );
 		}
 
-		virtual void op( const Eref& e, A1 arg1, A2 arg2 ) 
+		virtual void op( const Eref& e, A1 arg1, A2 arg2 )
 				const = 0;
 
 		const OpFunc* makeHopFunc( HopIndex hopIndex) const;
 
 		void opBuffer( const Eref& e, double* buf ) const {
 			const A1& arg1 = Conv< A1 >::buf2val( &buf );
-			op( e, 		
+			op( e,
 				arg1, Conv< A2 >::buf2val( &buf ) );
 		}
 
@@ -172,25 +172,25 @@ template< class A1, class A2 > class OpFunc2Base: public OpFunc
 				unsigned int nf = elm->numField( i - start );
 				for ( unsigned int j = 0; j < nf; ++j) {
 					Eref er( elm, i, j );
-					op( er, temp1[ k % temp1.size() ], 
+					op( er, temp1[ k % temp1.size() ],
 						temp2[ k % temp2.size() ] );
 					++k;
 				}
 			}
 		}
 
-		virtual void opVec( const Eref& e, 
+		virtual void opVec( const Eref& e,
 						const vector< A1 >& arg1,
 						const vector< A2 >& arg2,
 						const OpFunc2Base< A1, A2 >* op ) const
 	   	{ ; } // overridden in HopFuncs.
 
 		string rttiType() const {
-			return Conv< A1 >::rttiType() + "," + Conv< A2 >::rttiType(); 
+			return Conv< A1 >::rttiType() + "," + Conv< A2 >::rttiType();
 		}
 };
 
-template< class A1, class A2, class A3 > class OpFunc3Base: 
+template< class A1, class A2, class A3 > class OpFunc3Base:
 	public OpFunc
 {
 	public:
@@ -198,7 +198,7 @@ template< class A1, class A2, class A3 > class OpFunc3Base:
 			return dynamic_cast< const SrcFinfo3< A1, A2, A3 >* >( s );
 		}
 
-		virtual void op( const Eref& e, A1 arg1, A2 arg2, A3 arg3 ) 
+		virtual void op( const Eref& e, A1 arg1, A2 arg2, A3 arg3 )
 				const = 0;
 
 		const OpFunc* makeHopFunc( HopIndex hopIndex) const;
@@ -206,7 +206,7 @@ template< class A1, class A2, class A3 > class OpFunc3Base:
 		void opBuffer( const Eref& e, double* buf ) const {
 			const A1& arg1 = Conv< A1 >::buf2val( &buf );
 			const A2& arg2 = Conv< A2 >::buf2val( &buf );
-			op( e, 		
+			op( e,
 				arg1, arg2, Conv< A3 >::buf2val( &buf ) );
 		}
 
@@ -216,7 +216,7 @@ template< class A1, class A2, class A3 > class OpFunc3Base:
 		}
 };
 
-template< class A1, class A2, class A3, class A4 > 
+template< class A1, class A2, class A3, class A4 >
 	class OpFunc4Base: public OpFunc
 {
 	public:
@@ -224,7 +224,7 @@ template< class A1, class A2, class A3, class A4 >
 			return dynamic_cast< const SrcFinfo4< A1, A2, A3, A4 >* >( s );
 		}
 
-		virtual void op( const Eref& e, 
+		virtual void op( const Eref& e,
 						A1 arg1, A2 arg2, A3 arg3, A4 arg4 ) const = 0;
 
 		const OpFunc* makeHopFunc( HopIndex hopIndex) const;
@@ -243,7 +243,7 @@ template< class A1, class A2, class A3, class A4 >
 		}
 };
 
-template< class A1, class A2, class A3, class A4, class A5 > 
+template< class A1, class A2, class A3, class A4, class A5 >
 	class OpFunc5Base: public OpFunc
 {
 	public:
@@ -251,7 +251,7 @@ template< class A1, class A2, class A3, class A4, class A5 >
 			return dynamic_cast< const SrcFinfo5< A1, A2, A3, A4, A5 >* >( s );
 		}
 
-		virtual void op( const Eref& e, 
+		virtual void op( const Eref& e,
 				A1 arg1, A2 arg2, A3 arg3, A4 arg4, A5 arg5 ) const = 0;
 
 		const OpFunc* makeHopFunc( HopIndex hopIndex) const;
@@ -272,7 +272,7 @@ template< class A1, class A2, class A3, class A4, class A5 >
 		}
 };
 
-template< class A1, class A2, class A3, class A4, class A5, class A6 > 
+template< class A1, class A2, class A3, class A4, class A5, class A6 >
 		class OpFunc6Base: public OpFunc
 {
 	public:
@@ -280,7 +280,7 @@ template< class A1, class A2, class A3, class A4, class A5, class A6 >
 			return dynamic_cast< const SrcFinfo6< A1, A2, A3, A4, A5, A6 >* >( s );
 		}
 
-		virtual void op( const Eref& e, A1 arg1, A2 arg2, A3 arg3, A4 arg4, 
+		virtual void op( const Eref& e, A1 arg1, A2 arg2, A3 arg3, A4 arg4,
 						A5 arg5, A6 arg6 ) const = 0;
 
 		const OpFunc* makeHopFunc( HopIndex hopIndex) const;
@@ -291,7 +291,7 @@ template< class A1, class A2, class A3, class A4, class A5, class A6 >
 			const A3& arg3 = Conv< A3 >::buf2val( &buf );
 			const A4& arg4 = Conv< A4 >::buf2val( &buf );
 			const A5& arg5 = Conv< A5 >::buf2val( &buf );
-			op( e, 		
+			op( e,
 				arg1, arg2, arg3, arg4, arg5, Conv< A6 >::buf2val( &buf ) );
 		}
 
@@ -303,11 +303,11 @@ template< class A1, class A2, class A3, class A4, class A5, class A6 >
 };
 
 /**
- * This is the base class for all GetOpFuncs. 
+ * This is the base class for all GetOpFuncs.
  */
 template< class A > class GetOpFuncBase: public OpFunc1Base< vector< A >* >
 {
-	public: 
+	public:
 			/*
 		bool checkFinfo( const Finfo* s ) const {
 			return ( dynamic_cast< const SrcFinfo1< A >* >( s )
@@ -339,13 +339,13 @@ template< class A > class GetOpFuncBase: public OpFunc1Base< vector< A >* >
 /*
 template< class A > class GetOpFuncBase: public OpFunc
 {
-	public: 
+	public:
 		bool checkFinfo( const Finfo* s ) const {
 			return ( dynamic_cast< const SrcFinfo1< A >* >( s )
 			|| dynamic_cast< const SrcFinfo1< FuncId >* >( s ) );
 		}
 
-		virtual void op( const Eref& e, ObjId recipient, FuncId fid ) 
+		virtual void op( const Eref& e, ObjId recipient, FuncId fid )
 				const = 0;
 
 		virtual A returnOp( const Eref& e ) const = 0;
@@ -357,22 +357,22 @@ template< class A > class GetOpFuncBase: public OpFunc
 */
 
 /**
- * This is the base class for all LookupGetOpFuncs. 
+ * This is the base class for all LookupGetOpFuncs.
  */
 template< class L, class A > class LookupGetOpFuncBase: public OpFunc
 {
-	public: 
+	public:
 		bool checkFinfo( const Finfo* s ) const {
 			return ( dynamic_cast< const SrcFinfo1< A >* >( s )
 			|| dynamic_cast< const SrcFinfo2< FuncId, L >* >( s ) );
 		}
 
-		virtual void op( const Eref& e, L index, 
+		virtual void op( const Eref& e, L index,
 						ObjId recipient, FuncId fid ) const = 0;
 
 		virtual A returnOp( const Eref& e, const L& index ) const = 0;
 
-		const OpFunc* makeHopFunc( HopIndex hopIndex) const 
+		const OpFunc* makeHopFunc( HopIndex hopIndex) const
 		{
 			// Perhaps later we can put in something for x-node gets.
 			return 0;

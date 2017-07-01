@@ -1,6 +1,6 @@
 /*******************************************************************
  * File:            UniformRng.cpp
- * Description:      
+ * Description:
  * Author:          Subhasis Ray
  * E-mail:          ray.subhasis@gmail.com
  * Created:         2008-02-01 11:30:20
@@ -34,7 +34,7 @@ const Cinfo* UniformRng::initCinfo()
         "The upper bound on the numbers generated",
         &UniformRng::setMax,
         &UniformRng::getMax);
-    
+
     static Finfo * uniformRngFinfos[] = {
         &min,
         &max,

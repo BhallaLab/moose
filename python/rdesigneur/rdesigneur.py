@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #########################################################################
 ## rdesigneur0_5.py ---
 ## This program is part of 'MOOSE', the
@@ -16,15 +17,18 @@
 ## channel conductances, between them.
 ##########################################################################
 from __future__ import print_function
+from __future__ import absolute_import
+
 import imp
 import os
 import moose
 import numpy as np
 import pylab
 import math
-import rmoogli
-#import rdesigneurProtos
-from rdesigneurProtos import *
+import rdesigneur.rmoogli
+
+from rdesigneur.rdesigneurProtos import *
+
 from moose.neuroml.NeuroML import NeuroML
 from moose.neuroml.ChannelML import ChannelML
 
@@ -137,7 +141,7 @@ class rdesigneur:
         self.adaptorList = adaptorList
         self.stimList = stimList
         self.plotList = plotList
-        self.saveList = plotList                    #ADDED BY Sarthak 
+        self.saveList = plotList                    #ADDED BY Sarthak
         self.saveAs = []
         self.moogList = moogList
         self.plotNames = []
@@ -157,7 +161,7 @@ class rdesigneur:
         except BuildError as msg:
             print("Error: rdesigneur: Prototype build failed:", msg)
             quit()
-            
+
 
 
     ################################################################
@@ -187,7 +191,7 @@ class rdesigneur:
         self.model = moose.Neutral( modelPath )
         self.modelPath = modelPath
         try:
-            # Protos made in the init phase. Now install the elec and 
+            # Protos made in the init phase. Now install the elec and
             # chem protos on model.
             self.installCellFromProtos()
             # Now assign all the distributions
@@ -650,16 +654,16 @@ class rdesigneur:
 
     ################################################################
     # Here we get the time-series data and write to various formats
-    ################################################################        
+    ################################################################
     #[TO DO] Add NSDF output function
     '''
     The author of the functions -- [_savePlots(), _getTimeSeriesTable(), _writeXML(), _writeCSV(), _saveFormats(), _save()] is
-    Sarthak Sharma. 
+    Sarthak Sharma.
     Email address: sarthaks442@gmail.com
-    ''' 
-    
+    '''
+
     def _savePlots( self ):
-        
+
         knownFields = {
             'Vm':('CompartmentBase', 'getVm', 1000, 'Memb. Potential (mV)' ),
             'Im':('CompartmentBase', 'getIm', 1e9, 'Memb. current (nA)' ),
@@ -672,11 +676,11 @@ class rdesigneur:
             'n':('PoolBase', 'getN', 1, '# of molecules'),
             'conc':('PoolBase', 'getConc', 1000, 'Concentration (uM)' )
         }
-        
+
         save_graphs = moose.Neutral( self.modelPath + '/save_graphs' )
         dummy = moose.element( '/' )
         k = 0
-        
+
         for i in self.saveList:
             pair = i[0] + " " + i[1]
             dendCompts = self.elecid.compartmentsFromExpression[ pair ]
@@ -702,12 +706,12 @@ class rdesigneur:
                     moose.connect( save_vtabs[q], 'requestOut', p, plotField )
                     q += 1
 
-    def _getTimeSeriesTable( self ):                                 
-                                                               
+    def _getTimeSeriesTable( self ):
+
         '''
         This function gets the list with all the details of the simulation
         required for plotting.
-        This function adds flexibility in terms of the details 
+        This function adds flexibility in terms of the details
         we wish to store.
         '''
 
@@ -722,11 +726,11 @@ class rdesigneur:
             'Ca':('CaConcBase', 'getCa', 1e3, 'Ca conc (uM)' ),
             'n':('PoolBase', 'getN', 1, '# of molecules'),
             'conc':('PoolBase', 'getConc', 1000, 'Concentration (uM)' )
-        }    
-        
-        ''' 
+        }
+
+        '''
         This takes data from plotList
-        saveList is exactly like plotList but with a few additional arguments: 
+        saveList is exactly like plotList but with a few additional arguments:
         ->It will have a resolution option, i.e., the number of decimal figures to which the value should be rounded
         ->There is a list of "saveAs" formats
         With saveList, the user will able to set what all details he wishes to be saved.
@@ -739,33 +743,33 @@ class rdesigneur:
             # Here we get the object details from plotList
             savePlotObj, plotField = self._parseComptField( dendCompts, self.saveList[i], knownFields )
             savePlotObj2, plotField2 = self._parseComptField( spineCompts, self.saveList[i], knownFields )
-            savePlotObj3 = savePlotObj + savePlotObj2                                    
-            
-            rowList = list(ind)                                       
-            save_vtab = moose.vec( ind[0] )                                   
+            savePlotObj3 = savePlotObj + savePlotObj2
+
+            rowList = list(ind)
+            save_vtab = moose.vec( ind[0] )
             t = np.arange( 0, save_vtab[0].vector.size, 1 ) * save_vtab[0].dt
-            
+
             rowList.append(save_vtab[0].dt)
             rowList.append(t)
             rowList.append([jvec.vector * ind[3] for jvec in save_vtab])             #get values
             rowList.append(self.saveList[i][3])
             rowList.append(filter(lambda obj: obj.path != '/', savePlotObj3))        #this filters out dummy elements
-            
+
             if (type(self.saveList[i][-1])==int):
                 rowList.append(self.saveList[i][-1])
             else:
                 rowList.append(12)
-            
+
             self.tabForXML.append(rowList)
             rowList = []
 
         timeSeriesTable = self.tabForXML                                            # the list with all the details of plot
         return timeSeriesTable
 
-    def _writeXML( self, filename, timeSeriesData ):                                #to write to XML file 
+    def _writeXML( self, filename, timeSeriesData ):                                #to write to XML file
 
         plotData = timeSeriesData
-        print("[CAUTION] The '%s' file might be very large if all the compartments are to be saved." % filename) 
+        print("[CAUTION] The '%s' file might be very large if all the compartments are to be saved." % filename)
         root = etree.Element("TimeSeriesPlot")
         parameters = etree.SubElement( root, "parameters" )
         if self.params == None:
@@ -785,13 +789,13 @@ class rdesigneur:
         title.set( 'dt', str(plotData[5]))
         p = []
         assert(len(plotData[7]) == len(plotData[9]))
-        
+
         res = plotData[10]
         for ind, jvec in enumerate(plotData[7]):
             p.append( etree.SubElement( title, "data"))
             p[-1].set( 'path', str(plotData[9][ind].path))
             p[-1].text = ''.join( str(round(value,res)) + ' ' for value in jvec )
-            
+
         tree = etree.ElementTree(root)
         tree.write(filename)
 
@@ -804,7 +808,7 @@ class rdesigneur:
         res = plotData[10]
 
         for ind, jvec in enumerate(plotData[7]):
-            header.append(plotData[9][ind].path)    
+            header.append(plotData[9][ind].path)
             dataList.append([round(value,res) for value in jvec.tolist()])
         dl = [tuple(lst) for lst in dataList]
         rows = zip(tuple(time), *dl)
@@ -815,7 +819,7 @@ class rdesigneur:
             writer.writerow(header)
             for row in rows:
                 writer.writerow(row)
-        
+
     ##########****SAVING*****###############
     def _saveFormats(self, timeSeriesData, k, *filenames):
         "This takes in the filenames and writes to corresponding format."

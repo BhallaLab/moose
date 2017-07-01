@@ -109,78 +109,78 @@ const Cinfo* SteadyState::initCinfo()
 		///////////////////////////////////////////////////////
 		// Field definitions
 		///////////////////////////////////////////////////////
-		static ValueFinfo< SteadyState, Id > stoich( 
-			"stoich", 
+		static ValueFinfo< SteadyState, Id > stoich(
+			"stoich",
 			"Specify the Id of the stoichiometry system to use",
 			&SteadyState::setStoich,
 			&SteadyState::getStoich
 		);
-		static ReadOnlyValueFinfo< SteadyState, bool > badStoichiometry( 
-			"badStoichiometry", 
+		static ReadOnlyValueFinfo< SteadyState, bool > badStoichiometry(
+			"badStoichiometry",
 			"Bool: True if there is a problem with the stoichiometry",
 			&SteadyState::badStoichiometry
 		);
-		static ReadOnlyValueFinfo< SteadyState, bool > isInitialized( 
-			"isInitialized", 
+		static ReadOnlyValueFinfo< SteadyState, bool > isInitialized(
+			"isInitialized",
 			"True if the model has been initialized successfully",
 			&SteadyState::isInitialized
 		);
-		static ReadOnlyValueFinfo< SteadyState, unsigned int > nIter( 
-			"nIter", 
+		static ReadOnlyValueFinfo< SteadyState, unsigned int > nIter(
+			"nIter",
 			"Number of iterations done by steady state solver",
 			&SteadyState::getNiter
 		);
-		static ReadOnlyValueFinfo< SteadyState, string > status( 
-			"status", 
+		static ReadOnlyValueFinfo< SteadyState, string > status(
+			"status",
 			"Status of solver",
 			&SteadyState::getStatus
 		);
-		static ValueFinfo< SteadyState, unsigned int > maxIter( 
-			"maxIter", 
+		static ValueFinfo< SteadyState, unsigned int > maxIter(
+			"maxIter",
 			"Max permissible number of iterations to try before giving up",
 			&SteadyState::setMaxIter,
 			&SteadyState::getMaxIter
 		);
-		static ValueFinfo< SteadyState, double> convergenceCriterion( 
-			"convergenceCriterion", 
+		static ValueFinfo< SteadyState, double> convergenceCriterion(
+			"convergenceCriterion",
 			"Fractional accuracy required to accept convergence",
 			&SteadyState::setConvergenceCriterion,
 			&SteadyState::getConvergenceCriterion
 		);
 		static ReadOnlyValueFinfo< SteadyState, unsigned int > numVarPools(
-			"numVarPools", 
+			"numVarPools",
 			"Number of variable molecules in reaction system.",
 			&SteadyState::getNumVarPools
 		);
-		static ReadOnlyValueFinfo< SteadyState, unsigned int > rank( 
-			"rank", 
+		static ReadOnlyValueFinfo< SteadyState, unsigned int > rank(
+			"rank",
 			"Number of independent molecules in reaction system",
 			&SteadyState::getRank
 		);
-		static ReadOnlyValueFinfo< SteadyState, unsigned int > stateType( 
-			"stateType", 
+		static ReadOnlyValueFinfo< SteadyState, unsigned int > stateType(
+			"stateType",
 			"0: stable; 1: unstable; 2: saddle; 3: osc?; 4: one near-zero eigenvalue; 5: other",
 			&SteadyState::getStateType
 		);
-		static ReadOnlyValueFinfo< SteadyState, unsigned int > 
+		static ReadOnlyValueFinfo< SteadyState, unsigned int >
 				nNegEigenvalues (
-			"nNegEigenvalues", 
+			"nNegEigenvalues",
 			"Number of negative eigenvalues: indicates type of solution",
 			&SteadyState::getNnegEigenvalues
 		);
-		static ReadOnlyValueFinfo< SteadyState, unsigned int > 
-				nPosEigenvalues( 
-			"nPosEigenvalues", 
+		static ReadOnlyValueFinfo< SteadyState, unsigned int >
+				nPosEigenvalues(
+			"nPosEigenvalues",
 			"Number of positive eigenvalues: indicates type of solution",
 			&SteadyState::getNposEigenvalues
 		);
 		static ReadOnlyValueFinfo< SteadyState, unsigned int > solutionStatus(
-			"solutionStatus", 
+			"solutionStatus",
 			"0: Good; 1: Failed to find steady states; "
 			"2: Failed to find eigenvalues",
 			&SteadyState::getSolutionStatus
 		);
-		static LookupValueFinfo< SteadyState, unsigned int, double > total( 
+		static LookupValueFinfo< SteadyState, unsigned int, double > total(
 				"total",
 				"Totals table for conservation laws. The exact mapping of"
 				"this to various sums of molecules is given by the "
@@ -194,8 +194,8 @@ const Cinfo* SteadyState::initCinfo()
 				&SteadyState::setTotal,
 				&SteadyState::getTotal
 		);
-		static ReadOnlyLookupValueFinfo< 
-				SteadyState, unsigned int, double > eigenvalues( 
+		static ReadOnlyLookupValueFinfo<
+				SteadyState, unsigned int, double > eigenvalues(
 			"eigenvalues",
 			"Eigenvalues computed for steady state",
 			&SteadyState::getEigenvalue
@@ -203,32 +203,32 @@ const Cinfo* SteadyState::initCinfo()
 		///////////////////////////////////////////////////////
 		// MsgDest definitions
 		///////////////////////////////////////////////////////
-		static DestFinfo setupMatrix( "setupMatrix", 
+		static DestFinfo setupMatrix( "setupMatrix",
 			"This function initializes and rebuilds the matrices used "
 			"in the calculation.",
-			new OpFunc0< SteadyState >(&SteadyState::setupMatrix) 
+			new OpFunc0< SteadyState >(&SteadyState::setupMatrix)
 		);
 
-		static DestFinfo settle( "settle", 
+		static DestFinfo settle( "settle",
 			"Finds the nearest steady state to the current initial "
 			"conditions. This function rebuilds the entire calculation "
 			"only if the object has not yet been initialized.",
 			new OpFunc0< SteadyState >( &SteadyState::settleFunc )
 		);
-		static DestFinfo resettle( "resettle", 
+		static DestFinfo resettle( "resettle",
 			"Finds the nearest steady state to the current initial "
 			"conditions. This function rebuilds the entire calculation ",
 			new OpFunc0< SteadyState >( &SteadyState::resettleFunc )
 		);
-		static DestFinfo showMatrices( "showMatrices", 
+		static DestFinfo showMatrices( "showMatrices",
 			"Utility function to show the matrices derived for the calculations on the reaction system. Shows the Nr, gamma, and total matrices",
 			new OpFunc0< SteadyState >( &SteadyState::showMatrices )
 		);
-		static DestFinfo randomInit( "randomInit", 
+		static DestFinfo randomInit( "randomInit",
 			"Generate random initial conditions consistent with the mass"
 			"conservation rules. Typically invoked in order to scan"
 			"states",
-			new EpFunc0< SteadyState >( 
+			new EpFunc0< SteadyState >(
 					&SteadyState::randomizeInitialCondition )
 		);
 		///////////////////////////////////////////////////////
@@ -259,7 +259,7 @@ const Cinfo* SteadyState::initCinfo()
 
 
 	};
-	
+
 	static string doc[] =
 	{
 		"Name", "SteadyState",
@@ -295,7 +295,7 @@ const Cinfo* SteadyState::initCinfo()
 		"time (typically under 1 second) before asking it to find the "
 		"fixed point. "
 	};
-	
+
 	static Dinfo< SteadyState > dinfo;
 	static Cinfo steadyStateCinfo(
 		"SteadyState",
@@ -317,8 +317,8 @@ static const Cinfo* steadyStateCinfo = SteadyState::initCinfo();
 
 SteadyState::SteadyState()
 	:
-		nIter_( 0 ), 
-		maxIter_( 100 ), 
+		nIter_( 0 ),
+		maxIter_( 100 ),
 		badStoichiometry_( 0 ),
 		status_( "OK" ),
 		isInitialized_( 0 ),
@@ -354,7 +354,7 @@ SteadyState::~SteadyState()
 		gsl_matrix_free( gamma_ );
 #endif
 }
-		
+
 ///////////////////////////////////////////////////
 // Field function definitions
 ///////////////////////////////////////////////////
@@ -374,7 +374,7 @@ void SteadyState::setStoich( Id value ) {
 	numVarPools_ = Field< unsigned int >::get( stoich_, "numVarPools" );
 	nReacs_ = Field< unsigned int >::get( stoich_, "numRates" );
 	setupSSmatrix();
-	double vol = LookupField< unsigned int, double >::get( 
+	double vol = LookupField< unsigned int, double >::get(
 				stoichPtr->getCompartment(), "oneVoxelVolume", 0 );
 	pool_.setVolume( vol );
 	pool_.setStoich( stoichPtr, 0 );
@@ -435,8 +435,8 @@ void SteadyState::setConvergenceCriterion( double value ) {
 	if ( value > 1e-10 )
 		convergenceCriterion_ = value;
 	else
-		cout << "Warning: Convergence criterion " << value << 
-		" too small. Old value " << 
+		cout << "Warning: Convergence criterion " << value <<
+		" too small. Old value " <<
 		convergenceCriterion_ << " retained\n";
 }
 
@@ -512,9 +512,9 @@ void print_gsl_mat( gsl_matrix* m, const char* name )
             if ( fabs( x ) < 1e-9 ) x = 0;
             printf( "%6g", x );
         }
-    
+
         printf( "\n");
-    }   
+    }
 }
 #endif
 
@@ -541,14 +541,14 @@ void SteadyState::setupSSmatrix()
 #ifdef USE_GSL
 	if ( numVarPools_ == 0 || nReacs_ == 0 )
 		return;
-	
+
 	int nTot = numVarPools_ + nReacs_;
 	gsl_matrix* N = gsl_matrix_calloc (numVarPools_, nReacs_);
 	if ( LU_ ) { // Clear out old one.
 		gsl_matrix_free( LU_ );
 	}
 	LU_ = gsl_matrix_calloc (numVarPools_, nTot);
-	vector< int > entry = Field< vector< int > >::get( 
+	vector< int > entry = Field< vector< int > >::get(
 					stoich_, "matrixEntry" );
 	vector< unsigned int > colIndex = Field< vector< unsigned int > >::get(
 					stoich_, "columnIndex" );
@@ -579,7 +579,7 @@ void SteadyState::setupSSmatrix()
 		cout << "SteadyState::setupSSmatrix(): Number of conserved species == 0. Aborting\n";
 		return;
 	}
-	
+
 	if ( Nr_ ) { // Clear out old one.
 		gsl_matrix_free( Nr_ );
 	}
@@ -593,11 +593,11 @@ void SteadyState::setupSSmatrix()
 		gsl_matrix_free( gamma_ );
 	}
 	gamma_ = gsl_matrix_calloc (nConsv, numVarPools_ );
-	
+
 	// Fill up gamma
 	for ( unsigned int i = rank_; i < numVarPools_; ++i )
 		for ( unsigned int j = 0; j < numVarPools_; ++j )
-			gsl_matrix_set( gamma_, i - rank_, j, 
+			gsl_matrix_set( gamma_, i - rank_, j,
 				gsl_matrix_get( LU_, i, j + nReacs_ ) );
 
 	// Fill up boundary condition values
@@ -614,7 +614,7 @@ void SteadyState::setupSSmatrix()
 	cout << ")\n";
 	*/
 	Id ksolve = Field< Id >::get( stoich_, "ksolve" );
-	vector< double > nVec = 
+	vector< double > nVec =
 			LookupField< unsigned int, vector< double > >::get(
 			ksolve,"nVec", 0 );
 
@@ -658,7 +658,7 @@ int iterate( const gsl_multiroot_fsolver_type* st, struct reac_info *ri,
 {
 	int status = 0;
 	gsl_vector* x = gsl_vector_calloc( ri->num_mols );
-	gsl_multiroot_fsolver *solver = 
+	gsl_multiroot_fsolver *solver =
 		gsl_multiroot_fsolver_alloc( st, ri->num_mols );
 	gsl_multiroot_function func = {&ss_func, ri->num_mols, ri};
 
@@ -673,7 +673,7 @@ int iterate( const gsl_multiroot_fsolver_type* st, struct reac_info *ri,
 		ri->nIter++;
 		status = gsl_multiroot_fsolver_iterate( solver );
 		if (status ) break;
-		status = gsl_multiroot_test_residual( 
+		status = gsl_multiroot_test_residual(
 			solver->f, ri->convergenceCriterion);
 	} while (status == GSL_CONTINUE && ri->nIter < maxIter );
 
@@ -691,12 +691,12 @@ void SteadyState::classifyState( const double* T )
 	// double* yprime = new double[ numVarPools_ ];
 	// vector< double > yprime( numVarPools_, 0.0 );
 	// Generate an approximation to the Jacobean by generating small
-	// increments to each of the molecules in the steady state, one 
+	// increments to each of the molecules in the steady state, one
 	// at a time, and putting the resultant rate vector into a column
 	// of the J matrix.
 	// This needs a bit of heuristic to decide what is a 'small' increment.
 	// Use the CoInits for this. Stoichiometry shouldn't matter too much.
-	// I used the totals from consv rules earlier, but that can have 
+	// I used the totals from consv rules earlier, but that can have
 	// negative values.
 	double tot = 0.0;
 	Stoich* s = reinterpret_cast< Stoich* >( stoich_.eref().data() );
@@ -706,7 +706,7 @@ void SteadyState::classifyState( const double* T )
 		tot += nVec[i];
 	}
 	tot *= DELTA;
-	
+
 	vector< double > yprime( nVec.size(), 0.0 );
 	// Fill up Jacobian
 	for ( unsigned int i = 0; i < numVarPools_; ++i ) {
@@ -758,7 +758,7 @@ void SteadyState::classifyState( const double* T )
 			// This means we have several zero eigenvalues.
 		}
 
-		if ( nNegEigenvalues_ == rank_ ) 
+		if ( nNegEigenvalues_ == rank_ )
 			stateType_ = 0; // Stable
 		else if ( nPosEigenvalues_ == rank_ ) // Never see it.
 			stateType_ = 1; // Unstable
@@ -780,7 +780,7 @@ void SteadyState::classifyState( const double* T )
 
 static bool isSolutionPositive( const vector< double >& x )
 {
-	for ( vector< double >::const_iterator 
+	for ( vector< double >::const_iterator
 					i = x.begin(); i != x.end(); ++i ) {
 		if ( *i < 0.0 ) {
 			cout << "Warning: SteadyState iteration gave negative concs\n";
@@ -798,7 +798,7 @@ void SteadyState::settle( bool forceSetup )
 {
 #ifdef USE_GSL
 	gsl_set_error_handler_off();
-	
+
 	if ( !isInitialized_ ) {
 		cout << "Error: SteadyState object has not been initialized. No calculations done\n";
 		return;
@@ -823,7 +823,7 @@ void SteadyState::settle( bool forceSetup )
 	ri.Nr = Nr_;
 	ri.gamma = gamma_;
 	ri.pool = &pool_;
-	ri.nVec = 
+	ri.nVec =
 			LookupField< unsigned int, vector< double > >::get(
 			ksolve,"nVec", 0 );
 	ri.convergenceCriterion = convergenceCriterion_;
@@ -880,7 +880,7 @@ int ss_func( const gsl_vector* x, void* params, gsl_vector* f )
 
 	for ( unsigned int i = 0; i < ri->num_mols; ++i ) {
 		double temp = op( gsl_vector_get( x, i ) );
-		if ( isNaN( temp ) || isInfinity( temp ) ) { 
+		if ( isNaN( temp ) || isInfinity( temp ) ) {
 			return GSL_ERANGE;
 		} else {
 			ri->nVec[i] = temp;
@@ -903,7 +903,7 @@ int ss_func( const gsl_vector* x, void* params, gsl_vector* f )
 	for ( int i = 0; i < num_consv; ++i ) {
 		double dT = - ri->T[i];
 		for ( unsigned int j = 0; j < ri->num_mols; ++j )
-			dT += gsl_matrix_get( ri->gamma, i, j) * 
+			dT += gsl_matrix_get( ri->gamma, i, j) *
 				op( gsl_vector_get( x, j ) );
 
 		gsl_vector_set( f, i + ri->rank, dT );
@@ -947,7 +947,7 @@ void eliminateRowsBelow( gsl_matrix* U, int start, int leftCol )
  * reorderRows:
  * Finds the leftmost row beginning from start, ignoring everything to the
  * left of leftCol. Puts this row at 'start', swapping with the original.
- * Assumes that the matrix is set up as [N I]. 
+ * Assumes that the matrix is set up as [N I].
  * Returns the new value of leftCol
  * If there are no appropriate rows, returns numReacs.
  */
@@ -976,7 +976,7 @@ int reorderRows( gsl_matrix* U, int start, int leftCol )
 /**
  * Does a simple gaussian decomposition. Assumes U has nice clean numbers
  * so I can apply a generous EPSILON to zero things out.
- * Assumes that the U matrix is the N matrix padded out by an identity 
+ * Assumes that the U matrix is the N matrix padded out by an identity
  * matrix on the right.
  * Returns rank.
  */
@@ -1031,7 +1031,7 @@ void SteadyState::randomizeInitialCondition( const Eref& me )
 {
 #ifdef USE_GSL
 	Id ksolve = Field< Id >::get( stoich_, "ksolve" );
-	vector< double > nVec = 
+	vector< double > nVec =
 			LookupField< unsigned int, vector< double > >::get(
 			ksolve,"nVec", 0 );
 	int numConsv = total_.size();
@@ -1086,7 +1086,7 @@ void SteadyState::randomizeInitialCondition( const Eref& me )
  * making sure they fit.
  */
 #ifdef USE_GSL
-void SteadyState::fitConservationRules( 
+void SteadyState::fitConservationRules(
 	gsl_matrix* U, const vector< double >& eliminatedTotal,
 		vector< double >&y
 	)

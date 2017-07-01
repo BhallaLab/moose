@@ -1,11 +1,11 @@
 #ifndef _MARKOVCHANNEL_H
 #define _MARKOVCHANNEL_H
 
-//This class deals with ion channels which can be found in one of multiple 
-//states, some of which are conducting. This implementation assumes the 
+//This class deals with ion channels which can be found in one of multiple
+//states, some of which are conducting. This implementation assumes the
 //occurence of first order kinetics to calculate the probabilities of the
-//channel of being found in all states. Further, the rates of transition 
-//between these states can be constant, voltage-dependent, ligand dependent 
+//channel of being found in all states. Further, the rates of transition
+//between these states can be constant, voltage-dependent, ligand dependent
 //(only one ligand species) or both. The current flow obtained from the channel
 //is calculated in a deterministic method by solving the system of
 //differential equations obtained from the assumptions above.
@@ -16,20 +16,20 @@ class MarkovChannel : public ChanCommon
 {
 	public:
 	//Default constructor. Use is not recommended as most of the class members
-	//cannot be initialized. 
+	//cannot be initialized.
 	MarkovChannel();
 
 	//Constructor to be used when number of states and number of open states are
 	//known. Use of this constructor is recommended as all the other members of
-	//the class can be initialized with the information provided. 
+	//the class can be initialized with the information provided.
 	static const Cinfo* initCinfo();
 
 	MarkovChannel( unsigned int, unsigned int);
 	~MarkovChannel( );
 
-	double getVm( ) const;	
+	double getVm( ) const;
 	void setVm( double );
-	
+
 	double getLigandConc( ) const;
 	void setLigandConc( double );
 
@@ -63,14 +63,14 @@ class MarkovChannel : public ChanCommon
 	//////////////////////
 	//MsgDest functions
 	/////////////////////
-	
+
 	void vProcess( const Eref&, const ProcPtr);
 	void vReinit( const Eref&, const ProcPtr);
 	void handleLigandConc( double );
 	void handleState( vector< double > );
 
 	private:
-	double g_;												//Expected conductance of the channel.	
+	double g_;												//Expected conductance of the channel.
 	double ligandConc_;								//Ligand concentration.
 	unsigned int numStates_;					//Total number of states.
 	unsigned int numOpenStates_;			//Number of open (conducting) states.

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """\
 Create general Channel Proto, pass in name, x and y power, and params
 
@@ -61,7 +62,7 @@ def interpolate_values_in_table(tabA,V_0,l=40):
 
 def fix_singularities(Params,Gate):
     import param_chan
-    
+
     if Params.A_C < 0:
 
         V_0 = Params.A_vslope*np.log(-Params.A_C)-Params.Avhalf

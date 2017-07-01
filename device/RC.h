@@ -1,31 +1,31 @@
 // RC.h ---
-// 
+//
 // Filename: RC.h
-// Description: 
+// Description:
 // Author: subhasis ray
-// Maintainer: 
+// Maintainer:
 // Created: Wed Dec 31 15:18:22 2008 (+0530)
-// Version: 
+// Version:
 // Last-Updated: Wed Feb 22 20:29:35 2012 (+0530)
 //           By: Subhasis Ray
 //     Update #: 54
-// URL: 
-// Keywords: 
-// Compatibility: 
-// 
-// 
+// URL:
+// Keywords:
+// Compatibility:
+//
+//
 
-// Commentary: 
-// 
-// 
-// 
-// 
+// Commentary:
+//
+//
+//
+//
 
 // Change log:
-// 
-// 
-// 
-// 
+//
+//
+//
+//
 /**********************************************************************
 ** This program is part of 'MOOSE', the
 ** Messaging Object Oriented Simulation Environment,
@@ -45,7 +45,7 @@
 
 class RC{
   public:
-    RC();    
+    RC();
     void setV0(double voltage);
     double getV0() const;
     void setResistance(double resistance);
@@ -73,5 +73,5 @@ class RC{
 #endif
 
 
-// 
+//
 // RC.h ends here

@@ -44,7 +44,7 @@ void testPoolVolumeScaling()
 	Id meshId( comptId.value() + 1 );
 	Id poolId = shell->doCreate( "Pool", comptId, "pool", 1 );
 
-	ObjId mid = shell->doAddMsg( "OneToOne", 
+	ObjId mid = shell->doAddMsg( "OneToOne",
 		ObjId( poolId, 0 ), "requestVolume",
 		ObjId( meshId, 0 ), "get_volume" );
 
@@ -95,10 +95,10 @@ void testReacVolumeScaling()
 
 	double vol1 = 1e-15;
 
-	ObjId mid = shell->doAddMsg( "OneToOne", 
+	ObjId mid = shell->doAddMsg( "OneToOne",
 		subId, "requestVolume", meshId, "get_volume" );
 	assert( mid != ObjId() );
-	mid = shell->doAddMsg( "OneToOne", 
+	mid = shell->doAddMsg( "OneToOne",
 		prdId, "requestVolume", meshId, "get_volume" );
 	assert( mid != ObjId() );
 
@@ -121,7 +121,7 @@ void testReacVolumeScaling()
 	assert( doubleEq( x, 2 ) );
 	x = Field< double >::get( reacId, "kb" );
 	assert( doubleEq( x, 3 ) );
-	
+
 	ret = shell->doAddMsg( "Single", reacId, "sub", subId, "reac" );
 	assert( ret != ObjId() );
 	double conv = 1.0 / ( NA * vol1 );
@@ -153,10 +153,10 @@ void testTwoReacGetNeighbors()
 	Id prdId = shell->doCreate( "Pool", comptId, "prd", 1 );
 	Id reacId = shell->doCreate( "Reac", comptId, "reac", 1 );
 
-	ObjId mid = shell->doAddMsg( "OneToOne", 
+	ObjId mid = shell->doAddMsg( "OneToOne",
 		subId, "requestVolume", meshId, "get_volume" );
 	assert( mid != ObjId() );
-	mid = shell->doAddMsg( "OneToOne", 
+	mid = shell->doAddMsg( "OneToOne",
 		prdId, "requestVolume", meshId, "get_volume" );
 	assert( mid != ObjId() );
 
@@ -169,14 +169,14 @@ void testTwoReacGetNeighbors()
 	assert( ret != ObjId() );
 
 	vector< Id > pools;
-	unsigned int num = reacId.element()->getNeighbors( pools, 
+	unsigned int num = reacId.element()->getNeighbors( pools,
 		Reac::initCinfo()->findFinfo( "toSub" ) );
 	assert( num == 2 );
 	assert( pools[0] == subId );
 	assert( pools[1] == subId );
 
 	pools.clear();
-	num = reacId.element()->getNeighbors( pools, 
+	num = reacId.element()->getNeighbors( pools,
 		Reac::initCinfo()->findFinfo( "sub" ) );
 	assert( num == 2 );
 	assert( pools[0] == subId );
@@ -262,7 +262,7 @@ void testMMenzProcess()
 	shell->doSetClock( 1, 0.01 );
 	shell->doUseClock( "/n/mm,/n/tab2", "process", 0 );
 	shell->doUseClock( "/n/#[ISA=Pool]", "process", 1 );
-	
+
 	//////////////////////////////////////////////////////////////////////
 	// Now run models and compare outputs
 	//////////////////////////////////////////////////////////////////////
@@ -338,7 +338,7 @@ void testKinetics()
 	testVolSort();
 
 	// This is now handled with real models in the regression tests.
-	// testWriteKkit( Id() ); 
+	// testWriteKkit( Id() );
 }
 
 void testMpiKinetics( )

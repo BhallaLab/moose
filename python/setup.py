@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # This file is part of MOOSE simulator: http://moose.ncbs.res.in.
 
 # MOOSE is free software: you can redistribute it and/or modify
@@ -13,12 +14,12 @@
 # along with MOOSE.  If not, see <http://www.gnu.org/licenses/>.
 
 
-"""setup.py: 
+"""setup.py:
 
     Script to install python targets.
 
 """
-    
+
 __author__           = "Dilawar Singh"
 __copyright__        = "Copyright 2013, Dilawar Singh and NCBS Bangalore"
 __credits__          = ["NCBS Bangalore"]
@@ -65,9 +66,9 @@ setup(
             , 'moose.chemUtil'
             , 'moose.merge'
             ],
-        package_dir = { 
-            'moose' : 'moose' 
+        package_dir = {
+            'moose' : 'moose'
             , 'rdesigneur' : 'rdesigneur'
             },
         package_data = { 'moose' : ['_moose' + suffix] },
-    ) 
+    )

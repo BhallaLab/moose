@@ -196,10 +196,10 @@ class controlled_runge_kutta ;
     * try_step( sys , in , dxdt , t , out , dt )
  */
 /**
- * \brief Implements step size control for Runge-Kutta steppers with error 
+ * \brief Implements step size control for Runge-Kutta steppers with error
  * estimation.
  *
- * This class implements the step size control for standard Runge-Kutta 
+ * This class implements the step size control for standard Runge-Kutta
  * steppers with error estimation.
  *
  * \tparam ErrorStepper The stepper type with error estimation, has to fulfill the ErrorStepper concept.
@@ -263,15 +263,15 @@ public:
      * \brief Tries to perform one step.
      *
      * This method tries to do one step with step size dt. If the error estimate
-     * is to large, the step is rejected and the method returns fail and the 
+     * is to large, the step is rejected and the method returns fail and the
      * step size dt is reduced. If the error estimate is acceptably small, the
-     * step is performed, success is returned and dt might be increased to make 
+     * step is performed, success is returned and dt might be increased to make
      * the steps as large as possible. This method also updates t if a step is
      * performed.
      *
      * \param system The system function to solve, hence the r.h.s. of the ODE. It must fulfill the
      *               Simple System concept.
-     * \param x The state of the ODE which should be solved. Overwritten if 
+     * \param x The state of the ODE which should be solved. Overwritten if
      * the step is successful.
      * \param t The value of the time. Updated if the step is successful.
      * \param dt The step size. Updated.
@@ -284,19 +284,19 @@ public:
     }
 
     /**
-     * \brief Tries to perform one step. Solves the forwarding problem and 
+     * \brief Tries to perform one step. Solves the forwarding problem and
      * allows for using boost range as state_type.
      *
      * This method tries to do one step with step size dt. If the error estimate
-     * is to large, the step is rejected and the method returns fail and the 
+     * is to large, the step is rejected and the method returns fail and the
      * step size dt is reduced. If the error estimate is acceptably small, the
-     * step is performed, success is returned and dt might be increased to make 
+     * step is performed, success is returned and dt might be increased to make
      * the steps as large as possible. This method also updates t if a step is
      * performed.
      *
      * \param system The system function to solve, hence the r.h.s. of the ODE. It must fulfill the
      *               Simple System concept.
-     * \param x The state of the ODE which should be solved. Overwritten if 
+     * \param x The state of the ODE which should be solved. Overwritten if
      * the step is successful. Can be a boost range.
      * \param t The value of the time. Updated if the step is successful.
      * \param dt The step size. Updated.
@@ -319,15 +319,15 @@ public:
      * \brief Tries to perform one step.
      *
      * This method tries to do one step with step size dt. If the error estimate
-     * is to large, the step is rejected and the method returns fail and the 
+     * is to large, the step is rejected and the method returns fail and the
      * step size dt is reduced. If the error estimate is acceptably small, the
-     * step is performed, success is returned and dt might be increased to make 
+     * step is performed, success is returned and dt might be increased to make
      * the steps as large as possible. This method also updates t if a step is
      * performed.
      *
      * \param system The system function to solve, hence the r.h.s. of the ODE. It must fulfill the
      *               Simple System concept.
-     * \param x The state of the ODE which should be solved. Overwritten if 
+     * \param x The state of the ODE which should be solved. Overwritten if
      * the step is successful.
      * \param dxdt The derivative of state.
      * \param t The value of the time. Updated if the step is successful.
@@ -359,9 +359,9 @@ public:
      * \note This method is disabled if state_type=time_type to avoid ambiguity.
      *
      * This method tries to do one step with step size dt. If the error estimate
-     * is to large, the step is rejected and the method returns fail and the 
+     * is to large, the step is rejected and the method returns fail and the
      * step size dt is reduced. If the error estimate is acceptably small, the
-     * step is performed, success is returned and dt might be increased to make 
+     * step is performed, success is returned and dt might be increased to make
      * the steps as large as possible. This method also updates t if a step is
      * performed.
      *
@@ -393,9 +393,9 @@ public:
      * \brief Tries to perform one step.
      *
      * This method tries to do one step with step size dt. If the error estimate
-     * is to large, the step is rejected and the method returns fail and the 
+     * is to large, the step is rejected and the method returns fail and the
      * step size dt is reduced. If the error estimate is acceptably small, the
-     * step is performed, success is returned and dt might be increased to make 
+     * step is performed, success is returned and dt might be increased to make
      * the steps as large as possible. This method also updates t if a step is
      * performed.
      *
@@ -528,16 +528,16 @@ private:
  * explicit stepper fsal version
  *
  * the class introduces the following try_step overloads
-    * try_step( sys , x , t , dt ) 
+    * try_step( sys , x , t , dt )
     * try_step( sys , in , t , out , dt )
     * try_step( sys , x , dxdt , t , dt )
     * try_step( sys , in , dxdt_in , t , out , dxdt_out , dt )
  */
 /**
- * \brief Implements step size control for Runge-Kutta FSAL steppers with 
+ * \brief Implements step size control for Runge-Kutta FSAL steppers with
  * error estimation.
  *
- * This class implements the step size control for FSAL Runge-Kutta 
+ * This class implements the step size control for FSAL Runge-Kutta
  * steppers with error estimation.
  *
  * \tparam ErrorStepper The stepper type with error estimation, has to fulfill the ErrorStepper concept.
@@ -597,15 +597,15 @@ public:
      * \brief Tries to perform one step.
      *
      * This method tries to do one step with step size dt. If the error estimate
-     * is to large, the step is rejected and the method returns fail and the 
+     * is to large, the step is rejected and the method returns fail and the
      * step size dt is reduced. If the error estimate is acceptably small, the
-     * step is performed, success is returned and dt might be increased to make 
+     * step is performed, success is returned and dt might be increased to make
      * the steps as large as possible. This method also updates t if a step is
      * performed.
      *
      * \param system The system function to solve, hence the r.h.s. of the ODE. It must fulfill the
      *               Simple System concept.
-     * \param x The state of the ODE which should be solved. Overwritten if 
+     * \param x The state of the ODE which should be solved. Overwritten if
      * the step is successful.
      * \param t The value of the time. Updated if the step is successful.
      * \param dt The step size. Updated.
@@ -619,19 +619,19 @@ public:
 
 
     /**
-     * \brief Tries to perform one step. Solves the forwarding problem and 
+     * \brief Tries to perform one step. Solves the forwarding problem and
      * allows for using boost range as state_type.
      *
      * This method tries to do one step with step size dt. If the error estimate
-     * is to large, the step is rejected and the method returns fail and the 
+     * is to large, the step is rejected and the method returns fail and the
      * step size dt is reduced. If the error estimate is acceptably small, the
-     * step is performed, success is returned and dt might be increased to make 
+     * step is performed, success is returned and dt might be increased to make
      * the steps as large as possible. This method also updates t if a step is
      * performed.
      *
      * \param system The system function to solve, hence the r.h.s. of the ODE. It must fulfill the
      *               Simple System concept.
-     * \param x The state of the ODE which should be solved. Overwritten if 
+     * \param x The state of the ODE which should be solved. Overwritten if
      * the step is successful. Can be a boost range.
      * \param t The value of the time. Updated if the step is successful.
      * \param dt The step size. Updated.
@@ -649,7 +649,7 @@ public:
      * Version 2 : try_step( sys , in , t , out , dt );
      *
      * This version does not solve the forwarding problem, boost::range can not be used.
-     * 
+     *
      * The disabler is needed to solve ambiguous overloads
      */
     /**
@@ -658,9 +658,9 @@ public:
      * \note This method is disabled if state_type=time_type to avoid ambiguity.
      *
      * This method tries to do one step with step size dt. If the error estimate
-     * is to large, the step is rejected and the method returns fail and the 
+     * is to large, the step is rejected and the method returns fail and the
      * step size dt is reduced. If the error estimate is acceptably small, the
-     * step is performed, success is returned and dt might be increased to make 
+     * step is performed, success is returned and dt might be increased to make
      * the steps as large as possible. This method also updates t if a step is
      * performed.
      *
@@ -693,15 +693,15 @@ public:
      * \brief Tries to perform one step.
      *
      * This method tries to do one step with step size dt. If the error estimate
-     * is to large, the step is rejected and the method returns fail and the 
+     * is to large, the step is rejected and the method returns fail and the
      * step size dt is reduced. If the error estimate is acceptably small, the
-     * step is performed, success is returned and dt might be increased to make 
+     * step is performed, success is returned and dt might be increased to make
      * the steps as large as possible. This method also updates t if a step is
      * performed.
      *
      * \param system The system function to solve, hence the r.h.s. of the ODE. It must fulfill the
      *               Simple System concept.
-     * \param x The state of the ODE which should be solved. Overwritten if 
+     * \param x The state of the ODE which should be solved. Overwritten if
      * the step is successful.
      * \param dxdt The derivative of state.
      * \param t The value of the time. Updated if the step is successful.
@@ -732,9 +732,9 @@ public:
      * \brief Tries to perform one step.
      *
      * This method tries to do one step with step size dt. If the error estimate
-     * is to large, the step is rejected and the method returns fail and the 
+     * is to large, the step is rejected and the method returns fail and the
      * step size dt is reduced. If the error estimate is acceptably small, the
-     * step is performed, success is returned and dt might be increased to make 
+     * step is performed, success is returned and dt might be increased to make
      * the steps as large as possible. This method also updates t if a step is
      * performed.
      *
@@ -925,7 +925,7 @@ private:
  * \class default_error_checker
  * \brief The default error checker to be used with Runge-Kutta error steppers
  *
- * This class provides the default mechanism to compare the error estimates 
+ * This class provides the default mechanism to compare the error estimates
  * reported by Runge-Kutta error steppers with user defined error bounds.
  * It is used by the controlled_runge_kutta steppers.
  *
@@ -940,7 +940,7 @@ private:
      * time_type max_dt)
      * \brief Constructs the error checker.
      *
-     * The error is calculated as follows: ???? 
+     * The error is calculated as follows: ????
      *
      * \param eps_abs Absolute tolerance level.
      * \param eps_rel Relative tolerance level.
@@ -948,7 +948,7 @@ private:
      * \param a_dxdt Factor for the weight of the derivative.
      * \param max_dt Maximum allowed step size.
      */
-    
+
     /**
      * \fn error( const State &x_old , const Deriv &dxdt_old , Err &x_err , time_type dt ) const
      * \brief Calculates the error level.

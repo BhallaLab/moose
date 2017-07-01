@@ -1,11 +1,11 @@
 include_directories(../basecode)
-add_library(msg 
+add_library(msg
     Msg.cpp
     DiagonalMsg.cpp
-    OneToAllMsg.cpp 
+    OneToAllMsg.cpp
     OneToOneMsg.cpp
-    SingleMsg.cpp 
-    SparseMsg.cpp 
-    OneToOneDataIndexMsg.cpp 
+    SingleMsg.cpp
+    SparseMsg.cpp
+    OneToOneDataIndexMsg.cpp
     testMsg.cpp
     )

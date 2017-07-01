@@ -57,7 +57,7 @@ class Vec {
 		Vec operator*( const double& other ) const;
 
 	private:
-		double a0_; 
+		double a0_;
 		double a1_;
 	   	double a2_;
 };

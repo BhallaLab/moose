@@ -48,7 +48,7 @@ class Interpol2D
 		double getSy() const;
 
         double getInterpolatedValue(vector<double> xy) const;
-    
+
 		////////////////////////////////////////////////////////////
 		// Here are the Interpol2D Destination functions
 		////////////////////////////////////////////////////////////
@@ -86,7 +86,7 @@ class Interpol2D
 			const vector< vector< double > >& value );
 
 		/**
-		 * Resizes 2-D vector. If either argument is zero, it remains 
+		 * Resizes 2-D vector. If either argument is zero, it remains
 		 * unchanged
 		 */
 		void resize( unsigned int xsize, unsigned int ysize, double init = 0.0  );

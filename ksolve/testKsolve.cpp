@@ -24,7 +24,7 @@
  * A + Tab <===> B
  * A + B -sumtot--> tot1
  * 2B <===> C
- * 
+ *
  * C ---e1Pool ---> D
  * D ---e2Pool ----> E
  *
@@ -49,7 +49,7 @@ Id makeReacTest()
 	Id D = pools[i++] = s->doCreate( "Pool", kin, "D", 1 );
 	Id E = pools[i++] = s->doCreate( "Pool", kin, "E", 1 );
 	Id tot1 = pools[i++] = s->doCreate( "BufPool", kin, "tot1", 1 );
-	Id sum = s->doCreate( "Function", tot1, "func", 1 ); // Silly that it has to have this name. 
+	Id sum = s->doCreate( "Function", tot1, "func", 1 ); // Silly that it has to have this name.
 	Id sumInput( sum.value() + 1 );
 	Id e1Pool = s->doCreate( "Pool", kin, "e1Pool", 1 );
 	Id e2Pool = s->doCreate( "Pool", kin, "e2Pool", 1 );
@@ -109,11 +109,11 @@ Id makeReacTest()
 	Field< double >::set( tab, "stopTime", 10.0 );
 	Field< double >::set( tab, "loopTime", 10.0 );
 	Field< bool >::set( tab, "doLoop", true );
-	
+
 
 	// Connect outputs
 	for ( unsigned int i = 0; i < 7; ++i )
-		s->doAddMsg( "Single", ObjId( plots,i), 
+		s->doAddMsg( "Single", ObjId( plots,i),
 						"requestOut", pools[i], "getConc" );
 
 	// Schedule it.
@@ -124,9 +124,9 @@ Id makeReacTest()
 	s->doUseClock( "/kinetics/##[ISA=Reac],/kinetics/##[ISA=EnzBase],/kinetics/##[ISA=SumFunc]",
 					"process", 4 );
 	s->doUseClock( "/kinetics/##[ISA=PoolBase]", "process", 5 );
-	s->doUseClock( "/kinetics/##[ISA=StimulusTable]", 
+	s->doUseClock( "/kinetics/##[ISA=StimulusTable]",
 					"process", 4 );
-	s->doUseClock( "/kinetics/##[ISA=Table]", "process", 8 ); 
+	s->doUseClock( "/kinetics/##[ISA=Table]", "process", 8 );
 	s->doSetClock( 4, simDt );
 	s->doSetClock( 5, simDt );
 	s->doSetClock( 8, plotDt );
@@ -145,7 +145,7 @@ void testSetupReac()
 	for ( unsigned int i = 0; i < 7; ++i ) {
 		stringstream ss;
 		ss << "plot." << i;
-		SetGet2< string, string >::set( ObjId( plots, i ), "xplot", 
+		SetGet2< string, string >::set( ObjId( plots, i ), "xplot",
 						"tsr.plot", ss.str() );
 	}
 	*/
@@ -159,7 +159,7 @@ void testBuildStoich()
 		// Id number, modulo varPools then bufPOols.
 		// Matrix looks like:
 		// Reac Name	R1	R2	e1a	e1b	e2
-		// MolName	
+		// MolName
 		// D			-1	0	0	0	0
 		// A			-1	0	0	0	0
 		// B			+1	-2	0	0	0
@@ -196,7 +196,7 @@ void testBuildStoich()
 #ifndef NDEBUG
 	Stoich* stoichPtr = reinterpret_cast< Stoich* >( stoich.eref().data() );
 #endif
-	
+
 	Field< string >::set( stoich, "path", "/kinetics/##" );
 
 	unsigned int n = Field< unsigned int >::get( stoich, "numAllPools" );
@@ -243,7 +243,7 @@ void testRunKsolve()
 	Field< Id >::set( stoich, "compartment", kin );
 	Field< Id >::set( stoich, "ksolve", ksolve );
 	Field< string >::set( stoich, "path", "/kinetics/##" );
-	s->doUseClock( "/kinetics/ksolve", "process", 4 ); 
+	s->doUseClock( "/kinetics/ksolve", "process", 4 );
 	s->doSetClock( 4, simDt );
 
 	s->doReinit();
@@ -252,7 +252,7 @@ void testRunKsolve()
 	for ( unsigned int i = 0; i < 7; ++i ) {
 		stringstream ss;
 		ss << "plot." << i;
-		SetGet2< string, string >::set( ObjId( plots, i ), "xplot", 
+		SetGet2< string, string >::set( ObjId( plots, i ), "xplot",
 						"tsr2.plot", ss.str() );
 	}
 	s->doDelete( kin );
@@ -284,9 +284,9 @@ void testRunGsolve()
 	Id stoich = s->doCreate( "Stoich", gsolve, "stoich", 1 );
 	Field< Id >::set( stoich, "compartment", kin );
 	Field< Id >::set( stoich, "ksolve", gsolve );
-	
+
 	Field< string >::set( stoich, "path", "/kinetics/##" );
-	s->doUseClock( "/kinetics/gsolve", "process", 4 ); 
+	s->doUseClock( "/kinetics/gsolve", "process", 4 );
 	s->doSetClock( 4, simDt );
 
 	s->doReinit();
@@ -295,7 +295,7 @@ void testRunGsolve()
 	for ( unsigned int i = 0; i < 7; ++i ) {
 		stringstream ss;
 		ss << "plot." << i;
-		SetGet2< string, string >::set( ObjId( plots, i ), "xplot", 
+		SetGet2< string, string >::set( ObjId( plots, i ), "xplot",
 						"tsr3.plot", ss.str() );
 	}
 	s->doDelete( kin );

@@ -35,7 +35,7 @@
 namespace boost {
 namespace numeric {
 namespace odeint {
-    
+
 template< class StateType , class Enabler = void >
 struct algebra_dispatcher_sfinae
 {
@@ -94,7 +94,7 @@ struct algebra_dispatcher< boost::numeric::ublas::matrix< T , L , A > >
 namespace boost {
 namespace numeric {
 namespace odeint {
-    
+
 // specialize for std::array
 template< class T , size_t N >
 struct algebra_dispatcher< std::array< T , N > >

@@ -14,7 +14,7 @@
 Id OneToOneMsg::managerId_;
 vector< OneToOneMsg* > OneToOneMsg::msg_;
 
-OneToOneMsg::OneToOneMsg( const Eref& e1, const Eref& e2, 
+OneToOneMsg::OneToOneMsg( const Eref& e1, const Eref& e2,
 				unsigned int msgIndex )
 	: Msg( ObjId( managerId_, (msgIndex != 0) ? msgIndex: msg_.size() ),
 					e1.element(), e2.element() ),
@@ -43,12 +43,12 @@ OneToOneMsg::~OneToOneMsg()
  * At this point, the effect of trying to go between regular
  * data entries and field entries is undefined.
  */
-Eref OneToOneMsg::firstTgt( const Eref& src ) const 
+Eref OneToOneMsg::firstTgt( const Eref& src ) const
 {
 	if ( src.element() == e1_ ) {
 		if ( e2_->hasFields() )
 			return Eref( e2_, i2_, src.dataIndex() );
-		else 
+		else
 			return Eref( e2_, src.dataIndex(), 0 );
 	} else if ( src.element() == e2_ ) {
 		return Eref( e1_, src.dataIndex() );
@@ -64,7 +64,7 @@ void OneToOneMsg::sources( vector< vector< Eref > > & v) const
 	if ( e2_->hasFields() ) {
 		if ( Eref( e2_, i2_ ).isDataHere() ) {
 			assert( i2_ > e2_->localDataStart() );
-			unsigned int nf = e2_->numField( i2_ - e2_->localDataStart() ); 
+			unsigned int nf = e2_->numField( i2_ - e2_->localDataStart() );
 			if ( n > nf )
 				n = nf;
 			v.resize( n );
@@ -89,7 +89,7 @@ void OneToOneMsg::targets( vector< vector< Eref > > & v) const
 	if ( e2_->hasFields() ) {
 		if ( Eref( e2_, i2_ ).isDataHere() ) {
 			assert( i2_ > e2_->localDataStart() );
-			unsigned int nf = e2_->numField( i2_ - e2_->localDataStart() ); 
+			unsigned int nf = e2_->numField( i2_ - e2_->localDataStart() );
 			if ( n > nf )
 				n = nf;
 			for ( unsigned int i = 0; i < n; ++i )
@@ -121,7 +121,7 @@ ObjId OneToOneMsg::findOtherEnd( ObjId f ) const
 		return ObjId( e2()->id(), f.dataIndex );
 	else if ( f.element() == e2() )
 		return ObjId( e1()->id(), f.dataIndex );
-	
+
 	return ObjId( 0, BADINDEX );
 }
 

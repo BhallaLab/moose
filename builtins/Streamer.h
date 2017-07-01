@@ -30,7 +30,7 @@
 
 using namespace std;
 
-class Streamer : public StreamerBase 
+class Streamer : public StreamerBase
 {
 
 public:

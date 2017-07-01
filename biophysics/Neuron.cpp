@@ -153,7 +153,7 @@ const Cinfo* Neuron::initCinfo()
 		&Neuron::getSourceFile
 	);
 
-	static ValueFinfo< Neuron, double > compartmentLengthInLambdas( 
+	static ValueFinfo< Neuron, double > compartmentLengthInLambdas(
 		"compartmentLengthInLambdas",
 		"Units: meters (SI). \n"
 		"Electrotonic length to use for the largest compartment in the "
@@ -176,8 +176,8 @@ const Cinfo* Neuron::initCinfo()
 		&Neuron::getCompartmentLengthInLambdas
 	);
 
-	static ElementValueFinfo< Neuron, vector< string > > 
-			channelDistribution( 
+	static ElementValueFinfo< Neuron, vector< string > >
+			channelDistribution(
 		"channelDistribution",
 		"Specification for distribution of channels, CaConcens and "
 		"any other model components that are defined as prototypes and "
@@ -241,8 +241,8 @@ const Cinfo* Neuron::initCinfo()
 		&Neuron::getChannelDistribution
 	);
 
-	static ElementValueFinfo< Neuron, vector< string > > 
-			passiveDistribution( 
+	static ElementValueFinfo< Neuron, vector< string > >
+			passiveDistribution(
 		"passiveDistribution",
 		"Specification for distribution of passive properties of cell.\n"
 		"Arguments: . path field expr [field expr]...\n"
@@ -324,20 +324,20 @@ const Cinfo* Neuron::initCinfo()
 		&Neuron::getSpineDistribution
 	);
 
-	
-	static ReadOnlyValueFinfo< Neuron, unsigned int > numCompartments( 
+
+	static ReadOnlyValueFinfo< Neuron, unsigned int > numCompartments(
 		"numCompartments",
 		"Number of electrical compartments in model. ",
 		&Neuron::getNumCompartments
 	);
-	
-	static ReadOnlyValueFinfo< Neuron, unsigned int > numSpines( 
+
+	static ReadOnlyValueFinfo< Neuron, unsigned int > numSpines(
 		"numSpines",
 		"Number of dendritic spines in model. ",
 		&Neuron::getNumSpines
 	);
 
-	static ReadOnlyValueFinfo< Neuron, unsigned int > numBranches( 
+	static ReadOnlyValueFinfo< Neuron, unsigned int > numBranches(
 		"numBranches",
 		"Number of branches in dendrites. ",
 		&Neuron::getNumBranches
@@ -350,19 +350,19 @@ const Cinfo* Neuron::initCinfo()
 		&Neuron::getPathDistFromSoma
 	);
 
-	static ReadOnlyValueFinfo< Neuron, vector< double > > geomDistFromSoma( 
+	static ReadOnlyValueFinfo< Neuron, vector< double > > geomDistFromSoma(
 		"geometricalDistanceFromSoma",
 		"geometrical distance of each segment from soma.",
 		&Neuron::getGeomDistFromSoma
 	);
 
-	static ReadOnlyValueFinfo< Neuron, vector< double > > elecDistFromSoma( 
+	static ReadOnlyValueFinfo< Neuron, vector< double > > elecDistFromSoma(
 		"electrotonicDistanceFromSoma",
 		"geometrical distance of each segment from soma, as measured along "
 		"the dendrite.",
 		&Neuron::getElecDistFromSoma
 	);
-	static ReadOnlyValueFinfo< Neuron, vector< ObjId > > compartments( 
+	static ReadOnlyValueFinfo< Neuron, vector< ObjId > > compartments(
 		"compartments",
 		"Vector of ObjIds of electrical compartments. Order matches order "
 		"of segments, and also matches the order of the electrotonic and "
@@ -370,16 +370,16 @@ const Cinfo* Neuron::initCinfo()
 		&Neuron::getCompartments
 	);
 
-	static ReadOnlyLookupElementValueFinfo< Neuron, string, vector< ObjId > > 
-			compartmentsFromExpression( 
+	static ReadOnlyLookupElementValueFinfo< Neuron, string, vector< ObjId > >
+			compartmentsFromExpression(
 		"compartmentsFromExpression",
 		"Vector of ObjIds of electrical compartments that match the "
 		"'path expression' pair in the argument string.",
 		&Neuron::getExprElist
 	);
 
-	static ReadOnlyLookupElementValueFinfo< Neuron, string, vector< double > > 
-			valuesFromExpression( 
+	static ReadOnlyLookupElementValueFinfo< Neuron, string, vector< double > >
+			valuesFromExpression(
 		"valuesFromExpression",
 		"Vector of values computed for each electrical compartment that "
 	   	"matches the 'path expression' pair in the argument string."
@@ -389,8 +389,8 @@ const Cinfo* Neuron::initCinfo()
 		&Neuron::getExprVal
 	);
 
-	static ReadOnlyLookupElementValueFinfo< Neuron, string, vector< ObjId > > 
-			spinesFromExpression( 
+	static ReadOnlyLookupElementValueFinfo< Neuron, string, vector< ObjId > >
+			spinesFromExpression(
 		"spinesFromExpression",
 		//"Vector of ObjIds of spines/heads sitting on the electrical "
 		//"compartments that match the 'path expression' pair in the "
@@ -402,7 +402,7 @@ const Cinfo* Neuron::initCinfo()
 	);
 
 	static ReadOnlyLookupElementValueFinfo< Neuron, ObjId,vector< ObjId > >
-			spinesOnCompartment( 
+			spinesOnCompartment(
 		"spinesOnCompartment",
 		"Vector of ObjIds of spines shafts/heads sitting on the specified "
 		"electrical compartment. If each spine has a shaft and a head,"
@@ -412,8 +412,8 @@ const Cinfo* Neuron::initCinfo()
 		&Neuron::getSpinesOnCompartment
 	);
 
-	static ReadOnlyLookupElementValueFinfo< Neuron, ObjId, ObjId > 
-			parentCompartmentOfSpine( 
+	static ReadOnlyLookupElementValueFinfo< Neuron, ObjId, ObjId >
+			parentCompartmentOfSpine(
 		"parentCompartmentOfSpine",
 		"Returns parent compartment of specified spine compartment."
 		"Both the spine head or its shaft will return the same parent.",
@@ -469,10 +469,10 @@ const Cinfo* Neuron::initCinfo()
 		&Neuron::getNumSpines,
 		false
 	);
-	
+
 	/////////////////////////////////////////////////////////////////////
-	static Finfo* neuronFinfos[] = 
-	{ 	
+	static Finfo* neuronFinfos[] =
+	{
 		&RM,						// ValueFinfo
 		&RA,						// ValueFinfo
 		&CM,						// ValueFinfo
@@ -529,7 +529,7 @@ static const Cinfo* neuronCinfo = Neuron::initCinfo();
 
 ////////////////////////////////////////////////////////////////////////
 Neuron::Neuron()
-	: 
+	:
 			RM_( 1.0 ),
 			RA_( 1.0 ),
 			CM_( 0.01 ),
@@ -544,7 +544,7 @@ Neuron::Neuron()
 			spineEntry_( this )
 {;}
 
-// When copying Neuron, we next have to rerun buildSegmentTree() and 
+// When copying Neuron, we next have to rerun buildSegmentTree() and
 // setSpineAndPsdMesh
 Neuron::Neuron( const Neuron& other )
     :
@@ -993,7 +993,7 @@ vector< double > Neuron::getExprVal( const Eref& e, string line ) const
 	return val;
 }
 
-vector< ObjId > Neuron::getSpinesFromExpression( 
+vector< ObjId > Neuron::getSpinesFromExpression(
 				const Eref& e, string line ) const
 {
 	unsigned long pos = line.find_first_of( " \t" );
@@ -1004,7 +1004,7 @@ vector< ObjId > Neuron::getSpinesFromExpression(
 	vector< ObjId > temp = getExprElist( e, "# " + expr );
 	// indexed by segIndex, includes all compts in all spines.
 	/*
-	vector< vector< Id > > allSpinesPerCompt( segId_.size() ); 
+	vector< vector< Id > > allSpinesPerCompt( segId_.size() );
 	for ( unsigned int i = 0; i < spines_.size(); ++i ) {
 		assert( allSpinesPerCompt.size() > spineParentSegIndex_[i] );
 		vector< Id >& s = allSpinesPerCompt[ spineParentSegIndex_[i] ];
@@ -1016,7 +1016,7 @@ vector< ObjId > Neuron::getSpinesFromExpression(
 		return ret;
 	for ( vector< ObjId >::iterator
 					i = temp.begin(); i != temp.end(); ++i ) {
-		map< Id, unsigned int >::const_iterator si = 
+		map< Id, unsigned int >::const_iterator si =
 				segIndex_.find( i->id );
 		assert( si != segIndex_.end() );
 		assert( si->second < segId_.size() );
@@ -1031,11 +1031,11 @@ vector< ObjId > Neuron::getSpinesFromExpression(
 	return ret;
 }
 
-vector< ObjId > Neuron::getSpinesOnCompartment( 
+vector< ObjId > Neuron::getSpinesOnCompartment(
 				const Eref& e, ObjId compt ) const
 {
 	vector< ObjId > ret;
-	map< Id, unsigned int >::const_iterator pos = 
+	map< Id, unsigned int >::const_iterator pos =
 			segIndex_.find( compt.id );
 	if ( pos != segIndex_.end() ) {
 		assert( pos->second < allSpinesPerCompt_.size() );
@@ -1046,7 +1046,7 @@ vector< ObjId > Neuron::getSpinesOnCompartment(
 	return ret;
 }
 
-ObjId Neuron::getParentCompartmentOfSpine( 
+ObjId Neuron::getParentCompartmentOfSpine(
 				const Eref& e, ObjId compt ) const
 {
 	for ( unsigned int comptIndex = 0; comptIndex < allSpinesPerCompt_.size(); ++comptIndex ) {
@@ -1058,9 +1058,9 @@ ObjId Neuron::getParentCompartmentOfSpine(
 	return ObjId();
 }
 
-void Neuron::buildElist( const Eref& e, 
-				const vector< string >& line, 
-				vector< ObjId >& elist, 
+void Neuron::buildElist( const Eref& e,
+				const vector< string >& line,
+				vector< ObjId >& elist,
 				vector< double >& val )
 {
     Shell* shell = reinterpret_cast< Shell* >( Id().eref().data() );
@@ -1723,7 +1723,7 @@ string findArg( const vector<string>& line, const string& field )
 
 /// Add entries into the pos vector for a given compartment i.
 static void addPos( unsigned int segIndex, unsigned int eIndex,
-		double spacing, double minSpacing, 
+		double spacing, double minSpacing,
 		double dendLength,
 		vector< unsigned int >& seglistIndex,
 		vector< unsigned int >& elistIndex,
@@ -1745,27 +1745,27 @@ static void addPos( unsigned int segIndex, unsigned int eIndex,
 }
 /*
  * This version tries to put in Pos using simple increments from the
- * start of each compt. Multiple issues including inability to put 
+ * start of each compt. Multiple issues including inability to put
  * spines in small compartments, even if many of them.
  *
 static void addPos( unsigned int segIndex, unsigned int eIndex,
-		double spacing, double spacingDistrib, 
+		double spacing, double spacingDistrib,
 		double dendLength,
 		vector< unsigned int >& seglistIndex,
 		vector< unsigned int >& elistIndex,
 		vector< double >& pos )
 {
 	if ( spacingDistrib > 0.0 ) {
-		double position = spacing * 0.5 + 
+		double position = spacing * 0.5 +
 				( moose::mtrand() - 0.5 ) * spacingDistrib;
 		while ( position < dendLength ) {
 			seglistIndex.push_back( segIndex );
 			elistIndex.push_back( eIndex );
 			pos.push_back( position );
 			position += spacing + ( moose::mtrand() - 0.5 ) * spacingDistrib;
-		} 
+		}
 	} else {
-		for ( double position = spacing * 0.5; 
+		for ( double position = spacing * 0.5;
 				position < dendLength; position += spacing ) {
 			seglistIndex.push_back( segIndex );
 			elistIndex.push_back( eIndex );
@@ -1775,7 +1775,7 @@ static void addPos( unsigned int segIndex, unsigned int eIndex,
 }
 */
 
-void Neuron::makeSpacingDistrib( const vector< ObjId >& elist, 
+void Neuron::makeSpacingDistrib( const vector< ObjId >& elist,
 		const vector< double >& val,
 		vector< unsigned int >& seglistIndex,
 		vector< unsigned int >& elistIndex,
@@ -1795,17 +1795,17 @@ void Neuron::makeSpacingDistrib( const vector< ObjId >& elist,
 				double spacing = val[ j + nuParser::EXPR ];
 				double spacingDistrib = parser.eval( val.begin() + j );
 				if ( spacingDistrib > spacing || spacingDistrib < 0 ) {
-					cout << "Warning: Neuron::makeSpacingDistrib: " << 
+					cout << "Warning: Neuron::makeSpacingDistrib: " <<
 						"0 < " << spacingDistrib << " < " << spacing <<
 						" fails on " << elist[i].path() << ". Using 0.\n";
 					spacingDistrib = 0.0;
 				}
-				map< Id, unsigned int>::const_iterator 
+				map< Id, unsigned int>::const_iterator
 					lookupDend = segIndex_.find( elist[i] );
 				if ( lookupDend != segIndex_.end() ) {
 					double dendLength = segs_[lookupDend->second].length();
-					addPos( lookupDend->second, i, 
-								spacing, spacingDistrib, dendLength, 
+					addPos( lookupDend->second, i,
+								spacing, spacingDistrib, dendLength,
 								seglistIndex, elistIndex, pos );
 				}
 			}
@@ -1817,8 +1817,8 @@ void Neuron::makeSpacingDistrib( const vector< ObjId >& elist,
 	}
 }
 
-static void makeAngleDistrib ( const vector< ObjId >& elist, 
-		const vector< double >& val, 
+static void makeAngleDistrib ( const vector< ObjId >& elist,
+		const vector< double >& val,
 		vector< unsigned int >& elistIndex,
 		vector< double >& theta,
 		const vector< string >& line )
@@ -1856,8 +1856,8 @@ static void makeAngleDistrib ( const vector< ObjId >& elist,
 	}
 }
 
-static void makeSizeDistrib ( const vector< ObjId >& elist, 
-		const vector< double >& val, 
+static void makeSizeDistrib ( const vector< ObjId >& elist,
+		const vector< double >& val,
 		vector< unsigned int >& elistIndex,
 		vector< double >& size,
 		const vector< string >& line )
@@ -1893,7 +1893,7 @@ static void makeSizeDistrib ( const vector< ObjId >& elist,
 	}
 }
 
-void Neuron::installSpines( const vector< ObjId >& elist, 
+void Neuron::installSpines( const vector< ObjId >& elist,
 		const vector< double >& val, const vector< string >& line )
 {
 	Id spineProto( "/library/spine" );
@@ -1902,16 +1902,16 @@ void Neuron::installSpines( const vector< ObjId >& elist,
 		cout << "Warning: Neuron::installSpines: Unable to find prototype spine: /library/spine\n";
 		return;
 	}
-	// Look up elist index from pos index, since there may be many 
+	// Look up elist index from pos index, since there may be many
 	// spines on each segment.
-	vector< unsigned int > elistIndex; 
+	vector< unsigned int > elistIndex;
 	vector< double > pos; // spacing of the new spines along compt.
 	vector< double > theta; // Angle of spines
 	vector< double > size; // Size scaling of spines
 	pos.reserve( elist.size() );
 	elistIndex.reserve( elist.size() );
 
-	makeSpacingDistrib( elist, val, 
+	makeSpacingDistrib( elist, val,
 					spineParentSegIndex_, elistIndex, pos, line);
 	makeAngleDistrib( elist, val, elistIndex, theta, line );
 	makeSizeDistrib( elist, val, elistIndex, size, line );
@@ -1919,8 +1919,8 @@ void Neuron::installSpines( const vector< ObjId >& elist,
 		unsigned int i = spineParentSegIndex_[k];
 		Vec x, y, z;
 		coordSystem( soma_, segId_[i], x, y, z );
-		spines_.push_back( 
-			addSpine( segId_[i], spineProto, pos[k], theta[k], 
+		spines_.push_back(
+			addSpine( segId_[i], spineProto, pos[k], theta[k],
 				x, y, z, size[k], k )
 		);
 	}

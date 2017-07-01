@@ -1,47 +1,48 @@
-# mtypes.py --- 
-# 
+# -*- coding: utf-8 -*-
+# mtypes.py ---
+#
 # Filename: mtypes.py
-# Description: 
-# Author: 
-# Maintainer: 
+# Description:
+# Author:
+# Maintainer:
 # Created: Fri Feb  8 11:29:36 2013 (+0530)
-# Version: 
+# Version:
 # Last-Updated: Tue Mar  1 02:52:35 2016 (-0500)
 #           By: subha
 #     Update #: 182
-# URL: 
-# Keywords: 
-# Compatibility: 
-# 
-# 
+# URL:
+# Keywords:
+# Compatibility:
+#
+#
 
-# Commentary: 
-# 
+# Commentary:
+#
 # Utility to detect the model type in a file
-# 
-# 
+#
+#
 
 # Change log:
-# 
-# 
-# 
-# 
+#
+#
+#
+#
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
 # published by the Free Software Foundation; either version 3, or
 # (at your option) any later version.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program; see the file COPYING.  If not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 # Floor, Boston, MA 02110-1301, USA.
-# 
-# 
+#
+#
 
 # Code:
 
@@ -99,7 +100,7 @@ def getType(filename, mode='t'):
 
     mode: 'b' for binary, 't' for text. Not used currently.
 
-    """    
+    """
     mtype = None
     msubtype = None
     if mode == 't':
@@ -117,7 +118,7 @@ def getSubtype(filename, typename):
         if subtypeFunc(filename):
             return subtype
     return ''
-    
+
 # Dictionary of model description types and functions to detect them.
 #
 # Fri Feb 8 11:07:41 IST 2013 - as of now we only recognize GENESIS .g
@@ -163,9 +164,9 @@ def isSBML(filename):
 
 def isKKIT(filename):
     """Check if `filename` is a GENESIS/KINETIKIT file.
-    
-    """    
-    pattern = re.compile('include\s+kkit') # KKIT files must have "include kkit" statement somewhere    
+
+    """
+    pattern = re.compile('include\s+kkit') # KKIT files must have "include kkit" statement somewhere
     with open(filename, 'r') as infile:
         while True:
             sentence = ''
@@ -188,7 +189,7 @@ def isKKIT(filename):
                 comment_end = line.find('*/')
                 if comment_end >= 0:
                     comment_start = -1;
-                    line = line[comment_end+2:] # keep the rest of the line                    
+                    line = line[comment_end+2:] # keep the rest of the line
                     break
                 line = infile.readline()
                 if line:
@@ -200,13 +201,13 @@ def isKKIT(filename):
             while line and contd:
                 sentence += ' ' + line[:-1]
                 line = infile.readline()
-                if line:                    
+                if line:
                     line = line.strip()
                     contd = line.endswith('\\')
             # if contd turned false, the last line came out of the
             # while loop unprocessed
             if line:
-                sentence += ' ' + line            
+                sentence += ' ' + line
             # print '>', sentence
             if re.search(pattern, sentence):
                 return True
@@ -229,7 +230,7 @@ subtypeChecks = {
     'genesis/kkit': isKKIT,
     'genesis/proto': isProto,
     'xml/neuroml': isNeuroML,
-    'xml/sbml': isSBML,    
+    'xml/sbml': isSBML,
 }
 
 # Mapping types to list of subtypes.
@@ -241,5 +242,5 @@ subtypes = {
 
 
 
-# 
+#
 # mtypes.py ends here

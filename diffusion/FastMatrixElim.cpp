@@ -38,11 +38,11 @@ FastMatrixElim::FastMatrixElim( const SparseMatrix< double >& orig )
 	: SparseMatrix< double >( orig )
 {;}
 
-void sortByColumn( 
+void sortByColumn(
 			vector< unsigned int >& col, vector< double >& entry );
 void testSorting();
 
-// 	
+//
 //	static unsigned int parents[] = { 1,6,3,6,5,8,7,8,9,10,-1};
 //	unsigned int numKids[] = {0,1,0,1,0,2,
 
@@ -53,18 +53,18 @@ bool FastMatrixElim::checkSymmetricShape() const
 	FastMatrixElim temp = *this;
 	temp.transpose();
 	return (
-		nrows_ == temp.nrows_ && 
+		nrows_ == temp.nrows_ &&
 		ncolumns_ == temp.ncolumns_ &&
 		N_.size() == temp.N_.size() &&
 		rowStart_ == temp.rowStart_ &&
-		colIndex_ == temp.colIndex_ 
+		colIndex_ == temp.colIndex_
 	);
 }
 
 bool FastMatrixElim::operator==( const FastMatrixElim& other ) const
 {
-	if ( 
-		nrows_ == other.nrows_ && 
+	if (
+		nrows_ == other.nrows_ &&
 		ncolumns_ == other.ncolumns_ &&
 		N_.size() == other.N_.size() &&
 		rowStart_ == other.rowStart_ &&
@@ -77,7 +77,7 @@ bool FastMatrixElim::operator==( const FastMatrixElim& other ) const
 	return false;
 }
 
-bool FastMatrixElim::isSymmetric() const 
+bool FastMatrixElim::isSymmetric() const
 {
 	FastMatrixElim temp = *this;
 	temp.transpose();
@@ -86,8 +86,8 @@ bool FastMatrixElim::isSymmetric() const
 
 /**
  * Scans the current matrix starting from index 0, to build tree of parent
- * voxels using the contents of the sparase matrix to indicate 
- * connectivity. Emits warning noises and returns an empty vector if 
+ * voxels using the contents of the sparase matrix to indicate
+ * connectivity. Emits warning noises and returns an empty vector if
  * the entire tree cannot be traversed, or
  * if the current matrix is not tree-like.
  * This still doesn't work. Fails because it cannot detect branches in
@@ -99,8 +99,8 @@ bool FastMatrixElim::buildTree( unsigned int parentRow,
 	assert( nRows() == nColumns() );
 	if ( parentRow == 0 ) {
 		parentVoxel.assign( nRows, EMPTY_VOXEL );
-		if ( !checkSymmetricShape() ) 
-			return false; // shape of matrix should be symmetric. 
+		if ( !checkSymmetricShape() )
+			return false; // shape of matrix should be symmetric.
 	}
 	const double* entry;
 	const unsigned int* colIndex;
@@ -132,16 +132,16 @@ bool FastMatrixElim::buildTree( unsigned int parentRow,
  */
 
 /**
- * Reorders rows and columns to put the matrix in the form suitable for 
+ * Reorders rows and columns to put the matrix in the form suitable for
  * rapid single-pass inversion. Returns 0 on failure, but at this
  * point I don't have a proper test for this.
  */
-bool FastMatrixElim::hinesReorder( 
+bool FastMatrixElim::hinesReorder(
 		const vector< unsigned int >& parentVoxel,
 		vector< unsigned int >& lookupOldRowFromNew
    	)
 {
-	// First we fill in the vector that specifies the old row number 
+	// First we fill in the vector that specifies the old row number
 	// assigned to each row of the reordered matrix.
 	assert( parentVoxel.size() == nrows_ );
 	lookupOldRowFromNew.clear();
@@ -190,7 +190,7 @@ bool FastMatrixElim::hinesReorder(
 
 
 // Fill in the reordered matrix. Note we need to reorder columns too.
-void FastMatrixElim::shuffleRows( 
+void FastMatrixElim::shuffleRows(
 				const vector< unsigned int >& lookupOldRowFromNew )
 {
 	vector< unsigned int > lookupNewRowFromOld( nrows_ );
@@ -224,7 +224,7 @@ void sortByColumn( vector< unsigned int >& col, vector< double >& entry )
 {
 	unsigned int num = col.size();
 	assert( num == entry.size() );
-	// Stupid bubble sort, as we only have up to 5 entries and need to 
+	// Stupid bubble sort, as we only have up to 5 entries and need to
 	// sort both the col and reorder the entries by the same sequence.
 	for ( unsigned int i = 0; i < num; ++i ) {
 		for ( unsigned int j = 1; j < num; ++j ) {
@@ -241,7 +241,7 @@ void sortByColumn( vector< unsigned int >& col, vector< double >& entry )
 }
 
 
-void FastMatrixElim::makeTestMatrix( 
+void FastMatrixElim::makeTestMatrix(
 				const double* test, unsigned int numCompts )
 {
 	setSize( numCompts, numCompts );
@@ -266,10 +266,10 @@ back-substitution.
 */
 
 /**
- * Builds the vector of forward ops: ratio, i, j 
- * RHS[i] = RHS[i] - RHS[j] * ratio 
+ * Builds the vector of forward ops: ratio, i, j
+ * RHS[i] = RHS[i] - RHS[j] * ratio
  * This vec tells the routine which rows below have to be eliminated.
- * This includes the rows if any in the tridiagonal band and also 
+ * This includes the rows if any in the tridiagonal band and also
  * rows, if any, on branches.
  */
 void FastMatrixElim::buildForwardElim( vector< unsigned int >& diag,
@@ -324,26 +324,26 @@ void FastMatrixElim::buildForwardElim( vector< unsigned int >& diag,
 		cout << endl;
 	}
 	for ( unsigned int i = 0; i < fops.size(); ++i ) {
-		cout << "fops[" << i << "]=		" << fops[i].b_ << "	" << fops[i].c_ << 
+		cout << "fops[" << i << "]=		" << fops[i].b_ << "	" << fops[i].c_ <<
 				"	" << fops[i].a_ << endl;
 	}
 	*/
 }
 
-/** 
+/**
  * Operations to be done on the RHS for the back sub are generated and
- * put into the bops (backward ops) vector. 
- * col > row here, row is the entry being operated on, and col is given by 
+ * put into the bops (backward ops) vector.
+ * col > row here, row is the entry being operated on, and col is given by
  * rowsToSub.
- * offDiagVal is the value on the off-diagonal at row,col.  
- * diagVal is the value on the diagonal at [row][row].  
+ * offDiagVal is the value on the off-diagonal at row,col.
+ * diagVal is the value on the diagonal at [row][row].
  * RHS[row] = ( RHS[row] - offDiagVal * RHS[col] ) / diagVal
  */
 void FastMatrixElim::buildBackwardSub( vector< unsigned int >& diag,
 	vector< Triplet< double > >& bops, vector< double >& diagVal )
 {
 	// This vec tells the routine which rows below have to be back-subbed.
-	// This includes the rows if any in the tridiagonal band and also 
+	// This includes the rows if any in the tridiagonal band and also
 	// rows, if any, on branches.
 	vector< vector< unsigned int > > rowsToSub( nrows_ );
 
@@ -384,7 +384,7 @@ void FastMatrixElim::buildBackwardSub( vector< unsigned int >& diag,
 
 	/*
 	for ( unsigned int i = 0; i < bops.size(); ++i ) {
-		cout << i << ":		" << bops[i].a_ << "	" << 
+		cout << i << ":		" << bops[i].a_ << "	" <<
 				bops[i].b_ << "	" <<  // diagonal index
 				bops[i].c_ << "	" <<  // off-diagonal index
 				1.0 / diagVal[bops[i].b_] << // diagonal value.
@@ -402,18 +402,18 @@ void FastMatrixElim::buildBackwardSub( vector< unsigned int >& diag,
  * Note that there will be only one parent term but possibly many
  * distal terms.
  */
-void FastMatrixElim::setDiffusionAndTransport( 
+void FastMatrixElim::setDiffusionAndTransport(
 			const vector< unsigned int >& parentVoxel,
 			double diffConst, double motorConst,
 		   	double dt )
 {
-	FastMatrixElim m; 
+	FastMatrixElim m;
 	m.nrows_ = m.ncolumns_ = nrows_;
 	m.rowStart_.resize( nrows_ + 1 );
 	m.rowStart_[0] = 0;
 	for ( unsigned int i = 1; i <= nrows_; ++i ) {
 		// Insert an entry for diagonal in each.
-		m.rowStart_[i] = rowStart_[i] + i; 
+		m.rowStart_[i] = rowStart_[i] + i;
 	}
 	for ( unsigned int i = 0; i < nrows_; ++i ) {
 		double proximalTerms = 0.0;
@@ -454,9 +454,9 @@ void FastMatrixElim::setDiffusionAndTransport(
 			m.N_.push_back( 0 ); // placeholder
 		}
 		assert( diagonalIndex != EMPTY_VOXEL );
-		m.N_[diagonalIndex] = 1.0 - dt * ( 
+		m.N_[diagonalIndex] = 1.0 - dt * (
 				diffConst * ( proximalTerms + distalTerms ) +
-				motorConst * distalTerms 
+				motorConst * distalTerms
 			);
 	}
 	*this = m;
@@ -488,7 +488,7 @@ void FastMatrixElim::advance( vector< double >& y,
  * static function. Reorders the ops and diagVal vectors so as to restore
  * the original indexing of the input vectors.
  */
-void FastMatrixElim::opsReorder( 
+void FastMatrixElim::opsReorder(
 		const vector< unsigned int >& lookupOldRowsFromNew,
 		vector< Triplet< double > >& ops,
 		vector< double >& diagVal )
@@ -531,11 +531,11 @@ void buildColIndex( unsigned int nrows,
 	}
 }
 
-/** 
+/**
  * Motor transport into branches is divided between the child branches
  * in proportion to their area. This function computes these proportions.
  */
-void findAreaProportion( vector< double >& areaProportion, 
+void findAreaProportion( vector< double >& areaProportion,
 		const vector< unsigned int >& parentVoxel,
 			const vector< double >& area )
 {
@@ -554,7 +554,7 @@ void findAreaProportion( vector< double >& areaProportion,
 }
 
 /// This function makes the diffusion matrix.
-bool FastMatrixElim::buildForDiffusion( 
+bool FastMatrixElim::buildForDiffusion(
 			const vector< unsigned int >& parentVoxel,
 			const vector< double >& volume,
 			const vector< double >& area,
@@ -562,7 +562,7 @@ bool FastMatrixElim::buildForDiffusion(
 			double diffConst, double motorConst, double dt )
 {
 	// Too slow to matter.
-	if ( diffConst < 1e-18 && fabs( motorConst ) < 1e-12 ) 
+	if ( diffConst < 1e-18 && fabs( motorConst ) < 1e-12 )
 		return false;
 	assert( nrows_ == parentVoxel.size() );
 	assert( nrows_ == volume.size() );
@@ -611,7 +611,7 @@ bool FastMatrixElim::buildForDiffusion(
 				e[j] += 1.0; // term for self.
 			} else { // Not diagonal.
 				// Fill in diffusion from this entry to i.
-				e[j] = diffConst * 
+				e[j] = diffConst *
 						(area[i] + a)/(length[i] + len )/vol;
 
 				// Fill in motor transport

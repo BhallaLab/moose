@@ -10,7 +10,7 @@
 #ifndef _STENCIL_H
 #define _STENCIL_H
 
-class Stencil 
+class Stencil
 {
 	public:
 		Stencil();
@@ -19,11 +19,11 @@ class Stencil
 
 		/**
 		 * computes the Flux f in the voxel on meshIndex. Takes the
-		 * matrix of molNumber[meshIndex][pool] and 
+		 * matrix of molNumber[meshIndex][pool] and
 		 * the vector of diffusionConst[pool] as arguments.
 		 */
-		virtual void addFlux( unsigned int meshIndex, 
-			vector< double >& f, const vector< vector< double > >& S, 
+		virtual void addFlux( unsigned int meshIndex,
+			vector< double >& f, const vector< vector< double > >& S,
 			const vector< double >& diffConst ) const = 0;
 
 	private:
@@ -37,8 +37,8 @@ class DummyStencil: public Stencil
 	public:
 		DummyStencil();
 		~DummyStencil();
-		void addFlux( unsigned int meshIndex, vector< double >& f, 
-			const vector< vector< double > >& S, 
+		void addFlux( unsigned int meshIndex, vector< double >& f,
+			const vector< vector< double > >& S,
 			const vector< double >& diffConst ) const;
 	private:
 };
@@ -52,8 +52,8 @@ class LineStencil: public Stencil
 	public:
 		LineStencil( double h );
 		~LineStencil();
-		void addFlux( unsigned int meshIndex, vector< double >& f, 
-			const vector< vector< double > >& S, 
+		void addFlux( unsigned int meshIndex, vector< double >& f,
+			const vector< vector< double > >& S,
 			const vector< double >& diffConst ) const;
 	private:
 		double h_;
@@ -69,8 +69,8 @@ class RectangleStencil: public Stencil
 	public:
 		RectangleStencil( double dx, double dy, unsigned int nx );
 		~RectangleStencil();
-		void addFlux( unsigned int meshIndex, vector< double >& f, 
-			const vector< vector< double > >& S, 
+		void addFlux( unsigned int meshIndex, vector< double >& f,
+			const vector< vector< double > >& S,
 			const vector< double >& diffConst ) const;
 	private:
 		double dx_;
@@ -86,11 +86,11 @@ class RectangleStencil: public Stencil
 class CuboidStencil: public Stencil
 {
 	public:
-		CuboidStencil( double dx, double dy, double dz, 
+		CuboidStencil( double dx, double dy, double dz,
 			unsigned int nx, unsigned int ny );
 		~CuboidStencil();
-		void addFlux( unsigned int meshIndex, vector< double >& f, 
-			const vector< vector< double > >& S, 
+		void addFlux( unsigned int meshIndex, vector< double >& f,
+			const vector< vector< double > >& S,
 			const vector< double >& diffConst ) const;
 	private:
 		double dx_;

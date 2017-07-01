@@ -1,5 +1,5 @@
 /**********************************************************************
-** This program is part of 'MOOSE', 
+** This program is part of 'MOOSE',
 ** the Multi Object Oriented Simulation Environment.
 **
 **  Copyright (C) 2003-2016 Upinder S. Bhalla. and NCBS
@@ -42,9 +42,9 @@ public:
     void plainPlot( string file );
     void loadXplot( string fname, string plotname );
 
-    void loadXplotRange( 
+    void loadXplotRange(
             string fname, string plotname,
-            unsigned int start, unsigned int end 
+            unsigned int start, unsigned int end
             );
 
     void loadCSV( string fname, int startLine, int colNum, char separator );
@@ -64,7 +64,7 @@ public:
 
 protected:
     vector< double >& vec();
-    
+
 private:
     double output_;
     vector< double > vec_;

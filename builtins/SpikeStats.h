@@ -11,18 +11,18 @@
 
 class SpikeStats: public Stats
 {
-	public: 
+	public:
 		SpikeStats();
 
 		/**
  		 * Inserts an event into the pendingEvents queue for spikes.
  		 */
 		void addSpike( DataId synIndex, const double time );
-		
+
 		////////////////////////////////////////////////////////////////
 		// Field assignment stuff.
 		////////////////////////////////////////////////////////////////
-		
+
 		void setThreshold( double thresh );
 		double getThreshold() const;
 

@@ -12,7 +12,7 @@
 
 class Enz: public CplxEnzBase
 {
-	public: 
+	public:
 		Enz();
 		~Enz();
 

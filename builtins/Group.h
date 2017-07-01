@@ -11,7 +11,7 @@
 
 class Group
 {
-	public: 
+	public:
 		Group();
 		static const Cinfo* initCinfo();
 	private:

@@ -33,48 +33,48 @@ SrcFinfo2< double, double >* DifShellBase::outerDifSourceOut(){
 
 const Cinfo* DifShellBase::initCinfo()
 {
-    
+
   static DestFinfo process( "process",
 			    "Handles process call",
 			    new ProcOpFunc< DifShellBase>(&DifShellBase::process ) );
   static DestFinfo reinit( "reinit",
 			   "Reinit happens only in stage 0",
 			   new ProcOpFunc< DifShellBase>( &DifShellBase::reinit ));
-    
+
   static Finfo* processShared[] = {
     &process, &reinit
   };
 
   static SharedFinfo proc(
-			  "proc", 
+			  "proc",
 			  "Shared message to receive Process message from scheduler",
 			  processShared, sizeof( processShared ) / sizeof( Finfo* ));
-    
 
 
-  
+
+
   static DestFinfo reaction( "reaction",
 			     "Here the DifShell receives reaction rates (forward and backward), and concentrations for the "
 			     "free-buffer and bound-buffer molecules.",
 			     new EpFunc4< DifShellBase, double, double, double, double >( &DifShellBase::buffer ));
-    
+
   static Finfo* bufferShared[] = {
     DifShellBase::concentrationOut(), &reaction
   };
-  
+
   static SharedFinfo buffer( "buffer",
 			     "This is a shared message from a DifShell to a Buffer (FixBuffer or DifBuffer). " ,
 			     bufferShared,
 			     sizeof( bufferShared ) / sizeof( Finfo* ));
   /////
-  
-  
-  
- 
+
+
+
+
   static DestFinfo fluxFromOut( "fluxFromOut",
 				"Destination message",
 				new EpFunc2< DifShellBase, double, double > ( &DifShellBase::fluxFromOut ));
- 
+
   static Finfo* innerDifShared[] = {
     &fluxFromOut,  DifShellBase::innerDifSourceOut(),
   };
@@ -87,7 +87,7 @@ const Cinfo* DifShellBase::initCinfo()
 
   static DestFinfo fluxFromIn( "fluxFromIn", "",
 			       new EpFunc2< DifShellBase, double, double> ( &DifShellBase::fluxFromIn ) );
-    
+
   static Finfo* outerDifShared[] = {
     &fluxFromIn,  DifShellBase::outerDifSourceOut(),
   };
@@ -96,8 +96,8 @@ const Cinfo* DifShellBase::initCinfo()
 				"Using this message, an outer shell sends to, and receives from its inner shell." ,
 				outerDifShared,
 				sizeof( outerDifShared ) / sizeof( Finfo* ));
- 
-  static ElementValueFinfo< DifShellBase, double> C( "C", 
+
+  static ElementValueFinfo< DifShellBase, double> C( "C",
 						     "Concentration C",// is computed by the DifShell",
 						     &DifShellBase::setC,
 						     &DifShellBase::getC);
@@ -136,7 +136,7 @@ const Cinfo* DifShellBase::initCinfo()
 							     &DifShellBase::getInnerArea );
 
   static DestFinfo mmPump( "mmPump", "Here DifShell receives pump outflux",
-			   new EpFunc2< DifShellBase, double, double >( &DifShellBase::mmPump ) );  
+			   new EpFunc2< DifShellBase, double, double >( &DifShellBase::mmPump ) );
   static DestFinfo influx( "influx", "",
 			   new EpFunc1< DifShellBase, double > (&DifShellBase::influx ));
   static DestFinfo outflux( "outflux", "",
@@ -264,7 +264,7 @@ void DifShellBase::setValence(const Eref& e, double valence )
   vSetValence(e,valence);
 }
 
-double DifShellBase::getValence(const Eref& e ) const 
+double DifShellBase::getValence(const Eref& e ) const
 {
   return vGetValence(e);
 }

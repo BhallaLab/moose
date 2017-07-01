@@ -87,7 +87,7 @@ using ::boost::ref;
 
 
 /*
- * 
+ *
  * the following is the suggested way, but unfortunately it does not work with all compilers.
  */
 
@@ -141,7 +141,7 @@ using ::boost::unwrap_reference;
 
 namespace boost {
 namespace numeric {
-namespace odeint {  
+namespace odeint {
 namespace detail {
 
 

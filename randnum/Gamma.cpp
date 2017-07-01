@@ -1,6 +1,6 @@
 /*******************************************************************
  * File:            Gamma.cpp
- * Description:      
+ * Description:
  * Author:          Subhasis Ray
  * E-mail:          ray.subhasis@gmail.com
  * Created:         2007-11-05 18:33:01
@@ -25,10 +25,10 @@
 Gamma::Gamma(double alpha, double theta):alpha_(alpha), theta_(theta)
 {
     if (( alpha < 0 ) || (theta < 0 ))
-    {        
+    {
         cerr << "ERROR: setting parameter of Gamma distribution to negative. Setting both to 1." << endl;
         alpha_ = 1;
-        theta_ = 1;        
+        theta_ = 1;
     }
 }
 double Gamma::getAlpha()
@@ -54,7 +54,7 @@ double Gamma::getVariance() const
 double Gamma::getNextSample() const
 {
     double result;
-    
+
     if ( alpha_ <= 1 )
     {
         result = gammaSmall();
@@ -68,7 +68,7 @@ double Gamma::getNextSample() const
         result *= theta_;
     }
 
-    return result;    
+    return result;
 }
 
 // See Algorithm A in TAOCP by Knuth, Vol 2 ,Section 3.4.1
@@ -81,13 +81,13 @@ double Gamma::gammaLarge() const// alpha > 1
     double uniformV;
     double check;
     double tmp;
-    
+
     while (true)
     {
-        uniformU = mtrand();        
+        uniformU = mtrand();
         yValue = tan(M_PI*uniformU);
         tmp = sqrt(2*alpha_ - 1)*yValue;
-        
+
         result = tmp + alpha_ - 1;
         if (result > 0)
         {
@@ -98,7 +98,7 @@ double Gamma::gammaLarge() const// alpha > 1
                 return result;
             }
         }
-    }    
+    }
     return result;    // silence the compiler
 }
 
@@ -107,7 +107,7 @@ double Gamma::gammaLarge() const// alpha > 1
 double Gamma::gammaSmall() const // 0 < alpha < 1
 {
     static Exponential expGen(1.0);
-    
+
     // G1. initialize
     static double p = NATURAL_E/(alpha_+NATURAL_E);
     static double pByE = 1.0/(alpha_+NATURAL_E);
@@ -115,7 +115,7 @@ double Gamma::gammaSmall() const // 0 < alpha < 1
     double expSample;
     double xValue = 0.0;
     double qValue;
-    
+
     while ( true )
     {
         // G2. generate G deviate
@@ -125,7 +125,7 @@ double Gamma::gammaSmall() const // 0 < alpha < 1
         {
             expSample = expGen.getNextSample();
         }
-        
+
         if ( uniformU < p )
         {
             xValue = exp(-expSample/alpha_);
@@ -135,20 +135,20 @@ double Gamma::gammaSmall() const // 0 < alpha < 1
             }
             qValue = p*exp(-xValue);
         }
-        else 
+        else
         {
             xValue = 1 + expSample;
             qValue = p + (1.0-p)*pow(xValue, alpha_ - 1.0);
         }
-        
+
         // G3. reject?
         if ( uniformU < qValue )
         {
             return xValue;
         }
     }
-    return xValue; // silence the compiler    
+    return xValue; // silence the compiler
 }
 
-    
+
 #endif

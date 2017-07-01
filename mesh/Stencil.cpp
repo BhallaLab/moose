@@ -15,9 +15,9 @@ using namespace std;
 ///////////////////////////////////////////////////////////////////////////
 // utility funcs
 ///////////////////////////////////////////////////////////////////////////
-void stencil1( vector< double >& f, int index, unsigned int n, 
-	double invSq, 
-	const vector< vector< double > >& S, 
+void stencil1( vector< double >& f, int index, unsigned int n,
+	double invSq,
+	const vector< vector< double > >& S,
 	const vector< double >& diffConst )
 {
 	const vector< double >& t0 = S[ index ];
@@ -53,7 +53,7 @@ void stencil1( vector< double >& f, int index, unsigned int n,
  * diffConst is the vector of [pools]
  */
 void stencilN( vector< double >& f, int index, unsigned int n, int offset,
-	double invSq, const vector< vector< double > >& S, 
+	double invSq, const vector< vector< double > >& S,
 	const vector< double >& diffConst )
 {
 	const vector< double >& t0 = S[ index ];
@@ -96,8 +96,8 @@ DummyStencil::DummyStencil()
 DummyStencil::~DummyStencil()
 {;}
 
-void DummyStencil::addFlux( unsigned int meshIndex, vector< double >& f, 
-			const vector< vector< double > >& S, 
+void DummyStencil::addFlux( unsigned int meshIndex, vector< double >& f,
+			const vector< vector< double > >& S,
 			const vector< double >& diffConst ) const
 {;}
 
@@ -177,7 +177,7 @@ void RectangleStencil::addFlux( unsigned int meshIndex,
 // 3-D stencil.
 ///////////////////////////////////////////////////////////////////////////
 
-CuboidStencil::CuboidStencil( double dx, double dy, double dz, 
+CuboidStencil::CuboidStencil( double dx, double dy, double dz,
 	unsigned int nx, unsigned int ny )
 	: dx_( dx ), dy_( dy ), nx_( nx ), ny_( ny )
 {

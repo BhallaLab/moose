@@ -11,7 +11,7 @@
 #define _EPFUNC_H
 
 /**
- * Utility function to return a pointer of the desired type from the 
+ * Utility function to return a pointer of the desired type from the
  * Eref data. Mainly here because it lets us specialize for Neutrals,
  * below.
  */
@@ -22,7 +22,7 @@ template< class T > T* getEpFuncData( const Eref& e )
 
 /**
  * This is a template specialization for GetEpFunc applied to Neutrals.
- * This is necessary in order to access Element fields of objects that 
+ * This is necessary in order to access Element fields of objects that
  * may not have been allocated (such as synapses), even though their Element
  * has been created and needs to be manipulated.
  * Apparently regular functions with same args will be preferred
@@ -58,7 +58,7 @@ template< class T > class EpFunc0: public OpFunc0Base
 		}
 
 	private:
-		void ( T::*func_ )( const Eref& e ); 
+		void ( T::*func_ )( const Eref& e );
 };
 
 template< class T, class A > class EpFunc1: public OpFunc1Base< A >
@@ -73,10 +73,10 @@ template< class T, class A > class EpFunc1: public OpFunc1Base< A >
 		}
 
 	private:
-		void ( T::*func_ )( const Eref& e, A ); 
+		void ( T::*func_ )( const Eref& e, A );
 };
 
-template< class T, class A1, class A2 > class EpFunc2: 
+template< class T, class A1, class A2 > class EpFunc2:
 		public OpFunc2Base< A1, A2 >
 {
 	public:
@@ -89,7 +89,7 @@ template< class T, class A1, class A2 > class EpFunc2:
 		}
 
 	private:
-		void ( T::*func_ )( const Eref& e, A1, A2 ); 
+		void ( T::*func_ )( const Eref& e, A1, A2 );
 };
 
 template< class T, class A1, class A2, class A3 > class EpFunc3:
@@ -101,12 +101,12 @@ template< class T, class A1, class A2, class A3 > class EpFunc3:
 			{;}
 
 		void op( const Eref& e, A1 arg1, A2 arg2, A3 arg3 ) const {
-			( reinterpret_cast< T* >( e.data() )->*func_ )( 
+			( reinterpret_cast< T* >( e.data() )->*func_ )(
 							e, arg1, arg2, arg3 );
 		}
 
 	private:
-		void ( T::*func_ )( const Eref& e, A1, A2, A3 ); 
+		void ( T::*func_ )( const Eref& e, A1, A2, A3 );
 };
 
 template< class T, class A1, class A2, class A3, class A4 > class EpFunc4:
@@ -118,15 +118,15 @@ template< class T, class A1, class A2, class A3, class A4 > class EpFunc4:
 			{;}
 
 		void op( const Eref& e, A1 arg1, A2 arg2, A3 arg3, A4 arg4 ) const {
-			( reinterpret_cast< T* >( e.data() )->*func_ )( 
+			( reinterpret_cast< T* >( e.data() )->*func_ )(
 							e, arg1, arg2, arg3, arg4 );
 		}
 
 	private:
-		void ( T::*func_ )( const Eref& e, A1, A2, A3, A4 ); 
+		void ( T::*func_ )( const Eref& e, A1, A2, A3, A4 );
 };
 
-template< class T, class A1, class A2, class A3, class A4, class A5 > 
+template< class T, class A1, class A2, class A3, class A4, class A5 >
 	class EpFunc5: public OpFunc5Base< A1, A2, A3, A4, A5 >
 {
 	public:
@@ -134,17 +134,17 @@ template< class T, class A1, class A2, class A3, class A4, class A5 >
 			: func_( func )
 			{;}
 
-		void op( const Eref& e, 
+		void op( const Eref& e,
 				A1 arg1, A2 arg2, A3 arg3, A4 arg4, A5 arg5 ) const {
-			( reinterpret_cast< T* >( e.data() )->*func_ )( 
+			( reinterpret_cast< T* >( e.data() )->*func_ )(
 							e, arg1, arg2, arg3, arg4, arg5 );
 		}
 	private:
-		void ( T::*func_ )( const Eref& e, A1, A2, A3, A4, A5 ); 
+		void ( T::*func_ )( const Eref& e, A1, A2, A3, A4, A5 );
 };
 
-template< class T, 
-		class A1, class A2, class A3, class A4, class A5, class A6 > 
+template< class T,
+		class A1, class A2, class A3, class A4, class A5, class A6 >
 		class EpFunc6: public OpFunc6Base< A1, A2, A3, A4, A5, A6 >
 {
 	public:
@@ -152,15 +152,15 @@ template< class T,
 			: func_( func )
 			{;}
 
-		void op( const Eref& e, 
+		void op( const Eref& e,
 				A1 arg1, A2 arg2, A3 arg3, A4 arg4, A5 arg5, A6 arg6 )
 			   	const {
-			( reinterpret_cast< T* >( e.data() )->*func_ )( 
+			( reinterpret_cast< T* >( e.data() )->*func_ )(
 							e, arg1, arg2, arg3, arg4, arg5, arg6 );
 		}
 
 	private:
-		void ( T::*func_ )( const Eref& e, A1, A2, A3, A4, A5, A6 ); 
+		void ( T::*func_ )( const Eref& e, A1, A2, A3, A4, A5, A6 );
 };
 
 /**
@@ -209,7 +209,7 @@ template< class T, class A > class GetEpFunc: public GetOpFuncBase< A >
  * FuncId of the function on the object that requested the
  * value. The EpFunc then sends back a message with the info.
  */
-template< class T, class L, class A > class GetEpFunc1: 
+template< class T, class L, class A > class GetEpFunc1:
 		public LookupGetOpFuncBase< L, A >
 {
 	public:
@@ -218,7 +218,7 @@ template< class T, class L, class A > class GetEpFunc1:
 			{;}
 
 
-		void op( const Eref& e, L index, ObjId recipient, FuncId fid ) 
+		void op( const Eref& e, L index, ObjId recipient, FuncId fid )
 				const {
 			const OpFunc *f = recipient.element()->cinfo()->getOpFunc( fid);
 			const OpFunc1Base< A >* recvOpFunc =
@@ -228,7 +228,7 @@ template< class T, class L, class A > class GetEpFunc1:
 		}
 
 		A returnOp( const Eref& e, const L& index ) const {
-			return ( reinterpret_cast< T* >( e.data() )->*func_)( 
+			return ( reinterpret_cast< T* >( e.data() )->*func_)(
 				e, index );
 		}
 

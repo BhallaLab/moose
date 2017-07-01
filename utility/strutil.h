@@ -11,7 +11,7 @@
 #include <string>
 #include <vector>
 
-namespace moose 
+namespace moose
 {
     /** List of characters considered to be whitespace */
     static const char* const DELIMITERS=" \t\r\n";
@@ -19,7 +19,7 @@ namespace moose
     /** Splits given string into tokens */
     void tokenize( const std::string& str,
             const std::string& delimiters,
-            std::vector< std::string >& tokens 
+            std::vector< std::string >& tokens
             );
 
     /** trims the leading and trailing white spaces */
@@ -32,11 +32,11 @@ namespace moose
     bool endswith(const std::string& full, const std::string& ending);
 
     /**
-     * @brief Compares the two strings a and b for first n characters, ignoring 
+     * @brief Compares the two strings a and b for first n characters, ignoring
      * the case of the characters. Return 0 in case both are same upto first n
      * characters. Othere a non-zero value is returned. When n is smaller or
      * equal to the size of both strings, positive is return if a is larger than
-     * b, or negative when a is smaller than b. 
+     * b, or negative when a is smaller than b.
      *
      * When n is larger than size of a or b, non-zero values is returned when  a and b
      * are not equal upto min(n, min(a.size(), b.size())) characters.

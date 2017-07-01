@@ -9,7 +9,7 @@
 **********************************************************************/
 
 /**
- * This FuncRate manages a one-way reaction whose rate is 
+ * This FuncRate manages a one-way reaction whose rate is
  * determined by a Function. It has no substrates, just controls the
  * rate of change of a target molecule.
  *
@@ -17,7 +17,7 @@
  *
  * The values x0, x1, x2.. are numbers at this point. So is the rate
  * output of this function. There may be a problem
- * if there is a volume change. 
+ * if there is a volume change.
  */
 class FuncRate: public ExternReac
 {
@@ -38,7 +38,7 @@ class FuncRate: public ExternReac
 			molIndex[0] = func_.getTarget();
 
 			// This is the number of substrates to the reac. It is zero.
-			return 0; 
+			return 0;
 			// The target molecule is handled as a product.
 		}
 
@@ -55,7 +55,7 @@ class FuncRate: public ExternReac
 		void setFuncArgIndex( const vector< unsigned int >& mol ) {
 			func_.setReactantIndex( mol );
 		}
-		
+
 		void setExpr( const string& s ) {
 			func_.setExpr( s );
 		}
@@ -78,20 +78,20 @@ class FuncRate: public ExternReac
 		FuncTerm func_;
 		double k_;
 		double funcVolPower_;
-	
+
 };
 
 
 /**
  * This FuncReac manages a one-way NOrder reaction whose rate is determined
- * by a Function, but which also has regular substrates and products. 
+ * by a Function, but which also has regular substrates and products.
  *
  *
  * dproduct/dt = func( x0, x1, x2..., t ) * [sub0] * [sub1] * ....
  *
  * The values x0, x1, x2 are expected to be concentrations so that they
  * do not depend on volume.
- * The substrates sub0, sub1, ... are # of molecules. 
+ * The substrates sub0, sub1, ... are # of molecules.
  * The term k_ is scaled so that it is unity at vol = 1/NA m^3.
  * k_ = (NA * vol)^(numSub-1)
  * The copyWithVolScaling operation scales it up and down from there.
@@ -124,7 +124,7 @@ class FuncReac: public FuncRate
 			v_ = molIndex;
 		}
 
-		void rescaleVolume( short comptIndex, 
+		void rescaleVolume( short comptIndex,
 			const vector< short >& compartmentLookup, double ratio )
 		{
 			for ( unsigned int i = 1; i < v_.size(); ++i ) {
@@ -138,7 +138,7 @@ class FuncReac: public FuncRate
 				double vol, double sub, double prd ) const
 		{
 			assert( v_.size() > 0 );
-			double ratio = sub * pow( NA * vol, 
+			double ratio = sub * pow( NA * vol,
 							funcVolPower_ + (int)( v_.size() ) - 1 );
 			FuncReac* ret = new FuncReac( k_ / ratio, v_ );
 			ret->func_ = func_;

@@ -66,7 +66,7 @@ const Cinfo* HHChannel2D::initCinfo()
 			&HHChannel2D::setInstant,
 			&HHChannel2D::getInstant
 		);
-		static ValueFinfo< HHChannel2D, double > X( "X", 
+		static ValueFinfo< HHChannel2D, double > X( "X",
 			"State variable for X gate",
 			&HHChannel2D::setX,
 			&HHChannel2D::getX
@@ -101,7 +101,7 @@ const Cinfo* HHChannel2D::initCinfo()
 	);
 ///////////////////////////////////////////////////////
 // FieldElementFinfo definition for HHGates. Note that these are made
-// with the deferCreate flag off, so that the HHGates are created 
+// with the deferCreate flag off, so that the HHGates are created
 // right away even if they are empty.
 // I assume that we only have a single HHGate entry for each one.
 ///////////////////////////////////////////////////////
@@ -233,7 +233,7 @@ int HHChannel2D::getInstant() const
 void HHChannel2D::setX( double X )
 {
         X_ = X;
-        xInited_ = true;        
+        xInited_ = true;
 }
 double HHChannel2D::getX() const
 {
@@ -243,7 +243,7 @@ double HHChannel2D::getX() const
 void HHChannel2D::setY( double Y )
 {
         Y_ = Y;
-        yInited_ = true;        
+        yInited_ = true;
 }
 double HHChannel2D::getY() const
 {
@@ -253,7 +253,7 @@ double HHChannel2D::getY() const
 void HHChannel2D::setZ( double Z )
 {
         Z_ = Z;
-        zInited_ = true;        
+        zInited_ = true;
 }
 double HHChannel2D::getZ() const
 {
@@ -273,7 +273,7 @@ void HHChannel2D::setXindex( string Xindex )
 	Xindex_ = Xindex;
 	Xdep0_ = dependency( Xindex, 0 );
 	Xdep1_ = dependency( Xindex, 1 );
-	
+
 	assert( Xdep0_ >= 0 );
 }
 
@@ -286,11 +286,11 @@ void HHChannel2D::setYindex( string Yindex )
 {
 	if ( Yindex == Yindex_ )
 		return;
-	
+
 	Yindex_ = Yindex;
 	Ydep0_ = dependency( Yindex, 0 );
 	Ydep1_ = dependency( Yindex, 1 );
-	
+
 	assert( Ydep0_ >= 0 );
 }
 
@@ -307,7 +307,7 @@ void HHChannel2D::setZindex( string Zindex )
 	Zindex_ = Zindex;
 	Zdep0_ = dependency( Zindex, 0 );
 	Zdep1_ = dependency( Zindex, 1 );
-	
+
 	assert( Zdep0_ >= 0 );
 }
 
@@ -330,7 +330,7 @@ HHGate2D* HHChannel2D::getZgate( unsigned int i )
 	return zGate_;
 }
 
-void HHChannel2D::setNumGates( unsigned int num ) 
+void HHChannel2D::setNumGates( unsigned int num )
 { ; }
 
 unsigned int  HHChannel2D::getNumXgates() const
@@ -364,27 +364,27 @@ int HHChannel2D::dependency( string index, unsigned int dim )
 	static vector< map< string, int > > dep;
 	if ( dep.empty() ) {
 		dep.resize( 2 );
-		
+
 		dep[ 0 ][ "VOLT_INDEX" ] = 0;
 		dep[ 0 ][ "C1_INDEX" ] = 1;
 		dep[ 0 ][ "C2_INDEX" ] = 2;
-		
+
 		dep[ 0 ][ "VOLT_C1_INDEX" ] = 0;
 		dep[ 0 ][ "VOLT_C2_INDEX" ] = 0;
 		dep[ 0 ][ "C1_C2_INDEX" ] = 1;
-		
+
 		dep[ 1 ][ "VOLT_INDEX" ] = -1;
 		dep[ 1 ][ "C1_INDEX" ] = -1;
 		dep[ 1 ][ "C2_INDEX" ] = -1;
-		
+
 		dep[ 1 ][ "VOLT_C1_INDEX" ] = 1;
 		dep[ 1 ][ "VOLT_C2_INDEX" ] = 2;
 		dep[ 1 ][ "C1_C2_INDEX" ] = 2;
 	}
-	
+
 	if ( dep[ dim ].find( index ) == dep[ dim ].end() )
 		return -1;
-	
+
 	if ( dep[ dim ][ index ] == 0 )
 		return 0;
 	if ( dep[ dim ][ index ] == 1 )
@@ -435,7 +435,7 @@ void HHChannel2D::vProcess( const Eref& e, ProcPtr info )
 		xGate_->lookupBoth( depValue( Xdep0_ ), depValue( Xdep1_ ), &A, &B );
 		if ( instant_ & INSTANT_X )
 			X_ = A/B;
-		else 
+		else
 			X_ = integrate( X_, info->dt, A, B );
 		g_ *= takeXpower_( X_, Xpower_ );
 	}
@@ -444,7 +444,7 @@ void HHChannel2D::vProcess( const Eref& e, ProcPtr info )
 		yGate_->lookupBoth( depValue( Ydep0_ ), depValue( Ydep1_ ), &A, &B );
 		if ( instant_ & INSTANT_Y )
 			Y_ = A/B;
-		else 
+		else
 			Y_ = integrate( Y_, info->dt, A, B );
 
 		g_ *= takeYpower_( Y_, Ypower_ );
@@ -454,7 +454,7 @@ void HHChannel2D::vProcess( const Eref& e, ProcPtr info )
         zGate_->lookupBoth( depValue( Zdep0_ ), depValue( Zdep1_ ), &A, &B );
 		if ( instant_ & INSTANT_Z )
 			Z_ = A/B;
-		else 
+		else
 			Z_ = integrate( Z_, info->dt, A, B );
 
 		g_ *= takeZpower_( Z_, Zpower_ );
@@ -536,7 +536,7 @@ bool HHChannel2D::setGatePower( const Eref& e, double power,
 	double *assignee, const string& gateType )
 {
 	if ( power < 0 ) {
-		cout << "Error: HHChannel2D::set" << gateType << 
+		cout << "Error: HHChannel2D::set" << gateType <<
 			"power: Cannot use negative power: " << power << endl;
 		return 0;
 	}
@@ -549,7 +549,7 @@ bool HHChannel2D::setGatePower( const Eref& e, double power,
 	} else if ( doubleEq( power, 0.0 ) ) {
 		destroyGate( e, gateType );
 	}
-	
+
 	*assignee = power;
 	return 1;
 }
@@ -593,7 +593,7 @@ void HHChannel2D::setZpower( const Eref& e, double Zpower )
  * an existing one.
  * \todo: May need to convert to handling arrays and Erefs.
  */
-// Assuming that the elements are simple elements. Use Eref for 
+// Assuming that the elements are simple elements. Use Eref for
 // general case
 
 bool HHChannel2D::checkOriginal( Id chanId ) const
@@ -609,7 +609,7 @@ bool HHChannel2D::checkOriginal( Id chanId ) const
 	return isOriginal;
 }
 
-void HHChannel2D::innerCreateGate( const string& gateName, 
+void HHChannel2D::innerCreateGate( const string& gateName,
 	HHGate2D** gatePtr, Id chanId, Id gateId )
 {
 	//Shell* shell = reinterpret_cast< Shell* >( ObjId( Id(), 0 ).data() );
@@ -621,7 +621,7 @@ void HHChannel2D::innerCreateGate( const string& gateName,
 	*gatePtr = new HHGate2D( chanId, gateId );
 }
 
-void HHChannel2D::createGate( const Eref& e, 
+void HHChannel2D::createGate( const Eref& e,
 	string gateType )
 {
 	if ( !checkOriginal( e.id() ) ) {
@@ -640,7 +640,7 @@ void HHChannel2D::createGate( const Eref& e,
 			gateType << "'. Ignored\n";
 }
 
-void HHChannel2D::innerDestroyGate( const string& gateName, 
+void HHChannel2D::innerDestroyGate( const string& gateName,
 	HHGate2D** gatePtr, Id chanId )
 {
 	if ( *gatePtr == 0 ) {
@@ -659,7 +659,7 @@ void HHChannel2D::destroyGate( const Eref& e,
 		cout << "Warning: HHChannel2D::destroyGate: Not allowed from copied channel:\n" << e.id().path() << "\n";
 		return;
 	}
-	
+
 	if ( gateType == "X" )
 		innerDestroyGate( "xGate", &xGate_, e.id() );
 	else if ( gateType == "Y" )
@@ -704,4 +704,4 @@ void testHHChannel2D2D()
 {
 	;
 }
-#endif 
+#endif

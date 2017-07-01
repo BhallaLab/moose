@@ -36,7 +36,7 @@
 #include "../randnum/RNG.h"
 
 /* Root finding algorithm is implemented here */
-#include "NonlinearSystem.h"                    
+#include "NonlinearSystem.h"
 
 /*
  * Bindings to lapack. These headers are not part of standard boost
@@ -665,7 +665,7 @@ void SteadyState::classifyState( const double* T )
     vl = NULL; vr = NULL;
 
     /*-----------------------------------------------------------------------------
-     *  INFO: Calling lapack routine geev to compute eigen vector of matrix J. 
+     *  INFO: Calling lapack routine geev to compute eigen vector of matrix J.
      *
      *  Argument 3 and 4 are left- and right-eigenvectors. Since we do not need
      *  them, they are set to NULL. Argument 2 holds eigen-vector and result is
@@ -712,7 +712,7 @@ void SteadyState::classifyState( const double* T )
 
 static bool isSolutionValid( const vector< double >& x )
 {
-    for( size_t i = 0; i < x.size(); i++ ) 
+    for( size_t i = 0; i < x.size(); i++ )
     {
         double v = x[i];
         if ( std::isnan( v ) or std::isinf( v ) )
@@ -762,14 +762,14 @@ void SteadyState::settle( bool forceSetup )
     ss->ri.gamma = gamma_;
     ss->ri.pool = &pool_;
     ss->ri.nVec = LookupField< unsigned int, vector< double > >::get(
-            ksolve,"nVec", 0 
+            ksolve,"nVec", 0
             );
     ss->ri.convergenceCriterion = convergenceCriterion_;
 
     // This gives the starting point for finding the solution.
     vector<double> init( numVarPools_ );
 
-    // Instead of starting at sqrt( x ), 
+    // Instead of starting at sqrt( x ),
     for( size_t i = 0; i < numVarPools_; ++i )
         init[i] = max( 0.0, sqrt(ss->ri.nVec[i]) );
 
@@ -807,11 +807,11 @@ void SteadyState::settle( bool forceSetup )
         solutionStatus_ = 0; // Good solution
 
         LookupField< unsigned int, vector< double > >::set(
-            ksolve, "nVec", 0, ss->ri.nVec 
+            ksolve, "nVec", 0, ss->ri.nVec
             );
         // Check what we set
         vector<double> t = LookupField< unsigned int, vector< double > >::get(
-             ksolve,"nVec", 0 
+             ksolve,"nVec", 0
              );
 
         //classifyState( T );
@@ -826,7 +826,7 @@ void SteadyState::settle( bool forceSetup )
 
         solutionStatus_ = 1; // Steady state failed.
         LookupField< unsigned int, vector< double > >::set(
-            ksolve, "nVec", 0, ss->ri.nVec 
+            ksolve, "nVec", 0, ss->ri.nVec
             );
 
     }
@@ -850,14 +850,14 @@ void SteadyState::settle( bool forceSetup )
 void swapRows( ublas::matrix< double >& mat, unsigned int r1, unsigned int r2)
 {
     ublas::vector<value_type> temp( mat.size2() );
-    for (size_t i = 0; i < mat.size2(); i++) 
+    for (size_t i = 0; i < mat.size2(); i++)
     {
         temp[i] = mat(r1, i );
         mat(r1, i ) = mat(r2, i );
     }
 
-    for (size_t i = 0; i < mat.size2(); i++) 
-        mat(r2, i) = temp[i]; 
+    for (size_t i = 0; i < mat.size2(); i++)
+        mat(r2, i) = temp[i];
 }
 
 
@@ -953,7 +953,7 @@ static bool checkAboveZero( const vector< double >& y )
 void recalcTotal( vector< double >& tot, ublas::matrix<double>& g, const double* S )
 {
     assert( g.size1() == tot.size() );
-    for ( size_t i = 0; i < g.size1(); ++i ) 
+    for ( size_t i = 0; i < g.size1(); ++i )
     {
         double t = 0.0;
         for ( unsigned int j = 0; j < g.size2(); ++j )

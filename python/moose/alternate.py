@@ -1,34 +1,35 @@
-# moose.py --- 
-# 
+# -*- coding: utf-8 -*-
+# moose.py ---
+#
 # Filename: moose.py
 # Description: THIS IS OUTDATED CODE AND KEPT FOR HISTORICAL REFERENCE
-#              moose.py in this directory is the replacement for this 
+#              moose.py in this directory is the replacement for this
 #              script.
-#  
+#
 # Author: Subhasis Ray
-# Maintainer: 
+# Maintainer:
 # Copyright (C) 2010 Subhasis Ray, all rights reserved.
 # Created: Sat Mar 12 14:02:40 2011 (+0530)
-# Version: 
+# Version:
 # Last-Updated: Mon Apr  9 03:32:28 2012 (+0530)
 #           By: Subhasis Ray
 #     Update #: 1672
-# URL: 
-# Keywords: 
-# Compatibility: 
-# 
-# 
+# URL:
+# Keywords:
+# Compatibility:
+#
+#
 
-# Commentary: 
-# 
+# Commentary:
+#
 # THIS IS OUTDATED CODE AND KEPT FOR HISTORICAL REFERENCE
-# 
-# 
+#
+#
 
 # Change log:
-# 
-# 
-# 
+#
+#
+#
 
 # Code:
 
@@ -210,7 +211,7 @@ getFieldNames() - return a list of the available field names on this object
 
 getFieldType(fieldName) - return the data type of the specified field.
 
-getSources(fieldName) - return a list of (source_element, source_field) for all 
+getSources(fieldName) - return a list of (source_element, source_field) for all
 messages coming in to fieldName of this object.
 
 getDestinations(fieldName) - return a list of (destination_elemnt, destination_field)
@@ -324,7 +325,7 @@ _moose_classes = dict([(child[0].name, True) for child in Id('/classes')[0].getF
 
 #     def __set__(self, obj, value):
 #         obj.oid_.setField(self.name, value)
-        
+
 #     def __delete__(self, obj):
 #         raise AttributeError('ValueFinfos cannot be deleted.')
 
@@ -333,7 +334,7 @@ class _LFDescriptor(object):
         self.name = name
     def __get__(self, obj, objtype=None):
         return _LookupField(obj.oid_, self.name)
-    
+
 class _LookupField(object):
     def __init__(self, obj, name):
         self.name = name
@@ -352,13 +353,13 @@ class _LookupField(object):
             self.obj.oid_.setLookupField(self.name, key, value)
         else:
             raise TypeError('obj is neither an ObjId nor a Neutral or subclass instance.')
-    
+
 class NeutralArray(object):
     """
     The base class. Each NeutralArray object has an unique Id (field
     id_) and that is the only data directly visible under Python. All
     operation are done on the objects by calling functions on the Id.
-    
+
     A NeutralArray object is actually an array. The individual
     elements in a NeutralArray are of class Neutral. To access these
     individual elements, you can index the NeutralArray object.
@@ -388,7 +389,7 @@ class NeutralArray(object):
         will create a duplicate reference to the existing intfire
         object. They will share the same Id and any changes made via
         the MOOSE API to one will be effective on the other.
-        
+
         """
         path = None
         dims = None
@@ -452,7 +453,7 @@ class NeutralArray(object):
             while _class_name not in _moose_classes:
                 _base_class = self.__base__
                 if _base_class == object:
-                    raise TypeError('Class %s does not inherit any MOOSE class.' % (self.__class__.__name__))                    
+                    raise TypeError('Class %s does not inherit any MOOSE class.' % (self.__class__.__name__))
                 _class_name = _base_class.__name__
                 if _class_name.endswith('Array'):
                     _class_name = _class_name[:-len('Array')]
@@ -480,7 +481,7 @@ class NeutralArray(object):
         If empty string or not specified, returns names of fields from
         all categories.
         """
-        
+
         return self.id_[0].getFieldNames(ftype)
 
     def getFieldType(self, field, ftype=''):
@@ -511,9 +512,9 @@ class NeutralArray(object):
     fieldNames = property(lambda self: self.id_[0].getFieldNames('valueFinfo'))
     name = property(lambda self: self.id_[0].name)
     shape = property(lambda self: self.id_.getShape())
-    
 
-        
+
+
 class Neutral(object):
     """Corresponds to a single entry in a NeutralArray. Base class for
     all other MOOSE classes for single entries in Array elements.
@@ -549,8 +550,8 @@ class Neutral(object):
         Arguments:
 
         arg1 : A path or an existing ObjId or an Id or a NeutralArray
-        or another Neutral object. 
-        
+        or another Neutral object.
+
         path -- a string specifying the path for the Neutral
         object. If there is already a Neutral object with the given
         path, a reference to that object is created. Otherwise, a new
@@ -603,8 +604,8 @@ class Neutral(object):
                     # A non-existing path has been provided. Try to
                     # construct a singleton array element and create
                     # reference to the first element.
-                    self_class = self.__class__                    
-                    while (self_class.__name__ not in _moose_classes) and (self_class != object): # Handle class extension in Python. 
+                    self_class = self.__class__
+                    while (self_class.__name__ not in _moose_classes) and (self_class != object): # Handle class extension in Python.
                         self_class = self_class.__base__
                     if self_class == object:
                         raise TypeError('Class %s does not inherit any MOOSE class.' % (self.__class__.__name__))
@@ -645,7 +646,7 @@ class Neutral(object):
                 else:
                     self.oid_ = _moose.ObjId(id_, dindex, findex, numFieldBits)
         # Check for conversion from instance of incompatible MOOSE
-        # class.        
+        # class.
         orig_classname = self.oid_.getField('class')
         if self.__class__.__name__ != orig_classname:
             orig_class = eval(orig_classname)
@@ -672,7 +673,7 @@ class Neutral(object):
         if fieldName in getFieldDict(self.className):
             return [eval('%s("%s")' % (id_[0].getField('class'), id_.getPath())) for id_ in self.oid_.getNeighbors(fieldName)]
         raise ValueError('%s: no such field on %s' % (fieldName, self.path))
-        
+
     def connect(self, srcField, dest, destField, msgType='Single'):
         return self.oid_.connect(srcField, dest.oid_, destField, msgType)
 
@@ -699,7 +700,7 @@ class Neutral(object):
             for (f1, f2) in zip(msg.getField('srcFieldsOnE1'), msg.getField('destFieldsOnE2')):
                 msg_dict.append((element(e2), f2))
         return msg_dict
-   
+
     def inMessages(self):
         msg_list = []
         for msg in self.msgIn:
@@ -720,8 +721,8 @@ class Neutral(object):
                 msg_list.append(msg_str)
         return msg_list
 
-    
-    
+
+
     className = property(lambda self: self.oid_.getField('class'))
     fieldNames = property(lambda self: self.oid_.getFieldNames())
     name = property(lambda self: self.oid_.getField('name'))
@@ -740,8 +741,8 @@ class Neutral(object):
                 tmp = self.oid_.getNeighbors(field)
                 neighbors[field] += [eval('%s("%s")' % (nid[0].getField('class'), nid.getPath())) for nid in tmp]
         return neighbors
-        
-    
+
+
     childList = property(lambda self: [eval('%s("%s")' % (ch[0].getField('class'), ch.getPath())) for ch in self.oid_.getField('children')])
 
 ################################################################
@@ -778,11 +779,11 @@ def arrayelement(path, className='Neutral'):
     oid = _moose.ObjId(path)
     className = oid.getField('class')
     return eval('%sArray("%s")' % (className, path))
-    
+
 
 ################################################################
 # Wrappers for global functions
-################################################################ 
+################################################################
 
 def copy(src, dest, name, n=1, toGlobal=False, copyExtMsg=False):
     if isinstance(src, NeutralArray):
@@ -808,7 +809,7 @@ def delete(target):
     if not isinstance(target, Id):
         raise TypeError('Only Id or Array objects can be deleted: received %s' % (target.__class__.__name__))
     _moose.delete(target)
-    
+
 def setCwe(element):
     """Set present working element"""
     if isinstance(element, NeutralArray):
@@ -827,7 +828,7 @@ def pwe():
     """Print present working element. Convenience function for GENESIS
     users."""
     print(_moose.getCwe().getPath())
-    
+
 def connect(src, srcMsg, dest, destMsg, msgType='Single'):
     """Connect src object's source field specified by srcMsg to
     destMsg field of target object."""
@@ -883,11 +884,11 @@ def showfield(element, field='*', showtype=False):
         if not isinstance(element, ObjId):
             raise TypeError('Expected argument of type ObjId or Neutral or a path to an existing object. Found %s' % (type(element)))
         element = Neutral(element)
-    if field == '*':        
+    if field == '*':
         value_field_dict = getFieldDict(element.className, 'valueFinfo')
         max_type_len = max(len(dtype) for dtype in value_field_dict.values())
         max_field_len = max(len(dtype) for dtype in value_field_dict.keys())
-        print() 
+        print()
         print('[', element.path, ']')
         for key, dtype in list(value_field_dict.items()):
             if dtype == 'bad' or key == 'this' or key == 'dummy' or key == 'me' or dtype.startswith('vector') or 'ObjId' in dtype:
@@ -906,11 +907,11 @@ def showfields(element, showtype=False):
     """Convenience function. Should be deprecated if nobody uses it."""
     warnings.warn('Deprecated. Use showfield(element, field="*", showtype=True) instead.', DeprecationWarning)
     showfield(element, field='*', showtype=showtype)
-    
+
 def wildcardFind(cond):
     """Search for objects that match condition cond."""
     return [eval('%s("%s")' % (id_[0].getField('class'), id_.getPath())) for id_ in _wildcardFind(cond)]
-    
+
 #######################################################
 # This is to generate class definitions automatically
 #######################################################
@@ -936,7 +937,7 @@ def update_class(cls, class_id):
         # in non-interactive mode. __main__.__file__ is not
         # defined in interactive mode and that is when we create
         # the documentation.
-        if not hasattr(main, '__file__'): 
+        if not hasattr(main, '__file__'):
             doc = field.docs
         setattr(cls, fieldName, property(fget=fget, fset=fset, doc=doc))
 
@@ -949,7 +950,7 @@ def update_class(cls, class_id):
         # defined in interactive mode and that is when we create
         # the documentation.
         doc = None
-        if not hasattr(main, '__file__'): 
+        if not hasattr(main, '__file__'):
             doc = field.docs
         setattr(cls, fieldName, property(fget=fget, doc=doc))
 
@@ -1025,12 +1026,12 @@ def define_class(class_id):
         base_class = object
     array_class_obj = type(array_class_name, (base_class,), {})
     globals()[array_class_name] = array_class_obj
-        
+
 classes_Id = Id('/classes')
 
 for child in classes_Id[0].children:
     define_class(child)
 
 
-# 
+#
 # moose.py ends here

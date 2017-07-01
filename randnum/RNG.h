@@ -43,7 +43,7 @@ using namespace std;
 
 namespace moose {
 
-/* 
+/*
  * =====================================================================================
  *        Class:  RNG
  *  Description:  Random number generator class.
@@ -65,7 +65,7 @@ class RNG
 
         void setRandomSeed( )
         {
-#if defined(USE_BOOST) 
+#if defined(USE_BOOST)
 #if defined(BOOST_RANDOM_DEVICE_EXISTS)
             boost::random::random_device rd;
             setSeed( rd() );
@@ -130,8 +130,8 @@ class RNG
          */
         T uniform( void )
         {
-#if defined(USE_BOOST) || defined(ENABLE_CPP11) 
-            return dist_( rng_ ); 
+#if defined(USE_BOOST) || defined(ENABLE_CPP11)
+            return dist_( rng_ );
 #else
             return mtrand();
 #endif

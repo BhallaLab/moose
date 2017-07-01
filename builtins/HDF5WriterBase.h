@@ -1,30 +1,30 @@
-// HDF5WriterBase.h --- 
-// 
+// HDF5WriterBase.h ---
+//
 // Filename: HDF5WriterBase.h
-// Description: 
+// Description:
 // Author: Subhasis Ray
-// Maintainer: 
+// Maintainer:
 // Created: Sat Feb 25 14:39:19 2012 (+0530)
-// Version: 
+// Version:
 // Last-Updated: Tue Aug 25 23:11:28 2015 (-0400)
 //           By: subha
 //     Update #: 57
-// URL: 
-// Keywords: 
-// Compatibility: 
-// 
-// 
+// URL:
+// Keywords:
+// Compatibility:
+//
+//
 
-// Commentary: 
-// 
+// Commentary:
+//
 // HDF5WriterBase provides a common interface for writing data/model to file.
-// 
-// 
+//
+//
 
 // Change log:
-// 
+//
 // 2012-02-25 14:39:36 (+0530) subha - started initial implementation
-// 
+//
 
 // Code:
 
@@ -60,32 +60,32 @@ class HDF5WriterBase
     void setLongAttr(string name, long value);
     string getStringAttr(string name) const;
     double getDoubleAttr(string name) const;
-    long getLongAttr(string name) const;            
+    long getLongAttr(string name) const;
 
     void setStringVecAttr(string name, vector < string > value);
     void setDoubleVecAttr(string name, vector < double > value);
     void setLongVecAttr(string name, vector < long > value);
     vector < string > getStringVecAttr(string name) const;
     vector < double > getDoubleVecAttr(string name) const;
-    vector < long > getLongVecAttr(string name) const;            
+    vector < long > getLongVecAttr(string name) const;
 
     virtual void flushAttributes();
     virtual void flush();
     virtual void close();
-    
+
     static const Cinfo* initCinfo();
-    
+
   protected:
     friend void testCreateStringDataset();
-    
+
     herr_t openFile();
     // C++ sucks - does not allow template specialization inside class
     hid_t createDoubleDataset(hid_t parent, std::string name, hsize_t size=0, hsize_t maxsize=H5S_UNLIMITED);
     hid_t createStringDataset(hid_t parent, std::string name, hsize_t size=0, hsize_t maxsize=H5S_UNLIMITED);
-            
+
     herr_t appendToDataset(hid_t dataset, const vector<double>& data);
     hid_t createDataset2D(hid_t parent, string name, unsigned int rows);
-    
+
     /// map from element path to nodes in hdf5file.  Multiple MOOSE
     /// tables can be written to the single file corresponding to a
     /// HDF5Writer. Each one will be represented by a specific data
@@ -135,5 +135,5 @@ template <typename A> herr_t writeVectorAttr(hid_t file_id, string path,
 
 
 
-// 
+//
 // HDF5WriterBase.h ends here

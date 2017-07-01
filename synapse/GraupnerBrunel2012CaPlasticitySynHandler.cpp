@@ -17,11 +17,11 @@
 
 const Cinfo* GraupnerBrunel2012CaPlasticitySynHandler::initCinfo()
 {
-	static string doc[] = 
+	static string doc[] =
 	{
 		"Name", "GraupnerBrunel2012CaPlasticitySynHandler",
 		"Author", "Aditya Gilra",
-		"Description", 
+		"Description",
 		"The GraupnerBrunel2012CaPlasticitySynHandler handles synapses"
         "with Ca-based plasticity as per Higgins et al. 2014 and Graupner and Brunel 2012."
         "Note 1:"
@@ -47,7 +47,7 @@ const Cinfo* GraupnerBrunel2012CaPlasticitySynHandler::initCinfo()
 	};
 
     static ValueFinfo< GraupnerBrunel2012CaPlasticitySynHandler, double > Ca(
-        "Ca", 
+        "Ca",
         "Ca is a post-synaptic decaying variable as a proxy for Ca concentration"
         "and receives an impulse whenever a pre- or post- spike occurs."
         "Caution: Ca is updated via an event-based rule, so it is only updated and valid"
@@ -59,42 +59,42 @@ const Cinfo* GraupnerBrunel2012CaPlasticitySynHandler::initCinfo()
     );
 
     static ValueFinfo< GraupnerBrunel2012CaPlasticitySynHandler, double > CaInit(
-        "CaInit", 
+        "CaInit",
         "CaInit is the initial value for Ca",
 		&GraupnerBrunel2012CaPlasticitySynHandler::setCaInit,
 		&GraupnerBrunel2012CaPlasticitySynHandler::getCaInit
     );
 
     static ValueFinfo< GraupnerBrunel2012CaPlasticitySynHandler, double > tauCa(
-        "tauCa", 
+        "tauCa",
         "tauCa is the time constant for decay of Ca",
 		&GraupnerBrunel2012CaPlasticitySynHandler::setTauCa,
 		&GraupnerBrunel2012CaPlasticitySynHandler::getTauCa
     );
 
     static ValueFinfo< GraupnerBrunel2012CaPlasticitySynHandler, double > tauSyn(
-        "tauSyn", 
+        "tauSyn",
         "tauSyn is the time constant for synaptic weight evolution equation",
 		&GraupnerBrunel2012CaPlasticitySynHandler::setTauSyn,
 		&GraupnerBrunel2012CaPlasticitySynHandler::getTauSyn
     );
 
     static ValueFinfo< GraupnerBrunel2012CaPlasticitySynHandler, double > CaPre(
-        "CaPre", 
+        "CaPre",
         "CaPre is added to Ca on every pre-spike",
 		&GraupnerBrunel2012CaPlasticitySynHandler::setCaPre,
 		&GraupnerBrunel2012CaPlasticitySynHandler::getCaPre
     );
 
     static ValueFinfo< GraupnerBrunel2012CaPlasticitySynHandler, double > CaPost(
-        "CaPost", 
+        "CaPost",
         "CaPost is added to Ca on every post-spike",
 		&GraupnerBrunel2012CaPlasticitySynHandler::setCaPost,
 		&GraupnerBrunel2012CaPlasticitySynHandler::getCaPost
     );
 
     static ValueFinfo< GraupnerBrunel2012CaPlasticitySynHandler, double > delayD(
-        "delayD", 
+        "delayD",
         "Time delay D after pre-spike, when Ca is increased by Capre."
         " delayD represents NMDA rise time.",
 		&GraupnerBrunel2012CaPlasticitySynHandler::setDelayD,
@@ -102,21 +102,21 @@ const Cinfo* GraupnerBrunel2012CaPlasticitySynHandler::initCinfo()
     );
 
     static ValueFinfo< GraupnerBrunel2012CaPlasticitySynHandler, double > gammaP(
-        "gammaP", 
+        "gammaP",
         "gammaP is the potentiation factor for synaptic weight increase if Ca>thetaP",
 		&GraupnerBrunel2012CaPlasticitySynHandler::setGammaP,
 		&GraupnerBrunel2012CaPlasticitySynHandler::getGammaP
     );
 
     static ValueFinfo< GraupnerBrunel2012CaPlasticitySynHandler, double > gammaD(
-        "gammaD", 
+        "gammaD",
         "gammaD is the depression factor for synaptic weight decrease if Ca>thetaD",
 		&GraupnerBrunel2012CaPlasticitySynHandler::setGammaD,
 		&GraupnerBrunel2012CaPlasticitySynHandler::getGammaD
     );
 
     static ValueFinfo< GraupnerBrunel2012CaPlasticitySynHandler, double > thetaP(
-        "thetaP", 
+        "thetaP",
         "Potentiation threshold for Ca"
         "User must ensure thetaP>thetaD, else simulation results will be wrong.",
 		&GraupnerBrunel2012CaPlasticitySynHandler::setThetaP,
@@ -124,7 +124,7 @@ const Cinfo* GraupnerBrunel2012CaPlasticitySynHandler::initCinfo()
     );
 
     static ValueFinfo< GraupnerBrunel2012CaPlasticitySynHandler, double > thetaD(
-        "thetaD", 
+        "thetaD",
         "Depression threshold for Ca"
         "User must ensure thetaP>thetaD, else simulation results will be wrong.",
 		&GraupnerBrunel2012CaPlasticitySynHandler::setThetaD,
@@ -132,7 +132,7 @@ const Cinfo* GraupnerBrunel2012CaPlasticitySynHandler::initCinfo()
     );
 
     static ValueFinfo< GraupnerBrunel2012CaPlasticitySynHandler, bool > bistable(
-        "bistable", 
+        "bistable",
         "If true, the synapse is bistable as in GraupnerBrunel2012 paper."
         "The effect of potential on the weight update is usually ignorable"
         " if Ca is above thetaP and thetaD most of the time.",
@@ -141,35 +141,35 @@ const Cinfo* GraupnerBrunel2012CaPlasticitySynHandler::initCinfo()
     );
 
     static ValueFinfo< GraupnerBrunel2012CaPlasticitySynHandler, bool > noisy(
-        "noisy", 
+        "noisy",
         "If true, turn noise on as per noiseSD",
 		&GraupnerBrunel2012CaPlasticitySynHandler::setNoisy,
 		&GraupnerBrunel2012CaPlasticitySynHandler::getNoisy
     );
 
     static ValueFinfo< GraupnerBrunel2012CaPlasticitySynHandler, double > noiseSD(
-        "noiseSD", 
+        "noiseSD",
         "Standard deviation of noise added to Ca",
 		&GraupnerBrunel2012CaPlasticitySynHandler::setNoiseSD,
 		&GraupnerBrunel2012CaPlasticitySynHandler::getNoiseSD
     );
 
     static ValueFinfo< GraupnerBrunel2012CaPlasticitySynHandler, double > weightMax(
-        "weightMax", 
+        "weightMax",
         "An upper bound on the weight",
 		&GraupnerBrunel2012CaPlasticitySynHandler::setWeightMax,
 		&GraupnerBrunel2012CaPlasticitySynHandler::getWeightMax
     );
 
     static ValueFinfo< GraupnerBrunel2012CaPlasticitySynHandler, double > weightMin(
-        "weightMin", 
+        "weightMin",
         "A lower bound on the weight",
 		&GraupnerBrunel2012CaPlasticitySynHandler::setWeightMin,
 		&GraupnerBrunel2012CaPlasticitySynHandler::getWeightMin
     );
 
     static ValueFinfo< GraupnerBrunel2012CaPlasticitySynHandler, double > weightScale(
-        "weightScale", 
+        "weightScale",
         "Scale all pre-synaptic weights by weightScale before adding to activation (default 1.0)"
         "In the terminology of the paper Higgins et al 2012, weight is synaptic efficacy,"
         "while weightScale*weight is what finally is added to activation variable.",
@@ -182,7 +182,7 @@ const Cinfo* GraupnerBrunel2012CaPlasticitySynHandler::initCinfo()
         new EpFunc1< GraupnerBrunel2012CaPlasticitySynHandler, \
                 double >( &GraupnerBrunel2012CaPlasticitySynHandler::addPostSpike ) );
 
-	static FieldElementFinfo< SynHandlerBase, Synapse > synFinfo( 
+	static FieldElementFinfo< SynHandlerBase, Synapse > synFinfo(
 		"synapse",
 		"Sets up field Elements for synapse",
 		Synapse::initCinfo(),
@@ -231,7 +231,7 @@ static const Cinfo* GraupnerBrunel2012CaPlasticitySynHandlerCinfo =\
     GraupnerBrunel2012CaPlasticitySynHandler::initCinfo();
 
 GraupnerBrunel2012CaPlasticitySynHandler::GraupnerBrunel2012CaPlasticitySynHandler()
-{ 
+{
     Ca_ = 0.0;
     CaInit_ = 0.0;
     tauCa_ = 1.0;
@@ -259,7 +259,7 @@ GraupnerBrunel2012CaPlasticitySynHandler& GraupnerBrunel2012CaPlasticitySynHandl
         ( const GraupnerBrunel2012CaPlasticitySynHandler& ssh)
 {
 	synapses_ = ssh.synapses_;
-	for ( vector< Synapse >::iterator 
+	for ( vector< Synapse >::iterator
 					i = synapses_.begin(); i != synapses_.end(); ++i )
 			i->setHandler( this );
 
@@ -297,7 +297,7 @@ Synapse* GraupnerBrunel2012CaPlasticitySynHandler::vGetSynapse( unsigned int i )
 	return &dummy;
 }
 
-void GraupnerBrunel2012CaPlasticitySynHandler::addSpike( 
+void GraupnerBrunel2012CaPlasticitySynHandler::addSpike(
 				unsigned int index, double time, double weight )
 {
 	assert( index < synapses_.size() );
@@ -318,38 +318,38 @@ weightFactors GraupnerBrunel2012CaPlasticitySynHandler::updateCaWeightFactors( d
         Ca_ *= exp(-deltaT/tauCa_);
         lastCaUpdateTime_ = currTime;
         weightFactors wUp; // by default all are set to 0.0
-        
+
         // calculate/approximate time spent above potentiation and depression thresholds
         // see pg 13 of Higgins et al | October 2014 | Volume 10 | Issue 10 | e1003834 | PLOS Comp Biol
         // starting from bottom condition, going upwards in the algorithm given in above paper
         if (CaOld <= thetaD_) {
         } else if (CaOld <= thetaP_) {
-            //cout << "tD<Caold<tP" << "\n";              
+            //cout << "tD<Caold<tP" << "\n";
             if (Ca_ <= thetaD_) {
                 wUp.tD = tauCa_*log(CaOld/thetaD_);
-                //cout << "Ca<tD" << "\n";              
+                //cout << "Ca<tD" << "\n";
             } else {
                 wUp.tD = deltaT;
-                //cout << "Ca>tD" << "\n";              
+                //cout << "Ca>tD" << "\n";
             }
         } else {
-            //cout << "Caold>tP" << "\n";              
+            //cout << "Caold>tP" << "\n";
             if (Ca_ <= thetaD_) {
                 wUp.tP = tauCa_*log(CaOld/thetaP_);
                 wUp.tD = tauCa_*log(thetaP_/thetaD_);
-                //cout << "Ca<tD" << "\n";              
-                //cout << "Caold = " << CaOld << "thetaP = " << thetaP_ << "\n";              
+                //cout << "Ca<tD" << "\n";
+                //cout << "Caold = " << CaOld << "thetaP = " << thetaP_ << "\n";
             } else if (Ca_ <= thetaP_) {
                 wUp.tP = tauCa_*log(CaOld/thetaP_);
                 wUp.tD = deltaT - wUp.tP;
-                //cout << "Ca<tP" << "\n";              
+                //cout << "Ca<tP" << "\n";
             } else {
                 wUp.tP = deltaT;
                 //cout << "Ca>tP" << "\n";
             }
         }
         wUp.t0 = deltaT - wUp.tP - wUp.tD;
-        
+
         // Depending on tP and tD, I return A,B,C factors for weight update
         // (see page 13 of Higgins et al 2014).
         // A,B,C,D,E are used to compute the weight change for one or multiple synapses
@@ -366,7 +366,7 @@ weightFactors GraupnerBrunel2012CaPlasticitySynHandler::updateCaWeightFactors( d
                 wUp.C = 0.0;
             }
         }
-        
+
         if (wUp.tD > 0) {
             wUp.D = exp(-wUp.tD*gammaD_/tauSyn_);
             if (noisy_) {
@@ -377,7 +377,7 @@ weightFactors GraupnerBrunel2012CaPlasticitySynHandler::updateCaWeightFactors( d
                 wUp.E = 0.0;
             }
         }
-        
+
         //cout << currTime  << " tD = " << wUp.tD << " tP = " << wUp.tP << "\n";
         // tP, tD, A, B, C, D, E of wUp
         // are set to 0.0 by default in struct constructor
@@ -398,7 +398,7 @@ void GraupnerBrunel2012CaPlasticitySynHandler::updateWeight( Synapse* synPtr, we
         newWeight = wFacPtr->D*newWeight + wFacPtr->E; // update the weight again
         //cout << " newweight = " << newWeight << "\n";
     }
-    
+
     // potential is usually ignorable when t0 is small,
     // i.e. Ca is mostly above thetaD or thetaP
     //cout << "before bistable newWeight = " << newWeight << "\n";
@@ -412,16 +412,16 @@ void GraupnerBrunel2012CaPlasticitySynHandler::updateWeight( Synapse* synPtr, we
         }
     }
     //cout << "after bistable newWeight = " << newWeight << "\n";
-    
+
     // clip weight within [weightMin,weightMax]
     newWeight = std::max(weightMin_, std::min(newWeight, weightMax_));
     //cout << " clipweight = " << newWeight << "\n";
-    //cout << " A = " << wFacPtr->A << " B = " << wFacPtr->B << " C = " << wFacPtr->C 
+    //cout << " A = " << wFacPtr->A << " B = " << wFacPtr->B << " C = " << wFacPtr->C
     //    << " D = " << wFacPtr->D << " E = " << wFacPtr->E << " newW = "<< newWeight << "\n";
     synPtr->setWeight( newWeight );
 }
 
-void GraupnerBrunel2012CaPlasticitySynHandler::vProcess( const Eref& e, ProcPtr p ) 
+void GraupnerBrunel2012CaPlasticitySynHandler::vProcess( const Eref& e, ProcPtr p )
 {
 	double activation = 0.0;
     double currTime = p->currTime;
@@ -465,14 +465,14 @@ void GraupnerBrunel2012CaPlasticitySynHandler::vProcess( const Eref& e, ProcPtr 
         //      or to LIF as an impulse to voltage.
 		//activation += currEvent.weight * weightScale_ / p->dt;
         activation += currSynPtr->getWeight() * weightScale_ / p->dt;
-        
+
         // update only once for this time-step if an event occurs
         if (!CaFactorsUpdated) {
             // update Ca and weightFactors
             wFacs = updateCaWeightFactors( currTime );
             CaFactorsUpdated = true;
         }
-        
+
 		events_.pop();
 	}
 	if ( activation != 0.0 )
@@ -488,7 +488,7 @@ void GraupnerBrunel2012CaPlasticitySynHandler::vProcess( const Eref& e, ProcPtr 
             wFacs = updateCaWeightFactors( currTime );
             CaFactorsUpdated = true;
         }
-        Ca_ += CaPre_;        
+        Ca_ += CaPre_;
 
 		delayDPreEvents_.pop();
 	}
@@ -503,10 +503,10 @@ void GraupnerBrunel2012CaPlasticitySynHandler::vProcess( const Eref& e, ProcPtr 
             CaFactorsUpdated = true;
         }
         Ca_ += CaPost_;
-        
+
 		postEvents_.pop();
 	}
-    
+
     // If any event has happened, update all pre-synaptic weights
     // If you want individual Ca for each pre-synapse
     // create individual SynHandlers for each
@@ -523,7 +523,7 @@ void GraupnerBrunel2012CaPlasticitySynHandler::vProcess( const Eref& e, ProcPtr 
 
 }
 
-void GraupnerBrunel2012CaPlasticitySynHandler::vReinit( const Eref& e, ProcPtr p ) 
+void GraupnerBrunel2012CaPlasticitySynHandler::vReinit( const Eref& e, ProcPtr p )
 {
 	// For no apparent reason, priority queues don't have a clear operation.
 	while( !events_.empty() )

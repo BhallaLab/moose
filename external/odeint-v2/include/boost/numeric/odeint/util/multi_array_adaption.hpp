@@ -32,14 +32,14 @@
 namespace boost {
 namespace numeric {
 namespace odeint {
-    
+
 template< typename T >
 struct is_multi_array
 {
     typedef boost::false_type type;
     const static bool value = type::value;
 };
-    
+
 template< typename T >
 struct is_resizeable_multi_array
 {
@@ -80,7 +80,7 @@ struct is_resizeable_sfinae< T , typename boost::enable_if< typename is_resizeab
 template< typename T1 , typename T2  >
 struct same_size_impl_sfinae< T1 , T2 ,
                        typename boost::enable_if<
-                           typename boost::mpl::and_< 
+                           typename boost::mpl::and_<
                                is_multi_array< T1 > ,
                                is_multi_array< T2 > ,
                                boost::mpl::bool_< T1::dimensionality == T2::dimensionality >
@@ -119,7 +119,7 @@ struct resize_impl_sfinae< T1 , T2 ,
         x1.reindex( origins );
     }
 };
-                            
+
 
 
 } // namespace odeint

@@ -82,7 +82,7 @@ size_t integrate_const(
     const Time time_step = dt;
     int real_steps = 0;
     int step = 0;
-    
+
     while( less_eq_with_sign( static_cast<Time>(time+time_step) , end_time , dt ) )
     {
         obs( start_state , time );
@@ -112,14 +112,14 @@ size_t integrate_const(
     typename odeint::unwrap_reference< Stepper >::type &st = stepper;
 
     Time time = start_time;
-    
+
     st.initialize( start_state , time , dt );
     obs( start_state , time );
     time += dt;
 
     int obs_step( 1 );
     int real_step( 0 );
-    
+
     while( less_eq_with_sign( static_cast<Time>(time+dt) , end_time , dt ) )
     {
         while( less_eq_with_sign( time , st.current_time() , dt ) )
@@ -148,7 +148,7 @@ size_t integrate_const(
             st.do_step( system );
             ++real_step;
         }
-        
+
     }
     // last observation, if we are still in observation interval
     // might happen due to finite precision problems when computing the the time
@@ -157,7 +157,7 @@ size_t integrate_const(
         st.calc_state( time , start_state );
         obs( start_state , time );
     }
-    
+
     return real_step;
 }
 

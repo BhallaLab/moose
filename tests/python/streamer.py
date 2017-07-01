@@ -1,4 +1,5 @@
-"""test_table_stream.py: 
+# -*- coding: utf-8 -*-
+"""test_table_stream.py:
 
     Test moose.TableStream.
 

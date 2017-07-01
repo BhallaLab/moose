@@ -14,7 +14,7 @@ class Arith
 	friend void testCopyMsgOps();
 	friend void testTicks();
 
-	public: 
+	public:
 		Arith();
 		void process( const Eref& e, ProcPtr p );
 		void reinit( const Eref& e, ProcPtr p );
@@ -23,11 +23,11 @@ class Arith
  		 * Inserts an event into the pendingEvents queue for spikes.
  		 */
 		void addSpike( unsigned int synIndex, const double time );
-		
+
 		////////////////////////////////////////////////////////////////
 		// Field assignment stuff.
 		////////////////////////////////////////////////////////////////
-		
+
 		void setFunction( string v );
 		string getFunction() const;
 		void setOutput( double v );
@@ -39,7 +39,7 @@ class Arith
 		////////////////////////////////////////////////////////////////
 		// Dest Func
 		////////////////////////////////////////////////////////////////
-		
+
 		void arg1( double v );
 		void arg2( double v );
 		void arg3( double v );

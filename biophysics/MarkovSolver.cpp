@@ -23,12 +23,12 @@ const Cinfo* MarkovSolver::initCinfo()
 	//////////////////////
 	//DestFinfos
 	//////////////////////
-	
+
 	static DestFinfo process(	"process",
 			"Handles process call",
-			new ProcOpFunc< MarkovSolver >( &MarkovSolver::process ) ); 
+			new ProcOpFunc< MarkovSolver >( &MarkovSolver::process ) );
 
-	static DestFinfo reinit( "reinit", 
+	static DestFinfo reinit( "reinit",
 			"Handles reinit call",
 			new ProcOpFunc< MarkovSolver >( &MarkovSolver::reinit ) );
 
@@ -37,7 +37,7 @@ const Cinfo* MarkovSolver::initCinfo()
 		&process, &reinit
 	};
 
-	static SharedFinfo proc( "proc", 
+	static SharedFinfo proc( "proc",
 			"This is a shared message to receive Process message from the"
 			"scheduler. The first entry is a MsgDest for the Process "
 			"operation. It has a single argument, ProcInfo, which "
@@ -48,14 +48,14 @@ const Cinfo* MarkovSolver::initCinfo()
 	);
 
 
-	static Finfo* markovSolverFinfos[] = 	
+	static Finfo* markovSolverFinfos[] =
 	{
 		&proc,							//SharedFinfo
 	};
 
         static Dinfo < MarkovSolver > dinfo;
 	static Cinfo markovSolverCinfo(
-			"MarkovSolver",			
+			"MarkovSolver",
 			MarkovSolverBase::initCinfo(),
 			markovSolverFinfos,
 			sizeof( markovSolverFinfos ) / sizeof( Finfo* ),
@@ -77,7 +77,7 @@ MarkovSolver::~MarkovSolver()
 	;
 }
 
-Matrix* MarkovSolver::computePadeApproximant( Matrix* Q1, 
+Matrix* MarkovSolver::computePadeApproximant( Matrix* Q1,
 																						unsigned int degreeIndex )
 {
 	Matrix *expQ;
@@ -85,7 +85,7 @@ Matrix* MarkovSolver::computePadeApproximant( Matrix* Q1,
 	vector< unsigned int >* swaps = new vector< unsigned int >;
 	unsigned int n = Q1->size();
 	unsigned int degree = mCandidates[degreeIndex];
-	double *padeCoeffs; 
+	double *padeCoeffs;
 
 
 	//Vector of Matrix pointers. Each entry is an even power of Q.
@@ -124,9 +124,9 @@ Matrix* MarkovSolver::computePadeApproximant( Matrix* Q1,
 	//Note that the formula for the 13th degree approximant used here
 	//is different from the one used for smaller degrees.
 	////////
-	switch( degree )	
+	switch( degree )
 	{
-		case 3 : 
+		case 3 :
 		case 5 :
 		case 7 :
 		case 9 :
@@ -143,9 +143,9 @@ Matrix* MarkovSolver::computePadeApproximant( Matrix* Q1,
 
 			//Computation of U.
 			for ( int i = degree; i > 1; i -= 2 )
-				matMatAdd( U, QevenPowers[i/2], 1.0, padeCoeffs[i], FIRST ); 
+				matMatAdd( U, QevenPowers[i/2], 1.0, padeCoeffs[i], FIRST );
 
-			//Adding b0 * I . 
+			//Adding b0 * I .
 			matEyeAdd( U, padeCoeffs[1], 0 );
 			matMatMul( Q1, U, SECOND );
 
@@ -174,7 +174,7 @@ Matrix* MarkovSolver::computePadeApproximant( Matrix* Q1,
 			//Long and rather messy expression for U and V.
 			//Refer paper mentioned in header for more details.
 			//Storing the result in temporaries is a better idea as it gives us
-			//control on how many temporaries are being created and also to 
+			//control on how many temporaries are being created and also to
 			//help in memory deallocation.
 
 			//Computation of U.
@@ -184,10 +184,10 @@ Matrix* MarkovSolver::computePadeApproximant( Matrix* Q1,
 
 			matMatMul( Q6, temp, SECOND );
 
-			matMatAdd( temp, Q6, 1.0, b13[7], FIRST ); 
-			matMatAdd( temp, Q4, 1.0, b13[5], FIRST ); 
-			matMatAdd( temp, Q2, 1.0, b13[3], FIRST ); 
-			matEyeAdd( temp, b13[1], DUMMY ); 
+			matMatAdd( temp, Q6, 1.0, b13[7], FIRST );
+			matMatAdd( temp, Q4, 1.0, b13[5], FIRST );
+			matMatAdd( temp, Q2, 1.0, b13[3], FIRST );
+			matEyeAdd( temp, b13[1], DUMMY );
 			U = matMatMul( Q1, temp );
 			delete temp;
 
@@ -196,10 +196,10 @@ Matrix* MarkovSolver::computePadeApproximant( Matrix* Q1,
 			matMatAdd( temp, Q4, 1.0, b13[10], FIRST );
 			matMatAdd( temp, Q2, 1.0, b13[8], FIRST );
 			matMatMul( Q6, temp, SECOND );
-			matMatAdd( temp, Q6, 1.0, b13[6], FIRST ); 
-			matMatAdd( temp, Q4, 1.0, b13[4], FIRST ); 
-			matMatAdd( temp, Q2, 1.0, b13[2], FIRST ); 
-			V = matEyeAdd( temp, b13[0] ); 
+			matMatAdd( temp, Q6, 1.0, b13[6], FIRST );
+			matMatAdd( temp, Q4, 1.0, b13[4], FIRST );
+			matMatAdd( temp, Q2, 1.0, b13[2], FIRST );
+			V = matEyeAdd( temp, b13[0] );
 			delete temp;
 
 			delete Q2;
@@ -214,7 +214,7 @@ Matrix* MarkovSolver::computePadeApproximant( Matrix* Q1,
 	invVminusU = matAlloc( n );
 	matInv( VminusU, swaps, invVminusU );
 	expQ = matMatMul( invVminusU, VplusU );
-	
+
 
 	//Memory cleanup.
 	delete U;
@@ -229,7 +229,7 @@ Matrix* MarkovSolver::computePadeApproximant( Matrix* Q1,
 
 Matrix* MarkovSolver::computeMatrixExponential()
 {
-	double mu, norm;					
+	double mu, norm;
 	unsigned int n = Q_->size();
 	Matrix *expQ, *Q1;
 
@@ -237,12 +237,12 @@ Matrix* MarkovSolver::computeMatrixExponential()
 
 	//Q1 <- Q - mu*I
 	//This reduces the norm of the matrix. The idea is that a lower
-	//order approximant will suffice if the norm is smaller. 
+	//order approximant will suffice if the norm is smaller.
 	Q1 = matEyeAdd( Q_, -mu );
 
-	//We cycle through the first four candidate values of m. The moment the norm 
+	//We cycle through the first four candidate values of m. The moment the norm
 	//satisfies the theta_M bound, we choose that m and compute the Pade'
-	//approximant to the exponential. We can then directly return the exponential. 
+	//approximant to the exponential. We can then directly return the exponential.
 	norm = matColNorm( Q1 );
 	for ( unsigned int i = 0; i < 4; ++i )
 	{
@@ -260,13 +260,13 @@ Matrix* MarkovSolver::computeMatrixExponential()
 	double sf = ceil( log( norm / thetaM[4] ) / log( (double)2 ) );
 	unsigned int s = 0;
 
-	if ( sf > 0 ) 
+	if ( sf > 0 )
 	{
 		s = static_cast< unsigned int >( sf );
 		matScalShift( Q1, 1.0/(2 << (s - 1)), 0, DUMMY );
 	}
 	expQ = computePadeApproximant( Q1, 4 );
-	
+
 	//Upto this point, the matrix stored in expQ is r13, the 13th degree
 	//Pade approximant corresponding to A/2^s, not A.
 	//Now we repeatedly square r13 's' times to get the exponential
@@ -308,7 +308,7 @@ void assignMat( Matrix* A, double testMat[3][3] )
 //we test out all degrees of the Pade approximant.
 void testMarkovSolver()
 {
-	MarkovSolver solver;	
+	MarkovSolver solver;
 
 	Matrix *expQ;
 
@@ -381,8 +381,8 @@ void testMarkovSolver()
 	for ( unsigned int i = 0; i < 5; ++i )
 	{
 		assignMat( solver.Q_, testMats[i] );
-		expQ = solver.computeMatrixExponential();	
-		assert( doubleEq( matColNorm( expQ ), correctColumnNorms[i] ) ); 
+		expQ = solver.computeMatrixExponential();
+		assert( doubleEq( matColNorm( expQ ), correctColumnNorms[i] ) );
 
 		//Comparing termwise just to be doubly sure.
 		for( unsigned int j = 0; j < 3; ++j )
@@ -411,18 +411,18 @@ void testMarkovSolver()
 	Id solver2dId = Id::nextId();
 	Id solver1dId = Id::nextId();
 
-	ObjId eRateTable2d =  Element( rateTable2dId, rateTableCinfo, 
+	ObjId eRateTable2d =  Element( rateTable2dId, rateTableCinfo,
                                              "rateTable2d", single, 1, true );
-	Element *eRateTable1d = new Element( rateTable1dId, rateTableCinfo, 
+	Element *eRateTable1d = new Element( rateTable1dId, rateTableCinfo,
 																			"rateTable1d", single, 1, true );
 	Element *eInt2d = new Element( int2dId, interpol2dCinfo, "int2d", single, 1 );
-	Element *eVecTable = new Element( vecTableId, vectorTableCinfo, "vecTable", 
+	Element *eVecTable = new Element( vecTableId, vectorTableCinfo, "vecTable",
 																		single, 1, true );
-	Element *eSolver2d = new Element( solver2dId, markovSolverCinfo, 
-																		"solver2d", single, 1, true );	
-	Element *eSolver1d = new Element( solver1dId, markovSolverCinfo, 
-																		"solver1d", single, 1, true );	
-																		 
+	Element *eSolver2d = new Element( solver2dId, markovSolverCinfo,
+																		"solver2d", single, 1, true );
+	Element *eSolver1d = new Element( solver1dId, markovSolverCinfo,
+																		"solver1d", single, 1, true );
+
 	Eref rateTable2dEref( eRateTable2d, 0 );
 	Eref rateTable1dEref( eRateTable1d, 0 );
 	Eref int2dEref( eInt2d, 0 );
@@ -454,7 +454,7 @@ void testMarkovSolver()
 	vecTable->setMax( 0.10 );
 	vecTable->setDiv( 200 );
 
-	v = vecTable->getMin(); 
+	v = vecTable->getMin();
 	for ( unsigned int i = 0; i < 201; ++i )
 	{
 		table1d.push_back( 1e3 * exp( 9 * v - 0.45 ) );
@@ -496,7 +496,7 @@ void testMarkovSolver()
 
 	markovSolver2d->init( rateTable2dId, 0.1 );
 	markovSolver1d->init( rateTable1dId, 0.1 );
-	
+
 	markovSolver2d->setVm( 0.0533 );
 	markovSolver2d->setLigandConc( 3.41e-6 );
 

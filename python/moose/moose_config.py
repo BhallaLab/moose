@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # This file is part of MOOSE simulator: http://moose.ncbs.res.in.
 
 # MOOSE is free software: you can redistribute it and/or modify
@@ -13,12 +14,12 @@
 # along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 
-"""multiscale_config.py: 
+"""multiscale_config.py:
 
 Last modified: Sat Jan 18, 2014  05:01PM
 
 """
-    
+
 __author__           = "Dilawar Singh"
 __copyright__        = "Copyright 2013, NCBS Bangalore"
 __credits__          = ["NCBS Bangalore", "Bhalla Lab"]
@@ -33,7 +34,7 @@ import datetime
 import time
 import os
 
-# Universal paths 
+# Universal paths
 nmlPath = '/neuroml'
 nmlCellPath = os.path.join(nmlPath, 'cells')
 libraryPath = os.path.join(nmlPath, 'cells')

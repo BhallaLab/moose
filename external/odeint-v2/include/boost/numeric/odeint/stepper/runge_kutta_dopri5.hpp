@@ -68,7 +68,7 @@ public :
     #else
     typedef explicit_error_stepper_fsal_base< runge_kutta_dopri5< ... > , ... > stepper_base_type;
     #endif
-    
+
     typedef typename stepper_base_type::state_type state_type;
     typedef typename stepper_base_type::value_type value_type;
     typedef typename stepper_base_type::deriv_type deriv_type;
@@ -193,7 +193,7 @@ public :
             //error estimate
             stepper_base_type::m_algebra.for_each7( xerr , dxdt_in , m_k3.m_v , m_k4.m_v , m_k5.m_v , m_k6.m_v , dxdt_out ,
                                                     typename operations_type::template scale_sum6< time_type , time_type , time_type , time_type , time_type , time_type >( dt*dc1 , dt*dc3 , dt*dc4 , dt*dc5 , dt*dc6 , dt*dc7 ) );
-        
+
         }
 
     }
@@ -276,7 +276,7 @@ public :
         resize_dxdt_tmp_impl( x );
         stepper_base_type::adjust_size( x );
     }
-    
+
 
 private:
 
@@ -298,7 +298,7 @@ private:
     {
         return adjust_size_by_resizeability( m_dxdt_tmp , x , typename is_resizeable<deriv_type>::type() );
     }
-        
+
 
 
     wrapped_state_type m_x_tmp;
@@ -318,8 +318,8 @@ private:
  * The Runge-Kutta Dormand-Prince 5 method is a very popular method for solving ODEs, see
  * <a href=""></a>.
  * The method is explicit and fulfills the Error Stepper concept. Step size control
- * is provided but continuous output is available which make this method favourable for many applications. 
- * 
+ * is provided but continuous output is available which make this method favourable for many applications.
+ *
  * This class derives from explicit_error_stepper_fsal_base and inherits its interface via CRTP (current recurring
  * template pattern). The method possesses the FSAL (first-same-as-last) property. See
  * explicit_error_stepper_fsal_base for more details.
@@ -346,8 +346,8 @@ private:
      * \brief This method performs one step. The derivative `dxdt_in` of `in` at the time `t` is passed to the
      * method. The result is updated out-of-place, hence the input is in `in` and the output in `out`. Furthermore,
      * the derivative is update out-of-place, hence the input is assumed to be in `dxdt_in` and the output in
-     * `dxdt_out`. 
-     * Access to this step functionality is provided by explicit_error_stepper_fsal_base and 
+     * `dxdt_out`.
+     * Access to this step functionality is provided by explicit_error_stepper_fsal_base and
      * `do_step_impl` should not be called directly.
      *
      * \param system The system function to solve, hence the r.h.s. of the ODE. It must fulfill the
@@ -365,8 +365,8 @@ private:
      * \brief This method performs one step. The derivative `dxdt_in` of `in` at the time `t` is passed to the
      * method. The result is updated out-of-place, hence the input is in `in` and the output in `out`. Furthermore,
      * the derivative is update out-of-place, hence the input is assumed to be in `dxdt_in` and the output in
-     * `dxdt_out`. 
-     * Access to this step functionality is provided by explicit_error_stepper_fsal_base and 
+     * `dxdt_out`.
+     * Access to this step functionality is provided by explicit_error_stepper_fsal_base and
      * `do_step_impl` should not be called directly.
      * An estimation of the error is calculated.
      *
@@ -383,7 +383,7 @@ private:
 
     /**
      * \fn runge_kutta_dopri5::calc_state( time_type t , StateOut &x , const StateIn1 &x_old , const DerivIn1 &deriv_old , time_type t_old , const StateIn2 &  , const DerivIn2 &deriv_new , time_type t_new ) const
-     * \brief This method is used for continuous output and it calculates the state `x` at a time `t` from the 
+     * \brief This method is used for continuous output and it calculates the state `x` at a time `t` from the
      * knowledge of two states `old_state` and `current_state` at time points `t_old` and `t_new`. It also uses
      * internal variables to calculate the result. Hence this method must be called after two successful `do_step`
      * calls.

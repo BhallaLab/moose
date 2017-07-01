@@ -61,7 +61,7 @@ namespace odeint {
     template< class Stepper , class System , class State >
     n_step_time_iterator< Stepper , System, State > make_n_step_time_iterator_begin(
         Stepper stepper ,
-        System system , 
+        System system ,
         State &x ,
         typename traits::time_type< Stepper >::type t ,
         typename traits::time_type< Stepper >::type dt ,
@@ -73,7 +73,7 @@ namespace odeint {
     template< class Stepper , class System , class State >
     n_step_time_iterator< Stepper , System , State > make_n_step_time_iterator_end(
         Stepper stepper ,
-        System system , 
+        System system ,
         State &x )
     {
         return n_step_time_iterator< Stepper , System , State >( stepper , system , x );
@@ -83,7 +83,7 @@ namespace odeint {
     std::pair< n_step_time_iterator< Stepper , System , State > , n_step_time_iterator< Stepper , System , State > >
     make_n_step_time_range(
         Stepper stepper ,
-        System system , 
+        System system ,
         State &x ,
         typename traits::time_type< Stepper >::type t ,
         typename traits::time_type< Stepper >::type dt ,

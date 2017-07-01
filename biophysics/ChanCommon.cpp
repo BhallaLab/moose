@@ -17,7 +17,7 @@
 ChanCommon::ChanCommon()
 			:
 			Vm_( 0.0 ),
-			Gbar_( 0.0 ), modulation_( 1.0 ), 
+			Gbar_( 0.0 ), modulation_( 1.0 ),
 			Ek_( 0.0 ),
 			Gk_( 0.0 ), Ik_( 0.0 )
 {

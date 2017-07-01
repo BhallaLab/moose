@@ -1073,12 +1073,15 @@ void finalize()
     //     free(classObject->tp_name); // skipping this as not sure whether this is useful - all gets deallocated at exit anyways.
     // }
     // get_moose_classes().clear();
+
     SHELLPTR->doQuit();
     Msg::clearAllMsgs();
     Id::clearAllElements();
+
 #ifdef USE_MPI
     MPI_Finalize();
 #endif
+
 } //! finalize()
 
 
@@ -3122,8 +3125,10 @@ static struct PyModuleDef MooseModuleDef =
 PyMODINIT_FUNC MODINIT(_moose)
 {
     clock_t modinit_start = clock();
-    PyGILState_STATE gstate;
-    gstate = PyGILState_Ensure();
+
+    //PyGILState_STATE gstate;
+    //gstate = PyGILState_Ensure();
+
     // First of all create the Shell.  We convert the environment
     // variables into c-like argv array
     vector<string> args = setup_runtime_env();
@@ -3134,6 +3139,7 @@ PyMODINIT_FUNC MODINIT(_moose)
         argv[ii] = (char*)(calloc(args[ii].length()+1, sizeof(char)));
         strncpy(argv[ii], args[ii].c_str(), args[ii].length()+1);
     }
+
     // Should not call. No pthreads now. PyEval_InitThreads();
     Id shellId = getShell(argc, argv);
     for (int ii = 1; ii < argc; ++ii)
@@ -3249,7 +3255,7 @@ PyMODINIT_FUNC MODINIT(_moose)
             << (defclasses_end - defclasses_start) * 1.0 /CLOCKS_PER_SEC
        );
 
-    PyGILState_Release(gstate);
+    //PyGILState_Release(gstate);
     clock_t modinit_end = clock();
 
     LOG( moose::info, "`Time to initialize module:"

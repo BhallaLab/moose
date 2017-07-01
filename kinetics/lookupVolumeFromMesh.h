@@ -26,7 +26,7 @@ double lookupVolumeFromMesh( const Eref& e );
  * products) of Reacs or Enzymes. Does NOT get volumes for the Enzyme
  * itself.
  */
-unsigned int getReactantVols( const Eref& reac, const SrcFinfo* pools, 
+unsigned int getReactantVols( const Eref& reac, const SrcFinfo* pools,
 	vector< double >& vols );
 
 /**
@@ -46,7 +46,7 @@ unsigned int getReactantVols( const Eref& reac, const SrcFinfo* pools,
  * substrates not in the 'pools' list, and so it should compute the
  * conversion for all pools, not n-1. This flag defaults to 0.
  */
-double convertConcToNumRateUsingMesh( const Eref& e, const SrcFinfo* pools, 
+double convertConcToNumRateUsingMesh( const Eref& e, const SrcFinfo* pools,
 	bool doPartialConversion );
 
 /**
@@ -61,7 +61,7 @@ double convertConcToNumRateUsingMesh( const Eref& e, const SrcFinfo* pools,
  * substrates not in the 'pools' list, and so it should compute the
  * conversion for all pools, not n-1. This flag defaults to 0.
  */
-double convertConcToNumRateUsingVol( const Eref& e, const SrcFinfo* pools, 
+double convertConcToNumRateUsingVol( const Eref& e, const SrcFinfo* pools,
 	double volume, double scale, bool doPartialConversion );
 
 /**
@@ -77,7 +77,7 @@ double convertConcToNumRateUsingVol( const Eref& e, const SrcFinfo* pools,
  * equal to moles per cubic metre, which is equal to millimolar.
  * The scale term is 1e-3 for micromolar, uM.
  */
-double convertConcToNumRateInTwoCompts( double v1, unsigned int n1, 
+double convertConcToNumRateInTwoCompts( double v1, unsigned int n1,
 	double v2, unsigned int n2, double scale );
 
 /**

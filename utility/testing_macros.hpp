@@ -2,7 +2,7 @@
  *
  *       Filename:  testing_macros.hpp
  *
- *    Description:  This file contains some macros useful in testing. 
+ *    Description:  This file contains some macros useful in testing.
  *
  *        Version:  1.0
  *        Created:  Monday 19 May 2014 05:04:41  IST
@@ -10,7 +10,7 @@
  *       Compiler:  gcc
  *
  *         Author:  Dilawar Singh (), dilawars@ncbs.res.in
- *   Organization:  
+ *   Organization:
  *
  * ==============================================================================
  */
@@ -40,7 +40,7 @@ static ostringstream assertStream;
 
 #define LOCATION(ss) \
     ss << "In function: " << SIMPLE_CURRENT_FUNCTION; \
-    ss << " file: " << __FILE__ << ":" << __LINE__ << endl;  
+    ss << " file: " << __FILE__ << ":" << __LINE__ << endl;
 
 #define EXPECT_TRUE( condition, msg) \
     if( !(condition) ) {\

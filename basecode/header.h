@@ -40,7 +40,7 @@ using namespace std;
  */
 typedef unsigned int FuncId;
 
-/** 
+/**
  * Looks up data entries.
  */
 typedef unsigned int DataId;

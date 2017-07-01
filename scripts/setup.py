@@ -1,11 +1,12 @@
+# -*- coding: utf-8 -*-
 
-"""setup.py: This 
+"""setup.py: This
 scripts prepare MOOSE for PyPI.
 
 Last modified: Mon Jul 28, 2014  12:52AM
 
 """
-    
+
 __author__           = "Dilawar Singh"
 __copyright__        = "Copyright 2013, Dilawar Singh and NCBS Bangalore"
 __credits__          = ["NCBS Bangalore"]
@@ -42,7 +43,7 @@ class BuildCommand(_build):
         self.build_temp = '/tmp'
         self.build_lib = '/tmp'
         self.new_dir = os.path.join(os.path.split(__file__)[0], build_dir)
-    
+
     def finalize_options(self):
         pass
 
@@ -141,19 +142,19 @@ url           = 'http://moose.ncbs.res.in/'
 
 setup(
         name = name
-        , version = version 
+        , version = version
         , author = "Upinder Bhalla et. al."
         , author_email = "bhalla@ncbs.res.in"
         , maintainer = 'Dilawar Singh'
         , maintainer_email = 'dilawars@ncbs.res.in'
-        , description = description 
+        , description = description
         , license = "LGPL"
         , url = url
         , long_description = read('README')
         , ext_modules = [
             Extension('_moose', [ '*' ])
             ]
-        , cmdclass = { 
+        , cmdclass = {
              'install' : InstallCommand
             , 'build_py' : BuildPyCommand
             , 'build_ext' : BuildCommand

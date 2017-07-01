@@ -83,12 +83,12 @@ class HHChannel2D: public ChanCommon
 		 * processFunc handles the update and calculations every
 		 * clock tick. It first sends the request for evaluation of
 		 * the gate variables to the respective gate objects and
-		 * recieves their response immediately through a return 
+		 * recieves their response immediately through a return
 		 * message. This is done so that many channel instances can
 		 * share the same gate lookup tables, but do so cleanly.
 		 * Such messages should never go to a remote node.
 		 * Then the function does its own little calculations to
-		 * send back to the parent compartment through regular 
+		 * send back to the parent compartment through regular
 		 * messages.
 		 */
 		void vProcess( const Eref& e, ProcPtr p );
@@ -96,8 +96,8 @@ class HHChannel2D: public ChanCommon
 		/**
 		 * Reinitializes the values for the channel. This involves
 		 * computing the steady-state value for the channel gates
-		 * using the provided Vm from the parent compartment. It 
-		 * involves a similar cycle through the gates and then 
+		 * using the provided Vm from the parent compartment. It
+		 * involves a similar cycle through the gates and then
 		 * updates to the parent compartment as for the processFunc.
 		 */
 		void vReinit( const Eref& e, ProcPtr p );
@@ -133,7 +133,7 @@ class HHChannel2D: public ChanCommon
 
 		/**
 		 * Utility function for destroying gate. Works only on original
-		 * HHChannel. Somewhat dangerous, should never be used after a 
+		 * HHChannel. Somewhat dangerous, should never be used after a
 		 * copy has been made as the pointer of the gate will be in use
 		 * elsewhere.
 		 */
@@ -154,7 +154,7 @@ class HHChannel2D: public ChanCommon
 		static PFDD selectPower( double power);
 
 		static const Cinfo* initCinfo();
-		
+
 	private:
 		int dependency( string index, unsigned int dim );
 		double depValue( int dependency );
@@ -165,7 +165,7 @@ class HHChannel2D: public ChanCommon
 		double Zpower_; /// Exponent for Z gate
 
 		/// bitmapped flag for X, Y, Z, to do equil calculation for gate
-		int instant_;	
+		int instant_;
 		double X_;	 /// State variable for X gate
 		double Y_;	 /// State variable for Y gate
 		double Z_;	 /// State variable for Z gate
@@ -173,13 +173,13 @@ class HHChannel2D: public ChanCommon
 		/**
 		 * true when the matching state variable has been initialized
 		 */
-        bool xInited_, yInited_, zInited_; 
+        bool xInited_, yInited_, zInited_;
 
 		double g_;	/// Internal variable used to calculate conductance
-		
+
 		double conc1_;
 		double conc2_;
-		
+
 		string Xindex_;
 		string Yindex_;
 		string Zindex_;

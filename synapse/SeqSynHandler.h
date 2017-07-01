@@ -25,7 +25,7 @@
  */
 class SeqSynHandler: public SynHandlerBase
 {
-	public: 
+	public:
 		SeqSynHandler();
 		~SeqSynHandler();
 		SeqSynHandler& operator=( const SeqSynHandler& other );
@@ -69,7 +69,7 @@ class SeqSynHandler: public SynHandlerBase
 	private:
 		void updateKernel();
 		/*
-		 * Here I would like to put in a sparse matrix. 
+		 * Here I would like to put in a sparse matrix.
 		 * Each timestep is a row
 		 * Each column is a neuron
 		 * Each value is the weight, though I could also look this up.
@@ -82,13 +82,13 @@ class SeqSynHandler: public SynHandlerBase
 		 * Then run through all available places.
 		 */
 		string kernelEquation_;
-		unsigned int kernelWidth_; // Width in terms of number of synapses 
+		unsigned int kernelWidth_; // Width in terms of number of synapses
 
 		// Time to store history. KernelDt defines num of rows
-		double historyTime_;	
+		double historyTime_;
 		double seqDt_;	// Time step for successive entries in kernel
 		// Scaling factor for sustained activation of synapse from response
-		double responseScale_; 
+		double responseScale_;
 		// Scaling factor for weight changes in each synapse from response
 		double weightScale_;
 
@@ -97,12 +97,12 @@ class SeqSynHandler: public SynHandlerBase
 		double seqActivation_; // global activation if sequence recognized
 
 		// Weight scaling based on individual synapse sequence tuning.
-		vector< double > weightScaleVec_; 
-		
+		vector< double > weightScaleVec_;
+
 		///////////////////////////////////////////
 		// Tracks the spikes that came in recently, as input to correlation
 		// analysis for sequence recognition.
-		vector< double > latestSpikes_; 
+		vector< double > latestSpikes_;
 
 		///////////////////////////////////////////
 		vector< vector<  double > > kernel_;	//Kernel for seq selectivity

@@ -23,7 +23,7 @@
 
 extern const double PI; // defined in consts.cpp
 
-CylBase::CylBase( double x, double y, double z, 
+CylBase::CylBase( double x, double y, double z,
 					double dia, double length, unsigned int numDivs )
 	:
 		x_( x ),
@@ -155,9 +155,9 @@ double CylBase::voxelVolume( const CylBase& parent, unsigned int fid ) const
 	if ( isCylinder_ )
 			return length_ * dia_ * dia_ * PI / ( 4.0 * numDivs_ );
 
- 	double frac0 = ( static_cast< double >( fid ) ) / 
+ 	double frac0 = ( static_cast< double >( fid ) ) /
 				static_cast< double >( numDivs_ );
- 	double frac1 = ( static_cast< double >( fid + 1 ) ) / 
+ 	double frac1 = ( static_cast< double >( fid + 1 ) ) /
 				static_cast< double >( numDivs_ );
 	double r0 = 0.5 * ( parent.dia_ * ( 1.0 - frac0 ) + dia_ * frac0 );
 	double r1 = 0.5 * ( parent.dia_ * ( 1.0 - frac1 ) + dia_ * frac1 );
@@ -169,13 +169,13 @@ double CylBase::voxelVolume( const CylBase& parent, unsigned int fid ) const
 
 /// Virtual function to return coords of mesh Entry.
 /// For Cylindrical mesh, coords are x1y1z1 x2y2z2 r0 r1 phi0 phi1
-vector< double > CylBase::getCoordinates( 
+vector< double > CylBase::getCoordinates(
 					const CylBase& parent, unsigned int fid ) const
 {
 	assert( numDivs_ > fid );
- 	double frac0 = ( static_cast< double >( fid ) ) / 
+ 	double frac0 = ( static_cast< double >( fid ) ) /
 				static_cast< double >( numDivs_ );
- 	double frac1 = ( static_cast< double >( fid + 1 ) ) / 
+ 	double frac1 = ( static_cast< double >( fid + 1 ) ) /
 				static_cast< double >( numDivs_ );
 
 	double r0 = 0.5 * ( parent.dia_ * ( 1.0 - frac0 ) + dia_ * frac0 );
@@ -193,7 +193,7 @@ vector< double > CylBase::getCoordinates(
 	ret[7] = r1;
 	ret[8] = 0;
 	ret[9] = 0;
-	
+
 	return ret;
 }
 
@@ -207,39 +207,39 @@ vector< double > CylBase::getCoordinates(
  * to be computed external to the CylBase, typically by calling the
  * getDiffusionArea for the child CylBase.
  */
-double CylBase::getDiffusionArea( 
+double CylBase::getDiffusionArea(
 				const CylBase& parent, unsigned int fid ) const
 {
 	assert( fid < numDivs_ + 1 );
 	if ( isCylinder_ )
 			return PI * dia_ * dia_ / 4.0;
- 	double frac0 = ( static_cast< double >( fid ) ) / 
+ 	double frac0 = ( static_cast< double >( fid ) ) /
 				static_cast< double >( numDivs_ );
 	double r0 = 0.5 * ( parent.dia_ * ( 1.0 - frac0 ) + dia_ * frac0 );
 	return PI * r0 * r0;
 }
 
 /// Return the cross section area of the middle of the specified voxel.
-double CylBase::getMiddleArea( 
+double CylBase::getMiddleArea(
 				const CylBase& parent, unsigned int fid ) const
 {
 	assert( fid < numDivs_ );
 	if ( isCylinder_ )
 			return PI * dia_ * dia_ / 4.0;
- 	double frac0 = ( 0.5 + static_cast< double >( fid ) ) / 
+ 	double frac0 = ( 0.5 + static_cast< double >( fid ) ) /
 				static_cast< double >( numDivs_ );
 	double r0 = 0.5 * ( parent.dia_ * ( 1.0 - frac0 ) + dia_ * frac0 );
 	return PI * r0 * r0;
 }
 
-double CylBase::getVoxelLength() const 
+double CylBase::getVoxelLength() const
 {
 	return length_ / numDivs_;
 }
 
 
 // Select grid size. Ideally the meshes should be comparable.
-double CylBase::selectGridSize( double h, double dia1, 
+double CylBase::selectGridSize( double h, double dia1,
 					double granularity ) const
 {
 	if ( length_ < 1e-7 && numDivs_ == 1 ) { // It is a disc, not a cylinder
@@ -260,7 +260,7 @@ double CylBase::selectGridSize( double h, double dia1,
 	return h;
 }
 
-static void fillPointsOnCircle( 
+static void fillPointsOnCircle(
 				const Vec& u, const Vec& v, const Vec& q,
 				double h, double r, vector< double >& area,
 				const CubeMesh* other
@@ -288,7 +288,7 @@ static void fillPointsOnCircle(
 	}
 }
 
-static void fillPointsOnDisc( 
+static void fillPointsOnDisc(
 				const Vec& u, const Vec& v, const Vec& q,
 				double h, double r, vector< double >& area,
 				const CubeMesh* other
@@ -321,7 +321,7 @@ void CylBase::matchCubeMeshEntries( const ChemCompt* compt,
 	const CylBase& parent,
 	unsigned int startIndex,
 	double granularity,
-	vector< VoxelJunction >& ret, 
+	vector< VoxelJunction >& ret,
 	bool useCylinderCurve, bool useCylinderCap ) const
 {
 	const CubeMesh* other = dynamic_cast< const CubeMesh* >( compt );
@@ -357,11 +357,11 @@ void CylBase::matchCubeMeshEntries( const ChemCompt* compt,
 			}
 		}
 		if ( useCylinderCap && i == numDivs_ - 1 ) {
-			fillPointsOnDisc( u, v, Vec( x_, y_, z_ ), 
+			fillPointsOnDisc( u, v, Vec( x_, y_, z_ ),
 							h, dia_/2.0, area, other );
 		}
-		// Go through all cubeMesh entries and compute diffusion 
-		// cross-section. Assume this is through a membrane, so the 
+		// Go through all cubeMesh entries and compute diffusion
+		// cross-section. Assume this is through a membrane, so the
 		// only factor relevant is area. Not the distance.
 		for ( unsigned int k = 0; k < area.size(); ++k ) {
 			if ( area[k] > EPSILON ) {
@@ -373,9 +373,9 @@ void CylBase::matchCubeMeshEntries( const ChemCompt* compt,
 
 // this is the function that does the actual calculation.
 // Returns radial distance from self to axis formed from parent to self.
-// also sends back linePos, the fraction along the line, and r, the 
+// also sends back linePos, the fraction along the line, and r, the
 // radius of the parent tapering cylinder at the point of linePos.
-double CylBase::nearest( double x, double y, double z, 
+double CylBase::nearest( double x, double y, double z,
 				const CylBase& parent,
 				double& linePos, double& r ) const
 {
@@ -389,12 +389,12 @@ double CylBase::nearest( double x, double y, double z,
 	//
 	// So distance from c to p is what we want.
 	//
-	// If k is 
+	// If k is
 	//
 	Vec a( parent.x_, parent.y_, parent.z_ );
 	Vec b( x_, y_, z_ );
 	Vec c( x, y, z );
-	
+
 	double dist = b.distance( a );
 	assert( dist > EPSILON );
 	double k = ( b - a ).dotProduct( c - a );
@@ -411,7 +411,7 @@ double CylBase::nearest( double x, double y, double z,
 }
 
 // This function returns the index.
-double CylBase::nearest( double x, double y, double z, 
+double CylBase::nearest( double x, double y, double z,
 				const CylBase& parent,
 				unsigned int& index ) const
 {

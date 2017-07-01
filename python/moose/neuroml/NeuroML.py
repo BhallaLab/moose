@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 ## Description: class NeuroML for loading NeuroML from single file into MOOSE
 ## Version 1.0 by Aditya Gilra, NCBS, Bangalore, India, 2011 for serial MOOSE
 ## Version 1.5 by Niraj Dudani, NCBS, Bangalore, India, 2012, ported to parallel MOOSE
@@ -86,7 +87,7 @@ class NeuroML():
             self.lengthUnits = root_element.attrib['lengthUnits']
         else:
             self.lengthUnits = 'micrometer'
-        
+
         ## lots of gymnastics to check if temperature meta tag is present
         self.temperature = CELSIUS_default # gets replaced below if tag for temperature is present
         self.temperature_default = True
@@ -101,7 +102,7 @@ class NeuroML():
                 tag = meta_property.find('.//{'+meta_ns+'}tag')
                 tagname = tag.text
                 if 'temperature' in tagname:
-                    ## value can be a tag or an element 
+                    ## value can be a tag or an element
                     if 'value' in list(tag.attrib.keys()): # value is an attrib
                         self.temperature = float(tag.attrib['value'])
                         self.temperature_default = False

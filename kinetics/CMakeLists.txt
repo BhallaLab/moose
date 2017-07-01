@@ -1,19 +1,19 @@
 include_directories(../msg)
 include_directories(../basecode ../utility)
 add_library(kinetics
-	PoolBase.cpp	
-	Pool.cpp	
-	BufPool.cpp	
-	ReacBase.cpp	
-	Reac.cpp	
-	EnzBase.cpp	
-	CplxEnzBase.cpp	
-	Enz.cpp	
-	MMenz.cpp	
-	Species.cpp	
-	ReadKkit.cpp	
-	WriteKkit.cpp	
-	ReadCspace.cpp	
-	lookupVolumeFromMesh.cpp	
-	testKinetics.cpp	
+	PoolBase.cpp
+	Pool.cpp
+	BufPool.cpp
+	ReacBase.cpp
+	Reac.cpp
+	EnzBase.cpp
+	CplxEnzBase.cpp
+	Enz.cpp
+	MMenz.cpp
+	Species.cpp
+	ReadKkit.cpp
+	WriteKkit.cpp
+	ReadCspace.cpp
+	lookupVolumeFromMesh.cpp
+	testKinetics.cpp
         )

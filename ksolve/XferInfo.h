@@ -10,7 +10,7 @@
 #ifndef _XFER_INFO_H
 #define _XFER_INFO_H
 
-/** 
+/**
  * Utility class holding the information required for setting up  the
  * data transfers needed on each timestep for the cross-solver reactions.
  */
@@ -33,7 +33,7 @@ class XferInfo {
 
 		/**
 		 * Vector of cases where last transfer in led to a negative
-		 * concentration. Track the negative value for correction in 
+		 * concentration. Track the negative value for correction in
 		 * the next cycle should the remainder become positive.
 		 */
 		vector< double > subzero;
@@ -45,14 +45,14 @@ class XferInfo {
 		vector< unsigned int > xferPoolIdx;
 
 		/**
-		 * Vector of voxels that particpate in junctions with the 
+		 * Vector of voxels that particpate in junctions with the
 		 * communicating ksolve. This is a subset of the
 		 * total number of voxels.
 		 */
 		vector< unsigned int > xferVoxel;
 
 		/**
-		 * Id of Ksolve that particpates in this set of 
+		 * Id of Ksolve that particpates in this set of
 		 * cross-compartment reactions with self.
 		 * This is used to identify with XferInfo to use for a given
 		 * incoming message.

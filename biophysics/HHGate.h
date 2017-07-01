@@ -11,21 +11,21 @@
 
 /**
  * This class handles a single gate on an HHChannel. It is equivalent to the
- * m and h terms on the Hodgkin-Huxley Na channel, or the n term on the 
- * K channel. It stores the 
- * voltage-dependence (sometimes concentration-dependence) of the 
+ * m and h terms on the Hodgkin-Huxley Na channel, or the n term on the
+ * K channel. It stores the
+ * voltage-dependence (sometimes concentration-dependence) of the
  * gating variables for opening the channel. It does so in a tabular form
- * which can be directly filled using experimental data points. 
+ * which can be directly filled using experimental data points.
  * It also provides a set of
- * utility functions for defining the gate in functional forms, and 
+ * utility functions for defining the gate in functional forms, and
  * accessing those original functional forms.
  * The HHGate is
- * accessed as a FieldElement, which means that it is available as a 
+ * accessed as a FieldElement, which means that it is available as a
  * pointer on the HHChannel. HHGates are typically shared. This means that
  * when you make a copy or a vector of an HHChannel, there is only a single
  * HHGate created, and its pointer is used by all the copies.
  * The lookup functions are thread-safe.
- * Field assignment to the HHGate should be possible only from the 
+ * Field assignment to the HHGate should be possible only from the
  * original HHChannel, but all the others do have read permission.
  */
 class HHGate
@@ -41,7 +41,7 @@ class HHGate
 		/**
 		 * This constructor is the one meant to be used. It takes the
 		 * originalId of the parent HHChannel as a required argument,
-		 * so that any subsequent 'write' functions can be checked to 
+		 * so that any subsequent 'write' functions can be checked to
 		 * see if they are legal. Also tracks its own Id.
 		 */
 		HHGate( Id originalChanId, Id originalGateId );
@@ -74,7 +74,7 @@ class HHGate
 		vector< double > getBeta( const Eref& e) const;
 		void setTau( const Eref& e, vector< double > val );
 		vector< double > getTau( const Eref& e) const;
-		void setMinfinity( const Eref& e, 	
+		void setMinfinity( const Eref& e,
 			vector< double > val );
 		vector< double > getMinfinity( const Eref& e) const;
 
@@ -146,12 +146,12 @@ class HHGate
 		 * Returns the Id of the original Channel.
 		 */
 		Id originalChannelId() const;
-		
+
 		/**
 		 * Returns the Id of the original Gate.
 		 */
 		Id originalGateId() const;
-		
+
 		/**
 		 * tabFill does interpolation and range resizing for
 		 * a table representing a lookup function.
@@ -160,17 +160,17 @@ class HHGate
 		 * Does NOT alter the existing xmin and xmax, but it does resize
 		 * the table.
 		 */
-		void tabFill( vector< double >& table, 
+		void tabFill( vector< double >& table,
 			unsigned int newXdivs, double newXmin, double newXmax );
 
 		/**
-		 * Update the Tau and Minfinity parameters because the alpha or 
+		 * Update the Tau and Minfinity parameters because the alpha or
 		 * beta tables have changed.
 		 */
 		void updateTauMinf();
 
 		/**
-		 * Update the alpha and beta parameters because the tau or 
+		 * Update the alpha and beta parameters because the tau or
 		 * minfinity tables have changed.
 		 */
 		void updateAlphaBeta();
@@ -180,7 +180,7 @@ class HHGate
 		 * and rebuild the tables.
 		 */
 		void updateTables();
-		
+
 		static const Cinfo* initCinfo();
 	private:
 		/// 5 parameters for alpha
@@ -224,7 +224,7 @@ class HHGate
 		Id originalGateId_;
 
 		/**
-		 * Flag: Use linear interpolation for lookup if true, use direct 
+		 * Flag: Use linear interpolation for lookup if true, use direct
 		 * table lookup if false.
 		 */
 		bool lookupByInterpolation_;

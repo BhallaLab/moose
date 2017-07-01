@@ -23,7 +23,7 @@ class Neuron;
  */
 class Spine
 {
-	public: 
+	public:
 		Spine();
 		Spine( const Neuron* parent );
 		//////////////////////////////////////////////////////////////////
@@ -50,11 +50,11 @@ class Spine
 		double getTotalLength( const Eref& e ) const;
 
 		// rotate around dend, but still at right angles to it.
-		void setAngle( const Eref& e, double theta ); 
+		void setAngle( const Eref& e, double theta );
 		double getAngle( const Eref& e ) const;
 
 		// Incline to dend, radians. Default is normal to dend and is 0.
-		void setInclination( const Eref& e, double phi ); 
+		void setInclination( const Eref& e, double phi );
 		double getInclination( const Eref& e ) const;
 
 		void setMinimumSize( const Eref& e, double len );
@@ -63,7 +63,7 @@ class Spine
 		double getMaximumSize( const Eref& e ) const;
 
 		// Assign to specific vector. Length of vector does size scaling.
-		//void setVectorDirection( const Eref& e, vector< double > dir ); 
+		//void setVectorDirection( const Eref& e, vector< double > dir );
 		//vector< double > getVectorDirection( const Eref& e ) const;
 
 		//////////////////////////////////////////////////////////////////
@@ -78,7 +78,7 @@ class Spine
 		const Neuron* parent_;
 		/**
 		 * Used as a sanity check for assigning dimensions, to avoid
-		 * unreasonable physiological values. 
+		 * unreasonable physiological values.
 		 * Defaults to 20 nanometers, which is somewhat smaller than the
 		 * 30 nm size estimated for synaptic vesicles.
 		 */

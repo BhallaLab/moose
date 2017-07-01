@@ -132,7 +132,7 @@ static const Cinfo* statsCinfo = Stats::initCinfo();
 ///////////////////////////////////////////////////////////////////////////
 
 Stats::Stats()
-	: 
+	:
 	mean_( 0.0 ), sdev_( 0.0 ), sum_( 0.0 ), num_( 0 ),
 	wmean_( 0.0 ), wsdev_( 0.0 ), wsum_( 0.0 ), wnum_( 0 ),
 	sumsq_( 0.0 ), isWindowDirty_( true )

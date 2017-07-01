@@ -23,7 +23,7 @@ static SrcFinfo5< double, unsigned int, unsigned int, vector< unsigned int>, vec
 	"memory allocation accordingly."
 	"Arguments are: oldvol, numTotalEntries, startEntry, localIndices, vols"
 	"The vols specifies volumes of each local mesh entry. It also specifies"
-	"how many meshEntries are present on the local node." 
+	"how many meshEntries are present on the local node."
 	"The localIndices vector is used for general load balancing only."
 	"It has a list of the all meshEntries on current node."
 	"If it is empty, we assume block load balancing. In this second"
@@ -55,14 +55,14 @@ const Cinfo* MeshEntry::initCinfo()
 			&MeshEntry::getVolume
 		);
 
-		static ReadOnlyElementValueFinfo< MeshEntry, unsigned int > 
+		static ReadOnlyElementValueFinfo< MeshEntry, unsigned int >
 			dimensions (
 			"dimensions",
 			"number of dimensions of this MeshEntry",
 			&MeshEntry::getDimensions
 		);
 
-		static ReadOnlyElementValueFinfo< MeshEntry, unsigned int > 
+		static ReadOnlyElementValueFinfo< MeshEntry, unsigned int >
 			meshType(
 			"meshType",
 		 	" The MeshType defines the shape of the mesh entry."
@@ -154,7 +154,7 @@ const Cinfo* MeshEntry::initCinfo()
 		remeshReacsOut(),	// SrcFinfo
 	};
 
-	static string doc[] = 
+	static string doc[] =
 	{
 			"Name", "MeshEntry",
 			"Author", "Upi Bhalla",
@@ -265,12 +265,12 @@ vector< double >MeshEntry::getDiffusionScaling( const Eref& e ) const
 // Utility function to pass on mesh changes
 //////////////////////////////////////////////////////////////
 void MeshEntry::triggerRemesh( const Eref& e,
-	double oldvol, 
+	double oldvol,
 	unsigned int startEntry, const vector< unsigned int >& localIndices,
 	const vector< double >& vols )
 {
 	// cout << "MeshEntry::triggerRemesh on " << e.element()->getName() << endl;
-	remeshOut()->send( e, oldvol, parent_->getNumEntries(), 
+	remeshOut()->send( e, oldvol, parent_->getNumEntries(),
 		startEntry, localIndices, vols );
 	remeshReacsOut()->send( e );
 }

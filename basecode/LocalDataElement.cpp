@@ -11,9 +11,9 @@
 #include "FuncOrder.h"
 #include "../shell/Shell.h"
 
-LocalDataElement::LocalDataElement( Id id, const Cinfo* c, 
+LocalDataElement::LocalDataElement( Id id, const Cinfo* c,
 	const string& name, unsigned int numData )
-	:	
+	:
 		DataElement( id, c, name, setDataSize( numData ) )
 {;}
 
@@ -25,10 +25,10 @@ LocalDataElement::LocalDataElement( Id id, const Cinfo* c,
  * retain info from the originals.
  * n is the number of new entries made.
  */
-LocalDataElement::LocalDataElement( Id id, const Element* orig, 
+LocalDataElement::LocalDataElement( Id id, const Element* orig,
 				unsigned int n )
-	:	
-		DataElement( id, orig, setDataSize( n ), 
+	:
+		DataElement( id, orig, setDataSize( n ),
 		( 1 + (n - 1 ) / Shell::numNodes() ) * Shell::myNode() )
 {;}
 
@@ -38,7 +38,7 @@ LocalDataElement::~LocalDataElement()
 
 // This is somewhat problematic to do as a low-level function. Will need
 // to look up all other nodes to get their conent
-Element* LocalDataElement::copyElement( Id newParent, Id newId, 
+Element* LocalDataElement::copyElement( Id newParent, Id newId,
 		unsigned int n, bool toGlobal ) const
 {
 	if ( toGlobal ) {
@@ -81,7 +81,7 @@ unsigned int LocalDataElement::getNode( unsigned int dataId ) const {
 	return dataId / numPerNode_;
 }
 
-/// Inherited virtual. Returns start DataId on specified node 
+/// Inherited virtual. Returns start DataId on specified node
 unsigned int LocalDataElement::startDataIndex( unsigned int node ) const
 {
 	if ( numPerNode_ * node < numData_ )
@@ -115,7 +115,7 @@ unsigned int LocalDataElement::setDataSize( unsigned int numData )
 // virtual func, overridden.
 void LocalDataElement::resize( unsigned int newNumData )
 {
-	DataElement::resize( setDataSize( newNumData ) ); 
+	DataElement::resize( setDataSize( newNumData ) );
 }
 
 unsigned int LocalDataElement::getNumOnNode( unsigned int node ) const

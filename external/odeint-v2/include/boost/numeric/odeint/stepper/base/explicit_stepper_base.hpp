@@ -141,7 +141,7 @@ public:
     /*
      * named Version 2: do_step_dxdt_impl( sys , in , dxdt , t , dt )
      *
-     * this version is needed when this stepper is used for initializing 
+     * this version is needed when this stepper is used for initializing
      * multistep stepper like adams-bashforth. Hence we provide an explicitely
      * named version that is not disabled. Meant for internal use only.
      */
@@ -183,7 +183,7 @@ public:
     /*
      * named Version 4: do_step_dxdt_impl( sys , in , dxdt , t , out, dt )
      *
-     * this version is needed when this stepper is used for initializing 
+     * this version is needed when this stepper is used for initializing
      * multistep stepper like adams-bashforth. Hence we provide an explicitely
      * named version. Meant for internal use only.
      */
@@ -246,9 +246,9 @@ protected:
  * \brief Base class for explicit steppers without step size control and without dense output.
  *
  * This class serves as the base class for all explicit steppers with algebra and operations.
- * Step size control and error estimation as well as dense output are not provided. explicit_stepper_base 
- * is used as the interface in a CRTP (currently recurring template pattern). In order to work 
- * correctly the parent class needs to have a method `do_step_impl( system , in , dxdt_in , t , out , dt )`. 
+ * Step size control and error estimation as well as dense output are not provided. explicit_stepper_base
+ * is used as the interface in a CRTP (currently recurring template pattern). In order to work
+ * correctly the parent class needs to have a method `do_step_impl( system , in , dxdt_in , t , out , dt )`.
  * This is method is used by explicit_stepper_base. explicit_stepper_base derives from
  * algebra_stepper_base. An example how this class can be used is
  *
@@ -257,11 +257,11 @@ protected:
  * class custom_euler : public explicit_stepper_base< 1 , State , Value , Deriv , Time , Algebra , Operations , Resizer >
  * {
  *  public:
- *     
+ *
  *     typedef explicit_stepper_base< 1 , State , Value , Deriv , Time , Algebra , Operations , Resizer > base_type;
  *
  *     custom_euler( const Algebra &algebra = Algebra() ) { }
- * 
+ *
  *     template< class Sys , class StateIn , class DerivIn , class StateOut >
  *     void do_step_impl( Sys sys , const StateIn &in , const DerivIn &dxdt , Time t , StateOut &out , Time dt )
  *     {
@@ -278,8 +278,8 @@ protected:
  *
  * For the Stepper concept only the `do_step( sys , x , t , dt )` needs to be implemented. But this class
  * provides additional `do_step` variants since the stepper is explicit. These methods can be used to increase
- * the performance in some situation, for example if one needs to analyze `dxdt` during each step. In this case 
- * one can use 
+ * the performance in some situation, for example if one needs to analyze `dxdt` during each step. In this case
+ * one can use
  *
  * \code
  * sys( x , dxdt , t );
@@ -293,7 +293,7 @@ protected:
  *   - `do_step( sys , in , t , out , dt )` - This method updates the state out-of-place, hence the result of the step is stored in `out`.
  *   - `do_step( sys , x , dxdt , t , dt )` - This method updates the state in-place, but the derivative at the point `t` must be
  *      explicitly passed in `dxdt`. For an example see the code snippet above.
- *   - `do_step( sys , in , dxdt , t , out , dt )` - This method update the state out-of-place and expects that the derivative at the point 
+ *   - `do_step( sys , in , dxdt , t , out , dt )` - This method update the state out-of-place and expects that the derivative at the point
  *     `t` is explicitly passed in `dxdt`. It is a combination of the two `do_step` methods above.
  *
  * \note The system is always passed as value, which might result in poor performance if it contains data. In this case it can be used with `boost::ref`
@@ -356,7 +356,7 @@ protected:
      *
      * The result is updated in place in x. This method is disabled if Time and Deriv are of the same type. In this
      * case the method could not be distinguished from other `do_step` versions.
-     * 
+     *
      * \note This method does not solve the forwarding problem.
      *
      * \param system The system function to solve, hence the r.h.s. of the ODE. It must fulfill the
@@ -383,7 +383,7 @@ protected:
     /**
      * \fn void explicit_stepper_base::do_step( System system , const StateIn &in , const DerivIn &dxdt , time_type t , StateOut &out , time_type dt )
      * \brief The method performs one step. The state of the ODE is updated out-of-place.
-     * Furthermore, the derivative of x at t is passed to the stepper. 
+     * Furthermore, the derivative of x at t is passed to the stepper.
      * It is supposed to be used in the following way:
      *
      * \code

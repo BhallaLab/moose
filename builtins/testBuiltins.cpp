@@ -24,7 +24,7 @@ void testArith()
 {
 	Id a1id = Id::nextId();
 	unsigned int size = 10;
-	Element* a1 = new GlobalDataElement( 
+	Element* a1 = new GlobalDataElement(
 					a1id, Arith::initCinfo(), "a1", size );
 
 	Eref a1_0( a1, 0 );
@@ -52,7 +52,7 @@ void testArith()
 	cout << "." << flush;
 }
 
-/** 
+/**
  * This test uses the Diagonal Msg and summing in the Arith element to
  * generate a Fibonacci series.
  */
@@ -62,7 +62,7 @@ void testFibonacci()
 		return;
 	unsigned int numFib = 20;
 	Id a1id = Id::nextId();
-	Element* a1 = new LocalDataElement( 
+	Element* a1 = new LocalDataElement(
 					a1id, Arith::initCinfo(), "a1", numFib );
 
 	Arith* data = reinterpret_cast< Arith* >( a1->data( 0 ) );
@@ -120,7 +120,7 @@ void testFibonacci()
 	cout << "." << flush;
 }
 
-/** 
+/**
  * This test uses the Diagonal Msg and summing in the Arith element to
  * generate a Fibonacci series.
  */
@@ -144,16 +144,16 @@ void testMpiFibonacci()
 	}
 	*/
 
-	ObjId mid1 = shell->doAddMsg( "Diagonal", 
+	ObjId mid1 = shell->doAddMsg( "Diagonal",
 		ObjId( a1id, 0 ), "output", ObjId( a1id, 0 ), "arg1" );
 	bool ret = Field< int >::set( mid1, "stride", 1 );
 	assert( ret );
 
-	ObjId mid2 = shell->doAddMsg( "Diagonal", 
+	ObjId mid2 = shell->doAddMsg( "Diagonal",
 		ObjId( a1id, 0 ), "output", ObjId( a1id, 0 ), "arg2" );
 	ret = Field< int >::set( mid2, "stride", 2 );
 	assert( ret );
-	
+
 	/*
 	bool ret = DiagonalMsg::add( a1, "output", a1, "arg1", 1 );
 	assert( ret );
@@ -277,7 +277,7 @@ void testGetMsg()
 	ObjId arithid = shell->doCreate( "Arith", ObjId(), "arith", 1 );
 	assert( arithid != ObjId() );
 	// Table* t = reinterpret_cast< Table* >( tabid.eref().data() );
-	ObjId ret = shell->doAddMsg( "Single", 
+	ObjId ret = shell->doAddMsg( "Single",
 		tabid.eref().objId(), "requestOut",
 		arithid.eref().objId(), "getOutputValue" );
 	assert( ret != ObjId() );
@@ -316,7 +316,7 @@ void testGetMsg()
 	/////////////////////////////////////////////////////////////////
 	Id arith2 = shell->doCopy( arithid, ObjId(), "arith2", 1, false, false);
 	shell->doUseClock( "/arith2", "process", 0 );
-	ret = shell->doAddMsg( "Single", 
+	ret = shell->doAddMsg( "Single",
 		tabid.eref().objId(), "requestOut",
 		arith2.eref().objId(), "getOutputValue" );
 	shell->doReinit();
@@ -328,7 +328,7 @@ void testGetMsg()
 
 	numEntries = Field< unsigned int >::get( tabid, "size" );
 	// One for reinit call, 100 for process, and there are two targets.
-	assert( numEntries == 202 ); 
+	assert( numEntries == 202 );
 	temp = Field< vector< double > >::get( tabid, "vector" );
 
 	for ( unsigned int i = 1; i < 100; ++i ) {
@@ -339,7 +339,7 @@ void testGetMsg()
 
 	// Perhaps I should do another test without reinit.
 	/*
-	SetGet2< string, string >::set( 
+	SetGet2< string, string >::set(
 		tabid.eref(), "xplot", "testfile", "testplot" );
 	tabentry.destroy();
 		*/
@@ -347,7 +347,7 @@ void testGetMsg()
 	shell->doDelete( arith2 );
 	shell->doDelete( tabid );
 	cout << "." << flush;
-	
+
 }
 
 void testStats()
@@ -371,7 +371,7 @@ void testStats()
 	ObjId stat1 = shell->doCreate( "Stats", ObjId(), "stat1", 1 );
 	Field< unsigned int >::set( stat1, "windowLength", size );
 
-	ObjId mid = shell->doAddMsg( "Single", tabid, "output", 
+	ObjId mid = shell->doAddMsg( "Single", tabid, "output",
 					stat1, "input" );
 
 	shell->doUseClock( "/tab", "process", 0 );

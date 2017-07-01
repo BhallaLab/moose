@@ -11,7 +11,7 @@
 #include "../shell/Shell.h"
 #include "../msg/OneToOneDataIndexMsg.h"
 
-void FieldElementFinfoBase::postCreationFunc( 
+void FieldElementFinfoBase::postCreationFunc(
 				Id parent, Element* parentElm ) const
 {
 	static const Finfo* pf = Neutral::initCinfo()->findFinfo( "parentMsg" );

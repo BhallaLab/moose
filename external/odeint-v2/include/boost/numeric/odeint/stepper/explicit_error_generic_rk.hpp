@@ -180,12 +180,12 @@ private:
  * This class implements the explicit Runge-Kutta algorithms with error estimation in a generic way.
  * The Butcher tableau is passed to the stepper which constructs the stepper scheme with the help of a
  * template-metaprogramming algorithm. ToDo : Add example!
- * 
+ *
  * This class derives explicit_error_stepper_base which provides the stepper interface.
  *
  * \tparam StageCount The number of stages of the Runge-Kutta algorithm.
  * \tparam Order The order of a stepper if the stepper is used without error estimation.
- * \tparam StepperOrder The order of a step if the stepper is used with error estimation. Usually Order and StepperOrder have 
+ * \tparam StepperOrder The order of a step if the stepper is used with error estimation. Usually Order and StepperOrder have
  * the same value.
  * \tparam ErrorOrder The order of the error step if the stepper is used with error estimation.
  * \tparam State The type representing the state of the ODE.
@@ -229,7 +229,7 @@ private:
      * \fn explicit_error_generic_rk::do_step_impl( System system , const StateIn &in , const DerivIn &dxdt , time_type t , StateOut &out , time_type dt )
      * \brief This method performs one step. The derivative `dxdt` of `in` at the time `t` is passed to the method.
      * The result is updated out-of-place, hence the input is in `in` and the output in `out`.
-     * Access to this step functionality is provided by explicit_stepper_base and 
+     * Access to this step functionality is provided by explicit_stepper_base and
      * `do_step_impl` should not be called directly.
      *
      * \param system The system function to solve, hence the r.h.s. of the ODE. It must fulfill the

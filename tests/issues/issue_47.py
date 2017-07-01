@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Issue 47 on moose-core
 import moose
 print( '[INFO] Using moose from %s' % moose.__file__ )

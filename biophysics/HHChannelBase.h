@@ -182,7 +182,7 @@ class HHChannelBase: public virtual ChanBase
 		/// Exponent for Z gate
 		double Zpower_;
 		/// Flag for use of conc for input to Z gate calculations.
-		bool useConcentration_;	
+		bool useConcentration_;
 
 		/// Value used to scale channel conductance up or down
 		double modulation_;

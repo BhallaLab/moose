@@ -12,7 +12,7 @@
 
 class ZombieBufPool: public ZombiePool
 {
-	public: 
+	public:
 		ZombieBufPool();
 		~ZombieBufPool();
 

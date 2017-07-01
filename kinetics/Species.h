@@ -18,7 +18,7 @@
  */
 class Species
 {
-	public: 
+	public:
 		Species();
 		//////////////////////////////////////////////////////////////////
 		// Field assignment stuff

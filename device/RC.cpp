@@ -1,31 +1,31 @@
-// RC.cpp --- 
-// 
+// RC.cpp ---
+//
 // Filename: RC.cpp
-// Description: 
+// Description:
 // Author: subhasis ray
-// Maintainer: 
+// Maintainer:
 // Created: Wed Dec 31 15:47:45 2008 (+0530)
-// Version: 
+// Version:
 // Last-Updated: Tue Jun 11 17:01:03 2013 (+0530)
 //           By: subha
 //     Update #: 247
-// URL: 
-// Keywords: 
-// Compatibility: 
-// 
-// 
+// URL:
+// Keywords:
+// Compatibility:
+//
+//
 
-// Commentary: 
-// 
-// 
-// 
-// 
+// Commentary:
+//
+//
+//
+//
 
 // Change log:
-// 
-// 
-// 
-// 
+//
+//
+//
+//
 /**********************************************************************
 ** This program is part of 'MOOSE', the
 ** Messaging Object Oriented Simulation Environment,
@@ -68,19 +68,19 @@ const Cinfo* RC::initCinfo()
                                          "for the Reinit operation. It also uses ProcInfo. ",
                                          processShared,
                                          sizeof( processShared ) / sizeof( Finfo* ));
-        static ValueFinfo<RC, double> V0( "V0", 
+        static ValueFinfo<RC, double> V0( "V0",
                                     "Initial value of 'state'",
                                     &RC::setV0,
                                     &RC::getV0 );
-        static ValueFinfo<RC, double> R( "R", 
+        static ValueFinfo<RC, double> R( "R",
                                     "Series resistance of the RC circuit.",
                                     &RC::setResistance,
                                     &RC::getResistance);
-        static ValueFinfo<RC, double> C( "C", 
+        static ValueFinfo<RC, double> C( "C",
                                     "Parallel capacitance of the RC circuit.",
                                     &RC::setCapacitance,
                                     &RC::getCapacitance);
-        static ReadOnlyValueFinfo<RC, double> state("state", 
+        static ReadOnlyValueFinfo<RC, double> state("state",
                                "Output value of the RC circuit. This is the voltage across the"
                                " capacitor.",
                                &RC::getState);
@@ -134,7 +134,7 @@ RC::RC():
 {
     ;   // Do nothing
 }
-            
+
 void RC::setV0( double v0 )
 {
 
@@ -219,7 +219,7 @@ void RC::reinit(const Eref& e, const ProcPtr proc)
 
     dt_tau_ = proc->dt / (resistance_ * capacitance_);
     state_ = v0_;
-    if (dt_tau_ > 1e-15){ 
+    if (dt_tau_ > 1e-15){
         exp_ = exp(-dt_tau_);
     } else {// use approximation
         exp_ = 1 - dt_tau_;
@@ -229,5 +229,5 @@ void RC::reinit(const Eref& e, const ProcPtr proc)
 }
 
 
-// 
+//
 // RC.cpp ends here

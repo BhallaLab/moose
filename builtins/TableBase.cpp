@@ -66,14 +66,14 @@ const Cinfo* TableBase::initCinfo()
 		static DestFinfo loadCSV( "loadCSV",
 			"Reads a single column from a CSV file. "
 			"Arguments: filename, column#, starting row#, separator",
-			new OpFunc4< TableBase, string, int, int, char >( 
+			new OpFunc4< TableBase, string, int, int, char >(
 				&TableBase::loadCSV ) );
 
 		static DestFinfo loadXplot( "loadXplot",
 			"Reads a single plot from an xplot file. "
 			"Arguments: filename, plotname"
 			"When the file has 2 columns, the 2nd column is loaded.",
-			new OpFunc2< TableBase, string, string >( 
+			new OpFunc2< TableBase, string, string >(
 				&TableBase::loadXplot ) );
 
 		static DestFinfo loadXplotRange( "loadXplotRange",
@@ -82,7 +82,7 @@ const Cinfo* TableBase::initCinfo()
 			"Arguments: filename, plotname, startindex, endindex"
 			"Uses C convention: startindex included, endindex not included."
 			"When the file has 2 columns, the 2nd column is loaded.",
-			new OpFunc4< TableBase, string, string, unsigned int, unsigned int >( 
+			new OpFunc4< TableBase, string, string, unsigned int, unsigned int >(
 				&TableBase::loadXplotRange ) );
 
 		static DestFinfo compareXplot( "compareXplot",
@@ -93,7 +93,7 @@ const Cinfo* TableBase::initCinfo()
 			"Arguments: filename, plotname, comparison_operation"
 			"Operations: rmsd (for RMSDifference), rmsr (RMSratio ), "
 			"dotp (Dot product, not yet implemented).",
-			new OpFunc3< TableBase, string, string, string >( 
+			new OpFunc3< TableBase, string, string, string >(
 				&TableBase::compareXplot ) );
 
 		static DestFinfo compareVec( "compareVec",
@@ -106,7 +106,7 @@ const Cinfo* TableBase::initCinfo()
 			"dotp (Dot product, not yet implemented).",
 			new OpFunc2< TableBase, vector< double >, string >(
 				&TableBase::compareVec ) );
-                
+
                 static DestFinfo clearVec(
                         "clearVec",
                         "Handles request to clear the data vector",
@@ -148,7 +148,7 @@ const Cinfo* TableBase::initCinfo()
 static const Cinfo* tableBaseCinfo = TableBase::initCinfo();
 
 TableBase::TableBase() : output_( 0 )
-{ 
+{
 }
 
 //////////////////////////////////////////////////////////////
@@ -291,7 +291,7 @@ void TableBase::loadXplot( string fname, string plotname )
 	}
 }
 
-void TableBase::loadXplotRange( string fname, string plotname, 
+void TableBase::loadXplotRange( string fname, string plotname,
 	unsigned int start, unsigned int end )
 {
 	vector< double > temp;
@@ -300,7 +300,7 @@ void TableBase::loadXplotRange( string fname, string plotname,
 		return;
 	}
 	if ( start > end || end > temp.size() ) {
-		cout << "TableBase::loadXplotRange: Bad range (" << start << 
+		cout << "TableBase::loadXplotRange: Bad range (" << start <<
 		", " << end << "] for table of size " << temp.size() <<
 		" from file " << fname << endl;
 		return;
@@ -309,7 +309,7 @@ void TableBase::loadXplotRange( string fname, string plotname,
 	vec_.insert( vec_.end(), temp.begin() + start, temp.begin() + end );
 }
 
-void TableBase::loadCSV( 
+void TableBase::loadCSV(
 	string fname, int startLine, int colNum, char separator )
 {
     cout << "TODO: Not implemented yet" << endl;
@@ -337,7 +337,7 @@ double getRMS( const vector< double >& v )
 		return -1;
 	for ( vector< double >::const_iterator i = v.begin(); i != v.end(); ++i)
 		sumsq += *i * *i;
-	
+
 	return sqrt( sumsq / size );
 }
 
@@ -429,7 +429,7 @@ double TableBase::getY( unsigned int index ) const
 	return 0;
 }
 
-double TableBase::interpolate( double xmin, double xmax, double input ) 
+double TableBase::interpolate( double xmin, double xmax, double input )
 	const
 {
 	if ( vec_.size() == 0 )
@@ -438,7 +438,7 @@ double TableBase::interpolate( double xmin, double xmax, double input )
 		return vec_[0];
 	if ( input > xmax )
 		return ( vec_.back() );
-	
+
 	unsigned int xdivs = vec_.size() - 1;
 
 	double fraction = ( input - xmin ) / ( xmax - xmin );
@@ -448,7 +448,7 @@ double TableBase::interpolate( double xmin, double xmax, double input )
 	unsigned int j = xdivs * fraction;
 	if ( j >= ( vec_.size() - 1 ) )
 		return vec_.back();
-	
+
 	double dx = (xmax - xmin ) / xdivs;
 	double lowerBound = xmin + j * dx;
 	double subFraction = ( input - lowerBound ) / dx;

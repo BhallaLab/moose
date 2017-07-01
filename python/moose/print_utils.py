@@ -1,10 +1,11 @@
+# -*- coding: utf-8 -*-
 """print_utils.py: A library with some print functions. Very useful during
 development.
 
 Last modified: Sat Jan 18, 2014  05:01PM
 
 """
-    
+
 __author__           = "Dilawar Singh"
 __copyright__        = "Copyright 2013, NCBS Bangalore"
 __credits__          = ["NCBS Bangalore", "Bhalla Lab"]
@@ -50,7 +51,7 @@ def colored(msg, label="INFO") :
     Return a colored string. Formatting is optional.
 
     At each ` we toggle the color.
-    
+
     """
     global prefixDict
     if label in prefixDict :
@@ -78,7 +79,7 @@ def dump(label, msg, frame=None, exception=None):
 
     prefix = '[{0}] '.format(label)
 
-    ''' Enable it if you want indented messages 
+    ''' Enable it if you want indented messages
     stackLength = len(inspect.stack()) - 1
     if stackLength == 1:
         prefix = '\n[{}] '.format(label)
@@ -88,7 +89,7 @@ def dump(label, msg, frame=None, exception=None):
 
     if type(msg) == list:
         if len(msg) > 1:
-            msg = [msg[0]] + ["`|- {0}`".format(x) for x in msg[1:]] 
+            msg = [msg[0]] + ["`|- {0}`".format(x) for x in msg[1:]]
         msg ="\n\t".join(msg)
 
 
@@ -104,7 +105,7 @@ def dump(label, msg, frame=None, exception=None):
 def info(msg): dump("INFO", msg)
 def warn(msg): dump("WARN", msg)
 
-def error(msg): 
+def error(msg):
     dump("ERROR", msg)
 
 def fatal(msg):

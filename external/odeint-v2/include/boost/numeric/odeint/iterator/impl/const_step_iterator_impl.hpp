@@ -52,7 +52,7 @@ namespace odeint {
         #endif
 
     public:
-   
+
         /**
          * \brief Constructs a const_step_iterator. This constructor should be used to construct the begin iterator.
          *

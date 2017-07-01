@@ -121,7 +121,7 @@ struct multi_array_algebra
     {
         detail::for_each15( s1.data() , s1.data() + s1.num_elements() , s2.data() , s3.data() , s4.data() , s5.data() , s6.data() , s7.data() , s8.data() , s9.data() , s10.data() , s11.data() , s12.data() , s13.data() , s14.data() , s15.data() , op );
     }
-    
+
     template< typename S >
     static typename norm_result_type<S>::type norm_inf( const S &s )
     {

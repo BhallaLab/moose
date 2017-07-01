@@ -1,6 +1,6 @@
 /*******************************************************************
  * File:            Gamma.h
- * Description:      
+ * Description:
  * Author:          Subhasis Ray
  * E-mail:          ray.subhasis@gmail.com
  * Created:         2007-11-05 19:22:32
@@ -26,7 +26,7 @@ class Gamma: public Probability
   public:
     Gamma(double alpha, double theta);
     double getAlpha();
-    double getTheta();    
+    double getTheta();
     double getMean()  const;
     double getVariance() const;
     double getNextSample() const;
@@ -35,8 +35,8 @@ class Gamma: public Probability
     double theta_;
     double gammaSmall() const;
     double gammaLarge() const;
-    
+
 };
 
-    
+
 #endif

@@ -1,47 +1,47 @@
-// NSDFWriter.cpp --- 
-// 
+// NSDFWriter.cpp ---
+//
 // Filename: NSDFWriter.cpp
-// Description: 
+// Description:
 // Author: subha
-// Maintainer: 
+// Maintainer:
 // Created: Thu Jun 18 23:16:11 2015 (-0400)
-// Version: 
+// Version:
 // Last-Updated: Sun Dec 20 23:20:19 2015 (-0500)
 //           By: subha
 //     Update #: 49
-// URL: 
-// Keywords: 
-// Compatibility: 
-// 
-// 
+// URL:
+// Keywords:
+// Compatibility:
+//
+//
 
-// Commentary: 
-// 
-// 
-// 
-// 
+// Commentary:
+//
+//
+//
+//
 
 // Change log:
-// 
-// 
-// 
-// 
+//
+//
+//
+//
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License as
 // published by the Free Software Foundation; either version 3, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; see the file COPYING.  If not, write to
 // the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 // Floor, Boston, MA 02110-1301, USA.
-// 
-// 
+//
+//
 
 // Code:
 #ifdef USE_HDF5
@@ -87,7 +87,7 @@ string iso_time(time_t * t)
 }
 
 const Cinfo * NSDFWriter::initCinfo()
-{    
+{
     static FieldElementFinfo< NSDFWriter, InputVariable > eventInputFinfo(
         "eventInput",
         "Sets up field elements for event inputs",
@@ -101,7 +101,7 @@ const Cinfo * NSDFWriter::initCinfo()
       "The moose element tree root to be saved under /model/modeltree",
       &NSDFWriter::setModelRoot,
       &NSDFWriter::getModelRoot);
-    
+
     static DestFinfo process(
         "process",
         "Handle process calls. Collects data in buffer and if number of steps"
@@ -117,7 +117,7 @@ const Cinfo * NSDFWriter::initCinfo()
     static Finfo * processShared[] = {
         &process, &reinit
     };
-    
+
     static SharedFinfo proc(
         "proc",
         "Shared message to receive process and reinit",
@@ -211,7 +211,7 @@ void NSDFWriter::sortOutUniformSources(const Eref& eref)
     // Go through all the sources and determine the index of the
     // source message in the dataset
     /////////////////////////////////////////////////////////////
-    
+
     for (unsigned int ii = 0; ii < func_.size(); ++ii){
         string varname = func_[ii];
         size_t found = varname.find("get");
@@ -234,7 +234,7 @@ void NSDFWriter::sortOutUniformSources(const Eref& eref)
 
 /**
    Handle the datasets for the requested fields (connected to
-   requestOut). This is is similar to what HDF5DataWriter does. 
+   requestOut). This is is similar to what HDF5DataWriter does.
  */
 void NSDFWriter::openUniformData(const Eref &eref)
 {
@@ -290,7 +290,7 @@ void NSDFWriter::createUniformMap()
         status = H5Tset_size(memtype, H5T_VARIABLE);
         assert(status >= 0);
         status = H5Dwrite(ds, memtype, H5S_ALL, H5S_ALL, H5P_DEFAULT, sources);
-#ifndef NDEBUG        
+#ifndef NDEBUG
         cout << "Write dataset: status=" << status << endl;
 #endif
         assert(status >= 0);
@@ -302,8 +302,8 @@ void NSDFWriter::createUniformMap()
         status = H5DSattach_scale(classFieldToUniform_[ii->first], ds, 0);
         status = H5DSset_label(classFieldToUniform_[ii->first], 0, "source");
         status = H5Dclose(ds);
-        status = H5Tclose(memtype);                          
-    } 
+        status = H5Tclose(memtype);
+    }
 }
 
 void NSDFWriter::closeEventData()
@@ -314,7 +314,7 @@ void NSDFWriter::closeEventData()
         }
     }
     events_.clear();
-    eventInputs_.clear();            
+    eventInputs_.clear();
     eventDatasets_.clear();
     eventSrc_.clear();
     eventSrcFields_.clear();
@@ -348,7 +348,7 @@ void NSDFWriter::openEventData(const Eref &eref)
             stringstream path;
             path << src[0].path() << "." << srcFields[0];
             hid_t dataSet = getEventDataset(src[0].path(), srcFields[0]);
-            eventDatasets_.push_back(dataSet);            
+            eventDatasets_.push_back(dataSet);
         } else {
             cerr <<"NSDFWriter::openEventData - cannot handle multiple connections at single input." <<endl;
         }
@@ -357,7 +357,7 @@ void NSDFWriter::openEventData(const Eref &eref)
 
 void NSDFWriter::createEventMap()
 {
-    herr_t status;    
+    herr_t status;
     hid_t eventMapContainer = require_group(filehandle_, MAPEVENTSRC);
     // Open the container for the event maps
     // Create the Datasets themselves (one for each field - each row
@@ -396,7 +396,7 @@ void NSDFWriter::createEventMap()
             }
             status = H5Rcreate(&(buf->data), filehandle_, dsname, H5R_OBJECT, -1);
             free(dsname);
-            assert(status >= 0);            
+            assert(status >= 0);
         }
         // create memory space
         hid_t memtype = H5Tcreate(H5T_COMPOUND, sizeof(map_type));
@@ -451,8 +451,8 @@ void NSDFWriter::flush()
 {
     // We need to update the tend on each write since we do not know
     // when the simulation is getting over and when it is just paused.
-    writeScalarAttr<string>(filehandle_, "tend", iso_time(NULL));    
-    
+    writeScalarAttr<string>(filehandle_, "tend", iso_time(NULL));
+
     // append all uniform data
     for (map< string, hid_t>::iterator it = classFieldToUniform_.begin();
          it != classFieldToUniform_.end(); ++it){
@@ -463,7 +463,7 @@ void NSDFWriter::flush()
         }
         if (data_.size() == 0 || data_[0].size() == 0){
             break;
-        }        
+        }
         double * buffer = (double*)calloc(idxit->second.size() * steps_, sizeof(double));
         vector< double > values;
         for (unsigned int ii = 0; ii < idxit->second.size(); ++ii){
@@ -472,7 +472,7 @@ void NSDFWriter::flush()
             }
             data_[idxit->second[ii]].clear();
         }
-        
+
         hid_t filespace = H5Dget_space(it->second);
         if (filespace < 0){
             break;
@@ -480,11 +480,11 @@ void NSDFWriter::flush()
         hsize_t dims[2];
         hsize_t maxdims[2];
         // retrieve current datset dimensions
-        herr_t status = H5Sget_simple_extent_dims(filespace, dims, maxdims);        
+        herr_t status = H5Sget_simple_extent_dims(filespace, dims, maxdims);
         hsize_t newdims[] = {dims[0], dims[1] + steps_}; // new column count
         status = H5Dset_extent(it->second, newdims); // extend dataset to new column count
         H5Sclose(filespace);
-        filespace = H5Dget_space(it->second); // get the updated filespace 
+        filespace = H5Dget_space(it->second); // get the updated filespace
         hsize_t start[2] = {0, dims[1]};
         dims[1] = steps_; // change dims for memspace & hyperslab
         hid_t memspace = H5Screate_simple(2, dims, NULL);
@@ -494,7 +494,7 @@ void NSDFWriter::flush()
         H5Sclose(filespace);
         free(buffer);
     }
-    
+
     // append all event data
     for (unsigned int ii = 0; ii < eventSrc_.size(); ++ii){
         appendToDataset(getEventDataset(eventSrc_[ii], eventSrcFields_[ii]),
@@ -571,7 +571,7 @@ void NSDFWriter::process(const Eref& eref, ProcPtr proc)
 NSDFWriter& NSDFWriter::operator=( const NSDFWriter& other)
 {
 	eventInputs_ = other.eventInputs_;
-	for ( vector< InputVariable >::iterator 
+	for ( vector< InputVariable >::iterator
 					i = eventInputs_.begin(); i != eventInputs_.end(); ++i )
 			i->setOwner( this );
         for (unsigned int ii = 0; ii < getNumEventInputs(); ++ii){
@@ -625,7 +625,7 @@ string NSDFWriter::getModelRoot() const
 {
     return modelRoot_;
 }
-        
+
 
 void NSDFWriter::writeModelTree()
 {
@@ -674,5 +674,5 @@ void NSDFWriter::writeModelTree()
 }
 #endif // USE_HDF5
 
-// 
+//
 // NSDFWriter.cpp ends here

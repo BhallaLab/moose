@@ -18,11 +18,11 @@
 
 const Cinfo* SeqSynHandler::initCinfo()
 {
-	static string doc[] = 
+	static string doc[] =
 	{
 		"Name", "SeqSynHandler",
 		"Author", "Upi Bhalla",
-		"Description", 
+		"Description",
 		"The SeqSynHandler handles synapses that recognize sequentially "
 			"ordered input, where the ordering is both in space and time. "
 			"It assumes that the N input synapses are ordered and "
@@ -40,7 +40,7 @@ const Cinfo* SeqSynHandler::initCinfo()
 			"It computes a vector with the local *response* term for each "
 			"point along all inputs, by taking a 2-d convolution of the "
 		    "kernel with the history[time][synapse#] matrix."
-			"\nThe local response can affect the synapse in three ways: " 
+			"\nThe local response can affect the synapse in three ways: "
 			"1. It can sum the entire response vector, scale by the "
 			"*responseScale* term, and send to the synapse as a steady "
 			"activation. Consider this a cell-wide immediate response to "
@@ -55,7 +55,7 @@ const Cinfo* SeqSynHandler::initCinfo()
 			"This is not yet implemented.\n"
 	};
 
-	static FieldElementFinfo< SynHandlerBase, Synapse > synFinfo( 
+	static FieldElementFinfo< SynHandlerBase, Synapse > synFinfo(
 		"synapse",
 		"Sets up field Elements for synapse",
 		Synapse::initCinfo(),
@@ -105,7 +105,7 @@ const Cinfo* SeqSynHandler::initCinfo()
 			&SeqSynHandler::setWeightScale,
 			&SeqSynHandler::getWeightScale
 	);
-	static ReadOnlyValueFinfo< SeqSynHandler, vector< double > > 
+	static ReadOnlyValueFinfo< SeqSynHandler, vector< double > >
 			weightScaleVec(
 			"weightScaleVec",
 			"Vector of  weight scaling for each synapse",
@@ -155,15 +155,15 @@ static const Cinfo* seqSynHandlerCinfo = SeqSynHandler::initCinfo();
 //////////////////////////////////////////////////////////////////////
 
 SeqSynHandler::SeqSynHandler()
-	: 
+	:
 		kernelEquation_( "" ),
 		kernelWidth_( 5 ),
-		historyTime_( 2.0 ), 
-		seqDt_ ( 1.0 ), 
+		historyTime_( 2.0 ),
+		seqDt_ ( 1.0 ),
 		responseScale_( 1.0 ),
 		weightScale_( 0.0 ),
 		seqActivation_( 0.0 )
-{ 
+{
 	int numHistory = static_cast< int >( 1.0 + floor( historyTime_ * (1.0 - 1e-6 ) / seqDt_ ) );
 	history_.resize( numHistory, 0 );
 }
@@ -175,7 +175,7 @@ SeqSynHandler::~SeqSynHandler()
 SeqSynHandler& SeqSynHandler::operator=( const SeqSynHandler& ssh)
 {
 	synapses_ = ssh.synapses_;
-	for ( vector< Synapse >::iterator 
+	for ( vector< Synapse >::iterator
 					i = synapses_.begin(); i != synapses_.end(); ++i )
 			i->setHandler( this );
 
@@ -223,8 +223,8 @@ void SeqSynHandler::updateKernel()
 	double x = 0;
 	double t = 0;
 	mu::Parser p;
-	p.DefineVar("x", &x); 
-	p.DefineVar("t", &t); 
+	p.DefineVar("x", &x);
+	p.DefineVar("t", &t);
 	p.DefineConst(_T("pi"), (mu::value_type)M_PI);
 	p.DefineConst(_T("e"), (mu::value_type)M_E);
 	p.SetExpr( kernelEquation_ );
@@ -372,7 +372,7 @@ void SeqSynHandler::dropSynapse( unsigned int msgLookup )
 }
 
 /////////////////////////////////////////////////////////////////////
-void SeqSynHandler::vProcess( const Eref& e, ProcPtr p ) 
+void SeqSynHandler::vProcess( const Eref& e, ProcPtr p )
 {
 	// Here we look at the correlations and do something with them.
 	int numHistory = static_cast< int >( 1.0 + floor( historyTime_ * (1.0 - 1e-6 ) / seqDt_ ) );
@@ -380,28 +380,28 @@ void SeqSynHandler::vProcess( const Eref& e, ProcPtr p )
 	// Check if we need to do correlations at all.
 	if ( numHistory > 0 && kernel_.size() > 0 ) {
 		// Check if timestep rolls over a seqDt boundary
-		if ( static_cast< int >( p->currTime / seqDt_ ) > 
+		if ( static_cast< int >( p->currTime / seqDt_ ) >
 				static_cast< int >( (p->currTime - p->dt) / seqDt_ ) ) {
 			history_.rollToNextRow();
 			history_.sumIntoRow( latestSpikes_, 0 );
 			latestSpikes_.assign( vGetNumSynapses(), 0.0 );
-	
+
 			// Build up the sum of correlations over time
 			vector< double > correlVec( vGetNumSynapses(), 0.0 );
 			for ( int i = 0; i < numHistory; ++i )
 				history_.correl( correlVec, kernel_[i], i );
 			if ( responseScale_ > 0.0 ) { // Sum all responses, send to chan
 				seqActivation_ = 0.0;
-				for ( vector< double >::iterator y = correlVec.begin(); 
+				for ( vector< double >::iterator y = correlVec.begin();
 								y != correlVec.end(); ++y )
 					seqActivation_ += *y;
-	
+
 				// We'll use the seqActivation_ to send a special msg.
 				seqActivation_ *= responseScale_;
 			}
 			if ( weightScale_ > 0.0 ) { // Short term changes in individual wts
 				weightScaleVec_ = correlVec;
-				for ( vector< double >::iterator y=weightScaleVec_.begin(); 
+				for ( vector< double >::iterator y=weightScaleVec_.begin();
 							y != weightScaleVec_.end(); ++y )
 					*y *= weightScale_;
 			}
@@ -414,7 +414,7 @@ void SeqSynHandler::vProcess( const Eref& e, ProcPtr p )
 	double activation = seqActivation_; // Start with seq activation
 	if ( weightScale_ > 0.0 ) {
 		while( !events_.empty() && events_.top().time <= p->currTime ) {
-			activation += events_.top().weight * 
+			activation += events_.top().weight *
 					weightScaleVec_[ events_.top().synIndex ] / p->dt;
 			events_.pop();
 		}
@@ -428,7 +428,7 @@ void SeqSynHandler::vProcess( const Eref& e, ProcPtr p )
 		SynHandlerBase::activationOut()->send( e, activation );
 }
 
-void SeqSynHandler::vReinit( const Eref& e, ProcPtr p ) 
+void SeqSynHandler::vReinit( const Eref& e, ProcPtr p )
 {
 	// For no apparent reason, priority queues don't have a clear operation.
 	while( !events_.empty() )

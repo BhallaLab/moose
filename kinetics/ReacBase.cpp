@@ -15,16 +15,16 @@
 #define EPSILON 1e-15
 
 static SrcFinfo2< double, double > *subOut() {
-	static SrcFinfo2< double, double > subOut( 
-			"subOut", 
+	static SrcFinfo2< double, double > subOut(
+			"subOut",
 			"Sends out increment of molecules on product each timestep"
 			);
 	return &subOut;
 }
 
 static SrcFinfo2< double, double > *prdOut() {
-	static SrcFinfo2< double, double > prdOut( 
-			"prdOut", 
+	static SrcFinfo2< double, double > prdOut(
+			"prdOut",
 			"Sends out increment of molecules on product each timestep"
 			);
 	return &prdOut;
@@ -130,7 +130,7 @@ const Cinfo* ReacBase::initCinfo()
 		&proc,				// SharedFinfo
 	};
 
-	static string doc[] = 
+	static string doc[] =
 	{
 		"Name", "ReacBase",
 		"Author", "Upinder S. Bhalla, 2012, NCBS",
@@ -277,7 +277,7 @@ double ReacBase::getConcKb( const Eref& e ) const
 
 unsigned int ReacBase::getNumSub( const Eref& e ) const
 {
-	const vector< MsgFuncBinding >* mfb = 
+	const vector< MsgFuncBinding >* mfb =
 		e.element()->getMsgAndFunc( subOut()->getBindIndex() );
 	assert( mfb );
 	return ( mfb->size() );
@@ -285,7 +285,7 @@ unsigned int ReacBase::getNumSub( const Eref& e ) const
 
 unsigned int ReacBase::getNumPrd( const Eref& e ) const
 {
-	const vector< MsgFuncBinding >* mfb = 
+	const vector< MsgFuncBinding >* mfb =
 		e.element()->getMsgAndFunc( prdOut()->getBindIndex() );
 	assert( mfb );
 	return ( mfb->size() );
@@ -308,7 +308,7 @@ void ReacBase::zombify( Element* orig, const Cinfo* zClass, Id solver )
 	vector< double > concKb( num, 0.0 );
 	for ( unsigned int i = 0; i < num; ++i ) {
 		Eref er( orig, i + start );
-		const ReacBase* rb = 
+		const ReacBase* rb =
 			reinterpret_cast< const ReacBase* >( er.data() );
 		concKf[ i ] = rb->getConcKf( er );
 		concKb[ i ] = rb->getConcKb( er );

@@ -35,22 +35,22 @@
  *  The sendBuffer call converts the arguments
  *  back from the bufer to their native form and despatches using the
  *  regular messaging. Note that the MsgDigest will have done the right
- *  thing here to set up the regular messaging even for off-node 
+ *  thing here to set up the regular messaging even for off-node
  *  DataIndices on this element.
  * 9. Messages reach their targets.
  *
  * Level 2. Setup.
- * 1. Objects and messages set up the regular way. Objects may have 
+ * 1. Objects and messages set up the regular way. Objects may have
  * subsets of their Data arrays placed on different nodes. Messages
  * are globals, their contents are replicated on every node.
- * 2. When a SrcFinfo::send call is about to execute for the first time, 
+ * 2. When a SrcFinfo::send call is about to execute for the first time,
  * it is digested: Element::digestMessages. During this step each of the
  * messages is expanded by putTargetsInDigeest into target Erefs.
  * 3. The target Erefs are inspected in filterOffNodeTargets. Off-node
  * targets are removed, and we record each pair of Source DataId and node.
  * 4. We now call putOffNodeTargetsInDigest. This generates the
  * HopFunc by calling OpFunc::makeHopFunc with the fid of the SrcFinfo.
- * 5. putOffNodeTargetsInDigest then examines the Source/Node pairs and 
+ * 5. putOffNodeTargetsInDigest then examines the Source/Node pairs and
  * creates HopFunc/Eref pairs which are stuffed into the msgDigest.
  * Note that these Erefs are the hacked version where the Eref specifies
  * the originating object, plus using its FieldIndex to specify the target
@@ -70,7 +70,7 @@
 #endif
 
 class TgtInfo {
-	public: 
+	public:
 		TgtInfo()
 				: id_(),
 				bindIndex_( 0 ), dataSize_( 0 )
@@ -121,17 +121,17 @@ class PostMaster {
 		void finalizeSends();
 
 		/// Handles 'get' calls from another node, to an object on mynode.
-		void handleRemoteGet( const Eref& e, 
+		void handleRemoteGet( const Eref& e,
 						const OpFunc* op, int requestingNode );
 
-		void handleRemoteGetVec( const Eref& e, 
+		void handleRemoteGetVec( const Eref& e,
 						const OpFunc* op, int requestingNode );
 
 		/// Returns pointer to Send buffer for filling in arguments.
-		double* addToSendBuf( const Eref& e, 
+		double* addToSendBuf( const Eref& e,
 				unsigned int bindIndex, unsigned int size );
 		/// Returns pointer to Set buffer for filling in arguments.
-		double* addToSetBuf( const Eref& e, 
+		double* addToSetBuf( const Eref& e,
 			unsigned int opIndex, unsigned int size, unsigned int hopType );
 		/// Sends off contets of Set buffer.
 		void dispatchSetBuf( const Eref& e );
@@ -139,10 +139,10 @@ class PostMaster {
 		/// Blocking call to get a value from a remote node.
 		double* remoteGet( const Eref& e, unsigned int bindIndex );
 		void remoteGetVec( const Eref& e, unsigned int bindIndex,
-				vector< vector< double > >& getRecvBuf, 
+				vector< vector< double > >& getRecvBuf,
 				vector< unsigned int >& size );
 		void remoteFieldGetVec( const Eref& e, unsigned int bindIndex,
-				vector< double >& getRecvBuf ); 
+				vector< double >& getRecvBuf );
 
 		static const unsigned int reserveBufSize;
 		static const unsigned int setRecvBufSize;
@@ -156,8 +156,8 @@ class PostMaster {
 	private:
 		unsigned int recvBufSize_;
 		// Used on master for sending, on others for receiving.
-		vector< double > setSendBuf_; 
-		vector< double > setRecvBuf_; 
+		vector< double > setSendBuf_;
+		vector< double > setRecvBuf_;
 		vector< vector< double > > sendBuf_;
 		vector< vector< double > > recvBuf_;
 		vector< unsigned int > sendSize_;

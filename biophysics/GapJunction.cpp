@@ -1,47 +1,47 @@
-// GapJunction.cpp --- 
-// 
+// GapJunction.cpp ---
+//
 // Filename: GapJunction.cpp
 // Description: Implements Gap junction
 // Author: Subhasis Ray
-// Maintainer: 
+// Maintainer:
 // Created: Tue Jul  2 11:40:13 2013 (+0530)
-// Version: 
+// Version:
 // Last-Updated: Tue Jul  2 14:26:01 2013 (+0530)
 //           By: subha
 //     Update #: 77
-// URL: 
-// Keywords: 
-// Compatibility: 
-// 
-// 
+// URL:
+// Keywords:
+// Compatibility:
+//
+//
 
-// Commentary: 
-// 
-// 
-// 
-// 
+// Commentary:
+//
+//
+//
+//
 
 // Change log:
-// 
-// 
-// 
-// 
+//
+//
+//
+//
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License as
 // published by the Free Software Foundation; either version 3, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 // General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program; see the file COPYING.  If not, write to
 // the Free Software Foundation, Inc., 51 Franklin Street, Fifth
 // Floor, Boston, MA 02110-1301, USA.
-// 
-// 
+//
+//
 
 // Code:
 
@@ -72,20 +72,20 @@ const Cinfo* GapJunction::initCinfo()
         "Conductance of the gap junction",
         &GapJunction::setGk,
         &GapJunction::getGk);
-        
+
     ///////////////////////////////////////////////////////////////////
     // Shared messages
     ///////////////////////////////////////////////////////////////////
     static DestFinfo process(
-        "process", 
+        "process",
         "Handles 'process' call",
         new ProcOpFunc< GapJunction >( &GapJunction::process ) );
-    
+
     static DestFinfo reinit(
-        "reinit", 
+        "reinit",
         "Handles 'reinit' call",
         new ProcOpFunc< GapJunction >( &GapJunction::reinit ) );
-	
+
     static Finfo* processShared[] = {
         &process, &reinit
     };
@@ -101,12 +101,12 @@ const Cinfo* GapJunction::initCinfo()
         "time, thread, dt and so on. The second entry is a MsgDest "
         "for the Reinit operation. It also uses ProcInfo. ",
         processShared, sizeof( processShared ) / sizeof( Finfo* ));
-        
+
     static DestFinfo Vm1(
         "Vm1",
         "Handles Vm message from compartment",
         new OpFunc1 < GapJunction, double >( &GapJunction::setVm1 ));
-    
+
     static Finfo * channel1Shared[] = {
         channel1Out(), &Vm1,
     };
@@ -117,7 +117,7 @@ const Cinfo* GapJunction::initCinfo()
         "terminal 2 to the compartment at terminal 1. The first entry is source\n"
         "sending out Gk and Vm2, the second entry is destination for Vm1.",
         channel1Shared, sizeof(channel1Shared)/sizeof(Finfo*));
-        
+
     static DestFinfo Vm2(
         "Vm2",
         "Handles Vm message from another compartment",
@@ -133,7 +133,7 @@ const Cinfo* GapJunction::initCinfo()
         "terminal 1 to the compartment at terminal 2. The first entry is source\n"
         "sending out Gk and Vm1, the second entry is destination for Vm2.",
         channel2Shared, sizeof(channel2Shared)/sizeof(Finfo*));
-    
+
     static Finfo * gapJunctionFinfos[] =
     {
         &channel1,
@@ -211,5 +211,5 @@ void GapJunction::reinit( const Eref&, ProcPtr p )
 
 
 
-// 
+//
 // GapJunction.cpp ends here

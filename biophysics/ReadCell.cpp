@@ -27,7 +27,7 @@ ReadCell::ReadCell()
 	RA_( 1.0 ),
 	EREST_ACT_( -0.065 ),
 	ELEAK_( -0.065 ),
-	
+
 #if 0
         // Unused privates. Causes error when -Werror is enabled. Uncomment them
         // appropriately when needed.
@@ -41,27 +41,27 @@ ReadCell::ReadCell()
 
 	erestFlag_( 0 ),
 	eleakFlag_( 0 ),
-	
+
 	cell_( Id() ),
 	currCell_( Id() ),
-	
+
 	lastCompt_( Id() ),
 	protoCompt_( Id() ),
-	
+
 	numCompartments_( 0 ),
 	numChannels_( 0 ),
 	numOthers_( 0 ),
-	
+
 	numProtoCompts_( 0 ),
 	numProtoChans_( 0 ),
 	numProtoOthers_( 0 ),
-	
+
 	graftFlag_( 0 ),
 	polarFlag_( 0 ),
 	relativeCoordsFlag_( 0 ),
 	doubleEndpointFlag_( 0 ),
 	symmetricFlag_( 0 ),
-	
+
 	shell_( reinterpret_cast< Shell* >( Id().eref().data() ) )
 {
 	/*
@@ -79,7 +79,7 @@ ReadCell::ReadCell()
 	else
 		ELEAK_ = EREST_ACT_;
 	*/
-	
+
 	string libPath = "/library";
 	Id libId( libPath );
 
@@ -91,12 +91,12 @@ ReadCell::ReadCell()
 	vector< Id > chanList =
 		Field< vector< Id > >::get(
 			ObjId( libId ), "children" );
-	
+
 	vector< Id >::iterator i;
 	for ( i = chanList.begin(); i != chanList.end(); ++i ) {
 		Id id = (*i);
 		string name = id.element()->getName();
-		
+
 		chanProtos_[ name ] = id;
 	}
 }
@@ -111,13 +111,13 @@ Id ReadCell::read(
 	Id parent )
 {
 	fileName_ = fileName;
-	
+
 	ifstream fin( fileName.c_str() );
 	if ( !fin ) {
 		cerr << "ReadCell::read -- could not open file " << fileName << ".\n";
 		return Id();
 	}
-	
+
 	/*
 	// Search for file in list of paths.
 	PathUtility pathUtil( Property::getProperty( Property::SIMPATH ) );
@@ -133,17 +133,17 @@ Id ReadCell::read(
 		return Id();
 	}
 	*/
-	
+
 	unsigned int size =  1;
 	if ( parent.element()->cinfo()->isA( "Neuron" ) ) {
 		cell_ = parent;
 		currCell_ = cell_;
 	} else {
-		cell_ = shell_->doCreate( "Neuron", parent, 
+		cell_ = shell_->doCreate( "Neuron", parent,
 						cellName, size, MooseGlobal );
 		currCell_ = cell_;
 	}
-	
+
 	if ( innerRead( fin ) ) {
 		return cell_;
 	} else {
@@ -156,29 +156,29 @@ bool ReadCell::innerRead( ifstream& fin )
 {
     string line;
 	lineNum_ = 0;
-	
+
 	ParseStage parseMode = DATA;
 	string::size_type pos;
-	
+
 	while ( getline( fin, line ) ) {
 		line = moose::trim( line );
 		lineNum_++;
-		
+
 		if ( line.length() == 0 )
 			continue;
-		
+
 		pos = line.find_first_not_of( "\t " );
 		if ( pos == string::npos )
 			continue;
 		else
 			line = line.substr( pos );
-		
+
 		if ( line.substr( 0, 2 ) == "//" )
 			continue;
-		
-		if ( ( pos = line.find( "//" ) ) != string::npos ) 
+
+		if ( ( pos = line.find( "//" ) ) != string::npos )
 			line = line.substr( 0, pos );
-		
+
 		if ( line.substr( 0, 2 ) == "/*" ) {
 			parseMode = COMMENT;
 		} else if ( line.find( "*/" ) != string::npos ) {
@@ -187,7 +187,7 @@ bool ReadCell::innerRead( ifstream& fin )
 		} else if ( line[ 0 ] == '*' ) {
 			parseMode = SCRIPT;
 		}
-		
+
 		if ( parseMode == COMMENT ) {
 			pos = line.find( "*/" );
 			if ( pos != string::npos ) {
@@ -196,7 +196,7 @@ bool ReadCell::innerRead( ifstream& fin )
 					line = line.substr( pos + 2 );
 			}
 		}
-		
+
 		if ( parseMode == DATA ) {
 			// For now not keeping it strict. Ignoring return status, and
 			// continuing even if there was error in processing this line.
@@ -208,13 +208,13 @@ bool ReadCell::innerRead( ifstream& fin )
 			parseMode = DATA;
 		}
 	}
-	
+
 	cout <<
 		"ReadCell: " <<
-		numCompartments_ << " compartments, " << 
-		numChannels_ << " channels, " << 
+		numCompartments_ << " compartments, " <<
+		numChannels_ << " channels, " <<
 		numOthers_ << " others\n";
-	
+
 	return 1;
 }
 
@@ -222,8 +222,8 @@ bool ReadCell::readScript( const string& line )
 {
 	vector< string > argv;
 	string delimiters( "\t " );
-        moose::tokenize( line, delimiters, argv ); 
-	
+        moose::tokenize( line, delimiters, argv );
+
 	if ( argv[ 0 ] == "*cartesian" ) {
 		polarFlag_ = 0;
 	} else if ( argv[ 0 ] == "*polar" ) {
@@ -243,7 +243,7 @@ bool ReadCell::readScript( const string& line )
 				"Line: " << lineNum_ << "\n";
 			return 0;
 		}
-		
+
 		if ( argv[ 1 ] == "RM" )
 			RM_ = atof( argv[ 2 ].c_str() );
 		if ( argv[ 1 ] == "RA" )
@@ -279,7 +279,7 @@ bool ReadCell::readScript( const string& line )
 				"Line: " << lineNum_ << "\n";
 			return 0;
 		}
-		
+
 		Id protoId( argv[ 1 ] );
 		if ( protoId.path() != argv[ 1 ] ) {
 			cerr << "Error: ReadCell: Bad path: " << argv[ 1 ] << " " <<
@@ -287,7 +287,7 @@ bool ReadCell::readScript( const string& line )
 				"Line: " << lineNum_ << "\n";
 			return 0;
 		}
-		
+
 		protoCompt_ = protoId;
 		countProtos();
 	} else if ( argv[ 0 ] == "*double_endpoint" ) {
@@ -302,7 +302,7 @@ bool ReadCell::readScript( const string& line )
 			"File: " << fileName_ <<
 			"Line: " << lineNum_ << "\n";
 	}
-	
+
 	return 1;
 }
 
@@ -310,28 +310,28 @@ bool ReadCell::readData( const string& line )
 {
 	vector< string > argv;
 	string delimiters( "\t " );
-        moose::tokenize( line, delimiters, argv ); 
-	
+        moose::tokenize( line, delimiters, argv );
+
 	if ( argv.size() < 6 ) {
 		cerr <<	"Error: ReadCell: Too few arguments in line: " << argv.size() <<
 				", should be > 6.\n";
 		cerr << "File: " << fileName_ << " Line: " << lineNum_ << endl;
 		return 0;
 	}
-	
+
 	double x0 = 0.0;
 	double y0 = 0.0;
 	double z0 = 0.0;
 	double x, y, z;
 	double d;
 	int argOffset = 0;
-	
+
 	string name = argv[ 0 ];
 	string parent = argv[ 1 ];
-	
+
 	if ( doubleEndpointFlag_ ) {
 		argOffset = 3;
-		
+
 		x0 = 1.0e-6 * atof( argv[ 2 ].c_str() );
 		y0 = atof( argv[ 3 ].c_str() );
 		z0 = atof( argv[ 4 ].c_str() );
@@ -347,7 +347,7 @@ bool ReadCell::readData( const string& line )
 			z0 *= 1.0e-6;
 		}
 	}
-	
+
 	x = 1.0e-6 * atof( argv[ argOffset + 2 ].c_str() );
 	y = atof( argv[ argOffset + 3 ].c_str() );
 	z = atof( argv[ argOffset + 4 ].c_str() );
@@ -362,20 +362,20 @@ bool ReadCell::readData( const string& line )
 		y *= 1.0e-6;
 		z *= 1.0e-6;
 	}
-	
+
 	d = 1.0e-6 * atof( argv[ argOffset + 5 ].c_str() );
-	
+
 	double length;
 	Id compt =
 		buildCompartment( name, parent, x0, y0, z0, x, y, z, d, length, argv );
-	
+
 	if ( compt == Id() )
 		return 0;
-	
+
 	return buildChannels( compt, argv, d, length );
 }
 
-Id ReadCell::buildCompartment( 
+Id ReadCell::buildCompartment(
 	const string& name,
 	const string& parent,
 	double x0, double y0, double z0,
@@ -388,10 +388,10 @@ Id ReadCell::buildCompartment(
 			SymCompartment::initCinfo()->findFinfo( "distalOut" );
 	/*
 	 * This section determines the parent compartment, to connect up with axial
-	 * messages. Here 'parent' refers to the biophysical relationship within 
+	 * messages. Here 'parent' refers to the biophysical relationship within
 	 * the neuron's tree, and not to the path hierarchy in the MOOSE element
 	 * tree.
-	 * 
+	 *
 	 * If the parent is specified as 'none', then the compartment is the root
 	 * of the cell's tree, and will not be connected axially to any compartments
 	 * except for its children, if any.
@@ -413,7 +413,7 @@ Id ReadCell::buildCompartment(
 		}
                 parentId = parentObjId;
 	}
-	
+
 	//~ Id childId;
 	//~ bool ret = lookupGet< Id, string >(
 		//~ currCell_, "lookupChild", childId, name );
@@ -426,7 +426,7 @@ Id ReadCell::buildCompartment(
 				//~ cerr << "File: " << fileName_ << " Line: " << lineNum_ << endl;
 				//~ return 0;
 			//~ }
-			//~ unsigned int index = 
+			//~ unsigned int index =
 				//~ atoi( name.substr( pos + 1, name.length() - pos ).c_str() );
 			//~ if ( childId.index() == index ) {
 				//~ cerr << "Error: ReadCell: duplicate child on parent compt '" <<
@@ -441,7 +441,7 @@ Id ReadCell::buildCompartment(
 			//~ return 0;
 		//~ }
 	//~ }
-	
+
 	unsigned int size = 1;
 	Id compt;
 	if ( graftFlag_ && ( parent == "none" || parent == "nil" ) ) {
@@ -460,7 +460,7 @@ Id ReadCell::buildCompartment(
 			numChannels_ += numProtoChans_;
 			numOthers_ += numProtoOthers_;
 		} else {
-			string comptType = ( symmetricFlag_ ) ? 
+			string comptType = ( symmetricFlag_ ) ?
 				"SymCompartment" : "Compartment";
 			compt = shell_->doCreate(
                             comptType, currCell_, name, size, MooseGlobal );
@@ -469,21 +469,21 @@ Id ReadCell::buildCompartment(
 		}
 	}
 	lastCompt_ = compt;
-	
+
 	if ( parentId != Id()){
 		double px, py, pz;
 		double dx, dy, dz;
-		
+
 		px = Field< double >::get( parentId, "x" );
 		py = Field< double >::get( parentId, "y" );
 		pz = Field< double >::get( parentId, "z" );
-		
+
 		if ( !doubleEndpointFlag_ ) {
 			x0 = px;
 			y0 = py;
 			z0 = pz;
 		}
-		
+
 		if ( relativeCoordsFlag_ == 1 ) {
 			x += px;
 			y += py;
@@ -497,7 +497,7 @@ Id ReadCell::buildCompartment(
 		dx = x - x0;
 		dy = y - y0;
 		dz = z - z0;
-		
+
 		length = sqrt( dx * dx + dy * dy + dz * dz );
 		if ( symmetricFlag_ ) {
 			// Now find all sibling compartments on the same parent.
@@ -507,26 +507,26 @@ Id ReadCell::buildCompartment(
 			// Later put in the soma as a sphere, with its special msgs.
 			shell_->doAddMsg( "Single",
 				parentId, "distal", compt, "proximal" );
-			for ( vector< Id >::iterator i = sibs.begin(); 
+			for ( vector< Id >::iterator i = sibs.begin();
 				i != sibs.end(); ++i ) {
 				shell_->doAddMsg( "Single",
 					compt, "sibling", *i, "sibling" );
 			}
 
 		} else {
-			shell_->doAddMsg( "Single", 
+			shell_->doAddMsg( "Single",
 				parentId, "axial", compt, "raxial" );
 		}
 	} else {
-		length = sqrt( x * x + y * y + z * z ); 
+		length = sqrt( x * x + y * y + z * z );
 		// or it could be a sphere.
 	}
-	
+
 	double Cm, Rm, Ra;
-	
+
 	Cm = CM_ * calcSurf( length, d );
 	Rm = RM_ / calcSurf( length, d );
-	
+
 	if ( length > 0 ) {
 		Ra = RA_ * length * 4.0 / ( d * d * M_PI );
 	} else {
@@ -536,7 +536,7 @@ Id ReadCell::buildCompartment(
 	// Set each of these to the other only if the only one set was other
 	double eleak = ( erestFlag_ && !eleakFlag_ ) ? EREST_ACT_ : ELEAK_;
 	double erest = ( !erestFlag_ && eleakFlag_ ) ? ELEAK_ : EREST_ACT_;
-	
+
 	Field< double >::set( compt, "x0", x0 );
 	Field< double >::set( compt, "y0", y0 );
 	Field< double >::set( compt, "z0", z0 );
@@ -551,7 +551,7 @@ Id ReadCell::buildCompartment(
 	Field< double >::set( compt, "initVm", erest );
 	Field< double >::set( compt, "Em", eleak );
 	Field< double >::set( compt, "Vm", erest );
-	
+
 	return compt;
 }
 
@@ -568,18 +568,18 @@ Id ReadCell::startGraftCell( const string& cellPath )
 		cerr << "File: " << fileName_ << " Line: " << lineNum_ << endl;
 		return Id();
 	}
-	
+
         ObjId parentObjId;
 	string cellName;
 	string::size_type pos_1 = cellPath.find_first_of( "/" );
 	string::size_type pos_2 = cellPath.find_last_of( "/" );
-	
+
 	if ( pos_1 != 0 ) {
 		cerr << "Error: ReadCell: *start_cell should be given absolute path.\n";
 		cerr << "File: " << fileName_ << " Line: " << lineNum_ << endl;
 		return Id();
 	}
-	
+
 	if ( pos_2 == 0 ) {
             parentObjId = ObjId("/");
 		cellName = cellPath.substr( 1 );
@@ -592,10 +592,10 @@ Id ReadCell::startGraftCell( const string& cellPath )
 			cerr << "File: " << fileName_ << " Line: " << lineNum_ << endl;
 			return Id();
 		}
-		
+
 		cellName = cellPath.substr( pos_2 + 1 );
 	}
-	
+
 	unsigned int size = 1;
 	return shell_->doCreate( "Compartment", parentObjId, cellName, size, MooseGlobal );
 }
@@ -607,7 +607,7 @@ Id ReadCell::findChannel( const string& name )
 		//~ if ( i->name() == name )
 			//~ return *i;
 	//~ return Id();
-	
+
 	map< string, Id >::iterator pos = chanProtos_.find( name );
 	if ( pos != chanProtos_.end() )
 		return pos->second;
@@ -622,7 +622,7 @@ double calcSurf( double len, double dia )
 		area = dia * dia * M_PI;
 	else
 		area = len * dia * M_PI;
-	
+
 	return area;
 }
 
@@ -635,7 +635,7 @@ bool ReadCell::buildChannels(
 	bool isArgOK;
 	int argStart;
 	vector< Id > goodChannels;
-	
+
 	if ( doubleEndpointFlag_ ) {
 		isArgOK = ( argv.size() % 2 ) == 1;
 		argStart = 9;
@@ -643,18 +643,18 @@ bool ReadCell::buildChannels(
 		isArgOK = ( argv.size() % 2 ) == 0;
 		argStart = 6;
 	}
-	
+
 	if ( !isArgOK ) {
 		cerr << "Error: ReadCell: Bad number of arguments in channel list\n";
 		cerr << "File: " << fileName_ << " Line: " << lineNum_ << endl;
 		return 0;
 	}
-	
+
 	for ( unsigned int j = argStart; j < argv.size(); j++ ) {
-		// Here we explicitly set compt fields by scaling from the 
+		// Here we explicitly set compt fields by scaling from the
 		// specific value applied here.
 		string chan = argv[ j ];
-		
+
 		double value = atof( argv[ ++j ].c_str() );
 		if ( chan == "RA" ) {
 			double temp;
@@ -674,7 +674,7 @@ bool ReadCell::buildChannels(
 		} else if ( chan == "Cm" ) {
 			Field< double >::set( compt, "Cm", value );
 		} else if ( chan == "kinModel" ) {
-			// Need 3 args here: 
+			// Need 3 args here:
 			// lambda, name of proto, method
 			// We already have lambda from value. Note it is in microns
 			if ( j + 2 < argv.size() ) {
@@ -687,11 +687,11 @@ bool ReadCell::buildChannels(
 				break;
 			}
 		} else if ( chan == "m2c" ) {
-			// Need 5 args here: 
+			// Need 5 args here:
 			// scale factor, mol, moloffset, chan, chanoffset
 			// We already have scale factor from value.
 			if ( j + 4 < argv.size() ) {
-				//~ addM2C( compt, value, argv.begin() + j + 1 ); 
+				//~ addM2C( compt, value, argv.begin() + j + 1 );
 				j += 4;
 			} else {
 				cerr << "Error: ReadCell: m2c adaptor needs 5 args\n";
@@ -699,10 +699,10 @@ bool ReadCell::buildChannels(
 				break;
 			}
 		} else if ( chan == "c2m" ) {
-			// Need another 5 args here: 
+			// Need another 5 args here:
 			// scale factor, chan, chanoffset, mol, moloffset
 			if ( j + 4 < argv.size() ) {
-				//~ addC2M( compt, value, argv.begin() + j + 1 ); 
+				//~ addC2M( compt, value, argv.begin() + j + 1 );
 				j += 4;
 			} else {
 				cerr << "Error: ReadCell: c2m adaptor needs 5 args\n";
@@ -717,7 +717,7 @@ bool ReadCell::buildChannels(
 				cerr << "File: " << fileName_ << " Line: " << lineNum_ << endl;
 				continue;
 			}
-			
+
 			Id copy = addChannel( compt, chanId, value, diameter, length );
 			if ( copy != Id() ) {
 				goodChannels.push_back( copy );
@@ -728,14 +728,14 @@ bool ReadCell::buildChannels(
 			}
 		}
 	}
-	
+
 	for ( unsigned int i = 0; i < goodChannels.size(); i++ )
 		addChannelMessage( goodChannels[ i ] );
-	
+
 	return 1;
 }
 
-Id ReadCell::addChannel( 
+Id ReadCell::addChannel(
 	Id compt,
 	Id proto,
 	double value,
@@ -754,12 +754,12 @@ Id ReadCell::addChannel(
         assert( copy.element()->getName() == proto.element()->getName() );
 /////////////////////////////
 	assert( copy != Id() );
-	
+
 	if ( addCanonicalChannel( compt, copy, value, dia, length ) ) return copy;
 	if ( addSpikeGen( compt, copy, value, dia, length ) ) return copy;
 	if ( addCaConc( compt, copy, value, dia, length ) ) return copy;
 	if ( addNernst( compt, copy, value ) ) return copy;
-	
+
 	return Id();
 }
 
@@ -767,13 +767,13 @@ Id ReadCell::addChannel(
  * Adds a typical channel to a compartment:
  *     - Connects up the 'channel' message between chan and compt.
  *     - Sets the Gbar field on the channel.
- * 
+ *
  * Typical channels currently are: HHChannel, HHChannel2D and SynChan. All of
  * these have the same "channel" interface, and have a "Gbar" field.
  */
 bool ReadCell::addCanonicalChannel(
 	Id compt,
-	Id chan, 
+	Id chan,
 	double value,
 	double dia,
 	double length )
@@ -793,27 +793,27 @@ bool ReadCell::addCanonicalChannel(
 			"channel"
 		);
 		if ( mid.bad() )
-			cout << "failed to connect message from compt " << compt << 
+			cout << "failed to connect message from compt " << compt <<
 					" to channel " << chan << endl;
-		
+
 		if ( value > 0 ) {
 			value *= calcSurf( length, dia );
 		} else {
 			value = -value;
 		}
-		
+
 		if ( !graftFlag_ )
 			++numChannels_;
-		
+
 		return Field< double >::set( chan, "Gbar", value );
 	}
-	
+
 	return 0;
 }
 
-bool ReadCell::addSpikeGen( 
+bool ReadCell::addSpikeGen(
 	Id compt,
-	Id chan, 
+	Id chan,
 	double value,
 	double dia,
 	double length )
@@ -827,13 +827,13 @@ bool ReadCell::addSpikeGen(
 			chan,
 			"Vm"
 		);
-		
+
 		if ( !graftFlag_ )
 			++numOthers_;
-		
+
 		return Field< double >::set( chan, "threshold", value );
 	}
-	
+
 	return 0;
 }
 
@@ -843,9 +843,9 @@ bool ReadCell::addSpikeGen(
  * fields created on channels and other objects. Here the 'addChannelMessage()'
  * function handles these 'addmsg' fields.
  */
-bool ReadCell::addCaConc( 
+bool ReadCell::addCaConc(
 	Id compt,
-	Id chan, 
+	Id chan,
 	double value,
 	double dia,
 	double length )
@@ -853,7 +853,7 @@ bool ReadCell::addCaConc(
 	double thickness = Field< double >::get( chan, "thick" );
 	if ( thickness > dia / 2.0 )
 		thickness = 0.0;
-	
+
 	string className = chan.element()->cinfo()->name();
 	if ( className == "CaConc" ) {
 		if ( value > 0.0 ) {
@@ -870,7 +870,7 @@ bool ReadCell::addCaConc(
 					vol = M_PI * (
 						dia * dia * dia -
 						inner_dia * inner_dia * inner_dia
-					) / 6.0; 
+					) / 6.0;
 				} else {
 					vol = M_PI * dia * dia * dia / 6.0;
 				}
@@ -880,17 +880,17 @@ bool ReadCell::addCaConc(
 		} else {
 			value = - value;
 		}
-		
+
 		if ( !graftFlag_ )
 			++numOthers_;
-		
+
 		return Field< double >::set( chan, "B", value );
 	}
-	
+
 	return 0;
 }
 
-bool ReadCell::addNernst( 
+bool ReadCell::addNernst(
 	Id compt,
 	Id chan,
 	double value )
@@ -901,81 +901,81 @@ bool ReadCell::addNernst(
 }
 
 /*
-void ReadCell::addKinModel( Element* compt, double lambda, 
+void ReadCell::addKinModel( Element* compt, double lambda,
 	string name, string method )
 {
 	// cout << "addKinModel on " << compt->name() <<
 	//		" name= " << name << ", lambda = " << lambda <<
 	//		", using " << method << endl;
-	
+
 	Element* kinElm = findChannel( name );
 	if ( kinElm == 0 ) {
 		cerr << "Error:ReadCell: KinProto '" << name << "' not found\n";
 		cerr << "File: " << fileName_ << " Line: " << lineNum_ << endl;
 		return;
 	}
-	
-	Element* kph = Neutral::create( "KinPlaceHolder", "kinModel", 
+
+	Element* kph = Neutral::create( "KinPlaceHolder", "kinModel",
 		compt->id(), Id::childId( compt->id() ) );
-	set< Id, double, string >( kph, "setup", 
+	set< Id, double, string >( kph, "setup",
 		kinElm->id(), lambda, method );
 }
 
-void ReadCell::addM2C( Element* compt, double scale, 
+void ReadCell::addM2C( Element* compt, double scale,
 	vector< string >::iterator args )
 {
-	// cout << "addM2C on " << compt->name() << 
-	//	" scale= " << scale << 
-	//	" mol= " << *args << ", moloff= " << *(args+1) << 
+	// cout << "addM2C on " << compt->name() <<
+	//	" scale= " << scale <<
+	//	" mol= " << *args << ", moloff= " << *(args+1) <<
 	//	" chan= " << *(args + 2) << ", chanoff= " << *(args+3) << endl;
-	
+
 	string molName = *args++;
 	double molOffset = atof( ( *args++ ).c_str() );
 	string chanName = *args++;
 	double chanOffset = atof( ( *args ).c_str() );
 	string adaptorName = molName + "_2_" + chanName;
-	
+
 	Element* chan = findChannel( chanName );
 	if ( chan == 0 ) {
-		cerr << "Error:ReadCell: addM2C ': channel" << chanName << 
+		cerr << "Error:ReadCell: addM2C ': channel" << chanName <<
 			"' not found\n";
 		cerr << "File: " << fileName_ << " Line: " << lineNum_ << endl;
 		return;
 	}
-	
+
 	Element* adaptor = Neutral::create( "Adaptor", adaptorName,
 		compt->id(), Id::childId( compt->id() ) );
-	
+
 	Eref( adaptor ).add( "outputSrc", Eref( chan ), "Gbar" );
 	set< string, double, double, double >( adaptor, "setup",
 		molName, scale, molOffset, chanOffset );
 }
 
-void ReadCell::addC2M( Element* compt, double scale, 
+void ReadCell::addC2M( Element* compt, double scale,
 	vector< string >::iterator args )
 {
-	// cout << "addC2M on " << compt->name() << 
-	//	" scale= " << scale << 
-	//	" chan= " << *args << ", chanoff= " << *(args+1) << 
+	// cout << "addC2M on " << compt->name() <<
+	//	" scale= " << scale <<
+	//	" chan= " << *args << ", chanoff= " << *(args+1) <<
 	//	" mol= " << *(args + 2) << ", moloff= " << *(args+3) <<  endl;
-	
+
 	string chanName = *args++;
 	double chanOffset = atof( ( *args++ ).c_str() );
 	string molName = *args++;
 	double molOffset = atof( ( *args++ ).c_str() );
 	string adaptorName = "Ca_2_" + molName;
-	
+
 	Element* chan = findChannel( chanName );
 	if ( chan == 0 ) {
-		cerr << "Error:ReadCell: addC2M ': channel" << chanName << 
+		cerr << "Error:ReadCell: addC2M ': channel" << chanName <<
 			"' not found\n";
 		cerr << "File: " << fileName_ << " Line: " << lineNum_ << endl;
 		return;
 	}
-	
+
 	Element* adaptor = Neutral::create( "Adaptor", adaptorName,
 		compt->id(), Id::childId( compt->id() ) );
-	
+
 	Eref( adaptor ).add( "inputRequest", Eref( chan ), "Ca" );
 	set< string, double, double, double >( adaptor, "setup",
 		molName, scale, chanOffset, molOffset );
@@ -1008,20 +1008,20 @@ void ReadCell::addChannelMessage( Id chan )
 		ObjId src = shell->doFind( token[0] );
 		ObjId dest = shell->doFind( token[2] );
 
-		// I would like to assert, or warn here, but there are legitimate 
-		// cases where not all possible messages are actually available 
+		// I would like to assert, or warn here, but there are legitimate
+		// cases where not all possible messages are actually available
 		// to set up. So I just bail.
 		if ( src.bad() || dest.bad()) {
 #ifndef NDEBUG
 				/*
-			cout << "ReadCell::addChannelMessage( " << chan.path() << 
-				"): " << name << " " << s << 
+			cout << "ReadCell::addChannelMessage( " << chan.path() <<
+				"): " << name << " " << s <<
 				": Bad src " << src << " or dest " << dest << endl;
 				*/
 #endif
-			continue; 
+			continue;
 		}
-		ObjId mid = 
+		ObjId mid =
 			shell->doAddMsg( "single", src, token[1], dest, token[3] );
 		assert( !mid.bad());
 	}
@@ -1035,16 +1035,16 @@ void ReadCell::countProtos( )
 {
 	//~ if ( protoCompt_ == 0 )
 		//~ return;
-	//~ 
+	//~
 	//~ numProtoCompts_ = 1; // protoCompt_ itself
 	//~ numProtoChans_ = 0;
 	//~ numProtoOthers_ = 0;
-//~ 
+//~
 	//~ vector< vector< Id > > cstack;
 	//~ cstack.push_back( Neutral::getChildList( protoCompt_ ) );
 	//~ while ( !cstack.empty() ) {
 		//~ vector< Id >& child = cstack.back();
-		//~ 
+		//~
 		//~ if ( child.empty() ) {
 			//~ cstack.pop_back();
 			//~ if ( !cstack.empty() )
@@ -1052,7 +1052,7 @@ void ReadCell::countProtos( )
 		//~ } else {
 			//~ const Id& curr = child.back();
 			//~ const Cinfo* currCinfo = curr()->cinfo();
-			//~ 
+			//~
 			//~ if ( currCinfo->isA( comptCinfo ) )
 				//~ ++numProtoCompts_;
 			//~ else if ( currCinfo->isA( chanCinfo ) ||
@@ -1062,7 +1062,7 @@ void ReadCell::countProtos( )
 			          //~ currCinfo->isA( caconcCinfo ) ||
 			          //~ currCinfo->isA( nernstCinfo ) )
 				//~ ++numProtoOthers_;
-			//~ 
+			//~
 			//~ cstack.push_back( Neutral::getChildList( curr() ) );
 		//~ }
 	//~ }
