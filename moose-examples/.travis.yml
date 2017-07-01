@@ -2,6 +2,10 @@ dist : trusty
 sudo : required 
 group : edge
 
+language: ruby
+rvm:
+    - 2.2
+
 notifications:
     email:
         recipients:
@@ -19,15 +23,18 @@ install:
     - sudo apt-get -y --force-yes install python-qt4 python-pip graphviz
     - sudo apt-get -y --force-yes install python-h5py python-scipy python-pygraphviz
     - sudo apt-get -y --force-yes install moose 
-    - sudo pip install python-libsbml python-networkx
+    - sudo pip install python-libsbml networkx
+    - gem install travis
 
 script:
+    - nvm use stable
     - # Making sure no python3 incompatible file.
     - python3 -m compileall -q .
     - python2 -m compileall -q .
     - /usr/bin/python -c 'import moose'
     - /usr/bin/python -c 'import moogli'
     - cd _travis && ./find_scripts_to_run.sh && ./run_scripts.sh 
+    - cd _travis && ./download_and_run_doqcs.sh
 
 exclude : [vendor]
 
@@ -35,7 +42,6 @@ deploy:
     provider : pages
     skip_cleanup : true
     github_token : $GHI_TOKEN
-    local_dir : _travis/_site
     on:
         branch : master
 

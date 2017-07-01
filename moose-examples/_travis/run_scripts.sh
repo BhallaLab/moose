@@ -26,7 +26,7 @@ if [ ! -f $MATPLOTRC ]; then
     exit
 fi
 
-TIMEOUT=10
+TIMEOUT=${1:-60}     # default timeout is 60 secs.
 NTHREADS=4
 for f in `cat ./TORUN`; do
     d=`dirname $f`
@@ -50,7 +50,7 @@ for f in `cat ./TORUN`; do
             echo "|| Timed-out status: $status" 
             echo "- [ ] $f" >> $BLACKLISTED
             sed -i 's/^/\ \ /' $TEMP
-            printf "\n\`i\`\`\n" >> $BLACKLISTED 
+            printf "\n\`\`\`\n" >> $BLACKLISTED 
             cat $TEMP >> $BLACKLISTED 
             printf "\`\`\`\n" >> $BLACKLISTED 
         else                                    # Failed
@@ -65,12 +65,10 @@ for f in `cat ./TORUN`; do
         fi
     ) & 
 done
-wait
 
 # Auto deploy to README.md file
-python ./deploy_gh_pages.py || echo "failed to generated site"
+python ./deploy_gh_pages.py 
 
-wait
 echo "Following scripts were successful"
 cat $SUCCEEDED
 
@@ -87,5 +85,3 @@ if [ -f $FAILED ]; then
     cat $FAILED
     exit 1
 fi
-
-
