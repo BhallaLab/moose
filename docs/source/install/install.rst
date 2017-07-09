@@ -149,6 +149,9 @@ If everything went fine, you should be able to import moose in python shell.
 Graphical User Interface (GUI)
 ------------------------------
 
+If you have installed the pre-built package, then you already have the GUI.
+You can launch it by runnung `moosegui` command in terminal.
+
 You can get the source of ``moose-gui`` from `here
 <https://github.com/BhallaLab/moose-gui>`_. You can download it either by
 clicking on `this link <https://github.com/BhallaLab/moose-gui/archive/master.zip>`_
@@ -187,7 +190,7 @@ Now you can fire up the GUI
     If you have installed ``moose`` package, then GUI is launched by
     running following commnad::
 
-    $ moose
+    $ moosegui
 
 Building moogli
 ---------------
