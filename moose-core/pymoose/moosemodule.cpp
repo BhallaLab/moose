@@ -1,38 +1,10 @@
 // moosemodule.cpp ---
-//
-// Filename: moosemodule.cpp
-// Description:
-// Author: Subhasis Ray
-// Maintainer:
-// Copyright (C) 2010 Subhasis Ray, all rights reserved.
-// Created: Thu Mar 10 11:26:00 2011 (+0530)
-// Version:
-// Last-Updated: Mon 25 Apr 2016 11:17:24 AM IST
-//           By: Dilawar Singh
-//
-
-// Change log:
-//
-// 2011-03-10 Initial version. Starting coding directly with Python
-//            API.  Trying out direct access to Python API instead of
-//            going via SWIG. SWIG has this issue of creating huge
-//            files and the resulting binaries are also very
-//            large. Since we are not going to use any language but
-//            Python in the foreseeable future, we can avoid the bloat
-//            by coding directly with Python API.
-//
-// 2012-01-05 Much polished version. Handling destFinfos as methods in
-//            Python class.
-//
-// 2012-04-13 Finished reimplementing the meta class system using
-//            Python/C API.
-//            Decided not to expose any lower level moose API.
-//
-// 2012-04-20 Finalized the C interface
+// For detailed log, see the git-log .
+// Author : Subhasis Ray
+// Maintainer : Dilawar Singh, Subhasis Ray
 
 #include <Python.h>
-
-#include <structmember.h> // This defines the type id macros like T_STRING
+#include <structmember.h>
 
 #ifdef USE_NUMPY
 #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
@@ -2879,6 +2851,7 @@ PyObject * moose_ObjId_get_elementField_attr(PyObject * self,
     Py_INCREF(self); // compensate for stolen ref
     PyTuple_SetItem(args, 1, PyString_FromString(name));
     _Field * ret = PyObject_New(_Field, &moose_ElementField);
+
     // 2. Now use this arg to actually create the element field.
     if (moose_ElementField.tp_init((PyObject*)ret, args, NULL) != 0)
     {

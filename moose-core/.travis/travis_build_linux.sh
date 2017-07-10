@@ -22,7 +22,7 @@ set -e
 
 PYTHON2="/usr/bin/python2"
 PYTHON3="/usr/bin/python3"
-#MAKEFLAGS="-j4"
+MAKEFLAGS="-j4"
 
 # Bug: `which python` returns /opt/bin/python* etc on travis. For which numpy
 # many not be available. Therefore, it is neccessary to use fixed path for
@@ -39,9 +39,8 @@ PYTHON3="/usr/bin/python3"
     make && ctest --output-on-failure
     cd .. # Now with boost.
     mkdir -p _BOOST_BUILD && cd _BOOST_BUILD && \
-        cmake -DWITH_BOOST=ON -DDEBUG=ON -DPYTHON_EXECUTABLE="$PYTHON2" ..
+        cmake -DWITH_BOOST=ON -DDEBUG=ON -DQUIET_MODE=ON -DPYTHON_EXECUTABLE="$PYTHON2" ..
     make && ctest --output-on-failure
-    sudo make install   # For testing doqcs database.
     cd ..
 
     # This is only applicable on linux build.
