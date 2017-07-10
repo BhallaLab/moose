@@ -28,5 +28,4 @@ script:
     - if type python3 > /dev/null; then python3 -m compileall -q . ; fi
     - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ./.travis/travis_build_osx.sh; fi
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./.travis/travis_build_linux.sh; fi
-    - cd ./.travis && ./download_and_run_doqcs.sh && cd ..
     - set +e

@@ -441,14 +441,10 @@ int moose_Id_init(_Id * self, PyObject * args, PyObject * kwargs)
        [unsigned int isGlobal] - default: 0
        [string type] - default: Neutral
     */
-    if (PyArg_ParseTupleAndKeywords(args,
-                                    kwargs,
-                                    "s|IIs:moose_Id_init",
-                                    kwlist,
-                                    &path,
-                                    &numData,
-                                    &isGlobal,
-                                    &type))
+    if (PyArg_ParseTupleAndKeywords(args, kwargs, "s|IIs:moose_Id_init",
+                                    kwlist, &path, &numData, &isGlobal,
+                                    &type)
+            )
     {
         // Parsing args successful, if any error happens now,
         // different argument processing will not help. Return error
@@ -462,10 +458,9 @@ int moose_Id_init(_Id * self, PyObject * args, PyObject * kwargs)
             return -1;
         }
         self->id_ = Id(trimmed_path);
+
         // Return already existing object
-        if (self->id_ != Id() ||
-                trimmed_path == "/" ||
-                trimmed_path == "/root")
+        if (self->id_ != Id() || trimmed_path == "/" || trimmed_path == "/root")
         {
             if ((numData > 0) && (numData != Field<unsigned int>::get(self->id_, "numData")))
             {
@@ -474,13 +469,10 @@ int moose_Id_init(_Id * self, PyObject * args, PyObject * kwargs)
             return 0;
         }
         if (type == NULL)
-        {
             type = _default_type;
-        }
         if (numData <= 0)
-        {
             numData = 1;
-        }
+
         self->id_ = create_Id_from_path(trimmed_path, numData, isGlobal, type);
         if (self->id_ == Id() && PyErr_Occurred())
         {
