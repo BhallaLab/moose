@@ -163,39 +163,6 @@ Shell::~Shell()
     ;
 }
 
-#ifdef  CYMOOSE
-
-/*-----------------------------------------------------------------------------
- *  This function must create a fully functional Shell. Used in cython
- *  interface.
- *-----------------------------------------------------------------------------*/
-Shell* Shell::initShell()
-{
-    Eref sheller = Id().eref();
-    Shell* shell = reinterpret_cast< Shell* >( sheller.data() );
-    return shell;
-}
-
-Id Shell::create(string type, string name, unsigned int numData
-                 , NodePolicy nodePolicy, unsigned int preferredNode
-                )
-{
-    if(name.size() == 0)
-        return doCreate(type, Id(), name, numData, nodePolicy, preferredNode);
-
-    string::size_type pos = name.find_last_of('/');
-    string parentPath = name.substr(0, pos);
-    ObjId parentObj = ObjId(parentPath);
-    //cerr << "info: Creating Obj with parent : " << parentObj << endl;
-    Id id = doCreate(type, parentObj, name.substr(pos+1)
-                     , numData, nodePolicy, preferredNode
-                    );
-    //cerr << "    ++ with id " << id << endl;
-    return id;
-}
-
-#endif     /* -----  CYMOOSE  ----- */
-
 void Shell::setShellElement( Element* shelle )
 {
     shelle_ = shelle;
@@ -245,12 +212,17 @@ Id Shell::doCreate( string type, ObjId parent, string name,
             warning( ss.str() );
             return Id();
         }
+
+        // TODO: This should be an error in future.
+        // This logic of handling already existing path is now handled in
+        // melements.cpp . Calling this section should become an error in
+        // future.
         if ( Neutral::child( parent.eref(), name ) != Id() )
         {
             stringstream ss;
-            ss << "Shell::doCreate: Object with same name already present: '"
-               << parent.path() << "/" << name << "'. No Element created";
-            warning( ss.str() );
+            ss << "Object with same path already present : " << parent.path()
+                << "/" << name;
+            moose::showWarn( ss.str() );
             return Id();
         }
         // Get the new Id ahead of time and pass to all nodes.
@@ -269,6 +241,7 @@ Id Shell::doCreate( string type, ObjId parent, string name,
             nb,			// Node balance configuration
             parentMsgIndex	// Message index of child-parent msg.
         );
+
         // innerCreate( type, parent, ret, name, numData, isGlobal );
 
         return ret;
@@ -1027,7 +1000,7 @@ bool Shell::keepLooping()
 
 void Shell::warning( const string& text )
 {
-    LOG( moose::warning, text  );
+    moose::showWarn( text  );
 }
 
 void Shell::error( const string& text )

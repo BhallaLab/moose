@@ -18,14 +18,16 @@ import os
 import moose
 import moose.utils as mu
 
+print( 'Using moose form %s' % moose.__file__ )
+print( '\t Moose version %s' % moose.version( ) )
+
 # the model lives in the same directory as the test script
 modeldir = os.path.dirname( os.path.realpath( __file__ ) )
 
 def main():
     modelname = os.path.join(modeldir, './chem_models/00001-sbml-l3v1.xml' )
     model = moose.mooseReadSBML( modelname, '/sbml' )
-    print( model )
-    c = moose.Clock('/clock')
+    c = moose.element('/clock')
     moose.reinit()
     moose.start(200)
     check(  )
