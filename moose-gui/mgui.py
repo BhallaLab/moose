@@ -49,17 +49,12 @@ import inspect
 import code
 import traceback
 import sys
-sys.path.append('../python')
-#sys.path.append('utils')
 import os
-from collections import defaultdict
-import posixpath # We use this to create MOOSE paths
 from PyQt4 import QtGui, QtCore, Qt
 import config
 import mplugin
 import moose
 import mexception
-from moose import utils
 from mload import loadFile
 from loaderdialog import LoaderDialog
 from shell import get_shell_class
@@ -70,7 +65,6 @@ from biomodelsclient import BioModelsClientWidget
 from PyQt4 import Qt, QtCore, QtGui
 from PyQt4.QtGui import *
 from MdiArea import MdiArea
-import os
 from setsolver import *
 from defines import *
 from collections import OrderedDict
@@ -292,7 +286,7 @@ class MWindow(QtGui.QMainWindow):
 
     def run_python_script(self, filepath):
         busyCursor()
-        import subprocess, shlex
+        import subprocess
         t = os.path.abspath(filepath)
         directory, filename = os.path.split(t)
         p = subprocess.Popen(["python", filename], cwd=directory)
@@ -1130,8 +1124,14 @@ class MWindow(QtGui.QMainWindow):
             ret,pluginName = self.checkPlugin(dialog)
             if pluginName == 'kkit':
                 if (ret['subtype'] == 'sbml' and ret['foundlib'] == False):
-                    reply = QtGui.QMessageBox.question(self, "python-libsbml is not found.","\n Read SBML is not possible.\n This can be installed using \n \n pip python-libsbml  or \n apt-get install python-libsbml",
-                                               QtGui.QMessageBox.Ok)
+                    reply = QtGui.QMessageBox.question(self
+                            , "python-libsbml is not found.","\n SBML support "
+                            " has been disabled.\n To enable it, please install"
+                            " it using: \n" 
+                            " \t 'pip install python-libsbml' "
+                            " or 'easy_install python-libsbml'"
+                            , QtGui.QMessageBox.Ok
+                            )
                     if reply == QtGui.QMessageBox.Ok:
                         QtGui.QApplication.restoreOverrideCursor()
                         return
