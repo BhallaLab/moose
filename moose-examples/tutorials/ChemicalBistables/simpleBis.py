@@ -19,7 +19,7 @@
 # You may also find in interesting to change the volume.
 
 import math
-import pylab
+import matplotlib.pyplot as plt
 import numpy
 import moose
 import sys
@@ -87,12 +87,14 @@ def makeModel():
                 moose.useClock( 4, '/model/compartment/##', 'process' )
                 moose.useClock( 8, '/model/graphs/#', 'process' )
 
+
 def displayPlots():
+                print( 'Displaying plots' )
                 for x in moose.wildcardFind( '/model/graphs/conc#' ):
                                 t = numpy.arange( 0, x.vector.size, 1 ) #sec
-                                pylab.plot( t, x.vector, label=x.name )
-                pylab.legend()
-                pylab.show()
+                                plt.plot( t, x.vector, label=x.name )
+                plt.legend()
+                plt.show()
 
 def main():
                 solver = "gsl"
@@ -132,8 +134,8 @@ def main():
 
                 # Iterate through all plots, dump their contents to data.plot.
                 displayPlots()
+                raw_input( 'Press any key to quit' )
 
-                quit()
 
 # Run the 'main' if this script is executed standalone.
 if __name__ == '__main__':
