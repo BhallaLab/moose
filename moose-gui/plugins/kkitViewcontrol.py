@@ -394,7 +394,7 @@ class GraphicalView(QtGui.QGraphicsView):
                                     self.layoutPt.updateArrow(pressItem.parent())
                                     QtGui.QMessageBox.warning(None,'Could not move the object', "The object can't be moved to empty space")
                         else:
-                            print " Check what moved when! does it reaches this condition"
+                            print( " Check what moved when! does it reaches this condition" )
 
                     self.layoutPt.positionChange(item.mobj) 
                     self.updateScale(self.iconScale)

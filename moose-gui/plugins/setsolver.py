@@ -61,8 +61,8 @@ def setCompartmentSolver(modelRoot,solver):
 	compts = moose.wildcardFind(modelRoot+'/##[ISA=ChemCompt]')
 
 	if ( len(compts) > 3 ):
-		print "Warning: setSolverOnCompt Cannot handle " ,
-		len(compts) , " chemical compartments\n"
+		print( "Warning: setSolverOnCompt Cannot handle ",
+		len(compts) , " chemical compartments\n" )
 		return;
 	
 	if ( len(compts) == 2 ):
