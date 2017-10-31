@@ -19,4 +19,5 @@
 
 set -o nounset                              # Treat unset variables as an error
 echo "Nothing to do here. The moose.rb formula will install all dependecnies"
+brew update
 brew tap homebrew/science
