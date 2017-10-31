@@ -16,9 +16,12 @@ MOOSE is multiscale: It can do all these calculations together. For example it h
 
 # VERSION
 
-## Chamcham 3.1.1 
+## Chamcham 3.1.2
 
-MOOSE 3.1 is an evolutionary update. It has a new Python-based SBML reader, improved handling of reaction-diffusion systems, and substantial refinements to the rdesigneur interface for setting up multiscale models. Several additional rdesigneur tutorials have been implemented. 
+MOOSE 3.1 (current version 3.1.2) is an evolutionary update. It has a new Python-based SBML reader
+, improved handling of reaction-diffusion systems, and substantial refinements to the 
+rdesigneur interface for setting up multiscale models. 
+Several additional rdesigneur tutorials have been implemented. 
 
 # LICENSE
 
