@@ -1,4 +1,5 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
+PROJECT(MOOSE)
 
 project(moose)
 
@@ -25,11 +26,14 @@ option(WITH_DOC "Build documentation" OFF)
 option(DEBUG "Build with DEBUG support" OFF)
 option(WITH_BOOST "Use Boost libraries instead of GSL" OFF)
 option(WITH_CUDA "Use CUDA/GPU" OFF)
-option(WITH_MPI "Use MPI" OFF)
-
+option(WITH_MPI "Use MPI (experimental)" OFF)
+option(WITH_GUI "Install moose-gui. Works only with python2." ON )
 
 # Required packages.
 find_package(PythonInterp REQUIRED)
+if(PYTHON_VERSION_MAJOR VERSION_EQUAL 3)
+    set(WITH_GUI OFF)
+endif( )
 
 add_custom_target(moose ALL)
 
@@ -38,8 +42,10 @@ set(PYMOOSE_SOURCE_DIR "${CMAKE_SOURCE_DIR}/moose-core")
 set(PYMOOSE_BUILD_DIR ${CMAKE_BINARY_DIR}/__moose-core_build)
 set(PYMOOSE_INSTALL_DIR ${CMAKE_BINARY_DIR}/__moose-core_install)
 
-set(MOOSE_GUI_DIR ${CMAKE_SOURCE_DIR}/moose-gui)
-set(MOOSE_GUI_INSTALL_DIR ${CMAKE_BINARY_DIR}/__moose-gui_install)
+if(WITH_GUI)
+    set(MOOSE_GUI_DIR ${CMAKE_SOURCE_DIR}/moose-gui)
+    set(MOOSE_GUI_INSTALL_DIR ${CMAKE_BINARY_DIR}/__moose-gui_install)
+endif()
 
 set(MOOSE_EXAMPLE_DIR ${CMAKE_SOURCE_DIR}/moose-examples)
 set(MOOSE_EXAMPLE_INSTALL_DIR ${CMAKE_BINARY_DIR}/__moose-examples_install)
@@ -60,23 +66,29 @@ add_custom_command( OUTPUT ${OUTPUT_MOOSEBIN}
     VERBATIM
     )
 
-# Now build moose-gui and moose-examples.
-# Make sure each script is compilable. Else report an error.
-add_custom_target( gui ALL 
-    COMMAND ${CMAKE_COMMAND} -E copy_directory ${MOOSE_GUI_DIR} ${MOOSE_GUI_INSTALL_DIR} 
-    COMMAND ${PYTHON_EXECUTABLE} -m compileall -q ${MOOSE_GUI_INSTALL_DIR}
-    COMMENT "Building moose-gui"
-    VERBATIM
-    )
+if(WITH_GUI)
+    # Now build moose-gui and moose-examples.
+    # Make sure each script is compilable. Else report an error.
+    add_custom_target( gui ALL 
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${MOOSE_GUI_DIR} ${MOOSE_GUI_INSTALL_DIR} 
+        COMMAND ${PYTHON_EXECUTABLE} -m compileall -q ${MOOSE_GUI_INSTALL_DIR}
+        COMMENT "Building moose-gui"
+        VERBATIM
+        )
 
-add_custom_target( examples ALL 
-    COMMAND ${CMAKE_COMMAND} -E copy_directory ${MOOSE_EXAMPLE_DIR} ${MOOSE_EXAMPLE_INSTALL_DIR}
-    COMMAND ${PYTHON_EXECUTABLE} -m compileall -q ${MOOSE_EXAMPLE_INSTALL_DIR}
-    VERBATIM
-    )
+    add_custom_target( examples ALL 
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${MOOSE_EXAMPLE_DIR} ${MOOSE_EXAMPLE_INSTALL_DIR}
+        COMMAND ${PYTHON_EXECUTABLE} -m compileall -q ${MOOSE_EXAMPLE_INSTALL_DIR}
+        VERBATIM
+        )
+endif()
 
-add_dependencies(moose moose-core gui examples)
-add_dependencies(examples  gui)
+add_dependencies(moose moose-core)
+
+if(WITH_GUI)
+    add_dependencies(moose gui examples)
+    add_dependencies(examples  gui)
+endif()
 
 
 ## moose-gui
@@ -89,31 +101,30 @@ install(DIRECTORY ${PYMOOSE_INSTALL_DIR}/
     PATTERN "*.pyc" EXCLUDE
     )
 
-install(DIRECTORY ${MOOSE_GUI_INSTALL_DIR}/
-    DESTINATION lib/moose/gui
-    PATTERN ".git*" EXCLUDE
-    PATTERN "*.pyc" EXCLUDE
-    )
+if(WITH_GUI)
+    install(DIRECTORY ${MOOSE_GUI_INSTALL_DIR}/
+        DESTINATION lib/moose/gui
+        PATTERN ".git*" EXCLUDE
+        PATTERN "*.pyc" EXCLUDE
+        )
 
-install(DIRECTORY ${MOOSE_EXAMPLE_DIR}/
-    DESTINATION lib/moose/moose-examples
-    PATTERN ".git*" EXCLUDE 
-    PATTERN "_travis*" EXCLUDE
-    PATTERN ".travis*" EXCLUDE
-    PATTERN "*.pyc" EXCLUDE
-    PATTERN "*.png" EXCLUDE
-    PATTERN "docs*" EXCLUDE
-    )
+    install(DIRECTORY ${MOOSE_EXAMPLE_DIR}/
+        DESTINATION lib/moose/moose-examples
+        PATTERN ".git*" EXCLUDE 
+        PATTERN "_travis*" EXCLUDE
+        PATTERN ".travis*" EXCLUDE
+        PATTERN "*.pyc" EXCLUDE
+        )
+endif()
 
-# Copy the command to launch moose.
-configure_file(${CMAKE_SOURCE_DIR}/cmake/moose.in ${CMAKE_BINARY_DIR}/moosegui)
-
-install(PROGRAMS ${CMAKE_BINARY_DIR}/moosegui DESTINATION bin)
+configure_file( ${CMAKE_SOURCE_DIR}/cmake/moose.in ${CMAKE_BINARY_DIR}/moose )
+install(PROGRAMS ${CMAKE_BINARY_DIR}/moose DESTINATION bin)
 
 ## UNINSTALL
-add_custom_target(uninstall 
-    DEPENDS __uninstall_moose-core__ __uninstall_moose-gui__
-    )
+add_custom_target(uninstall DEPENDS __uninstall_moose-core__ )
+if(WITH_GUI)
+    add_dependencies( uninstall __uninstall_moose-gui__ )
+endif( )
 
 add_custom_command(OUTPUT __uninstall_moose-core__
     COMMAND xargs rm -rf < install_manifest.txt
@@ -121,23 +132,28 @@ add_custom_command(OUTPUT __uninstall_moose-core__
     COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_INSTALL_PREFIX}/bin/moose.bin
     )
 
-add_custom_command(OUTPUT  __uninstall_moose-gui__
-    COMMAND ${CMAKE_COMMAND} -E remove_directory
-    ${CMAKE_INSTALL_PREFIX}/lib/moose/gui
-    COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_INSTALL_PREFIX}/bin/moose
-    )
+if(WITH_GUI)
+    add_custom_command(OUTPUT  __uninstall_moose-gui__
+        COMMAND ${CMAKE_COMMAND} -E remove_directory
+        ${CMAKE_INSTALL_PREFIX}/lib/moose/gui
+        COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_INSTALL_PREFIX}/bin/moose
+        )
+endif()
 
 ################################################################################
 # CTEST 
 #################################################################################
 enable_testing( )
 add_test( NAME test_pymoose_sanity 
-    COMMAND ${PYTHON_EXECUTABLE} -c "import moose; print( moose.version( ) );"
+    COMMAND ${PYTHON_EXECUTABLE} -c "import moose"
     )
-add_test( NAME test_gui_sanity 
-    COMMAND ${PYTHON_EXECUTABLE} ${MOOSE_GUI_INSTALL_DIR}/mgui.py 
-    WORKING_DIRECTORY ${MOOSE_GUI_INSTALL_DIR}
-    )
+
+if(WITH_GUI)
+    add_test( NAME test_gui_sanity 
+        COMMAND ${PYTHON_EXECUTABLE} ${MOOSE_GUI_INSTALL_DIR}/mgui.py 
+        WORKING_DIRECTORY ${MOOSE_GUI_INSTALL_DIR}
+        )
+endif()
 
 set_tests_properties( test_pymoose_sanity 
     PROPERTIES ENVIRONMENT "PYTHONPATH=${PYMOOSE_BUILD_DIR}/python"
