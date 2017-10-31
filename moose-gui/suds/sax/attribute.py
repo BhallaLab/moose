@@ -171,4 +171,4 @@ class Attribute(UnicodeMixin):
             v = self.value.escape()
         else:
             v = self.value
-        return u'%s="%s"' % (n, v)
+        return '%s="%s"' % (n, v)

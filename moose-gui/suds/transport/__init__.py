@@ -54,7 +54,7 @@ class Request(UnicodeMixin):
         self.message = message
 
     def __unicode__(self):
-        return u"""\
+        return """\
 URL: %s
 HEADERS: %s
 MESSAGE:
@@ -89,7 +89,7 @@ class Reply(UnicodeMixin):
         self.message = message
 
     def __unicode__(self):
-        return u"""\
+        return """\
 CODE: %s
 HEADERS: %s
 MESSAGE:

@@ -88,7 +88,7 @@ class Binding:
         @return: A collection of parameter definitions
         @rtype: [I{pdef},..]
         """
-        raise Exception, 'not implemented'
+        raise Exception('not implemented')
 
     def get_message(self, method, args, kwargs):
         """
@@ -286,7 +286,7 @@ class Binding:
         @return: The XML content for the <body/>
         @rtype: [L{Element},..]
         """
-        raise Exception, 'not implemented'
+        raise Exception('not implemented')
 
     def headercontent(self, method):
         """
@@ -339,7 +339,7 @@ class Binding:
         @return: The body content.
         @rtype: [L{Element},...]
         """
-        raise Exception, 'not implemented'
+        raise Exception('not implemented')
 
     def body(self, content):
         """

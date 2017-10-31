@@ -28,7 +28,7 @@ from datetime import timedelta
 import os
 from tempfile import gettempdir as tmp
 try:
-    import cPickle as pickle
+    import pickle as pickle
 except Exception:
     import pickle
 
@@ -136,7 +136,7 @@ class FileCache(Cache):
         @type duration: {unit:value}
         """
         if len(duration) == 1:
-            arg = duration.items()[0]
+            arg = list(duration.items())[0]
             if not arg[0] in self.units:
                 raise Exception('must be: %s' % str(self.units))
             self.duration = arg

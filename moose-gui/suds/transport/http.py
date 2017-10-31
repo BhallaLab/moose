@@ -22,12 +22,12 @@ from suds.properties import Unskin
 from suds.transport import *
 
 import base64
-from cookielib import CookieJar
-import httplib
+from http.cookiejar import CookieJar
+import http.client
 import socket
 import sys
-import urllib2
-from urlparse import urlparse
+import urllib.request, urllib.error, urllib.parse
+from urllib.parse import urlparse
 
 from logging import getLogger
 log = getLogger(__name__)
@@ -62,10 +62,10 @@ class HttpTransport(Transport):
         try:
             url = self.__get_request_url(request)
             log.debug('opening (%s)', url)
-            u2request = urllib2.Request(url)
+            u2request = urllib.request.Request(url)
             self.proxy = self.options.proxy
             return self.u2open(u2request)
-        except urllib2.HTTPError, e:
+        except urllib.error.HTTPError as e:
             raise TransportError(str(e), e.code, e.fp)
 
     def send(self, request):
@@ -74,7 +74,7 @@ class HttpTransport(Transport):
         msg = request.message
         headers = request.headers
         try:
-            u2request = urllib2.Request(url, msg, headers)
+            u2request = urllib.request.Request(url, msg, headers)
             self.addcookies(u2request)
             self.proxy = self.options.proxy
             request.headers.update(u2request.headers)
@@ -85,10 +85,10 @@ class HttpTransport(Transport):
                 headers = fp.headers.dict
             else:
                 headers = fp.headers
-            result = Reply(httplib.OK, headers, fp.read())
+            result = Reply(http.client.OK, headers, fp.read())
             log.debug('received:\n%s', result)
-        except urllib2.HTTPError, e:
-            if e.code in (httplib.ACCEPTED, httplib.NO_CONTENT):
+        except urllib.error.HTTPError as e:
+            if e.code in (http.client.ACCEPTED, http.client.NO_CONTENT):
                 result = None
             else:
                 raise TransportError(e.msg, e.code, e.fp)
@@ -140,7 +140,7 @@ class HttpTransport(Transport):
 
         """
         if self.urlopener is None:
-            return urllib2.build_opener(*self.u2handlers())
+            return urllib.request.build_opener(*self.u2handlers())
         return self.urlopener
 
     def u2handlers(self):
@@ -152,7 +152,7 @@ class HttpTransport(Transport):
 
         """
         handlers = []
-        handlers.append(urllib2.ProxyHandler(self.proxy))
+        handlers.append(urllib.request.ProxyHandler(self.proxy))
         return handlers
 
     def u2ver(self):
@@ -165,7 +165,7 @@ class HttpTransport(Transport):
         try:
             part = urllib2.__version__.split('.', 1)
             return float('.'.join(part))
-        except Exception, e:
+        except Exception as e:
             log.exception(e)
             return 0
 
