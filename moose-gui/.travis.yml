@@ -13,7 +13,7 @@ install:
     - sudo apt-get -y update
     - sudo apt-get -y --force-yes install python3 python-pip
     - sudo apt-get -y --force-yes install moose
-    - sudo pip install python-libsbml
+    - sudo -H pip install python-libsbml
 
 script:
     - # Making sure no python incompatible file is added.
