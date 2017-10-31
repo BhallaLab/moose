@@ -118,8 +118,11 @@ void VoxelPoolsBase::scaleVolsBufsRates(
 	unsigned int start = stoichPtr_->getNumVarPools();
 	unsigned int end = start + stoichPtr_->getNumBufPools();
 	assert( end == Sinit_.size() );
-	for ( unsigned int i = start; i < end; ++i )
-		S_[i] = Sinit_[i];
+	for ( unsigned int i = start; i < end; ++i ) {
+		// Must not reassign pools that are controlled by functions.
+		if ( !stoichPtr->isFuncTarget(i) )
+			S_[i] = Sinit_[i];
+	}
 
 	// Scale rates. Start by clearing out old rates if any
 	for ( unsigned int i = 0; i < rates_.size(); ++i )

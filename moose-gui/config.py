@@ -127,7 +127,7 @@ class MooseSetting(dict):
             cls._instance = super(MooseSetting, cls).__new__(cls, *args, **kwargs)
             firsttime, errs = init_dirs()
             for e in errs:
-                print e
+                print( e )
             QtCore.QCoreApplication.setOrganizationName('NCBS')
             QtCore.QCoreApplication.setOrganizationDomain('ncbs.res.in')
             QtCore.QCoreApplication.setApplicationName('MOOSE')
@@ -208,12 +208,12 @@ def init_dirs():
         if not os.path.exists(MOOSE_LOCAL_DIR):
             try:
                 os.mkdir(MOOSE_LOCAL_DIR)
-                print 'Created local moose directory:', MOOSE_LOCAL_DIR
+                print( 'Created local moose directory:', MOOSE_LOCAL_DIR )
             except OSError, e:
                 errors.append(e)
-                print e
+                print( e )
     if not os.access(MOOSE_DOCS_DIR, os.R_OK + os.X_OK):
-        print "Could not access Demos directory: %s" % (MOOSE_DOCS_DIR)
+        print( "Could not access Demos directory: %s" % (MOOSE_DOCS_DIR) )
         errors.append(OSError(errno.EACCES, 'Cannot access %s' % (MOOSE_DOCS_DIR)))
     '''
     return firsttime, errors

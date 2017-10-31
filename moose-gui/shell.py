@@ -68,7 +68,7 @@ def get_shell_class():
         from scishell import SciShell
         return SciShell
     
-    except ImportError:
+    except ImportError as e:
         return PyCutExt
     
 
@@ -175,11 +175,11 @@ class PyCutExt(QTextEdit):
         # interpreter prompt.
         try:
             sys.ps1
-        except AttributeError:
+        except AttributeError as e:
             sys.ps1 = ">>> "
         try:
             sys.ps2
-        except AttributeError:
+        except AttributeError as e:
             sys.ps2 = "... "
 
         # interpreter banner
@@ -295,8 +295,8 @@ class PyCutExt(QTextEdit):
         self.H.append(QtCore.QString(self.line)) # Added by yr
         try:
             self.lines.append(str(self.line))
-        except Exception,e:
-            print e
+        except Exception as e:
+            print( e )
 
         source = '\n'.join(self.lines)
         self.more = self.interpreter.runsource(source)

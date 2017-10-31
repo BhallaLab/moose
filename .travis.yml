@@ -1,6 +1,4 @@
 sudo : required
-dist : trusty
-group : edge
 
 compiler:
     - gcc
@@ -11,8 +9,6 @@ os:
 
 allow_failure:
     - osx
-
-osx_image : xcode8
 
 branches:
     only:

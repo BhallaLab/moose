@@ -1,3 +1,12 @@
+__author__      =   "HarshaRani"
+__credits__     =   ["Upi Lab"]
+__license__     =   "GPL3"
+__version__     =   "1.0.0"
+__maintainer__  =   "HarshaRani"
+__email__       =   "hrani@ncbs.res.in"
+__status__      =   "Development"
+__updated__     =   "Jul 27 2017"
+
 import moose
 from kkitQGraphics import * 
 from kkitOrdinateUtil import *
@@ -25,7 +34,6 @@ def checkCreate(scene,view,modelpath,mobj,string,ret_string,num,event_pos,layout
     #     modelRoot = modelpath[0:modelpath.find('/',1)]
     # else:
     #     modelRoot = modelpath
-    print "28 ",modelpath
     if moose.exists(modelpath+'/info'):
         mType = moose.Annotator((moose.element(modelpath+'/info'))).modeltype
     itemAtView = view.sceneContainerPt.itemAt(view.mapToScene(event_pos))

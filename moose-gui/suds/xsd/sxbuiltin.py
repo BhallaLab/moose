@@ -62,7 +62,7 @@ class XBoolean(XBuiltin):
     @staticmethod
     def translate(value, topython=True):
         if topython:
-            if isinstance(value, basestring):
+            if isinstance(value, str):
                 return XBoolean.translation[0].get(value)
         else:
             if isinstance(value, (bool, int)):
@@ -78,7 +78,7 @@ class XInteger(XBuiltin):
     @staticmethod
     def translate(value, topython=True):
         if topython:
-            if isinstance(value, basestring) and len(value):
+            if isinstance(value, str) and len(value):
                 return int(value)
         else:
             if isinstance(value, int):
@@ -94,10 +94,10 @@ class XLong(XBuiltin):
     @staticmethod
     def translate(value, topython=True):
         if topython:
-            if isinstance(value, basestring) and len(value):
-                return long(value)
+            if isinstance(value, str) and len(value):
+                return int(value)
         else:
-            if isinstance(value, (int, long)):
+            if isinstance(value, int):
                 return str(value)
             return value
 
@@ -110,7 +110,7 @@ class XFloat(XBuiltin):
     @staticmethod
     def translate(value, topython=True):
         if topython:
-            if isinstance(value, basestring) and len(value):
+            if isinstance(value, str) and len(value):
                 return float(value)
         else:
             if isinstance(value, float):
@@ -126,7 +126,7 @@ class XDate(XBuiltin):
     @staticmethod
     def translate(value, topython=True):
         if topython:
-            if isinstance(value, basestring) and len(value):
+            if isinstance(value, str) and len(value):
                 return Date(value).value
         else:
             if isinstance(value, dt.date):
@@ -142,7 +142,7 @@ class XTime(XBuiltin):
     @staticmethod
     def translate(value, topython=True):
         if topython:
-            if isinstance(value, basestring) and len(value):
+            if isinstance(value, str) and len(value):
                 return Time(value).value
         else:
             if isinstance(value, dt.time):
@@ -158,7 +158,7 @@ class XDateTime(XBuiltin):
     @staticmethod
     def translate(value, topython=True):
         if topython:
-            if isinstance(value, basestring) and len(value):
+            if isinstance(value, str) and len(value):
                 return DateTime(value).value
         else:
             if isinstance(value, dt.datetime):

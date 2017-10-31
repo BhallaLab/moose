@@ -6,9 +6,9 @@
 # Maintainer:
 # Created: Tue Nov 13 15:58:31 2012 (+0530)
 # Version:
-# Last-Updated: Thu Jul 18 10:35:00 2013 (+0530)
-#           By: subha
-#     Update #: 2244
+# Last-Updated: Thu Oct 5 12:35:00 2013 (+0530)
+#           By: Harsha
+#     Update #: 
 # URL:
 # Keywords:
 # Compatibility:
@@ -44,7 +44,11 @@
 #
 
 # Code:
+'''
+Oct 5: could not recreate if object already exist in moose which was allowed earlier
+        now if object exist need to use element which is cleaned here
 
+'''
 import sys
 import config
 import pickle
@@ -331,9 +335,15 @@ class RunView(RunBase):
             self.dataRoot = modelRoot + '/data'
         else:
             self.dataRoot = "/data"
-        self.setModelRoot(moose.Neutral(self.plugin.modelRoot).path)
-        self.setDataRoot(moose.Neutral('/data').path)
-        self.setDataRoot(moose.Neutral(self.plugin.modelRoot).path)
+        if not moose.exists(self.plugin.modelRoot):
+            moose.Neutral(self.plugin.modelroot)
+        self.setModelRoot(moose.element(self.plugin.modelRoot).path)
+        if not moose.exists('/data'):
+            moose.Neutral('/data')
+        self.setDataRoot(moose.element('/data').path)
+        if not moose.exists(self.plugin.modelRoot):
+            moose.Neutral(self.plugin.modelRoot)
+        self.setDataRoot(moose.element(self.plugin.modelRoot).path)
         self.plugin.modelRootChanged.connect(self.setModelRoot)
         self.plugin.dataRootChanged.connect(self.setDataRoot)
         # self.getCentralWidget()
@@ -709,19 +719,34 @@ class SchedulingWidget(QtGui.QWidget):
         else:
             stoich = moose.Stoich(compt[0].path+'/stoich')
             status = int(stoich.status)
+            # Flag to track status of Stoich object.
+            # -1: No path yet assigned.
+            # 0: Success
+            # 1: Warning: Missing reactant in Reac or Enz
+            # 2: Warning: Missing substrate in MMenz
+            # 4: Warning: Compartment not defined
+            # 8: Warning: Neither Ksolve nor Dsolve defined
+            # 16: Warning: No objects found on path
+
             # print("Status =>", status)
+
+            if status == 1 or status == 2:
+                nameRE = "\n\nclassName --> parent --> name  "
+                for res in moose.wildcardFind(self.modelRoot+'/##[ISA=ReacBase],'+self.modelRoot+'/##[ISA=EnzBase]'):
+                    if not len(res.neighbors["sub"]) or not len(res.neighbors["prd"]):
+                        nameRE = nameRE+"\n "+res.className + " --> "+res.parent.name+ " --> "+res.name
+
             if status == -1:
                 QtGui.QMessageBox.warning(None,"Could not Run the model","Warning: Reaction path not yet assigned.\n ")
                 return -1
             if status == 1:
-                QtGui.QMessageBox.warning(None,"Could not Run the model","Warning: Missing a reactant in a Reac or Enz.\n ")
+                #QtGui.QMessageBox.warning(None,"Could not Run the model","Warning: Missing a reactant in a Reac or Enz.\n ")
+                QtGui.QMessageBox.warning(None,"Could not Run the model","Warning: Missing a reactant in %s " %(nameRE))
                 return 1
             elif status == 2:
-                QtGui.QMessageBox.warning(None,"Could not Run the model","Warning: Missing a substrate in an MMenz.\n ")
+                QtGui.QMessageBox.warning(None,"Could not Run the model","Warning: Missing a substrate in an MMenz %s " %(nameRE))
+                #QtGui.QMessageBox.warning(None,"Could not Run the model","Warning: Missing a substrate in an MMenz.\n ")
                 return 2
-            elif status == 3:
-                QtGui.QMessageBox.warning(None,"Could not Run the model","Warning: Missing substrates as well as reactants.\n ")
-                return 3
             elif status == 4:
                 QtGui.QMessageBox.warning(None,"Could not Run the model"," Warning: Compartment not defined.\n ")
                 return 4

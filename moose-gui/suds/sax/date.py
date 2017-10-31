@@ -65,7 +65,7 @@ class Date(UnicodeMixin):
             self.value = value.date()
         elif isinstance(value, datetime.date):
             self.value = value
-        elif isinstance(value, basestring):
+        elif isinstance(value, str):
             self.value = self.__parse(value)
         else:
             raise ValueError("invalid type for Date(): %s" % type(value))
@@ -115,7 +115,7 @@ class DateTime(UnicodeMixin):
         """
         if isinstance(value, datetime.datetime):
             self.value = value
-        elif isinstance(value, basestring):
+        elif isinstance(value, str):
             self.value = self.__parse(value)
         else:
             raise ValueError("invalid type for DateTime(): %s" % type(value))
@@ -173,7 +173,7 @@ class Time(UnicodeMixin):
         """
         if isinstance(value, datetime.time):
             self.value = value
-        elif isinstance(value, basestring):
+        elif isinstance(value, str):
             self.value = self.__parse(value)
         else:
             raise ValueError("invalid type for Time(): %s" % type(value))
