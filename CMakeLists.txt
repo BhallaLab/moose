@@ -91,9 +91,6 @@ if(WITH_GUI)
 endif()
 
 
-## moose-gui
-## TODO: moose-gui should be a python module.
-set(MOOSE_GUI_DIR ${CMAKE_SOURCE_DIR}/moose-gui)
 
 install(DIRECTORY ${PYMOOSE_INSTALL_DIR}/
     DESTINATION ${CMAKE_INSTALL_PREFIX}
@@ -102,6 +99,8 @@ install(DIRECTORY ${PYMOOSE_INSTALL_DIR}/
     )
 
 if(WITH_GUI)
+    # moose-gui
+    set(MOOSE_GUI_DIR ${CMAKE_SOURCE_DIR}/moose-gui)
     install(DIRECTORY ${MOOSE_GUI_INSTALL_DIR}/
         DESTINATION lib/moose/gui
         PATTERN ".git*" EXCLUDE
@@ -115,10 +114,11 @@ if(WITH_GUI)
         PATTERN ".travis*" EXCLUDE
         PATTERN "*.pyc" EXCLUDE
         )
-endif()
 
-configure_file( ${CMAKE_SOURCE_DIR}/cmake/moose.in ${CMAKE_BINARY_DIR}/moose )
-install(PROGRAMS ${CMAKE_BINARY_DIR}/moose DESTINATION bin)
+    configure_file( ${CMAKE_SOURCE_DIR}/cmake/moose.in 
+        ${CMAKE_BINARY_DIR}/moosegui )
+    install(PROGRAMS ${CMAKE_BINARY_DIR}/moose DESTINATION bin)
+endif()
 
 ## UNINSTALL
 add_custom_target(uninstall DEPENDS __uninstall_moose-core__ )
