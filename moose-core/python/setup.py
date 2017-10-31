@@ -32,6 +32,8 @@ try:
 except Exception as e:
     suffix = '.so'
 
+print( 'Python module suffix is %s' % suffix )
+
 setup(
         name='moose',
         version=version,
