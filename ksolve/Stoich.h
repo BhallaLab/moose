@@ -126,6 +126,8 @@ class Stoich
 
 		unsigned int getNumFuncs() const;
 		const FuncTerm* funcs( unsigned int i ) const;
+		/// Returns true if the specified pool is controlled by a func
+		bool isFuncTarget( unsigned int poolIndex ) const;
 
 		vector< int > getMatrixEntry() const;
 		vector< unsigned int > getColIndex() const;
@@ -619,6 +621,13 @@ class Stoich
 		 * Vector of funcs controlling pool number, that is N.
 		 */
 		vector< Id > poolFuncVec_;
+
+		/**
+		 * vector tracks which pool is controlled by which func.
+		 * Unused entries are flagged by ~0.
+		 * funcTarget_[ poolIndex ] == funcIndex
+		 */
+		vector< unsigned int > funcTarget_;
 
 		/**
 		 * Vector of funcs controlling pool increment, that is dN/dt

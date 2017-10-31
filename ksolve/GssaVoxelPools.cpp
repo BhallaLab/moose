@@ -70,7 +70,7 @@ void GssaVoxelPools::updateDependentMathExpn(
     // The lower commented block has all funcs updated every time step,
     // but this too
     // doesn't update the cascading reacs. So this is now handled by the
-    // useClockedUpdate flag, and we use the upper block here instead.
+    // useClockedUpdate flag, and we use the lower block here instead.
     /*
     const vector< unsigned int >& deps = g->dependentMathExpn[ rindex ];
     for( vector< unsigned int >::const_iterator
@@ -78,11 +78,15 @@ void GssaVoxelPools::updateDependentMathExpn(
     		g->stoich->funcs( *i )->evalPool( varS(), time );
     }
     */
+	/*
     unsigned int numFuncs = g->stoich->getNumFuncs();
     for( unsigned int i = 0; i < numFuncs; ++i )
     {
         g->stoich->funcs( i )->evalPool( varS(), time );
     }
+	*/
+	// This function is equivalent to the loop above.
+	g->stoich->updateFuncs( varS(), time );
 }
 
 void GssaVoxelPools::updateDependentRates(
@@ -135,6 +139,7 @@ void GssaVoxelPools::setNumReac( unsigned int n )
  */
 bool GssaVoxelPools::refreshAtot( const GssaSystem* g )
 {
+	g->stoich->updateFuncs( varS(), t_ );
     updateReacVelocities( g, S(), v_ );
     atot_ = 0;
     for ( vector< double >::const_iterator
@@ -156,7 +161,6 @@ bool GssaVoxelPools::refreshAtot( const GssaSystem* g )
  */
 void GssaVoxelPools::recalcTime( const GssaSystem* g, double currTime )
 {
-    updateDependentMathExpn( g, 0, currTime );
     refreshAtot( g );
     assert( t_ > currTime );
     t_ = currTime;
@@ -174,6 +178,8 @@ void GssaVoxelPools::advance( const ProcInfo* p, const GssaSystem* g )
         if ( atot_ <= 0.0 )   // reac system is stuck, will not advance.
         {
             t_ = nextt;
+    		g->stoich->updateFuncs( varS(), t_ );
+        	// updateDependentMathExpn( g, 0, t_ );
             return;
         }
         unsigned int rindex = pickReac();
@@ -185,6 +191,8 @@ void GssaVoxelPools::advance( const ProcInfo* p, const GssaSystem* g )
             if ( !refreshAtot( g ) )   // Stuck state.
             {
                 t_ = nextt;
+    			g->stoich->updateFuncs( varS(), t_ );
+        		// updateDependentMathExpn( g, 0, t_ );
                 return;
             }
             // We had a roundoff error, fixed it, but now need to be sure
@@ -210,8 +218,8 @@ void GssaVoxelPools::advance( const ProcInfo* p, const GssaSystem* g )
             r = rng_.uniform();
         }
         t_ -= ( 1.0 / atot_ ) * log( r );
-        // g->stoich->updateFuncs( varS(), t_ ); // Handled next line.
-        updateDependentMathExpn( g, rindex, t_ );
+		g->stoich->updateFuncs( varS(), t_ );
+        // updateDependentMathExpn( g, rindex, t_ );
         updateDependentRates( g->dependency[ rindex ], g->stoich );
     }
 }
@@ -371,7 +379,7 @@ void GssaVoxelPools::xferIn( XferInfo& xf,
         // cout << x << "	i = " << *i << *j << "	m = " << *m << endl;
         double dx = *i++ - *j++;
         double base = floor( dx );
-        if ( rng_.uniform() > dx - base )
+        if ( rng_.uniform() >= (dx - base) )
             x += base;
         else
             x += base + 1.0;
@@ -425,7 +433,7 @@ void GssaVoxelPools::xferInOnlyProxies(
         if ( *k >= stoichPtr_->getNumVarPools() && *k < proxyEndIndex )
         {
             double base = floor( *i );
-            if ( rng_.uniform() > *i - base )
+            if ( rng_.uniform() >= (*i - base) )
                 varSinit()[*k] = (varS()[*k] += base );
             else
                 varSinit()[*k] = (varS()[*k] += base + 1.0 );

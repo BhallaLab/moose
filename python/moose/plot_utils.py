@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
-"""plot_utils.py: Some utility function for plotting data in moose.
+#
+# plot_utils.py: Some utility function for plotting data in moose.
 
-Last modified: Sun Jan 10, 2016  04:04PM
-
-"""
+from __future__ import print_function, division, absolute_import
 
 __author__           = "Dilawar Singh"
 __copyright__        = "Copyright 2013, NCBS Bangalore"
@@ -15,10 +14,14 @@ __email__            = "dilawars@ncbs.res.in"
 __status__           = "Development"
 
 import numpy as np
-import moose
-import print_utils as pu
-
 import matplotlib.pyplot as plt
+import moose
+import moose.print_utils as pu
+import re
+
+# To support python 2.6. On Python3.6+, dictionaries are ordered by default.
+# This is here to fill this gap.
+from moose.OrderedDict import OrderedDict
 
 def plotAscii(yvec, xvec = None, file=None):
     """Plot two list-like object in terminal using gnuplot.
@@ -235,7 +238,7 @@ def saveRecords(records, xvec = None, **kwargs):
 def plotRecords(records, xvec = None, **kwargs):
     """Wrapper
     """
-    dataDict = {}
+    dataDict = OrderedDict( )
     try:
         for k in sorted(records.keys(), key=str.lower):
             dataDict[k] = records[k]
@@ -284,12 +287,21 @@ def plotRecords(records, xvec = None, **kwargs):
     plt.close( )
 
 
-def plotTables( records, xvec = None, **kwargs ):
-    """Plot dictionary of moose.Table/moose.Table2
+def plotTables( regex = '.*', **kwargs ):
+    """plotTables Plot all moose.Table/moose.Table2 matching given regex. By
+    default plot all tables. Table names must be unique. Table name are used as
+    legend.
 
-    :param records: A dictionary of moose.Table. All tables must have same
-    length.
-    :param xvec: If None, moose.Clock is used to generate time-vector.
+    :param regex: Python regular expression to be matched.
     :param **kwargs:
+        - subplot = True/False; if True, each Table is plotted in a subplot.
+        - outfile = filepath; If given, plot will be saved to this path.
     """
-    return plotRecords( records, xvec, **kwargs )
+
+    tables = moose.wildcardFind( '/##[TYPE=Table]' )
+    tables += moose.wildcardFind( '/##[TYPE=Table2]' )
+    toPlot = OrderedDict( )
+    for t in sorted(tables, key = lambda x: x.name):
+        if re.search( regex, t.name ):
+            toPlot[ t.name ] = t
+    return plotRecords( toPlot, None, **kwargs )

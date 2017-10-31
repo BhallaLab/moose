@@ -34,17 +34,12 @@ if(COMPILER_SUPPORTS_CXX11)
     if(APPLE)
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++" )
     endif(APPLE)
-elseif(COMPILER_SUPPORTS_CXX0X)
-    message(STATUS "Your compiler supports c++0x features. Enabling it")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
-    add_definitions( -DENABLE_CXX11 )
+else(COMPILER_SUPPORTS_CXX11)
     add_definitions( -DBOOST_NO_CXX11_SCOPED_ENUMS -DBOOST_NO_SCOPED_ENUMS )
-    if(APPLE)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++" )
-    endif(APPLE)
-else()
-    add_definitions( -DBOOST_NO_CXX11_SCOPED_ENUMS -DBOOST_NO_SCOPED_ENUMS )
-    message(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support.")
-endif()
+    message(FATAL_ERROR "\
+        The compiler ${CMAKE_CXX_COMPILER} is too old. \
+        Please use a compiler which has c++11 support.
+        ")
+endif(COMPILER_SUPPORTS_CXX11)
 
 
