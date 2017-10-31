@@ -1,4 +1,24 @@
 # -*- coding: utf-8 -*-
+'''
+*******************************************************************
+ * File:            validation.py
+ * Description:
+ * Author:          HarshaRani
+ * E-mail:          hrani@ncbs.res.in
+ ********************************************************************/
+
+/**********************************************************************
+** This program is part of 'MOOSE', the
+** Messaging Object Oriented Simulation Environment,
+** also known as GENESIS 3 base code.
+**           copyright (C) 2003-2017 Upinder S. Bhalla. and NCBS
+Created : Thu May 12 10:19:00 2016(+0530)
+Version
+Last-Updated: Fri Jul 28 15:50:00 2017(+0530)
+          By:
+**********************************************************************/
+
+'''
 foundLibSBML_ = False
 try:
     from libsbml import *

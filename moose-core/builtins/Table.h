@@ -43,6 +43,9 @@ public:
     void setUseStreamer ( bool status );
     bool getUseStreamer ( void ) const;
 
+    void setUseSpikeMode ( bool status );
+    bool getUseSpikeMode ( void ) const;
+
     void setOutfile ( string outfilepath );
     string getOutfile ( void ) const;
 
@@ -75,6 +78,8 @@ private:
     double threshold_;
     double lastTime_;
     double input_;
+	bool fired_;
+	bool useSpikeMode_;
 
     /**
      * @brief Keep the data, each entry is preceeded by time value.

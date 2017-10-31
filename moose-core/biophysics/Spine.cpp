@@ -59,7 +59,7 @@ const Cinfo* Spine::initCinfo()
 			"scaled by the user, both the diameter and the length of the "
 			"spine head scale by the cube root of the ratio to the "
 			"previous volume. The diameter of the PSD is pegged to the "
-			"diameter fo the spine head. \n"
+			"diameter of the spine head. \n"
 			"This is useful to scale total # of molecules in the head. ",
 			&Spine::setHeadVolume,
 			&Spine::getHeadVolume

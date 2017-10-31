@@ -50,6 +50,8 @@ class Neuron
 				const Eref& e, ObjId compt ) const;
 		ObjId getParentCompartmentOfSpine( const Eref& e, ObjId compt )
 				const;
+		vector< ObjId > getSpineIdsFromCompartmentIds(
+				const Eref& e, vector< ObjId > compt ) const;
 		void setChannelDistribution( const Eref& e, vector< string > v );
 		vector< string > getChannelDistribution( const Eref& e ) const;
 		void setPassiveDistribution( const Eref& e, vector< string > v );

@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
-"""print_utils.py: A library with some print functions. Very useful during
-development.
+# print_utils.py:
+#
+# A library with some print functions. Very useful during development.
 
-Last modified: Sat Jan 18, 2014  05:01PM
-
-"""
+from __future__ import print_function, division, absolute_import
 
 __author__           = "Dilawar Singh"
 __copyright__        = "Copyright 2013, NCBS Bangalore"
@@ -15,9 +14,7 @@ __maintainer__       = "Dilawar Singh"
 __email__            = "dilawars@ncbs.res.in"
 __status__           = "Development"
 
-import inspect
-import sys
-from . import _moose as moose
+import moose
 
 HEADER = '\033[95m'
 OKBLUE = '\033[94m'
@@ -79,7 +76,9 @@ def dump(label, msg, frame=None, exception=None):
 
     prefix = '[{0}] '.format(label)
 
-    ''' Enable it if you want indented messages
+    '''
+    # Enable it if you want indented messages
+    import inspect
     stackLength = len(inspect.stack()) - 1
     if stackLength == 1:
         prefix = '\n[{}] '.format(label)
@@ -102,8 +101,11 @@ def dump(label, msg, frame=None, exception=None):
     if exception:
         print((" [Expcetion] {0}".format(exception)))
 
-def info(msg): dump("INFO", msg)
-def warn(msg): dump("WARN", msg)
+def info(msg):
+    dump("INFO", msg)
+
+def warn(msg):
+    dump("WARN", msg)
 
 def error(msg):
     dump("ERROR", msg)

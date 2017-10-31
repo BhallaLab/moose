@@ -17,18 +17,15 @@
 ## channel conductances, between them.
 ##########################################################################
 from __future__ import print_function
-from __future__ import absolute_import
-
 import imp
 import os
 import moose
 import numpy as np
 import pylab
 import math
-import rdesigneur.rmoogli
-
-from rdesigneur.rdesigneurProtos import *
-
+import rmoogli
+#import rdesigneurProtos
+from rdesigneurProtos import *
 from moose.neuroml.NeuroML import NeuroML
 from moose.neuroml.ChannelML import ChannelML
 
@@ -84,6 +81,7 @@ class rdesigneur:
             useGssa = True,
             combineSegments = True,
             stealCellFromLibrary = False,
+            verbose = True,
             diffusionLength= 2e-6,
             meshLambda = -1.0,    #This is a backward compatibility hack
             temperature = 32,
@@ -115,6 +113,7 @@ class rdesigneur:
         self.useGssa = useGssa
         self.combineSegments = combineSegments
         self.stealCellFromLibrary = stealCellFromLibrary
+        self.verbose = verbose
         self.diffusionLength= diffusionLength
         if meshLambda > 0.0:
             print("Warning: meshLambda argument is deprecated. Please use 'diffusionLength' instead.\nFor now rdesigneur will accept this argument.")
@@ -205,7 +204,8 @@ class rdesigneur:
             self._buildMoogli()
             self._buildStims()
             self._configureClocks()
-            self._printModelStats()
+            if self.verbose:
+                self._printModelStats()
             self._savePlots()
 
         except BuildError as msg:
@@ -319,7 +319,8 @@ class rdesigneur:
                 return True
             if moose.exists( '/library/' + protoVec[0] ):
                 #moose.copy('/library/' + protoVec[0], '/library/', protoVec[1])
-                print('renaming /library/' + protoVec[0] + ' to ' + protoVec[1])
+                if self.verbose:
+                    print('renaming /library/' + protoVec[0] + ' to ' + protoVec[1])
                 moose.element( '/library/' + protoVec[0]).name = protoVec[1]
                 #moose.le( '/library' )
                 return True
@@ -458,6 +459,7 @@ class rdesigneur:
                     "buildChemDistrib: No elec compartments found in path: '" \
                         + pair + "'" )
             self.spineComptElist = self.elecid.spinesFromExpression[ pair ]
+            #print( 'LEN SPINECOMPTELIST =' + str( pair ) + ", " str( len( self.spineComptElist ) ) )
             '''
             if len( self.spineComptElist ) == 0:
                 raise BuildError( \
@@ -522,7 +524,7 @@ class rdesigneur:
             objList = self._collapseElistToPathAndClass( comptList, plotSpec[2], kf[0] )
             # print ("objList: ", len(objList), kf[1])
             return objList, kf[1]
-        elif (field == 'n' or field == 'conc'  ):
+        elif (field == 'n' or field == 'conc' or field == 'volume'  ):
             path = plotSpec[2]
             pos = path.find( '/' )
             if pos == -1:   # Assume it is in the dend compartment.
@@ -558,15 +560,18 @@ class rdesigneur:
     def _buildPlots( self ):
         knownFields = {
             'Vm':('CompartmentBase', 'getVm', 1000, 'Memb. Potential (mV)' ),
+            'spikeTime':('CompartmentBase', 'getVm', 1, 'Spike Times (s)'),
             'Im':('CompartmentBase', 'getIm', 1e9, 'Memb. current (nA)' ),
             'inject':('CompartmentBase', 'getInject', 1e9, 'inject current (nA)' ),
             'Gbar':('ChanBase', 'getGbar', 1e9, 'chan max conductance (nS)' ),
+            'modulation':('ChanBase', 'getModulation', 1, 'chan modulation (unitless)' ),
             'Gk':('ChanBase', 'getGk', 1e9, 'chan conductance (nS)' ),
             'Ik':('ChanBase', 'getIk', 1e9, 'chan current (nA)' ),
             'ICa':('NMDAChan', 'getICa', 1e9, 'Ca current (nA)' ),
             'Ca':('CaConcBase', 'getCa', 1e3, 'Ca conc (uM)' ),
             'n':('PoolBase', 'getN', 1, '# of molecules'),
-            'conc':('PoolBase', 'getConc', 1000, 'Concentration (uM)' )
+            'conc':('PoolBase', 'getConc', 1000, 'Concentration (uM)' ),
+            'volume':('PoolBase', 'getVolume', 1e18, 'Volume (um^3)' )
         }
         graphs = moose.Neutral( self.modelPath + '/graphs' )
         dummy = moose.element( '/' )
@@ -579,17 +584,21 @@ class rdesigneur:
             plotObj2, plotField2 = self._parseComptField( spineCompts, i, knownFields )
             assert( plotField == plotField2 )
             plotObj3 = plotObj + plotObj2
-            numPlots = sum( i != dummy for i in plotObj3 )
+            numPlots = sum( q != dummy for q in plotObj3 )
             if numPlots > 0:
                 tabname = graphs.path + '/plot' + str(k)
                 scale = knownFields[i[3]][2]
                 units = knownFields[i[3]][3]
-                self.plotNames.append( ( tabname, i[4], k, scale, units ) )
+                self.plotNames.append( ( tabname, i[4], k, scale, units, i[3] ) )
                 k += 1
-                if i[3] == 'n' or i[3] == 'conc':
+                if i[3] == 'n' or i[3] == 'conc' or i[3] == 'volume' or i[3] == 'Gbar':
                     tabs = moose.Table2( tabname, numPlots )
                 else:
                     tabs = moose.Table( tabname, numPlots )
+                    if i[3] == 'spikeTime':
+                        tabs.vec.threshold = -0.02 # Threshold for classifying Vm as a spike.
+                        tabs.vec.useSpikeMode = True # spike detect mode on
+
                 vtabs = moose.vec( tabs )
                 q = 0
                 for p in [ x for x in plotObj3 if x != dummy ]:
@@ -599,6 +608,7 @@ class rdesigneur:
     def _buildMoogli( self ):
         knownFields = {
             'Vm':('CompartmentBase', 'getVm', 1000, 'Memb. Potential (mV)', -80.0, 40.0 ),
+            'initVm':('CompartmentBase', 'getInitVm', 1000, 'Init. Memb. Potl (mV)', -80.0, 40.0 ),
             'Im':('CompartmentBase', 'getIm', 1e9, 'Memb. current (nA)', -10.0, 10.0 ),
             'inject':('CompartmentBase', 'getInject', 1e9, 'inject current (nA)', -10.0, 10.0 ),
             'Gbar':('ChanBase', 'getGbar', 1e9, 'chan max conductance (nS)', 0.0, 1.0 ),
@@ -607,7 +617,8 @@ class rdesigneur:
             'ICa':('NMDAChan', 'getICa', 1e9, 'Ca current (nA)', -10.0, 10.0 ),
             'Ca':('CaConcBase', 'getCa', 1e3, 'Ca conc (uM)', 0.0, 10.0 ),
             'n':('PoolBase', 'getN', 1, '# of molecules', 0.0, 200.0 ),
-            'conc':('PoolBase', 'getConc', 1000, 'Concentration (uM)', 0.0, 2.0 )
+            'conc':('PoolBase', 'getConc', 1000, 'Concentration (uM)', 0.0, 2.0 ),
+            'volume':('PoolBase', 'getVolume', 1e18, 'Volume (um^3)' )
         }
         moogliBase = moose.Neutral( self.modelPath + '/moogli' )
         k = 0
@@ -639,14 +650,24 @@ class rdesigneur:
 
     def display( self ):
         for i in self.plotNames:
+
             pylab.figure( i[2] )
             pylab.title( i[1] )
             pylab.xlabel( "Time (s)" )
             pylab.ylabel( i[4] )
             vtab = moose.vec( i[0] )
-            t = np.arange( 0, vtab[0].vector.size, 1 ) * vtab[0].dt
-            for j in vtab:
-                pylab.plot( t, j.vector * i[3] )
+            if i[5] == 'spikeTime':
+                k = 0
+                tmax = moose.element( '/clock' ).currentTime
+                for j in vtab: # Plot a raster
+                    y = [k] * len( j.vector )
+                    pylab.plot( j.vector * i[3], y, linestyle = 'None', marker = '.', markersize = 10 )
+                    pylab.xlim( 0, tmax )
+                
+            else:
+                t = np.arange( 0, vtab[0].vector.size, 1 ) * vtab[0].dt
+                for j in vtab:
+                    pylab.plot( t, j.vector * i[3] )
         if len( self.moogList ) > 0:
             pylab.ion()
         pylab.show(block=True)
@@ -666,15 +687,18 @@ class rdesigneur:
 
         knownFields = {
             'Vm':('CompartmentBase', 'getVm', 1000, 'Memb. Potential (mV)' ),
+            'spikeTime':('CompartmentBase', 'getVm', 1, 'Spike Times (s)'),
             'Im':('CompartmentBase', 'getIm', 1e9, 'Memb. current (nA)' ),
             'inject':('CompartmentBase', 'getInject', 1e9, 'inject current (nA)' ),
             'Gbar':('ChanBase', 'getGbar', 1e9, 'chan max conductance (nS)' ),
+            'modulation':('ChanBase', 'getModulation', 1, 'chan modulation (unitless)' ),
             'Gk':('ChanBase', 'getGk', 1e9, 'chan conductance (nS)' ),
             'Ik':('ChanBase', 'getIk', 1e9, 'chan current (nA)' ),
             'ICa':('NMDAChan', 'getICa', 1e9, 'Ca current (nA)' ),
             'Ca':('CaConcBase', 'getCa', 1e3, 'Ca conc (uM)' ),
             'n':('PoolBase', 'getN', 1, '# of molecules'),
-            'conc':('PoolBase', 'getConc', 1000, 'Concentration (uM)' )
+            'conc':('PoolBase', 'getConc', 1000, 'Concentration (uM)' ),
+            'volume':('PoolBase', 'getVolume', 1e18, 'Volume (um^3)' )
         }
 
         save_graphs = moose.Neutral( self.modelPath + '/save_graphs' )
@@ -696,11 +720,15 @@ class rdesigneur:
                 units = knownFields[i[3]][3]
                 self.saveNames.append( ( save_tabname, i[4], k, scale, units ) )
                 k += 1
-                if i[3] == 'n' or i[3] == 'conc':
+                if i[3] == 'n' or i[3] == 'conc' or i[3] == 'volume' or i[3] == 'Gbar':
                     save_tabs = moose.Table2( save_tabname, numPlots )
+                    save_vtabs = moose.vec( save_tabs )
                 else:
                     save_tabs = moose.Table( save_tabname, numPlots )
-                save_vtabs = moose.vec( save_tabs )
+                    save_vtabs = moose.vec( save_tabs )
+                    if i[3] == 'spikeTime':
+                        save_vtabs.threshold = -0.02 # Threshold for classifying Vm as a spike.
+                        save_vtabs.useSpikeMode = True # spike detect mode on
                 q = 0
                 for p in [ x for x in plotObj3 if x != dummy ]:
                     moose.connect( save_vtabs[q], 'requestOut', p, plotField )
@@ -717,6 +745,7 @@ class rdesigneur:
 
         knownFields = {
             'Vm':('CompartmentBase', 'getVm', 1000, 'Memb. Potential (mV)' ),
+            'spikeTime':('CompartmentBase', 'getVm', 1, 'Spike Times (s)'),
             'Im':('CompartmentBase', 'getIm', 1e9, 'Memb. current (nA)' ),
             'inject':('CompartmentBase', 'getInject', 1e9, 'inject current (nA)' ),
             'Gbar':('ChanBase', 'getGbar', 1e9, 'chan max conductance (nS)' ),
@@ -725,7 +754,8 @@ class rdesigneur:
             'ICa':('NMDAChan', 'getICa', 1e9, 'Ca current (nA)' ),
             'Ca':('CaConcBase', 'getCa', 1e3, 'Ca conc (uM)' ),
             'n':('PoolBase', 'getN', 1, '# of molecules'),
-            'conc':('PoolBase', 'getConc', 1000, 'Concentration (uM)' )
+            'conc':('PoolBase', 'getConc', 1000, 'Concentration (uM)' ),
+            'volume':('PoolBase', 'getVolume', 1e18, 'Volume (um^3)' )
         }
 
         '''
@@ -893,18 +923,17 @@ class rdesigneur:
         if self.turnOffElec:
             elecDt = 1e6
             elecPlotDt = 1e6
-            diffDt = 0.1    # Slow it down again because no multiscaling
-            chemDt = 0.1    # Slow it down again because no multiscaling
         else:
             elecDt = self.elecDt
-            diffDt = self.diffDt
-            chemDt = self.chemDt
+            elecPlotDt = self.elecPlotDt
+        diffDt = self.diffDt
+        chemDt = self.chemDt
         for i in range( 0, 9 ):
             moose.setClock( i, elecDt )
+        moose.setClock( 8, elecPlotDt )
         moose.setClock( 10, diffDt )
         for i in range( 11, 18 ):
             moose.setClock( i, chemDt )
-        moose.setClock( 8, self.elecPlotDt )
         moose.setClock( 18, self.chemPlotDt )
         hsolve = moose.HSolve( self.elecid.path + '/hsolve' )
         hsolve.dt = elecDt
@@ -1231,7 +1260,14 @@ class rdesigneur:
         mesh = moose.element( '/model/chem/' + meshName )
         #elecComptList = mesh.elecComptList
         if elecRelPath == 'spine':
-            elecComptList = moose.vec( mesh.elecComptList[0].path + '/../spine' )
+            # This is nasty. The spine indexing is different from
+            # the compartment indexing and the mesh indexing and the 
+            # chem indexing. Need to fix at some time.
+            #elecComptList = moose.vec( mesh.elecComptList[0].path + '/../spine' )
+            elecComptList = moose.element( '/model/elec').spineIdsFromCompartmentIds[ mesh.elecComptList ]
+            #print( len( mesh.elecComptList ) )
+            # for i,j in zip( elecComptList, mesh.elecComptList ):
+            #    print( "Lookup: {} {} {}; orig: {} {} {}".format( i.name, i.index, i.fieldIndex, j.name, j.index, j.fieldIndex ))
         else:
             elecComptList = mesh.elecComptList
 
@@ -1270,18 +1306,23 @@ class rdesigneur:
         #print 'building ', len( elecComptList ), 'adaptors ', adName, ' for: ', mesh.name, elecRelPath, elecField, chemRelPath
         av = ad.vec
         chemVec = moose.element( mesh.path + '/' + chemRelPath ).vec
+        root = moose.element( '/' )
 
         for i in zip( elecComptList, startVoxelInCompt, endVoxelInCompt, av ):
             i[3].inputOffset = 0.0
             i[3].outputOffset = offset
             i[3].scale = scale
             if elecRelPath == 'spine':
+                # Check needed in case there were unmapped entries in 
+                # spineIdsFromCompartmentIds
                 elObj = i[0]
+                if elObj == root:
+                    continue
             else:
                 ePath = i[0].path + '/' + elecRelPath
                 if not( moose.exists( ePath ) ):
-                    raise BuildError( \
-                        "Error: buildAdaptor: no elec obj in " + ePath )
+                    continue
+                    #raise BuildError( "Error: buildAdaptor: no elec obj in " + ePath )
                 elObj = moose.element( i[0].path + '/' + elecRelPath )
             if ( isElecToChem ):
                 elecFieldSrc = 'get' + capField

@@ -1,7 +1,22 @@
 # -*- coding: utf-8 -*-
+""" ChemconnectUtil.py Some of the command function are written """
+
+#Created : Friday May 27 12:19:00 2016(+0530)
+
+__author__           = "Harsha Rani"
+__copyright__        = "Copyright 2017, Harsha Rani and NCBS Bangalore"
+__credits__          = ["NCBS Bangalore"]
+__license__          = "GNU GPL"
+__version__          = "1.0.0"
+__maintainer__       = "Harsha Rani"
+__email__            = "hrani@ncbs.res.in"
+__status__           = "Development"
+__updated__          = "Aug 8 2017"
+
+#Aug 8 : added findCompartment function here
+
 import moose
 import numpy as np
-from collections import Counter
 
 def xyPosition(objInfo,xory):
     try:
@@ -119,7 +134,7 @@ def setupItem(modelPath,cntDict):
                 uniqItem,countuniqItem = countitems(items,'prd')
                 prdNo = uniqItem
                 if (len(subNo) == 0 or len(prdNo) == 0):
-                    print ("Substrate Product is empty ",path, " ",items)
+                    print ("\nSubstrate Product is empty for "+items.path)
 
                 for prd in uniqItem:
                     prdlist.append((moose.element(prd),'p',countuniqItem[prd]))
@@ -178,5 +193,18 @@ def countitems(mitems,objtype):
     items = []
     items = moose.element(mitems).neighbors[objtype]
     uniqItems = set(items)
-    countuniqItems = Counter(items)
+    #countuniqItems = Counter(items)
+    countuniqItems = dict((i, items.count(i)) for i in items)
     return(uniqItems,countuniqItems)
+
+def findCompartment(element):
+    if element.path == '/':
+        return moose.element('/')
+    elif mooseIsInstance(element, ["CubeMesh", "CyclMesh"]):
+        return (element)
+    else:
+        return findCompartment(moose.element(element.parent))
+    
+
+def mooseIsInstance(element, classNames):
+    return moose.element(element).__class__.__name__ in classNames

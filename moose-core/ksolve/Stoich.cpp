@@ -631,6 +631,12 @@ const FuncTerm* Stoich::funcs( unsigned int i ) const
     return funcs_[i];
 }
 
+bool Stoich::isFuncTarget( unsigned int poolIndex ) const
+{
+	assert( poolIndex < funcTarget_.size() );
+	return ( funcTarget_[poolIndex] != ~0 );
+}
+
 vector< int > Stoich::getMatrixEntry() const
 {
     return N_.matrixEntry();
@@ -968,6 +974,10 @@ void Stoich::resizeArrays()
 
     species_.resize( totNumPools, 0 );
 
+	funcTarget_.clear();
+	// Only the pools controlled by a func (targets) have positive indices.
+	funcTarget_.resize( totNumPools, ~0 ); 
+
     unsigned int totNumRates =
         ( reacVec_.size() + offSolverReacVec_.size() ) * (1+useOneWay_) +
         ( enzVec_.size() + offSolverEnzVec_.size() ) * (2 + useOneWay_ ) +
@@ -1118,10 +1128,13 @@ void Stoich::installAndUnschedFunc( Id func, Id pool, double volScale )
     string expr = Field< string >::get( func, "expr" );
     ft->setExpr( expr );
     // Tie the output of the FuncTerm to the pool it controls.
-    ft->setTarget( convertIdToPoolIndex( pool ) );
+	unsigned int targetIndex = convertIdToPoolIndex( pool );
+    ft->setTarget( targetIndex );
     ft->setVolScale( volScale );
     unsigned int funcIndex = convertIdToFuncIndex( func );
     assert( funcIndex != ~0U );
+	// funcTarget_ vector tracks which pools are controlled by which func.
+	funcTarget_[targetIndex] = funcIndex;
     funcs_[ funcIndex ] = ft;
 }
 
