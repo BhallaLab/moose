@@ -28,7 +28,7 @@ version = '3.1.2'
 
 try:
     import importlib.machinery
-    suffix = importlib.machinery.EXTENSION_SUFFIXES[0]
+    suffix = importlib.machinery.EXTENSION_SUFFIXES[-1]
 except Exception as e:
     suffix = '.so'
 
