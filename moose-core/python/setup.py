@@ -64,7 +64,7 @@ setup(
             , 'moose.neuroml'
             , 'moose.genesis'
             , 'moose.chemUtil'
-            , 'moose.merge'
+            , 'moose.chemMerge'
             ],
         package_dir = {
             'moose' : 'moose'

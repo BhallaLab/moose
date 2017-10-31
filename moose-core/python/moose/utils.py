@@ -1,15 +1,11 @@
 # -*- coding: utf-8 -*-
-"""
-utils.py:
+# utils.py:
+#
+# Utility functions for moose.
+#
+# NOTE: Some function might break because unicode is default string in python3.
 
-Utility functions for moose.
-
-NOTE: Some function might break because unicode is default string in python3.
-
-"""
-
-from __future__ import print_function, division
-from __future__ import absolute_import
+from __future__ import print_function, division, absolute_import
 
 __author__           = 'Subhasis Ray, Aditya Gilra, Dilawar Singh'
 __copyright__        = "Copyright 2013, NCBS Bangalore"
@@ -30,17 +26,9 @@ import re
 
 from moose.moose_constants import *
 
-# Make these import non-important.
-try:
-    from moose.plot_utils import *
-except Exception as e:
-    pass
-
-try:
-    from moose.print_utils import *
-except Exception as e:
-    pass
-
+# Print and Plot utilities.
+from moose.plot_utils import *
+from moose.print_utils import *
 
 def create_table_path(model, graph, element, field):
 

@@ -84,6 +84,18 @@ const Cinfo* PoolBase::initCinfo()
 			&PoolBase::getSpecies
 		);
 
+		static ElementValueFinfo< PoolBase, bool > isBuffered(
+			"isBuffered",
+			"Flag: True if Pool is buffered. "
+			"In the case of Pool and BufPool the field can be assigned, to "
+			"change the type of the Pool object to BufPool, or vice versa. "
+			"None of the messages are affected. "
+			"This object class flip can only be done in the non-zombified "
+			"form of the Pool/BufPool. In Zombies it is read-only.",
+			&PoolBase::setIsBuffered,
+			&PoolBase::getIsBuffered
+		);
+
 		//////////////////////////////////////////////////////////////
 		// MsgDest Definitions
 		//////////////////////////////////////////////////////////////
@@ -103,6 +115,24 @@ const Cinfo* PoolBase::initCinfo()
 			"Separate finfo to assign molWt, and consequently diffusion const."
 			"Should only be used in SharedMsg with species.",
 			new EpFunc1< PoolBase, double >( &PoolBase::handleMolWt )
+		);
+		//////////////////////////////////////////////////////////////
+		// MsgDest Definitions: These three are used for non-reaction
+		// calculations involving algebraically defined rate terms.
+		//////////////////////////////////////////////////////////////
+		static DestFinfo increment( "increment",
+			"Increments mol numbers by specified amount. Can be +ve or -ve",
+			new OpFunc1< PoolBase, double >( &PoolBase::increment )
+		);
+
+		static DestFinfo decrement( "decrement",
+			"Decrements mol numbers by specified amount. Can be +ve or -ve",
+			new OpFunc1< PoolBase, double >( &PoolBase::decrement )
+		);
+
+		static DestFinfo nIn( "nIn",
+			"Assigns the number of molecules in Pool to specified value",
+			new OpFunc1< PoolBase, double >( &PoolBase::nIn )
 		);
 
 		//////////////////////////////////////////////////////////////
@@ -155,6 +185,10 @@ const Cinfo* PoolBase::initCinfo()
 		&concInit,	// Value
 		&volume,	// Readonly Value
 		&speciesId,	// Value
+		&isBuffered,	// Value
+		&increment,			// DestFinfo
+		&decrement,			// DestFinfo
+        &nIn,				// DestFinfo
 		&reac,				// SharedFinfo
 		&proc,				// SharedFinfo
 		&species,			// SharedFinfo
@@ -208,6 +242,21 @@ void PoolBase::reinit( const Eref& e, ProcPtr p )
 	vReinit( e, p );
 }
 
+void PoolBase::increment( double val )
+{
+	vIncrement(val);
+}
+
+void PoolBase::decrement( double val )
+{
+	vDecrement( val );
+}
+
+void PoolBase::nIn( double val)
+{
+	vnIn(val);
+}
+
 void PoolBase::reac( double A, double B )
 {
 	vReac( A, B );
@@ -232,6 +281,15 @@ void PoolBase::vReac( double A, double B )
 {;}
 
 void PoolBase::vHandleMolWt( const Eref& e, double v )
+{;}
+
+void PoolBase::vIncrement( double val )
+{;}
+
+void PoolBase::vDecrement( double val )
+{;}
+
+void PoolBase::vnIn( double val)
 {;}
 
 //////////////////////////////////////////////////////////////
@@ -328,6 +386,19 @@ unsigned int PoolBase::getSpecies( const Eref& e ) const
 	return vGetSpecies( e );
 }
 
+/**
+ * setIsBuffered is active only for Pool and BufPool. Otherwise ignored.
+ */
+void PoolBase::setIsBuffered( const Eref& e, bool v )
+{
+	vSetIsBuffered( e, v );
+}
+
+bool PoolBase::getIsBuffered( const Eref& e ) const
+{
+	return vGetIsBuffered( e );
+}
+
 //////////////////////////////////////////////////////////////
 // Virtual Field Definitions
 //////////////////////////////////////////////////////////////
@@ -340,6 +411,10 @@ double PoolBase::vGetMotorConst(const Eref& e ) const
 {
 	return 0.0;
 }
+
+/// Dummy default function for most pool subclasses.
+void PoolBase::vSetIsBuffered( const Eref& e, bool v )
+{;}
 
 //////////////////////////////////////////////////////////////
 // Zombie conversion routine: Converts Pool subclasses. There
