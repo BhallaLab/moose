@@ -1,4 +1,26 @@
 # -*- coding: utf-8 -*-
+'''
+*******************************************************************
+ * File:            chemConnectUtil.py
+ * Description:
+ * Author:          HarshaRani
+ * E-mail:          hrani@ncbs.res.in
+ ********************************************************************/
+/**********************************************************************
+** This program is part of 'MOOSE', the
+** Messaging Object Oriented Simulation Environment,
+** also known as GENESIS 3 base code.
+**           copyright (C) 2003-2017 Upinder S. Bhalla. and NCBS
+Created : Friday May 27 12:19:00 2016(+0530)
+Version
+Last-Updated: Mon Aug 7 17:02:00 2017(+0530)
+          By: HarshaRani
+**********************************************************************/
+/****************************
+
+Aug 7: cleaned up space
+'''
+
 import moose
 
 pygraphvizFound_ = True
@@ -47,7 +69,7 @@ def autoCoordinates(meshEntry,srcdesConnection):
                     for items in (items for items in out[0] ):
                         G.add_edge(moose.element(items[0]).path,inn.path)
                 if len(out[1]) == 0:
-                    print(inn.className + ':' + inn.name + "doesn't have output mssg")
+                    print(inn.className + ':' + inn.name + " doesn't have output mssg")
                 else:
                     for items in (items for items in out[1] ):
                         G.add_edge(inn.path,moose.element(items[0]).path)

@@ -90,4 +90,4 @@ if __name__ == '__main__':
         raise Exception("Test failed. No file : %s" % nsdfFile)
 
     data = np.loadtxt( nsdfFile )
-    assert len(data) == 60001, "Expected 60001 entries"
+    assert len(data) == 4, "Expected 4 entries"
