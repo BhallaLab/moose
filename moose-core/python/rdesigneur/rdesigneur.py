@@ -16,39 +16,27 @@
 ## latter in the former, including mapping entities like calcium and
 ## channel conductances, between them.
 ##########################################################################
-from __future__ import print_function
+from __future__ import print_function, absolute_import 
+
 import imp
 import os
 import moose
 import numpy as np
 import pylab
 import math
-import rmoogli
-#import rdesigneurProtos
-from rdesigneurProtos import *
+
+import rdesigneur.rmoogli
+from rdesigneur.rdesigneurProtos import *
+
 from moose.neuroml.NeuroML import NeuroML
 from moose.neuroml.ChannelML import ChannelML
 
+# In python3, cElementTree is deprecated. We do not plan to support python <2.7
+# in future, so other imports have been removed.
 try:
   from lxml import etree
 except ImportError:
-  try:
-    # Python 2.5
-    import xml.etree.cElementTree as etree
-  except ImportError:
-    try:
-      # Python 2.5
-      import xml.etree.ElementTree as etree
-    except ImportError:
-      try:
-        # normal cElementTree install
-        import cElementTree as etree
-      except ImportError:
-        try:
-          # normal ElementTree install
-          import elementtree.ElementTree as etree
-        except ImportError:
-          print("Failed to import ElementTree from any known place")
+  import xml.etree.ElementTree as etree
 
 import csv
 
@@ -85,8 +73,8 @@ class rdesigneur:
             diffusionLength= 2e-6,
             meshLambda = -1.0,    #This is a backward compatibility hack
             temperature = 32,
-            chemDt= 0.001,          # Much finer than MOOSE, for multiscale
-            diffDt= 0.001,          # 10x finer than MOOSE, for multiscale
+            chemDt= 0.1,            # Much finer than MOOSE, for multiscale
+            diffDt= 0.01,           # 10x finer than MOOSE, for multiscale
             elecDt= 50e-6,          # Same default as from MOOSE
             chemPlotDt = 1.0,       # Same default as from MOOSE
             elecPlotDt = 0.1e-3,    # Same default as from MOOSE
