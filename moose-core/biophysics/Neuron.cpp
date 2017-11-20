@@ -619,8 +619,8 @@ static void doClassSpecificMessaging( Shell* shell, Id obj, ObjId compt )
     if ( obj.element()->cinfo()->isA( "ChanBase" ) )
     {
         shell->doAddMsg( "Single", compt, "channel", obj, "channel" );
-        // Add the message to the Ca pool if not defined
-        if ( obj.element()->getName().find_first_of( "Ca" ) != string::npos )
+        // Add the message to the Ca pool if our obj has 'Ca' in its name.
+        if ( obj.element()->getName().find( "Ca" ) != string::npos )
         {
             // Don't do it if we have the legacy GENESIS format
             if ( Neutral::child( obj.eref(), "addmsg1" ) == Id() )
@@ -631,9 +631,9 @@ static void doClassSpecificMessaging( Shell* shell, Id obj, ObjId compt )
                 wildcardFind( path, elist );
                 if ( elist.size() > 0 )
                 {
-                    // cout << "Added Ca Msg for " << obj.path() << endl;
+                    // cout << "Added Ca Msg for " << obj.path() << ", name = " << obj.element()->getName() << endl;
                     ObjId mid = shell->doAddMsg(
-                                    "single", obj, "IkOut", elist[0], "current" );
+                        "single", obj, "IkOut", elist[0], "current" );
                     assert( !mid.bad());
                 }
             }

@@ -32,6 +32,9 @@ public:
     double getOutputValue() const;
     void setOutputValue( double val );
 
+	string getPlotDump() const;
+	void setPlotDump( string v );
+
     double getY( unsigned int index ) const;
 
     //////////////////////////////////////////////////////////////////

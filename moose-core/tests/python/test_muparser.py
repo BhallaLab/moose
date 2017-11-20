@@ -1,15 +1,10 @@
 # -*- coding: utf-8 -*-
+
 """test_muparser.py:
 
+Modified from https://elifesciences.org/articles/25827 , Fig4.py
+
 """
-
-__author__           = "Dilawar Singh"
-__copyright__        = "Copyright 2017-, Dilawar Singh"
-__version__          = "1.0.0"
-__maintainer__       = "Dilawar Singh"
-__email__            = "dilawars@ncbs.res.in"
-__status__           = "Development"
-
 import sys
 import os
 import numpy as np
@@ -162,6 +157,9 @@ if __name__ == '__main__':
     moose.Neutral( '/library' )
     moose.Neutral( '/model' )
     plotPanelC()
-    plotPanelDEFG( [0,1,2,3,4], 3 )
-    plotPanelDEFG( [4,1,0,3,2], 4 )
+    #if sys.version_info[0] == 2:
+    #    plotPanelDEFG( [0,1,2,3,4], 3 )
+    #    plotPanelDEFG( [4,1,0,3,2], 4 )
+    #else:
+    #    print( 'TODO: Running any of the following two functions causes seg-fault' )
     print( 'All done' )

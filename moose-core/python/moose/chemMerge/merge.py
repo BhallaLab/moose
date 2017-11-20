@@ -12,7 +12,7 @@
 #**           copyright (C) 2003-2017 Upinder S. Bhalla. and NCBS
 #Created : Friday Dec 16 23:19:00 2016(+0530)
 #Version
-#Last-Updated: Wed Oct 14 00:25:33 2017(+0530)
+#Last-Updated: Wed Oct 25 16:25:33 2017(+0530)
 #         By: Harsha
 #**********************************************************************/
 
@@ -39,6 +39,7 @@
 #
 '''
 Change log
+Oct 25: line to load SBML file was commented, which is uncommented now and also while copying MMenz had a problem which also cleaned up
 Oct 14: absolute import with mtypes just for python3
 
 Oct 12: clean way of cheking the type of path provided, filepath,moose obj, moose path are taken,
@@ -350,9 +351,10 @@ def loadModels(filepath):
             loaded = True
 
         elif subtype == 'sbml':
-            #moose.mooseReadSBML(filename,modelpath)
-            #loaded = True
-            pass
+            if moose.exists(modelpath):
+                moose.delete(modelpath)
+            moose.mooseReadSBML(filepath,modelpath)
+            loaded = True
         else:
             print("This file is not supported for mergering")
             modelpath = moose.Shell('/')
@@ -512,7 +514,7 @@ def enzymeMerge(comptA,comptB,key,poolListina):
 
                                 if eb.className in ["ZombieMMenz","MMenz"]:
                                     eapath = eb.parent.path.replace(objB,objA)
-                                    enz = moose.copy(eb.name,moose.element(eapath))
+                                    enz = moose.copy(eb,moose.element(eapath))
                                     enzinfo = moose.Annotator(enz.path+'/info')
                                     moose.connect(moose.element(enz).parent,"nOut",moose.element(enz),"enzDest")
                                     #moose.connect(moose.element(enz),"enz",moose.element(enz).parent,"reac")

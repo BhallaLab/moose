@@ -24,6 +24,13 @@ const Cinfo* TableBase::initCinfo()
 			&TableBase::getVec
 		);
 
+		static ValueFinfo< TableBase, string > plotDump(
+			"plotDump",
+			"'File plotname' for dumpling an xplot, as a workaround for an error in the xplot python interface. Note separator is a space. The return value is a dummy.",
+			&TableBase::setPlotDump,
+			&TableBase::getPlotDump
+		);
+
 		static ReadOnlyValueFinfo< TableBase, double > outputValue(
 			"outputValue",
 			"Output value holding current table entry or output of a calculation",
@@ -115,6 +122,7 @@ const Cinfo* TableBase::initCinfo()
 
 	static Finfo* tableBaseFinfos[] = {
 		&vec,			// Value
+		&plotDump,		// Value, used for debugging xplot function.
 		&outputValue,	// ReadOnlyValue
 		&size,			// ReadOnlyValue
 		&y,				// ReadOnlyLookupValue
@@ -490,4 +498,22 @@ vector< double >& TableBase::vec()
 const vector< double >& TableBase::data( )
 {
     return vec_;
+}
+
+string TableBase::getPlotDump() const
+{
+	static string ret = "plot.Dump";
+	return ret;
+}
+
+void TableBase::setPlotDump( string v )
+{
+	
+	std::size_t pos = v.rfind(" ");
+	string fname = v.substr( 0, pos );
+	string plotname = "plot";
+	if ( pos != string::npos )
+		plotname = v.substr( pos );
+	// cout << "setPlotDump( " << fname << ", " << plotname << " ),  " << v << "\n";
+	xplot( fname, plotname );
 }
