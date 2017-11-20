@@ -65,6 +65,7 @@ add_custom_command( OUTPUT ${OUTPUT_MOOSEBIN}
     COMMAND MAKE=$(MAKE) bash -c ${CMAKE_BINARY_DIR}/build_moose-core.sh
     VERBATIM
     )
+add_dependencies(moose moose-core)
 
 if(WITH_GUI)
     # Now build moose-gui and moose-examples.
@@ -81,11 +82,6 @@ if(WITH_GUI)
         COMMAND ${PYTHON_EXECUTABLE} -m compileall -q ${MOOSE_EXAMPLE_INSTALL_DIR}
         VERBATIM
         )
-endif()
-
-add_dependencies(moose moose-core)
-
-if(WITH_GUI)
     add_dependencies(moose gui examples)
     add_dependencies(examples  gui)
 endif()
@@ -120,17 +116,13 @@ endif()
 configure_file( ${CMAKE_SOURCE_DIR}/cmake/moose.in ${CMAKE_BINARY_DIR}/moose )
 install(PROGRAMS ${CMAKE_BINARY_DIR}/moose DESTINATION bin)
 
-## UNINSTALL
-add_custom_target(uninstall DEPENDS __uninstall_moose-core__ )
-if(WITH_GUI)
-    add_dependencies( uninstall __uninstall_moose-gui__ )
-endif( )
-
+# UNINSTALL
 add_custom_command(OUTPUT __uninstall_moose-core__
     COMMAND xargs rm -rf < install_manifest.txt
     COMMAND pip uninstall -y moose 
     COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_INSTALL_PREFIX}/bin/moose.bin
     )
+add_custom_target(uninstall DEPENDS __uninstall_moose-core__ )
 
 if(WITH_GUI)
     add_custom_command(OUTPUT  __uninstall_moose-gui__
@@ -138,6 +130,7 @@ if(WITH_GUI)
         ${CMAKE_INSTALL_PREFIX}/lib/moose/gui
         COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_INSTALL_PREFIX}/bin/moose
         )
+    add_dependencies( uninstall __uninstall_moose-gui__ )
 endif()
 
 ################################################################################
