@@ -563,7 +563,7 @@ def createReaction(model, specInfoMap, modelAnnotaInfo, globparameterIdValue,fun
 
         if (reac.isSetId()):
             rId = reac.getId()
-            groups = [k for k, v in groupInfo.iteritems() if rId in v]
+            groups = [k for k, v in groupInfo.items() if rId in v]
             if groups:
                 group = groups[0]
         if (reac.isSetName()):
@@ -1094,7 +1094,7 @@ def createSpecies(basePath, model, comptSbmlidMooseIdMap,
             sName = None
             sId = spe.getId()
 
-            groups = [k for k, v in groupInfo.iteritems() if sId in v]
+            groups = [k for k, v in groupInfo.items() if sId in v]
             if groups:
                 group = groups[0]
             if spe.isSetName():

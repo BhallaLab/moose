@@ -22,10 +22,12 @@ import imp
 import os
 import moose
 import numpy as np
-import pylab
 import math
+import itertools
+import sys
+import time
 
-import rdesigneur.rmoogli
+import rdesigneur.rmoogli as rmoogli
 from rdesigneur.rdesigneurProtos import *
 
 from moose.neuroml.NeuroML import NeuroML
@@ -497,6 +499,10 @@ class rdesigneur:
             j += 1
         return ret
 
+    # Utility function for doing lookups for objects.
+    def _makeUniqueNameStr( self, obj ):
+        return obj.name + " " + str( obj.index )
+
     # Returns vector of source objects, and the field to use.
     # plotSpec is of the form
     #   [ region_wildcard, region_expr, path, field, title]
@@ -510,7 +516,6 @@ class rdesigneur:
         kf = knownFields[field] # Find the field to decide type.
         if ( kf[0] == 'CaConcBase' or kf[0] == 'ChanBase' or kf[0] == 'NMDAChan' ):
             objList = self._collapseElistToPathAndClass( comptList, plotSpec[2], kf[0] )
-            # print ("objList: ", len(objList), kf[1])
             return objList, kf[1]
         elif (field == 'n' or field == 'conc' or field == 'volume'  ):
             path = plotSpec[2]
@@ -521,15 +526,11 @@ class rdesigneur:
             chemCompt = path[:pos]
             cc = moose.element( self.modelPath + '/chem/' + chemCompt)
             voxelVec = []
-            if ( chemCompt == 'dend' ):
-                for i in comptList:
-                    voxelVec.extend( cc.dendVoxelsOnCompartment[i] )
-            else:
-                em = cc.elecComptMap
-                elecComptMap = { moose.element(em[i]):i for i in range(len(em)) }
-                for i in comptList:
-                    if i in elecComptMap:
-                        voxelVec.extend( [ elecComptMap[i] ] )
+            temp = [ self._makeUniqueNameStr( i ) for i in comptList ]
+            comptSet = set( temp )
+            #em = [ moose.element(i) for i in cc.elecComptMap ]
+            em = [ self._makeUniqueNameStr(i) for i in cc.elecComptMap ]
+            voxelVec = [i for i in range(len( em ) ) if em[i] in comptSet ]
             # Here we collapse the voxelVec into objects to plot.
             allObj = moose.vec( self.modelPath + '/chem/' + plotSpec[2] )
             #print "####### allObj=", self.modelPath + '/chem/' + plotSpec[2]
@@ -637,29 +638,31 @@ class rdesigneur:
         rmoogli.displayMoogli( self, moogliDt, runtime, rotation )
 
     def display( self ):
+        import matplotlib.pyplot as plt
         for i in self.plotNames:
-
-            pylab.figure( i[2] )
-            pylab.title( i[1] )
-            pylab.xlabel( "Time (s)" )
-            pylab.ylabel( i[4] )
+            plt.figure( i[2] )
+            plt.title( i[1] )
+            plt.xlabel( "Time (s)" )
+            plt.ylabel( i[4] )
             vtab = moose.vec( i[0] )
             if i[5] == 'spikeTime':
                 k = 0
                 tmax = moose.element( '/clock' ).currentTime
                 for j in vtab: # Plot a raster
                     y = [k] * len( j.vector )
-                    pylab.plot( j.vector * i[3], y, linestyle = 'None', marker = '.', markersize = 10 )
-                    pylab.xlim( 0, tmax )
+                    plt.plot( j.vector * i[3], y, linestyle = 'None', marker = '.', markersize = 10 )
+                    plt.xlim( 0, tmax )
                 
             else:
                 t = np.arange( 0, vtab[0].vector.size, 1 ) * vtab[0].dt
                 for j in vtab:
-                    pylab.plot( t, j.vector * i[3] )
+                    plt.plot( t, j.vector * i[3] )
         if len( self.moogList ) > 0:
-            pylab.ion()
-        pylab.show(block=True)
-        self._save()                                             #This calls the _save function which saves only if the filenames have been specified
+            plt.ion()
+        plt.show(block=True)
+        
+        #This calls the _save function which saves only if the filenames have been specified
+        self._save()                                            
 
     ################################################################
     # Here we get the time-series data and write to various formats
@@ -908,6 +911,7 @@ class rdesigneur:
     ################################################################
     # Utility function for setting up clocks.
     def _configureClocks( self ):
+        t0 = time.time()
         if self.turnOffElec:
             elecDt = 1e6
             elecPlotDt = 1e6
@@ -916,16 +920,22 @@ class rdesigneur:
             elecPlotDt = self.elecPlotDt
         diffDt = self.diffDt
         chemDt = self.chemDt
+        print( "t1 = {}".format( time.time() - t0 ) )
         for i in range( 0, 9 ):
             moose.setClock( i, elecDt )
         moose.setClock( 8, elecPlotDt )
         moose.setClock( 10, diffDt )
+        print( "t2 = {}".format( time.time() - t0 ) )
         for i in range( 11, 18 ):
             moose.setClock( i, chemDt )
         moose.setClock( 18, self.chemPlotDt )
+        print( "t3 = {}".format( time.time() - t0 ) )
         hsolve = moose.HSolve( self.elecid.path + '/hsolve' )
         hsolve.dt = elecDt
+        print( "t4 = {}".format( time.time() - t0 ) )
         hsolve.target = self.soma.path
+        print( "t5 = {}".format( time.time() - t0 ) )
+        sys.stdout.flush()
     ################################################################
     ################################################################
     ################################################################
@@ -1259,18 +1269,6 @@ class rdesigneur:
         else:
             elecComptList = mesh.elecComptList
 
-        '''
-        for i in elecComptList:
-            print i.diameter
-        print len( elecComptList[0] )
-        print elecComptList[0][0].parent.path
-        print "--------------------------------------"
-        spine = moose.vec( elecComptList[0].path + '/../spine' )
-        for i in spine:
-            print i.headDiameter
-
-        moose.le( elecComptList[0][0].parent )
-        '''
         if len( elecComptList ) == 0:
             raise BuildError( \
                 "buildAdaptor: no elec compts in elecComptList on: " + \
