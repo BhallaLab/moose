@@ -29,9 +29,10 @@ option(WITH_CUDA "Use CUDA/GPU" OFF)
 option(WITH_MPI "Use MPI (experimental)" OFF)
 option(WITH_GUI "Install moose-gui. Works only with python2." ON )
 
-# Required packages.
+# On python3. Do not install GUI. 
 find_package(PythonInterp REQUIRED)
 if(PYTHON_VERSION_MAJOR VERSION_EQUAL 3)
+    message(STATUS "moose-gui does not support python3 yet. Disabling" )
     set(WITH_GUI OFF)
 endif( )
 
