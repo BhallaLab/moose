@@ -112,7 +112,6 @@ todo_include_todos = True
 # A list of ignored prefixes for module index sorting.
 #modindex_common_prefix = []
 
-sys.setrecursionlimit(2000)
 
 # -- Options for HTML output ---------------------------------------------------
 
