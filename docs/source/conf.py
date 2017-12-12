@@ -27,6 +27,7 @@ sys.path.append(os.path.abspath('../../moose-examples/tutorials/ChemicalBistable
 sys.path.append(os.path.abspath('../../moose-examples/tutorials/ExcInhNet'))
 sys.path.append(os.path.abspath('../../moose-examples/neuroml/lobster_pyloric'))
 sys.path.append(os.path.abspath('../../moose-examples/tutorials/ExcInhNetCaPlasticity'))
+sys.path.append('../../docproj/ext/breathe/')
 
 # -- General configuration -----------------------------------------------------
 
@@ -41,6 +42,7 @@ extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.autosummary',
               'sphinx.ext.todo',
               'sphinx.ext.viewcode',
+              'breathe'
 		]
 
 todo_include_todos = True
@@ -109,6 +111,8 @@ todo_include_todos = True
 
 # A list of ignored prefixes for module index sorting.
 #modindex_common_prefix = []
+
+sys.setrecursionlimit(2000)
 
 # -- Options for HTML output ---------------------------------------------------
 
@@ -286,4 +290,14 @@ import subprocess, os
 read_the_docs_build = os.environ.get('READTHEDOCS', None) == 'True'
 
 if read_the_docs_build:
-    subprocess.call('cd ../../doxygen; echo HELLO......................; doxygen Doxyfile', shell=True)
+    subprocess.call('cd ../../source/doxygen; echo HELLO......................; doxygen Doxyfile', shell=True)
+
+#####################Breathe##########################
+
+breathe_projects = {
+    'src':'doxygen/cpp/xml'
+    }
+
+breathe_default_project = 'index'
+
+

@@ -34,7 +34,7 @@ Contents:
    :maxdepth: 2
    :numbered:
 
-   moose_quickstart
+
 
 Indices and tables
 ==================
