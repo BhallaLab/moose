@@ -25,11 +25,15 @@ to pick your distribution and follow instructions.
 
 .. todo:: Packages for gentoo, Arch Linux
 
+Mac OSX
+^^^^^^^^
 
-MacOSX support is not complete yet. Python-scripting interface can be installed on MaxOSX using ``homebrew``
+
+MacOSX support for moose-gui is not complete yet. However, the python-scripting interface can be installed on OSX using ``homebrew``
 ::
 
-    $ brew install homebrew/science/moose
+    $ brew tap BhallaLab/moose
+    $ brew install moose
 
 
 Building MOOSE
