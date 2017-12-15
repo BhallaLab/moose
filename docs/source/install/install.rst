@@ -37,7 +37,7 @@ Building MOOSE
 
 In case your distribution is not listed on `our repository page
 <https://software.opensuse.org/download.html?project=home:moose&package=moose>`_
-, or if you want to build the lastest development code, read on.
+, or if you want to build the latest development code, read on.
 
 First, you need to get the source code. You can use ``git`` (clone the
 repository) or download snapshot of github repo by clicking on `this link
@@ -52,7 +52,7 @@ Or,
     $ wget https://github.com/BhallaLab/moose/archive/master.zip
     $ unzip master.zip
 
-If you don't want lasest snapshot of ``MOOSE``, you can download other released
+If you don't want latest snapshot of ``MOOSE``, you can download other released
 versions from `here <`https://github.com/BhallaLab/moose/releases>`_.
 
 Install dependencies
@@ -111,7 +111,7 @@ build moose
 
 .. code-block:: bash
 
-   $ cd /to/moose/source/code
+   $ cd /to/moose/source/code/ (root directory of moose)
    $ mkdir _build
    $ cd _build
    $ cmake  ..
@@ -158,6 +158,9 @@ clicking on `this link <https://github.com/BhallaLab/moose-gui/archive/master.zi
 or by using ``git`` ::
 
     $ git clone https://github.com/BhallaLab/moose-gui
+
+
+Alternatively the moose-gui folder exists within the moose folder downloaded and built earlier in the installation process. It can be found under ``location_of_moose_folder/moose/moose-gui/``.
 
 Below are packages which you may want to install to use MOOSE Graphical User Interface.
 
