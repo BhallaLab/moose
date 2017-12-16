@@ -26,4 +26,7 @@ set -e
     sudo dpkg -D=2 -i ../moose*.deb
     cd ~ && /usr/bin/python -c \
         "import moose; print moose.version(); print( moose.__file__ ); moose.test( timeout = 10 )"
+
+    # Now launch gui, terminate is after 3 seconds.
+    timeout -k 3 moosegui
 )
