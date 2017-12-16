@@ -132,8 +132,11 @@ if(WITH_GUI)
         )
 endif()
 
-configure_file( ${CMAKE_SOURCE_DIR}/cmake/moose.in ${CMAKE_BINARY_DIR}/moose )
-install(PROGRAMS ${CMAKE_BINARY_DIR}/moose DESTINATION bin)
+configure_file( 
+    ${CMAKE_SOURCE_DIR}/cmake/moosegui.in
+    ${CMAKE_BINARY_DIR}/moosegui 
+    )
+install(PROGRAMS ${CMAKE_BINARY_DIR}/moosegui DESTINATION bin)
 
 # UNINSTALL
 add_custom_command(OUTPUT __uninstall_moose-core__
