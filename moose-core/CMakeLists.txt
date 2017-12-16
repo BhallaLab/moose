@@ -407,7 +407,9 @@ execute_process(
 message( STATUS "Platform ${_platform_desc}" )
 
 
-set(EXTRA_ARGS "--prefix ${CMAKE_INSTALL_PREFIX}")
+# DISTUTILS_EXTRA_ARGS may come of top-level cmake script. On DEBIAN/UBUNTU, it
+# is most likely to be --install-layout=deb .
+set(EXTRA_ARGS "--prefix ${CMAKE_INSTALL_PREFIX} ${DISTUTILS_EXTRA_ARGS}")
 
 ## NOTE: Disable it here. It must be handled by moose repository CMakeLists.txt
 ## which is used in created packages. For normal user, it should install in
