@@ -18,33 +18,11 @@ __status__           = "Development"
 
 import os
 import sys
-import site
-
-# if uid is zero then install in root paths. Else install it in user path.
-
-#print( '[INFO] Overwriting --prefix ' )
-#try:
-#    prefixLoc = sys.argv.index( '--prefix' )
-#    del sys.argv[ prefixLoc ]
-#    del sys.argv[ prefixLoc ]
-#except Exception as e:
-#    pass
-#
-#uid = os.getuid( )
-#if uid == 0:
-#    # Here comes the root.
-#    print( '   called by sudo' )
-#    sys.argv += [ '--prefix', '/usr' ]
-#else:
-#    sys.argv += [ '--prefix', site.getuserbase( ) ]
-#
-#print( sys.argv )
 
 from distutils.core import setup
-
 script_dir = os.path.dirname( os.path.abspath( __file__ ) )
-
 version = '3.2.git'
+
 try:
     with open( os.path.join( script_dir, '..', 'VERSION'), 'r' ) as f:
         version = f.read( )
