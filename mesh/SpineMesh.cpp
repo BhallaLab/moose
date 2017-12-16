@@ -260,6 +260,7 @@ void SpineMesh::handleSpineList(
 		vector< unsigned int > index( head.size(), 0 );
 		for ( unsigned int i = 0; i < head.size(); ++i ) {
 			spines_[i] = SpineEntry( shaft[i], head[i], parentVoxel[i] );
+			// cout << i << "	" << head[i] << ", pa = " << parentVoxel[i] << endl;
 			// ret = spines_[i].psdCoords();
 			// assert( ret.size() == 8 );
 			// psdCoords.insert( psdCoords.end(), ret.begin(), ret.end() );

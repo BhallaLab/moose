@@ -527,9 +527,14 @@ class rdesigneur:
             cc = moose.element( self.modelPath + '/chem/' + chemCompt)
             voxelVec = []
             temp = [ self._makeUniqueNameStr( i ) for i in comptList ]
+            #print( temp )
+            #print( "#####################" )
             comptSet = set( temp )
             #em = [ moose.element(i) for i in cc.elecComptMap ]
-            em = [ self._makeUniqueNameStr(i) for i in cc.elecComptMap ]
+            em = sorted( [ self._makeUniqueNameStr(i[0]) for i in cc.elecComptMap ] )
+            #print( em )
+            #print( "=================================================" )
+
             voxelVec = [i for i in range(len( em ) ) if em[i] in comptSet ]
             # Here we collapse the voxelVec into objects to plot.
             allObj = moose.vec( self.modelPath + '/chem/' + plotSpec[2] )
@@ -574,6 +579,7 @@ class rdesigneur:
             assert( plotField == plotField2 )
             plotObj3 = plotObj + plotObj2
             numPlots = sum( q != dummy for q in plotObj3 )
+            #print( "PlotList: {0}: numobj={1}, field ={2}, nd={3}, ns={4}".format( pair, numPlots, plotField, len( dendCompts ), len( spineCompts ) ) )
             if numPlots > 0:
                 tabname = graphs.path + '/plot' + str(k)
                 scale = knownFields[i[3]][2]
@@ -911,7 +917,6 @@ class rdesigneur:
     ################################################################
     # Utility function for setting up clocks.
     def _configureClocks( self ):
-        t0 = time.time()
         if self.turnOffElec:
             elecDt = 1e6
             elecPlotDt = 1e6
@@ -920,21 +925,16 @@ class rdesigneur:
             elecPlotDt = self.elecPlotDt
         diffDt = self.diffDt
         chemDt = self.chemDt
-        print( "t1 = {}".format( time.time() - t0 ) )
         for i in range( 0, 9 ):
             moose.setClock( i, elecDt )
         moose.setClock( 8, elecPlotDt )
         moose.setClock( 10, diffDt )
-        print( "t2 = {}".format( time.time() - t0 ) )
         for i in range( 11, 18 ):
             moose.setClock( i, chemDt )
         moose.setClock( 18, self.chemPlotDt )
-        print( "t3 = {}".format( time.time() - t0 ) )
         hsolve = moose.HSolve( self.elecid.path + '/hsolve' )
         hsolve.dt = elecDt
-        print( "t4 = {}".format( time.time() - t0 ) )
         hsolve.target = self.soma.path
-        print( "t5 = {}".format( time.time() - t0 ) )
         sys.stdout.flush()
     ################################################################
     ################################################################

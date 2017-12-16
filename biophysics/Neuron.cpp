@@ -1111,6 +1111,7 @@ void Neuron::buildElist( const Eref& e,
     ObjId oldCwe = shell->getCwe();
     shell->setCwe( e.objId() );
     wildcardFind( path, elist );
+	sort( elist.begin(), elist.end() );
     shell->setCwe( oldCwe );
     evalExprForElist( elist, expr, val );
 }
@@ -1285,6 +1286,8 @@ static void fillSegments( vector< SwcSegment >& segs,
                     comptType = 3; // generic dendrite
                 }
             }
+			// cout << "Seg[" << i << "].xy = " << int(x*1e6) << " " << int(y*1e6) << endl;
+
             segs.push_back(
                 SwcSegment( i, comptType, x, y, z, dia/2.0, paIndex ) );
         }
@@ -1347,6 +1350,7 @@ void Neuron::buildSegmentTree( const Eref& e )
 {
     vector< Id > kids;
     Neutral::children( e, kids );
+	sort( kids.begin(), kids.end() );
 
     soma_ = fillSegIndex( kids, segIndex_ );
     if ( kids.size() == 0 || soma_ == Id() )

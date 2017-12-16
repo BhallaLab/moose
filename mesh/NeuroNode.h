@@ -165,7 +165,7 @@ class NeuroNode: public CylBase
 					vector< unsigned int >& spineParent );
 		void setParentAndChildren( unsigned int index, int dendParent,
 				vector< NeuroNode >& nodes,
-				const map< Id, unsigned int >& dendMap );
+				const unordered_map< Id, unsigned int >& dendMap );
 
 		/**
 		 * Trims off all spines from tree. Does so by identifying a set of

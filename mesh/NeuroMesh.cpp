@@ -648,6 +648,7 @@ void NeuroMesh::updateShaftParents()
 // Uses all compartments, and if they have spines on them adds those too.
 void NeuroMesh::setSubTree( const Eref& e, vector< ObjId > compts )
 {
+    sort( compts.begin(), compts.end() );
     if ( separateSpines_ )
     {
         NeuroNode::buildSpinyTree( compts, nodes_, shaft_, head_, parent_);

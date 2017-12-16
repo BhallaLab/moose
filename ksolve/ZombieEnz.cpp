@@ -224,22 +224,28 @@ void ZombieEnz::setSolver( Id stoich, Id enz )
 	bool isOK = true;
 	unsigned int numReactants;
 	numReactants = enz.element()->getNeighbors( enzMols, enzFinfo );
-	isOK &= ( numReactants == 1 );
+	bool hasEnz = ( numReactants == 1 );
 	vector< Id > subs;
 	numReactants = enz.element()->getNeighbors( subs, subFinfo );
-	isOK &= ( numReactants > 0 );
+	bool hasSubs = ( numReactants > 0 );
 	numReactants = enz.element()->getNeighbors( cplxMols, cplxFinfo );
-	isOK &= ( numReactants == 1 );
+	bool hasCplx = ( numReactants == 1 );
 	vector< Id > prds;
 	numReactants = enz.element()->getNeighbors( prds, prdFinfo );
-	isOK &= ( numReactants > 0 );
+	bool hasPrds = ( numReactants > 0 );
 	assert( stoich.element()->cinfo()->isA( "Stoich" ) );
 	stoich_ = reinterpret_cast< Stoich* >( stoich.eref().data() );
 
-	if ( isOK ) {
+	if ( hasEnz && hasSubs && hasCplx && hasPrds ) {
 		stoich_->installEnzyme( enz, enzMols[0], cplxMols[0], subs, prds );
 	} else {
 		stoich_->installDummyEnzyme( enz, Id() );
-		cout << "Warning: ZombieEnz:setSolver: Dangling Enz, missing a substrate or product\n";
+		string msg = "";
+		if ( !hasEnz ) msg = msg + " enzyme";
+		if ( !hasCplx ) msg = msg + " enzyme-substrate complex";
+		if ( !hasSubs ) msg = msg + " substrates";
+		if ( !hasPrds ) msg = msg + " products";
+		cout << "Warning: ZombieEnz:setSolver: Dangling Enz '" <<
+			enz.path() << "':\nMissing " << msg << endl;
 	}
 }

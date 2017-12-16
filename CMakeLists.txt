@@ -408,9 +408,12 @@ message( STATUS "Platform ${_platform_desc}" )
 
 set(EXTRA_ARGS "--prefix ${CMAKE_INSTALL_PREFIX}")
 
-if( ${_platform_desc} MATCHES ".*(Ubuntu|Debian).*" )
-    list( APPEND EXTRA_ARGS "--install-layout=deb" )
-endif( )
+## NOTE: Disable it here. It must be handled by moose repository CMakeLists.txt
+## which is used in created packages. For normal user, it should install in
+## site-packages.
+#if( ${_platform_desc} MATCHES ".*(Ubuntu|Debian).*" )
+#    list( APPEND EXTRA_ARGS "--install-layout=deb" )
+#endif( )
 
 # If make is called with sudo, install in system directories. Otherwise use
 # --user to install in user home.
