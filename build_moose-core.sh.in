@@ -3,12 +3,22 @@ set -x
 set -e
 
 # NOTICE: This file is parsed by cmake to create a shell script. Not all syntax
-# will play well with cmake. CMAKE replaces @FOO@ and ${FOO} with cmake variable
+# will play well with cmake. 
+#
+# CMAKE replaces @FOO@ and ${FOO} with cmake variable
 # values.
 
 if [ -z "$MAKE" ]; then
     MAKE=make
 fi
+
+CMAKE_PYMOOSE_ARGS=''
+SITE_PACKAGE=`@PYTHON_EXECUTABLE@ -c \
+    "from distutils.sysconfig import get_python_lib; print(get_python_lib())"`
+echo $SITE_PACKAGE
+
+
+# If we are on DEBIAN/UBUNTU, pass --install-layout=deb to moose-core.
 
 echo "Building MOOSE"
 (
