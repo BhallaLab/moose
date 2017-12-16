@@ -1,8 +1,8 @@
-moose (3.1.2ubuntu1) UNRELEASED; urgency=medium
+moose (3.2.git) UNRELEASED; urgency=medium
 
-  * Nightly build of chamcham (3.1.x) series. 
+    * Nightly build. 
 
- -- Dilawar Singh <dilawars@Gulgula>  Mon, 08 May 2017 13:40:08 +0530
+ -- Dilawar Singh <dilawars@ncbs.res.in>  Sat, 16 Dec 2017 10:17:08 +0530
 
 moose (3.0.2) unstable; urgency=low
 
