@@ -27,7 +27,8 @@ set -e
     cd ~ && /usr/bin/python -c \
         "import moose; print moose.version(); print( moose.__file__ ); moose.test( timeout = 10 )"
 
-    # Now launch gui, terminate is after 3 seconds.
-    timeout 3 moosegui
+    # NOTE: Lauching gui would work on travis since DISPLAY is defined.
+    # However we can check if files are installed.
+    # TODO: Put some test for GUI.
 
 )
