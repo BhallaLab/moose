@@ -1,5 +1,5 @@
 [![Build Status - master](https://travis-ci.org/BhallaLab/moose.svg?branch=master)](https://travis-ci.org/BhallaLab/moose)   [![Documentation Status](https://readthedocs.org/projects/moose/badge/?version=latest)](https://readthedocs.org/projects/moose/?badge=latest)
-[__Linux Packages__](https://software.opensuse.org//download.html?project=home%3Amoose&package=moose) 
+| [__Linux Packages__](https://software.opensuse.org//download.html?project=home%3Amoose&package=moose) | 
 [__Document__](http://moose.readthedocs.io/en/latest/)
 
 This is the parent repository of [MOOSE simulator](https://moose.ncbs.res.in).
