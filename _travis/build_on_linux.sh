@@ -28,5 +28,6 @@ set -e
         "import moose; print moose.version(); print( moose.__file__ ); moose.test( timeout = 10 )"
 
     # Now launch gui, terminate is after 3 seconds.
-    timeout -k 3 moosegui
+    timeout 3 moosegui
+
 )
