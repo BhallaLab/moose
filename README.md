@@ -5,6 +5,11 @@ It keeps the snanshots of its components: core (written in C++) and python
 scripting interface, MOOSE's Graphical User Interface (GUI). This should be the 
 source of stable MOOSE code.
 
+__Quick Install__
+
+[Linux Packages](https://software.opensuse.org//download.html?project=home%3Amoose&package=moose)
+[Document](http://moose.readthedocs.io/en/latest/)
+
 # About
 
 MOOSE is the Multiscale Object-Oriented Simulation Environment. It is designed to simulate neural systems ranging from biochemical signaling to complex models of single neurons, circuits, and large networks. A typical use case is to model neural activity-driven synaptic plasticity, in which network activity to synapses triggers biochemical reaction-diffusion events, which in turn modulate ion channels to give rise to synaptic plasticity.
