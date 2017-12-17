@@ -448,6 +448,8 @@ class  KineticsWidget(EditorWidgetBase):
                 autoCoordinates(self.meshEntry,self.srcdesConnection)
         
         self.size = QtCore.QSize(1000 ,550)
+
+	'''
         if self.xmax-self.xmin != 0:
             self.xratio = (self.size.width()-10)/(self.xmax-self.xmin)
         else: self.xratio = self.size.width()-10
@@ -462,7 +464,7 @@ class  KineticsWidget(EditorWidgetBase):
             self.xratio = 1
         if self.yratio == 0:
             self.yratio = 1
-
+	'''
     def sizeHint(self):
         return QtCore.QSize(800,400)
 
