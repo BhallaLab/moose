@@ -42,7 +42,6 @@ extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.autosummary',
               'sphinx.ext.todo',
               'sphinx.ext.viewcode',
-              'breathe'
 		]
 
 todo_include_todos = True
@@ -290,13 +289,4 @@ read_the_docs_build = os.environ.get('READTHEDOCS', None) == 'True'
 
 if read_the_docs_build:
     subprocess.call('cd ../../source/doxygen; echo HELLO......................; doxygen Doxyfile', shell=True)
-
-#####################Breathe##########################
-
-breathe_projects = {
-    'src':'doxygen/cpp/xml'
-    }
-
-breathe_default_project = 'index'
-
 
