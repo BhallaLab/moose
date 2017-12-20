@@ -641,9 +641,9 @@ loop through the elements in an ``vec`` like a Python list ::
 
 shows ::
 
-        /model/comp[0] <type 'moose.melement'>
-        /model/comp[1] <type 'moose.melement'>
-        /model/comp[2] <type 'moose.melement'>
+        /model[0]/comp[0] <type 'moose.Compartment'>
+        /model[0]/comp[1] <type 'moose.Compartment'>
+        /model[0]/comp[2] <type 'moose.Compartment'>
 
 Thus elements are instances of class ``melement``. All elements in an
 ``vec`` share the ``id_`` of the ``vec`` which can retrieved by

@@ -65,22 +65,23 @@ def create_population(container, size):
     This uses **ionchannel.create_1comp_neuron**.
 
     """
+    #I imagine that layers in a network will consist of such populations
     path = container.path
     print((path, size, type(path)))
-    comps = create_1comp_neuron('{}/neuron'.format(path), number=size)
-    synpath = path+'/synchan'
+    comps = create_1comp_neuron('{}/neuron'.format(path), number=size) #creates population of 1comp_neurons as per ionchannel.py
+    synpath = path+'/synchan' #path under container
     print((synpath, size, type(size)))
     synchan = moose.vec(synpath, n=size, dtype='SynChan')
     synchan.Gbar = 1e-8
     synchan.tau1 = 2e-3
     synchan.tau2 = 2e-3
-    m = moose.connect(comps, 'channel', synchan, 'channel', 'OneToOne')
+    m = moose.connect(comps, 'channel', synchan, 'channel', 'OneToOne') #connect neupop to channel with 1to1 connections
     synhandler = moose.vec('{}/synhandler'.format(path), n=size,
                            dtype='SimpleSynHandler')
-    moose.connect(synhandler, 'activationOut', synchan, 'activation', 'OneToOne')
-    spikegen = moose.vec('{}/spikegen'.format(path), n=size, dtype='SpikeGen')
+    moose.connect(synhandler, 'activationOut', synchan, 'activation', 'OneToOne') #connect handler - channel
+    spikegen = moose.vec('{}/spikegen'.format(path), n=size, dtype='SpikeGen') #create spikegen through vec. Bu why?
     spikegen.threshold = 0.0
-    m = moose.connect(comps, 'VmOut', spikegen, 'Vm', 'OneToOne')
+    m = moose.connect(comps, 'VmOut', spikegen, 'Vm', 'OneToOne') #connect neurons to spikegens.
     return {'compartment': comps, 'spikegen': spikegen, 'synchan':
             synchan, 'synhandler': synhandler}
 
@@ -104,12 +105,12 @@ delay:      float (mean delay of synaptic transmission)
             
     """
     for sh in synhandler:
-        scount = len(spikegen)
-        sh.synapse.num = scount
-        sh.synapse.vec.delay = 5e-3
+        scount = len(spikegen)#len(spikegen) = number of spikegens? AKA no. of vecs?
+        sh.synapse.num = scount #sets number of synapses equal to number of spikegens. Only need one synhandler then?
+        sh.synapse.vec.delay = 5e-3 #
         for ii, syn in enumerate(sh.synapse):
-            msg = moose.connect(spikegen[ii], 'spikeOut', syn, 'addSpike')
-            print(('Connected', spikegen[ii].path, 'to', syn.path, 'on', sh.path))
+            msg = moose.connect(spikegen[ii], 'spikeOut', syn, 'addSpike') #for each synapse, connect each spikegen to each synapse one to one
+            print(('Connected', spikegen[ii].path, 'to', syn.path, 'on', sh.path)) #flavour text
 
 def create_network(size=2):
     """
@@ -117,10 +118,10 @@ def create_network(size=2):
     pop_B and connect them up.
     """
     net = moose.Neutral('network')
-    pop_a = create_population(moose.Neutral('/network/pop_A'), size)
+    pop_a = create_population(moose.Neutral('/network/pop_A'), size) #calls previously defined method to create pop a
     print(pop_a)
-    pop_b = create_population(moose.Neutral('/network/pop_B'), size)
-    make_synapses(pop_a['spikegen'], pop_b['synhandler'])
+    pop_b = create_population(moose.Neutral('/network/pop_B'), size) #create second population (like a layer I guess?)
+    make_synapses(pop_a['spikegen'], pop_b['synhandler']) #connects spikegens of population a to new synapses connected to synhandler of population b
     pulse = moose.PulseGen('pulse')
     pulse.level[0] = 1e-9
     pulse.delay[0] = 0.02 # disable the pulsegen
@@ -128,9 +129,10 @@ def create_network(size=2):
     pulse.delay[1] = 1e9
     data = moose.Neutral('/data')
     vm_a = moose.Table('/data/Vm_A', n=size)
-    moose.connect(pulse, 'output', pop_a['compartment'], 'injectMsg', 'OneToAll')
-    moose.connect(vm_a, 'requestOut', pop_a['compartment'], 'getVm', 'OneToOne')
-    vm_b = moose.Table('/data/Vm_B', size)
+    moose.connect(pulse, 'output', pop_a['compartment'], 'injectMsg', 'OneToAll') #connects pulsegen to pop a) #1 to all here means it connect
+    # s the single pulsegen to all neurons in pop a
+    moose.connect(vm_a, 'requestOut', pop_a['compartment'], 'getVm', 'OneToOne') #connects table to pop a
+    vm_b = moose.Table('/data/Vm_B', size) #
     moose.connect(vm_b, 'requestOut', pop_b['compartment'], 'getVm', 'OneToOne')
     gksyn_b = moose.Table('/data/Gk_syn_b', n=size)
     moose.connect(gksyn_b, 'requestOut', pop_b['synchan'], 'getGk', 'OneToOne')
@@ -141,7 +143,7 @@ def create_network(size=2):
             'Vm_A': vm_a,
             'Vm_B': vm_b,
             'Gsyn_B': gksyn_b
-        }
+        } #return dict object with all the created objects within.
 
 def main():
     """
@@ -149,6 +151,8 @@ def main():
     connected via alpha synapses. It also shows the use of SynChan class to create a
     network of single-compartment neurons connected by synapse.
     """
+
+    ##main is mostly clocksetting, method calling and plotting
     simtime = 0.1
     simdt = 0.25e-5
     plotdt = 0.25e-3
@@ -175,6 +179,9 @@ def main():
         plt.plot(oid.vector, label=oid.path)
     plt.legend()
     plt.show()
+
+if __name__ == '__main__':
+    main()
 
 
 #

@@ -45,7 +45,7 @@ Run Python from MOOSE
 .. automodule:: pyrun
   :members:
 
-.. automodule:: pyrun1
-  :members:
+.. automodule: pyrun1
+..   :members:
 
 .. _quickstart-classes:
