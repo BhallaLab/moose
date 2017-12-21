@@ -174,4 +174,13 @@ private:
     static vector< Element* >& elements();
 };
 
+namespace std {
+	template <> class hash<Id>{
+			public :
+			size_t operator()(const Id &x ) const{
+			return hash<unsigned int>()( x.value() );
+		}
+	};
+}
+
 #endif // _ID_H

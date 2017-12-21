@@ -21,10 +21,14 @@ set -o nounset                              # Treat unset variables as an error
 set -e
 
 (
-    mkdir -p _GSL_BUILD && cd _GSL_BUILD && cmake -DQUIET_MODE=ON -DDEBUG=ON -DPYTHON_EXECUTABLE=`which python` ..
+    mkdir -p _GSL_BUILD && cd _GSL_BUILD \
+        && cmake -DQUIET_MODE=ON -DDEBUG=ON \
+        -DPYTHON_EXECUTABLE=`which python` ..
     make && ctest --output-on-failure
     cd .. # Now with boost.
-    mkdir -p _BOOST_BUILD && cd _BOOST_BUILD && cmake -DWITH_BOOST=ON -DDEBUG=ON -DPYTHON_EXECUTABLE=`which python` ..
+    mkdir -p _BOOST_BUILD && cd _BOOST_BUILD \
+        && cmake -DWITH_BOOST=ON -DDEBUG=ON \
+        -DPYTHON_EXECUTABLE=`which python` ..
     make && ctest --output-on-failure
     cd ..
 )

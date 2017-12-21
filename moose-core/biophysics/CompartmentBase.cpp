@@ -636,6 +636,15 @@ void CompartmentBase::displace( double dx, double dy, double dz )
 	z_ += dz;
 }
 
+static bool hasScaleFormula( const Eref& e ) {
+	vector< Id > kids;
+	Neutral::children( e, kids );
+	for ( vector< Id >::iterator j = kids.begin(); j != kids.end(); j++ )
+		if ( j->element()->getName() == "scaleFormula" )
+			return true;
+	return false;
+}
+
 void CompartmentBase::setGeomAndElec( const Eref& e,
 				double len, double dia )
 {
@@ -650,6 +659,8 @@ void CompartmentBase::setGeomAndElec( const Eref& e,
 		vector< ObjId > chans;
 		allChildren( e.objId(), ALLDATA, "ISA=ChanBase", chans );
 		for ( unsigned int i = 0; i < chans.size(); ++i ) {
+			if ( hasScaleFormula( chans[i].eref() ) )
+				continue; // Later we will eval the formula with len and dia
 			double gbar = Field< double >::get( chans[i], "Gbar" );
 			gbar *= len * dia / ( length_ * diameter_ );
 			Field< double >::set( chans[i], "Gbar", gbar );

@@ -36,9 +36,27 @@ if(PYTHON_VERSION_MAJOR VERSION_EQUAL 3)
     set(WITH_GUI OFF)
 endif( )
 
+# On debian or ubuntu, --install-layout=deb needs to be passed.
+if(UNIX AND NOT APPLE)
+    find_program(LSB_RELEASE lsb_release)
+    if(LSB_RELEASE)
+        execute_process(COMMAND ${LSB_RELEASE} -is
+            OUTPUT_VARIABLE LSB_RELEASE_ID_SHORT
+            OUTPUT_STRIP_TRAILING_WHITESPACE
+            )
+        if(${LSB_RELEASE_ID_SHORT} STREQUAL "Ubuntu" 
+                OR ${LSB_RELEASE_ID_SHORT} STREQUAL "Debian" )
+            message(STATUS "Debian based LINUX: ${LSB_RELEASE_ID_SHORT}" )
+            set(CMAKE_PYMOOSE_ARGS "-DDISTUTILS_EXTRA_ARGS=\"--install-layout=deb\"" )
+        endif( )
+    endif( )
+endif( )
+
+
+
 add_custom_target(moose ALL)
 
-## intialize paths
+
 set(PYMOOSE_SOURCE_DIR "${CMAKE_SOURCE_DIR}/moose-core")
 set(PYMOOSE_BUILD_DIR ${CMAKE_BINARY_DIR}/__moose-core_build)
 set(PYMOOSE_INSTALL_DIR ${CMAKE_BINARY_DIR}/__moose-core_install)
@@ -114,8 +132,11 @@ if(WITH_GUI)
         )
 endif()
 
-configure_file( ${CMAKE_SOURCE_DIR}/cmake/moose.in ${CMAKE_BINARY_DIR}/moose )
-install(PROGRAMS ${CMAKE_BINARY_DIR}/moose DESTINATION bin)
+configure_file( 
+    ${CMAKE_SOURCE_DIR}/cmake/moosegui.in
+    ${CMAKE_BINARY_DIR}/moosegui 
+    )
+install(PROGRAMS ${CMAKE_BINARY_DIR}/moosegui DESTINATION bin)
 
 # UNINSTALL
 add_custom_command(OUTPUT __uninstall_moose-core__
@@ -131,7 +152,7 @@ if(WITH_GUI)
         ${CMAKE_INSTALL_PREFIX}/lib/moose/gui
         COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_INSTALL_PREFIX}/bin/moose
         )
-    add_dependencies( uninstall __uninstall_moose-gui__ )
+    #add_dependencies( uninstall __uninstall_moose-gui__ )
 endif()
 
 ################################################################################

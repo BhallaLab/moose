@@ -427,7 +427,7 @@ static bool checkForSpine( unsigned int dendIndex, Id compt,
  *
  */
 static void spinyTraverse( unsigned int dendIndex,
-	vector< Id >& dend, const map< Id, unsigned int >& dendMap,
+	vector< Id >& dend, const unordered_map< Id, unsigned int >& dendMap,
 	vector< int >& seen, unsigned int numSeen,
 	vector< Id >& shaftId, vector< Id >& headId,
 	vector< int >& dendParent, vector< unsigned int >& spineParent
@@ -436,7 +436,7 @@ static void spinyTraverse( unsigned int dendIndex,
 	vector< Id > conn = findAllConnectedCompartments( dend[dendIndex] );
 	seen[ dendIndex ] = numSeen;
 	for ( vector< Id >::iterator i = conn.begin(); i != conn.end(); ++i ) {
-		map< Id, unsigned int >::const_iterator idLookup =
+		unordered_map< Id, unsigned int >::const_iterator idLookup =
 				dendMap.find( *i );
 		if ( idLookup != dendMap.end() ) {
 			if ( !seen[ idLookup->second ] ) {
@@ -448,6 +448,32 @@ static void spinyTraverse( unsigned int dendIndex,
 		} else {
 			checkForSpine( dendIndex, *i, shaftId, headId, spineParent );
 		}
+	}
+}
+
+// Takes all 3 arrays, gets an array of indices that sorts them by shaftId,
+// and then uses it to sort them all.
+// Based on a post by quantdev on StackOverflow.
+static void sortByShaftIds( vector< Id >& shaftId, vector< Id >& headId,
+	vector< unsigned int >& spineParent )
+{
+	size_t sortedIndex(0);
+	vector<int> y(shaftId.size());
+	generate(begin(y), end(y), [&]{ return sortedIndex++; });
+	sort(  begin(y), end(y),
+		[&](int i1, int i2) { return shaftId[i1] < shaftId[i2]; } );
+
+	assert( sortedIndex == shaftId.size() );
+	assert( sortedIndex == headId.size() );
+	assert( sortedIndex == spineParent.size() );
+
+	auto a = shaftId;
+	auto b = headId;
+	auto c = spineParent;
+	for ( size_t i = 0; i < sortedIndex; ++i) {
+		shaftId[i] = a[y[i]];
+		headId[i] = b[y[i]];
+		spineParent[i] = c[y[i]];
 	}
 }
 
@@ -469,12 +495,13 @@ void NeuroNode::buildSpinyTree(
 {
 	nodes.clear();
 	sort( elist.begin(), elist.end() );
-	map< Id, unsigned int > dendMap;
+	unordered_map< Id, unsigned int > dendMap;
 	vector< Id > dend;
 	for ( vector< ObjId >::iterator
 		i = elist.begin(); i != elist.end(); ++i ) {
 		if ( isPartOfDend( *i ) ) {
 			dendMap[ *i ] = dend.size();
+			//cout << "st: dendMap[" << *i << "] = " << dend.size() << endl;
 			dend.push_back( *i );
 		}
 	}
@@ -487,6 +514,9 @@ void NeuroNode::buildSpinyTree(
 			shaftId, headId,
 			dendParent, spineParent );
 	}
+	// Here I sort by shaftIds. I have 4 parallel arrays, so I get the
+	// Index order of the whole lot that will sort the shaftIds.
+	sortByShaftIds( shaftId, headId, spineParent );
 	if ( numSeen == 0 )
 		return;
 	for ( unsigned int i = 0; i < dend.size(); ++i )
@@ -501,10 +531,10 @@ void NeuroNode::buildSpinyTree(
 }
 
 void NeuroNode::setParentAndChildren( unsigned int index, int dendParent,
-	vector< NeuroNode >& nodes, const map< Id, unsigned int >& dendMap )
+	vector< NeuroNode >& nodes, const unordered_map< Id, unsigned int >& dendMap )
 {
 	parent_ = dendParent;
-	const map< Id, unsigned int >::const_iterator dendLookup =
+	const unordered_map< Id, unsigned int >::const_iterator dendLookup =
 			dendMap.find( nodes[dendParent].elecCompt_ );
 	if ( dendLookup != dendMap.end() ) {
 		assert( dendLookup->second < nodes.size() );
