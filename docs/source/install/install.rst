@@ -115,7 +115,7 @@ build moose
 
 .. code-block:: bash
 
-   $ cd /to/moose/source/code/ (root directory of moose)
+   $ cd /to/moose_directory/moose-core/ 
    $ mkdir _build
    $ cd _build
    $ cmake  ..
