@@ -8,8 +8,7 @@ Moose tutorials demonstrate how to do a variety of things with moose. It is reco
    :maxdepth: 2
 
    ChemicalBistables
+   ChemicalOscillators
    ExcInhNet
    ExcInhNetPlast
-   ChemicalOscillators
-   Rdesigneur
    

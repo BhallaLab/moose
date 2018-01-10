@@ -2,8 +2,6 @@
 Chemical Bistables
 ******************
 
-
-
 A `bistable system <https://en.wikipedia.org/wiki/Bistability>`_ is a dynamic system that has two stable equilibrium states. The following examples can be used to teach and demonstrate different aspects of bistable systems or to learn how to model them using moose. Each example contains a short description, the model's code, and the output with default settings. 
 
 Each example can be found as a python file within the main moose folder under 
@@ -16,14 +14,16 @@ In order to run the example, run the script
 
     python filename.py
 
-in your command line, where ``filename.py`` is the name of the python file you would like to run. The filenames are written in **bold** at the beginning of each section, and the files themselves can be found in the aformentioned directory.
+in command line, where ``filename.py`` is the name of the python file you would like to run. The filenames of each example are written in **bold** at the beginning of their respective sections, and the files themselves can be found in the aformentioned directory.
 
 In chemical bistable models that use solvers, there are optional arguments that allow you to specify which solver you would like to use.
 :: 
 
     python filename.py [gsl | gssa | ee]
 
-All the following examples can be run with either of the three solvers, which in some cases produces a different outcome. However, simply running the file without the optional arguement will by default use the ``gsl`` solver, which will produce the outputs shown below.
+Where gsl is a deterministic solver, gssa stands for Gillespie stochastic simulation algorithm, and ee stands for exponential euler.
+
+All the following examples can be run with either of the three solvers, which in some cases produces a different outcome. However, simply running the file without the optional argument will by default use the ``gsl`` solver. These ``gsl`` outputs are the ones shown below. 
 
 Simple Bistables
 ================
@@ -58,6 +58,8 @@ thresholds different for the different states?
 
 2. Try different volumes in line 31, and rerun using the gssa. Will you
    see more or less noise if you increase the volume to 1e-20 m^3?
+
+**Code:**
 
 .. hidden-code-block:: python
     :linenos:
@@ -222,6 +224,8 @@ automatically scales the volumes from 1e-19 down to smaller values.
 
 Note how the simulation successively becomes noisier, until at very
 small volumes there are spontaneous state transitions.
+
+**Code:**
 
 .. hidden-code-block:: python
     :linenos:
@@ -389,7 +393,6 @@ small volumes there are spontaneous state transitions.
 .. parsed-literal::
 
     vol = 1e-19, a.concInit = 1.0, a.nInit = 60221.415
-    Close graph to go to next plot
     
 
 
@@ -400,7 +403,6 @@ small volumes there are spontaneous state transitions.
 .. parsed-literal::
 
     vol = 1e-20, a.concInit = 1.0, a.nInit = 6022.1415
-    Close graph to go to next plot
     
 
 
@@ -411,7 +413,6 @@ small volumes there are spontaneous state transitions.
 .. parsed-literal::
 
     vol = 1e-21, a.concInit = 1.0, a.nInit = 602.21415
-    Close graph to go to next plot
     
 
 
@@ -422,7 +423,6 @@ small volumes there are spontaneous state transitions.
 .. parsed-literal::
 
     vol = 3e-22, a.concInit = 1.0, a.nInit = 180.664245
-    Close graph to go to next plot
     
 
 
@@ -433,7 +433,6 @@ small volumes there are spontaneous state transitions.
 .. parsed-literal::
 
     vol = 1e-22, a.concInit = 1.0, a.nInit = 60.221415
-    Close graph to go to next plot
     
 
 
@@ -444,7 +443,6 @@ small volumes there are spontaneous state transitions.
 .. parsed-literal::
 
     vol = 3e-23, a.concInit = 1.0, a.nInit = 18.0664245
-    Close graph to go to next plot
     
 
 
@@ -455,7 +453,6 @@ small volumes there are spontaneous state transitions.
 .. parsed-literal::
 
     vol = 1e-23, a.concInit = 1.0, a.nInit = 6.0221415
-    Close graph to go to next plot
     
 
 
@@ -485,6 +482,8 @@ that it is now very stably in this state, and the system rebounds to its
 original levels. At t = 320 we apply a strong push to take it over to a
 state where **b** is larger. At t = 430 we give it a strong push to take
 it back to the **c** dominant state.
+
+**Code:**
 
 .. hidden-code-block:: python
     :linenos:
@@ -598,6 +597,8 @@ goes on for 500 s.
 Note that this is a somewhat unphysiological manipulation! Following
 this the model settles back to the same 'off' state it was in
 originally.
+
+**Code:**
 
 .. hidden-code-block:: python
     :linenos:
@@ -723,6 +724,8 @@ and vice versa. However we have a small asymmetry due to the tapering of
 the cylinder. As there is a slightly larger volume on the left, the
 transition point gradually advances to the right, as molecule **b**
 yields to the slightly larger amounts of molecule **c**.
+
+**Code:**
 
 .. hidden-code-block:: python
     :linenos:
@@ -934,6 +937,8 @@ steady states are.
 
 For more information on the algorithm used, look in the comments within
 the main method of the code below.
+
+**Code:**
 
 .. hidden-code-block:: python
     :linenos:
@@ -1192,8 +1197,8 @@ the main method of the code below.
 
 .. image:: ../../../images/findS.png
 
-Dose Response
-=============
+Dose Response (Under construction)
+==================================
 
 File name: **doseResponse.py**
 
@@ -1203,6 +1208,8 @@ again from the bistable regime. Like the previous example, it uses the
 steady-state solver to find the stable points for each value of the
 control parameter. Unfortunately it doesn't work right now. Seems like
 the kcat scaling isn't being registered.
+
+**Code:**
 
 .. hidden-code-block:: python
     :linenos:
