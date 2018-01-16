@@ -27,8 +27,8 @@ MOOSE is a simulation environment, not just a numerical engine: It provides data
 
    /install/index_install
    /user/py/quickstart/index_qs
-   /user/py/tutorials/index_tut
    /user/py/cookbook/index_ckbk
+   /user/py/tutorials/index_tut
    /user/py/graphics/index_graphics
    /user/py/references/index_ref
    /doxygen/doxy

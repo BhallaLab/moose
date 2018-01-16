@@ -21,7 +21,7 @@ In chemical bistable models that use solvers, there are optional arguments that 
 
     python filename.py [gsl | gssa | ee]
 
-Where gsl is a deterministic solver, gssa stands for Gillespie stochastic simulation algorithm, and ee stands for exponential euler.
+Where ``gsl`` is Gnu Scientific Library's deterministic solver, ``gssa`` stands for Gillespie stochastic simulation algorithm, and ``ee`` is the exponential euler algorithm.
 
 All the following examples can be run with either of the three solvers, which in some cases produces a different outcome. However, simply running the file without the optional argument will by default use the ``gsl`` solver. These ``gsl`` outputs are the ones shown below. 
 
