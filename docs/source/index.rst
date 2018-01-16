@@ -35,7 +35,6 @@ MOOSE is a simulation environment, not just a numerical engine: It provides data
 
 .. toctree::
    :maxdepth: 1
-
    :titlesonly:
 
 .. toctree::

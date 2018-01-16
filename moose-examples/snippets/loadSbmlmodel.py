@@ -46,12 +46,12 @@ from moose.chemUtil.add_Delete_ChemicalSolver import *
 
 def main():
     """
-This example illustrates loading, running of an SBML model defined in XML format.
-Default this  file load's 00001-sbml-l3v1.xml which is taken from l3v1 SBML testcase.
-Plots are setup.
-Model is run for 20sec.
-As a general rule we created model under '/path/model' and plots under '/path/graphs'.
-If someone wants to load anyother file then 
+    This example illustrates loading, running of an SBML model defined in XML format.
+    Default this  file load's 00001-sbml-l3v1.xml which is taken from l3v1 SBML testcase.
+    Plots are setup.
+    Model is run for 20sec.
+    As a general rule we created model under '/path/model' and plots under '/path/graphs'.
+    If someone wants to load anyother file then 
     `python loadSbmlmodel filepath runtime`
     """
 

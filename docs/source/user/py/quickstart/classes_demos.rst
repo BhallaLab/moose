@@ -70,6 +70,7 @@ Function
 
 .. automodule:: func
   :members:
+  :noindex:
 
 SymCompartment
 ^^^^^^^^^^^^^^

@@ -2,10 +2,6 @@
 Getting started with python scripting for MOOSE
 ***********************************************
 
-.. contents:
-   :local:
-   :depth: 1
-
 .. figure:: ../../../images/Gallery_Moose_Multiscale.png
    :alt: **multiple scales in moose**
    :scale: 100%
@@ -30,11 +26,10 @@ MOOSE is a simulation environment, not just a numerical engine: It provides data
 
 Contents:
 
-.. toctree::
-   :maxdepth: 2
-   :numbered:
+.. contents::
+   :local:
+   :depth: 1
 
-   moose_quickstart
 Coding basics and how to use this document
 ==========================================
 
@@ -114,6 +109,7 @@ Alternatively, if you want to see a full list of classes, functions and their fi
 
 * :ref:`genindex`
 * :ref:`modindex`
+
 .. 
    :ref:`search` 
 

@@ -20,5 +20,6 @@ Modeling chemical reactions in neurons
 .. automodule:: gssaRDspiny
    :members:
 
-.. automodule:: rxdSpineSize
+.. automodule: rxdSpineSize
    :members:
+   (rxdSpineSize does not exist in any appended folders -> gives error while building html)

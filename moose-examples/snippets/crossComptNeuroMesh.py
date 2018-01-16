@@ -204,7 +204,7 @@ def main():
     files.  Normally one uses standard model formats like
     SBML or kkit to concisely define kinetic and neuronal models.
     This example creates a simple reaction::
-        a <==> b <==> c
+    a <==> b <==> c
     in which **a, b**, and **c** are in the dendrite, spine head, and PSD
     respectively.
     The model is set up to run using the Ksolve for integration. Although

@@ -45,7 +45,8 @@ In case your distribution is not listed on `our repository page
 
 First, you need to get the source code. You can use ``git`` (clone the
 repository) or download snapshot of github repo by clicking on `this link
-<https://github.com/BhallaLab/moose/archive/master.zip>`_.::
+<https://github.com/BhallaLab/moose/archive/master.zip>`__.
+::
 
     $ git clone https://github.com/BhallaLab/moose
 
@@ -57,7 +58,7 @@ Or,
     $ unzip master.zip
 
 If you don't want latest snapshot of ``MOOSE``, you can download other released
-versions from `here <`https://github.com/BhallaLab/moose/releases>`_.
+versions from `here <https://github.com/BhallaLab/moose/releases>`__.
 
 Install dependencies
 ^^^^^^^^^^^^^^^^^^^^
@@ -157,8 +158,8 @@ If you have installed the pre-built package, then you already have the GUI.
 You can launch it by runnung `moosegui` command in terminal.
 
 You can get the source of ``moose-gui`` from `here
-<https://github.com/BhallaLab/moose-gui>`_. You can download it either by
-clicking on `this link <https://github.com/BhallaLab/moose-gui/archive/master.zip>`_
+<https://github.com/BhallaLab/moose-gui>`__. You can download it either by
+clicking on `this link <https://github.com/BhallaLab/moose-gui/archive/master.zip>`__
 or by using ``git`` ::
 
     $ git clone https://github.com/BhallaLab/moose-gui
@@ -203,7 +204,7 @@ Building moogli
 ---------------
 
 ``moogli`` is subproject of ``MOOSE`` for visualizing models. More details can
-be found `here <http://moose.ncbs.res.in/moogli>`_.
+be found `here <http://moose.ncbs.res.in/moogli>`__.
 
 `Moogli` is part of `moose` package. Building moogli can be tricky because of
 multiple depednecies it has.
@@ -212,7 +213,7 @@ multiple depednecies it has.
     - OSG (3.2.x) For 3D rendering and simulation of neuronal models
     - Qt4 (4.8.x) For C++ GUI of Moogli
 
-To get the latest source code of ``moogli``, click on `this link <https://github.com/BhallaLab/moogli/archive/master.zip>`_.
+To get the latest source code of ``moogli``, click on `this link <https://github.com/BhallaLab/moogli/archive/master.zip>`__.
 
 Moogli depends on ``OpenSceneGraph`` (version 3.2.0 or higher) which may not
 be easily available for your operating system.

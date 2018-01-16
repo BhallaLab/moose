@@ -1104,11 +1104,9 @@ the location of the spine. There are three pulses of calcium, the first
 being quite weak.
 
 .. figure:: ../../../../images/rdes10_CaSpread.png
-   :alt: Calcium influx from spine in middle of cylindrical compartment,
-   spreading into the dendrite and then axially in both directions.
+   :alt: Calcium influx from spine in middle of cylindrical compartment, spreading into the dendrite and then axially in both directions.
 
-   Calcium influx from spine in middle of cylindrical compartment,
-   spreading into the dendrite and then axially in both directions.
+   Calcium influx from spine in middle of cylindrical compartment, spreading into the dendrite and then axially in both directions.
 
 Once the simulation completes you'll also see a number of plots, so that
 you can figure out what the calcium influx was doing. Here, we have a
