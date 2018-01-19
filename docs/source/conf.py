@@ -22,17 +22,19 @@ import sys
 import sphinx_rtd_theme
 import mock
 
+conf_dir_ = os.path.dirname( __file__ )
+
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.insert(0, os.path.abspath('../python'))
-sys.path.insert(0, os.path.abspath('./Extensions'))
 sys.path.append(os.path.abspath('../../moose-examples/snippets'))
 sys.path.append(os.path.abspath('../../moose-examples/tutorials/ChemicalOscillators'))
 sys.path.append(os.path.abspath('../../moose-examples/tutorials/ChemicalBistables'))
 sys.path.append(os.path.abspath('../../moose-examples/tutorials/ExcInhNet'))
 sys.path.append(os.path.abspath('../../moose-examples/neuroml/lobster_pyloric'))
 sys.path.append(os.path.abspath('../../moose-examples/tutorials/ExcInhNetCaPlasticity'))
+sys.path.append(os.path.join(conf_dir_, 'Extensions') )
 
 # -- General configuration -----------------------------------------------------
 

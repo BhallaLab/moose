@@ -35,7 +35,12 @@ Released under the WTFPL (http://sam.zoy.org/wtfpl/).
 from docutils import nodes
 from docutils.parsers.rst import directives
 from sphinx.directives.code import CodeBlock
-from sphinx.util.compat import make_admonition
+
+# Fixes from https://github.com/abakan/ablog/commit/413566341b36d2b855fdebe133e15edcd4542785
+try:
+    from sphinx.util.compat import make_admonition
+except ImportError as e:
+    from docutils.parsers.rst.directives.admonitions import BaseAdmonition as make_admonition
 
 HCB_COUNTER = 0
 
@@ -82,6 +87,12 @@ class HiddenCodeBlock(CodeBlock):
         hcb.line = self.lineno
         return [hcb]
 
+def visit_hcb_tex( self, node ):
+    pass
+
+def depart_hcb_tex( self, node ):
+    pass
+
 
 def visit_hcb_html(self, node):
     """Visit hidden code block"""
@@ -126,4 +137,4 @@ def depart_hcb_html(self, node):
 def setup(app):
     app.add_directive('hidden-code-block', HiddenCodeBlock)
     app.add_node(hidden_code_block, html=(visit_hcb_html, depart_hcb_html))
-
+    app.add_node(hidden_code_block, latex=(visit_hcb_tex, depart_hcb_tex))
