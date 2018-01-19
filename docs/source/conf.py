@@ -287,6 +287,7 @@ exclude_patterns = ['/docs/source/user/py/references/*.rst']
 #run the doxygen thingy
 import subprocess, os
 read_the_docs_build = os.environ.get('READTHEDOCS', None) == 'True'
+
 if not read_the_docs_build:
     subprocess.call('cd doxygen; echo HELLO......................; doxygen Doxyfile', shell=True)
 
