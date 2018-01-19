@@ -66,7 +66,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'MOOSE'
-copyright = u'2016, Upinder Bhalla, Niraj Dudani, Aditya Gilra, Aviral Goel, Subhasis Ray, Harsha Rani and Dilawar Singh'
+copyright = u'2018, Upinder Bhalla, Niraj Dudani, Subhasis Ray, Aditya Gilra,Harsha Rani, Aviral Goel, Dilawar Singh, Malav Shah, Dhruva Gowda storz'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -208,7 +208,7 @@ latex_elements = {
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
   ('index', 'MOOSE.tex', u'MOOSE Documentation',
-   u'Upinder Bhalla, Niraj Dudani, Aditya Gilra, Aviral Goel, Subhasis Ray,Harsha Rani and Dilawar Singh', 'manual'),
+   u'Upinder Bhalla, Niraj Dudani, Subhasis Ray, Aditya Gilra,Harsha Rani, Aviral Goel, Dilawar Singh, Malav Shah, Dhruva Gowda storz', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -238,7 +238,7 @@ latex_domain_indices = True
 # (source start file, name, description, authors, manual section).
 man_pages = [
     ('index', 'moose', u'MOOSE Documentation',
-     [u'Upinder Bhalla, Niraj Dudani, Aditya Gilra, Aviral Goel, Subhasis Ray,Harsha Rani and Dilawar Singh'], 1)
+     [u'Upinder Bhalla, Niraj Dudani, Subhasis Ray, Aditya Gilra,Harsha Rani, Aviral Goel, Dilawar Singh, Malav Shah, Dhruva Gowda storz'], 1)
 ]
 
 # If true, show URL addresses after external links.
@@ -252,7 +252,7 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
   ('index', 'MOOSE', u'MOOSE Documentation',
-   u'Upinder Bhalla, Niraj Dudani, Aditya Gilra, Aviral Goel, Subhasis Ray,Harsha Rani and Dilawar Singh', 'MOOSE', 'MOOSE is the Multiscale Object-Oriented Simulation Environment.',
+   u' Upinder Bhalla, Niraj Dudani, Subhasis Ray, Aditya Gilra,Harsha Rani, Aviral Goel, Dilawar Singh, Malav Shah, Dhruva Gowda storz', 'MOOSE', 'MOOSE is the Multiscale Object-Oriented Simulation Environment.',
    'Science'),
 ]
 
