@@ -2,13 +2,9 @@
 Getting started with python scripting for MOOSE
 ***********************************************
 
-.. contents::
-   :local:
-   :depth: 1
-
 .. figure:: ../../../images/Gallery_Moose_Multiscale.png
    :alt: **multiple scales in moose**
-   :scale: 50%
+   :scale: 100%
 
    *Multiple scales can be modelled and simulated in MOOSE*
 
@@ -30,18 +26,58 @@ MOOSE is a simulation environment, not just a numerical engine: It provides data
 
 Contents:
 
-.. toctree::
-   :maxdepth: 2
-   :numbered:
+.. contents::
+   :local:
+   :depth: 1
 
-   moose_quickstart
+Coding basics and how to use this document
+==========================================
 
-Indices and tables
-==================
+This page acts as the first stepping stone for learning how moose works. The tutorials here are intended to be interactive, and are presented as python commands. Python commands are identifiable by the ``>>>`` before the command as opposed to ``$`` which identifies a command-line command.  
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+        >>> this_is_a_python_command
+
+You are encouraged to run a python shell while reading through this documentation and trying out each command for yourself. Python shells are environments within your terminal wherein everything you type is interpreted as a python command. They can be accessed by typing 
+::
+
+        $ python
+
+in your command-line terminal.
+
+While individually typing lines of code in a python terminal is useful for practicing using moose and coding in general, note that once you close the python environment all the code you typed is gone and the moose models created are also lost. In order to 'save' models that you create, you would have to type your code in a text file with a ``.py`` extension. The easiest way to do this is to create a text file in command line, open it with a text editor (for example, gedit), and simply type your code in (make sure you indent correctly). 
+::
+
+        $ touch code.py
+        $ gedit code.py
+
+Once you have written your code in the file, you can run it through your python environment. 
+::
+
+        $ python code.py
+
+Note that apart from this section of the quickstart, most of the moose documentation is in the form of ``snippets``. These are basically ``.py`` files with code that demonstrates a certain functionality in moose. If you see a dialogue box like this one: 
+
+.. automodule:: func
+  :members: main
+
+You can view the code by clicking the green source button on the left side of the box. Alternatively, the source code for all of the examples in the documentation can be found in ``moose/moose-examples/snippets``. Once you run each file in python, it is encouraged that you look through the code to understand how it works. 
+
+In the quickstart, most of the snippets demonstrate the functionality of specific classes. However, snippets in later sections such as the cookbook show how to do specific things in moose such as creating networks, chemical models, and synaptic channels.
+
+
+Importing moose and accessing documentation
+===========================================
+
+
+In a python script you import modules to access the functionalities they provide. In order to use moose, you need to import it within a python environment or at the beginning of your python script. 
+
+        >>> import moose
+
+This make the ``moose`` module available for use in Python. You can use Python's built-in ``help`` function to read the top-level documentation for the moose module.
+
+        >>> help(moose)
+
+This will give you an overview of the module. Press ``q`` to exit the pager and get back to the interpreter. You can also access the documentation for individual classes and functions this way.
 
         >>> help(moose.connect)
 
@@ -68,6 +104,14 @@ Each field can have its own detailed documentation, too. ::
 Note that you need to put the class-name followed by dot followed by
 field-name within quotes. Otherwise, ``moose.doc`` will receive the
 field value as parameter and get confused.
+
+Alternatively, if you want to see a full list of classes, functions and their fields, you can browse through the following pages. This is especially helpful when going through snippets. 
+
+* :ref:`genindex`
+* :ref:`modindex`
+
+.. 
+   :ref:`search` 
 
 .. _quickstart-creating:
 
@@ -593,9 +637,9 @@ loop through the elements in an ``vec`` like a Python list ::
 
 shows ::
 
-        /model/comp[0] <type 'moose.melement'>
-        /model/comp[1] <type 'moose.melement'>
-        /model/comp[2] <type 'moose.melement'>
+        /model[0]/comp[0] <type 'moose.Compartment'>
+        /model[0]/comp[1] <type 'moose.Compartment'>
+        /model[0]/comp[2] <type 'moose.Compartment'>
 
 Thus elements are instances of class ``melement``. All elements in an
 ``vec`` share the ``id_`` of the ``vec`` which can retrieved by

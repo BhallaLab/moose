@@ -355,6 +355,7 @@ variables can be input from pool object.
 - **New**: **File -> New -> Model name**. This opens a empty widget for model building
 - **Saving models**: **File -> Save Model -> select from dialog**.
 - **Changing numerical methods**: **Preference->Chemical tab** item from Simulation Control. Currently supports:
+
 1. Runge Kutta: This is the Runge-Kutta-Fehlberg implementation from the GNU Scientific Library (GSL). It is a fifth order variable timestep explicit method. Works well for most reaction systems except if they have very stiff reactions.
 2. Gillespie: Optimized Gillespie stochastic systems algorithm, custom implementation. This uses variable timesteps internally. Note that it slows down with increasing numbers of molecules in each pool. It also slows down, but not so badly, if the number of reactions goes up.
 3. Exponential Euler:This methods computes the solution of partial and ordinary differential equations.

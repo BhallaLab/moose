@@ -53,8 +53,9 @@ Insert Spine heads
 .. automodule:: insertSpinesWithoutRdesigneur
    :members:
 
-Multi compartmental Neuron model
---------------------------------
+.. Multi compartmental Neuron model
+.. --------------------------------
 
-.. automodule:: testHsolve
+.. automodule: testHsolve
    :members:
+   (testHsolve no longer exists in any of the appended paths)

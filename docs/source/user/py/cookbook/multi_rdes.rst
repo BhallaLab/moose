@@ -1,6 +1,6 @@
-**********
-RDesigneur
-**********
+************************
+More Rdesigneur Examples
+************************
 
 Building Chemical-Electrical Signalling Models
 ----------------------------------------------

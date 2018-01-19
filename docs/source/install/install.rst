@@ -25,11 +25,15 @@ to pick your distribution and follow instructions.
 
 .. todo:: Packages for gentoo, Arch Linux
 
+Mac OSX
+^^^^^^^^
 
-MacOSX support is not complete yet. Python-scripting interface can be installed on MaxOSX using ``homebrew``
+
+MacOSX support for moose-gui is not complete yet. However, the python-scripting interface can be installed on OSX using ``homebrew``
 ::
 
-    $ brew install homebrew/science/moose
+    $ brew tap BhallaLab/moose
+    $ brew install moose
 
 
 Building MOOSE
@@ -37,11 +41,12 @@ Building MOOSE
 
 In case your distribution is not listed on `our repository page
 <https://software.opensuse.org/download.html?project=home:moose&package=moose>`_
-, or if you want to build the lastest development code, read on.
+, or if you want to build the latest development code, read on.
 
 First, you need to get the source code. You can use ``git`` (clone the
 repository) or download snapshot of github repo by clicking on `this link
-<https://github.com/BhallaLab/moose/archive/master.zip>`_.::
+<https://github.com/BhallaLab/moose/archive/master.zip>`__.
+::
 
     $ git clone https://github.com/BhallaLab/moose
 
@@ -52,8 +57,8 @@ Or,
     $ wget https://github.com/BhallaLab/moose/archive/master.zip
     $ unzip master.zip
 
-If you don't want lasest snapshot of ``MOOSE``, you can download other released
-versions from `here <`https://github.com/BhallaLab/moose/releases>`_.
+If you don't want latest snapshot of ``MOOSE``, you can download other released
+versions from `here <https://github.com/BhallaLab/moose/releases>`__.
 
 Install dependencies
 ^^^^^^^^^^^^^^^^^^^^
@@ -111,7 +116,7 @@ build moose
 
 .. code-block:: bash
 
-   $ cd /to/moose/source/code
+   $ cd /to/moose_directory/moose-core/ 
    $ mkdir _build
    $ cd _build
    $ cmake  ..
@@ -153,11 +158,14 @@ If you have installed the pre-built package, then you already have the GUI.
 You can launch it by runnung `moosegui` command in terminal.
 
 You can get the source of ``moose-gui`` from `here
-<https://github.com/BhallaLab/moose-gui>`_. You can download it either by
-clicking on `this link <https://github.com/BhallaLab/moose-gui/archive/master.zip>`_
+<https://github.com/BhallaLab/moose-gui>`__. You can download it either by
+clicking on `this link <https://github.com/BhallaLab/moose-gui/archive/master.zip>`__
 or by using ``git`` ::
 
     $ git clone https://github.com/BhallaLab/moose-gui
+
+
+Alternatively the moose-gui folder exists within the moose folder downloaded and built earlier in the installation process. It can be found under ``location_of_moose_folder/moose/moose-gui/``.
 
 Below are packages which you may want to install to use MOOSE Graphical User Interface.
 
@@ -196,7 +204,7 @@ Building moogli
 ---------------
 
 ``moogli`` is subproject of ``MOOSE`` for visualizing models. More details can
-be found `here <http://moose.ncbs.res.in/moogli>`_.
+be found `here <http://moose.ncbs.res.in/moogli>`__.
 
 `Moogli` is part of `moose` package. Building moogli can be tricky because of
 multiple depednecies it has.
@@ -205,7 +213,7 @@ multiple depednecies it has.
     - OSG (3.2.x) For 3D rendering and simulation of neuronal models
     - Qt4 (4.8.x) For C++ GUI of Moogli
 
-To get the latest source code of ``moogli``, click on `this link <https://github.com/BhallaLab/moogli/archive/master.zip>`_.
+To get the latest source code of ``moogli``, click on `this link <https://github.com/BhallaLab/moogli/archive/master.zip>`__.
 
 Moogli depends on ``OpenSceneGraph`` (version 3.2.0 or higher) which may not
 be easily available for your operating system.

@@ -11,6 +11,11 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
+#Workaround to fix bug where extensions werent added
+from docutils.parsers.rst.directives.admonitions import BaseAdmonition
+from sphinx.util import compat
+compat.make_admonition = BaseAdmonition
+
 import subprocess
 import os
 import sys
@@ -21,6 +26,7 @@ import mock
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.insert(0, os.path.abspath('../python'))
+sys.path.insert(0, os.path.abspath('./Extensions'))
 sys.path.append(os.path.abspath('../../moose-examples/snippets'))
 sys.path.append(os.path.abspath('../../moose-examples/tutorials/ChemicalOscillators'))
 sys.path.append(os.path.abspath('../../moose-examples/tutorials/ChemicalBistables'))
@@ -41,6 +47,7 @@ extensions = ['sphinx.ext.autodoc',
               'sphinx.ext.autosummary',
               'sphinx.ext.todo',
               'sphinx.ext.viewcode',
+              'hidden_code_block'
 		]
 
 todo_include_todos = True
@@ -109,6 +116,7 @@ todo_include_todos = True
 
 # A list of ignored prefixes for module index sorting.
 #modindex_common_prefix = []
+
 
 # -- Options for HTML output ---------------------------------------------------
 
@@ -286,4 +294,5 @@ import subprocess, os
 read_the_docs_build = os.environ.get('READTHEDOCS', None) == 'True'
 
 if read_the_docs_build:
-    subprocess.call('cd ../../doxygen; echo HELLO......................; doxygen Doxyfile', shell=True)
+    subprocess.call('cd doxygen; echo HELLO......................; doxygen Doxyfile', shell=True)
+
