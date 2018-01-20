@@ -35,7 +35,12 @@ Released under the WTFPL (http://sam.zoy.org/wtfpl/).
 from docutils import nodes
 from docutils.parsers.rst import directives
 from sphinx.directives.code import CodeBlock
-from sphinx.util.compat import make_admonition
+
+# Fixes from https://github.com/abakan/ablog/commit/413566341b36d2b855fdebe133e15edcd4542785
+try:
+    from sphinx.util.compat import make_admonition
+except ImportError as e:
+    from docutils.parsers.rst.directives.admonitions import BaseAdmonition as make_admonition
 
 HCB_COUNTER = 0
 
@@ -82,6 +87,41 @@ class HiddenCodeBlock(CodeBlock):
         hcb.line = self.lineno
         return [hcb]
 
+def visit_hcb_tex( self, node ):
+    global HCB_COUNTER
+
+    # We want to use the original highlighter so that we don't
+    # have to reimplement it.  However it raises a SkipNode 
+    # error at the end of the function call.  Thus we intercept
+    # it and raise it again later.
+    try: 
+        self.visit_literal_block(node)
+    except nodes.SkipNode:
+        pass
+
+    ## The last element of the body should be the literal code 
+    ## block that was just made.
+    #code_block = self.body[-1]
+
+    #fill_header = {'divname': 'hiddencodeblock{0}'.format(HCB_COUNTER), 
+    #               'startdisplay': 'none' if node['starthidden'] else 'block', 
+    #               'label': node.get('label'), 
+    #               }
+
+    #divheader = ("""<a href="javascript:showhide(document.getElementById('{divname}'))">"""
+    #             """{label}</a><br />"""
+    #             '''<div id="{divname}" style="display: {startdisplay}">'''
+    #             ).format(**fill_header)
+
+    #code_block = js_showhide + divheader + code_block + "</div>"
+
+    ## reassign and exit
+    #self.body[-1] = code_block
+    raise nodes.SkipNode
+
+def depart_hcb_tex( self, node ):
+    pass
+
 
 def visit_hcb_html(self, node):
     """Visit hidden code block"""
@@ -122,8 +162,7 @@ def depart_hcb_html(self, node):
     """Depart hidden code block"""
     # Stub because of SkipNode in visit
 
-
 def setup(app):
     app.add_directive('hidden-code-block', HiddenCodeBlock)
     app.add_node(hidden_code_block, html=(visit_hcb_html, depart_hcb_html))
-
+    app.add_node(hidden_code_block, latex=(visit_hcb_tex, depart_hcb_tex))

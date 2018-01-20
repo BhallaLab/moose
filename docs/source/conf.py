@@ -22,17 +22,19 @@ import sys
 import sphinx_rtd_theme
 import mock
 
+conf_dir_ = os.path.dirname( __file__ )
+
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.insert(0, os.path.abspath('../python'))
-sys.path.insert(0, os.path.abspath('./Extensions'))
 sys.path.append(os.path.abspath('../../moose-examples/snippets'))
 sys.path.append(os.path.abspath('../../moose-examples/tutorials/ChemicalOscillators'))
 sys.path.append(os.path.abspath('../../moose-examples/tutorials/ChemicalBistables'))
 sys.path.append(os.path.abspath('../../moose-examples/tutorials/ExcInhNet'))
 sys.path.append(os.path.abspath('../../moose-examples/neuroml/lobster_pyloric'))
 sys.path.append(os.path.abspath('../../moose-examples/tutorials/ExcInhNetCaPlasticity'))
+sys.path.append(os.path.join(conf_dir_, 'Extensions') )
 
 # -- General configuration -----------------------------------------------------
 
@@ -66,7 +68,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'MOOSE'
-copyright = u'2016, Upinder Bhalla, Niraj Dudani, Aditya Gilra, Aviral Goel, Subhasis Ray, Harsha Rani and Dilawar Singh'
+copyright = u'2018, Upinder Bhalla, Niraj Dudani, Subhasis Ray, Aditya Gilra,Harsha Rani, Aviral Goel, Dilawar Singh, Malav Shah, Dhruva Gowda storz'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -208,7 +210,7 @@ latex_elements = {
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
   ('index', 'MOOSE.tex', u'MOOSE Documentation',
-   u'Upinder Bhalla, Niraj Dudani, Aditya Gilra, Aviral Goel, Subhasis Ray,Harsha Rani and Dilawar Singh', 'manual'),
+   u'Upinder Bhalla, Niraj Dudani, Subhasis Ray, Aditya Gilra,Harsha Rani, Aviral Goel, Dilawar Singh, Malav Shah, Dhruva Gowda storz', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -238,7 +240,7 @@ latex_domain_indices = True
 # (source start file, name, description, authors, manual section).
 man_pages = [
     ('index', 'moose', u'MOOSE Documentation',
-     [u'Upinder Bhalla, Niraj Dudani, Aditya Gilra, Aviral Goel, Subhasis Ray,Harsha Rani and Dilawar Singh'], 1)
+     [u'Upinder Bhalla, Niraj Dudani, Subhasis Ray, Aditya Gilra,Harsha Rani, Aviral Goel, Dilawar Singh, Malav Shah, Dhruva Gowda storz'], 1)
 ]
 
 # If true, show URL addresses after external links.
@@ -252,7 +254,7 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
   ('index', 'MOOSE', u'MOOSE Documentation',
-   u'Upinder Bhalla, Niraj Dudani, Aditya Gilra, Aviral Goel, Subhasis Ray,Harsha Rani and Dilawar Singh', 'MOOSE', 'MOOSE is the Multiscale Object-Oriented Simulation Environment.',
+   u' Upinder Bhalla, Niraj Dudani, Subhasis Ray, Aditya Gilra,Harsha Rani, Aviral Goel, Dilawar Singh, Malav Shah, Dhruva Gowda storz', 'MOOSE', 'MOOSE is the Multiscale Object-Oriented Simulation Environment.',
    'Science'),
 ]
 
@@ -283,16 +285,9 @@ autodoc_mock_imports = [ 'numpy' , 'moose.sbml' , 'moose.genesis' , 'moose.LIF'
 exclude_patterns = ['/docs/source/user/py/references/*.rst']
 
 #run the doxygen thingy
-# read_the_docs_build = os.environ.get('READTHEDOCS', None) == 'True'
-#
-# if read_the_docs_build:
-#
-#     subprocess.call('cd ../../doxygen; doxygen', shell=True)
-
 import subprocess, os
-
 read_the_docs_build = os.environ.get('READTHEDOCS', None) == 'True'
 
-if read_the_docs_build:
+if not read_the_docs_build:
     subprocess.call('cd doxygen; echo HELLO......................; doxygen Doxyfile', shell=True)
 
