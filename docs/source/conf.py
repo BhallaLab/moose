@@ -197,20 +197,29 @@ htmlhelp_basename = 'MOOSE'
 
 latex_elements = {
 # The paper size ('letterpaper' or 'a4paper').
-#'papersize': 'letterpaper',
+'papersize': 'a4paper',
 
 # The font size ('10pt', '11pt' or '12pt').
-#'pointsize': '10pt',
+'pointsize': '11pt',
 
 # Additional stuff for the LaTeX preamble.
-#'preamble': '',
+'preamble': r'''
+\usepackage{libertine} 
+\usepackage{mathpazo}
+\usepackage{epstopdf}
+% Convert GIF to PNG in pdf.
+\epstopdfDeclareGraphicsRule{.gif}{png}{.png}{convert gif:#1 png:\OutputFile}
+\AppendGraphicsExtensions{.gif}
+    '''
 }
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'MOOSE.tex', u'MOOSE Documentation',
-   u'Upinder Bhalla, Niraj Dudani, Subhasis Ray, Aditya Gilra,Harsha Rani, Aviral Goel, Dilawar Singh, Malav Shah, Dhruva Gowda storz', 'manual'),
+  ('index', 'MOOSE.tex', u'MOOSE User Manual',
+   r'Upinder Bhalla, Niraj Dudani, Subhasis Ray \\Aditya Gilra,Harsha Rani, Aviral Goel \\ Dilawar Singh, Malav Shah, Dhruva Gowda Storz' 
+   , 'manual'
+   ),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -219,13 +228,13 @@ latex_logo = 'images/moose_logo.png'
 
 # For "manual" documents, if this is true, then toplevel headings are parts,
 # not chapters.
-#latex_use_parts = False
+latex_use_parts = True
 
 # If true, show page references after internal links.
 latex_show_pagerefs = True
 
 # If true, show URL addresses after external links.
-#latex_show_urls = False
+latex_show_urls = True
 
 # Documents to append as an appendix to all manuals.
 #latex_appendices = []
@@ -239,12 +248,12 @@ latex_domain_indices = True
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'moose', u'MOOSE Documentation',
-     [u'Upinder Bhalla, Niraj Dudani, Subhasis Ray, Aditya Gilra,Harsha Rani, Aviral Goel, Dilawar Singh, Malav Shah, Dhruva Gowda storz'], 1)
+    ('index', 'moose', u'MOOSE User Manual',
+     [u'Upinder Bhalla, Niraj Dudani, Subhasis Ray, Aditya Gilra,Harsha Rani, Aviral Goel, Dilawar Singh, Malav Shah, Dhruva Gowda Storz'], 1)
 ]
 
 # If true, show URL addresses after external links.
-#man_show_urls = False
+man_show_urls = True
 
 
 # -- Options for Texinfo output ------------------------------------------------
@@ -254,7 +263,9 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
   ('index', 'MOOSE', u'MOOSE Documentation',
-   u' Upinder Bhalla, Niraj Dudani, Subhasis Ray, Aditya Gilra,Harsha Rani, Aviral Goel, Dilawar Singh, Malav Shah, Dhruva Gowda storz', 'MOOSE', 'MOOSE is the Multiscale Object-Oriented Simulation Environment.',
+   u'Upinder Bhalla, Niraj Dudani, Subhasis Ray, Aditya Gilra,Harsha Rani, Aviral Goel, Dilawar Singh, Malav Shah, Dhruva Gowda Storz'
+   , 'MOOSE'
+   , 'MOOSE is the Multiscale Object-Oriented Simulation Environment.',
    'Science'),
 ]
 
