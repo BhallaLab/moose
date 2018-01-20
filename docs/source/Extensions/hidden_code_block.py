@@ -88,7 +88,36 @@ class HiddenCodeBlock(CodeBlock):
         return [hcb]
 
 def visit_hcb_tex( self, node ):
-    pass
+    global HCB_COUNTER
+
+    # We want to use the original highlighter so that we don't
+    # have to reimplement it.  However it raises a SkipNode 
+    # error at the end of the function call.  Thus we intercept
+    # it and raise it again later.
+    try: 
+        self.visit_literal_block(node)
+    except nodes.SkipNode:
+        pass
+
+    ## The last element of the body should be the literal code 
+    ## block that was just made.
+    #code_block = self.body[-1]
+
+    #fill_header = {'divname': 'hiddencodeblock{0}'.format(HCB_COUNTER), 
+    #               'startdisplay': 'none' if node['starthidden'] else 'block', 
+    #               'label': node.get('label'), 
+    #               }
+
+    #divheader = ("""<a href="javascript:showhide(document.getElementById('{divname}'))">"""
+    #             """{label}</a><br />"""
+    #             '''<div id="{divname}" style="display: {startdisplay}">'''
+    #             ).format(**fill_header)
+
+    #code_block = js_showhide + divheader + code_block + "</div>"
+
+    ## reassign and exit
+    #self.body[-1] = code_block
+    raise nodes.SkipNode
 
 def depart_hcb_tex( self, node ):
     pass
