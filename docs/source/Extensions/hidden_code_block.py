@@ -162,7 +162,6 @@ def depart_hcb_html(self, node):
     """Depart hidden code block"""
     # Stub because of SkipNode in visit
 
-
 def setup(app):
     app.add_directive('hidden-code-block', HiddenCodeBlock)
     app.add_node(hidden_code_block, html=(visit_hcb_html, depart_hcb_html))
