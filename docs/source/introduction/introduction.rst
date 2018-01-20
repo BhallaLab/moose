@@ -8,7 +8,7 @@ networks. MOOSE can operate at many levels of detail, from stochastic chemical
 computations, to multicompartment single-neuron models, to spiking neuron
 network models.
 
-.. figure:: images/Gallery_Moose_Multiscale.png
+.. figure:: ../images/Gallery_Moose_Multiscale.png
    :scale: 75%
    :alt: **multiple scales in moose**
 
