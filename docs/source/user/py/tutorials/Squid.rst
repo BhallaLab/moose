@@ -5,7 +5,7 @@ Squid giant axon
 This tutorial is an interactive graphical simulation of a squid giant axon,
 closely based on the 'Squid' demo by Mark Nelson which ran in GENESIS.
 
-The `squid giant axon <https://en.wikipedia.org/wiksi/Squid_giant_axon>`_ is a very large axon that plays a role in the water jet propulsion systems of squid. 
+The `squid giant axon <https://en.wikipedia.org/wiki/Squid_giant_axon>`_ is a very large axon that plays a role in the water jet propulsion systems of squid. 
 
 Alan Hodgkin, Andrew Huxley, and John Eccles won the nobel prize in physiology or medicine for their pioneering work on the squid axon. Hodgin and Huxley were the first to qualitatively describe action potentials within neurons. The large diameter of the squid giant axon (0.5 mm to 1 mm) allowed them to affix electrodes and voltage clamps to precisely measure the action potential as it travelled through the axon. They later went on to mathematically describe this in an equation that paved the road for mathematical and computational biology's development. 
 
