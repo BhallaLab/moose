@@ -48,11 +48,11 @@ models.  Several additional rdesigneur tutorials have been implemented.
 
 # Installing
 
-See the file `INSTALL.md`.
+See the file  [NSTALL.md](INSTALL.md).
 
 # AUTHORS
 
-See the file `CREDITS`
+See the file [CREDITS](CREDITS.md)
 
 ## Examples, tutorials and Demos: 
 
