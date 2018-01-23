@@ -33,6 +33,9 @@ interface with Python, graphical displays with Matplotlib, PyQt, and OpenGL, and
 support for many model formats. These include SBML, NeuroML, GENESIS kkit and
 cell.p formats, HDF5 and NSDF for data writing.
 
+# Documentation
+
+MOOSE Documentation can be found at https://moose.ncbs.res.in/?q=documentation .  
 
 # VERSION
 
@@ -43,27 +46,15 @@ Python-based SBML reader , improved handling of reaction-diffusion systems, and
 substantial refinements to the rdesigneur interface for setting up multiscale
 models.  Several additional rdesigneur tutorials have been implemented. 
 
-# LICENSE
+# Installing
 
-MOOSE is released under the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or (at
-your option) any later version.
-
-# Building and installing
-
-See the file `INSTALL.md`.
+See the file  [NSTALL.md](INSTALL.md).
 
 # AUTHORS
 
-- Upinder S. Bhalla     -   Primary Architect, Chemical kinetic solvers
-- Niraj Dudani          -   Neuronal solver
-- Subhasis Ray          -   PyMOOSE Design and Documentation, Python Plugin Interface, NSDF Format
-- G.V.HarshaRani        -   Web page design, SBML support, Kinetikit Plugin Development
-- Aditya Gilra          -   NeuroML reader development, integrate-and-fire neurons/networks, STDP
-- Aviral Goel           -   Moogli/Neurokit Development
-- Dilawar Singh         -   Packaging
+See the file [CREDITS](CREDITS.md)
 
-# Examples, tutorials and Demos: 
+## Examples, tutorials and Demos: 
 
 Look in the [moose-examples repository](https://github.com/BhallaLab/moose-examples) for sample code. 
 
@@ -79,7 +70,7 @@ Look in the [moose-examples repository](https://github.com/BhallaLab/moose-examp
   all meant to run as individual files.
 
 
-# Supported file formats.
+## Supported file formats.
 
 MOOSE comes with a NeuroML reader. Demos/neuroml has some python scripts showing
 how to load NeuroML models.
@@ -97,7 +88,8 @@ need to have all the channels used in the .p file preloaded in /library:
 
 MOOSE can also read .swc files from NeuroMorpho.org.
 
-# Documentation
+# LICENSE
 
-Complete MOOSE Documentation can be found at -
-https://moose.ncbs.res.in/?q=documentation
+MOOSE is released under the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or (at
+your option) any later version.
