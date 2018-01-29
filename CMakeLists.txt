@@ -163,13 +163,16 @@ add_test( NAME test_pymoose_sanity
     COMMAND ${PYTHON_EXECUTABLE} -c "import moose"
     )
 
-if(WITH_GUI)
-    add_test( NAME test_gui_sanity 
-        COMMAND ${PYTHON_EXECUTABLE} ${MOOSE_GUI_INSTALL_DIR}/mgui.py 
-        WORKING_DIRECTORY ${MOOSE_GUI_INSTALL_DIR}
-        )
-endif()
-
 set_tests_properties( test_pymoose_sanity 
     PROPERTIES ENVIRONMENT "PYTHONPATH=${PYMOOSE_BUILD_DIR}/python"
     )
+
+# # This test always fails when -X is not working which is usually the case on
+# # Travis and OBS.
+# if(WITH_GUI)
+#     add_test( NAME test_gui_sanity 
+#         COMMAND ${PYTHON_EXECUTABLE} ${MOOSE_GUI_INSTALL_DIR}/mgui.py 
+#         WORKING_DIRECTORY ${MOOSE_GUI_INSTALL_DIR}
+#         )
+# endif()
+
