@@ -35,6 +35,16 @@ MacOSX support for moose-gui is not complete yet. However, the python-scripting 
     $ brew tap BhallaLab/moose
     $ brew install moose
 
+Docker Images
+^^^^^^^^^^^^^^
+
+Docker images are available for stable version. 
+::
+      $ docker pull bhallalab/moose
+      $ docker run -it --rm -v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY=$DISPLAY bhallalab/moose
+      
+This will launch `xterm`; run `moosegui` in terminal to lauch the GUI. 
+
 
 Building MOOSE
 --------------
