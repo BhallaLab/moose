@@ -9,6 +9,7 @@ Quick Start
 .. toctree::
    :maxdepth: 2
 
+   qs_inter
    qs_GUI
    moose_quickstart
    demos
