@@ -117,7 +117,7 @@ if(WITH_GUI)
 
     configure_file( ${CMAKE_SOURCE_DIR}/cmake/moose.in 
         ${CMAKE_BINARY_DIR}/moosegui )
-    install(PROGRAMS ${CMAKE_BINARY_DIR}/moose DESTINATION bin)
+    install(PROGRAMS ${CMAKE_BINARY_DIR}/moosegui DESTINATION bin)
 endif()
 
 ## UNINSTALL
