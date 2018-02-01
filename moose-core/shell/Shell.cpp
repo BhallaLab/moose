@@ -631,7 +631,7 @@ ObjId Shell::doFind( const string& path ) const
 
 string Shell::doVersion()
 {
-    return MOOSE_VERSION;
+    return VERSION_MOOSE;
 }
 
 void Shell::setCwe( ObjId val )

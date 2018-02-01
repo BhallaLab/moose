@@ -1,5 +1,4 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
-PROJECT(MOOSE)
+cmake_minimum_required(VERSION 2.8)
 
 project(moose)
 
@@ -11,15 +10,18 @@ endif(POLICY CMP0048)
 # version file. If GIT fails, use the previous known version.
 find_program(GIT_EXEC "git")
 message( STATUS "Looking for git ${GIT_EXEC}" )
-if( (NOT MOOSE_VERSION) AND GIT_EXEC)
+if(VERSION_MOOSE)
+    message( STATUS "MOOSE version is set to ${VERSION_MOOSE} at build time" )
+elseif(GIT_EXEC)
+    message( STATUS "Getting version by reading git tags" )
     execute_process( 
         COMMAND ${GIT_EXEC} describe --tags --long
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-        OUTPUT_VARIABLE MOOSE_VERSION
+        OUTPUT_VARIABLE VERSION_MOOSE
         OUTPUT_STRIP_TRAILING_WHITESPACE
     )
 endif( )
-message( STATUS "Building version ${MOOSE_VERSION}" )
+message( STATUS "Building version ${VERSION_MOOSE}" )
 
 # Options to pass down to moose-core
 option(WITH_DOC "Build documentation" OFF)
@@ -122,9 +124,6 @@ endif()
 
 ## UNINSTALL
 add_custom_target(uninstall DEPENDS __uninstall_moose-core__ )
-if(WITH_GUI)
-    add_dependencies( uninstall __uninstall_moose-gui__ )
-endif( )
 
 add_custom_command(OUTPUT __uninstall_moose-core__
     COMMAND xargs rm -rf < install_manifest.txt
@@ -138,6 +137,7 @@ if(WITH_GUI)
         ${CMAKE_INSTALL_PREFIX}/lib/moose/gui
         COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_INSTALL_PREFIX}/bin/moose
         )
+    add_dependencies( uninstall __uninstall_moose-gui__ )
 endif()
 
 ################################################################################

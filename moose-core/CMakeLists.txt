@@ -9,7 +9,7 @@ if(COMMAND cmake_policy)
     endif(POLICY CMP0050)
 endif(COMMAND cmake_policy)
 
-project(MOOSE)
+project(moose-core)
 
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules")
 include(CheckCXXCompiler.cmake)
@@ -19,34 +19,31 @@ include(GetRevision)
 
 # If from command line, version info is not passed, use the git to generate a
 # version file. If GIT fails, use the previous known version.
-set(VERSION_FILE ${CMAKE_CURRENT_SOURCE_DIR}/VERSION)
 find_program(GIT_EXEC "git")
-message( STATUS "Looking for git ${GIT_EXEC}" )
-if( (NOT MOOSE_VERSION) AND GIT_EXEC)
+if(VERSION_MOOSE)
+    message( STATUS "Using user specified version ${VERSION_MOOSE}" )
+elseif(GIT_EXEC)
     execute_process( 
         COMMAND ${GIT_EXEC} describe --tags --long
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-        OUTPUT_VARIABLE MOOSE_VERSION
+        OUTPUT_VARIABLE VERSION_MOOSE
         OUTPUT_STRIP_TRAILING_WHITESPACE
         )
+    message( STATUS "Fetching version from git tags" )
 endif( )
 
 # Default to current date.
-if( (NOT MOOSE_VERSION)  )
-    NOW(TIMESTAMP)
-    set(MOOSE_VERSION "nightly-${TIMESTAMP}" )
-elseif(MOOSE_VERSION)
-    message(STATUS "+ Using user specified VERSION = ${MOOSE_VERSION}" )
+if(VERSION_MOOSE)
+    message(STATUS "+ Using user specified VERSION = ${VERSION_MOOSE}" )
 else()
-    message(FATAL_ERROR "Could not determine MOOSE_VERSION" )
+    message(FATAL_ERROR "Could not determine VERSION_MOOSE" )
 endif( )
 
-add_definitions( -DMOOSE_VERSION="${MOOSE_VERSION}")
-message( STATUS "MOOSE Version ${MOOSE_VERSION}" )
+add_definitions( -DVERSION_MOOSE="${VERSION_MOOSE}")
 
 # Write VERSION to a file VERSION so that setup.py can use it.
-message(STATUS "+ Writing ${MOOSE_VERSION} to ${VERSION_FILE}" )
-file(WRITE ${VERSION_FILE} ${MOOSE_VERSION} )
+message(STATUS "+ Writing ${VERSION_MOOSE} to ${VERSION_FILE}" )
+file(WRITE ${VERSION_FILE} ${VERSION_MOOSE} )
 
 # This snippet is from LLVM project.
 # Sanity check our source directory to make sure that we are not trying to

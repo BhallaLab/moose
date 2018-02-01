@@ -30,8 +30,8 @@
 
 using namespace std;
 
-#ifndef MOOSE_VERSION
-#define MOOSE_VERSION "3.0.2"
+#ifndef VERSION_MOOSE
+#define VERSION_MOOSE "3.0.2"
 #endif
 
 /**
