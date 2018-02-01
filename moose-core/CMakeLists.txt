@@ -428,7 +428,7 @@ if(WITH_PYTHON)
     install(CODE 
         "
         execute_process(
-            COMMAND ${PYTHON_EXECUTABLE} setup.py install --prefix=${CMAKE_INSTALL_PREFIX}
+            COMMAND ${PYTHON_EXECUTABLE} setup.py install ${EXTRA_ARGS}
             WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/python
             )
         "
