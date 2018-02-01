@@ -8,6 +8,14 @@ Getting started with python scripting for MOOSE
 
    *Multiple scales can be modelled and simulated in MOOSE*
 
+
+
+*To see an interactive version of this page, click the following link*
+
+.. image:: https://mybinder.org/badge.svg 
+   :target: https://mybinder.org/v2/gh/BhallaLab/moose-binder/master?filepath=home%2Fmooser%2Fquickstart%2FGetting%20started%20with%20python%20scripting%20for%20MOOSE.ipynb
+
+
 This document describes how to use the ``moose`` module in Python
 scripts or in an interactive Python shell. It aims to give you enough
 overview to help you start scripting using MOOSE and extract farther
