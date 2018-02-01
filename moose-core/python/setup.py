@@ -24,7 +24,10 @@ from distutils.core import setup
 
 script_dir = os.path.dirname( os.path.abspath( __file__ ) )
 
-version = '3.1.2'
+version = '3.1.3'
+if os.path.exists( os.path.join( script_dir, '..', 'VERSION' ) ):
+    with open(os.path.join( script_dir, '..', 'VERSION' ) ) as f:
+        version = f.read( )
 
 try:
     import importlib.machinery

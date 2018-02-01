@@ -42,7 +42,8 @@ endif( )
 add_definitions( -DVERSION_MOOSE="${VERSION_MOOSE}")
 
 # Write VERSION to a file VERSION so that setup.py can use it.
-message(STATUS "+ Writing ${VERSION_MOOSE} to ${VERSION_FILE}" )
+set(VERSION_FILE "${CMAKE_CURRENT_SOURCE_DIR}")
+message(STATUS "Writing ${VERSION_MOOSE} to ${VERSION_FILE}" )
 file(WRITE ${VERSION_FILE} ${VERSION_MOOSE} )
 
 # This snippet is from LLVM project.
