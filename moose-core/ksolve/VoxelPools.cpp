@@ -215,6 +215,14 @@ void VoxelPools::advance( const ProcInfo* p )
                 , p->dt
                 );
 #endif
+    if ( !stoichPtr_->getAllowNegative() ) { // clean out negatives
+		unsigned int nv = stoichPtr_->getNumVarPools();
+		double* vs = varS();
+		for ( unsigned int i = 0; i < nv; ++i ) {
+			if ( signbit(vs[i]) )
+				vs[i] = 0.0;
+		}
+	}
 }
 
 void VoxelPools::setInitDt( double dt )

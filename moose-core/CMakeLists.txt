@@ -12,15 +12,22 @@ if(COMMAND cmake_policy)
 endif(COMMAND cmake_policy)
 
 
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules")
 include(CheckCXXCompiler.cmake)
 include(CheckIncludeFileCXX)
 include(FindPkgConfig)
+include(GetRevision)
 
 # If from command line, version info is not passed, use the git to generate a
 # version file. If GIT fails, use the previous known version.
 set(MOOSE_VERSION 3.2-git)
 add_definitions( -DMOOSE_VERSION="${MOOSE_VERSION}")
 message( STATUS "MOOSE Version ${MOOSE_VERSION}" )
+
+# Write VERSION to a file VERSION so that setup.py can use it.
+set(VERSION_FILE ${CMAKE_CURRENT_SOURCE_DIR}/VERSION)
+message(STATUS "+ Writing ${MOOSE_VERSION} to ${VERSION_FILE}" )
+file(WRITE ${VERSION_FILE} ${MOOSE_VERSION} )
 
 # This snippet is from LLVM project.
 # Sanity check our source directory to make sure that we are not trying to
@@ -74,9 +81,6 @@ option(WITH_GSL  "Use gsl-library. Alternative is WITH_BOOST" ON)
 option(PARALLELIZED_SOLVERS "Use parallel version of GSOLVE. (alpha)" OFF )
 option(PARALLELIZED_CLOCK "High level parallelization of moose::Clock (alpha)" OFF )
 
-################################# CMKAE MACROS #################################
-
-set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules")
 
 ############################ BUILD CONFIGURATION #################################
 
@@ -285,15 +289,9 @@ if(WITH_MPI)
     endif()
 endif(WITH_MPI)
 
-pkg_check_modules(MUPARSER muparser)
-if(MUPARSER_FOUND)
-    message(STATUS "Using system muparser ${MUPARSER_VERSION}")
-    list(APPEND SYSTEM_SHARED_LIBS ${MUPARSER_LIBRARIES})
-else()
-    message(STATUS "Using private muparser")
-    add_subdirectory(external/muparser)
-    list(APPEND MOOSE_LIBRARIES muparser)
-endif()
+# Always use private version of muparser. We have some custom edits.
+add_subdirectory(external/muparser)
+list(APPEND MOOSE_LIBRARIES muparser)
 
 # Add subdirectroeis
 add_subdirectory(basecode)
@@ -411,18 +409,16 @@ message( STATUS "Platform ${_platform_desc}" )
 # is most likely to be --install-layout=deb .
 set(EXTRA_ARGS "--prefix ${CMAKE_INSTALL_PREFIX} ${DISTUTILS_EXTRA_ARGS}")
 
-## NOTE: Disable it here. It must be handled by moose repository CMakeLists.txt
-## which is used in created packages. For normal user, it should install in
-## site-packages.
-#if( ${_platform_desc} MATCHES ".*(Ubuntu|Debian).*" )
-#    list( APPEND EXTRA_ARGS "--install-layout=deb" )
-#endif( )
+# On Debian/Ubuntu install using debian layout
+if( ${_platform_desc} MATCHES ".*(Ubuntu|Debian).*" )
+    list( APPEND EXTRA_ARGS "--install-layout=deb" )
+endif( )
 
 # If make is called with sudo, install in system directories. Otherwise use
 # --user to install in user home.
 install(CODE
     "execute_process(
-        COMMAND ${PYTHON_EXECUTABLE} setup.cmake.py install ${EXTRA_ARGS}
+        COMMAND ${PYTHON_EXECUTABLE} setup.cmake.py install ${EXTRA_ARGS} ${PYMOOSE_EXTRA_INSTALL_ARGS}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/python
         )"
         )

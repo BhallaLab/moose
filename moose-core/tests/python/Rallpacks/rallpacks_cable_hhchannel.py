@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """rallpacks_cable_hhchannel.py:
 
-    A cable with 1000 compartments with HH-type channels in it.
+A cable with 1000 compartments with HH-type channels in it.
 
 Last modified: Wed May 21, 2014  09:51AM
 
@@ -22,7 +22,6 @@ from moose import utils
 import time
 import os
 import numpy as np
-import matplotlib.pyplot as plt
 import compartment as comp
 
 

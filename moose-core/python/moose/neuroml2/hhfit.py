@@ -53,19 +53,59 @@
 
 import traceback
 import warnings
-from collections import deque
+import moose.utils as mu
 import numpy as np
-from scipy.optimize import curve_fit
-from matplotlib import pyplot as plt
+
+try:
+    from scipy.optimize import curve_fit
+except ImportError as e:
+    mu.error( "To use this feature/module, please install python-scipy" )
+    raise e
+
+def exponential2(x, a, scale, x0, y0=0):
+    res = a * np.exp((x - x0)/scale) + y0
+    #print('============   Calculating exponential2 for %s, a=%s, scale=%s, x0=%s, y0=%s; = %s'%(x, a, scale, x0, y0, res))
+    return res
 
 def exponential(x, a, k, x0, y0=0):
-    return a * np.exp(k * (x - x0)) + y0
+    res = a * np.exp(k * (x - x0)) + y0
+    #print('============   Calculating exponential for %s, a=%s, k=%s, x0=%s, y0=%s; = %s'%(x, a, k, x0, y0, res))
+    return res
+
+def sigmoid2(x, a, scale, x0, y0=0):
+    res = a / (np.exp(-1*(x - x0)/scale) + 1.0) + y0
+    #print('============   Calculating sigmoid for %s, a=%s, scale=%s, x0=%s, y0=%s; = %s'%(x, a, scale, x0, y0, res))
+    return res
 
 def sigmoid(x, a, k, x0, y0=0):
-    return a / (np.exp(k * (x - x0)) + 1.0) + y0
+    res = a / (np.exp(k * (x - x0)) + 1.0) + y0
+    #print('============   Calculating sigmoid for %s, a=%s, k=%s, x0=%s, y0=%s; = %s'%(x, a, k, x0, y0, res))
+    return res
+
+def linoid2(x, a, scale, x0, y0=0):
+    """The so called linoid function. Called explinear in neuroml."""
+    
+    denominator = 1 - np.exp(-1 * (x - x0)/scale)
+    # Linoid often includes a zero denominator - we need to fill those
+    # points with interpolated values (interpolation is simpler than
+    # finding limits).
+    ret = (a/scale) *  (x - x0) / denominator
+    infidx = np.flatnonzero((ret == np.inf) | (ret == -np.inf))
+    if len(infidx) > 0:
+        for ii in infidx:
+            if ii == 0:
+                ret[ii] = ret[ii+1] - (ret[ii+2] - ret[ii+1])
+            elif ii == len(ret):
+                ret[ii] = ret[ii-1] + (ret[ii-1] - ret[ii-2])
+            else:
+                ret[ii] = (ret[ii+1] + ret[ii+2]) * 0.5
+    res = ret + y0
+    #print('============   Calculating linoid2 for %s, a=%s, scale=%s, x0=%s, y0=%s; res=%s'%(x, a, scale, x0, y0,res))
+    return res
 
 def linoid(x, a, k, x0, y0=0):
-    """The so called linoid function. Called explinear in neurml."""
+    """The so called linoid function. Called explinear in neuroml."""
+    
     denominator = np.exp(k * (x - x0)) - 1.0
     # Linoid often includes a zero denominator - we need to fill those
     # points with interpolated values (interpolation is simpler than
@@ -80,7 +120,9 @@ def linoid(x, a, k, x0, y0=0):
                 ret[ii] = ret[ii-1] + (ret[ii-1] - ret[ii-2])
             else:
                 ret[ii] = (ret[ii+1] + ret[ii+2]) * 0.5
-    return ret + y0
+    res = ret + y0
+    #print('============   Calculating linoid for %s, a=%s, k=%s, x0=%s, y0=%s; res=%s'%(x, a, k, x0, y0,res))
+    return res
 
 def double_exp(x, a, k1, x1, k2, x2, y0=0):
     """For functions of the form:

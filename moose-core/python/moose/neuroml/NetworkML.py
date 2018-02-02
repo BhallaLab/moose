@@ -378,7 +378,7 @@ class NetworkML():
                 else:
                     if not moose.exists(pre_path+'/'+syn_name+'_spikegen'):
                         ## create new spikegen
-                        spikegen = moose.SpikeGen(pre_path+'/'+syn_name+'_spikegen')
+                        spikegen = moose.element(pre_path+'/'+syn_name+'_spikegen')
                         ## connect the compartment Vm to the spikegen
                         moose.connect(precomp,"VmOut",spikegen,"Vm")
                         ## spikegens for different synapse_types can have different thresholds

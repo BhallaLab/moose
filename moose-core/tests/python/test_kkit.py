@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
-import matplotlib
-# Tests may be run over ssh without -X e.g. on travis.
-matplotlib.use( 'Agg' )
 
-import matplotlib.pyplot as plt
 import numpy
 import sys
 import os
@@ -49,15 +45,11 @@ def main():
         # Display all plots.
         for x in moose.wildcardFind( '/model/#graphs/conc#/#' ):
             t = numpy.arange( 0, x.vector.size, 1 ) * x.dt
-            plt.plot( t, x.vector, label=x.name )
 
         vals = x.vector
         stats = [ vals.min(), vals.max( ), vals.mean(), vals.std( ) ]
         expected = [ 0.0, 0.00040464 , 0.0001444 , 0.00013177 ]
         assert numpy.allclose(stats, expected, rtol=1e-4) , 'Got %s expected %s' % (stats, expected )
-        plt.legend()
-        plt.savefig( '%s.png' % sys.argv[0] )
-        print( 'Wrote results to %s.png' % sys.argv[0] )
 
 # Run the 'main' if this script is executed standalone.
 if __name__ == '__main__':

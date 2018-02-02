@@ -48,9 +48,6 @@ extern unsigned int totalTests;
 #define TEST_END totalTests++; \
     cout << std::right <<  setw(20) << "test of " << SIMPLE_CURRENT_FUNCTION << " finished.";
 
-/*-----------------------------------------------------------------------------
- *  Global functions in namespace moose
- *-----------------------------------------------------------------------------*/
 #define MISSING_BRACKET_AT_END                  -1
 #define EMPTY_PATH                              -2
 #define SPACES_AT_THE_BEGINING                  -3
@@ -59,6 +56,9 @@ extern unsigned int totalTests;
 #define BAD_CHARACTER_IN_PATH                   -6
 
 
+/*-----------------------------------------------------------------------------
+ *  Global functions in namespace moose
+ *-----------------------------------------------------------------------------*/
 namespace moose
 {
 

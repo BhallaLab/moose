@@ -1,0 +1,18 @@
+all : fix
+	@echo "All done"
+
+wheel : ./setup.wheel.py
+	python ./setup.wheel.py bdist_wheel
+
+check : wheel
+	auditwheel show dist/*.whl
+	echo "If successful then run `make fix`"
+
+fix : check 
+	auditwheel repair dist/*.whl
+
+upload : fix 
+	twine upload dist/*.whl
+
+
+

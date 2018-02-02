@@ -13,12 +13,16 @@
 **           copyright (C) 2003-2017 Upinder S. Bhalla. and NCBS
 Created : Friday May 27 12:19:00 2016(+0530)
 Version
-Last-Updated: Tue 8 Aug 11:10:00 2017(+0530)
+Last-Updated: Sat 6 Jan 01:10:00 2018(+0530)
           By: HarshaRani
 **********************************************************************/
 /****************************
-
+2018
+Jan 6: for Product_formation_, k3 units depends on noofSub, prd was passed which is fixed
 2017
+Dec 15: If model path exists is checked
+        Enz cplx is written only if enz,cplx,sub, prd exist, a clean check is made
+        Checked if function exist inputs and also if expr is exist, then written.
 Aug 8 : removed "findCompartment" function to chemConnectUtil and imported the function from the same file
         convertSpecialChar for setId and convertSpecialCharshot for setName.
         specialChar like /,\,[,],space are not allowed as moose doesn't take
@@ -62,7 +66,6 @@ def mooseWriteSBML(modelpath, filename, sceneitems={}):
         filename = filenameExt[:filenameExt.find('.')]
     else:
         filename = filenameExt
-
     # validatemodel
     sbmlOk = False
     global spe_constTrue
@@ -71,7 +74,9 @@ def mooseWriteSBML(modelpath, filename, sceneitems={}):
     nameList_ = []
 
     xcord,ycord = [],[]
-    if moose.exists(moose.element(modelpath).path):
+    if not moose.exists(modelpath):
+        return False, "Path doesn't exist"
+    elif moose.exists(modelpath):
         mObj = moose.wildcardFind(moose.element(modelpath).path+'/##[ISA=PoolBase]'+','+
                                   moose.element(modelpath).path+'/##[ISA=ReacBase]'+','+
                                   moose.element(modelpath).path+'/##[ISA=EnzBase]'+','+
@@ -81,7 +86,7 @@ def mooseWriteSBML(modelpath, filename, sceneitems={}):
                 if moose.exists(p.path+'/info'):
                     xcord.append(moose.element(p.path+'/info').x)
                     ycord.append(moose.element(p.path+'/info').y)
-        recalculatecoordinates(mObj,xcord,ycord)
+        recalculatecoordinates(modelpath,mObj,xcord,ycord)
     positionInfoexist = False
 
     xmlns = SBMLNamespaces(3, 1)
@@ -121,7 +126,6 @@ def mooseWriteSBML(modelpath, filename, sceneitems={}):
         cremodel_.setAnnotation(modelAnno)
     groupInfo = {}
     compartexist, groupInfo = writeCompt(modelpath, cremodel_)
-
     if compartexist == True:
         species = writeSpecies( modelpath,cremodel_,sbmlDoc,sceneitems,groupInfo)
         if species:
@@ -136,7 +140,10 @@ def mooseWriteSBML(modelpath, filename, sceneitems={}):
                 name = str(idBeginWith(moose.element(key).name))
                 group.setId(name)
                 group.setKind("collection")
-                ginfo = moose.element(key.path+'/info')
+                if moose.exists(key.path+'/info'):
+                    ginfo = moose.element(key.path+'/info')
+                else:
+                    moose.Annotator(key.path+'/info')
                 groupCompartment = findCompartment(key)
                 if ginfo.color != '':
                     grpAnno = "<moose:GroupAnnotation>"
@@ -215,12 +222,8 @@ def writeEnz(modelpath, cremodel_, sceneitems,groupInfo):
                     enzGpnCorCol = enzGpnCorCol + "<moose:textColor>" + \
                         Anno.textColor + "</moose:textColor>\n"
         if (enz.className == "Enz" or enz.className == "ZombieEnz"):
-            enzyme = cremodel_.createReaction()
-            if notesE != "":
-                cleanNotesE = convertNotesSpecialChar(notesE)
-                notesStringE = "<body xmlns=\"http://www.w3.org/1999/xhtml\">\n \t \t" + \
-                    cleanNotesE + "\n\t </body>"
-                enzyme.setNotes(notesStringE)
+            # Enz cplx is written into 2 reaction S+E-> SE*, SE* -> E+P
+            foundEnzymeComplex = False
             comptVec = findCompartment(moose.element(enz))
             if not isinstance(moose.element(comptVec), moose.ChemCompt):
                 return -2
@@ -228,158 +231,187 @@ def writeEnz(modelpath, cremodel_, sceneitems,groupInfo):
                 compt = comptVec.name + "_" + \
                     str(comptVec.getId().value) + "_" + \
                     str(comptVec.getDataIndex()) + "_"
+            
+            #Writting out S+E -> SE*
             enzsetId = str(idBeginWith(cleanEnzname +
-                                         "_" +
-                                         str(enz.getId().value) +
-                                         "_" +
-                                         str(enz.getDataIndex()) +
-                                         "_" +
-                                         "Complex_formation_"))
-            enzyme.setId(enzsetId)
-
-            if groupName != moose.element('/'):
-                if groupName not in groupInfo:
-                    groupInfo[groupName]=[enzsetId]
-                else:
-                    groupInfo[groupName].append(enzsetId)
-            enzyme.setName(str(idBeginWith(convertSpecialCharshot(enz.name))))
-            #enzyme.setName(cleanEnzname)
-            enzyme.setFast(False)
-            enzyme.setReversible(True)
-            k1 = enz.concK1
-            k2 = enz.k2
-            k3 = enz.k3
-            enzAnno = " "
-            enzAnno = "<moose:EnzymaticReaction>\n"
-
+                                         "_" + str(enz.getId().value) +
+                                         "_" + str(enz.getDataIndex()) +
+                                         "_" + "Complex_formation_"))
+            #Finding Enzyme parent (E), each enzyme should just have one parent, multiple parent not right!
+            secplxerror = ""
+            enzSubt = ()
             enzOut = enz.neighbors["enzOut"]
-
             if not enzOut:
-                print(" Enzyme parent missing for ", enz.name)
+                secplxerror = "enzyme parent missing "
             else:
+                enzAnno = "<moose:EnzymaticReaction>\n"
                 listofname(enzOut, True)
                 enzSubt = enzOut
-                for i in range(0, len(nameList_)):
-                    enzAnno = enzAnno + "<moose:enzyme>" + \
-                        (str(idBeginWith(convertSpecialChar(
-                            nameList_[i])))) + "</moose:enzyme>\n"
-            #noofSub,sRateLaw = getSubprd(cremodel_,True,"sub",enzSub)
-            # for i in range(0,len(nameList_)):
-            #    enzAnno=enzAnno+"<moose:enzyme>"+nameList_[i]+"</moose:enzyme>\n"
-            #rec_order  = noofSub
-            #rate_law = "k1"+"*"+sRateLaw
-
-            enzSub = enz.neighbors["sub"]
-            if not enzSub:
-                print("Enzyme \"", enz.name, "\" substrate missing")
-            else:
-                listofname(enzSub, True)
-                enzSubt += enzSub
-                for i in range(0, len(nameList_)):
-                    enzAnno = enzAnno + "<moose:substrates>" + \
-                        nameList_[i] + "</moose:substrates>\n"
-            if enzSubt:
-                rate_law = "k1"
-                noofSub, sRateLaw = getSubprd(cremodel_, True, "sub", enzSubt)
-                #rec_order = rec_order + noofSub
-                rec_order = noofSub
-                rate_law = compt + " * ( " + rate_law + " * " + sRateLaw
-
-            enzPrd = enz.neighbors["cplxDest"]
-            if not enzPrd:
-                print("Enzyme \"", enz.name, "\"product missing")
-            else:
-                noofPrd, sRateLaw = getSubprd(cremodel_, True, "prd", enzPrd)
-                for i in range(0, len(nameList_)):
-                    enzAnno = enzAnno + "<moose:product>" + \
-                        nameList_[i] + "</moose:product>\n"
-                rate_law = rate_law + " - " + " k2 " + ' * ' + sRateLaw +" )"
-
-            prd_order = noofPrd
-            enzAnno = enzAnno + "<moose:groupName>" + cleanEnzname + "_" + \
-                str(enz.getId().value) + "_" + \
-                str(enz.getDataIndex()) + "_" + "</moose:groupName>\n"
-            enzAnno = enzAnno + "<moose:stage>1</moose:stage>\n"
-            if enzannoexist:
-                enzAnno = enzAnno + enzGpnCorCol
-            enzAnno = enzAnno + "</moose:EnzymaticReaction>"
-            enzyme.setAnnotation(enzAnno)
-            kl = enzyme.createKineticLaw()
-            kl.setFormula(rate_law)
-            kl.setNotes(
-                "<body xmlns=\"http://www.w3.org/1999/xhtml\">\n\t\t" +
-                rate_law +
-                "\n \t </body>")
-            punit = parmUnit(prd_order - 1, cremodel_)
-            printParameters(kl, "k2", k2, punit)
-
-            unit = parmUnit(rec_order - 1, cremodel_)
-            printParameters(kl, "k1", k1, unit)
-            enzyme = cremodel_.createReaction()
-            enzsetIdP = str(idBeginWith(cleanEnzname +
-                                         "_" +
-                                         str(enz.getId().value) +
-                                         "_" +
-                                         str(enz.getDataIndex()) +
-                                         "_" +
-                                         "Product_formation_"))
-            enzyme.setId(enzsetIdP)
-            enzyme.setName(str(idBeginWith(convertSpecialCharshot(enz.name))))
-            #enzyme.setName(cleanEnzname)
-            if groupName != moose.element('/'):
-                if groupName not in groupInfo:
-                    groupInfo[groupName]=[enzsetIdP]
+                if len(nameList_) != 1:
+                    secplxerror = secplxerror +" multiple enzyme parent present"
                 else:
-                    groupInfo[groupName].append(enzsetIdP)
+                    for i in range(0, len(nameList_)):
+                        enzAnno = enzAnno + "<moose:enzyme>" + \
+                            (str(idBeginWith(convertSpecialChar(
+                                nameList_[i])))) + "</moose:enzyme>\n"
 
-            enzyme.setFast(False)
-            enzyme.setReversible(False)
-            enzAnno2 = "<moose:EnzymaticReaction>"
+                    #Finding Substrate, (S)
+                    enzSub = enz.neighbors["sub"]
+                    if not enzSub:
+                        secplxerror = secplxerror + " substrate missing"
+                    else:
+                        listofname(enzSub, True)
+                        enzSubt += enzSub
+                        for i in range(0, len(nameList_)):
+                            enzAnno = enzAnno + "<moose:substrates>" + \
+                            nameList_[i] + "</moose:substrates>\n"
 
-            enzSub = enz.neighbors["cplxDest"]
-            if not enzSub:
-                print(" complex missing from ", enz.name)
-            else:
-                noofSub, sRateLaw = getSubprd(cremodel_, True, "sub", enzSub)
-                for i in range(0, len(nameList_)):
-                    enzAnno2 = enzAnno2 + "<moose:complex>" + \
-                        nameList_[i] + "</moose:complex>\n"
+                        #Finding product, which in this case the cplx (SE*)
+                        enzPrd = enz.neighbors["cplxDest"]
+                        noofPrd = len(enzPrd)
+                        if not enzPrd:
+                            secplxerror = secplxerror + " enzymecplx missing which act as product "                            
+                        else:
+                            listofname(enzPrd, True)
+                            for i in range(0, len(nameList_)):
+                                enzAnno = enzAnno + "<moose:product>" + \
+                                    nameList_[i] + "</moose:product>\n"
+                            foundEnzymeComplex = True
 
-            enzEnz = enz.neighbors["enzOut"]
-            if not enzEnz:
-                print("Enzyme parent missing for ", enz.name)
-            else:
-                noofEnz, sRateLaw1 = getSubprd(cremodel_, True, "prd", enzEnz)
-                for i in range(0, len(nameList_)):
-                    enzAnno2 = enzAnno2 + "<moose:enzyme>" + \
-                        nameList_[i] + "</moose:enzyme>\n"
-            enzPrd = enz.neighbors["prd"]
-            if enzPrd:
-                noofprd, sRateLaw2 = getSubprd(cremodel_, True, "prd", enzPrd)
-            else:
-                print("Enzyme \"", enz.name, "\" product missing")
-            for i in range(0, len(nameList_)):
-                enzAnno2 = enzAnno2 + "<moose:product>" + \
-                    nameList_[i] + "</moose:product>\n"
-            enzAnno2 += "<moose:groupName>" + cleanEnzname + "_" + \
+            if foundEnzymeComplex:
+                # Only if S+E->SE* found, reaction is created
+                enzyme = cremodel_.createReaction()
+                if notesE != "":
+                    cleanNotesE = convertNotesSpecialChar(notesE)
+                    notesStringE = "<body xmlns=\"http://www.w3.org/1999/xhtml\">\n \t \t" + \
+                                    cleanNotesE + "\n\t </body>"
+                    enzyme.setNotes(notesStringE)
+                
+                enzyme.setId(enzsetId)
+                enzyme.setName(str(idBeginWith(convertSpecialCharshot(enz.name))))
+                enzyme.setFast(False)
+                enzyme.setReversible(True)
+                k1 = enz.concK1
+                k2 = enz.k2
+                k3 = enz.k3
+                
+                enzAnno = enzAnno + "<moose:groupName>" + cleanEnzname + "_" + \
                 str(enz.getId().value) + "_" + \
                 str(enz.getDataIndex()) + "_" + "</moose:groupName>\n"
-            enzAnno2 += "<moose:stage>2</moose:stage> \n"
-            if enzannoexist:
-                enzAnno2 = enzAnno2 + enzGpnCorCol
-            enzAnno2 += "</moose:EnzymaticReaction>"
-            enzyme.setAnnotation(enzAnno2)
+                enzAnno = enzAnno + "<moose:stage>1</moose:stage>\n"
+                if enzannoexist:
+                    enzAnno = enzAnno + enzGpnCorCol
+                enzAnno = enzAnno + "</moose:EnzymaticReaction>"
+                enzyme.setAnnotation(enzAnno)
+                if enzSubt:
+                    rate_law = "k1"
+                    noofSub, sRateLaw = getSubprd(cremodel_, True, "sub", enzSubt)
+                    rate_law = compt + " * ( " + rate_law + " * " + sRateLaw
+                if enzPrd:
+                    noofPrd, sRateLaw = getSubprd(cremodel_, True, "prd", enzPrd)
+                    rate_law = rate_law + " - " + " k2 " + ' * ' + sRateLaw +" )"
+                kl = enzyme.createKineticLaw()
+                kl.setFormula(rate_law)
+                kl.setNotes("<body xmlns=\"http://www.w3.org/1999/xhtml\">\n\t\t" + \
+                            rate_law + "\n \t </body>")
+                unit = parmUnit(noofSub - 1, cremodel_)
+                printParameters(kl, "k1", k1, unit)
+                punit = parmUnit(noofPrd - 1, cremodel_)
+                printParameters(kl, "k2", k2, punit)
 
-            enzrate_law = compt + " * k3" + '*' + sRateLaw
-            kl = enzyme.createKineticLaw()
-            kl.setFormula(enzrate_law)
-            kl.setNotes(
-                "<body xmlns=\"http://www.w3.org/1999/xhtml\">\n\t\t" +
-                enzrate_law +
-                "\n \t </body>")
-            unit = parmUnit(noofPrd - 1, cremodel_)
-            printParameters(kl, "k3", k3, unit)
+                if groupName != moose.element('/'):
+                    if groupName not in groupInfo:
+                        groupInfo[groupName]=[enzsetId]
+                    else:
+                        groupInfo[groupName].append(enzsetId)       
+            else:
+                if secplxerror:
+                    print ("\'"+enz.name+"\' this enzyme is not written to file because,"+ secplxerror)
+            
+            #Here SE* -> E+ P
+            foundEnzymeEP = False
+            enzsetIdP = str(idBeginWith(cleanEnzname +
+                                        "_" + str(enz.getId().value) +
+                                        "_" + str(enz.getDataIndex()) +
+                                        "_" + "Product_formation_"))
+            cplxeperror = ""
+            #enzSubt = ""
+            enzOut = enz.neighbors["enzOut"]
+            if not enzOut:
+                cplxepeerror = "enzyme parent missing "
+            else:
+                enzAnno2 = "<moose:EnzymaticReaction>\n"
+                listofname(enzOut, True)
+                #enzSubt = enzOut
+                if len(nameList_) != 1:
+                    cplxeperror = cplxeperror +" multiple enzyme parent present"
+                else:
+                    # for i in range(0, len(nameList_)):
+                    #     enzEnz = "<moose:enzyme>" + \
+                    #             (str(idBeginWith(convertSpecialChar(
+                    #             nameList_[i])))) + "</moose:enzyme>\n"
+                    #Finding Substrate, which is (SE*)
+                    enzSub = enz.neighbors["cplxDest"]
+                    noofSub = len(enzSub)
+                    listofname(enzSub, True)
+                    if not enzSub:
+                        cplxeperror = cplxeperror +"complex missing which act as substrate "
+                    else:
+                        for i in range(0, len(nameList_)):
+                            enzAnno2 =enzAnno2 +"<moose:complex>" + \
+                                    nameList_[i] + "</moose:complex>\n"
+                        listofname(enzOut, True)
+                        for i in range(0, len(nameList_)):
+                            enzAnno2 = enzAnno2 +"<moose:enzyme>" + \
+                                (str(idBeginWith(convertSpecialChar(
+                                nameList_[i])))) + "</moose:enzyme>\n"
 
+                        enzPrd = enz.neighbors["prd"]
+                        noofPrd = len(enzPrd)
+                        if not enzPrd:
+                            cplxeperror = cplxeperror + "product missing "
+                        else:
+                            listofname(enzPrd,True)
+                            for i in range(0, len(nameList_)):
+                                enzAnno2 = enzAnno2 + "<moose:product>" + \
+                                            nameList_[i] + "</moose:product>\n"
+                                enzAnno2 += "<moose:groupName>" + cleanEnzname + "_" + \
+                                str(enz.getId().value) + "_" + \
+                                str(enz.getDataIndex()) + "_" + "</moose:groupName>\n"
+                                enzAnno2 += "<moose:stage>2</moose:stage> \n"
+                                if enzannoexist:
+                                    enzAnno2 = enzAnno2 + enzGpnCorCol
+                                enzAnno2 += "</moose:EnzymaticReaction>"
+
+                            foundEnzymeEP = True
+            
+            if foundEnzymeEP:
+                enzyme = cremodel_.createReaction()
+                enzyme.setId(enzsetIdP)
+                enzyme.setName(str(idBeginWith(convertSpecialCharshot(enz.name))))
+                enzyme.setFast(False)
+                enzyme.setReversible(False)
+                enzyme.setAnnotation(enzAnno2)
+                noofSub, sRateLaw = getSubprd(cremodel_, True, "sub", enzSub)
+                enzprdt = ()
+                enzPrdt = enzPrd+enzOut
+                noofprd, sRateLaw2 = getSubprd(cremodel_, True, "prd", enzPrdt)
+                enzrate_law = compt + " * k3" + '*' + sRateLaw
+                kl = enzyme.createKineticLaw()
+                kl.setFormula(enzrate_law)
+                kl.setNotes(
+                        "<body xmlns=\"http://www.w3.org/1999/xhtml\">\n\t\t" +
+                        enzrate_law +
+                        "\n \t </body>")
+                unit = parmUnit(noofSub - 1, cremodel_)
+                printParameters(kl, "k3", k3, unit)
+                if groupName != moose.element('/'):
+                    if groupName not in groupInfo:
+                        groupInfo[groupName]=[enzsetIdP]
+                    else:
+                        groupInfo[groupName].append(enzsetIdP)
+            else:
+                print (cplxeperror)
         elif(enz.className == "MMenz" or enz.className == "ZombieMMenz"):
 
             enzSub = enz.neighbors["sub"]
@@ -520,6 +552,7 @@ def Counter(items):
     return dict((i, items.count(i)) for i in items)
 
 def getSubprd(cremodel_, mobjEnz, type, neighborslist):
+    
     if type == "sub":
         reacSub = neighborslist
         reacSubCou = Counter(reacSub)
@@ -563,6 +596,7 @@ def processRateLaw(objectCount, cremodel, noofObj, type, mobjEnz):
         clean_name = (str(idBeginWith(convertSpecialChar(nameIndex))))
         if mobjEnz == True:
             nameList_.append(clean_name)
+
         if type == "sub":
             sbmlRef = cremodel.createReactant()
         elif type == "prd":
@@ -573,7 +607,6 @@ def processRateLaw(objectCount, cremodel, noofObj, type, mobjEnz):
 
         if type == "sub" or type == "prd":
             sbmlRef.setSpecies(clean_name)
-
             sbmlRef.setStoichiometry(count)
             if clean_name in spe_constTrue:
                 sbmlRef.setConstant(True)
@@ -740,22 +773,25 @@ def writeReac(modelpath, cremodel_, sceneitems,reacGroup):
 def writeFunc(modelpath, cremodel_):
     funcs = moose.wildcardFind(modelpath + '/##[ISA=Function]')
     # if func:
+    foundFunc = False
     for func in funcs:
         if func:
             if func.parent.className == "CubeMesh" or func.parent.className == "CyclMesh":
-                funcEle = moose.element(
-                    moose.element(func).neighbors["valueOut"][0])
-                funcEle1 = moose.element(funcEle)
-                fName = idBeginWith(convertSpecialChar(
+                if len(moose.element(func).neighbors["valueOut"]) > 0:
+                    funcEle = moose.element(
+                        moose.element(func).neighbors["valueOut"][0])
+                    funcEle1 = moose.element(funcEle)
+                    fName = idBeginWith(convertSpecialChar(
                     funcEle.name + "_" + str(funcEle.getId().value) + "_" + str(funcEle.getDataIndex()) + "_"))
-                expr = moose.element(func).expr
-
+                    expr = " "
+                    expr = str(moose.element(func).expr)
+                    if not expr:
+                        foundFunc = True
             else:
+                foundFunc = True
                 fName = idBeginWith(convertSpecialChar(func.parent.name +
-                                                       "_" +
-                                                       str(func.parent.getId().value) +
-                                                       "_" +
-                                                       str(func.parent.getDataIndex()) +
+                                                       "_" + str(func.parent.getId().value) +
+                                                       "_" + str(func.parent.getDataIndex()) +
                                                        "_"))
                 item = func.path + '/x[0]'
                 sumtot = moose.element(item).neighbors["input"]
@@ -766,10 +802,10 @@ def writeFunc(modelpath, cremodel_):
                         z = str(idBeginWith(str(convertSpecialChar(sumtot[i].name + "_" + str(moose.element(
                             sumtot[i]).getId().value) + "_" + str(moose.element(sumtot[i]).getDataIndex())) + "_")))
                         expr = expr.replace(v, z)
-
-            rule = cremodel_.createAssignmentRule()
-            rule.setVariable(fName)
-            rule.setFormula(expr)
+            if foundFunc:
+                rule = cremodel_.createAssignmentRule()
+                rule.setVariable(fName)
+                rule.setFormula(expr)
 
 def convertNotesSpecialChar(str1):
     d = {"&": "_and", "<": "_lessthan_", ">": "_greaterthan_", "BEL": "&#176"}
@@ -1020,10 +1056,11 @@ def xyPosition(objInfo,xory):
     except ValueError:
         return (float(0))
 
-def recalculatecoordinates(mObjlist,xcord,ycord):
+def recalculatecoordinates(modelpath, mObjlist,xcord,ycord):
     positionInfoExist = not(len(np.nonzero(xcord)[0]) == 0 \
                         and len(np.nonzero(ycord)[0]) == 0)
-
+    defaultsceneWidth =  1000
+    defaultsceneHeight =  800
     if positionInfoExist:
         #Here all the object has been taken now recalculate and reassign back x and y co-ordinates
         xmin = min(xcord)
@@ -1033,11 +1070,21 @@ def recalculatecoordinates(mObjlist,xcord,ycord):
         for merts in mObjlist:
             objInfo = merts.path+'/info'
             if moose.exists(objInfo):
-                Ix = (xyPosition(objInfo,'x')-xmin)/(xmax-xmin)
-                Iy = (ymin-xyPosition(objInfo,'y'))/(ymax-ymin)
+                Ix = defaultsceneWidth * ((xyPosition(objInfo,'x')-xmin)/(xmax-xmin))
+                Iy = defaultsceneHeight * ((ymin-xyPosition(objInfo,'y'))/(ymax-ymin))
                 moose.element(objInfo).x = Ix
                 moose.element(objInfo).y = Iy
-
+   
+    else:
+        srcdesConnection = {}
+        setupItem(modelpath,srcdesConnection)
+        #print srcdesConnection
+        '''
+        #meshEntry,xmin,xmax,ymin,ymax,positionInfoExist,sceneitems = setupMeshObj(modelpath)
+        #if not positionInfoExist:
+            #cmin,cmax,sceneitems = autoCoordinates(meshEntry,srcdesConnection)
+            sceneitems = autoCoordinates(meshEntry,srcdesConnection)
+        '''
 def writeUnits(cremodel_):
     unitVol = cremodel_.createUnitDefinition()
     unitVol.setId("volume")

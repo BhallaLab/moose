@@ -133,3 +133,15 @@ Session.vim
 *.clean
 
 /VERSION
+/_build
+/python/moose/neuroml2/*.dat
+/python/moose/neuroml2/test_files/*.dat
+/python/moose/neuroml2/schema/Cells.xml
+/python/moose/neuroml2/schema/Channels.xml
+/python/moose/neuroml2/schema/Inputs.xml
+/python/moose/neuroml2/schema/Networks.xml
+/python/moose/neuroml2/schema/NeuroML2CoreTypes.xml
+/python/moose/neuroml2/schema/NeuroMLCoreCompTypes.xml
+/python/moose/neuroml2/schema/PyNN.xml
+/python/moose/neuroml2/schema/Simulation.xml
+/python/moose/neuroml2/schema/Synapses.xml
