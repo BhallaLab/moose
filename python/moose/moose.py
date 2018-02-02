@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
-from __future__ import print_function, division, absolute_import
 
 # Author: Subhasis Ray
 # Maintainer: Dilawar Singh, Harsha Rani, Upi Bhalla
+
+from __future__ import print_function, division, absolute_import
 
 from contextlib import closing
 import warnings
@@ -10,6 +11,7 @@ import pydoc
 from io import StringIO
 
 import moose
+import moose.utils as mu
 
 sbmlImport_, sbmlError_ = True, ''
 
@@ -19,6 +21,20 @@ try:
 except Exception as e:
     sbmlImport_ = False
     sbmlError_ = '%s' % e
+
+# NeuroML2 import.
+nml2Import_, nml2ImportError_ = True, ''
+try:
+    import moose.neuroml2 as _neuroml2
+except Exception as e:
+    nml2Import_ = False
+    nml2ImportError_ = '\n'.join( [ 
+        "NML2 support is disabled because `libneuroml` and "
+        , "`pyneuroml` modules are not found."
+        , "     pip install pyneuroml libneuroml "
+        , " should fix it." 
+        , " Actual error: %s " % e ]
+        )
 
 chemImport_, chemError_ = True, ''
 try:
@@ -172,6 +188,24 @@ def mergeChemModel(src, des):
         return _chemMerge.merge.mergeChemModel(src,des)
     else:
         return False
+
+# NML2 reader and writer function.
+def mooseReadNML2( modelpath ):
+    """Read NeuroML model (version 2).
+
+    """
+    global nml2Import_
+    if nml2Import_:
+        reader = _neuroml2.NML2Reader( )
+        reader.read( modelpath )
+        return reader
+    else:
+        mu.info( nml2ImportError_ )
+        mu.warn( "Could not load NML2 support. Doing nothing" )
+        return False
+
+def mooseWriteNML2( outfile ):
+    mu.warn( "Writing to NML2 is not supported yet" )
 
 ################################################################
 # Wrappers for global functions

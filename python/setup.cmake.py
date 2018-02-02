@@ -24,7 +24,7 @@ script_dir = os.path.dirname( os.path.abspath( __file__ ) )
 version = '3.2.git'
 
 try:
-    with open( os.path.join( script_dir, '..', 'VERSION'), 'r' ) as f:
+    with open( os.path.join( script_dir, '..', '..', 'VERSION'), 'r' ) as f:
         version = f.read( )
 except Exception as e:
     print( 'Failed to read VERSION %s' % e )
@@ -51,6 +51,7 @@ setup(
             , 'moose'
             , 'moose.SBML'
             , 'moose.neuroml'
+            , 'moose.neuroml2'
             , 'moose.genesis'
             , 'moose.chemUtil'
             , 'moose.chemMerge'
@@ -59,5 +60,5 @@ setup(
             'moose' : 'moose'
             , 'rdesigneur' : 'rdesigneur'
             },
-        package_data = { 'moose' : ['_moose' + suffix] },
+        package_data = { 'moose' : ['_moose' + suffix, 'neuroml2/schema/NeuroMLCoreDimensions.xml'] },
     )

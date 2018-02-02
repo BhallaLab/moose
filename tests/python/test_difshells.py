@@ -1,15 +1,12 @@
 # -*- coding: utf-8 -*-
 import moose
 import numpy as np
-import matplotlib.pyplot as plt
 import chan_proto
 import param_chan
 from params import *
 
 
 def linoid(x, param):
-    # plt.figure()
-    # plt.plot(x,(param[2]+np.exp((V+param[3])/param[4])))
     den = (param[2] + np.exp((V + param[3]) / param[4]))
     nom = (param[0] + param[1] * V)
     return nom / den
@@ -190,4 +187,3 @@ if __name__ == '__main__':
                 header += ' difshell_' + str(i) + '_difbuff_' + str(j)
     np.savetxt(fname, res, header=header, comments='')
 
-    # plt.show()

@@ -29,11 +29,9 @@ MAKEFLAGS="-j4"
 # python executable.
 
 (
-    # Old makefile based flow.
     $PYTHON2 -m compileall -q .
     if type $PYTHON3 > /dev/null; then $PYTHON3 -m compileall -q . ; fi
 
-    ## CMAKE based flow
     mkdir -p _GSL_BUILD && cd _GSL_BUILD && \
         cmake -DDEBUG=ON -DPYTHON_EXECUTABLE="$PYTHON2" ..
     make && ctest --output-on-failure
@@ -44,7 +42,7 @@ MAKEFLAGS="-j4"
     cd ..
 
     # This is only applicable on linux build.
-    echo "Python3 support. Removed python2-networkx and install python3"
+    echo "Python3: Removed python2-networkx and install python3"
     if type $PYTHON3 > /dev/null; then
         sudo apt-get remove -qq python-networkx
         sudo apt-get install -qq python3-networkx

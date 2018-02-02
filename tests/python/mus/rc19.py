@@ -47,18 +47,15 @@
 # Code:
 """Cell morphology and passive properties from Branco et al 2010."""
 from __future__ import print_function
-
-__author__ = 'Subhasis Ray'
+__author__ = 'Subhasis Ray, Dilawar Sing'
 
 import sys
 
 import moose
 from moose import utils as mutils
 from synapse import *
-from matplotlib import pyplot as plt
 import numpy as np
 from settings import *
-
 from nachannel import *
 from kchannel import *
 from cachannel import *
@@ -232,7 +229,6 @@ def run_sim_parallel(passive=True, solver='hsolve'):
     moose.reinit()
     moose.start(tstop)
     print('$$$$$$$$$$$', moose.element('/clock'    ).currentTime)
-    fig = plt.figure()
     axes_vm = fig.add_subplot(111)
     # axes_vm_out = fig.add_subplot(121)
     # axes_vm_in = fig.add_subplot(122, sharex=axes_vm_out, sharey=axes_vm_out)
@@ -250,28 +246,6 @@ def run_sim_parallel(passive=True, solver='hsolve'):
             v = dinfo['soma_vm'].vector
             t = np.linspace(0, tstop, len(v))
             print('num points=', len(t), 't0=', t[0], 't_last=', t[-1], 'v0=', v[0], 'v_last=', v[-1])
-            axes_vm.plot(t, v)
-            # if ii % 2 == 0:
-            #     axes_vm_in.plot(t,
-            #                     v,
-            #                     color=color[ii])
-            # else:
-            #     axes_vm_out.plot(t,
-            #                      v,
-            #                      color=color[ii])
-            # for tab in dinfo['nmda_gk']:
-            #     axes_nmda.plot(np.linspace(0, tstop, len(tab.vector)),
-            #                    tab.vector, color=color[ii])
-            # # axes_nmda.legend()
-            # for tab in dinfo['ampa_gk']:
-            #     axes_ampa.plot(np.linspace(0, tstop, len(tab.vector)),
-            #                    tab.vector, label='%s/%s' % (dinfo['data'].name, tab.name), color=color[ii])
-    # axes_vm.legend([plt.Line2D([0], [0], color=color[ii]) for ii in range(len(stim_order))],
-    #                [str(st) for st in stim_order])
-    #axes_vm.legend()
-    #axes_nmda.legend()
-    #axes_ampa.legend()
-    plt.show()
 
 if __name__ == '__main__':
     if len(sys.argv) > 1:

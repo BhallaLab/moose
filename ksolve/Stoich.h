@@ -59,6 +59,10 @@ class Stoich
 		void setOneWay( bool v );
 		bool getOneWay() const;
 
+		// Flag that defines permission for pool values to go negative.
+		void setAllowNegative( bool v );
+		bool getAllowNegative() const;
+
 		/// Returns number of local pools that are updated by solver
 		unsigned int getNumVarPools() const;
 
@@ -510,6 +514,15 @@ class Stoich
 		 * reactions, as is needed in the case of the Gillespie algorithm.
 		 */
 		bool useOneWay_;
+
+		/** 
+		 * True if pools are permitted to take negative concentrations.
+		 * This may happen if solver is handling a general equation system
+		 * that is not constrained by chemical rules.
+		 * Defaults to False, so that we cannot have negative concs.
+		 */
+		bool allowNegative_;
+
 		string path_;
 
 		/// This contains the Id of the Kinetic solver.

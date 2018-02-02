@@ -81,7 +81,13 @@ crossing times as Event data. '''
     nsdf.stringAttr[eventDataPath] = 's'
 
 if __name__ == '__main__':
-    setup_model()
+    try:
+        setup_model()
+    except AttributeError as e:
+        print( 'This MOOSE is not compiled with NSDF support' )
+        quit(0)
+    except Exception as e:
+        raise e
     # Very basic tests
     nsdfFile = 'nsdf.txt'
     if not os.path.exists( nsdf.filename ):

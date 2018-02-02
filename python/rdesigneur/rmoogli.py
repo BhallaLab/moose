@@ -10,7 +10,6 @@
 #########################################################################
 
 import math
-import matplotlib
 import sys
 import moose
 import os
@@ -30,6 +29,7 @@ hasMoogli = True
 
 if hasDisplay:
     try:
+        import matplotlib
         from PyQt4 import QtGui
         import moogli
         import moogli.extensions.moose

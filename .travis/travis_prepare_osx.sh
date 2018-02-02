@@ -35,3 +35,5 @@ echo 'import sys; sys.path.insert(1, "/usr/local/lib/python2.7/site-packages")' 
 # ensurepip
 #python -m ensurepip
 pip2 install matplotlib --user
+pip2 install pyNeuroML libNeuroML --user
+pip2 install scipy --user

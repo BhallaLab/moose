@@ -75,6 +75,19 @@ const Cinfo* Stoich::initCinfo()
         &Stoich::getCompartment
     );
 
+    static ValueFinfo< Stoich, bool > allowNegative(
+        "allowNegative",
+        "Flag: allow negative values if true. Default is false."
+        " This is used to protect the chemical system from going unstable"
+        " in cases where the numerical integration gives a negative value."
+        " Typically it is a small negative value but is obviously"
+        " physically impossible. In some cases we want to use the " 
+        " solvers to handle general systems of equations (not purely "
+		" chemical ones), so we have this flag to allow it.",
+        &Stoich::setAllowNegative,
+        &Stoich::getAllowNegative
+    );
+
     static ReadOnlyValueFinfo< Stoich, unsigned int > numVarPools(
         "numVarPools",
         "Number of time-varying pools to be computed by the "
@@ -220,6 +233,7 @@ const Cinfo* Stoich::initCinfo()
         &ksolve,			// Value
         &dsolve,			// Value
         &compartment,		// Value
+        &allowNegative,		// Value
         &numVarPools,		// ReadOnlyValue
         &numBufPools,		// ReadOnlyValue
         &numAllPools,		// ReadOnlyValue
@@ -258,7 +272,8 @@ static const Cinfo* stoichCinfo = Stoich::initCinfo();
 
 Stoich::Stoich()
     :
-    useOneWay_( 0 ),
+    useOneWay_( false ),
+    allowNegative_( false ),
     path_( "" ),
     ksolve_(), // Must be reassigned to build stoich system.
     dsolve_(), // Must be assigned if diffusion is planned.
@@ -308,6 +323,16 @@ void Stoich::setOneWay( bool v )
 bool Stoich::getOneWay() const
 {
     return useOneWay_;
+}
+
+void Stoich::setAllowNegative( bool v )
+{
+    allowNegative_ = v;
+}
+
+bool Stoich::getAllowNegative() const
+{
+    return allowNegative_;
 }
 
 void Stoich::setPath( const Eref& e, string v )
@@ -634,7 +659,7 @@ const FuncTerm* Stoich::funcs( unsigned int i ) const
 bool Stoich::isFuncTarget( unsigned int poolIndex ) const
 {
 	assert( poolIndex < funcTarget_.size() );
-	return ( funcTarget_[poolIndex] != ~0 );
+	return ( funcTarget_[poolIndex] != ~0U );
 }
 
 vector< int > Stoich::getMatrixEntry() const

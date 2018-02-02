@@ -31,4 +31,9 @@ set -e
         -DPYTHON_EXECUTABLE=`which python` ..
     make && ctest --output-on-failure
     cd ..
+
+    # Now test the brew formula
+    cd ~
+    brew tap BhallaLab/moose
+    brew install moose
 )
