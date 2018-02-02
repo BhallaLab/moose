@@ -343,6 +343,7 @@ class  KineticsWidget(EditorWidgetBase):
         self.meshEntry          = {}        
         self.mooseId_GObj       = {}
         self.qGraCompt          = {}
+        self.qGraGrp            = {}
         self.xyCord             = {}
         self.editor             = None
         
