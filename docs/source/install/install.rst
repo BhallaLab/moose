@@ -3,9 +3,8 @@ Use pre-built packages
 
 If you need only `python` interface, you can install it using `pip`. This is the easiest
 way to install Python interface.
-
 ::
-    pip install pymoose 
+     pip install pymoose 
 
 We also build moose package with additional components such as gui and `moogli`. 
 
