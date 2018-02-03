@@ -1,22 +1,20 @@
 Use pre-built packages
 -----------------------
 
+If you need only `python` interface, you can install it using `pip`. This is the easiest
+way to install Python interface.
+
+::
+    pip install pymoose 
+
+We also build moose package with additional components such as gui and `moogli`. 
+
 Linux
 ^^^^^^
 
 We recommend that you use our repositories hosted at `Open Build Service
-<https://build.opensuse.org/package/show/home:moose/moose>`_.  We have packages for the following distributions
-
-- Debian 7.0, 8.0
-- Ubuntu 12.04, 14.04, 15.04, 15.10, 16.04
-- CentOS 6, 7
-- Fedora 20, 21, 22, 23
-- OpenSUSE 13.1, 13.2, Factory ARM, Leap 42.1, Tumbleweed
-- SLE 12, 12 SP1
-- RHEL 7
-- Scientific Linux 7
-
-Visit `this page
+<https://build.opensuse.org/package/show/home:moose/moose>`_.  Packages for most 
+linux distributions are available. Visit `this page
 <https://software.opensuse.org/download.html?project=home:moose&package=moose>`_
 to pick your distribution and follow instructions.
 
@@ -27,7 +25,6 @@ to pick your distribution and follow instructions.
 
 Mac OSX
 ^^^^^^^^
-
 
 MacOSX support for moose-gui is not complete yet. However, the python-scripting interface can be installed on OSX using ``homebrew``
 ::
