@@ -20,7 +20,7 @@ to pick your distribution and follow instructions.
 .. note::
     ``moogli`` (tool to visualize network activity) is not available for CentOS-6.
 
-.. todo:: Packages for gentoo, Arch Linux
+.. todo:: Packages for gentoo
 
 Mac OSX
 ^^^^^^^^
@@ -30,6 +30,16 @@ MacOSX support for moose-gui is not complete yet. However, the python-scripting 
 
     $ brew tap BhallaLab/moose
     $ brew install moose
+
+Docker Images
+^^^^^^^^^^^^^^
+
+Docker images of stable version are available from public repository.
+::
+      $ docker pull bhallalab/moose
+      $ docker run -it --rm -v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY=$DISPLAY bhallalab/moose
+      
+This will launch `xterm`; run `moosegui` in terminal to lauch the GUI. 
 
 
 Building MOOSE
