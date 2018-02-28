@@ -61,6 +61,7 @@ class SimpleSynHandler: public SynHandlerBase
 		unsigned int addSynapse();
 		void dropSynapse( unsigned int droppedSynNumber );
 		void addSpike( unsigned int index, double time, double weight );
+		double getTopSpike( unsigned int index ) const;
 		////////////////////////////////////////////////////////////////
 		static const Cinfo* initCinfo();
 	private:

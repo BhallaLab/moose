@@ -80,6 +80,8 @@ class rdesigneur:
             elecDt= 50e-6,          # Same default as from MOOSE
             chemPlotDt = 1.0,       # Same default as from MOOSE
             elecPlotDt = 0.1e-3,    # Same default as from MOOSE
+            funcDt = 0.1e-3,        # Used when turnOffElec is False.
+                                    # Otherwise system uses chemDt.
             cellProto = [],
             spineProto = [],
             chanProto = [],
@@ -113,6 +115,7 @@ class rdesigneur:
         self.diffDt= diffDt
         self.elecDt= elecDt
         self.elecPlotDt= elecPlotDt
+        self.funcDt= funcDt
         self.chemPlotDt= chemPlotDt
 
         self.cellProtoList = cellProto
@@ -640,8 +643,8 @@ class rdesigneur:
     ################################################################
     # Here we display the plots and moogli
     ################################################################
-    def displayMoogli( self, moogliDt, runtime, rotation = math.pi/500.0):
-        rmoogli.displayMoogli( self, moogliDt, runtime, rotation )
+    def displayMoogli( self, moogliDt, runtime, rotation = math.pi/500.0, fullscreen = False):
+        rmoogli.displayMoogli( self, moogliDt, runtime, rotation, fullscreen )
 
     def display( self ):
         import matplotlib.pyplot as plt
@@ -925,12 +928,14 @@ class rdesigneur:
             elecPlotDt = self.elecPlotDt
         diffDt = self.diffDt
         chemDt = self.chemDt
-        for i in range( 0, 9 ):
+        for i in range( 0, 9 ):     # Assign elec family of clocks
             moose.setClock( i, elecDt )
-        moose.setClock( 8, elecPlotDt )
-        moose.setClock( 10, diffDt )
-        for i in range( 11, 18 ):
+        moose.setClock( 8, elecPlotDt ) 
+        moose.setClock( 10, diffDt )# Assign diffusion clock.
+        for i in range( 11, 18 ):   # Assign the chem family of clocks.
             moose.setClock( i, chemDt )
+        if not self.turnOffElec:    # Assign the Function clock
+            moose.setClock( 12, self.funcDt )
         moose.setClock( 18, self.chemPlotDt )
         hsolve = moose.HSolve( self.elecid.path + '/hsolve' )
         hsolve.dt = elecDt

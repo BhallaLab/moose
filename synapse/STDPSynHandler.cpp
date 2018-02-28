@@ -190,6 +190,13 @@ void STDPSynHandler::addSpike(
 	events_.push( PreSynEvent( index, time, weight ) );
 }
 
+double STDPSynHandler::getTopSpike( unsigned int index ) const
+{
+	if ( events_.empty() )
+		return 0.0;
+	return events_.top().time;
+}
+
 void STDPSynHandler::addPostSpike( const Eref& e, double time )
 {
 	postEvents_.push( PostSynEvent( time ) );

@@ -1,6 +1,7 @@
 set(CMAKE_LEGACY_CYGWIN_WIN32 0)
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
-project(MOOSE)
+
+project(moose-core)
 
 if(COMMAND cmake_policy)
     cmake_policy(SET CMP0003 NEW)
@@ -15,18 +16,28 @@ set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules")
 include(CheckCXXCompiler.cmake)
 include(CheckIncludeFileCXX)
 include(FindPkgConfig)
-include(GetRevision)
+
+# getgit revision number
+find_program( GIT_EXEC git )
+if(GIT_EXEC)
+    execute_process(COMMAND ${GIT_EXEC} rev-parse --short HEAD 
+        OUTPUT_VARIABLE GIT_HEAD
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+        )
+endif()
 
 # If from command line, version info is not passed, use the git to generate a
 # version file. If GIT fails, use the previous known version.
-set(MOOSE_VERSION 3.2-git)
-add_definitions( -DMOOSE_VERSION="${MOOSE_VERSION}")
-message( STATUS "MOOSE Version ${MOOSE_VERSION}" )
+if(NOT VERSION_MOOSE)
+    set(VERSION_MOOSE "3.2.0rc1-${GIT_HEAD}")
+endif( )
+add_definitions( -DMOOSE_VERSION="${VERSION_MOOSE}")
+message( STATUS "MOOSE Version ${VERSION_MOOSE}" )
 
-# Write VERSION to a file VERSION so that setup.py can use it.
-set(VERSION_FILE ${CMAKE_CURRENT_SOURCE_DIR}/VERSION)
-message(STATUS "+ Writing ${MOOSE_VERSION} to ${VERSION_FILE}" )
-file(WRITE ${VERSION_FILE} ${MOOSE_VERSION} )
+# Write VERSION to a file VERSION so that setup.cmake.py can use it.
+set(VERSION_FILE ${CMAKE_CURRENT_SOURCE_DIR}/python/VERSION)
+message(STATUS "+ Writing ${VERSION_MOOSE} to ${VERSION_FILE}" )
+file(WRITE ${VERSION_FILE} ${VERSION_MOOSE} )
 
 # This snippet is from LLVM project.
 # Sanity check our source directory to make sure that we are not trying to
@@ -267,19 +278,24 @@ endif(WITH_BOOST)
 # these two types because of --whole-archive option. See
 # BhallaLab/moose-core#66,
 if(WITH_GSL)
-    message(STATUS "Using gsl libraries: ${GSL_LIBRARIES}")
-    foreach(GSL_LIB ${GSL_LIBRARIES} )
-        if(GSL_LIB)
-            get_filename_component( GSL_LIB_EXT ${GSL_LIB} EXT )
-            if(GSL_LIB_EXT)
-                if(GSL_LIB_EXT STREQUAL ".a" )
-                    list(APPEND STATIC_LIBRARIES ${GSL_LIB})
-                else()
-                    list(APPEND SYSTEM_SHARED_LIBS ${GSL_LIB})
-                endif( )
-            endif( )
-        endif( )
-    endforeach( )
+    if(GSL_STATIC_LIBRARIES)
+       message( STATUS "Using static libraries ${GSL_STATIC_LIBRARIES}" )
+       list(APPEND STATIC_LIBRARIES ${GSL_STATIC_LIBRARIES})
+    else( )
+       message(STATUS "Using gsl libraries: ${GSL_LIBRARIES}")
+       foreach(GSL_LIB ${GSL_LIBRARIES} )
+           if(GSL_LIB)
+               get_filename_component( GSL_LIB_EXT ${GSL_LIB} EXT )
+               if(GSL_LIB_EXT)
+                   if(GSL_LIB_EXT STREQUAL ".a" )
+                       list(APPEND STATIC_LIBRARIES ${GSL_LIB})
+                   else()
+                       list(APPEND SYSTEM_SHARED_LIBS ${GSL_LIB})
+                   endif( )
+               endif( )
+           endif( )
+       endforeach( )
+   endif( )
 endif()
 
 if(WITH_MPI)
@@ -373,6 +389,7 @@ if(DEBUG)
     endif( WITH_BOOST )
 endif()
 
+
 ######################### BUILD PYMOOSE ########################################
 add_subdirectory( pymoose )
 
@@ -429,8 +446,6 @@ if(${CMAKE_BUILD_TOOL} MATCHES "make")
         "=======================================\n"
         )
 endif()
-
-
 
 
 ############################ CTEST ######################################
