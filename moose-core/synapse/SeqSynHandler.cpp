@@ -513,6 +513,13 @@ void SeqSynHandler::addSpike(unsigned int index, double time, double weight)
 	latestSpikes_[ synapseOrder_[index] ] += weight;
 }
 
+double SeqSynHandler::getTopSpike( unsigned int index ) const
+{
+	if ( events_.empty() )
+		return 0.0;
+	return events_.top().time;
+}
+
 unsigned int SeqSynHandler::addSynapse()
 {
 	unsigned int newSynIndex = synapses_.size();

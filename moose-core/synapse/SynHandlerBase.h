@@ -79,6 +79,7 @@ class SynHandlerBase
 		 */
 		virtual void addSpike(
 			unsigned int index, double time, double weight ) = 0;
+		virtual double getTopSpike( unsigned int index ) const = 0;
 		////////////////////////////////////////////////////////////////
 		// Virtual func definitions for fields.
 		////////////////////////////////////////////////////////////////

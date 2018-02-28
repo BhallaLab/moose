@@ -8,6 +8,7 @@
 **********************************************************************/
 
 #include "header.h"
+#include "ElementValueFinfo.h"
 #include "SynHandlerBase.h"
 #include "Synapse.h"
 
@@ -26,6 +27,13 @@ const Cinfo* Synapse::initCinfo()
 			&Synapse::setDelay,
 			&Synapse::getDelay
 		);
+		static ElementValueFinfo< Synapse, double > spikeTime(
+			"spikeTime",
+			"Value field interface to add spike (by assignment) and to "
+			"read the value of the spike on top of the queue.",
+			&Synapse::addSpike,
+			&Synapse::getTopSpike
+		);
 
 		static DestFinfo addSpike( "addSpike",
 			"Handles arriving spike messages, inserts into event queue.",
@@ -34,6 +42,7 @@ const Cinfo* Synapse::initCinfo()
 	static Finfo* synapseFinfos[] = {
 		&weight,		// Field
 		&delay,			// Field
+		&spikeTime,		// ElementField
 		&addSpike,		// DestFinfo
 	};
 
@@ -101,6 +110,11 @@ void Synapse::addSpike( const Eref& e, double time )
 		cout << "	" << time << "," << e.fieldIndex();
 	}
 	handler_->addSpike( e.fieldIndex(), time + delay_, weight_ );
+}
+
+double Synapse::getTopSpike( const Eref& e ) const
+{
+	return handler_->getTopSpike( e.fieldIndex() );
 }
 
 /////////////////////////////////////////////////////////////

@@ -104,6 +104,13 @@ void SimpleSynHandler::addSpike(
 	events_.push( SynEvent( time, weight ) );
 }
 
+double SimpleSynHandler::getTopSpike( unsigned int index ) const
+{
+	if ( events_.empty() )
+		return 0.0;
+	return events_.top().time;
+}
+
 void SimpleSynHandler::vProcess( const Eref& e, ProcPtr p )
 {
 	double activation = 0.0;

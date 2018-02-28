@@ -305,6 +305,15 @@ void GraupnerBrunel2012CaPlasticitySynHandler::addSpike(
 	delayDPreEvents_.push( PreSynEvent( index, time+delayD_, weight ) );
 }
 
+double GraupnerBrunel2012CaPlasticitySynHandler::getTopSpike( 
+				unsigned int index ) const
+{
+	if ( events_.empty() )
+		return 0.0;
+	return events_.top().time;
+}
+
+
 void GraupnerBrunel2012CaPlasticitySynHandler::addPostSpike( const Eref& e, double time )
 {
 	postEvents_.push( PostSynEvent( time ) );

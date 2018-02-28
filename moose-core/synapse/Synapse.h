@@ -26,6 +26,7 @@ class Synapse
 		double getDelay() const;
 
 		void addSpike( const Eref& e, double time );
+		double getTopSpike( const Eref& e ) const;
 
 		void setHandler( SynHandlerBase* h );
 

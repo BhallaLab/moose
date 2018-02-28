@@ -150,7 +150,7 @@ const Cinfo * Function::initCinfo()
         "log2        1       logarithm to the base 2\n"
         "log10       1       logarithm to the base 10\n"
         "log         1       logarithm to the base 10\n"
-        "ln  1       logarithm to base e (2.71828...)\n"
+        "ln  	     1       logarithm to base e (2.71828...)\n"
         "exp         1       e raised to the power of x\n"
         "sqrt        1       square root of a value\n"
         "sign        1       sign function -1 if x<0; 1 if x>0\n"
@@ -166,32 +166,34 @@ const Cinfo * Function::initCinfo()
         "                    if seed = -1, a 'random' seed is created using either\n"
         "                    by random_device or by reading system clock\n"
         "\nOperators\n"
-        "Op  meaning         priority\n"
-        "=   assignment     -1\n"
-        "&&  logical and     1\n"
-        "||  logical or      2\n"
-        "<=  less or equal   4\n"
-        ">=  greater or equal        4\n"
-        "!=  not equal       4\n"
-        "==  equal   4\n"
-        ">   greater than    4\n"
-        "<   less than       4\n"
-        "+   addition        5\n"
-        "-   subtraction     5\n"
-        "*   multiplication  6\n"
-        "/   division        6\n"
-        "^   raise x to the power of y       7\n"
-        "%   floating point modulo         7\n"
+        "Op  meaning         		priority\n"
+        "=   assignment     		-1\n"
+        "&&  logical and     		1\n"
+        "||  logical or      		2\n"
+        "<=  less or equal   		4\n"
+        ">=  greater or equal  		4\n"
+        "!=  not equal         		4\n"
+        "==  equal   			4\n"
+        ">   greater than    		4\n"
+        "<   less than       		4\n"
+        "+   addition        		5\n"
+        "-   subtraction     		5\n"
+        "*   multiplication  		6\n"
+        "/   division        		6\n"
+        "^   raise x to the power of y  7\n"
+        "%   floating point modulo      7\n"
         "\n"
-        "?:  if then else operator   C++ style syntax\n",
+        "?:  if then else operator   	C++ style syntax\n",
         &Function::setExpr,
-        &Function::getExpr);
+        &Function::getExpr
+    );
 
     static ValueFinfo< Function, unsigned int > numVars(
         "numVars",
         "Number of variables used by Function.",
         &Function::setNumVar,
-        &Function::getNumVar);
+        &Function::getNumVar
+    );
 
     static FieldElementFinfo< Function, Variable > inputs(
         "x",
@@ -199,7 +201,8 @@ const Cinfo * Function::initCinfo()
         Variable::initCinfo(),
         &Function::getVar,
         &Function::setNumVar,
-        &Function::getNumVar);
+        &Function::getNumVar
+    );
 
     static LookupValueFinfo < Function, string, double > constants(
         "c",
@@ -229,10 +232,7 @@ const Cinfo * Function::initCinfo()
     static DestFinfo reinit( "reinit",
                              "Handles reinit call.",
                              new ProcOpFunc< Function >( &Function::reinit ) );
-    static Finfo* processShared[] =
-            {
-		&process, &reinit
-            };
+    static Finfo* processShared[] = { &process, &reinit };
 
     static SharedFinfo proc( "proc",
                              "This is a shared message to receive Process messages "
@@ -382,7 +382,7 @@ Function::Function(const Function& rhs): _numVar(rhs._numVar),
 
 Function& Function::operator=(const Function rhs)
 {
-	static Eref er;
+    static Eref er;
     _clearBuffer();
     _mode = rhs._mode;
     _lastValue = rhs._lastValue;

@@ -76,7 +76,7 @@ ELSE(MACOSX)
         ${MOOSE_LIBRARIES}
         ${STATIC_LIBRARIES}
         "-Wl,--no-whole-archive"
-        ${PYTHON_LIBRARIES}
+        # ${PYTHON_LIBRARIES}
         ${SYSTEM_SHARED_LIBS}
         )
 endif(MACOSX)
