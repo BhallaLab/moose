@@ -125,7 +125,8 @@ endif()
 set(MOOSE_GUI_DIR ${CMAKE_SOURCE_DIR}/moose-gui)
 
 # Install pymoose. Use tar.gz in PYMOOSE_BUILD_DIR and unarchive it.
-install(DIRECTORY ${PYMOOSE_INSTALL_DIR}/
+# /usr is prefixed by bdist so we need to replace it.
+install(DIRECTORY ${PYMOOSE_INSTALL_DIR}/usr/
     DESTINATION ${CMAKE_INSTALL_PREFIX}
     PATTERN ".git" EXCLUDE
     PATTERN "*.pyc" EXCLUDE
