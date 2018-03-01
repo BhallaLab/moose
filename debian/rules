@@ -13,7 +13,7 @@ override_dh_auto_clean:
 
 # consider using -DUSE_VERSIONED_DIR=ON if backporting
 override_dh_auto_configure:
-	cmake -DCMAKE_INSTALL_PREFIX=debian/tmp/usr
+	cmake -DCMAKE_INSTALL_PREFIX=debian/tmp/usr -DCMAKE_VERSION=3.2.git
 
 override_dh_auto_build:
 	make VERBOSE=0 -j`nproc`

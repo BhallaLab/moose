@@ -461,11 +461,12 @@ endif( )
 
 # get platform and arch using python.
 # NOTE: creating bdist or bdist_dump uses /usr and /usr/local on rpm and deb
-# based unix respectively. Not a great situation to be in. We are using
-# bdist_egg and then copy everything from egg/. 
+# based unix respectively. Not a great situation to be in. Need to write a
+# setup.cfg file to fix the prefix in all cases. 
+file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/python/setup.cfg "[install]\nprefix=/usr" )
 find_package( PythonInterp REQUIRED)
 add_custom_target( bdist 
-    COMMAND ${PYTHON_EXECUTABLE} setup.cmake.py bdist_egg -d ${PYMOOSE_BDIST_DIR}
+    COMMAND ${PYTHON_EXECUTABLE} setup.cmake.py bdist_dumb -d ${PYMOOSE_BDIST_DIR}
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/python
     COMMENT "Genearating bdist using setup.cmake.py." 
     VERBATIM

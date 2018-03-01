@@ -25,6 +25,7 @@ try:
 except Exception as e:
     from distutils.core import setup
 
+
 # Read version from VERSION created by cmake file. This file must be present for
 # setup.cmake.py to work perfectly.
 script_dir = os.path.dirname( os.path.abspath( __file__ ) )
