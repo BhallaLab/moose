@@ -467,7 +467,7 @@ execute_process(
     )
 # If not set, use default.
 if(NOT PY_PLATFORM_ARCH)
-    message(PY_PLATFORM_ARCH "linux-x86_64")
+    set(PY_PLATFORM_ARCH "linux-x86_64")
 endif( )
 message(STATUS "Building bdist for arch: ${PY_PLATFORM_ARCH}")
 add_custom_target( bdist 
