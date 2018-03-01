@@ -7,9 +7,9 @@ notifications:
 
 
 install:
-    - wget http://download.opensuse.org/repositories/home:moose/xUbuntu_12.04/Release.key
+    - wget http://download.opensuse.org/repositories/home:moose/xUbuntu_14.04/Release.key
     - sudo apt-key add - < Release.key  
-    - sudo sh -c "echo 'deb http://download.opensuse.org/repositories/home:/moose/xUbuntu_12.04/ /' >> /etc/apt/sources.list.d/moose.list"
+    - sudo sh -c "echo 'deb http://download.opensuse.org/repositories/home:/moose/xUbuntu_14.04/ /' >> /etc/apt/sources.list.d/moose.list"
     - sudo apt-get -y update
     - sudo apt-get -y --force-yes install python3 python-pip
     - sudo apt-get -y --force-yes install moose
