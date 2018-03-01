@@ -58,6 +58,10 @@ add_custom_target(moose ALL)
 
 set(PYMOOSE_SOURCE_DIR "${CMAKE_SOURCE_DIR}/moose-core")
 set(PYMOOSE_BUILD_DIR ${CMAKE_BINARY_DIR}/__moose-core_build)
+
+# NOTE: new setuptools does not install python module to this directory unless
+# it supports .pth file or PYTHONPATH points to it. Make sure when moose-core is
+# installing into user_specified path, set PYTHONPATH to this directory.
 set(PYMOOSE_INSTALL_DIR ${CMAKE_BINARY_DIR}/__moose-core_install)
 
 if(WITH_GUI)
@@ -105,8 +109,8 @@ if(WITH_GUI)
 endif()
 
 
-## moose-gui
-## TODO: moose-gui should be a python module.
+# moose-gui
+# TODO: moose-gui should be a python module.
 set(MOOSE_GUI_DIR ${CMAKE_SOURCE_DIR}/moose-gui)
 
 install(DIRECTORY ${PYMOOSE_INSTALL_DIR}/

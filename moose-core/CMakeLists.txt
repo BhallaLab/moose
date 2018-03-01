@@ -434,7 +434,7 @@ endif( )
 # --user to install in user home.
 install(CODE
     "execute_process(
-        COMMAND ${PYTHON_EXECUTABLE} setup.cmake.py install ${EXTRA_ARGS} ${PYMOOSE_EXTRA_INSTALL_ARGS}
+        COMMAND ${PYTHON_EXECUTABLE} setup.cmake.py install -f ${EXTRA_ARGS} ${PYMOOSE_EXTRA_INSTALL_ARGS}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/python
         )"
         )
