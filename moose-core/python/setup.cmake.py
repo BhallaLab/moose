@@ -25,15 +25,12 @@ try:
 except Exception as e:
     from distutils.core import setup
 
+# Read version from VERSION created by cmake file. This file must be present for
+# setup.cmake.py to work perfectly.
 script_dir = os.path.dirname( os.path.abspath( __file__ ) )
-version = '3.2.0-git'
-
-try:
-    with open( os.path.join( script_dir, 'VERSION'), 'r' ) as f:
-        version = f.read( )
-except Exception as e:
-    print( 'Failed to read VERSION from file due to: %s' % e )
-    print( 'Using default %s' % version )
+version = None
+with open( os.path.join( script_dir, 'VERSION'), 'r' ) as f:
+    version = f.read( )
 
 try:
     import importlib.machinery

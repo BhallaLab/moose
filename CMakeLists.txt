@@ -28,6 +28,16 @@ option(WITH_CUDA "Use CUDA/GPU" OFF)
 option(WITH_MPI "Use MPI (experimental)" OFF)
 option(WITH_GUI "Install moose-gui. Works only with python2." ON )
 
+# get platform and arch using python.
+find_package( PythonInterp REQUIRED)
+execute_process( 
+    COMMAND ${PYTHON_EXECUTABLE} -c "import sys;print('%s-%s'%(sys.platform,sys.arch))"
+    OUTPUT_VARIABLE PY_PLATFORM_ARCH
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+message(STATUS "Building bdist for arch - ${PY_PLATFORM_ARCH}")
+
+
 # On python3. Do not install GUI. 
 find_package(PythonInterp REQUIRED)
 if(PYTHON_VERSION_MAJOR VERSION_EQUAL 3)
@@ -86,6 +96,11 @@ configure_file( ${CMAKE_SOURCE_DIR}/cmake/build_moose-core.sh.in
 add_custom_target( moose-core ALL DEPENDS ${OUTPUT_MOOSEBIN} )
 add_custom_command( OUTPUT ${OUTPUT_MOOSEBIN}
     COMMAND MAKE=$(MAKE) bash -c ${CMAKE_BINARY_DIR}/build_moose-core.sh
+    # Note that this command requires us to be in the same directory where we
+    # want to extract the tar file.
+    COMMAND ${CMAKE_COMMAND} -E chdir ${PYMOOSE_INSTALL_DIR}
+        tar xvf ${PYMOOSE_BUILD_DIR}/pymoose-${MOOSE_VERSION}.${PY_PLATFORM_ARCH}.tar.gz 
+    COMMENT "Building bdist and unarchiving it"
     VERBATIM
     )
 add_dependencies(moose moose-core)
@@ -114,6 +129,7 @@ endif()
 # TODO: moose-gui should be a python module.
 set(MOOSE_GUI_DIR ${CMAKE_SOURCE_DIR}/moose-gui)
 
+# Install pymoose. Use tar.gz in PYMOOSE_BUILD_DIR and unarchive it.
 install(DIRECTORY ${PYMOOSE_INSTALL_DIR}/
     DESTINATION ${CMAKE_INSTALL_PREFIX}
     PATTERN ".git" EXCLUDE
