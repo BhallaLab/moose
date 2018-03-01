@@ -393,6 +393,7 @@ endif()
 ######################### BUILD PYMOOSE ########################################
 add_subdirectory( pymoose )
 
+
 ######################### INSTALL ##############################################
 
 if(DEBUG)
@@ -448,6 +449,22 @@ if(${CMAKE_BUILD_TOOL} MATCHES "make")
         "=======================================\n"
         )
 endif()
+
+# Target for creating bdist. This is handy for creating bdist for packaging.
+# Save the binary distribution (tar.gz) to PYMOOSE_BDIST_DIR. Note that this
+# target is only useful when creating packages on Open Build Service i.e. if you
+# use this target on distribution X, it may not work on distrbutions other than
+# X. See python-wheels for making portable distributions.
+if(NOT PYMOOSE_BDIST_DIR)
+    set(PYMOOSE_BDIST_DIR ${CMAKE_BINARY_DIR}/pymoose_bdist)
+endif( )
+add_custom_target( bdist 
+    DEPENDS pymoose
+    COMMAND ${PYTHON_EXECUTABLE} setup.cmake.py bdist -d ${PYMOOSE_BDIST_DIR}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/python
+    COMMENT "Genearating bdist using setup.cmake.py." 
+    VERBATIM
+    )
 
 
 ############################ CTEST ######################################

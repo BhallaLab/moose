@@ -60,9 +60,10 @@ set(PYMOOSE_SOURCE_DIR "${CMAKE_SOURCE_DIR}/moose-core")
 set(PYMOOSE_BUILD_DIR ${CMAKE_BINARY_DIR}/__moose-core_build)
 
 # NOTE: new setuptools does not install python module to this directory unless
-# it supports .pth file or PYTHONPATH points to it. Make sure when moose-core is
-# installing into user_specified path, set PYTHONPATH to this directory.
+# installing into user_specified path, set PYTHONPATH to this directory. We now
+# create a bdist to this directory.
 set(PYMOOSE_INSTALL_DIR ${CMAKE_BINARY_DIR}/__moose-core_install)
+set(PYMOOSE_BDIST_DIR ${PYMOOSE_BUILD_DIR}/)
 
 if(WITH_GUI)
     set(MOOSE_GUI_DIR ${CMAKE_SOURCE_DIR}/moose-gui)

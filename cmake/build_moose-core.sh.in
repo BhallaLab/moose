@@ -11,20 +11,18 @@ if [ -z "$MAKE" ]; then
     MAKE=make
 fi
 
-echo "Building MOOSE"
-(
-    export GSL_ROOT_DIR=@GSL_ROOT_DIR@
-    export HDF5_ROOT=@HDF5_ROOT@
-    cd @PYMOOSE_BUILD_DIR@
-    cmake -DCMAKE_INSTALL_PREFIX=@PYMOOSE_INSTALL_DIR@ \
-        -DCMAKE_BUILD_TYPE=Release \
-        -DWITH_BOOST=@WITH_BOOST@ \
-        -DPYTHON_EXECUTABLE=@PYTHON_EXECUTABLE@ \
-        -DVERSION_MOOSE=@MOOSE_VERSION@ \
-        @CMAKE_PYMOOSE_ARGS@ \
-        @PYMOOSE_SOURCE_DIR@ 
-    $MAKE
-    ctest -output-on-failure || echo "Some tests failed"
-    $MAKE install
-)
-
+echo "Building pymoose and creating bdist."
+export GSL_ROOT_DIR=@GSL_ROOT_DIR@
+export HDF5_ROOT=@HDF5_ROOT@
+cd @PYMOOSE_BUILD_DIR@
+cmake -DCMAKE_INSTALL_PREFIX=@PYMOOSE_INSTALL_DIR@ \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DWITH_BOOST=@WITH_BOOST@ \
+    -DPYTHON_EXECUTABLE=@PYTHON_EXECUTABLE@ \
+    -DVERSION_MOOSE=@MOOSE_VERSION@ \
+    -DPYMOOSE_BDIST_DIR=@PYMOOSE_BDIST_DIR@ \
+    @CMAKE_PYMOOSE_ARGS@ \
+    @PYMOOSE_SOURCE_DIR@ 
+$MAKE
+ctest --output-on-failure || echo "Some tests failed"
+$MAKE bdist
