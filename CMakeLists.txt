@@ -28,18 +28,6 @@ option(WITH_CUDA "Use CUDA/GPU" OFF)
 option(WITH_MPI "Use MPI (experimental)" OFF)
 option(WITH_GUI "Install moose-gui. Works only with python2." ON )
 
-# get platform and arch using python.
-find_package( PythonInterp REQUIRED)
-execute_process( 
-    COMMAND ${PYTHON_EXECUTABLE} -c "import sys;print('%s-%s'%(sys.platform,sys.arch))"
-    OUTPUT_VARIABLE PY_PLATFORM_ARCH
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-    )
-if( NOT PY_PLATFORM_ARCH )
-    set(PY_PLATFORM_ARCH "linux-x86_64" )
-endif( )
-message(STATUS "Building bdist for arch - ${PY_PLATFORM_ARCH}")
-
 
 # On python3. Do not install GUI. 
 find_package(PythonInterp REQUIRED)
@@ -65,7 +53,6 @@ if(UNIX AND NOT APPLE)
 endif( )
 
 
-
 add_custom_target(moose ALL)
 
 
@@ -76,7 +63,10 @@ set(PYMOOSE_BUILD_DIR ${CMAKE_BINARY_DIR}/__moose-core_build)
 # installing into user_specified path, set PYTHONPATH to this directory. We now
 # create a bdist to this directory.
 set(PYMOOSE_INSTALL_DIR ${CMAKE_BINARY_DIR}/__moose-core_install)
-set(PYMOOSE_BDIST_DIR ${PYMOOSE_BUILD_DIR}/)
+file(MAKE_DIRECTORY ${PYMOOSE_INSTALL_DIR})
+
+set(PYMOOSE_BDIST_DIR ${PYMOOSE_BUILD_DIR})
+message( STATUS "bdist directory PYMOOSE_BDIST_DIR ${PYMOOSE_BDIST_DIR}" )
 
 if(WITH_GUI)
     set(MOOSE_GUI_DIR ${CMAKE_SOURCE_DIR}/moose-gui)
@@ -97,14 +87,16 @@ configure_file( ${CMAKE_SOURCE_DIR}/cmake/build_moose-core.sh.in
 
 # Build pymoose module.
 add_custom_target( moose-core ALL DEPENDS ${OUTPUT_MOOSEBIN} )
+
 add_custom_command( OUTPUT ${OUTPUT_MOOSEBIN}
     COMMAND MAKE=$(MAKE) bash -c ${CMAKE_BINARY_DIR}/build_moose-core.sh
     # Note that this command requires us to be in the same directory where we
     # want to extract the tar file.
     COMMAND ${CMAKE_COMMAND} -E chdir ${PYMOOSE_INSTALL_DIR}
-        tar xvf ${PYMOOSE_BUILD_DIR}/pymoose-${MOOSE_VERSION}.${PY_PLATFORM_ARCH}.tar.gz 
+        tar xvf ${PYMOOSE_BUILD_DIR}/pymoose-${MOOSE_VERSION}.*.tar.gz 
     COMMENT "Building bdist and unarchiving it"
-    VERBATIM
+    # VERBATIM ## WARN: Don't use VERBATIM here. The glob * in tar xvf will not
+    # work
     )
 add_dependencies(moose moose-core)
 
