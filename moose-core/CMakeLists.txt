@@ -460,9 +460,12 @@ if(NOT PYMOOSE_BDIST_DIR)
 endif( )
 
 # get platform and arch using python.
+# NOTE: creating bdist or bdist_dump uses /usr and /usr/local on rpm and deb
+# based unix respectively. Not a great situation to be in. We are using
+# bdist_egg and then copy everything from egg/. 
 find_package( PythonInterp REQUIRED)
 add_custom_target( bdist 
-    COMMAND ${PYTHON_EXECUTABLE} setup.cmake.py bdist -d ${PYMOOSE_BDIST_DIR}
+    COMMAND ${PYTHON_EXECUTABLE} setup.cmake.py bdist_egg -d ${PYMOOSE_BDIST_DIR}
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/python
     COMMENT "Genearating bdist using setup.cmake.py." 
     VERBATIM
