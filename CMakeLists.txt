@@ -458,20 +458,11 @@ endif()
 if(NOT PYMOOSE_BDIST_DIR)
     set(PYMOOSE_BDIST_DIR ${CMAKE_BINARY_DIR}/pymoose_bdist)
 endif( )
+
 # get platform and arch using python.
 find_package( PythonInterp REQUIRED)
-execute_process( 
-    COMMAND ${PYTHON_EXECUTABLE} -c "import sys;print('%s-%s'%(sys.platform,sys.arch))"
-    OUTPUT_VARIABLE PY_PLATFORM_ARCH
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-    )
-# If not set, use default.
-if(NOT PY_PLATFORM_ARCH)
-    message(PY_PLATFORM_ARCH "linux-x86_64")
-endif( )
-message(STATUS "Building bdist for arch: ${PY_PLATFORM_ARCH}")
 add_custom_target( bdist 
-    COMMAND ${PYTHON_EXECUTABLE} setup.cmake.py bdist -p ${PY_PLATFORM_ARCH} -d ${PYMOOSE_BDIST_DIR}
+    COMMAND ${PYTHON_EXECUTABLE} setup.cmake.py bdist -d ${PYMOOSE_BDIST_DIR}
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/python
     COMMENT "Genearating bdist using setup.cmake.py." 
     VERBATIM
