@@ -35,6 +35,9 @@ execute_process(
     OUTPUT_VARIABLE PY_PLATFORM_ARCH
     OUTPUT_STRIP_TRAILING_WHITESPACE
     )
+if( NOT PY_PLATFORM_ARCH )
+    set(PY_PLATFORM_ARCH "linux-x86_64" )
+endif( )
 message(STATUS "Building bdist for arch - ${PY_PLATFORM_ARCH}")
 
 
