@@ -426,9 +426,14 @@ message( STATUS "Platform ${_platform_desc}" )
 # is most likely to be --install-layout=deb .
 set(EXTRA_ARGS "--prefix ${CMAKE_INSTALL_PREFIX} ${DISTUTILS_EXTRA_ARGS}")
 
-# On Debian/Ubuntu install using debian layout
+# On Debian/Ubuntu install using debian layout. 
+# NOTE: Also create setup.cfg file which setup prefix and install-layout
+# suitable for DEBIAN systems.
 if( ${_platform_desc} MATCHES ".*(Ubuntu|Debian).*" )
     list( APPEND EXTRA_ARGS "--install-layout=deb" )
+    file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/python/setup.cfg 
+         "[install]\nprefix=/usr\ninstall-layout=deb" 
+       )
 endif( )
 
 # If make is called with sudo, install in system directories. Otherwise use
@@ -463,7 +468,6 @@ endif( )
 # NOTE: creating bdist or bdist_dump uses /usr and /usr/local on rpm and deb
 # based unix respectively. Not a great situation to be in. Need to write a
 # setup.cfg file to fix the prefix in all cases. 
-file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/python/setup.cfg "[install]\nprefix=/usr" )
 find_package( PythonInterp REQUIRED)
 add_custom_target( bdist 
     COMMAND ${PYTHON_EXECUTABLE} setup.cmake.py bdist_dumb -d ${PYMOOSE_BDIST_DIR}
