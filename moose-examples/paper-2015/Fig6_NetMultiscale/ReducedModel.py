@@ -885,4 +885,7 @@ if __name__=='__main__':
     plt.show()
     plt.savefig( fname + '.svg', bbox_inches='tight')
     print( "Hit 'enter' to exit" )
-    input()
+    try:
+        raw_input()
+    except Exception as e:
+        input( )

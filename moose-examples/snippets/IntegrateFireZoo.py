@@ -120,7 +120,13 @@ def main():
     #choiceKey = 'LIF'
     #### No need, am inputting it from the user on the terminal
     choiceKeys = list(neuronChoices.keys()) # keys() does not retain the order in dict defn above!
-    choiceIndex = eval(str(input('Choose a number corresponding to your desired neuron: '+str([(i,key) for (i,key) in enumerate(choiceKeys)])+' -- ')))
+
+    try:
+        v = raw_input('Choose a number corresponding to your desired neuron: '+str([(i,key) for (i,key) in enumerate(choiceKeys)])+' -- ')
+    except NameError as e:
+        v = input('Choose a number corresponding to your desired neuron: '+str([(i,key) for (i,key) in enumerate(choiceKeys)])+' -- ')
+
+    choiceIndex = eval(v)
     choiceKey = choiceKeys[choiceIndex]
     neuronChoice = neuronChoices[choiceKey]
 

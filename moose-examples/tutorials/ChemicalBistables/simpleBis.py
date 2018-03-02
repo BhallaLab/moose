@@ -134,7 +134,10 @@ def main():
 
                 # Iterate through all plots, dump their contents to data.plot.
                 displayPlots()
-                raw_input( 'Press any key to quit' )
+                try:
+                    raw_input( 'Press any key to quit' )
+                except NameError as e:
+                    input( 'Press any key to quit' )
 
 
 # Run the 'main' if this script is executed standalone.

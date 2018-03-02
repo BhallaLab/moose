@@ -153,9 +153,11 @@ def main():
         # Iterate through all plots, dump their contents to data.plot.
         displayPlots()
         pylab.show( block=False )
-        print(('vol = ', vol, 'hit enter to go to next plot'))
-        input()
-
+        print( 'vol = %f . hit enter to go to next plot' % vol )
+        try:
+            raw_input()
+        except NameError as e:
+            input( )
     quit()
 
 # Run the 'main' if this script is executed standalone.
