@@ -91,13 +91,15 @@ def wildcard_test():
     for element in moose.wildcardFind(wildcard):
         print(('\t', element.path))
 
-    # `#` can be used only once and matches all subsequent characters in name
+
+    # `?` can be used any number of times but substitutes a single character
     wildcard = '/alfa/bravo/charl?e'
     print(('\nElements Matching:', wildcard))
     for element in moose.wildcardFind(wildcard):
         print(('\t', element.path))
 
-    # `?` can be used any number of times but substitutes a single character
+    
+    # `#` can be used only once and matches all subsequent characters in name
     wildcard = '/alfa/bravo/fox#'
     print(('\nElements Matching:', wildcard))
     for element in moose.wildcardFind(wildcard):

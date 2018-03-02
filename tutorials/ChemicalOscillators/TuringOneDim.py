@@ -160,7 +160,10 @@ def main():
         fig.canvas.draw()
 
     print( "Hit 'enter' to exit" )
-    raw_input( )
+    try:
+        raw_input( )
+    except NameError as e: # python3
+        input( )
 
 
 
