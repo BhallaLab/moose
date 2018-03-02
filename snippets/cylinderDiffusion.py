@@ -184,10 +184,11 @@ def main():
     print((atot2/atot, btot2/btot, ctot2/ctot, dtot2/dtot))
     print(('Initial to final (b+c)=', (btot2 + ctot2) / (btot + ctot )))
     print("\nHit '0' to exit")
-    eval(str(input()))
-
+    try:
+        raw_input( )
+    except NameError as e: # python3
+        input( )
     quit()
-
 
 # Run the 'main' if this script is executed standalone.
 if __name__ == '__main__':
