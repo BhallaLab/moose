@@ -426,9 +426,14 @@ message( STATUS "Platform ${_platform_desc}" )
 # is most likely to be --install-layout=deb .
 set(EXTRA_ARGS "--prefix ${CMAKE_INSTALL_PREFIX} ${DISTUTILS_EXTRA_ARGS}")
 
-# On Debian/Ubuntu install using debian layout
+# On Debian/Ubuntu install using debian layout. 
+# NOTE: Also create setup.cfg file which setup prefix and install-layout
+# suitable for DEBIAN systems.
 if( ${_platform_desc} MATCHES ".*(Ubuntu|Debian).*" )
     list( APPEND EXTRA_ARGS "--install-layout=deb" )
+    file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/python/setup.cfg 
+         "[install]\nprefix=/usr\ninstall-layout=deb" 
+       )
 endif( )
 
 # If make is called with sudo, install in system directories. Otherwise use
@@ -458,20 +463,14 @@ endif()
 if(NOT PYMOOSE_BDIST_DIR)
     set(PYMOOSE_BDIST_DIR ${CMAKE_BINARY_DIR}/pymoose_bdist)
 endif( )
+
 # get platform and arch using python.
+# NOTE: creating bdist or bdist_dump uses /usr and /usr/local on rpm and deb
+# based unix respectively. Not a great situation to be in. Need to write a
+# setup.cfg file to fix the prefix in all cases. 
 find_package( PythonInterp REQUIRED)
-execute_process( 
-    COMMAND ${PYTHON_EXECUTABLE} -c "import sys;print('%s-%s'%(sys.platform,sys.arch))"
-    OUTPUT_VARIABLE PY_PLATFORM_ARCH
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-    )
-# If not set, use default.
-if(NOT PY_PLATFORM_ARCH)
-    mes(PY_PLATFORM_ARCH "linux-x86_64")
-endif( )
-message(STATUS "Building bdist for arch: ${PY_PLATFORM_ARCH}")
 add_custom_target( bdist 
-    COMMAND ${PYTHON_EXECUTABLE} setup.cmake.py bdist -p ${PY_PLATFORM_ARCH} -d ${PYMOOSE_BDIST_DIR}
+    COMMAND ${PYTHON_EXECUTABLE} setup.cmake.py bdist_dumb -d ${PYMOOSE_BDIST_DIR}
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/python
     COMMENT "Genearating bdist using setup.cmake.py." 
     VERBATIM
