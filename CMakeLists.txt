@@ -1,7 +1,7 @@
 set(CMAKE_LEGACY_CYGWIN_WIN32 0)
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 
-project(moose-core)
+project(pymoose)
 
 if(COMMAND cmake_policy)
     cmake_policy(SET CMP0003 NEW)
@@ -29,7 +29,7 @@ endif()
 # If from command line, version info is not passed, use the git to generate a
 # version file. If GIT fails, use the previous known version.
 if(NOT VERSION_MOOSE)
-    set(VERSION_MOOSE "3.2.0rc1-${GIT_HEAD}")
+    set(VERSION_MOOSE "3.2.0-${GIT_HEAD}")
 endif( )
 add_definitions( -DMOOSE_VERSION="${VERSION_MOOSE}")
 message( STATUS "MOOSE Version ${VERSION_MOOSE}" )
@@ -393,6 +393,7 @@ endif()
 ######################### BUILD PYMOOSE ########################################
 add_subdirectory( pymoose )
 
+
 ######################### INSTALL ##############################################
 
 if(DEBUG)
@@ -421,18 +422,25 @@ execute_process(
 message( STATUS "Platform ${_platform_desc}" )
 
 
-set(EXTRA_ARGS "--prefix ${CMAKE_INSTALL_PREFIX}")
+# DISTUTILS_EXTRA_ARGS may come of top-level cmake script. On DEBIAN/UBUNTU, it
+# is most likely to be --install-layout=deb .
+set(EXTRA_ARGS "--prefix ${CMAKE_INSTALL_PREFIX} ${DISTUTILS_EXTRA_ARGS}")
 
-# On Debian/Ubuntu install using debian layout
+# On Debian/Ubuntu install using debian layout. 
+# NOTE: Also create setup.cfg file which setup prefix and install-layout
+# suitable for DEBIAN systems.
 if( ${_platform_desc} MATCHES ".*(Ubuntu|Debian).*" )
     list( APPEND EXTRA_ARGS "--install-layout=deb" )
+    file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/python/setup.cfg 
+         "[install]\nprefix=/usr\ninstall-layout=deb" 
+       )
 endif( )
 
 # If make is called with sudo, install in system directories. Otherwise use
 # --user to install in user home.
 install(CODE
     "execute_process(
-        COMMAND ${PYTHON_EXECUTABLE} setup.cmake.py install ${EXTRA_ARGS} ${PYMOOSE_EXTRA_INSTALL_ARGS}
+        COMMAND ${PYTHON_EXECUTABLE} setup.cmake.py install -f ${EXTRA_ARGS} ${PYMOOSE_EXTRA_INSTALL_ARGS}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/python
         )"
         )
@@ -446,6 +454,27 @@ if(${CMAKE_BUILD_TOOL} MATCHES "make")
         "=======================================\n"
         )
 endif()
+
+# Target for creating bdist. This is handy for creating bdist for packaging.
+# Save the binary distribution (tar.gz) to PYMOOSE_BDIST_DIR. Note that this
+# target is only useful when creating packages on Open Build Service i.e. if you
+# use this target on distribution X, it may not work on distrbutions other than
+# X. See python-wheels for making portable distributions.
+if(NOT PYMOOSE_BDIST_DIR)
+    set(PYMOOSE_BDIST_DIR ${CMAKE_BINARY_DIR}/pymoose_bdist)
+endif( )
+
+# get platform and arch using python.
+# NOTE: creating bdist or bdist_dump uses /usr and /usr/local on rpm and deb
+# based unix respectively. Not a great situation to be in. Need to write a
+# setup.cfg file to fix the prefix in all cases. 
+find_package( PythonInterp REQUIRED)
+add_custom_target( bdist 
+    COMMAND ${PYTHON_EXECUTABLE} setup.cmake.py bdist_dumb -d ${PYMOOSE_BDIST_DIR}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/python
+    COMMENT "Genearating bdist using setup.cmake.py." 
+    VERBATIM
+    )
 
 
 ############################ CTEST ######################################
