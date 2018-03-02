@@ -10,10 +10,11 @@ set(PYMOOSE_SRCS
     test_moosemodule.cpp
     PyRun.cpp
     )
-add_library( _moose MODULE ${PYMOOSE_SRCS} )
 
+add_library( _moose MODULE ${PYMOOSE_SRCS} )
 set(PYMOOSE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/python/moose")
 
+find_package(PythonInterp REQUIRED)
 execute_process( COMMAND ${PYTHON_EXECUTABLE} -c
     "try: import importlib.machinery; print(importlib.machinery.EXTENSION_SUFFIXES[0])
 except Exception: pass"

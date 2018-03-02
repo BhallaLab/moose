@@ -39,23 +39,15 @@
 #============================================================================
 
 # Finding NumPy involves calling the Python interpreter
-if(NumPy_FIND_REQUIRED)
-    find_package(PythonInterp REQUIRED)
-else()
-    find_package(PythonInterp)
-endif()
 
-if(NOT PYTHONINTERP_FOUND)
-    set(NUMPY_FOUND FALSE)
-    return()
-endif()
-
-execute_process(COMMAND "${PYTHON_EXECUTABLE}" "-c"
+message( STATUS "Using python ${PYTHON_EXECUTABLE} to locate numpy" )
+execute_process(COMMAND ${PYTHON_EXECUTABLE} -c
     "import numpy as n; print(n.__version__); print(n.get_include());"
     RESULT_VARIABLE _NUMPY_SEARCH_SUCCESS
     OUTPUT_VARIABLE _NUMPY_VALUES_OUTPUT
     ERROR_VARIABLE _NUMPY_ERROR_VALUE
-    OUTPUT_STRIP_TRAILING_WHITESPACE)
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+)
 
 if(NOT _NUMPY_SEARCH_SUCCESS MATCHES 0)
     if(NumPy_FIND_REQUIRED)
