@@ -25,4 +25,4 @@ cmake -DCMAKE_INSTALL_PREFIX=@PYMOOSE_INSTALL_DIR@ \
     @PYMOOSE_SOURCE_DIR@ 
 $MAKE
 ctest --output-on-failure || echo "Some tests failed"
-$MAKE bdist
+$MAKE bdist VERBOSE=1
