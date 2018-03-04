@@ -132,10 +132,11 @@ add_custom_command(OUTPUT __uninstall_moose-core__
     )
 
 if(WITH_GUI)
-    add_custom_command(OUTPUT  __uninstall_moose-gui__
+    add_custom_target( __uninstall_moose-gui__ )
+    add_custom_command(TARGET __uninstall_moose-gui__ 
         COMMAND ${CMAKE_COMMAND} -E remove_directory
         ${CMAKE_INSTALL_PREFIX}/lib/moose/gui
-        COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_INSTALL_PREFIX}/bin/moose
+        COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_INSTALL_PREFIX}/bin/moosegui
         )
     add_dependencies( uninstall __uninstall_moose-gui__ )
 endif()
