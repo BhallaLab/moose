@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from __future__ import print_function, division, absolute_import
 
 # Author: Subhasis Ray
@@ -10,6 +11,7 @@ import pydoc
 import os
 from io import StringIO
 
+import moose
 import moose.SBML.readSBML as _readSBML
 import moose.SBML.writeSBML as _writeSBML
 import moose.genesis.writeKkit as _writeKkit
@@ -18,7 +20,6 @@ import moose.chemUtil as _chemUtil
 # Import function from C++ module into moose namespace.
 from moose._moose import *
 
-# Version
 def version( ):
     return VERSION
 
