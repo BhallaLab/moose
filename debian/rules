@@ -5,7 +5,7 @@
 ## Here goes the debian make.
 
 %:
-	dh "$@" --with python2
+	dh "$@" 
 
 override_dh_auto_clean:
 	rm -rf $(BUILD_DIR_MOOSE)

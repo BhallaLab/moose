@@ -23,7 +23,7 @@ echo "Building MOOSE"
         @CMAKE_PYMOOSE_ARGS@ \
         @PYMOOSE_SOURCE_DIR@ 
     $MAKE
-    ctest -output-on-failure || echo "Some tests failed"
+    ctest --output-on-failure || echo "Some tests failed"
     $MAKE install
 )
 

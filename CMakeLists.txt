@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 
 project(moose)
-
 if(POLICY CMP0048)
     cmake_policy(SET CMP0048 OLD )
 endif(POLICY CMP0048)
@@ -64,7 +63,8 @@ configure_file( ${CMAKE_SOURCE_DIR}/cmake/build_moose-core.sh.in
 # Build pymoose module.
 add_custom_target( moose-core ALL DEPENDS ${OUTPUT_MOOSEBIN} )
 add_custom_command( OUTPUT ${OUTPUT_MOOSEBIN}
-    COMMAND MAKE=$(MAKE) bash -c ${CMAKE_BINARY_DIR}/build_moose-core.sh
+    COMMAND ${CMAKE_BINARY_DIR}/build_moose-core.sh
+    COMMENT "Building pymoose"
     VERBATIM
     )
 

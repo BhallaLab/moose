@@ -21,7 +21,7 @@ set -o nounset                                  # Treat unset variables as an er
 set -e -x
 PATH=/usr/bin:/usr/local/bin:$PATH
 
-gbp buildpackage  --git-ignore-branch --git-ignore-new -uc -us
+gbp buildpackage  --git-ignore-branch --git-ignore-new -uc -us -d
 sudo dpkg -i ../moose*.deb
 
 python -c 'import moose'
