@@ -48,10 +48,4 @@ install:
     - sudo ldconfig /usr/lib64
 
 script:
-    - gbp buildpackage  --git-ignore-branch --git-ignore-new -uc -us
-    - sudo dpkg -i ../moose*.deb
-
-after_success:
-    - python -c 'import moose'
-    - python -c 'import moogli'
-    - cd __moose-core_build && ctest --output-on-failure
+    - ./.travis_build.sh
