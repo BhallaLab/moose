@@ -22,6 +22,9 @@ elseif(GIT_EXEC)
 endif( )
 message( STATUS "Building version ${VERSION_MOOSE}" )
 
+# Prefix
+message( STATUS "CMAKE_INSTALL_PREFIX= ${CMAKE_INSTALL_PREFIX}" )
+
 # Options to pass down to moose-core
 option(WITH_DOC "Build documentation" OFF)
 option(DEBUG "Build with DEBUG support" OFF)
@@ -57,14 +60,17 @@ file(MAKE_DIRECTORY ${PYMOOSE_BUILD_DIR})
 # different platform.
 set(OUTPUT_MOOSEBIN ${PYMOOSE_BUILD_DIR}/moose.bin)
 
-configure_file( ${CMAKE_SOURCE_DIR}/cmake/build_moose-core.sh.in 
-    ${CMAKE_BINARY_DIR}/build_moose-core.sh )
+configure_file( 
+    ${CMAKE_SOURCE_DIR}/cmake/build_moose-core.sh.in 
+    ${PYMOOSE_BUILD_DIR}/build_moose-core.sh 
+    )
 
 # Build pymoose module.
-add_custom_target( moose-core ALL DEPENDS ${OUTPUT_MOOSEBIN} )
+add_custom_target( moose-core DEPENDS ${OUTPUT_MOOSEBIN} )
 add_custom_command( OUTPUT ${OUTPUT_MOOSEBIN}
-    COMMAND ${CMAKE_BINARY_DIR}/build_moose-core.sh
-    COMMENT "Building pymoose"
+    COMMAND bash -c ${PYMOOSE_BUILD_DIR}/build_moose-core.sh
+    WORKING_DIRECTORY ${PYMOOSE_BUILD_DIR}
+    COMMENT "Building pymoose in ${PYMOOSE_BUILD_DIR}"
     VERBATIM
     )
 
