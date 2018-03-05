@@ -17,6 +17,7 @@ install:
 script:
     - # Making sure no python incompatible file is added.
     - python -m compileall -q .
+    - python3 -m compileall -q .
     - python -c 'import moose'
     - python -c 'import moogli'
     - # More tests here for gui.
