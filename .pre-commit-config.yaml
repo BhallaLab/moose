@@ -1,10 +1,11 @@
-- repo: https://github.com/pre-commit/pre-commit-hooks
-  sha: v0.6.1
-  hooks:
-      - id: check-added-large-files
-      - id: check-ast
-      - id: check-merge-conflict
-      - id: check-case-conflict 
-      - id: check-docstring-first
-      - id: debug-statements
-
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    sha: v0.8.0
+    hooks:
+    - id: check-added-large-files
+    - id: check-ast
+    - id: check-merge-conflict
+    - id: check-case-conflict
+    - id: check-docstring-first
+    - id: debug-statements
+    - id: fix-encoding-pragma
+    - id: trailing-whitespace
