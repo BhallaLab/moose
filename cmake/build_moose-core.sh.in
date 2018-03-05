@@ -22,6 +22,6 @@ echo "Building MOOSE"
         -DVERSION_MOOSE=@VERSION_MOOSE@ \
         @CMAKE_PYMOOSE_ARGS@ \
         @PYMOOSE_SOURCE_DIR@ 
-    make && ctest --output-on-failure && make install
+    make -j`nproc` && ctest --output-on-failure && make install
 )
 

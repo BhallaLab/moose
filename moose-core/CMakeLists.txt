@@ -433,10 +433,10 @@ endif( )
 # --user to install in user home.
 install(CODE
     "execute_process(
-        COMMAND ${PYTHON_EXECUTABLE} setup.cmake.py install -f ${EXTRA_ARGS} ${PYMOOSE_EXTRA_INSTALL_ARGS}
-        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/python
+        COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_INSTALL_PREFIX} 
+            tar xvf pymoose*.tag.gz
         )"
-        )
+    )
 
 # Print message to start build process
 if(${CMAKE_BUILD_TOOL} MATCHES "make")
