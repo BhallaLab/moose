@@ -9,18 +9,18 @@ endif(POLICY CMP0048)
 # version file. If GIT fails, use the previous known version.
 find_program(GIT_EXEC "git")
 message( STATUS "Looking for git ${GIT_EXEC}" )
-if(VERSION_MOOSE)
-    message( STATUS "MOOSE version is set to ${VERSION_MOOSE} at build time" )
+if(VERSION)
+    message( STATUS "MOOSE version is set to ${VERSION} at build time" )
 elseif(GIT_EXEC)
     message( STATUS "Getting version by reading git tags" )
     execute_process( 
         COMMAND ${GIT_EXEC} describe --tags --long
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-        OUTPUT_VARIABLE VERSION_MOOSE
+        OUTPUT_VARIABLE VERSION
         OUTPUT_STRIP_TRAILING_WHITESPACE
     )
 endif( )
-message( STATUS "Building version ${VERSION_MOOSE}" )
+message( STATUS "Building version ${VERSION}" )
 
 # Prefix
 message( STATUS "CMAKE_INSTALL_PREFIX= ${CMAKE_INSTALL_PREFIX}" )
@@ -66,12 +66,19 @@ configure_file(
     ${PYMOOSE_BUILD_DIR}/build_moose-core.sh 
     )
 
-# Build pymoose module.
+# Build pymoose module, create bdist and  and unarchive the bdist to
+# PYMOOSE_INSTALL_DIR.
 add_custom_target( moose-core DEPENDS ${OUTPUT_MOOSEBIN} )
 add_custom_command( OUTPUT ${OUTPUT_MOOSEBIN}
     COMMAND ${PYMOOSE_BUILD_DIR}/build_moose-core.sh
     WORKING_DIRECTORY ${PYMOOSE_BUILD_DIR}
     COMMENT "Building pymoose in ${PYMOOSE_BUILD_DIR}"
+    VERBATIM
+    )
+add_custom_command( TARGET moose-core POST_BUILD 
+    COMMAND ${CMAKE_COMMAND} -E chdir ${PYMOOSE_INSTALL_DIR} tar xvf
+        ${PYMOOSE_BUILD_DIR}/bdist/pymoose-${VERSION}.CMAKE.tar.gz
+    COMMENT "Unarchiving pymoose bdist"
     VERBATIM
     )
 
@@ -135,7 +142,7 @@ add_custom_target(uninstall DEPENDS __uninstall_moose-core__ )
 add_custom_command(OUTPUT __uninstall_moose-core__
     COMMAND xargs rm -rf < install_manifest.txt
     COMMAND pip uninstall -y moose 
-    COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_INSTALL_PREFIX}/bin/moose.bin
+    COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_INSTALL_PREFIX}/bin/moosegui
     )
 
 if(WITH_GUI)

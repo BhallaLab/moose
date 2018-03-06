@@ -7,10 +7,6 @@ set -e
 # will play well with cmake. CMAKE replaces @FOO@ and ${FOO} with cmake variable
 # values.
 
-if [ ! -n "$MAKE" ]; then
-    MAKE=make -j4
-fi
-
 echo "Building pymoose and creating bdist."
 export GSL_ROOT_DIR=@GSL_ROOT_DIR@
 export HDF5_ROOT=@HDF5_ROOT@
@@ -19,10 +15,10 @@ cmake -DCMAKE_INSTALL_PREFIX=@PYMOOSE_INSTALL_DIR@ \
     -DCMAKE_BUILD_TYPE=Release \
     -DWITH_BOOST=@WITH_BOOST@ \
     -DPYTHON_EXECUTABLE=@PYTHON_EXECUTABLE@ \
-    -DVERSION_MOOSE=@MOOSE_VERSION@ \
-    -DPYMOOSE_BDIST_DIR=@PYMOOSE_BDIST_DIR@ \
+    -DVERSION_MOOSE=@VERSION@ \
     @CMAKE_PYMOOSE_ARGS@ \
     @PYMOOSE_SOURCE_DIR@ 
-$MAKE
+
+make -j3
 ctest --output-on-failure || echo "Some tests failed"
-$MAKE bdist VERBOSE=1
+make bdist 
