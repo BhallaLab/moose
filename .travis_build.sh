@@ -20,10 +20,5 @@
 set -o nounset                                  # Treat unset variables as an error
 set -e -x
 PATH=/usr/bin:/usr/local/bin:$PATH
-
 gbp buildpackage  --git-ignore-branch --git-ignore-new -uc -us -d
-sudo dpkg -i ../moose*.deb
-
-python -c 'import moose'
-python -c 'import moogli'
-cd __moose-core_build && ctest --output-on-failure
+pwd 

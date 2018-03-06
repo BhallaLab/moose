@@ -49,3 +49,6 @@ install:
 
 script:
     - ./.travis_build.sh
+    - sudo dpkg -i ../moose*.deb 
+    - python -c 'import moose'
+    - python -c 'import moogli'
