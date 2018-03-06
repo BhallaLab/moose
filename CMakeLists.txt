@@ -147,4 +147,3 @@ if(WITH_GUI)
         )
     add_dependencies( uninstall __uninstall_moose-gui__ )
 endif()
-

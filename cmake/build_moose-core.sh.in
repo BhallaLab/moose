@@ -7,8 +7,8 @@ set -e
 # will play well with cmake. CMAKE replaces @FOO@ and ${FOO} with cmake variable
 # values.
 
-if [ -z "$MAKE" ]; then
-    MAKE=make
+if [ ! -n "$MAKE" ]; then
+    MAKE=make -j4
 fi
 
 echo "Building pymoose and creating bdist."
