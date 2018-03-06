@@ -475,27 +475,6 @@ if(${CMAKE_BUILD_TOOL} MATCHES "make")
         )
 endif()
 
-# Target for creating bdist. This is handy for creating bdist for packaging.
-# Save the binary distribution (tar.gz) to PYMOOSE_BDIST_DIR. Note that this
-# target is only useful when creating packages on Open Build Service i.e. if you
-# use this target on distribution X, it may not work on distrbutions other than
-# X. See python-wheels for making portable distributions.
-if(NOT PYMOOSE_BDIST_DIR)
-    set(PYMOOSE_BDIST_DIR ${CMAKE_BINARY_DIR}/pymoose_bdist)
-endif( )
-
-# get platform and arch using python.
-# NOTE: creating bdist or bdist_dump uses /usr and /usr/local on rpm and deb
-# based unix respectively. Not a great situation to be in. Need to write a
-# setup.cfg file to fix the prefix in all cases. 
-find_package( PythonInterp REQUIRED)
-add_custom_target( bdist 
-    COMMAND ${PYTHON_EXECUTABLE} setup.cmake.py bdist_dumb -d ${PYMOOSE_BDIST_DIR}
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/python
-    COMMENT "Genearating bdist using setup.cmake.py." 
-    VERBATIM
-    )
-
 
 ############################ CTEST ######################################
 include( CTest )
