@@ -8,7 +8,7 @@ Homepage: http://moose.ncbs.res.in
 
 Package: moose
 Architecture: any
-Depends: ${shlibs:Depends}, ${python:Depends}, python-numpy-abi9, libhdf5-7 | libhdf5-serial-1.8.4, python-lxml, python-numpy, python-matplotlib, python-nose, python-networkx, python-qt4
+Depends: ${misc:Depends}, ${shlibs:Depends}, ${python:Depends}
 Description: the Multiscale Object-Oriented Simulation Environment
  It is the base and numerical core for large, detailed simulations including Computational Neuroscience and Systems Biology.
  .
