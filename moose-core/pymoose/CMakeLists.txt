@@ -49,7 +49,7 @@ set_target_properties(_moose PROPERTIES
     COMPILE_FLAGS "${PYTHON_INCLUDE_FLAGS}"
     LIBRARY_OUTPUT_DIRECTORY ${PYMOOSE_OUTPUT_DIRECTORY}
     PREFIX ""
-    SUFFIX ".so"
+    SUFFIX ${PYTHON_SO_EXTENSION}
     )
 
 if(NOT(PYTHON_SO_EXTENSION STREQUAL ""))
@@ -77,7 +77,7 @@ if(MACOSX)
     target_link_libraries(_moose
         ${SYSTEM_SHARED_LIBS}
         )
-ELSE(MACOSX)
+else(MACOSX)
     target_link_libraries(_moose
         "-Wl,--whole-archive"
         ${MOOSE_LIBRARIES}
@@ -87,25 +87,12 @@ ELSE(MACOSX)
         ${SYSTEM_SHARED_LIBS}
         )
 endif(MACOSX)
-
-# Make this target dependant on all python files in python folder.
-add_custom_target(copy_python_files
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${CMAKE_SOURCE_DIR}/python ${CMAKE_BINARY_DIR}/python
-    COMMENT "Copying required python files and other files to build directory"
-    VERBATIM
-    )
-
-add_dependencies(_moose copy_python_files)
-
-
-# Print message at the end of build process.
-add_custom_command( TARGET _moose POST_BUILD
+add_custom_command(TARGET _moose POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E cmake_echo_color --cyan
-    "MOOSE python extention is successfully built. Now "
-    " 1. Run 'make install' to install it for single user. "
-    " 2. Run 'sudo make install' to install it system-wide. "
-    " "
-    "NOTE: Run 'pip uninstall moose' to uninstall moose."
+        "MOOSE python extention is successfully built. Now "
+        " Run 'sudo make install' to install it. "
+        " "
+        "NOTE: Run 'pip uninstall moose' to uninstall moose."
     VERBATIM
     )
+

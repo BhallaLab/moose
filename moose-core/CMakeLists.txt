@@ -1,6 +1,7 @@
 set(CMAKE_LEGACY_CYGWIN_WIN32 0)
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
 
+
 project(pymoose)
 
 if(COMMAND cmake_policy)
@@ -21,24 +22,29 @@ include(FindPkgConfig)
 # getgit revision number
 find_program( GIT_EXEC git )
 if(GIT_EXEC)
-    execute_process(COMMAND ${GIT_EXEC} rev-parse --short HEAD
+    execute_process(
+        COMMAND ${GIT_EXEC} rev-parse --short HEAD
         OUTPUT_VARIABLE GIT_HEAD
         OUTPUT_STRIP_TRAILING_WHITESPACE
-        )
+    )
+else(GIT_EXEC)
+    set(GIT_HEAD 'HEAD')
+    message(STATUS "Couldn't fetch version from git repo" )
 endif()
 
 # If from command line, version info is not passed, use the git to generate a
 # version file. If GIT fails, use the previous known version.
 if(NOT VERSION_MOOSE)
     set(VERSION_MOOSE "3.1.3-${GIT_HEAD}")
-endif( )
+endif()
+
 add_definitions( -DMOOSE_VERSION="${VERSION_MOOSE}")
 message( STATUS "MOOSE Version ${VERSION_MOOSE}" )
 
 # Write VERSION to a file VERSION so that setup.cmake.py can use it.
 set(VERSION_FILE ${CMAKE_CURRENT_SOURCE_DIR}/python/VERSION)
-message(STATUS "+ Writing ${VERSION_MOOSE} to ${VERSION_FILE}" )
 file(WRITE ${VERSION_FILE} ${VERSION_MOOSE} )
+message(STATUS "| Writing ${VERSION_MOOSE} to ${VERSION_FILE}" )
 
 # This snippet is from LLVM project.
 # Sanity check our source directory to make sure that we are not trying to
@@ -418,8 +424,11 @@ set(_platform "CMAKE" )
 set(PYMOOSE_BDIST_FILE ${PYMOOSE_BDIST_DIR}/pymoose-${VERSION_MOOSE}.${_platform}.tar.gz)
 message(STATUS "binary distribution file ${PYMOOSE_BDIST_FILE}")
 add_custom_target(bdist ALL DEPENDS  ${PYMOOSE_BDIST_FILE} )
+
+# Any command using setup.cmake.py must run in the same directory.
 add_custom_command( OUTPUT ${PYMOOSE_BDIST_FILE}
-    COMMAND ${PYTHON_EXECUTABLE} setup.cmake.py bdist -p ${_platform} -d ${PYMOOSE_BDIST_DIR}
+    COMMAND ${PYTHON_EXECUTABLE} setup.cmake.py bdist_dumb -p ${_platform}
+        -d ${PYMOOSE_BDIST_DIR}
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/python
     COMMENT "bdist is saved to ${PYMOOSE_BDIST_DIR}"
     VERBATIM
@@ -429,7 +438,19 @@ add_custom_command(TARGET bdist POST_BUILD
     COMMENT "Unarchiving bdist file ${PYMOOSE_BDIST_FILE} to ${PYMOOSE_BDIST_INSTALL_DIR}"
     VERBATIM
     )
-add_dependencies( bdist _moose )
+
+# Copy python files from source to current binary directory. Make sure to call
+# this before building bdist.
+file(GLOB_RECURSE PYTHON_SRCS "${CMAKE_SOURCE_DIR}/python/*")
+add_custom_target(copy_pymoose DEPENDS ${PYTHON_SRCS}
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_CURRENT_SOURCE_DIR}/python ${CMAKE_CURRENT_BINARY_DIR}/python
+    COMMENT "Copying required python files and other files to build directory"
+    VERBATIM
+    )
+
+add_dependencies( bdist copy_pymoose )
+add_dependencies( copy_pymoose _moose )
 
 ######################### INSTALL ##############################################
 
@@ -486,7 +507,7 @@ foreach( _test_script ${PY_TEST_SCRIPTS} )
         WORKING_DIRECTORY ${PYMOOSE_TEST_DIRECTORY}
         )
      set_tests_properties( ${_test_name}
-        PROPERTIES ENVIRONMENT "PYTHONPATH=${PROJECT_BINARY_DIR}/python"
+         PROPERTIES ENVIRONMENT "PYTHONPATH=${CMAKE_CURRENT_BINARY_DIR}/python"
         )
 endforeach( )
 
