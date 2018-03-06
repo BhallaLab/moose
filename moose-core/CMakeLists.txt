@@ -122,10 +122,7 @@ endif()
 ################################### TARGETS ####################################
 
 add_library(libmoose SHARED basecode/main.cpp)
-
-if(DEBUG)
-    add_executable(moose.bin basecode/main.cpp)
-endif( )
+add_executable(moose.bin basecode/main.cpp)
 
 ################################### SETUP BUILD ################################
 
@@ -374,46 +371,23 @@ ELSE(MACOSX)
         )
 endif(MACOSX)
 
-if(DEBUG)
-    add_dependencies(moose.bin libmoose)
-    target_link_libraries(moose.bin moose ${CMAKE_DL_LIBS})
-    if( WITH_BOOST )
-        target_link_libraries( moose.bin ${Boost_LIBRARIES} )
-    endif( WITH_BOOST )
-endif()
+add_dependencies(moose.bin libmoose)
+target_link_libraries(moose.bin moose ${CMAKE_DL_LIBS})
+if( WITH_BOOST )
+    target_link_libraries( moose.bin ${Boost_LIBRARIES} )
+endif( WITH_BOOST )
 
 
 ######################### BUILD PYMOOSE ########################################
+# This target is built by pymoose/CMakeLists.txt file.
 add_subdirectory( pymoose )
 
-
-######################### INSTALL ##############################################
-
-if(DEBUG)
-    install(TARGETS moose.bin
-        DESTINATION bin
-        )
-
-    install(TARGETS libmoose
-        DESTINATION lib
-        )
-
-    install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/scripts/moose
-        DESTINATION bin
-        )
-endif( )
-
-# INSTALL python module.
-# This target is built by pymoose/CMakeLists.txt file. Using the --prefix option
 # always override debian default installation directory. It will be installed in
 # site-packages instead of dist-packages.
 # See https://bugs.launchpad.net/ubuntu/+source/python2.6/+bug/362570
 # HACK: Get platform information from python and use it to fix the layout.
-execute_process(
-    COMMAND ${PYTHON_EXECUTABLE} -mplatform OUTPUT_VARIABLE _platform_desc
-    )
-message( STATUS "Platform ${_platform_desc}" )
-
+execute_process(COMMAND ${PYTHON_EXECUTABLE} -mplatform OUTPUT_VARIABLE _platform_desc)
+message(STATUS "Platform: ${_platform_desc}")
 
 # DISTUTILS_EXTRA_ARGS may come of top-level cmake script. On DEBIAN/UBUNTU, it
 # is most likely to be --install-layout=deb .
@@ -422,20 +396,55 @@ set(EXTRA_ARGS "--prefix ${CMAKE_INSTALL_PREFIX} ${DISTUTILS_EXTRA_ARGS}")
 # On Debian/Ubuntu install using debian layout.
 # NOTE: Also create setup.cfg file which setup prefix and install-layout
 # suitable for DEBIAN systems.
-if( ${_platform_desc} MATCHES ".*(Ubuntu|Debian).*" )
-    list( APPEND EXTRA_ARGS "--install-layout=deb" )
+if(${_platform_desc} MATCHES ".*(Ubuntu|Debian).*")
+    list(APPEND EXTRA_ARGS "--install-layout=deb")
     file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/python/setup.cfg
          "[install]\nprefix=/usr\ninstall-layout=deb"
        )
-endif( )
+endif()
 
-# If make is called with sudo, install in system directories. Otherwise use
-# --user to install in user home.
-install(CODE
-    "execute_process(
-        COMMAND ${CMAKE_COMMAND} -E chdir ${CMAKE_INSTALL_PREFIX} 
-            tar xvf pymoose*.tag.gz
-        )"
+# Set PYMOOSE binary distribution build and install directories.
+# Target for creating bdist. This is handy for creating bdist for packaging.
+# Save the binary distribution (tar.gz) to PYMOOSE_BDIST_DIR.
+find_package(PythonInterp REQUIRED)
+if(NOT PYMOOSE_BDIST_DIR)
+    set(PYMOOSE_BDIST_DIR ${CMAKE_BINARY_DIR}/bdist)
+endif( )
+set(PYMOOSE_BDIST_INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/pymoose_bdist_install)
+file(MAKE_DIRECTORY ${PYMOOSE_BDIST_INSTALL_DIR})
+
+# We need a custom name for bdist; same on all platform.
+set(_platform "CMAKE" )
+set(PYMOOSE_BDIST_FILE ${PYMOOSE_BDIST_DIR}/pymoose-${VERSION_MOOSE}.${_platform}.tar.gz)
+message(STATUS "binary distribution file ${PYMOOSE_BDIST_FILE}")
+add_custom_target(bdist ALL DEPENDS  ${PYMOOSE_BDIST_FILE} )
+add_custom_command( OUTPUT ${PYMOOSE_BDIST_FILE}
+    COMMAND ${PYTHON_EXECUTABLE} setup.cmake.py bdist -p ${_platform} -d ${PYMOOSE_BDIST_DIR}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/python
+    COMMENT "bdist is saved to ${PYMOOSE_BDIST_DIR}"
+    VERBATIM
+    )
+add_custom_command(TARGET bdist POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E chdir ${PYMOOSE_BDIST_INSTALL_DIR} tar xvf ${PYMOOSE_BDIST_FILE}
+    COMMENT "Unarchiving bdist file ${PYMOOSE_BDIST_FILE} to ${PYMOOSE_BDIST_INSTALL_DIR}"
+    VERBATIM
+    )
+add_dependencies( bdist _moose )
+
+######################### INSTALL ##############################################
+
+install(TARGETS moose.bin DESTINATION bin CONFIGURATIONS Debug)
+
+install(TARGETS libmoose DESTINATION lib CONFIGURATIONS Debug)
+
+install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/scripts/moose
+    DESTINATION bin CONFIGURATIONS Debug
+    )
+
+# install pymoose bdist.
+install(DIRECTORY ${PYMOOSE_BDIST_INSTALL_DIR}/
+    DESTINATION ${CMAKE_INSTALL_PREFIX}
+    CONFIGURATIONS Release
     )
 
 # Print message to start build process
@@ -447,27 +456,6 @@ if(${CMAKE_BUILD_TOOL} MATCHES "make")
         "=======================================\n"
         )
 endif()
-
-# Target for creating bdist. This is handy for creating bdist for packaging.
-# Save the binary distribution (tar.gz) to PYMOOSE_BDIST_DIR. Note that this
-# target is only useful when creating packages on Open Build Service i.e. if you
-# use this target on distribution X, it may not work on distrbutions other than
-# X. See python-wheels for making portable distributions.
-if(NOT PYMOOSE_BDIST_DIR)
-    set(PYMOOSE_BDIST_DIR ${CMAKE_BINARY_DIR}/pymoose_bdist)
-endif( )
-
-# get platform and arch using python.
-# NOTE: creating bdist or bdist_dump uses /usr and /usr/local on rpm and deb
-# based unix respectively. Not a great situation to be in. Need to write a
-# setup.cfg file to fix the prefix in all cases.
-find_package( PythonInterp REQUIRED)
-add_custom_target( bdist
-    COMMAND ${PYTHON_EXECUTABLE} setup.cmake.py bdist_dumb -d ${PYMOOSE_BDIST_DIR}
-    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/python
-    COMMENT "Genearating bdist using setup.cmake.py."
-    VERBATIM
-    )
 
 
 ############################ CTEST ######################################
