@@ -1,14 +1,14 @@
-moose (3.1.3ubuntu1) unstable; urgency=medium
+moose (3.1.3ubuntu1) experimental; urgency=medium
 
   * Version bumped.
 
- -- Dilawar Singh <dilawars@ghevar>  Thu, 01 Feb 2018 12:26:15 +0530
+ -- Dilawar Singh <dilawars@ncbs.res.in>  Thu, 01 Feb 2018 12:26:15 +0530
 
 moose (3.1.2) unstable; urgency=medium
 
   * Chamcham release (3.1.x) series.
 
- -- Dilawar Singh <dilawars@Gulgula>  Mon, 08 May 2017 13:43:42 +0530
+ -- Dilawar Singh <dilawars@ncbs.res.in>  Mon, 08 May 2017 13:43:42 +0530
 
 moose (3.1.2) unstable; urgency=low
 
