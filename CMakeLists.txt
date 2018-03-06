@@ -151,18 +151,20 @@ endif()
 ################################################################################
 # CTEST 
 #################################################################################
-enable_testing( )
-add_test( NAME test_pymoose_sanity 
-    COMMAND ${PYTHON_EXECUTABLE} -c "import moose"
-    )
+if(CMAKE_BUILD_TYPE EQUAL "DEBUG")
+    enable_testing( )
+    add_test( NAME test_pymoose_sanity 
+        COMMAND ${PYTHON_EXECUTABLE} -c "import moose"
+        )
 
-if(WITH_GUI)
-    add_test( NAME test_gui_sanity 
-        COMMAND ${PYTHON_EXECUTABLE} ${MOOSE_GUI_INSTALL_DIR}/mgui.py 
-        WORKING_DIRECTORY ${MOOSE_GUI_INSTALL_DIR}
+    if(WITH_GUI)
+        add_test( NAME test_gui_sanity 
+            COMMAND ${PYTHON_EXECUTABLE} ${MOOSE_GUI_INSTALL_DIR}/mgui.py 
+            WORKING_DIRECTORY ${MOOSE_GUI_INSTALL_DIR}
+            )
+    endif()
+
+    set_tests_properties( test_pymoose_sanity 
+        PROPERTIES ENVIRONMENT "PYTHONPATH=${PYMOOSE_BUILD_DIR}/python"
         )
 endif()
-
-set_tests_properties( test_pymoose_sanity 
-    PROPERTIES ENVIRONMENT "PYTHONPATH=${PYMOOSE_BUILD_DIR}/python"
-    )
