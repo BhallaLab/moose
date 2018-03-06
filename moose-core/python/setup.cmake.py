@@ -61,5 +61,5 @@ setup(
             ],
 	install_requires = [ 'python-libsbml', 'numpy' ],
         package_dir = { 'moose' : 'moose', 'rdesigneur' : 'rdesigneur' },
-        package_data = { 'moose' : ['_moose*%s' % suffix ] },
+        package_data = { 'moose' : ['_moose%s' % suffix ] },
     )
