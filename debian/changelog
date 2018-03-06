@@ -1,15 +1,18 @@
-moose (3.2.git) UNRELEASED; urgency=medium
+moose (3.1.3ubuntu1) experimental; urgency=medium
 
-    * Nightly build. 
+  * Version bumped.
 
- -- Dilawar Singh <dilawars@ncbs.res.in>  Sat, 16 Dec 2017 10:17:08 +0530
+ -- Dilawar Singh <dilawars@ncbs.res.in>  Thu, 01 Feb 2018 12:26:15 +0530
 
-moose (3.0.2) unstable; urgency=low
+moose (3.1.2) unstable; urgency=medium
 
-  * Initial release 
-  * Feature-freeze release.
-  * trunk series. Experimental branch.
-  * 3.0.2 relase.
-  * Just packed with SBML and GSL-1.6 support.
+  * Chamcham release (3.1.x) series.
 
- -- Dilawar Singh <dilawars@ncbs.res.in>  Sun, 05 Jul 2015 13:41:58 +0530
+ -- Dilawar Singh <dilawars@ncbs.res.in>  Mon, 08 May 2017 13:43:42 +0530
+
+moose (3.1.2) unstable; urgency=low
+
+  * Bugfixes over 3.1.1
+  * Enhanced rdesigneur interface.
+
+ -- Dilawar <dilawars@ncbs.res.in>  Sat, 22 Apr 2017 13:41:58 +0530
