@@ -69,7 +69,7 @@ configure_file(
 # Build pymoose module.
 add_custom_target( moose-core DEPENDS ${OUTPUT_MOOSEBIN} )
 add_custom_command( OUTPUT ${OUTPUT_MOOSEBIN}
-    COMMAND bash -c ${PYMOOSE_BUILD_DIR}/build_moose-core.sh
+    COMMAND ${PYMOOSE_BUILD_DIR}/build_moose-core.sh
     WORKING_DIRECTORY ${PYMOOSE_BUILD_DIR}
     COMMENT "Building pymoose in ${PYMOOSE_BUILD_DIR}"
     VERBATIM
