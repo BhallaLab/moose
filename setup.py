@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
+from __future__ import print_function
 
 """setup.py: This
+NOT COMPLETE.
 scripts prepare MOOSE for PyPI.
 
 Last modified: Mon Jul 28, 2014  12:52AM
