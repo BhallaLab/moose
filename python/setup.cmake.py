@@ -34,8 +34,13 @@ except Exception as e:
     print( 'Failed to read VERSION %s' % e )
     print( 'Using default %s' % version )
 
-import importlib.machinery
-suffix = importlib.machinery.EXTENSION_SUFFIXES[-1]
+# importlib is available only for python3.
+suffix = '.so'
+try:
+    import importlib.machinery
+    suffix = importlib.machinery.EXTENSION_SUFFIXES[-1]
+except ImportError as e:
+    pass
 
 setup(
         name='pymoose',
