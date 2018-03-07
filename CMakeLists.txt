@@ -82,7 +82,7 @@ add_custom_command( OUTPUT ${OUTPUT_MOOSEBIN}
     )
 add_custom_command( TARGET moose-core POST_BUILD 
     COMMAND ${CMAKE_COMMAND} -E chdir ${PYMOOSE_INSTALL_DIR} tar xvf
-        ${PYMOOSE_BUILD_DIR}/bdist/pymoose-${VERSION}.CMAKE.tar.gz
+    ${PYMOOSE_BUILD_DIR}/bdist/pymoose-${VERSION_MOOSE}.CMAKE.tar.gz
     COMMENT "Unarchiving pymoose bdist"
     VERBATIM
     )
