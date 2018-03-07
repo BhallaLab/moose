@@ -141,10 +141,6 @@ cat > $GUIBIN <<EOF
 cd %{_prefix}/lib/moose/gui && python mgui.py & 
 EOF
 chmod a+x $GUIBIN
-%if 0%{?centos_version} || 0%{?rhel_version} || 0%{?scientificlinux_version}
-%else
-%fdupes %{buildroot}/%{_prefix}
-%endif
 
 %files 
 %defattr(-,root,root)
