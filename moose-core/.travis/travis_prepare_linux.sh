@@ -30,6 +30,6 @@ apt-get install -qq libgsl0-dev
 apt-get install -qq python-pip python3-pip
 apt-get install -qq libgraphviz-dev
 
-# Dependencies for NML2 
+# Dependencies for NML2
 apt-get install -qq python-scipy python3-scipy
-pip install pyNeuroML libNeuroML 
+#pip install pyNeuroML libNeuroML

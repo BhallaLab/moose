@@ -1,7 +1,6 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
+cmake_minimum_required(VERSION 2.8)
 
 project(moose)
-
 if(POLICY CMP0048)
     cmake_policy(SET CMP0048 OLD )
 endif(POLICY CMP0048)
@@ -10,63 +9,43 @@ endif(POLICY CMP0048)
 # version file. If GIT fails, use the previous known version.
 find_program(GIT_EXEC "git")
 message( STATUS "Looking for git ${GIT_EXEC}" )
-if( (NOT MOOSE_VERSION) AND GIT_EXEC)
+if(VERSION_MOOSE)
+    message( STATUS "MOOSE version is set to ${VERSION_MOOSE} at build time" )
+elseif(GIT_EXEC)
+    message( STATUS "Getting version by reading git tags" )
     execute_process( 
         COMMAND ${GIT_EXEC} describe --tags --long
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-        OUTPUT_VARIABLE MOOSE_VERSION
+        OUTPUT_VARIABLE VERSION_MOOSE
         OUTPUT_STRIP_TRAILING_WHITESPACE
     )
 endif( )
-message( STATUS "Building version ${MOOSE_VERSION}" )
+message( STATUS "Building version ${VERSION_MOOSE}" )
+
+# Prefix
+message( STATUS "CMAKE_INSTALL_PREFIX= ${CMAKE_INSTALL_PREFIX}" )
 
 # Options to pass down to moose-core
-option(WITH_DOC "Build documentation" OFF)
-option(DEBUG "Build with DEBUG support" OFF)
-option(WITH_BOOST "Use Boost libraries instead of GSL" OFF)
-option(WITH_CUDA "Use CUDA/GPU" OFF)
-option(WITH_MPI "Use MPI (experimental)" OFF)
-option(WITH_GUI "Install moose-gui. Works only with python2." ON )
+option(WITH_DOC   "Build documentation"                         OFF)
+option(DEBUG      "Build with DEBUG support"                    OFF)
+option(WITH_BOOST "Use Boost libraries instead of GSL"          OFF)
+option(WITH_CUDA  "Use CUDA/GPU"                                OFF)
+option(WITH_MPI   "Use MPI (experimental)"                      OFF)
+option(WITH_GUI   "Install moose-gui. Works only with python2." ON )
 
-
-# On python3. Do not install GUI. 
+# Required packages.
 find_package(PythonInterp REQUIRED)
 if(PYTHON_VERSION_MAJOR VERSION_EQUAL 3)
-    message(STATUS "moose-gui does not support python3 yet. Disabling" )
     set(WITH_GUI OFF)
 endif( )
 
-# On debian or ubuntu, --install-layout=deb needs to be passed.
-if(UNIX AND NOT APPLE)
-    find_program(LSB_RELEASE lsb_release)
-    if(LSB_RELEASE)
-        execute_process(COMMAND ${LSB_RELEASE} -is
-            OUTPUT_VARIABLE LSB_RELEASE_ID_SHORT
-            OUTPUT_STRIP_TRAILING_WHITESPACE
-            )
-        if(${LSB_RELEASE_ID_SHORT} STREQUAL "Ubuntu" 
-                OR ${LSB_RELEASE_ID_SHORT} STREQUAL "Debian" )
-            message(STATUS "Debian based LINUX: ${LSB_RELEASE_ID_SHORT}" )
-            set(CMAKE_PYMOOSE_ARGS "-DDISTUTILS_EXTRA_ARGS=\"--install-layout=deb\"" )
-        endif( )
-    endif( )
-endif( )
-
-
 add_custom_target(moose ALL)
 
-
+## intialize paths
 set(PYMOOSE_SOURCE_DIR "${CMAKE_SOURCE_DIR}/moose-core")
 set(PYMOOSE_BUILD_DIR ${CMAKE_BINARY_DIR}/__moose-core_build)
-
-# NOTE: new setuptools does not install python module to this directory unless
-# installing into user_specified path, set PYTHONPATH to this directory. We now
-# create a bdist to this directory.
 set(PYMOOSE_INSTALL_DIR ${CMAKE_BINARY_DIR}/__moose-core_install)
 file(MAKE_DIRECTORY ${PYMOOSE_INSTALL_DIR})
-
-set(PYMOOSE_BDIST_DIR ${PYMOOSE_BUILD_DIR})
-message( STATUS "bdist directory PYMOOSE_BDIST_DIR ${PYMOOSE_BDIST_DIR}" )
 
 if(WITH_GUI)
     set(MOOSE_GUI_DIR ${CMAKE_SOURCE_DIR}/moose-gui)
@@ -82,23 +61,31 @@ file(MAKE_DIRECTORY ${PYMOOSE_BUILD_DIR})
 # different platform.
 set(OUTPUT_MOOSEBIN ${PYMOOSE_BUILD_DIR}/moose.bin)
 
-configure_file( ${CMAKE_SOURCE_DIR}/cmake/build_moose-core.sh.in 
-    ${CMAKE_BINARY_DIR}/build_moose-core.sh )
-
-# Build pymoose module.
-add_custom_target( moose-core ALL DEPENDS ${OUTPUT_MOOSEBIN} )
-
-add_custom_command( OUTPUT ${OUTPUT_MOOSEBIN}
-    COMMAND MAKE=$(MAKE) bash -c ${CMAKE_BINARY_DIR}/build_moose-core.sh
-    # Note that this command requires us to be in the same directory where we
-    # want to extract the tar file.
-    COMMAND ${CMAKE_COMMAND} -E chdir ${PYMOOSE_INSTALL_DIR}
-        tar xvf ${PYMOOSE_BUILD_DIR}/pymoose-${MOOSE_VERSION}.*.tar.gz 
-    COMMENT "Building bdist and unarchiving it"
-    # VERBATIM ## WARN: Don't use VERBATIM here. The glob * in tar xvf will not
-    # work
+# NOTE: Do not use ExternalProject to build moose-core. There is no simple way
+# to export environment variable in ExrernalProject command  to subshell.
+# HDF_ROOT and GSL_ROOT etc variable are used by cmake of moose-core repo to
+# find appropriate libraries. Using ExternalProject is *most* likely to cause
+# build failure on OBS.
+configure_file( 
+    ${CMAKE_SOURCE_DIR}/cmake/build_moose-core.sh.in 
+    ${PYMOOSE_BUILD_DIR}/build_moose-core.sh 
     )
-add_dependencies(moose moose-core)
+
+# Build pymoose module, create bdist and  and unarchive the bdist to
+# PYMOOSE_INSTALL_DIR.
+add_custom_target( moose-core DEPENDS ${OUTPUT_MOOSEBIN} )
+add_custom_command( OUTPUT ${OUTPUT_MOOSEBIN}
+    COMMAND ${PYMOOSE_BUILD_DIR}/build_moose-core.sh
+    WORKING_DIRECTORY ${PYMOOSE_BUILD_DIR}
+    COMMENT "Building pymoose in ${PYMOOSE_BUILD_DIR}"
+    VERBATIM
+    )
+add_custom_command( TARGET moose-core POST_BUILD 
+    COMMAND ${CMAKE_COMMAND} -E chdir ${PYMOOSE_INSTALL_DIR} tar xvf
+        ${PYMOOSE_BUILD_DIR}/bdist/pymoose-${VERSION}.CMAKE.tar.gz
+    COMMENT "Unarchiving pymoose bdist"
+    VERBATIM
+    )
 
 if(WITH_GUI)
     # Now build moose-gui and moose-examples.
@@ -115,17 +102,17 @@ if(WITH_GUI)
         COMMAND ${PYTHON_EXECUTABLE} -m compileall -q ${MOOSE_EXAMPLE_INSTALL_DIR}
         VERBATIM
         )
+endif()
+
+add_dependencies(moose moose-core)
+
+if(WITH_GUI)
     add_dependencies(moose gui examples)
     add_dependencies(examples  gui)
 endif()
 
 
-# moose-gui
-# TODO: moose-gui should be a python module.
-set(MOOSE_GUI_DIR ${CMAKE_SOURCE_DIR}/moose-gui)
 
-# Install pymoose. Use tar.gz in PYMOOSE_BUILD_DIR and unarchive it.
-# /usr is prefixed by bdist so we need to replace it.
 install(DIRECTORY ${PYMOOSE_INSTALL_DIR}/usr/
     DESTINATION ${CMAKE_INSTALL_PREFIX}
     PATTERN ".git" EXCLUDE
@@ -133,6 +120,8 @@ install(DIRECTORY ${PYMOOSE_INSTALL_DIR}/usr/
     )
 
 if(WITH_GUI)
+    # moose-gui
+    set(MOOSE_GUI_DIR ${CMAKE_SOURCE_DIR}/moose-gui)
     install(DIRECTORY ${MOOSE_GUI_INSTALL_DIR}/
         DESTINATION lib/moose/gui
         PATTERN ".git*" EXCLUDE
@@ -146,49 +135,27 @@ if(WITH_GUI)
         PATTERN ".travis*" EXCLUDE
         PATTERN "*.pyc" EXCLUDE
         )
+
+    configure_file( ${CMAKE_SOURCE_DIR}/cmake/moosegui.in ${CMAKE_BINARY_DIR}/moosegui )
+
+    install(PROGRAMS ${CMAKE_BINARY_DIR}/moosegui DESTINATION bin)
 endif()
 
-configure_file( 
-    ${CMAKE_SOURCE_DIR}/cmake/moosegui.in
-    ${CMAKE_BINARY_DIR}/moosegui 
-    )
-install(PROGRAMS ${CMAKE_BINARY_DIR}/moosegui DESTINATION bin)
+## UNINSTALL
+add_custom_target(uninstall DEPENDS __uninstall_moose-core__ )
 
-# UNINSTALL
 add_custom_command(OUTPUT __uninstall_moose-core__
     COMMAND xargs rm -rf < install_manifest.txt
     COMMAND pip uninstall -y moose 
-    COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_INSTALL_PREFIX}/bin/moose.bin
+    COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_INSTALL_PREFIX}/bin/moosegui
     )
-add_custom_target(uninstall DEPENDS __uninstall_moose-core__ )
 
 if(WITH_GUI)
-    add_custom_command(OUTPUT  __uninstall_moose-gui__
+    add_custom_target( __uninstall_moose-gui__ )
+    add_custom_command(TARGET __uninstall_moose-gui__ 
         COMMAND ${CMAKE_COMMAND} -E remove_directory
         ${CMAKE_INSTALL_PREFIX}/lib/moose/gui
-        COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_INSTALL_PREFIX}/bin/moose
+        COMMAND ${CMAKE_COMMAND} -E remove ${CMAKE_INSTALL_PREFIX}/bin/moosegui
         )
-    #add_dependencies( uninstall __uninstall_moose-gui__ )
+    add_dependencies( uninstall __uninstall_moose-gui__ )
 endif()
-
-################################################################################
-# CTEST 
-#################################################################################
-enable_testing( )
-add_test( NAME test_pymoose_sanity 
-    COMMAND ${PYTHON_EXECUTABLE} -c "import moose"
-    )
-
-set_tests_properties( test_pymoose_sanity 
-    PROPERTIES ENVIRONMENT "PYTHONPATH=${PYMOOSE_BUILD_DIR}/python"
-    )
-
-# # This test always fails when -X is not working which is usually the case on
-# # Travis and OBS.
-# if(WITH_GUI)
-#     add_test( NAME test_gui_sanity 
-#         COMMAND ${PYTHON_EXECUTABLE} ${MOOSE_GUI_INSTALL_DIR}/mgui.py 
-#         WORKING_DIRECTORY ${MOOSE_GUI_INSTALL_DIR}
-#         )
-# endif()
-

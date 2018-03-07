@@ -21,19 +21,23 @@ set -o nounset                              # Treat unset variables as an error
 set -e
 
 (
+
+    # Make sure not to pick up python from /opt.
+    PATH=/usr/bin:/usr/local/bin:$PATH
     mkdir -p _GSL_BUILD && cd _GSL_BUILD \
         && cmake -DQUIET_MODE=ON -DDEBUG=ON \
         -DPYTHON_EXECUTABLE=`which python` ..
-    make && ctest --output-on-failure
+    make -j3 && ctest --output-on-failure
+
     cd .. # Now with boost.
     mkdir -p _BOOST_BUILD && cd _BOOST_BUILD \
         && cmake -DWITH_BOOST=ON -DDEBUG=ON \
         -DPYTHON_EXECUTABLE=`which python` ..
-    make && ctest --output-on-failure
-    cd ..
 
-    # Now test the brew formula
-    cd ~
-    brew tap BhallaLab/moose
-    brew install moose
+    make -j3 && ctest --output-on-failure
+    cd ..
+    set +e
+
 )
+set +e
+

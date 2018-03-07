@@ -3,8 +3,8 @@
 [__Document__](http://moose.readthedocs.io/en/latest/)
 
 This is the parent repository of [MOOSE simulator](https://moose.ncbs.res.in).
-It keeps the snanshots of its components: core (written in C++) and python 
-scripting interface, MOOSE's Graphical User Interface (GUI). This should be the 
+It keeps the snanshots of its components: c++ core and its Python 
+interface (pymoose), MOOSE's Graphical User Interface (GUI). This should be the 
 source of stable MOOSE code.
 
 # About
@@ -39,10 +39,10 @@ MOOSE Documentation can be found at https://moose.ncbs.res.in/?q=documentation .
 
 # VERSION
 
-## Chamcham 3.1.2
+## Chamcham Series
 
-MOOSE 3.1 (current version 3.1.2) is an evolutionary update. It has a new
-Python-based SBML reader , improved handling of reaction-diffusion systems, and
+Chamcham series (current version 3.1.3) is an evolutionary update. It has a new
+Python-based SBML reader, improved handling of reaction-diffusion systems, and
 substantial refinements to the rdesigneur interface for setting up multiscale
 models.  Several additional rdesigneur tutorials have been implemented. 
 
