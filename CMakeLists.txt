@@ -9,18 +9,18 @@ endif(POLICY CMP0048)
 # version file. If GIT fails, use the previous known version.
 find_program(GIT_EXEC "git")
 message( STATUS "Looking for git ${GIT_EXEC}" )
-if(VERSION)
-    message( STATUS "MOOSE version is set to ${VERSION} at build time" )
+if(VERSION_MOOSE)
+    message( STATUS "MOOSE version is set to ${VERSION_MOOSE} at build time" )
 elseif(GIT_EXEC)
     message( STATUS "Getting version by reading git tags" )
     execute_process( 
         COMMAND ${GIT_EXEC} describe --tags --long
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-        OUTPUT_VARIABLE VERSION
+        OUTPUT_VARIABLE VERSION_MOOSE
         OUTPUT_STRIP_TRAILING_WHITESPACE
     )
 endif( )
-message( STATUS "Building version ${VERSION}" )
+message( STATUS "Building version ${VERSION_MOOSE}" )
 
 # Prefix
 message( STATUS "CMAKE_INSTALL_PREFIX= ${CMAKE_INSTALL_PREFIX}" )
@@ -61,6 +61,11 @@ file(MAKE_DIRECTORY ${PYMOOSE_BUILD_DIR})
 # different platform.
 set(OUTPUT_MOOSEBIN ${PYMOOSE_BUILD_DIR}/moose.bin)
 
+# NOTE: Do not use ExternalProject to build moose-core. There is no simple way
+# to export environment variable in ExrernalProject command  to subshell.
+# HDF_ROOT and GSL_ROOT etc variable are used by cmake of moose-core repo to
+# find appropriate libraries. Using ExternalProject is *most* likely to cause
+# build failure on OBS.
 configure_file( 
     ${CMAKE_SOURCE_DIR}/cmake/build_moose-core.sh.in 
     ${PYMOOSE_BUILD_DIR}/build_moose-core.sh 
