@@ -26,12 +26,12 @@ message( STATUS "Building version ${VERSION}" )
 message( STATUS "CMAKE_INSTALL_PREFIX= ${CMAKE_INSTALL_PREFIX}" )
 
 # Options to pass down to moose-core
-option(WITH_DOC "Build documentation" OFF)
-option(DEBUG "Build with DEBUG support" OFF)
-option(WITH_BOOST "Use Boost libraries instead of GSL" OFF)
-option(WITH_CUDA "Use CUDA/GPU" OFF)
-option(WITH_MPI "Use MPI (experimental)" OFF)
-option(WITH_GUI "Install moose-gui. Works only with python2." ON )
+option(WITH_DOC   "Build documentation"                         OFF)
+option(DEBUG      "Build with DEBUG support"                    OFF)
+option(WITH_BOOST "Use Boost libraries instead of GSL"          OFF)
+option(WITH_CUDA  "Use CUDA/GPU"                                OFF)
+option(WITH_MPI   "Use MPI (experimental)"                      OFF)
+option(WITH_GUI   "Install moose-gui. Works only with python2." ON )
 
 # Required packages.
 find_package(PythonInterp REQUIRED)

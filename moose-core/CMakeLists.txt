@@ -415,7 +415,11 @@ find_package(PythonInterp REQUIRED)
 if(NOT PYMOOSE_BDIST_DIR)
     set(PYMOOSE_BDIST_DIR ${CMAKE_BINARY_DIR}/bdist)
 endif( )
-set(PYMOOSE_BDIST_INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/pymoose_bdist_install)
+
+# If no one hsa set the PYMOOSE bdist installation directory, use default.
+if(NOT PYMOOSE_BDIST_INSTALL_DIR)
+    set(PYMOOSE_BDIST_INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/pymoose_bdist_install)
+endif()
 file(MAKE_DIRECTORY ${PYMOOSE_BDIST_INSTALL_DIR})
 
 # We need a custom name for bdist; same on all platform.
