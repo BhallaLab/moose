@@ -108,6 +108,7 @@ mkdir -p _build
 cd _build 
 cmake \
           -DWITH_DOC=OFF \
+          -DWITH_GUI=ON \
           -DCMAKE_INSTALL_PREFIX=%{buildroot}/usr \
           -DCMAKE_INSALL_LIBEXEC=%_libexecdir \
           -DCMAKE_C_FLAGS=%optflags \
@@ -115,11 +116,6 @@ cmake \
           -DMOOSE_VERSION=%version \
           -DCMAKE_BUILD_TYPE="Release|RelWithDebugInfo" \
           -DCMAKE_INSTALL_DO_STRIP=0 \
-%if 0%{?centos_version}
-          -DWITH_MOOGLI=OFF \
-%else
-          -DWITH_MOOGLI=ON \
-%endif
           ..
 
 make VERBOSE=1 %{?_smp_mflags}
@@ -137,7 +133,7 @@ compileall.compile_dir("%{buildroot}/%{python_sitelib}/"
 # Create a launcher.
 GUIBIN=%{buildroot}/%{_prefix}/bin/moosegui
 cat > $GUIBIN <<EOF
-#!/bin/bash
+#!/bin/sh
 cd %{_prefix}/lib/moose/gui && python mgui.py & 
 EOF
 chmod a+x $GUIBIN
