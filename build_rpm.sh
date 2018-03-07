@@ -18,5 +18,5 @@
 #===============================================================================
 
 set -o nounset                                  # Treat unset variables as an error
-gbp buildpackage-rpm  --git-ignore-branch --git-ignore-new -uc -us -d  \
-    --git-spec-file=./rmp/moose.spec | tee _rpm.log
+gbp buildpackage-rpm  --git-ignore-branch --git-ignore-new  \
+    --git-spec-file=./rpm/moose.spec | tee _rpm.log
