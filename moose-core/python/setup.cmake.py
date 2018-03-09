@@ -53,7 +53,10 @@ setup(
                                     , 'moose.neuroml', 'moose.neuroml2'
                                     , 'moose.chemUtil'
                                 ],
-        install_requires       = [ 'python-libsbml', 'numpy' ],
+				# install_requires is `setuptool` specific keyword. Don't use it here
+				# else wheel won't build for OSX. Let use install the dependencies
+				# by themselves. We notify them when they try to import SBML.
+        # install_requires       = [ 'python-libsbml', 'numpy' ],
         package_dir            = { 'moose' : 'moose', 'rdesigneur' : 'rdesigneur' },
         package_data           = { 'moose' : ['_moose' + suffix ] },
         )
