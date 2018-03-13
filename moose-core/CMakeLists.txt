@@ -401,7 +401,7 @@ set(EXTRA_ARGS "--prefix ${CMAKE_INSTALL_PREFIX} ${DISTUTILS_EXTRA_ARGS}")
 # On Debian/Ubuntu install using debian layout.
 # NOTE: Also create setup.cfg file which setup prefix and install-layout
 # suitable for DEBIAN systems.
-if(${_platform_desc} MATCHES ".*(Ubuntu|Debian).*")
+if(${_platform_desc} MATCHES ".*(Ubuntu|debian).*")
     list(APPEND EXTRA_ARGS "--install-layout=deb")
     file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/python/setup.cfg
          "[install]\nprefix=/usr\ninstall-layout=deb"

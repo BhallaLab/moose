@@ -6,6 +6,9 @@ set -e
 # NOTICE: This file is parsed by cmake to create a shell script. Not all syntax
 # will play well with cmake. CMAKE replaces @FOO@ and ${FOO} with cmake variable
 # values.
+if [ -z $MAKEOPTS ]; then
+    export MAKEOPTS="-j5"
+fi
 
 echo "Building pymoose and creating bdist."
 export GSL_ROOT_DIR=@GSL_ROOT_DIR@
@@ -18,7 +21,7 @@ cmake -DCMAKE_INSTALL_PREFIX=@PYMOOSE_INSTALL_DIR@ \
     -DVERSION_MOOSE=@VERSION_MOOSE@ \
     @CMAKE_PYMOOSE_ARGS@ \
     @PYMOOSE_SOURCE_DIR@ 
+make $MAKEOPTS
+ctest --output-on-failure 
+make bdist
 
-make -j3
-ctest --output-on-failure || echo "Some tests failed"
-make bdist 
