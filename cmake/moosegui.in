@@ -1,3 +1,2 @@
 #!/bin/sh 
-
-cd @CMAKE_INSTALL_PREFIX@/lib/moose/gui && python mgui.py 
+cd @CMAKE_INSTALL_PREFIX@/lib/moose/gui && @PYTHON_EXECUTABLE@ mgui.py 
