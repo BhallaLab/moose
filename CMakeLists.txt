@@ -117,6 +117,7 @@ install(DIRECTORY ${PYMOOSE_INSTALL_DIR}/usr/
     DESTINATION ${CMAKE_INSTALL_PREFIX}
     PATTERN ".git" EXCLUDE
     PATTERN "*.pyc" EXCLUDE
+    CONFIGURATIONS Release
     )
 
 if(WITH_GUI)
@@ -126,6 +127,7 @@ if(WITH_GUI)
         DESTINATION lib/moose/gui
         PATTERN ".git*" EXCLUDE
         PATTERN "*.pyc" EXCLUDE
+        CONFIGURATIONS Release
         )
 
     install(DIRECTORY ${MOOSE_EXAMPLE_DIR}/
@@ -134,11 +136,14 @@ if(WITH_GUI)
         PATTERN "_travis*" EXCLUDE
         PATTERN ".travis*" EXCLUDE
         PATTERN "*.pyc" EXCLUDE
+        CONFIGURATIONS Release
         )
 
     configure_file( ${CMAKE_SOURCE_DIR}/cmake/moosegui.in ${CMAKE_BINARY_DIR}/moosegui )
-
-    install(PROGRAMS ${CMAKE_BINARY_DIR}/moosegui DESTINATION bin)
+    install(PROGRAMS ${CMAKE_BINARY_DIR}/moosegui 
+        DESTINATION bin
+        CONFIGURATIONS Release
+        )
 endif()
 
 ## UNINSTALL
