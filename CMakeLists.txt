@@ -444,12 +444,13 @@ file(GLOB_RECURSE PYTHON_SRCS "${CMAKE_SOURCE_DIR}/python/*")
 add_custom_target(copy_pymoose DEPENDS ${PYTHON_SRCS}
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${CMAKE_CURRENT_SOURCE_DIR}/python ${CMAKE_CURRENT_BINARY_DIR}/python
-    COMMENT "Copying required python files and other files to build directory"
+        COMMENT "Copying required python files from
+        ${CMAKE_CURRENT_SOURCE_DIR}/python to  to build directory"
     VERBATIM
     )
 
 add_dependencies( bdist copy_pymoose )
-add_dependencies( copy_pymoose _moose )
+add_dependencies( _moose bdist )
 
 ######################### INSTALL ##############################################
 
@@ -462,7 +463,7 @@ install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/scripts/moose
     )
 
 # install pymoose bdist.
-install(DIRECTORY ${PYMOOSE_BDIST_INSTALL_DIR}/
+install(DIRECTORY ${PYMOOSE_BDIST_INSTALL_DIR}/usr/
     DESTINATION ${CMAKE_INSTALL_PREFIX}
     CONFIGURATIONS Release
     )

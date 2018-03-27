@@ -31,13 +31,14 @@ print( 'Got %s from VERSION file' % version )
 
 
 # importlib is available only for python3.
-suffix = '.so'
+suffix = 'so'
 try:
     import importlib.machinery
     suffix = importlib.machinery.EXTENSION_SUFFIXES[0].split('.')[-1]
+    print( '[INFO] Suffix is %s' % suffix )
 except Exception as e:
     print( '[WARN] Failed to determine importlib suffix' )
-    suffix = '.so'
+    suffix = 'so'
 
 setup(
         name                   = 'pymoose',
@@ -58,5 +59,5 @@ setup(
 				# by themselves. We notify them when they try to import SBML.
         # install_requires       = [ 'python-libsbml', 'numpy' ],
         package_dir            = { 'moose' : 'moose', 'rdesigneur' : 'rdesigneur' },
-        package_data           = { 'moose' : ['_moose' + suffix ] },
+        package_data           = { 'moose' : ['_moose.' + suffix ] },
         )
