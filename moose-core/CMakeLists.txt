@@ -442,7 +442,7 @@ add_custom_command(TARGET bdist POST_BUILD
 # Copy python files from source to current binary directory. Make sure to call
 # this before building bdist.
 file(GLOB_RECURSE PYTHON_SRCS "${CMAKE_SOURCE_DIR}/python/*")
-add_custom_target(copy_pymoose DEPENDS ${PYTHON_SRCS}
+add_custom_target(copy_pymoose DEPENDS ${PYTHON_SRCS} _moose
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${CMAKE_CURRENT_SOURCE_DIR}/python ${CMAKE_CURRENT_BINARY_DIR}/python
         COMMENT "Copying required python files from
@@ -451,7 +451,6 @@ add_custom_target(copy_pymoose DEPENDS ${PYTHON_SRCS}
     )
 
 add_dependencies( bdist copy_pymoose )
-add_dependencies( _moose bdist )
 
 ######################### INSTALL ##############################################
 
