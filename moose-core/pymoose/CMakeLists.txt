@@ -11,7 +11,6 @@ set(PYMOOSE_SRCS
     PyRun.cpp
     )
 
-# Build _moose.so in source directory and them copy everything to
 # current binary directory using cmake.
 add_library( _moose MODULE ${PYMOOSE_SRCS} )
 set(PYMOOSE_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/python/moose")
