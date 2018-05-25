@@ -432,8 +432,20 @@ class GraphicalView(QtGui.QGraphicsView):
                         moose.Neutral(self.modelRoot+'/data')
                         moose.Neutral(self.modelRoot+'/data/graph_0')
                         self.graph = moose.element(self.modelRoot+'/data/graph_0')
+                    plotType = "Conc"
+                    msgBox = QtGui.QMessageBox()
+                    msgBox.setText('What to plot?')
+                    msgBox.addButton(QtGui.QPushButton('Number'), QtGui.QMessageBox.YesRole)
+                    msgBox.addButton(QtGui.QPushButton('Concentration'), QtGui.QMessageBox.NoRole)
+                    ret = msgBox.exec_()
+                    if ret == 0:
+                        plotType = "N"
+                    tablePath = moose.utils.create_table_path(moose.element(self.modelRoot), self.graph, element, plotType)
+                    table     = moose.utils.create_table(tablePath, element, plotType,"Table2")
+                    '''
                     tablePath = utils.create_table_path(moose.element(self.modelRoot), self.graph, element, "Conc")
                     table     = utils.create_table(tablePath, element, "Conc","Table2")
+                    '''
                     self.layoutPt.plugin.view.getCentralWidget().plotWidgetContainer.plotAllData()
                     reply = QtGui.QMessageBox.information(self, "plot Object","Plot is added to Graph1",
                                                    QtGui.QMessageBox.Ok)
