@@ -141,7 +141,7 @@ const Cinfo* Stoich::initCinfo()
         "matrixEntry",
         "The non-zero matrix entries in the sparse matrix. Their"
         "column indices are in a separate vector and the row"
-        "informatino in a third",
+        "information in a third",
         &Stoich::getMatrixEntry
     );
     // Stuff here for getting Stoichiometry matrix to manipulate in
@@ -195,22 +195,6 @@ const Cinfo* Stoich::initCinfo()
                                 "Restore all zombies to their native state",
                                 new OpFunc0< Stoich >( &Stoich::unZombifyModel )
                               );
-    static DestFinfo buildXreacs( "buildXreacs",
-                                  "Build cross-reaction terms between current stoich and "
-                                  "argument. This function scans the voxels at which there are "
-                                  "junctions between different compartments, and orchestrates "
-                                  "set up of interfaces between the Ksolves that implement "
-                                  "the X reacs at those junctions. ",
-                                  new EpFunc1< Stoich, Id >( &Stoich::buildXreacs )
-                                );
-
-    static DestFinfo filterXreacs( "filterXreacs",
-                                   "Filter cross-reaction terms on current stoich"
-                                   "This function clears out absent rate terms that would "
-                                   "otherwise try to compute cross reactions where the "
-                                   "junctions are not present. ",
-                                   new OpFunc0< Stoich >( &Stoich::filterXreacs )
-                                 );
     static DestFinfo scaleBufsAndRates( "scaleBufsAndRates",
                                         "Args: voxel#, volRatio\n"
                                         "Handles requests for runtime volume changes in the specified "
@@ -246,8 +230,6 @@ const Cinfo* Stoich::initCinfo()
         &proxyPools,		// ReadOnlyLookupValue
         &status,			// ReadOnlyLookupValue
         &unzombify,			// DestFinfo
-        &buildXreacs,		// DestFinfo
-        &filterXreacs,		// DestFinfo
         &scaleBufsAndRates,	// DestFinfo
     };
 
@@ -405,7 +387,6 @@ void Stoich::setElist( const Eref& e, const vector< ObjId >& elist )
         status_ = 16;
         return;
     }
-    locateOffSolverReacs( compartment_, temp );
 
     // allocateObjMap( temp );
     allocateModel( temp );
@@ -426,54 +407,9 @@ void Stoich::setElist( const Eref& e, const vector< ObjId >& elist )
     if ( kinterface_ )
     {
         kinterface_->setDsolve( dsolve_ );
-        // kinterface_->setupCrossSolverReacs( offSolverPoolVec_ );
-        kinterface_->setupCrossSolverReacVols( subComptVec_, prdComptVec_);
         kinterface_->updateRateTerms();
     }
 }
-
-void Stoich::setupCrossSolverReacVols() const
-{
-    kinterface_->setupCrossSolverReacVols( subComptVec_, prdComptVec_);
-}
-
-/*
-// Utility function for getting inputs to a single Function object.
-static vector< ObjId > inputsToFunc( Id func )
-{
-	static const Finfo* inputFinfo =
-			Cinfo::find( "Variable" )->findFinfo("input");
-	static const DestFinfo* df = dynamic_cast< const DestFinfo* >( inputFinfo );
-	assert( df );
-	static FuncId fid = df->funcId();
-	assert( func.element()->cinfo()->isA( "Function" );
-	unsigned int numInputs = Field< unsigned int >::get( func, "numVars" );
-	Id varId( func.value() );
-	vector< ObjId > caller;
-	varId.element()->getInputMsgs( caller, fid );
-	cout << "NUM Inputs = " << numInputs << ", numObjId = " << caller.size() << endl;
-	return caller;
-}
-
-// routine to get all inputs (pool Ids) to Pool Functions
-void Stoich::inputsToPoolFuncs(
-		vector< pair< Id, vector< unsigned int> >& ret ) const
-{
-	ret.clear();
-	vector< Id >::iterator i;
-	vector< ObjId >::iterator j;
-	for ( i = poolFuncVec_.begin(); i != poolFuncVec_.end(); ++i )
-		vector< ObjId > ovec = inputsToFunc( *i );
-		vector< unsigned int > poolIndex;
-		poolIndex.reserve( ovec.size() );
-		for ( j = ovec.begin(); j != ovec.end(); ++j ) {
-			unsigned int poolIndex =
-			poolIndex.push_back( convertIdToPoolIndex( j->id ) );
-		}
-		ret.push_back( pair( *i, poolIndex) );
-	return ret;
-}
-*/
 
 //////////////////////////////////////////////////////////////////////
 
@@ -1276,48 +1212,6 @@ const KinSparseMatrix& Stoich::getStoichiometryMatrix() const
     return N_;
 }
 
-void Stoich::buildXreacs( const Eref& e, Id otherStoich )
-{
-	if ( status_ == 0 )
-    	kinterface_->setupCrossSolverReacs( offSolverPoolMap_,otherStoich);
-}
-
-void Stoich::filterXreacs()
-{
-	if ( status_ == 0 ) {
-    	kinterface_->filterCrossRateTerms( offSolverReacVec_, offSolverReacCompts_ );
-    	kinterface_->filterCrossRateTerms( offSolverEnzVec_, offSolverEnzCompts_ );
-    	kinterface_->filterCrossRateTerms( offSolverMMenzVec_, offSolverMMenzCompts_ );
-	}
-}
-
-/*
-void Stoich::comptsOnCrossReacTerms( vector< pair< Id, Id > >& xr ) const
-{
-	xr.clear();
-	assert( offSolverReacVec_.size() == offSolverReacCompts_.size() );
-	assert( offSolverEnzVec_.size() == offSolverEnzCompts_.size() );
-	assert( offSolverMMenzVec_.size() == offSolverMMenzCompts_.size() );
-	unsigned int numOffSolverRates = getNumRates() - getNumCoreRates();
-	if ( numOffSolverRates == 0 )
-		return;
-	unsigned int k = getNumCoreRates();
-	unsigned int j = 0;
-
-	for ( unsigned int i = 0; i < offSolverReacs_.size() ; ++i ) {
-		if ( i+1 < offSolverReacs_.size() )
-			j = convertIdToReacIndex( offSolverReacs_[i+1] );
-		else
-			j = rates_.size();
-		while ( k < j ) {
-			xr.push_back( offSolverReacCompts_[i] );
-			k++;
-		}
-	}
-	assert( xr.size() == numXrates );
-}
-*/
-
 //////////////////////////////////////////////////////////////
 // Model zombification functions
 //////////////////////////////////////////////////////////////
@@ -1334,31 +1228,6 @@ static Id findFuncMsgSrc( Id pa, const string& msg )
             return ret[0];
     }
     return Id(); // failure
-
-
-    /*
-    cout << "fundFuncMsgSrc:: convert to DestFinfo\n";
-    const DestFinfo *df = dynamic_cast< const DestFinfo* >( finfo );
-    if ( !df ) return Id();
-    FuncId fid = df->getFid();
-
-    cout << "fundFuncMsgSrc:: findCaller\n";
-    ObjId caller = pa.element()->findCaller( fid );
-    if ( caller.bad() )
-    	return Id();
-    cout << "Found Func for " << pa.path() << " on " << msg << endl;
-    cout << "Func was " << caller.path() << endl;
-    return caller.id;
-    */
-
-    /*
-    	vector< Id > kids = Neutral::getChildren( pa.eref() );
-    	for ( vector< Id >::iterator i = kids.begin(); i != kids.end(); ++i )
-    		if ( i->element()->cinfo()->isA( "Function" ) )
-    			return( *i );
-    	return Id();
-    */
-
 }
 
 Id Stoich::zombifyPoolFuncWithScaling( Id pool )

@@ -129,7 +129,6 @@ public:
 #endif
 
     //////////////////////////////////////////////////////////////////
-    static SrcFinfo2< Id, vector< double > >* xComptOut();
     static const Cinfo* initCinfo();
 private:
 

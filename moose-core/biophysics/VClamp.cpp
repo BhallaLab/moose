@@ -82,8 +82,9 @@ const Cinfo * VClamp::initCinfo()
                             "Shared message to receive Process messages from the scheduler",
                             processShared, sizeof(processShared) / sizeof(Finfo*));
 
-    static ReadOnlyValueFinfo< VClamp, double> command("command",
+    static ValueFinfo< VClamp, double> command("command",
                                                "Command input received by the clamp circuit.",
+                                               &VClamp::setCommand,
                                                &VClamp::getCommand);
     static ValueFinfo< VClamp, unsigned int> mode("mode",
                                                   "Working mode of the PID controller.\n"
@@ -210,14 +211,12 @@ VClamp::~VClamp()
 
 void VClamp::setCommand(double value)
 {
-    // e2_ = 0;
-    // e1_ = 0;
     cmdIn_ = value;
 }
 
 double VClamp::getCommand() const
 {
-    return command_;
+    return cmdIn_;
 }
 
 void VClamp::setTi(double value)
@@ -334,13 +333,16 @@ void VClamp::reinit(const Eref& e, ProcPtr p)
     tauByDt_ = tau_ / p->dt;
     dtByTi_ = p->dt/ti_;
     tdByDt_ = td_ / p->dt;
-    if (Kp_ == 0){
-        vector<Id> compartments;
-        unsigned int numComp = e.element()->getNeighbors(compartments, currentOut());
-        if (numComp > 0){
-            double Cm = Field<double>::get(compartments[0], "Cm");
+
+    vector<Id> compartments;
+    unsigned int numComp = e.element()->getNeighbors(compartments, currentOut());
+    if (numComp > 0){
+        double Cm = Field<double>::get(compartments[0], "Cm");
+    	if (Kp_ == 0){
             Kp_ = Cm / p->dt;
-        }
+    	}
+		command_ = cmdIn_ = oldCmdIn_ = 
+           	Field<double>::get(compartments[0], "initVm");
     }
 }
 

@@ -17,6 +17,7 @@
 #include "ChemCompt.h"
 #include "MeshCompt.h"
 #include "CubeMesh.h"
+#include "EndoMesh.h"
 
 const unsigned int CubeMesh::EMPTY = ~0;
 const unsigned int CubeMesh::SURFACE = ~1;
@@ -223,13 +224,26 @@ const Cinfo* CubeMesh::initCinfo()
 		&surface,		// Value
 	};
 
+	static string doc[] =
+	{
+		"Name", "CubeMesh",
+		"Author", "Upi Bhalla",
+		"Description", "Chemical compartment with cuboid grid. "
+				"Defaults to a cube of size 10 microns, with mesh size "
+				"also 10 microns, so that there is just 1 cubic voxel. "
+				"These defaults are similar to that of a typical cell. "
+				"Can be configured to have different x,y,z dimensions and "
+				"also different dx,dy,dz voxel sizes. ",
+	};
 	static Dinfo< CubeMesh > dinfo;
 	static Cinfo cubeMeshCinfo (
 		"CubeMesh",
 		ChemCompt::initCinfo(),
 		cubeMeshFinfos,
 		sizeof( cubeMeshFinfos ) / sizeof ( Finfo* ),
-		&dinfo
+		&dinfo,
+		doc,
+        sizeof(doc)/sizeof(string)
 	);
 
 	return &cubeMeshCinfo;
@@ -252,12 +266,12 @@ CubeMesh::CubeMesh()
 		x0_( 0.0 ),
 		y0_( 0.0 ),
 		z0_( 0.0 ),
-		x1_( 1.0 ),
-		y1_( 1.0 ),
-		z1_( 1.0 ),
-		dx_( 1.0 ),
-		dy_( 1.0 ),
-		dz_( 1.0 ),
+		x1_( 10e-6 ),
+		y1_( 10e-6 ),
+		z1_( 10e-6 ),
+		dx_( 10e-6 ),
+		dy_( 10e-6 ),
+		dz_( 10e-6 ),
 		nx_( 1 ),
 		ny_( 1 ),
 		nz_( 1 ),
@@ -887,9 +901,16 @@ void CubeMesh::innerSetNumEntries( unsigned int n )
 	cout << "Warning: CubeMesh::innerSetNumEntries is readonly.\n";
 }
 
+// We assume this is linear diffusion for now. Fails for 2 or 3-D diffusion
 vector< unsigned int > CubeMesh::getParentVoxel() const
 {
-	static vector< unsigned int > ret;
+	unsigned int numEntries = innerGetNumEntries();
+	vector< unsigned int > ret( numEntries );
+	if ( numEntries > 0 )
+		ret[0] = static_cast< unsigned int >( -1 );
+	for (unsigned int i = 1; i < numEntries; ++i )
+		ret[i] = i-1;
+
 	return ret;
 }
 
@@ -921,14 +942,27 @@ const vector< double >& CubeMesh::vGetVoxelMidpoint() const
 const vector< double >& CubeMesh::getVoxelArea() const
 {
 	static vector< double > area;
-	assert( 0 ); // Not yet operational
+	if ( nx_ * ny_ == 1 ) 
+		area.resize( nz_, dx_ * dy_ );
+	else if ( nx_ * nz_ == 1 ) 
+		area.resize( ny_, dx_ * dz_ );
+	else if ( ny_ * nz_ == 1 ) 
+		area.resize( nx_, dy_ * dz_ );
+	else
+		area.resize( nx_, dy_ * dz_ ); // Just put in a number.
+	assert( area.size() == nx_ * ny_ * nz_ );
 	return area;
 }
 
 const vector< double >& CubeMesh::getVoxelLength() const
 {
 	static vector< double > length;
-	assert( 0 ); // Not yet operational
+	if ( dx_ > dy_ && dx_ > dz_ )
+		length.assign( innerGetNumEntries(), dx_ );
+	else if ( dy_ > dz_ )
+		length.assign( innerGetNumEntries(), dy_ );
+	else
+		length.assign( innerGetNumEntries(), dz_ );
 	return length;
 }
 
@@ -1100,9 +1134,15 @@ void CubeMesh::matchMeshEntries( const ChemCompt* other,
 				cout << "Warning:CubeMesh::matchMeshEntries: cannot yet handle unequal meshes\n";
 		}
 		*/
-	} else {
-		cout << "Warning:CubeMesh::matchMeshEntries: cannot yet handle Neuro or Cyl meshes.\n";
+		return;
 	}
+	const EndoMesh* em = dynamic_cast< const EndoMesh* >( other );
+	if ( em ) {
+        em->matchMeshEntries( this, ret );
+        flipRet( ret );
+		return;
+	}
+	cout << "Warning:CubeMesh::matchMeshEntries: cannot yet handle Neuro or Cyl meshes.\n";
 }
 
 unsigned int CubeMesh::numDims() const

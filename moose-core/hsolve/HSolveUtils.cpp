@@ -320,9 +320,9 @@ int HSolveUtils::targets(
 	e->getNeighbors( all, f );
 
 	vector< Id >::iterator ia;
-	if ( filter.empty() )
+	if ( filter.empty() ) {
 		target.insert( target.end(), all.begin(), all.end() );
-	else
+	} else {
 		for ( ia = all.begin(); ia != all.end(); ++ia ) {
 			string className = (*ia).element()->cinfo()->name();
 			bool hit =
@@ -335,6 +335,7 @@ int HSolveUtils::targets(
 			if ( ( hit && include ) || ( !hit && !include ) )
 				target.push_back( *ia );
 		}
+	}
 
 	return target.size() - oldSize;
 }

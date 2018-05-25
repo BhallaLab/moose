@@ -89,6 +89,18 @@ const Cinfo* ChemCompt::initCinfo()
 			&ChemCompt::getStencilIndex
 		);
 
+		static ValueFinfo< ChemCompt, bool > isMembraneBound(
+			"isMembraneBound",
+		 	"Flag, set to True for meshes where each voxel is membrane "
+			"bound. \n"
+			"NeuroMesh and SpineMesh are false. \n"
+			"CubeMesh, CylMesh, and EndoMesh can be either. If they are "
+		 	"membrane bound they can still interact via channels and "
+		 	"cross-compartment reactions. ",
+			&ChemCompt::setIsMembraneBound,
+			&ChemCompt::getIsMembraneBound
+		);
+
 		//////////////////////////////////////////////////////////////
 		// MsgDest Definitions
 		//////////////////////////////////////////////////////////////
@@ -148,6 +160,7 @@ const Cinfo* ChemCompt::initCinfo()
 		&numDimensions,	// ReadOnlyValue
 		&stencilRate,	// ReadOnlyLookupValue
 		&stencilIndex,	// ReadOnlyLookupValue
+		&isMembraneBound,	// Value
 		voxelVolOut(),	// SrcFinfo
 		&buildDefaultMesh,	// DestFinfo
 		&setVolumeNotRates,		// DestFinfo
@@ -184,7 +197,8 @@ static const Cinfo* chemMeshCinfo = ChemCompt::initCinfo();
 
 ChemCompt::ChemCompt()
 	:
-		entry_( this )
+		entry_( this ),
+		isMembraneBound_( false )
 {
 	;
 }
@@ -336,6 +350,16 @@ vector< double > ChemCompt::getStencilRate( unsigned int row ) const
 vector< unsigned int > ChemCompt::getStencilIndex( unsigned int row ) const
 {
 	return this->getNeighbors( row );
+}
+
+bool ChemCompt::getIsMembraneBound() const
+{
+	return isMembraneBound_;
+}
+
+void ChemCompt::setIsMembraneBound( bool v )
+{
+	isMembraneBound_ = v;
 }
 
 

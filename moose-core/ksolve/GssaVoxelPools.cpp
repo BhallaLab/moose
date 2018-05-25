@@ -343,7 +343,6 @@ void GssaVoxelPools::setStoich( const Stoich* stoichPtr )
 void GssaVoxelPools::setVolumeAndDependencies( double vol )
 {
     VoxelPoolsBase::setVolumeAndDependencies( vol );
-    stoichPtr_->setupCrossSolverReacVols();
     updateAllRateTerms( stoichPtr_->getRateTerms(),
                         stoichPtr_->getNumCoreRates() );
 }
@@ -414,31 +413,4 @@ void GssaVoxelPools::xferIn( XferInfo& xf,
     */
     // Does this fix the problem of negative concs?
     refreshAtot( g );
-}
-
-void GssaVoxelPools::xferInOnlyProxies(
-    const vector< unsigned int >& poolIndex,
-    const vector< double >& values,
-    unsigned int numProxyPools,
-    unsigned int voxelIndex	)
-{
-    unsigned int offset = voxelIndex * poolIndex.size();
-    vector< double >::const_iterator i = values.begin() + offset;
-    unsigned int proxyEndIndex = stoichPtr_->getNumVarPools() +
-                                 stoichPtr_->getNumProxyPools();
-    for ( vector< unsigned int >::const_iterator
-            k = poolIndex.begin(); k != poolIndex.end(); ++k )
-    {
-        // if ( *k >= size() - numProxyPools )
-        if ( *k >= stoichPtr_->getNumVarPools() && *k < proxyEndIndex )
-        {
-            double base = floor( *i );
-            if ( rng_.uniform() >= (*i - base) )
-                varSinit()[*k] = (varS()[*k] += base );
-            else
-                varSinit()[*k] = (varS()[*k] += base + 1.0 );
-            // varSinit()[*k] = (varS()[*k] += round( *i ));
-        }
-        i++;
-    }
 }

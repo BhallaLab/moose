@@ -371,60 +371,7 @@ void VoxelPools::print() const
 void VoxelPools::setVolumeAndDependencies( double vol )
 {
 	VoxelPoolsBase::setVolumeAndDependencies( vol );
-	stoichPtr_->setupCrossSolverReacVols();
 	updateAllRateTerms( stoichPtr_->getRateTerms(),
 		stoichPtr_->getNumCoreRates() );
 }
 
-
-////////////////////////////////////////////////////////////
-#if 0
-/**
- * Zeroes out rate terms that are involved in cross-reactions that
- * are not present on current voxel.
- */
-void VoxelPools::filterCrossRateTerms(
-		const vector< pair< Id, Id > >&
-				offSolverReacCompts  )
-{
-		/*
-From VoxelPoolsBase:proxyPoolVoxels[comptIndex][#] we know
-if specified compt has local proxies.
-	Note that compt is identified by an index, and actually looks up
-	the Ksolve.
-From Ksolve::compartment_ we know which compartment a given ksolve belongs
-	in
-From Ksolve::xfer_[otherKsolveIndex].ksolve we have the id of the other
-	Ksolves.
-From Stoich::offSolverReacCompts_ which is pair< Id, Id > we have the
-	ids of the _compartments_ feeding into the specified rateTerms.
-
-Somewhere I need to make a map of compts to comptIndex.
-
-The ordering of the xfer vector is simply by the order of the script call
-for buildXfer.
-
-This has become too ugly
-Skip the proxyPoolVoxels info, or use the comptIndex here itself to
-build the table.
-comptIndex looks up xfer which holds the Ksolve Id. From that we can
-get the compt id. All this relies on this mapping being correct.
-Or I should pass in the compt when I build it.
-
-OK, now we have VoxelPoolsBase::proxyPoolCompts_ vector to match the
-comptIndex.
-
-*/
-	unsigned int numCoreRates = stoichPtr_->getNumCoreRates();
- 	for ( unsigned int i = 0; i < offSolverReacCompts.size(); ++i ) {
-		const pair< Id, Id >& p = offSolverReacCompts[i];
-		if ( !isVoxelJunctionPresent( p.first, p.second) ) {
-			unsigned int k = i + numCoreRates;
-			assert( k < rates_.size() );
-			if ( rates_[k] )
-				delete rates_[k];
-			rates_[k] = new ExternReac;
-		}
-	}
-}
-#endif

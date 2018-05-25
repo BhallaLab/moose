@@ -430,14 +430,14 @@ add_custom_target(bdist ALL DEPENDS  ${PYMOOSE_BDIST_FILE} )
 
 # Any command using setup.cmake.py must run in the same directory.
 add_custom_command( OUTPUT ${PYMOOSE_BDIST_FILE}
-    COMMAND ${PYTHON_EXECUTABLE} setup.cmake.py bdist_dumb -p ${_platform} 
+    COMMAND ${PYTHON_EXECUTABLE} setup.cmake.py bdist_dumb -p ${_platform}
         -d ${PYMOOSE_BDIST_DIR}
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/python
     COMMENT "bdist is saved to ${PYMOOSE_BDIST_DIR}"
     VERBATIM
     )
 add_custom_command(TARGET bdist POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E chdir ${PYMOOSE_BDIST_INSTALL_DIR} tar xvf ${PYMOOSE_BDIST_FILE}
+    COMMAND ${CMAKE_COMMAND} -E chdir ${PYMOOSE_BDIST_INSTALL_DIR} tar xf ${PYMOOSE_BDIST_FILE}
     COMMENT "Unarchiving bdist file ${PYMOOSE_BDIST_FILE} to ${PYMOOSE_BDIST_INSTALL_DIR}"
     VERBATIM
     )
@@ -449,7 +449,7 @@ add_custom_target(copy_pymoose DEPENDS ${PYTHON_SRCS}
     COMMAND ${CMAKE_COMMAND} -E copy_directory
         ${CMAKE_CURRENT_SOURCE_DIR}/python ${CMAKE_CURRENT_BINARY_DIR}/python
     COMMENT "Copying required python files and other files to build directory"
-    VERBATIM 
+    VERBATIM
     )
 
 add_dependencies( bdist copy_pymoose )
@@ -459,14 +459,11 @@ add_dependencies( copy_pymoose _moose )
 
 install(TARGETS moose.bin DESTINATION bin CONFIGURATIONS Debug)
 install(TARGETS libmoose DESTINATION lib CONFIGURATIONS Debug)
-install(PROGRAMS ${CMAKE_CURRENT_SOURCE_DIR}/scripts/moose
-    DESTINATION bin CONFIGURATIONS Debug
-    )
 
-# install pymoose bdist.
-install(DIRECTORY ${PYMOOSE_BDIST_INSTALL_DIR}/
+# install pymoose bdist. The bdist comes with predefined /usr; remove it.
+install(DIRECTORY ${PYMOOSE_BDIST_INSTALL_DIR}/usr/
     DESTINATION ${CMAKE_INSTALL_PREFIX}
-    CONFIGURATIONS Release
+    CONFIGURATIONS Release Debug
     )
 
 # Print message to start build process

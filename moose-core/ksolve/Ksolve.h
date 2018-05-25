@@ -127,29 +127,10 @@ public:
     void updateRateTerms( unsigned int index );
 
     //////////////////////////////////////////////////////////////////
-    // Functions for cross-compartment transfer
-    //////////////////////////////////////////////////////////////////
-    void setupXfer( Id myKsolve, Id otherKsolve,
-                    unsigned int numProxyMols,
-                    const vector< VoxelJunction >& vj );
-
-    void assignXferIndex( unsigned int numProxyMols,
-                          unsigned int xferCompt,
-                          const vector< vector< unsigned int > >& voxy );
-
-    void assignXferVoxels( unsigned int xferCompt );
-
-    unsigned int assignProxyPools( const map< Id, vector< Id > >& xr,
-                                   Id myKsolve, Id otherKsolve, Id otherComptId );
-
-    void buildCrossReacVolScaling( Id otherKsolve,
-                                   const vector< VoxelJunction >& vj );
-    //////////////////////////////////////////////////////////////////
     // for debugging
     void print() const;
 
     //////////////////////////////////////////////////////////////////
-    static SrcFinfo2< Id, vector< double > >* xComptOut();
     static const Cinfo* initCinfo();
 
 private:

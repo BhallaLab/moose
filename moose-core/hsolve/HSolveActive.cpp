@@ -356,13 +356,13 @@ void HSolveActive::sendValues( ProcPtr info )
 {
     vector< unsigned int >::iterator i;
 
-    for ( i = outVm_.begin(); i != outVm_.end(); ++i )
+    for ( i = outVm_.begin(); i != outVm_.end(); ++i ) {
         Compartment::VmOut()->send(
             //~ ZombieCompartment::VmOut()->send(
             compartmentId_[ *i ].eref(),
             V_[ *i ]
         );
-
+	}
 
     for ( i = outIk_.begin(); i != outIk_.end(); ++i ){
 

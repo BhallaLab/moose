@@ -19,7 +19,7 @@ enum MeshType {
 	CUBOID,
 	CYL, CYL_SHELL, CYL_SHELL_SEG,
 	SPHERE, SPHERE_SHELL, SPHERE_SHELL_SEG,
-	TETRAHEDRON, DISK
+	TETRAHEDRON, DISK, ENDO
 };
 
 class ChemCompt;
@@ -58,6 +58,7 @@ class MeshEntry
 		 * 6: spherical shell
 		 * 7: spherical shell segment
 		 * 8: Tetrahedral
+		 * 9: EndoMesh
 		 */
 		unsigned int getMeshType( const Eref& e ) const;
 
