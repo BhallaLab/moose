@@ -27,9 +27,13 @@ Mac OSX
 
 MacOSX support for moose-gui is not complete yet. However, the python-scripting interface can be installed on OSX using ``homebrew``
 ::
-
     $ brew tap BhallaLab/moose
     $ brew install moose
+
+Or alternatively, via pip 
+::
+    $ pip install pymoose --user 
+    
 
 Docker Images
 ^^^^^^^^^^^^^^
