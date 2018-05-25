@@ -1,8 +1,11 @@
 Use pre-built packages
 -----------------------
 
-If you need only `python` interface, you can install it using `pip`. This is the easiest
-way to install Python interface.
+pip
+^^^^
+
+If you only need `python` interface, use `pip`. This is the easiest way to install Python interface.
+This solution has been tested for Linux and MacOSX.
 ::
      pip install pymoose 
 
