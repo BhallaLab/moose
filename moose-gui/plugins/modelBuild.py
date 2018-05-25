@@ -5,7 +5,7 @@ __version__     =   "1.0.0"
 __maintainer__  =   "HarshaRani"
 __email__       =   "hrani@ncbs.res.in"
 __status__      =   "Development"
-__updated__     =   "Jul 27 2017"
+__updated__     =   "Apr 11 2018"
 
 import moose
 from kkitQGraphics import * 
@@ -137,14 +137,17 @@ def checkCreate(scene,view,modelpath,mobj,string,ret_string,num,event_pos,layout
         #moose.connect( funcObj, 'valueOut', mobj ,'setN' )
         poolclass = ["ZombieBufPool","BufPool"]
         comptclass = ["CubeMesh","cyclMesh"]
+
         if mobj.className in poolclass:
             funcParent = layoutPt.mooseId_GObj[element(mobj.path)]
         elif mobj.className in comptclass:
             funcParent = layoutPt.qGraCompt[moose.element(mobj)]
             posWrtComp = funcParent.mapFromScene(pos).toPoint()
             #posWrtComp = (itemAtView.mapFromScene(pos)).toPoint()
+        elif mobj.className in "Neutral":
+            funcParent = layoutPt.qGraGrp[element(mobj)]
+
         qGItem = FuncItem(funcObj,funcParent)
-        #print " function ", posWrtComp.x(),posWrtComp.y()
         qGItem.setDisplayProperties(posWrtComp.x(),posWrtComp.y(),QtGui.QColor('red'),QtGui.QColor('green'))
         layoutPt.mooseId_GObj[funcObj] = qGItem
         #if mType == "new_kkit":
@@ -273,7 +276,7 @@ def createObj(scene,view,modelpath,string,pos,layoutPt):
             ret_string,num = findUniqId(mobj,string,num)
 
     elif string == "Function":
-        mobj = findCompartment(mobj)
+        #mobj = findCompartment(mobj)
         ret_string,num = findUniqId(mobj,string,num)
         '''
         if itemAt != None:

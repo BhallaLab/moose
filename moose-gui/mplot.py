@@ -6,9 +6,9 @@
 # Maintainer:
 # Created: Mon Mar 11 20:24:26 2013 (+0530)
 # Version:
-# Last-Updated: Wed Jul  3 10:32:35 2013 (+0530)
-#           By: subha
-#     Update #: 309
+# Last-Updated: Wed Apr  11 15:32:35 2018 (+0530)
+#           By: Harsha
+#     Update #: 
 # URL:
 # Keywords:
 # Compatibility:
@@ -23,7 +23,7 @@
 #
 
 # Change log:
-#
+# 2018 April 11: In chemical model, now pool can be ploted as number or concentration.
 #
 #
 #
@@ -153,8 +153,16 @@ class CanvasWidget(FigureCanvas):
         # print "Mouse Position : ", pos
         modelRoot, element = event.mimeData().data
         if isinstance (element,moose.PoolBase):
-            tablePath = moose.utils.create_table_path(self.model, self.graph, element, "Conc")
-            table     = moose.utils.create_table(tablePath, element, "Conc","Table2")
+            plotType = "Conc"
+            msgBox = QtGui.QMessageBox()
+            msgBox.setText('What to plot?')
+            msgBox.addButton(QtGui.QPushButton('Number'), QtGui.QMessageBox.YesRole)
+            msgBox.addButton(QtGui.QPushButton('Concentration'), QtGui.QMessageBox.NoRole)
+            ret = msgBox.exec_()
+            if ret == 0:
+                plotType = "N"
+            tablePath = moose.utils.create_table_path(self.model, self.graph, element, plotType)
+            table     = moose.utils.create_table(tablePath, element, plotType,"Table2")
             # moose.connect(table, 'requestOut', element, 'getConc')
             self.updateSignal.emit()
         elif isinstance(element, moose.CompartmentBase):
