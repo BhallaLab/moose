@@ -17,6 +17,7 @@ class HSolve: public HSolveActive
 {
 public:
 	HSolve();
+	~HSolve();
 
 	void process( const Eref& hsolve, ProcPtr p );
 	void reinit( const Eref& hsolve, ProcPtr p );
@@ -157,6 +158,7 @@ private:
 
 	void setup( Eref hsolve );
 	void zombify( Eref hsolve ) const;
+	void unzombify() const;
 
 	// Mapping global Id to local index. Defined in HSolveInterface.cpp.
 	void mapIds();

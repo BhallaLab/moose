@@ -13,5 +13,6 @@ add_library(mesh
     SpineEntry.cpp
     SpineMesh.cpp
     PsdMesh.cpp
+	EndoMesh.cpp
     testMesh.cpp
     )

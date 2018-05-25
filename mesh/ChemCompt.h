@@ -69,6 +69,9 @@ class ChemCompt
 		void setMethod( string method );
 		string getMethod() const;
 
+		bool getIsMembraneBound() const;
+		void setIsMembraneBound( bool v );
+
 		/**
 		 * Function to return the stencil values used in the
 		 * diffusion calculations for voxelized compartments.
@@ -349,6 +352,15 @@ class ChemCompt
 		 * function.
 		 */
 		string method_;
+
+		/**
+		 * Flag, set to True for meshes where each voxel is membrane bound.
+		 * NeuroMesh and SpineMesh are false
+		 * CubeMesh, CylMesh, and EndoMesh can be either. If they are
+		 * membrane bound they can still interact via channels and 
+		 * cross-compartment reactions.
+		 */
+		bool isMembraneBound_;
 };
 
 extern SrcFinfo5<

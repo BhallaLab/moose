@@ -206,6 +206,7 @@ void DiffAmp::reinit(const Eref& e, ProcPtr p)
     output_ = 0.0;
     plus_ = 0.0;
     minus_ = 0.0;
+    outputOut()->send(e, output_);
 }
 
 //

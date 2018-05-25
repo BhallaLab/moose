@@ -129,7 +129,7 @@ RC::RC():
         state_(0),
         inject_(0),
         msg_inject_(0.0),
-        exp_(0.0),
+        expTau_(0.0),
         dt_tau_(0.0)
 {
     ;   // Do nothing
@@ -203,13 +203,30 @@ void RC::setInjectMsg( double inject )
 
 void RC::process(const Eref& e, const ProcPtr proc )
 {
+	/*
     double sum_inject_prev = inject_ + msg_inject_;
     double sum_inject = inject_ + msg_inject_;
     double dVin = (sum_inject - sum_inject_prev) * resistance_;
     double Vin = sum_inject * resistance_;
     state_ = Vin + dVin - dVin / dt_tau_ +
-            (state_ - Vin + dVin / dt_tau_) * exp_;
+            (state_ - Vin + dVin / dt_tau_) * expTau_;
     sum_inject_prev = sum_inject;
+    msg_inject_ = 0.0;
+    outputOut()->send(e, state_);
+	*/
+
+	////////////////////////////////////////////////////////////////
+	// double A = inject + msgInject_;
+	// double B = 1.0/resistance_;
+	// double x = exp( -B * proc->dt / capacitance_ );
+	// state_ = state_ * x + (A/B) * (1.0-x);
+	// double x = exp( -dt_tau_ );
+	state_ = state_ * expTau_ + 
+		resistance_*(inject_ + msg_inject_) * (1.0-expTau_);
+	
+	/// OR, if we use simple Euler: ///
+	// state_ += (inject_ + msgInject_ - state_/resistance_ ) * proc->dt / capacitance_;
+
     msg_inject_ = 0.0;
     outputOut()->send(e, state_);
 }
@@ -220,9 +237,9 @@ void RC::reinit(const Eref& e, const ProcPtr proc)
     dt_tau_ = proc->dt / (resistance_ * capacitance_);
     state_ = v0_;
     if (dt_tau_ > 1e-15){
-        exp_ = exp(-dt_tau_);
+        expTau_ = exp(-dt_tau_);
     } else {// use approximation
-        exp_ = 1 - dt_tau_;
+        expTau_ = 1 - dt_tau_;
     }
     msg_inject_ = 0.0;
     outputOut()->send(e, state_);

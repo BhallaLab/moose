@@ -33,6 +33,7 @@ class EnzBase
 
 		// This doesn't need a virtual form, depends on standard msgs.
 		unsigned int getNumSub( const Eref& e ) const;
+		unsigned int getNumPrd( const Eref& e ) const;
 
 		//////////////////////////////////////////////////////////////////
 		// Virtual funcs for field assignment stuff

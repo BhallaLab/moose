@@ -63,6 +63,12 @@ const Cinfo* EnzBase::initCinfo()
 			&EnzBase::getNumSub
 		);
 
+		static ReadOnlyElementValueFinfo< EnzBase, unsigned int > numPrd(
+			"numProducts",
+			"Number of products in this MM reaction. Usually 1.",
+			&EnzBase::getNumPrd
+		);
+
 
 		//////////////////////////////////////////////////////////////
 		// Shared Msg Definitions
@@ -125,6 +131,7 @@ const Cinfo* EnzBase::initCinfo()
 		&numKm,	// ElementValue
 		&kcat,	// Value
 		&numSub,	// ReadOnlyElementValue
+		&numPrd,	// ReadOnlyElementValue
 		&enzDest,			// DestFinfo
 		&sub,				// SharedFinfo
 		&prd,				// SharedFinfo
@@ -255,6 +262,14 @@ unsigned int EnzBase::getNumSub( const Eref& e ) const
 {
 	const vector< MsgFuncBinding >* mfb =
 		e.element()->getMsgAndFunc( subOut()->getBindIndex() );
+	assert( mfb );
+	return ( mfb->size() );
+}
+
+unsigned int EnzBase::getNumPrd( const Eref& e ) const
+{
+	const vector< MsgFuncBinding >* mfb =
+		e.element()->getMsgAndFunc( prdOut()->getBindIndex() );
 	assert( mfb );
 	return ( mfb->size() );
 }

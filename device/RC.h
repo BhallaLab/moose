@@ -66,7 +66,7 @@ class RC{
     double state_;
     double inject_;
     double msg_inject_;
-    double exp_;
+    double expTau_;
     double dt_tau_;
 };
 

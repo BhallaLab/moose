@@ -23,6 +23,7 @@
 #include "../biophysics/ChanBase.h"
 #include "../biophysics/ChanCommon.h"
 #include "../biophysics/HHChannel.h"
+#include "../biophysics/CaConc.h"
 #include "ZombieHHChannel.h"
 #include "../shell/Shell.h"
 
@@ -192,6 +193,11 @@ HSolve::HSolve()
     ;
 }
 
+HSolve::~HSolve()
+{
+    unzombify();
+}
+
 
 ///////////////////////////////////////////////////
 // Dest function definitions
@@ -215,23 +221,48 @@ void HSolve::zombify( Eref hsolve ) const
 
     for ( i = compartmentId_.begin(); i != compartmentId_.end(); ++i )
 		temp.push_back( ObjId( *i, 0 ) );
-    for ( i = compartmentId_.begin(); i != compartmentId_.end(); ++i )
+    for ( i = compartmentId_.begin(); i != compartmentId_.end(); ++i ) {
         CompartmentBase::zombify( i->eref().element(),
 					   ZombieCompartment::initCinfo(), hsolve.id() );
+	}
 
 	temp.clear();
     for ( i = caConcId_.begin(); i != caConcId_.end(); ++i )
 		temp.push_back( ObjId( *i, 0 ) );
 	// Shell::dropClockMsgs( temp, "process" );
-    for ( i = caConcId_.begin(); i != caConcId_.end(); ++i )
+    for ( i = caConcId_.begin(); i != caConcId_.end(); ++i ) {
         CaConcBase::zombify( i->eref().element(), ZombieCaConc::initCinfo(), hsolve.id() );
+	}
 
 	temp.clear();
     for ( i = channelId_.begin(); i != channelId_.end(); ++i )
 		temp.push_back( ObjId( *i, 0 ) );
-    for ( i = channelId_.begin(); i != channelId_.end(); ++i )
+    for ( i = channelId_.begin(); i != channelId_.end(); ++i ) {
         HHChannelBase::zombify( i->eref().element(),
 						ZombieHHChannel::initCinfo(), hsolve.id() );
+	}
+}
+
+void HSolve::unzombify() const
+{
+    vector< Id >::const_iterator i;
+
+    for ( i = compartmentId_.begin(); i != compartmentId_.end(); ++i )
+		if ( i->element() ) {
+        	CompartmentBase::zombify( i->eref().element(),
+					   Compartment::initCinfo(), Id() );
+		}
+
+    for ( i = caConcId_.begin(); i != caConcId_.end(); ++i )
+		if ( i->element() ) {
+        	CaConcBase::zombify( i->eref().element(), CaConc::initCinfo(), Id() );
+		}
+
+    for ( i = channelId_.begin(); i != channelId_.end(); ++i )
+		if ( i->element() ) {
+        	HHChannelBase::zombify( i->eref().element(),
+						HHChannel::initCinfo(), Id() );
+		}
 }
 
 void HSolve::setup( Eref hsolve )

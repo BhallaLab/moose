@@ -195,6 +195,7 @@ void makeSolverOnCompt( Shell* s, const vector< ObjId >& compts,
 		Field< Id >::set( stoich, "ksolve", ksolve );
 		Field< string >::set( stoich, "path", simpath );
 	}
+	/* Not needed now that we use xfer pools to cross compartments.
 	if ( stoichVec.size() == 2 ) {
 		SetGet1< Id >::set( stoichVec[1], "buildXreacs", stoichVec[0] );
 	}
@@ -206,6 +207,7 @@ void makeSolverOnCompt( Shell* s, const vector< ObjId >& compts,
 					i = stoichVec.begin(); i != stoichVec.end(); ++i ) {
 		SetGet0::set( *i, "filterXreacs" );
 	}
+	*/
 }
 
 void setMethod( Shell* s, Id mgr, double simdt, double plotdt,
@@ -286,31 +288,9 @@ Id ReadKkit::read(
 	assignEnzCompartments();
 	assignMMenzCompartments();
 
-	/*
-	if ( moveOntoCompartment_ ) {
-		assignPoolCompartments();
-		assignReacCompartments();
-		assignEnzCompartments();
-		assignMMenzCompartments();
-	}
-	*/
-
 	convertParametersToConcUnits();
 
-	// s->doSetClock( 8, plotdt_ );
-
-	// string plotpath = basePath_ + "/graphs/##[TYPE=Table]," + basePath_ + "/moregraphs/##[TYPE=Table]";
-	// s->doUseClock( plotpath, "process", 8 );
-
 	setMethod( s, mgr, simdt_, plotdt_, method );
-	/*
-	if ( !moveOntoCompartment_ ) {
-		assignPoolCompartments();
-		assignReacCompartments();
-		assignEnzCompartments();
-		assignMMenzCompartments();
-	}
-	*/
 
 	//Harsha: Storing solver and runtime at model level rather than model level
 	Id kinetics( basePath_+"/kinetics");
@@ -332,15 +312,6 @@ void ReadKkit::run()
 	shell_->doSetClock( 16, plotdt_ );
 	shell_->doSetClock( 17, plotdt_ );
 	shell_->doSetClock( 18, plotdt_ );
-	/*
-	string poolpath = basePath_ + "/kinetics/##[ISA=Pool]";
-	string reacpath = basePath_ + "/kinetics/##[ISA!=Pool]";
-	string plotpath = basePath_ + "/graphs/##[TYPE=Table]," +
-		basePath_ + "/moregraphs/##[TYPE=Table]";
-	shell_->doUseClock( reacpath, "process", 4 );
-	shell_->doUseClock( poolpath, "process", 5 );
-	shell_->doUseClock( plotpath, "process", 8 );
-	*/
 	shell_->doReinit();
 	if ( useVariableDt_ ) {
 		shell_->doSetClock( 11, fastdt_ );
@@ -540,16 +511,33 @@ string ReadKkit::cleanPath( const string& path ) const
 	// which later created a problem as the same name exist in moose when minus
 	// was replaced with underscore.
 	//So replacing minus with _minus_ like I do in SBML
-	string ret = path;
+	size_t Iindex = 0;
+	string cleanDigit="/";
+	while(true)
+	{ 
+	  	size_t sindex = path.find('/',Iindex+1);
+	  	if (sindex == string::npos) 
+		{	if (isdigit((path.substr(Iindex+1,sindex-Iindex-1))[0]) )
+		       	cleanDigit += '_' ;
+		    cleanDigit += path.substr(Iindex+1,sindex-Iindex-1);
+			break;
+		}
+	  	if (isdigit((path.substr(Iindex+1,sindex-Iindex-1))[0]))
+        	cleanDigit+='_';
+	  	cleanDigit += path.substr(Iindex+1,sindex-Iindex);
+		Iindex = sindex; 
+	}
+	string ret = cleanDigit;
+	//string ret = path;
 	string cleanString;
-	for ( unsigned int i = 0; i < path.length(); ++i ) {
+	for ( unsigned int i = 0; i < cleanDigit.length(); ++i ) {
 		char c = ret[i];
 		if ( c == '*' )
 			cleanString += "_p";
 		else if ( c == '[' || c == ']' || c == '@' || c == ' ')
 			cleanString += '_';
 		else if (c == '-')
-			cleanString += "_dash_";
+			cleanString += "_";
 		else
 			cleanString += c;
 	}
@@ -563,8 +551,7 @@ void assignArgs( map< string, int >& argConv, const vector< string >& args )
 }
 
 void ReadKkit::objdump( const vector< string >& args)
-{
-	if ( args[1] == "kpool" )
+{	if ( args[1] == "kpool" )
 		assignArgs( poolMap_, args );
 	else if ( args[1] == "kreac" )
 		assignArgs( reacMap_, args );
@@ -619,8 +606,7 @@ void ReadKkit::textload( const vector< string >& args)
 }
 
 void ReadKkit::undump( const vector< string >& args)
-{
-	if ( args[1] == "kpool" )
+{	if ( args[1] == "kpool" )
 		buildPool( args );
 	else if ( args[1] == "kreac" )
 		buildReac( args );
@@ -973,7 +959,6 @@ Id ReadKkit::buildInfo( Id parent,
 	map< string, int >& m, const vector< string >& args )
 {
 	Id info = shell_->doCreate( "Annotator", parent, "info", 1 );
-	//cout << "parent " << parent << " " << parent.path() << " info " << info.path();
 	assert( info != Id() );
 
 	double x = atof( args[ m[ "x" ] ].c_str() );
@@ -991,7 +976,6 @@ Id ReadKkit::buildGroup( const vector< string >& args )
 {
 	string head;
 	string tail = pathTail( cleanPath( args[2] ), head );
-
 	Id pa = shell_->doFind( head ).id;
 	assert( pa != Id() );
 	Id group = shell_->doCreate( "Neutral", pa, tail, 1 );
@@ -1012,7 +996,7 @@ Id ReadKkit::buildGroup( const vector< string >& args )
  * traffic are originally framed in terms of number of receptors, not conc.
  */
 Id ReadKkit::buildPool( const vector< string >& args )
-{
+{   
 	string head;
 	string clean = cleanPath( args[2] );
 	string tail = pathTail( clean, head );
@@ -1060,7 +1044,6 @@ Id ReadKkit::buildPool( const vector< string >& args )
 	poolVols_[pool] = vol;
 
 	Id info = buildInfo( pool, poolMap_, args );
-
 	/*
 	cout << setw( 20 ) << head << setw( 15 ) << tail << "	" <<
 		setw( 12 ) << nInit << "	" <<

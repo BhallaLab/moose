@@ -70,17 +70,6 @@ public:
     void xferIn( XferInfo& xf,
                  unsigned int voxelIndex, const GssaSystem* g );
 
-    /**
-     * Used during initialization: Takes only the proxy pool values
-     * from the incoming transfer data, and assigns it to the proxy
-     * pools on current solver
-     */
-    void xferInOnlyProxies(
-        const vector< unsigned int >& poolIndex,
-        const vector< double >& values,
-        unsigned int numProxyPools,
-        unsigned int voxelIndex	);
-
     void setStoich( const Stoich* stoichPtr );
 
 private:

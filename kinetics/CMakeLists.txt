@@ -11,6 +11,7 @@ add_library(kinetics
 	Enz.cpp
 	MMenz.cpp
 	Species.cpp
+	ConcChan.cpp
 	ReadKkit.cpp
 	WriteKkit.cpp
 	ReadCspace.cpp

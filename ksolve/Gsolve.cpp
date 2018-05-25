@@ -33,23 +33,6 @@
 
 const unsigned int OFFNODE = ~0;
 
-// static function
-SrcFinfo2< Id, vector< double > >* Gsolve::xComptOut()
-{
-    static SrcFinfo2< Id, vector< double > > xComptOut( "xComptOut",
-            "Sends 'n' of all molecules participating in cross-compartment "
-            "reactions between any juxtaposed voxels between current compt "
-            "and another compartment. This includes molecules local to this "
-            "compartment, as well as proxy molecules belonging elsewhere. "
-            "A(t+1) = (Alocal(t+1) + AremoteProxy(t+1)) - Alocal(t) "
-            "A(t+1) = (Aremote(t+1) + Aproxy(t+1)) - Aproxy(t) "
-            "Then we update A on the respective solvers with: "
-            "Alocal(t+1) = Aproxy(t+1) = A(t+1) "
-            "This is equivalent to sending dA over on each timestep. "
-                                                      );
-    return &xComptOut;
-}
-
 const Cinfo* Gsolve::initCinfo()
 {
     ///////////////////////////////////////////////////////
@@ -161,11 +144,6 @@ const Cinfo* Gsolve::initCinfo()
                                  "Handles initReinit call from Clock",
                                  new ProcOpFunc< Gsolve >( &Gsolve::initReinit ) );
 
-    static DestFinfo xComptIn( "xComptIn",
-                               "Handles arriving pool 'n' values used in cross-compartment "
-                               "reactions.",
-                               new EpFunc2< Gsolve, Id, vector< double > >( &Gsolve::xComptIn )
-                             );
     ///////////////////////////////////////////////////////
     // Shared definitions
     ///////////////////////////////////////////////////////
@@ -188,16 +166,6 @@ const Cinfo* Gsolve::initCinfo()
                              initShared, sizeof( initShared ) / sizeof( const Finfo* )
                            );
 
-    static Finfo* xComptShared[] =
-    {
-        xComptOut(), &xComptIn
-    };
-    static SharedFinfo xCompt( "xCompt",
-                               "Shared message for pool exchange for cross-compartment "
-                               "reactions. Exchanges latest values of all pools that "
-                               "participate in such reactions.",
-                               xComptShared, sizeof( xComptShared ) / sizeof( const Finfo* )
-                             );
     ///////////////////////////////////////////////////////
 
     static Finfo* gsolveFinfos[] =
@@ -210,7 +178,6 @@ const Cinfo* Gsolve::initCinfo()
         &voxelVol,			// DestFinfo
         &proc,				// SharedFinfo
         &init,				// SharedFinfo
-        &xCompt,			// SharedFinfo
         // Here we put new fields that were not there in the Ksolve.
         &useRandInit,		// Value
         &useClockedUpdate,	// Value
@@ -438,6 +405,7 @@ void Gsolve::process( const Eref& e, ProcPtr p )
         dvalues[2] = 0;
         dvalues[3] = stoichPtr_->getNumVarPools();
         dsolvePtr_->getBlock( dvalues );
+        dsolvePtr_->setPrev();
 
         // Here we need to convert to integers, just in case. Normally
         // one would use a stochastic (integral) diffusion method with
@@ -459,31 +427,10 @@ void Gsolve::process( const Eref& e, ProcPtr p )
         }
         setBlock( dvalues );
     }
-    // Second, take the arrived xCompt reac values and update S with them.
-    // Here the roundoff issues are handled by the GssaVoxelPools functions
-    for ( unsigned int i = 0; i < xfer_.size(); ++i )
-    {
-        XferInfo& xf = xfer_[i];
-        // cout << xfer_.size() << "	" << xf.xferVoxel.size() << endl;
-        for ( unsigned int j = 0; j < xf.xferVoxel.size(); ++j )
-        {
-            pools_[xf.xferVoxel[j]].xferIn( xf, j, &sys_ );
-        }
-    }
-    // Third, record the current value of pools as the reference for the
-    // next cycle.
-    for ( unsigned int i = 0; i < xfer_.size(); ++i )
-    {
-        XferInfo& xf = xfer_[i];
-        for ( unsigned int j = 0; j < xf.xferVoxel.size(); ++j )
-        {
-            pools_[xf.xferVoxel[j]].xferOut( j, xf.lastValues, xf.xferPoolIdx );
-        }
-    }
 
-    // Fourth: Fix the rates if we have had any diffusion or xreacs
+    // Third: Fix the rates if we have had any diffusion or xreacs
     // happening. This is very inefficient at this point, need to fix.
-    if ( dsolvePtr_ || xfer_.size() > 0 )
+    if ( dsolvePtr_ )
     {
         for ( vector< GssaVoxelPools >::iterator
                 i = pools_.begin(); i != pools_.end(); ++i )
@@ -491,7 +438,7 @@ void Gsolve::process( const Eref& e, ProcPtr p )
             i->refreshAtot( &sys_ );
         }
     }
-    // Fifth, update the mol #s.
+    // Fourth, update the mol #s.
     // First we advance the simulation.
     size_t nvPools = pools_.size( );
 
@@ -537,6 +484,11 @@ void Gsolve::process( const Eref& e, ProcPtr p )
         kvalues[3] = stoichPtr_->getNumVarPools();
         getBlock( kvalues );
         dsolvePtr_->setBlock( kvalues );
+
+		// Now use the values in the Dsolve to update junction fluxes
+		// for diffusion, channels, and xreacs
+		dsolvePtr_->updateJunctions( p->dt );
+		// Here the Gsolve may need to do something to convert to integers
     }
 }
 
@@ -552,30 +504,7 @@ void Gsolve::reinit( const Eref& e, ProcPtr p )
     {
         i->reinit( &sys_ );
     }
-
-    // Second, take the arrived xCompt reac values and update S with them.
-    // Here the roundoff issues are handled by the GssaVoxelPools functions
-    for ( unsigned int i = 0; i < xfer_.size(); ++i )
-    {
-        const XferInfo& xf = xfer_[i];
-        for ( unsigned int j = 0; j < xf.xferVoxel.size(); ++j )
-        {
-            pools_[xf.xferVoxel[j]].xferInOnlyProxies(
-                xf.xferPoolIdx, xf.values,
-                stoichPtr_->getNumProxyPools(), j );
-        }
-    }
-    // Third, record the current value of pools as the reference for the
-    // next cycle.
-    for ( unsigned int i = 0; i < xfer_.size(); ++i )
-    {
-        XferInfo& xf = xfer_[i];
-        for ( unsigned int j = 0; j < xf.xferVoxel.size(); ++j )
-        {
-            pools_[xf.xferVoxel[j]].xferOut( j, xf.lastValues, xf.xferPoolIdx );
-        }
-    }
-    // Fourth, update the atots.
+    // Second, update the atots.
     for ( vector< GssaVoxelPools >::iterator
             i = pools_.begin(); i != pools_.end(); ++i )
     {
@@ -593,24 +522,7 @@ void Gsolve::reinit( const Eref& e, ProcPtr p )
 // init operations.
 //////////////////////////////////////////////////////////////
 void Gsolve::initProc( const Eref& e, ProcPtr p )
-{
-    if ( !stoichPtr_ )
-        return;
-    // vector< vector< double > > values( xfer_.size() );
-    for ( unsigned int i = 0; i < xfer_.size(); ++i )
-    {
-        XferInfo& xf = xfer_[i];
-        unsigned int size = xf.xferPoolIdx.size() * xf.xferVoxel.size();
-        // values[i].resize( size, 0.0 );
-        vector< double > values( size, 0.0 );
-        for ( unsigned int j = 0; j < xf.xferVoxel.size(); ++j )
-        {
-            unsigned int vox = xf.xferVoxel[j];
-            pools_[vox].xferOut( j, values, xf.xferPoolIdx );
-        }
-        xComptOut()->sendTo( e, xf.ksolve, e.id(), values );
-    }
-}
+{;}
 
 void Gsolve::initReinit( const Eref& e, ProcPtr p )
 {
@@ -619,20 +531,6 @@ void Gsolve::initReinit( const Eref& e, ProcPtr p )
     for ( unsigned int i = 0 ; i < pools_.size(); ++i )
     {
         pools_[i].reinit( &sys_ );
-    }
-    // vector< vector< double > > values( xfer_.size() );
-    for ( unsigned int i = 0; i < xfer_.size(); ++i )
-    {
-        XferInfo& xf = xfer_[i];
-        unsigned int size = xf.xferPoolIdx.size() * xf.xferVoxel.size();
-        xf.lastValues.assign( size, 0.0 );
-        for ( unsigned int j = 0; j < xf.xferVoxel.size(); ++j )
-        {
-            unsigned int vox = xf.xferVoxel[j];
-            pools_[ vox ].xferOut( j, xf.lastValues, xf.xferPoolIdx );
-            // values[i] = xf.lastValues;
-        }
-        xComptOut()->sendTo( e, xf.ksolve, e.id(), xf.lastValues );
     }
 }
 //////////////////////////////////////////////////////////////
@@ -1118,7 +1016,6 @@ void Gsolve::updateVoxelVol( vector< double > vols )
         {
             pools_[i].setVolumeAndDependencies( vols[i] );
         }
-        stoichPtr_->setupCrossSolverReacVols();
         updateRateTerms( ~0U );
     }
 }
@@ -1130,7 +1027,6 @@ void Gsolve::updateRateTerms( unsigned int index )
         // unsigned int numCrossRates = stoichPtr_->getNumRates() - stoichPtr_->getNumCoreRates();
         for ( unsigned int i = 0 ; i < pools_.size(); ++i )
         {
-            // pools_[i].resetXreacScale( numCrossRates );
             pools_[i].updateAllRateTerms( stoichPtr_->getRateTerms(),
                                           stoichPtr_->getNumCoreRates() );
         }

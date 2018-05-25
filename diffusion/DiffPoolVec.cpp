@@ -51,6 +51,12 @@ void DiffPoolVec::setN( unsigned int voxel, double v )
 	n_[ voxel ] = v;
 }
 
+double DiffPoolVec::getPrev( unsigned int voxel ) const
+{
+	assert( voxel < n_.size() );
+	return prev_[ voxel ];
+}
+
 const vector< double >& DiffPoolVec::getNvec() const
 {
 	return n_;
@@ -69,6 +75,11 @@ void DiffPoolVec::setNvec( unsigned int start, unsigned int num,
 	vector< double >::iterator p = n_.begin() + start;
 	for ( unsigned int i = 0; i < num; ++i )
 		*p++ = *q++;
+}
+
+void DiffPoolVec::setPrevVec()
+{
+	prev_ = n_;
 }
 
 double DiffPoolVec::getDiffConst() const
@@ -142,5 +153,5 @@ void DiffPoolVec::advance( double dt )
 void DiffPoolVec::reinit() // Not called by the clock, but by parent.
 {
 	assert( n_.size() == nInit_.size() );
-	n_ = nInit_;
+	prev_ = n_ = nInit_;
 }

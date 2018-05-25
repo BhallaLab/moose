@@ -17,7 +17,6 @@
 #include "VoxelPoolsBase.h"
 #include "VoxelPools.h"
 #include "../mesh/VoxelJunction.h"
-#include "XferInfo.h"
 #include "ZombiePoolInterface.h"
 
 #include "RateTerm.h"
@@ -37,23 +36,6 @@
 #include <thread>
 
 const unsigned int OFFNODE = ~0;
-
-// static function
-SrcFinfo2< Id, vector< double > >* Ksolve::xComptOut()
-{
-    static SrcFinfo2< Id, vector< double > > xComptOut( "xComptOut",
-            "Sends 'n' of all molecules participating in cross-compartment "
-            "reactions between any juxtaposed voxels between current compt "
-            "and another compartment. This includes molecules local to this "
-            "compartment, as well as proxy molecules belonging elsewhere. "
-            "A(t+1) = (Alocal(t+1) + AremoteProxy(t+1)) - Alocal(t) "
-            "A(t+1) = (Aremote(t+1) + Aproxy(t+1)) - Aproxy(t) "
-            "Then we update A on the respective solvers with: "
-            "Alocal(t+1) = Aproxy(t+1) = A(t+1) "
-            "This is equivalent to sending dA over on each timestep. "
-                                                      );
-    return &xComptOut;
-}
 
 const Cinfo* Ksolve::initCinfo()
 {
@@ -193,22 +175,6 @@ const Cinfo* Ksolve::initCinfo()
                              initShared, sizeof( initShared ) / sizeof( const Finfo* )
                            );
 
-    static DestFinfo xComptIn( "xComptIn",
-                               "Handles arriving pool 'n' values used in cross-compartment "
-                               "reactions.",
-                               new EpFunc2< Ksolve, Id, vector< double > >( &Ksolve::xComptIn )
-                             );
-    static Finfo* xComptShared[] =
-    {
-        xComptOut(), &xComptIn
-    };
-    static SharedFinfo xCompt( "xCompt",
-                               "Shared message for pool exchange for cross-compartment "
-                               "reactions. Exchanges latest values of all pools that "
-                               "participate in such reactions.",
-                               xComptShared, sizeof( xComptShared ) / sizeof( const Finfo* )
-                             );
-
     static Finfo* ksolveFinfos[] =
     {
         &method,			// Value
@@ -225,7 +191,6 @@ const Cinfo* Ksolve::initCinfo()
         &estimatedDt,		// ReadOnlyValue
         &stoich,			// ReadOnlyValue
         &voxelVol,			// DestFinfo
-        &xCompt,			// SharedFinfo
         &proc,				// SharedFinfo
         &init,				// SharedFinfo
     };
@@ -542,47 +507,17 @@ void Ksolve::process( const Eref& e, ProcPtr p )
         dvalues[1] = getNumLocalVoxels();
         dvalues[2] = 0;
         dvalues[3] = stoichPtr_->getNumVarPools();
+
         dsolvePtr_->getBlock( dvalues );
-
-        /*
-        vector< double >::iterator i = dvalues.begin() + 4;
-        for ( ; i != dvalues.end(); ++i )
-        	cout << *i << "	" << round( *i ) << endl;
-        getBlock( kvalues );
-        vector< double >::iterator d = dvalues.begin() + 4;
-        for ( vector< double >::iterator
-        		k = kvalues.begin() + 4; k != kvalues.end(); ++k )
-        		*k++ = ( *k + *d )/2.0
-        setBlock( kvalues );
-        */
-        setBlock( dvalues );
-    }
-
-    // Second, take the arrived xCompt reac values and update S with them.
-    for ( unsigned int i = 0; i < xfer_.size(); ++i )
-    {
-        const XferInfo& xf = xfer_[i];
-        // cout << xfer_.size() << "	" << xf.xferVoxel.size() << endl;
-        for ( unsigned int j = 0; j < xf.xferVoxel.size(); ++j )
-        {
-            pools_[xf.xferVoxel[j]].xferIn(
-                xf.xferPoolIdx, xf.values, xf.lastValues, j );
-        }
-    }
-
-    // Third, record the current value of pools as the reference for the
-    // next cycle.
-    for ( unsigned int i = 0; i < xfer_.size(); ++i )
-    {
-        XferInfo& xf = xfer_[i];
-        for ( unsigned int j = 0; j < xf.xferVoxel.size(); ++j )
-            pools_[xf.xferVoxel[j]].xferOut( j, xf.lastValues, xf.xferPoolIdx );
+		// Second, set the prev_ value in DiffPoolVec
+		dsolvePtr_->setPrev();
+        setBlock( dvalues ); 
     }
 
     size_t nvPools = pools_.size( );
 
 #ifdef PARALLELIZE_KSOLVE_WITH_CPP11_ASYNC
-    // Fourth, do the numerical integration for all reactions.
+    // Third, do the numerical integration for all reactions.
     size_t grainSize = min( nvPools, 1 + (nvPools / numThreads_ ) );
     size_t nWorkers = nvPools / grainSize;
 
@@ -615,7 +550,7 @@ void Ksolve::process( const Eref& e, ProcPtr p )
 #endif
 
 
-    // Finally, assemble and send the integrated values off for the Dsolve.
+    // Assemble and send the integrated values off for the Dsolve.
     if ( dsolvePtr_ )
     {
         vector< double > kvalues( 4 );
@@ -625,6 +560,10 @@ void Ksolve::process( const Eref& e, ProcPtr p )
         kvalues[3] = stoichPtr_->getNumVarPools();
         getBlock( kvalues );
         dsolvePtr_->setBlock( kvalues );
+
+		// Now use the values in the Dsolve to update junction fluxes
+		// for diffusion, channels, and xreacs
+        dsolvePtr_->updateJunctions( p->dt );
     }
 }
 
@@ -674,28 +613,6 @@ void Ksolve::reinit( const Eref& e, ProcPtr p )
         return;
     }
 
-    // cout << "************************* path = " << e.id().path() << endl;
-    for ( unsigned int i = 0; i < xfer_.size(); ++i )
-    {
-        const XferInfo& xf = xfer_[i];
-        for ( unsigned int j = 0; j < xf.xferVoxel.size(); ++j )
-        {
-            pools_[xf.xferVoxel[j]].xferInOnlyProxies(
-                xf.xferPoolIdx, xf.values,
-                stoichPtr_->getNumProxyPools(),
-                j );
-        }
-    }
-    for ( unsigned int i = 0; i < xfer_.size(); ++i )
-    {
-        XferInfo& xf = xfer_[i];
-        for ( unsigned int j = 0; j < xf.xferVoxel.size(); ++j )
-        {
-            pools_[xf.xferVoxel[j]].xferOut(
-                j, xf.lastValues, xf.xferPoolIdx );
-        }
-    }
-
 #if PARALLELIZE_KSOLVE_WITH_CPP11_ASYNC
     if( 1 < getNumThreads( ) )
         cout << "Debug: User wants Ksolve with " << numThreads_ << " threads" << endl;
@@ -708,40 +625,12 @@ void Ksolve::reinit( const Eref& e, ProcPtr p )
 //////////////////////////////////////////////////////////////
 void Ksolve::initProc( const Eref& e, ProcPtr p )
 {
-    // vector< vector< double > > values( xfer_.size() );
-    for ( unsigned int i = 0; i < xfer_.size(); ++i )
-    {
-        XferInfo& xf = xfer_[i];
-        unsigned int size = xf.xferPoolIdx.size() * xf.xferVoxel.size();
-        // values[i].resize( size, 0.0 );
-        vector< double > values( size, 0.0 );
-        for ( unsigned int j = 0; j < xf.xferVoxel.size(); ++j )
-        {
-            unsigned int vox = xf.xferVoxel[j];
-            pools_[vox].xferOut( j, values, xf.xferPoolIdx );
-        }
-        xComptOut()->sendTo( e, xf.ksolve, e.id(), values );
-    }
-    // xComptOut()->sendVec( e, values );
 }
 
 void Ksolve::initReinit( const Eref& e, ProcPtr p )
 {
     for ( unsigned int i = 0 ; i < pools_.size(); ++i )
         pools_[i].reinit( p->dt );
-
-    for ( unsigned int i = 0; i < xfer_.size(); ++i )
-    {
-        XferInfo& xf = xfer_[i];
-        unsigned int size = xf.xferPoolIdx.size() * xf.xferVoxel.size();
-        xf.lastValues.assign( size, 0.0 );
-        for ( unsigned int j = 0; j < xf.xferVoxel.size(); ++j )
-        {
-            unsigned int vox = xf.xferVoxel[j];
-            pools_[ vox ].xferOut( j, xf.lastValues, xf.xferPoolIdx );
-        }
-        xComptOut()->sendTo( e, xf.ksolve, e.id(), xf.lastValues );
-    }
 }
 
 /**
@@ -919,7 +808,6 @@ void Ksolve::updateVoxelVol( vector< double > vols )
         {
             pools_[i].setVolumeAndDependencies( vols[i] );
         }
-        stoichPtr_->setupCrossSolverReacVols();
         updateRateTerms( ~0U );
     }
 }
@@ -944,25 +832,5 @@ void Ksolve::print() const
     cout << "method = " << method_ << ", stoich=" << stoich_.path() <<endl;
     cout << "dsolve = " << dsolve_.path() << endl;
     cout << "compartment = " << compartment_.path() << endl;
-    cout << "xfer summary: numxfer = " << xfer_.size() << "\n";
-    for ( unsigned int i = 0; i < xfer_.size(); ++i )
-    {
-        cout << "xfer_[" << i << "] numValues=" <<
-             xfer_[i].values.size() <<
-             ", xferPoolIdx.size = " << xfer_[i].xferPoolIdx.size() <<
-             ", xferVoxel.size = " << xfer_[i].xferVoxel.size() << endl;
-    }
-    cout << "xfer details:\n";
-    for ( unsigned int i = 0; i < xfer_.size(); ++i )
-    {
-        cout << "xfer_[" << i << "] xferPoolIdx=\n";
-        const vector< unsigned int>& xi = xfer_[i].xferPoolIdx;
-        for ( unsigned int j = 0; j << xi.size(); ++j )
-            cout << "	" << xi[j];
-        cout << "\nxfer_[" << i << "] xferVoxel=\n";
-        const vector< unsigned int>& xv = xfer_[i].xferVoxel;
-        for ( unsigned int j = 0; j << xv.size(); ++j )
-            cout << "	" << xv[j];
-    }
 }
 
