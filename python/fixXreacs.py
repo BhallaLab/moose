@@ -181,7 +181,7 @@ def restoreXreacs( basepath ):
         #print( "Deleting {}".format( i.parent.path ) )
         #print msgs
         moose.delete( i.parent )
-        for j in msgs:
+        for j in msgs[1:]:
             if len( j ) > 0:
                 args = j.split( ' ' )
                 assert( len( args ) == 4 )

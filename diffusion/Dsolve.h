@@ -96,7 +96,7 @@ class Dsolve: public ZombiePoolInterface
 		 * the junction between any specified pair of Dsolves.
 		 * Note that it builds the junction on the 'self' Dsolve.
 		 */
-		void innerBuildMeshJunctions( Id self, Id other, 
+		static void innerBuildMeshJunctions( Id self, Id other, 
 						bool isMembraneBound );
 
 		/// Sets up map of matching pools for diffusion.
@@ -107,7 +107,8 @@ class Dsolve: public ZombiePoolInterface
 						vector< unsigned int >& srcPools, 
 						vector< unsigned int >& destPools,
 						Id src, Id dest );
-		void mapChansBetweenDsolves( DiffJunction& jn, Id self, Id other);
+		static void mapChansBetweenDsolves( DiffJunction& jn, 
+						Id self, Id other);
 
 		/**
 		 * Computes flux through a junction between diffusion solvers.

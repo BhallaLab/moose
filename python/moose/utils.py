@@ -23,7 +23,6 @@ import re
 
 from moose.moose_constants import *
 from moose.print_utils import *
-
 # Print and Plot utilities.
 try:
     from moose.plot_utils import *
@@ -341,7 +340,10 @@ def autoposition(root):
         stack.extend([childcomp for childcomp in map(moose.element, comp.neighbors['raxial']) if childcomp.z == 0])
     return ret
 
-
+def loadModel(filename, target,method='ee'):
+    moose.loadModel(filename,target)
+    moose.mooseaddChemSolver(target,method)
+	
 def readcell_scrambled(filename, target, method='ee'):
     """A special version for handling cases where a .p file has a line
     with specified parent yet to be defined.

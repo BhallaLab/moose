@@ -278,10 +278,12 @@ void writePlot( ofstream& fout, Id id,
 {
 	string path = id.path();
 	size_t pos = path.find( "/graphs" );
-	if ( pos == string::npos )
+	if ( pos == string::npos ) {
 		pos = path.find( "/moregraphs" );
-		if ( pos == string::npos )
+		if ( pos == string::npos ) {
 			return;
+		}
+	}
 	path = path.substr( pos );
 	fout << "simundump xplot " << path << " 3 524288 \\\n" <<
 	"\"delete_plot.w <s> <d>; edit_plot.D <w>\" " << textcolour << " 0 0 1\n";
