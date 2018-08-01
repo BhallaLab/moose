@@ -1,17 +1,13 @@
-**Rdesigneur: Building multiscale models**
+==========================================
+Rdesigneur: Building multiscale models
 ==========================================
 
-.. Upi Bhalla
+| Author:        Upi Bhalla
+| Date:         Aug 26 2016, 
+| Last-Updated: July 31 2018
+| By:	        Upi Bhalla
 
-.. Aug 26 2016. Updated July 2018
-
-.. --------------
-
-Contents
---------
-
-.. contents::
-   :depth: 3
+------------------------------
 
 Introduction
 ------------
