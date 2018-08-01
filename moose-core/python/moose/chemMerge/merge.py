@@ -12,7 +12,7 @@
 #**           copyright (C) 2003-2017 Upinder S. Bhalla. and NCBS
 #Created : Friday Dec 16 23:19:00 2016(+0530)
 #Version
-#Last-Updated: Wed Oct 25 16:25:33 2017(+0530)
+#Last-Updated: Wed May 21 11:52:33 2018(+0530)
 #         By: Harsha
 #**********************************************************************/
 
@@ -36,17 +36,21 @@
 #       --- if same Enz Name and same sub and prd then nothing is copied
 #       --- if same Enz Name but sub or prd is different then duplicated and copied
 #   -- Function are copied only if destination pool to which its suppose to connect doesn't exist with function of its own
+#       which is a limitation in moose that no function can be connected to same pool
 #
 '''
 Change log
-Oct 25: line to load SBML file was commented, which is uncommented now and also while copying MMenz had a problem which also cleaned up
-Oct 14: absolute import with mtypes just for python3
+May 21 : Instead of A and B changed to S and D (source and destination), 
+        - at Pool level Neutral and its objected where copied, but again at Enz and Reac level copying was done which caused duplicates which is taken care
+        - If Neutral object name is changed for destination, then change made to source file which would be easy to copy else path issue will come
+Oct 25 : line to load SBML file was commented, which is uncommented now and also while copying MMenz had a problem which also cleaned up
+Oct 14 : absolute import with mtypes just for python3
 
-Oct 12: clean way of cheking the type of path provided, filepath,moose obj, moose path are taken,
+Oct 12 : clean way of cheking the type of path provided, filepath,moose obj, moose path are taken,
         if source is empty then nothing to copy, 
         if destination was empty list is update with new object
 
-Oct 11: missing group are copied instead of creating one in new path which also copies Annotator info
+Oct 11 : missing group are copied instead of creating one in new path which also copies Annotator info
         earlier if user asked to save the model, it was saving default to kkit format, now user need to run the command to save (if this is run in command)
         To check: When Gui is allowed to merge 2 models, need to see what happens
 
@@ -113,34 +117,33 @@ def mergeChemModel(src,des):
         grpNotcopiedyet = []
         dictComptA = dict( [ (i.name,i) for i in moose.wildcardFind(modelA+'/##[ISA=ChemCompt]') ] )
         dictComptB = dict( [ (i.name,i) for i in moose.wildcardFind(modelB+'/##[ISA=ChemCompt]') ] )
+                
         poolNotcopiedyet = []
         if len(dictComptA):
             for key in list(dictComptA.keys()):
                 if key not in dictComptB:
-                    # if compartmentname from modelB does not exist in modelA, then copy
+                    # if compartment name from modelB does not exist in modelA, then copy
                     copy = moose.copy(dictComptA[key],moose.element(modelB))
+
                     dictComptB[key]=moose.element(copy)
                 else:
-                    #if compartmentname from modelB exist in modelA,
+                    #if compartment name from modelB exist in modelA,
                     #volume is not same, then change volume of ModelB same as ModelA
                     if abs(dictComptB[key].volume - dictComptA[key].volume):
                         #hack for now
                         while (abs(dictComptB[key].volume - dictComptA[key].volume) != 0.0):
                             dictComptA[key].volume = float(dictComptB[key].volume)
                     dictComptB = dict( [ (i.name,i) for i in moose.wildcardFind(modelB+'/##[ISA=ChemCompt]') ] )
-
+                    
                     #Mergering pool
-                    poolMerge(dictComptB[key],dictComptA[key],poolNotcopiedyet)
+                    poolMerge(dictComptA[key],dictComptB[key],poolNotcopiedyet)
 
-            if grpNotcopiedyet:
-                # objA = moose.element(comptA).parent.name
-                # if not moose.exists(objA+'/'+comptB.name+'/'+bpath.name):
-                #   print bpath
-                #   moose.copy(bpath,moose.element(objA+'/'+comptB.name))
-                pass
+            
             comptBdict =  comptList(modelB)
+
             poolListinb = {}
             poolListinb = updatePoolList(comptBdict)
+            
             R_Duplicated, R_Notcopiedyet,R_Daggling = [], [], []
             E_Duplicated, E_Notcopiedyet,E_Daggling = [], [], []
             for key in list(dictComptA.keys()):
@@ -148,27 +151,27 @@ def mergeChemModel(src,des):
                 funcExist,funcNotallowed = functionMerge(dictComptB,dictComptA,key)
 
                 poolListinb = updatePoolList(dictComptB)
-                R_Duplicated,R_Notcopiedyet,R_Daggling = reacMerge(dictComptB,dictComptA,key,poolListinb)
+                R_Duplicated,R_Notcopiedyet,R_Daggling = reacMerge(dictComptA,dictComptB,key,poolListinb)
 
                 poolListinb = updatePoolList(dictComptB)
                 E_Duplicated,E_Notcopiedyet,E_Daggling = enzymeMerge(dictComptB,dictComptA,key,poolListinb)
-            '''
-            if isinstance(src, str):
-                if os.path.isfile(src) == True:
-                    spath, sfile = os.path.split(src)
-                else:
-                    sfile = src
-            else:
-                sfile = src
-            if isinstance(des, str):
-                print " A str",des
-                if os.path.isfile(des) == True:
-                    dpath, dfile = os.path.split(des)
-                else:
-                    dfile = des
-            else:
-                dfile = des
-            '''
+            
+            # if isinstance(src, str):
+            #     if os.path.isfile(src) == True:
+            #         spath, sfile = os.path.split(src)
+            #     else:
+            #         sfile = src
+            # else:
+            #     sfile = src
+            # if isinstance(des, str):
+            #     print " A str",des
+            #     if os.path.isfile(des) == True:
+            #         dpath, dfile = os.path.split(des)
+            #     else:
+            #         dfile = des
+            # else:
+            #     dfile = des
+            
             print("\nThe content of %s (src) model is merged to %s (des)." %(sfile, dfile))
             # Here any error or warning during Merge is written it down
             if funcExist:
@@ -216,6 +219,7 @@ def mergeChemModel(src,des):
                     print ("Enzyme:")
                     for ed in list(E_Daggling):
                         print ("%s " %str(ed.name))
+            
             ## Model is saved
             print ("\n ")
             print ('\nMerged model is available under moose.element(\'%s\')' %(modelB))
@@ -249,6 +253,7 @@ def mergeChemModel(src,des):
             #     print ('  If you are in python terminal you could save \n   >moose.mooseWriteKkit(\'%s\',\'filename.g\')' %(modelB))
             #     print ('  If you are in python terminal you could save \n   >moose.mooseWriteSBML(\'%s\',\'filename.g\')' %(modelB))
             #return modelB
+        
     else:
         print ('\nSource file has no objects to copy(\'%s\')' %(modelA))
         return moose.element('/')
@@ -375,62 +380,72 @@ def deleteSolver(modelRoot):
             if moose.exists((st_ksolve).path):
                 moose.delete(st_ksolve)
 
-def poolMerge(comptA,comptB,poolNotcopiedyet):
-
-    aCmptGrp = moose.wildcardFind(comptA.path+'/#[TYPE=Neutral]')
-    aCmptGrp = aCmptGrp +(moose.element(comptA.path),)
-
-    bCmptGrp = moose.wildcardFind(comptB.path+'/#[TYPE=Neutral]')
-    bCmptGrp = bCmptGrp +(moose.element(comptB.path),)
-
-    objA = moose.element(comptA.path).parent.name
-    objB = moose.element(comptB.path).parent.name
-    for bpath in bCmptGrp:
-        grp_cmpt = ((bpath.path).replace(objB,objA)).replace('[0]','')
-        if moose.exists(grp_cmpt) :
-            if moose.element(grp_cmpt).className != bpath.className:
+def poolMerge(comptS,comptD,poolNotcopiedyet):
+    #Here from source file all the groups are check if exist, if doesn't exist then create those groups
+    #Then for that group pools are copied
+    SCmptGrp = moose.wildcardFind(comptS.path+'/#[TYPE=Neutral]')
+    SCmptGrp = SCmptGrp +(moose.element(comptS.path),)
+    
+    DCmptGrp = moose.wildcardFind(comptD.path+'/#[TYPE=Neutral]')
+    DCmptGrp = DCmptGrp +(moose.element(comptD.path),)
+    
+    objS = moose.element(comptS.path).parent.name
+    objD = moose.element(comptD.path).parent.name
+    
+    for spath in SCmptGrp:
+        grp_cmpt = ((spath.path).replace(objS,objD)).replace('[0]','')
+        if moose.exists(grp_cmpt):
+            #If path exist, but its not the Neutral obj then creating a neutral obj with _grp
+            #It has happened that pool, reac, enz name might exist with the same name, which when tried to create a group
+            # it silently ignored the path and object copied under that pool instead of Group
+            if moose.element(grp_cmpt).className != spath.className:
                 grp_cmpt = grp_cmpt+'_grp'
-                bpath.name = bpath.name+"_grp"
-                l = moose.Neutral(grp_cmpt)
+                moose.Neutral(grp_cmpt)
+                # If group name is changed while creating in destination, then in source file the same is changed,
+                # so that later path issue doens't come 
+                spath.name = spath.name+'_grp'
         else:
-            #moose.Neutral(grp_cmpt)
-            src = bpath
-            srcpath = (bpath.parent).path
-            des = srcpath.replace(objB,objA)
-            moose.copy(bpath,moose.element(des))
-
-        apath = moose.element(bpath.path.replace(objB,objA))
-
-        bpoollist = moose.wildcardFind(bpath.path+'/#[ISA=PoolBase]')
-        apoollist = moose.wildcardFind(apath.path+'/#[ISA=PoolBase]')
-        for bpool in bpoollist:
-            if bpool.name not in [apool.name for apool in apoollist]:
-                copied = copy_deleteUnlyingPoolObj(bpool,apath)
+            #Neutral obj from src if doesn't exist in destination,then create src's Neutral obj in des
+            src = spath
+            srcpath = (spath.parent).path
+            des = srcpath.replace(objS,objD)
+            moose.Neutral(moose.element(des).path+'/'+spath.name)
+        
+        dpath = moose.element(spath.path.replace(objS,objD))
+        spoollist = moose.wildcardFind(spath.path+'/#[ISA=PoolBase]')
+        dpoollist = moose.wildcardFind(dpath.path+'/#[ISA=PoolBase]')
+        #check made, for a given Neutral or group if pool doesn't exist then copied
+        # but some pool if enzyme cplx then there are holded untill that enzyme is copied in
+        # `enzymeMerge` function        
+        for spool in spoollist:
+            if spool.name not in [dpool.name for dpool in dpoollist]:
+                copied = copy_deleteUnlyingPoolObj(spool,dpath)
                 if copied == False:
                     #hold it for later, this pool may be under enzyme, as cplx
-                    poolNotcopiedyet.append(bpool)
-
+                    poolNotcopiedyet.append(spool)
+    
 def copy_deleteUnlyingPoolObj(pool,path):
     # check if this pool is under compartement or under enzyme?(which is enzyme_cplx)
     # if enzyme_cplx then don't copy untill this perticular enzyme is copied
-    # case: This enzyme_cplx might exist in modelA if enzyme exist
-    # which will automatically copie's the pool
+    # case: This enzyme_cplx might exist in modelA if enzyme exist then this
+    # will automatically copie's the pool
     copied = False
 
     if pool.parent.className not in ["Enz","ZombieEnz","MMenz","ZombieMMenz"]:
-        poolcopied = moose.copy(pool,path)
-        copied = True
-        # deleting function and enzyme which gets copied if exist under pool
-        # This is done to ensure daggling function / enzyme not copied.
-        funclist = []
-        for types in ['setConc','setN','increment']:
-            funclist.extend(moose.element(poolcopied).neighbors[types])
+         if path.className in ["Neutral","CubeMesh","CyclMesh"]:
+            poolcopied = moose.copy(pool,path)
+            copied = True
+            # deleting function and enzyme which gets copied if exist under pool
+            # This is done to ensure daggling function / enzyme not copied.
+            funclist = []
+            for types in ['setConc','setN','increment']:
+                funclist.extend(moose.element(poolcopied).neighbors[types])
 
-        for fl in funclist:
-            moose.delete(fl)
-        enzlist = moose.element(poolcopied).neighbors['reac']
-        for el in list(set(enzlist)):
-            moose.delete(el.path)
+            for fl in funclist:
+                moose.delete(fl)
+            enzlist = moose.element(poolcopied).neighbors['reac']
+            for el in list(set(enzlist)):
+                moose.delete(el.path)
     return copied
 
 def updatePoolList(comptAdict):
@@ -439,88 +454,90 @@ def updatePoolList(comptAdict):
         poolListina[key] = plist
     return poolListina
 
-def enzymeMerge(comptA,comptB,key,poolListina):
+def enzymeMerge(comptD,comptS,key,poolListind):
     war_msg = ""
     RE_Duplicated, RE_Notcopiedyet, RE_Daggling = [], [], []
-    comptApath = moose.element(comptA[key]).path
-    comptBpath = moose.element(comptB[key]).path
-    objA = moose.element(comptApath).parent.name
-    objB = moose.element(comptBpath).parent.name
-    enzyListina = moose.wildcardFind(comptApath+'/##[ISA=EnzBase]')
-    enzyListinb = moose.wildcardFind(comptBpath+'/##[ISA=EnzBase]')
-    for eb in enzyListinb:
-        eBsubname, eBprdname = [],[]
-        eBsubname = subprdList(eb,"sub")
-        eBprdname = subprdList(eb,"prd")
+    comptDpath = moose.element(comptD[key]).path
+    comptSpath = moose.element(comptS[key]).path
+    objD = moose.element(comptDpath).parent.name
+    objS = moose.element(comptSpath).parent.name
+    #nzyListina => enzyListind
+
+    enzyListind = moose.wildcardFind(comptDpath+'/##[ISA=EnzBase]')
+    enzyListins = moose.wildcardFind(comptSpath+'/##[ISA=EnzBase]')
+    for es in enzyListins:
+        eSsubname, eSprdname = [],[]
+        eSsubname = subprdList(es,"sub")
+        eSprdname = subprdList(es,"prd")
         allexists, allexistp = False, False
         allclean = False
 
-        poolinAlist = poolListina[findCompartment(eb).name]
-        for pA in poolinAlist:
-            if eb.parent.name == pA.name:
-                eapath = eb.parent.path.replace(objB,objA)
+        poolinDlist = poolListind[findCompartment(es).name]
+        for pD in poolinDlist:
+            if es.parent.name == pD.name:
+                edpath = es.parent.path.replace(objS,objD)
 
-                if not moose.exists(eapath+'/'+eb.name):
+                if not moose.exists(edpath+'/'+es.name):
                     #This will take care
                     #  -- If same enzparent name but different enzyme name
                     #  -- or different parent/enzyme name
-                    if eBsubname and eBprdname:
-                        allexists = checkexist(eBsubname,objB,objA)
-                        allexistp = checkexist(eBprdname,objB,objA)
+                    if eSsubname and eSprdname:
+                        allexists = checkexist(eSsubname,objS,objD)
+                        allexistp = checkexist(eSprdname,objS,objD)
                         if allexists and allexistp:
-                            enzPool = moose.element(pA.path)
-                            eapath = eb.parent.path.replace(objB,objA)
-                            enz = moose.element(moose.copy(eb,moose.element(eapath)))
+                            enzPool = moose.element(pD.path)
+                            edpath = es.parent.path.replace(objS,objD)
+                            enz = moose.element(moose.copy(es,moose.element(edpath)))
                             enzPool = enz.parent
-                            if eb.className in ["ZombieEnz","Enz"]:
+                            if es.className in ["ZombieEnz","Enz"]:
                                 moose.connect(moose.element(enz),"enz",enzPool,"reac")
-                            if eb.className in ["ZombieMMenz","MMenz"]:
+                            if es.className in ["ZombieMMenz","MMenz"]:
                                 moose.connect(enzPool,"nOut",enz,"enzDest")
-                            connectObj(enz,eBsubname,"sub",comptA,war_msg)
-                            connectObj(enz,eBprdname,"prd",comptA,war_msg)
+                            connectObj(enz,eSsubname,"sub",comptD,war_msg)
+                            connectObj(enz,eSprdname,"prd",comptD,war_msg)
                             allclean = True
                         else:
                             # didn't find sub or prd for this Enzyme
-                            RE_Notcopiedyet.append(eb)
+                            RE_Notcopiedyet.append(es)
                     else:
                         #   -- it is dagging reaction
-                        RE_Daggling.append(eb)
+                        RE_Daggling.append(es)
                 else:
                     #Same Enzyme name
                     #   -- Same substrate and product including same volume then don't copy
                     #   -- different substrate/product or if sub/prd's volume is different then DUPLICATE the Enzyme
                     allclean = False
-                    ea = moose.element(eb.path.replace(objB,objA))
-                    eAsubname = subprdList(ea,"sub")
-                    eBsubname = subprdList(eb,"sub")
-                    hasSamenoofsublen,hasSameS,hasSamevols = same_len_name_vol(eAsubname,eBsubname)
+                    ed = moose.element(es.path.replace(objS,objD))
+                    eDsubname = subprdList(ed,"sub")
+                    eSsubname = subprdList(es,"sub")
+                    hasSamenoofsublen,hasSameS,hasSamevols = same_len_name_vol(eDsubname,eSsubname)
 
-                    eAprdname = subprdList(ea,"prd")
-                    eBprdname = subprdList(eb,"prd")
-                    hasSamenoofprdlen,hasSameP,hasSamevolp = same_len_name_vol(eAprdname,eBprdname)
+                    eDprdname = subprdList(ed,"prd")
+                    eSprdname = subprdList(es,"prd")
+                    hasSamenoofprdlen,hasSameP,hasSamevolp = same_len_name_vol(eDprdname,eSprdname)
                     if not all((hasSamenoofsublen,hasSameS,hasSamevols,hasSamenoofprdlen,hasSameP,hasSamevolp)):
                         # May be different substrate or product or volume of Sub/prd may be different,
                         # Duplicating the enzyme
-                        if eBsubname and eBprdname:
+                        if eSsubname and eSprdname:
                             allexists,allexistp = False,False
-                            allexists = checkexist(eBsubname,objB,objA)
-                            allexistp = checkexist(eBprdname,objB,objA)
+                            allexists = checkexist(eSsubname,objS,objD)
+                            allexistp = checkexist(eSprdname,objS,objD)
                             if allexists and allexistp:
-                                eb.name = eb.name+"_duplicated"
-                                if eb.className in ["ZombieEnz","Enz"]:
-                                    eapath = eb.parent.path.replace(objB,objA)
-                                    enz = moose.copy(eb,moose.element(eapath))
-                                    moose.connect(enz, 'enz', eapath, 'reac' )
+                                es.name = es.name+"_duplicated"
+                                if es.className in ["ZombieEnz","Enz"]:
+                                    edpath = es.parent.path.replace(objS,objD)
+                                    enz = moose.copy(es,moose.element(edpath))
+                                    moose.connect(enz, 'enz', edpath, 'reac' )
 
-                                if eb.className in ["ZombieMMenz","MMenz"]:
-                                    eapath = eb.parent.path.replace(objB,objA)
-                                    enz = moose.copy(eb,moose.element(eapath))
+                                if es.className in ["ZombieMMenz","MMenz"]:
+                                    edpath = es.parent.path.replace(objS,objD)
+                                    enz = moose.copy(es,moose.element(edpath))
                                     enzinfo = moose.Annotator(enz.path+'/info')
                                     moose.connect(moose.element(enz).parent,"nOut",moose.element(enz),"enzDest")
                                     #moose.connect(moose.element(enz),"enz",moose.element(enz).parent,"reac")
 
-                                connectObj(enz,eBsubname,"sub",comptA,war_msg)
-                                connectObj(enz,eBprdname,"prd",comptA,war_msg)
+                                connectObj(enz,eSsubname,"sub",comptD,war_msg)
+                                connectObj(enz,eSprdname,"prd",comptD,war_msg)
                                 RE_Duplicated.append(enz)
                                 allclean = True
                             else:
@@ -531,51 +548,53 @@ def enzymeMerge(comptA,comptB,key,poolListina):
                     if not allclean:
                         # didn't find sub or prd for this enzyme
                         #   --  it may be connected Enzyme cplx
-                        if eBsubname and eBprdname:
-                            RE_Notcopiedyet.append(eb)
+                        if eSsubname and eSprdname:
+                            RE_Notcopiedyet.append(es)
                         else:
-                            RE_Daggling.append(eb)
+                            RE_Daggling.append(es)
 
     return RE_Duplicated,RE_Notcopiedyet,RE_Daggling
 
-def reacMerge(comptA,comptB,key,poolListina):
+def reacMerge(comptS,comptD,key,poolListina):
     RE_Duplicated, RE_Notcopiedyet, RE_Daggling = [], [], []
     war_msg = ""
-    comptApath = moose.element(comptA[key]).path
-    comptBpath = moose.element(comptB[key]).path
-    objA = moose.element(comptApath).parent.name
-    objB = moose.element(comptBpath).parent.name
-    reacListina = moose.wildcardFind(comptApath+'/##[ISA=ReacBase]')
-    reacListinb = moose.wildcardFind(comptBpath+'/##[ISA=ReacBase]')
-    for rb in reacListinb:
-        rBsubname, rBprdname = [],[]
-        rBsubname = subprdList(rb,"sub")
-        rBprdname = subprdList(rb,"prd")
+    comptSpath = moose.element(comptS[key]).path
+    comptDpath = moose.element(comptD[key]).path
+    objS = moose.element(comptSpath).parent.name
+    objD = moose.element(comptDpath).parent.name
+    
+    reacListins = moose.wildcardFind(comptSpath+'/##[ISA=ReacBase]')
+    reacListind = moose.wildcardFind(comptDpath+'/##[ISA=ReacBase]')
+    
+    for rs in reacListins:
+        rSsubname, rSprdname = [],[]
+        rSsubname = subprdList(rs,"sub")
+        rSprdname = subprdList(rs,"prd")
         allexists, allexistp = False, False
         allclean = False
 
-        if rb.name not in [ra.name for ra in reacListina]:
+        if rs.name not in [rd.name for rd in reacListind]:
             # reaction name not found then copy
             # And assuming that pools are copied earlier EXPECT POOL CPLX
-            #To be assured the it takes correct compartment name incase reaction sub's
-            #belongs to different compt
-            key = findCompartment(rb).name
-            if rBsubname and rBprdname:
-                allexists =  checkexist(rBsubname,objB,objA)
-                allexistp = checkexist(rBprdname,objB,objA)
+            # To be assured the it takes correct compartment name incase reaction sub's
+            # belongs to different compt
+            key = findCompartment(rs).name
+            if rSsubname and rSprdname:
+                allexists =  checkexist(rSsubname,objS,objD)
+                allexistp =  checkexist(rSprdname,objS,objD)
                 if allexists and allexistp:
-                    rapath = rb.parent.path.replace(objB,objA)
-                    reac = moose.copy(rb,moose.element(rapath))
-                    connectObj(reac,rBsubname,"sub",comptA,war_msg)
-                    connectObj(reac,rBprdname,"prd",comptA,war_msg)
+                    rdpath = rs.parent.path.replace(objS,objD)
+                    reac = moose.copy(rs,moose.element(rdpath))
+                    connectObj(reac,rSsubname,"sub",comptD,war_msg)
+                    connectObj(reac,rSprdname,"prd",comptD,war_msg)
                     allclean = True
                 else:
                     # didn't find sub or prd for this reaction
                     #   --  it may be connected Enzyme cplx
-                    RE_Notcopiedyet.append(rb)
+                    RE_Notcopiedyet.append(rs)
             else:
                 #   -- it is dagging reaction
-                RE_Daggling.append(rb)
+                RE_Daggling.append(rs)
                 #print ("This reaction \""+rb.path+"\" has no substrate/product daggling reaction are not copied")
                 #war_msg = war_msg+"\nThis reaction \""+rb.path+"\" has no substrate/product daggling reaction are not copied"
 
@@ -583,30 +602,31 @@ def reacMerge(comptA,comptB,key,poolListina):
             #Same reaction name
             #   -- Same substrate and product including same volume then don't copy
             #   -- different substrate/product or if sub/prd's volume is different then DUPLICATE the reaction
+            
             allclean = False
-            for ra in reacListina:
-                if rb.name == ra.name:
-                    rAsubname = subprdList(ra,"sub")
-                    rBsubname = subprdList(rb,"sub")
-                    hasSamenoofsublen,hasSameS,hasSamevols = same_len_name_vol(rAsubname,rBsubname)
+            for rd in reacListind:
+                if rs.name == rd.name:
+                    rSsubname = subprdList(rs,"sub")
+                    rDsubname = subprdList(rd,"sub")
+                    hasSamenoofsublen,hasSameS,hasSamevols = same_len_name_vol(rSsubname,rDsubname)
 
-                    rAprdname = subprdList(ra,"prd")
-                    rBprdname = subprdList(rb,"prd")
-                    hasSamenoofprdlen,hasSameP,hasSamevolp = same_len_name_vol(rAprdname,rBprdname)
+                    rSprdname = subprdList(rs,"prd")
+                    rDprdname = subprdList(rd,"prd")
+                    hasSamenoofprdlen,hasSameP,hasSamevolp = same_len_name_vol(rSprdname,rDprdname)
                     if not all((hasSamenoofsublen,hasSameS,hasSamevols,hasSamenoofprdlen,hasSameP,hasSamevolp)):
                         # May be different substrate or product or volume of Sub/prd may be different,
                         # Duplicating the reaction
-                        if rBsubname and rBprdname:
+                        if rSsubname and rSprdname:
                             allexists,allexistp = False,False
-                            allexists = checkexist(rBsubname,objB,objA)
-                            allexistp = checkexist(rBprdname,objB,objA)
+                            allexists = checkexist(rSsubname,objS,objD)
+                            allexistp = checkexist(rSprdname,objS,objD)
                             if allexists and allexistp:
-                                rb.name = rb.name+"_duplicated"
+                                rs.name = rs.name+"_duplicated"
                                 #reac = moose.Reac(comptA[key].path+'/'+rb.name+"_duplicated")
-                                rapath = rb.parent.path.replace(objB,objA)
-                                reac = moose.copy(rb,moose.element(rapath))
-                                connectObj(reac,rBsubname,"sub",comptA,war_msg)
-                                connectObj(reac,rBprdname,"prd",comptA,war_msg)
+                                rdpath = rs.parent.path.replace(objS,objD)
+                                reac = moose.copy(rs,moose.element(rdpath))
+                                connectObj(reac,rSsubname,"sub",comptD,war_msg)
+                                connectObj(reac,rSprdname,"prd",comptD,war_msg)
                                 RE_Duplicated.append(reac)
                                 allclean = True
                             else:
@@ -617,11 +637,11 @@ def reacMerge(comptA,comptB,key,poolListina):
                     if not allclean:
                         # didn't find sub or prd for this reaction
                         #   --  it may be connected Enzyme cplx
-                        if rBsubname and rBprdname:
-                            RE_Notcopiedyet.append(rb)
+                        if rSsubname and rSprdname:
+                            RE_Notcopiedyet.append(rs)
                         else:
-                            RE_Daggling.append(rb)
-
+                            RE_Daggling.append(rs)
+    
     return RE_Duplicated,RE_Notcopiedyet,RE_Daggling
 
 def subprdList(reac,subprd):
@@ -704,6 +724,7 @@ def mooseIsInstance(element, classNames):
 
 
 if __name__ == "__main__":
+
     try:
         sys.argv[1]
     except IndexError:
@@ -712,7 +733,7 @@ if __name__ == "__main__":
     else:
         src = sys.argv[1]
         if not os.path.exists(src):
-            print("Filename or path does not exist",src)
+            print("Filename or path does not exist %s." %(src))
         else:
             try:
                 sys.argv[2]
@@ -722,10 +743,12 @@ if __name__ == "__main__":
             else:
                 des = sys.argv[2]
                 if not os.path.exists(src):
-                    print("Filename or path does not exist",des)
+                    print("Filename or path does not exist %s." %(des))
                     exit(0)
                 else:
+                    print ("src and des %s, %s." %(src, des))
                     mergered = mergeChemModel(src,des)
+
                 '''
                 try:
                     sys.argv[3]

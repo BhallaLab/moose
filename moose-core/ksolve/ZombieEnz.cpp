@@ -23,6 +23,8 @@
 #include "CplxEnzBase.h"
 #include "ZombieEnz.h"
 
+#define EPSILON 1e-15
+
 const Cinfo* ZombieEnz::initCinfo()
 {
 		//////////////////////////////////////////////////////////////
@@ -118,8 +120,11 @@ void ZombieEnz::vSetKcat( const Eref& e, double v )
 	double k2 = getK2( e );
 	double k3 = getKcat( e );
 	double ratio = 4.0;
-	if ( k3 > 1e-10 )
+	if ( v < EPSILON )
+		v = EPSILON;
+	if ( k3 > EPSILON ) {
 		ratio = k2/k3;
+	}
 	double Km = (k2 + k3) / concK1_;
 	concK1_ = v * (1.0 + ratio) / Km;
 

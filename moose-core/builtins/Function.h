@@ -92,6 +92,10 @@ class Function
     void setUseTrigger(bool useTrigger);
     bool getUseTrigger() const;
 
+	// set/get flag to do function evaluation at reinit
+    void setDoEvalAtReinit(bool doEvalAtReinit);
+    bool getDoEvalAtReinit() const;
+
     void setNumVar(unsigned int num);
     unsigned int getNumVar() const;
 
@@ -143,6 +147,7 @@ protected:
     double _rate;
     unsigned int _mode;
     bool _useTrigger;
+    bool _doEvalAtReinit;
      // this stores variables received via incoming messages, identifiers of the form x{i} are included in this
     vector<Variable *> _varbuf;
     // this stores variable values pulled by sending request. identifiers of the form y{i} are included in this

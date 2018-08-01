@@ -22,6 +22,8 @@
 #include "EnzBase.h"
 #include "ZombieMMenz.h"
 
+#define EPSILON 1e-15
+
 const Cinfo* ZombieMMenz::initCinfo()
 {
 		//////////////////////////////////////////////////////////////
@@ -121,6 +123,8 @@ double ZombieMMenz::vGetNumKm( const Eref& e ) const
 
 void ZombieMMenz::vSetKcat( const Eref& e, double v )
 {
+	if ( v < EPSILON )
+		v = EPSILON;
 	stoich_->setMMenzKcat( e, v );
 }
 

@@ -13,11 +13,12 @@
 **           copyright (C) 2003-2017 Upinder S. Bhalla. and NCBS
 Created : Friday May 27 12:19:00 2016(+0530)
 Version
-Last-Updated: Sat 6 Jan 01:10:00 2018(+0530)
+Last-Updated: Mon 30 Apr 15:10:00 2018(+0530)
           By: HarshaRani
 **********************************************************************/
 /****************************
 2018
+Apr 30: indentation corrected while writting annotation for enzymecomplex
 Jan 6: for Product_formation_, k3 units depends on noofSub, prd was passed which is fixed
 2017
 Dec 15: If model path exists is checked
@@ -143,7 +144,7 @@ def mooseWriteSBML(modelpath, filename, sceneitems={}):
                 if moose.exists(key.path+'/info'):
                     ginfo = moose.element(key.path+'/info')
                 else:
-                    moose.Annotator(key.path+'/info')
+                    ginfo = moose.Annotator(key.path+'/info')
                 groupCompartment = findCompartment(key)
                 if ginfo.color != '':
                     grpAnno = "<moose:GroupAnnotation>"
@@ -231,7 +232,6 @@ def writeEnz(modelpath, cremodel_, sceneitems,groupInfo):
                 compt = comptVec.name + "_" + \
                     str(comptVec.getId().value) + "_" + \
                     str(comptVec.getDataIndex()) + "_"
-            
             #Writting out S+E -> SE*
             enzsetId = str(idBeginWith(cleanEnzname +
                                          "_" + str(enz.getId().value) +
@@ -254,7 +254,6 @@ def writeEnz(modelpath, cremodel_, sceneitems,groupInfo):
                         enzAnno = enzAnno + "<moose:enzyme>" + \
                             (str(idBeginWith(convertSpecialChar(
                                 nameList_[i])))) + "</moose:enzyme>\n"
-
                     #Finding Substrate, (S)
                     enzSub = enz.neighbors["sub"]
                     if not enzSub:
@@ -277,7 +276,6 @@ def writeEnz(modelpath, cremodel_, sceneitems,groupInfo):
                                 enzAnno = enzAnno + "<moose:product>" + \
                                     nameList_[i] + "</moose:product>\n"
                             foundEnzymeComplex = True
-
             if foundEnzymeComplex:
                 # Only if S+E->SE* found, reaction is created
                 enzyme = cremodel_.createReaction()
@@ -318,15 +316,16 @@ def writeEnz(modelpath, cremodel_, sceneitems,groupInfo):
                 printParameters(kl, "k1", k1, unit)
                 punit = parmUnit(noofPrd - 1, cremodel_)
                 printParameters(kl, "k2", k2, punit)
-
                 if groupName != moose.element('/'):
                     if groupName not in groupInfo:
-                        groupInfo[groupName]=[enzsetId]
+                        #groupInfo[groupName]=[enzsetId]
+                        groupInfo[groupName]=[nameList_[0]]
                     else:
-                        groupInfo[groupName].append(enzsetId)       
+                        #groupInfo[groupName].append(enzsetId)
+                        groupInfo[groupName].append(nameList_[0])
             else:
                 if secplxerror:
-                    print ("\'"+enz.name+"\' this enzyme is not written to file because,"+ secplxerror)
+                    print ("\'"+enz.parent.name+ "/"+enz.name+"\' this enzyme is not written to file because,"+ secplxerror)
             
             #Here SE* -> E+ P
             foundEnzymeEP = False
@@ -335,6 +334,7 @@ def writeEnz(modelpath, cremodel_, sceneitems,groupInfo):
                                         "_" + str(enz.getDataIndex()) +
                                         "_" + "Product_formation_"))
             cplxeperror = ""
+            enzAnno2 = ""
             #enzSubt = ""
             enzOut = enz.neighbors["enzOut"]
             if not enzOut:
@@ -375,16 +375,15 @@ def writeEnz(modelpath, cremodel_, sceneitems,groupInfo):
                             for i in range(0, len(nameList_)):
                                 enzAnno2 = enzAnno2 + "<moose:product>" + \
                                             nameList_[i] + "</moose:product>\n"
-                                enzAnno2 += "<moose:groupName>" + cleanEnzname + "_" + \
-                                str(enz.getId().value) + "_" + \
-                                str(enz.getDataIndex()) + "_" + "</moose:groupName>\n"
-                                enzAnno2 += "<moose:stage>2</moose:stage> \n"
-                                if enzannoexist:
-                                    enzAnno2 = enzAnno2 + enzGpnCorCol
-                                enzAnno2 += "</moose:EnzymaticReaction>"
+                        enzAnno2 += "<moose:groupName>" + cleanEnzname + "_" + \
+                            str(enz.getId().value) + "_" + \
+                            str(enz.getDataIndex()) + "_" + "</moose:groupName>\n"
+                        enzAnno2 += "<moose:stage>2</moose:stage> \n"
+                        if enzannoexist:
+                            enzAnno2 = enzAnno2 + enzGpnCorCol
+                        enzAnno2 += "</moose:EnzymaticReaction>"
 
-                            foundEnzymeEP = True
-            
+                        foundEnzymeEP = True
             if foundEnzymeEP:
                 enzyme = cremodel_.createReaction()
                 enzyme.setId(enzsetIdP)
@@ -407,9 +406,11 @@ def writeEnz(modelpath, cremodel_, sceneitems,groupInfo):
                 printParameters(kl, "k3", k3, unit)
                 if groupName != moose.element('/'):
                     if groupName not in groupInfo:
-                        groupInfo[groupName]=[enzsetIdP]
+                        #groupInfo[groupName]=[nameList_[0]]
+                        pass
                     else:
-                        groupInfo[groupName].append(enzsetIdP)
+                        #groupInfo[groupName].append(nameList_[0])
+                        pass
             else:
                 print (cplxeperror)
         elif(enz.className == "MMenz" or enz.className == "ZombieMMenz"):
@@ -776,6 +777,7 @@ def writeFunc(modelpath, cremodel_):
     foundFunc = False
     for func in funcs:
         if func:
+            #not neccessary parent is compartment can be group also
             if func.parent.className == "CubeMesh" or func.parent.className == "CyclMesh":
                 if len(moose.element(func).neighbors["valueOut"]) > 0:
                     funcEle = moose.element(
@@ -785,8 +787,16 @@ def writeFunc(modelpath, cremodel_):
                     funcEle.name + "_" + str(funcEle.getId().value) + "_" + str(funcEle.getDataIndex()) + "_"))
                     expr = " "
                     expr = str(moose.element(func).expr)
-                    if not expr:
+                    if expr:
                         foundFunc = True
+                        item = func.path + '/x[0]'
+                        sumtot = moose.element(item).neighbors["input"]
+                        for i in range(0, len(sumtot)):
+                            v = "x" + str(i)
+                            if v in expr:
+                                z = str(idBeginWith(str(convertSpecialChar(sumtot[i].name + "_" + str(moose.element(
+                                    sumtot[i]).getId().value) + "_" + str(moose.element(sumtot[i]).getDataIndex())) + "_")))
+                                expr = expr.replace(v, z)
             else:
                 foundFunc = True
                 fName = idBeginWith(convertSpecialChar(func.parent.name +

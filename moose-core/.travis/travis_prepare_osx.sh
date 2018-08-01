@@ -39,6 +39,6 @@ echo 'import sys; sys.path.insert(1, "/usr/local/lib/python2.7/site-packages")' 
 PATH=/usr/local/bin:/usr/bin:$PATH
 # ensurepip
 python -m ensurepip
-python -m pip install matplotlib --user
+python -m pip install matplotlib --user --upgrade
 python -m pip install pyNeuroML libNeuroML --user
 python -m pip install scipy --user

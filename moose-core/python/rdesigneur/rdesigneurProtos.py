@@ -49,7 +49,10 @@ import moose
 import math
 from moose import utils
 
-EREST_ACT = -70e-3
+EREST_ACT = -0.060
+ECA = 0.080
+EK =    -0.075
+SOMA_A = 3.32e-9
 per_ms = 1e3
 PI = 3.14159265359
 FaradayConst = 96485.3365 # Coulomb/mol
@@ -106,6 +109,329 @@ def make_HH_K(name = 'HH_K', parent='/library', vmin=-120e-3, vmax=40e-3, vdivs=
     k.tick = -1
     return k
 
+#/========================================================================
+#/                Tabchannel Na Hippocampal cell channel
+#/========================================================================
+def make_Na( name ):
+    if moose.exists( '/library/' + name ):
+        return
+    Na = moose.HHChannel( '/library/' + name )
+    Na.Ek = 0.055             #    V
+    Na.Gbar = 300 * SOMA_A    #    S
+    Na.Gk = 0                 #    S
+    Na.Xpower = 2
+    Na.Ypower = 1
+    Na.Zpower = 0
+
+    xgate = moose.element( Na.path + '/gateX' )
+    xA = np.array( [ 320e3 * (0.0131 + EREST_ACT),
+        -320e3, -1.0, -1.0 * (0.0131 + EREST_ACT), -0.004, 
+        -280e3 * (0.0401 + EREST_ACT), 280e3, -1.0, 
+        -1.0 * (0.0401 + EREST_ACT), 5.0e-3, 
+        3000, -0.1, 0.05 ] )
+    xgate.alphaParms = xA
+
+    ygate = moose.element( Na.path + '/gateY' )
+    yA = np.array( [ 128.0, 0.0, 0.0, -1.0 * (0.017 + EREST_ACT), 0.018,
+        4.0e3, 0.0, 1.0, -1.0 * (0.040 + EREST_ACT), -5.0e-3, 
+        3000, -0.1, 0.05 ] )
+    ygate.alphaParms = yA
+    return Na
+
+#========================================================================
+#                Tabchannel K(DR) Hippocampal cell channel
+#========================================================================
+def make_K_DR( name ):
+    if moose.exists( '/library/' + name ):
+        return
+    K_DR = moose.HHChannel( '/library/' + name )
+    K_DR.Ek = EK                #    V
+    K_DR.Gbar = 150 * SOMA_A    #    S
+    K_DR.Gk = 0                 #    S
+    K_DR.Xpower = 1
+    K_DR.Ypower = 0
+    K_DR.Zpower = 0
+
+    xgate = moose.element( K_DR.path + '/gateX' )
+    xA = np.array( [ 16e3 * (0.0351 + EREST_ACT), 
+        -16e3, -1.0, -1.0 * (0.0351 + EREST_ACT), -0.005,
+        250, 0.0, 0.0, -1.0 * (0.02 + EREST_ACT), 0.04,
+        3000, -0.1, 0.05 ] )
+    xgate.alphaParms = xA
+    return K_DR
+
+#========================================================================
+#                Tabchannel K(A) Hippocampal cell channel
+#========================================================================
+def make_K_A( name ):
+    if moose.exists( '/library/' + name ):
+        return
+    K_A = moose.HHChannel( '/library/' + name )
+    K_A.Ek = EK                #    V
+    K_A.Gbar = 50 * SOMA_A    #    S
+    K_A.Gk = 0                #    S
+    K_A.Xpower = 1
+    K_A.Ypower = 1
+    K_A.Zpower = 0
+
+    xgate = moose.element( K_A.path + '/gateX' )
+    xA = np.array( [ 20e3 * (0.0131 + EREST_ACT), 
+        -20e3, -1.0, -1.0 * (0.0131 + EREST_ACT), -0.01,
+        -17.5e3 * (0.0401 + EREST_ACT), 
+        17.5e3, -1.0, -1.0 * (0.0401 + EREST_ACT), 0.01,
+        3000, -0.1, 0.05 ] )
+    xgate.alphaParms = xA
+
+    ygate = moose.element( K_A.path + '/gateY' )
+    yA = np.array( [ 1.6, 0.0, 0.0, 0.013 - EREST_ACT, 0.018,
+        50.0, 0.0, 1.0, -1.0 * (0.0101 + EREST_ACT), -0.005,
+        3000, -0.1, 0.05 ] )
+    ygate.alphaParms = yA
+
+#//========================================================================
+#//                      Tabulated Ca Channel
+#//========================================================================
+
+def make_Ca( name ):
+    if moose.exists( '/library/' + name):
+        return
+    Ca = moose.HHChannel( '/library/' + name )
+    Ca.Ek = ECA
+    Ca.Gbar = 40 * SOMA_A
+    Ca.Gk = 0
+    Ca.Xpower = 2
+    Ca.Ypower = 1
+    Ca.Zpower = 0
+
+    xgate = moose.element( Ca.path + '/gateX' )
+    xA = np.array( [ 1.6e3, 0, 1.0, -1.0 * (0.065 + EREST_ACT), -0.01389, -20e3 * (0.0511 + EREST_ACT), 20e3, -1.0, -1.0 * (0.0511 + EREST_ACT), 5.0e-3, 3000, -0.1, 0.05 ] )
+#    xgate.min = -0.1
+#    xgate.max = 0.05
+#    xgate.divs = 3000
+#// Converting Traub's expressions for the gCa/s alpha and beta functions
+#// to SI units and entering the A, B, C, D and F parameters, we get:
+#    xgate.alpha( 1.6e3, 0, 1.0, -1.0 * (0.065 + EREST_ACT), -0.01389 )
+#    xgate.beta( -20e3 * (0.0511 + EREST_ACT), 20e3, -1.0, -1.0 * (0.0511 + EREST_ACT), 5.0e-3 )
+    #xgate.setupAlpha( xA )
+    xgate.alphaParms = xA
+
+
+#  The Y gate (gCa/r) is not quite of this form.  For V > EREST_ACT, alpha =
+#  5*{exp({-50*(V - EREST_ACT)})}.  Otherwise, alpha = 5.  Over the entire
+#  range, alpha + beta = 5.  To create the Y_A and Y_B tables, we use some
+#  of the pieces of the setupalpha function.
+    ygate = moose.element( Ca.path + '/gateY' )
+    ygate.min = -0.1
+    ygate.max = 0.05
+    ygate.divs = 3000
+    yA = np.zeros( (ygate.divs + 1), dtype=float)
+    yB = np.zeros( (ygate.divs + 1), dtype=float)
+
+
+#Fill the Y_A table with alpha values and the Y_B table with (alpha+beta)
+    dx = (ygate.max - ygate.min)/ygate.divs
+    x = ygate.min
+    for i in range( ygate.divs + 1 ):
+        if ( x > EREST_ACT):
+            yA[i] = 5.0 * math.exp( -50 * (x - EREST_ACT) )
+        else:
+            yA[i] = 0.0
+        #yB[i] = 6.0 - yA[i]
+        yB[i] = 5.0
+        x += dx
+    ygate.tableA = yA
+    ygate.tableB = yB
+# Tell the cell reader that the current from this channel must be fed into
+# the Ca_conc pool of calcium.
+    addmsg1 = moose.Mstring( Ca.path + '/addmsg1' )
+    addmsg1.value = '.    IkOut    ../Ca_conc    current'
+# in some compartments, whe have an NMDA_Ca_conc object to put the current
+# into.
+    addmsg2 = moose.Mstring( Ca.path + '/addmsg2' )
+    addmsg2.value = '.    IkOut    ../NMDA_Ca_conc    current'
+# As we typically use the cell reader to create copies of these prototype
+#elements in one or more compartments, we need some way to be sure that the
+#needed messages are established.  Although the cell reader has enough
+#information to create the messages which link compartments to their channels
+#and to other adjacent compartments, it most be provided with the information
+#needed to establish additional messages.  This is done by placing the
+#message string in a user-defined field of one of the elements which is
+#involved in the message.  The cell reader recognizes the added object names
+#"addmsg1", "addmsg2", etc. as indicating that they are to be
+#evaluated and used to set up messages.  The paths are relative to the
+#element which contains the message string in its added field.  Thus,
+#"../Ca_conc" refers to the sibling element Ca_conc and "."
+#refers to the Ca element itself.
+
+
+#/*************************************************************************
+#Next, we need an element to take the Calcium current calculated by the Ca
+#channel and convert it to the Ca concentration.  The "Ca_concen" object
+#solves the equation dC/dt = B*I_Ca - C/tau, and sets Ca = Ca_base + C.  As
+#it is easy to make mistakes in units when using this Calcium diffusion
+#equation, the units used here merit some discussion.
+
+#With Ca_base = 0, this corresponds to Traub's diffusion equation for
+#concentration, except that the sign of the current term here is positive, as
+#GENESIS uses the convention that I_Ca is the current flowing INTO the
+#compartment through the channel.  In SI units, the concentration is usually
+#expressed in moles/m^3 (which equals millimoles/liter), and the units of B
+#are chosen so that B = 1/(ion_charge * Faraday * volume). Current is
+#expressed in amperes and one Faraday = 96487 coulombs.  However, in this
+#case, Traub expresses the concentration in arbitrary units, current in
+#microamps and uses tau = 13.33 msec.  If we use the same concentration units,
+#but express current in amperes and tau in seconds, our B constant is then
+#10^12 times the constant (called "phi") used in the paper.  The actual value
+#used will be typically be determined by the cell reader from the cell
+#parameter file.  However, for the prototype channel we wlll use Traub's
+#corrected value for the soma.  (An error in the paper gives it as 17,402
+#rather than 17.402.)  In our units, this will be 17.402e12.
+
+#*************************************************************************/
+
+
+#//========================================================================
+#//                      Ca conc
+#//========================================================================
+
+def make_Ca_conc( name ):
+    if moose.exists( '/library/' + name ):
+        return
+    conc = moose.CaConc( '/library/tempName' )
+    conc.name = name
+    conc.tau = 0.013333  # sec
+    conc.B  = 17.402e12 # Curr to conc conversion for soma
+    conc.Ca_base = 0.00000
+
+#This Ca_concen element should receive a message from any calcium channels
+# with the current going through the channel. Here we have this specified
+# in the Ca channel, with the idea that more than one channel might
+# contribute Ca ions to this calcium pool. In the original GENESIS file
+# this was specified here in make_Ca_conc.
+
+#========================================================================
+#             Tabulated Ca-dependent K AHP Channel
+#========================================================================
+
+# This is a tabchannel which gets the calcium concentration from Ca_conc
+#  in order to calculate the activation of its Z gate.  It is set up much
+#  like the Ca channel, except that the A and B tables have values which are
+#  functions of concentration, instead of voltage.
+
+def make_K_AHP( name ):
+    if moose.exists( '/library/' + name ):
+        return
+    K_AHP = moose.HHChannel( '/library/' + name )
+    K_AHP.Ek = EK    #            V
+    K_AHP.Gbar = 8 * SOMA_A #    S
+    K_AHP.Gk = 0    #    S
+    K_AHP.Xpower = 0
+    K_AHP.Ypower = 0
+    K_AHP.Zpower = 1
+
+    zgate = moose.element( K_AHP.path + '/gateZ' )
+    xmax = 500.0
+    zgate.min = 0
+    zgate.max = xmax
+    zgate.divs = 3000
+    zA = np.zeros( (zgate.divs + 1), dtype=float)
+    zB = np.zeros( (zgate.divs + 1), dtype=float)
+    dx = (zgate.max - zgate.min)/zgate.divs
+    x = zgate.min
+    for i in range( zgate.divs + 1 ):
+            zA[i] = min( 0.02 * CA_SCALE * x, 10 )
+            zB[i] = 1.0
+            x = x + dx
+
+    zgate.tableA = zA
+    zgate.tableB = zB
+    addmsg1 = moose.Mstring( K_AHP.path + '/addmsg1' )
+    addmsg1.value = '../Ca_conc    concOut    . concen'
+# Use an added field to tell the cell reader to set up a message from the
+# Ca_Conc with concentration info, to the current K_AHP object.
+
+
+#//========================================================================
+#//  Ca-dependent K Channel - K(C) - (vdep_channel with table and tabgate)
+#//========================================================================
+
+#The expression for the conductance of the potassium C-current channel has a
+#typical voltage and time dependent activation gate, where the time dependence
+#arises from the solution of a differential equation containing the rate
+#parameters alpha and beta.  It is multiplied by a function of calcium
+#concentration that is given explicitly rather than being obtained from a
+#differential equation.  Therefore, we need a way to multiply the activation
+#by a concentration dependent value which is determined from a lookup table.
+#This is accomplished by using the Z gate with the new tabchannel "instant"
+#field, introduced in GENESIS 2.2, to implement an "instantaneous" gate for
+#the multiplicative Ca-dependent factor in the conductance.
+
+def make_K_C( name ):
+    if moose.exists( '/library/' + name ):
+        return
+    K_C = moose.HHChannel( '/library/' + name )
+    K_C.Ek = EK                    #    V
+    K_C.Gbar = 100.0 * SOMA_A     #    S
+    K_C.Gk = 0                    #    S
+    K_C.Xpower = 1
+    K_C.Zpower = 1
+    K_C.instant = 4                # Flag: 0x100 means Z gate is instant.
+    K_C.useConcentration = 1
+
+    # Now make a X-table for the voltage-dependent activation parameter.
+    xgate = moose.element( K_C.path + '/gateX' )
+    xgate.min = -0.1
+    xgate.max = 0.05
+    xgate.divs = 3000
+    xA = np.zeros( (xgate.divs + 1), dtype=float)
+    xB = np.zeros( (xgate.divs + 1), dtype=float)
+    dx = (xgate.max - xgate.min)/xgate.divs
+    x = xgate.min
+    for i in range( xgate.divs + 1 ):
+        alpha = 0.0
+        beta = 0.0
+        if (x < EREST_ACT + 0.05):
+            alpha = math.exp( 53.872 * (x - EREST_ACT) - 0.66835 ) / 0.018975
+            beta = 2000* (math.exp ( (EREST_ACT + 0.0065 - x)/0.027)) - alpha
+        else:
+            alpha = 2000 * math.exp( ( EREST_ACT + 0.0065 - x)/0.027 )
+            beta = 0.0
+        xA[i] = alpha
+        xB[i] = alpha + beta
+        x = x + dx
+    xgate.tableA = xA
+    xgate.tableB = xB
+
+# Create a table for the function of concentration, allowing a
+# concentration range of 0 to 200, with 3000 divisions.  This is done
+# using the Z gate, which can receive a CONCEN message.  By using
+# the "instant" flag, the A and B tables are evaluated as lookup tables,
+#  rather than being used in a differential equation.
+    zgate = moose.element( K_C.path + '/gateZ' )
+    zgate.min = 0.0
+    xmax = 150.0
+    zgate.max = xmax
+    zgate.divs = 3000
+    zA = np.zeros( (zgate.divs + 1), dtype=float)
+    zB = np.zeros( (zgate.divs + 1), dtype=float)
+    dx = ( zgate.max -  zgate.min)/ zgate.divs
+    x = zgate.min
+    #CaScale = 100000.0 / 250.0e-3
+    for i in range( zgate.divs + 1 ):
+        zA[i] = min( 1000.0, x * CA_SCALE / (250 * xmax ) )
+        zB[i] = 1000.0
+        x += dx
+    zgate.tableA = zA
+    zgate.tableB = zB
+
+# Now we need to provide for messages that link to external elements.
+# The message that sends the Ca concentration to the Z gate tables is stored
+# in an added field of the channel, so that it may be found by the cell
+# reader.
+    addmsg1 = moose.Mstring( K_C.path + '/addmsg1' )
+    addmsg1.value = '../Ca_conc    concOut    . concen'
+
+
 #========================================================================
 #                SynChan: Glu receptor
 #========================================================================
@@ -131,14 +457,15 @@ def make_GABA( name ):
     if moose.exists( '/library/' + name ):
         return
     GABA = moose.SynChan( '/library/' + name )
-    GABA.Ek = EK + 10.0e-3
-    GABA.tau1 = 4.0e-3
-    GABA.tau2 = 9.0e-3
+    GABA.Ek = -0.065            # V
+    GABA.tau1 = 4.0e-3          # s
+    GABA.tau2 = 9.0e-3          # s
     sh = moose.SimpleSynHandler( GABA.path + '/sh' )
     moose.connect( sh, 'activationOut', GABA, 'activation' )
     sh.numSynapses = 1
     sh.synapse[0].weight = 1
 
+#========================================================================
 
 def makeChemOscillator( name = 'osc', parent = '/library' ):
     model = moose.Neutral( parent + '/' + name )
@@ -248,7 +575,7 @@ def transformNMDAR( path ):
     # compartment, it builds it on 'pa'. It places the compartment
     # on the end of 'prev', and at 0,0,0 otherwise.
 
-def buildCompt( pa, name, RM = 1.0, RA = 1.0, CM = 0.01, dia = 1.0e-6, x = 0.0, y = 0.0, z = 0.0, dx = 10e-6, dy = 0.0, dz = 0.0 ):
+def buildCompt( pa, name, RM = 1.0, RA = 1.0, CM = 0.01, dia = 1.0e-6, x = 0.0, y = 0.0, z = 0.0, dx = 10e-6, dy = 0.0, dz = 0.0, Em = -0.065, initVm = -0.065 ):
     length = np.sqrt( dx * dx + dy * dy + dz * dz )
     compt = moose.Compartment( pa.path + '/' + name )
     compt.x0 = x
@@ -264,6 +591,8 @@ def buildCompt( pa, name, RM = 1.0, RA = 1.0, CM = 0.01, dia = 1.0e-6, x = 0.0, 
     compt.Ra = length * RA / xa
     compt.Rm = RM / sa
     compt.Cm = CM * sa
+    compt.Em = Em
+    compt.initVm = initVm
     return compt
 
 def buildComptWrapper( pa, name, length, dia, xoffset, RM, RA, CM ):
@@ -289,8 +618,6 @@ def buildSyn( name, compt, Ek, tau1, tau2, Gbar, CM ):
 # Utility function, borrowed from proto18.py, for making an LCa channel.
 # Based on Traub's 91 model, I believe.
 def make_LCa( name = 'LCa', parent = '/library' ):
-        EREST_ACT = -0.060 #/* hippocampal cell resting potl */
-        ECA = 0.140 + EREST_ACT #// 0.080
         if moose.exists( parent + '/' + name ):
                 return
         Ca = moose.HHChannel( parent + '/' + name )
@@ -327,80 +654,39 @@ def make_LCa( name = 'LCa', parent = '/library' ):
         return Ca
 ######################################################################
 
-# Derived from : squid/electronics.py
-# Description: 
-# Author: Subhasis Ray
-# Maintainer: 
-# Created: Wed Feb 22 00:53:38 2012 (+0530)
-# Version: 
-# Last-Updated: Fri May 04 16:35:40 2018 (+0530)
-#           By: Upi
-#     Update #: 221
-
-# Change log:
-# 
-# 2012-02-22 23:22:30 (+0530) Subha - the circuitry put in a class.
-# 2018-05-04 23:22:30 (+0530) Upi - Adapted for Rdesigneur
-# 
-
-# Code:
-
-class ClampCircuit(moose.Neutral):
-    """Container for a Voltage-Clamp/Current clamp circuit."""
-    defaults = {
-        'level1': 25.0e-3,
-        'width1': 50.0e-3,
-        'delay1': 2.0e-3,
-        'delay2': 1e3,
-        'trigMode': 0,
-        'delay3': 1e6
-        }
-    def __init__(self, path ):
-        moose.Neutral.__init__(self, path)        
-        '''
-        self.pulsegen = moose.PulseGen(path+"/pulse") # holding voltage/current generator
-        self.pulsegen.count = 2
-        self.pulsegen.baseLevel = -65.0e-3
-        self.pulsegen.firstLevel = -40.0e-3
-        self.pulsegen.firstWidth = 50.0e-3
-        self.pulsegen.firstDelay = 2.0e-3
-        self.pulsegen.secondDelay = 0.0
-        self.pulsegen.trigMode = 2
-        self.gate = moose.PulseGen(path+"/gate") # holding voltage/current generator
-        self.gate.level[0] = 1.0
-        self.gate.delay[0] = 0.0
-        self.gate.width[0] = 1e3
-        moose.connect(self.gate, 'output', self.pulsegen, 'input')
-        '''
-        self.lowpass = moose.RC(path+"/lowpass") # lowpass filter
-        self.lowpass.R = 1.0
-        self.lowpass.C = 0.03
-        self.vclamp = moose.DiffAmp(path+"/vclamp")
-        self.vclamp.gain = 1.0
-        self.vclamp.saturation = 1e10
-        self.iclamp = moose.DiffAmp(path+"/iclamp")
-        self.iclamp.gain = 0.0
-        self.iclamp.saturation = 1e10
-        self.pid = moose.PIDController(path+"/pid")
-        self.pid.gain = 0.5
-        self.pid.tauI = 0.02e-3
-        self.pid.tauD = 0.005e-3
-        self.pid.saturation = 1e7
-        # Connect voltage clamp circuitry
-        #moose.connect(self.pulsegen, "output", self.lowpass, "injectIn")
-        moose.connect(self.lowpass, "output", self.vclamp, "plusIn")
-        moose.connect(self.vclamp, "output", self.pid, "commandIn")
-        #moose.connect(compartment, "VmOut", self.pid, "sensedIn")
-        #moose.connect(self.pid, "output", compartment, "injectMsg")
-        addmsg1 = moose.Mstring( path + '/addmsg1' )
-        addmsg1.value = './pid  output  ..  injectMsg'
-        addmsg2 = moose.Mstring( path + '/addmsg2' )
-        addmsg2.value = '.. VmOut ./pid  sensedIn'
-
 def make_vclamp( name = 'Vclamp', parent = '/library' ):
     if moose.exists( '/library/' + name ):
         return
-    vclamp = ClampCircuit( parent + '/' + name )
+    vclamp = moose.VClamp( parent + '/' + name )
+    vclamp.mode = 0     # Default. could try 1, 2 as well
+    vclamp.tau = 0.2e-3 # lowpass filter for command voltage input
+    vclamp.ti = 20e-6   # Integral time
+    vclamp.td = 5e-6    # Differential time. Should it be >= dt?
+    vclamp.gain = 0.00005   # Gain of vclamp ckt.
+
+    # Connect voltage clamp circuitry
+    addmsg1 = moose.Mstring( vclamp.path + '/addmsg1' )
+    addmsg1.value = '.  currentOut  ..  injectMsg'
+    addmsg2 = moose.Mstring( vclamp.path + '/addmsg2' )
+    addmsg2.value = '.. VmOut . sensedIn'
+
+    return vclamp
+
+######################################################################
+
+def make_synInput( name = 'RandSpike', parent = '/library' ):
+    if moose.exists( '/library/' + name ):
+        return
+    rs = moose.RandSpike( parent + '/' + name + '_rs' )
+    rs.rate = 0     # mean firing rate
+    rs.refractT = 5e-3 # 5 ms.
+    
+
+    # Connect rand spike to channel that it is sitting on.
+    addmsg1 = moose.Mstring( rs.path + '/addmsg1' )
+    addmsg1.value = '.  spikeOut  ../sh/synapse[0]  addSpike'
+
+    return rs
 
 ######################################################################
 

@@ -128,12 +128,14 @@ void matMatAdd( Matrix* A, Matrix* B, double alpha, double beta,
 	Matrix *C;
 	unsigned int n = A->size();
 
-	if ( resIndex == FIRST )
+	if ( resIndex == FIRST ) {
 		C = A;
-	else if ( resIndex == SECOND )
+	} else if ( resIndex == SECOND ) {
 		C = B;
-	else
+	} else {
 		cerr << "matMatAdd : Invalid index supplied to store result.\n";
+		return;
+	}
 
 	for( unsigned int i = 0; i < n; ++i )
 	{
@@ -481,7 +483,7 @@ Matrix* matAlloc( unsigned int n )
 
 	A->resize( n );
 	for ( unsigned int i = 0; i < n; ++i )
-		(*A)[i].resize( n );
+		(*A)[i].resize( n, 0.0 );
 
 	return A;
 }
@@ -490,7 +492,7 @@ Vector* vecAlloc( unsigned int n )
 {
 	Vector* vec = new Vector;
 
-	vec->resize( n );
+	vec->resize( n, 0.0 );
 
 	return vec;
 }
