@@ -1,5 +1,5 @@
 ************************
-More Rdesigneur Examples
+Rdesigneur Examples
 ************************
 
 .. hidden-code-block:: reStructuredText
