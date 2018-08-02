@@ -9,10 +9,13 @@ Rdesigneur: Building multiscale models
 
 ------------------------------
 
+.. contents::
+   :depth: 3
+
 Introduction
 ------------
 
-**Rdesigneur** (Reaction Diffusion and Electrical SIGnaling in NEURons)
+**Rdesigneur** (**R**\eaction **D**\iffusion and **E**\lectrical **SIG**\naling in **NEUR**\ons)
 is an interface to the multiscale modeling capabilities in MOOSE. It is
 designed to build models incorporating biochemical signaling pathways in
 dendrites and spines, coupled to electrical events in neurons.
