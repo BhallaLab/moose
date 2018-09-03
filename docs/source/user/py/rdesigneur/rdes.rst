@@ -1,13 +1,14 @@
-==========================================
-Rdesigneur: Building multiscale models
+**Rdesigneur: Building multiscale models**
 ==========================================
 
-| Author:        Upi Bhalla
-| Date:         Aug 26 2016, 
-| Last-Updated: July 31 2018
-| By:	        Upi Bhalla
+.. Upi Bhalla
 
-------------------------------
+.. Aug 26 2016. Updated August 2018
+
+.. --------------
+
+Contents
+--------
 
 .. contents::
    :depth: 3
@@ -15,7 +16,7 @@ Rdesigneur: Building multiscale models
 Introduction
 ------------
 
-**Rdesigneur** (**R**\eaction **D**\iffusion and **E**\lectrical **SIG**\naling in **NEUR**\ons)
+**Rdesigneur** (Reaction Diffusion and Electrical SIGnaling in NEURons)
 is an interface to the multiscale modeling capabilities in MOOSE. It is
 designed to build models incorporating biochemical signaling pathways in
 dendrites and spines, coupled to electrical events in neurons.
@@ -42,14 +43,16 @@ Rdesigneur's main role is to specify how these are put together,
 including assigning parameters for the model. Using Rdesigneur one can compactly
 and quickly put together quite complex multiscale models.
 
-Quick Start
------------
+Rdesigneur examples
+-------------------
 
 Here we provide a few use cases, building up from a minimal model to a
 reasonably complete multiscale model spanning chemical and electrical
 signaling. The files for these examples are also available in
 ``moose-examples/tutorials/Rdesigneur``, and the file names are mentioned
 as we go along.
+
+.. _`building rdesigneur without arguments`:
 
 Bare Rdesigneur: single passive compartment
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -166,7 +169,7 @@ the plot.
 
 The *rdes.display()* function causes the plots to be displayed.
 
-.. figure:: ../../../../images/rdes2_passive_squid.png
+.. figure:: ./images/rdes2_passive_squid.png
    :alt: Plot for current input to passive compartment
 
    Plot for current input to passive compartment
@@ -210,14 +213,14 @@ seconds. The *plotList* now includes two entries, and will generate two plots.
 The first is for plotting the soma membrane potential, just to be sure that
 the voltage clamp is doing its job. 
 
-.. figure:: ../../../../images/ex2.1_vclamp_a.png
+.. figure:: ./images/ex2.1_vclamp_a.png
    :alt: Plot for membrane potential in voltage clamp
 
    Plot for membrane potential in voltage clamp
 
 The second graph plots the holding current.  Note the capacitive transients.
 
-.. figure:: ../../../../images/ex2.1_vclamp_b.png
+.. figure:: ./images/ex2.1_vclamp_b.png
    :alt: Plot for holding current for voltage clamp
 
    Plot for holding current for voltage clamp
@@ -280,7 +283,7 @@ Here we introduce two new model specification lines:
 As before we apply a somatic current pulse. Since we now have HH
 channels in the model, this generates action potentials.
 
-.. figure:: ../../../../images/rdes3_squid.png
+.. figure:: ./images/rdes3_squid.png
    :alt: Plot for HH squid simulation
 
    Plot for HH squid simulation
@@ -331,7 +334,7 @@ Here we see the classic HH current response, a downward brief deflection due to
 the Na channel, and a slower upward sustained current due to the K delayed
 rectifier.
 
-.. figure:: ../../../../images/ex3.1_squid_vclamp.png
+.. figure:: ./images/ex3.1_squid_vclamp.png
    :alt: Plot for HH squid voltage clamp pulse.
 
    Plot for HH squid voltage clamp pulse.
@@ -415,7 +418,7 @@ neuronal geometry.
 
     rdes.displayMoogli( 0.00005, 0.05, 0.0 )
 
-.. figure:: ../../../../images/ex3.2_axon_propagating_AP.png
+.. figure:: ./images/ex3.2_axon_propagating_AP.png
    :alt: Axon with propagating action potential
 
    Axon with propagating action potential
@@ -445,7 +448,7 @@ Watch how the AP is triggered bidirectionally from the stimulus point on the
 100th segment of the axon, and observe what happens when two action potentials 
 bump into each other.
 
-.. figure:: ../../../../images/ex3.3_AP_collision.png
+.. figure:: ./images/ex3.3_AP_collision.png
    :alt: Colliding action potentials
 
    Colliding action potentials
@@ -542,7 +545,7 @@ When you run the example, keep an eye out for a few things:
 -  **Speed:** Compare the propagation speed with the previous,
    unmyelinated axon. Note that the current model is larger!
 
-.. figure:: ../../../../images/rdes3.2_myelinated_axon.png
+.. figure:: ./images/rdes3.2_myelinated_axon.png
    :alt: Myelinated axon with propagating action potential
 
    Myelinated axon with propagating action potential
@@ -595,7 +598,7 @@ Here the crucial line is the *cellProto* line. There are four arguments here:
 
 This is what the soma looks like:
 
-.. figure:: ../../../../images/ex4.0_scaledSoma.png
+.. figure:: ./images/ex4.0_scaledSoma.png
    :alt: Image of soma.
 
    Image of soma.
@@ -657,7 +660,7 @@ arguments are optional.
         
 This is what the ball-and-stick cell looks like:
 
-.. figure:: ../../../../images/ex4.1_ballAndStick.png
+.. figure:: ./images/ex4.1_ballAndStick.png
    :alt: Image of ball and stick cell.
 
    Image of ball and stick cell.
@@ -719,7 +722,7 @@ very similar to the previous one, ex4.1:
 While the real point of this simulation is to check speed, it does illustrate
 how to deliver a stimulus shaped like a sine wave:
 
-.. figure:: ../../../../images/ex4.2_sine_stim.png
+.. figure:: ./images/ex4.2_sine_stim.png
    :alt: Sine-wave shaped stimulus.
 
    Sine-wave shaped stimulus.
@@ -727,7 +730,7 @@ how to deliver a stimulus shaped like a sine wave:
 We can see that the cell has a peculiar response to this. Not surprising, as
 the cell uses HH channels which are not good at rate coding.
 
-.. figure:: ../../../../images/ex4.2_spiking.png
+.. figure:: ./images/ex4.2_spiking.png
    :alt: Spiking response to sine-wave shaped stimulus.
 
    Spiking response to sine-wave shaped stimulus.
@@ -787,7 +790,7 @@ Most of this is similar to previous stimLists.
 
 As the model has no voltage-gated channels, we do not see spiking.
 
-.. figure:: ../../../../images/ex5.0_random_syn_input.png
+.. figure:: ./images/ex5.0_random_syn_input.png
    :alt: Random synaptic input with a Poisson distribution.
    
    Random synaptic input with a Poisson distribution.
@@ -823,7 +826,7 @@ periodic. The one change is of an argument in the stimList to say
 
 As designed, we get periodically firing synaptic input.
 
-.. figure:: ../../../../images/ex5.1_periodic_syn_input.png
+.. figure:: ./images/ex5.1_periodic_syn_input.png
    :alt: Periodic synaptic input
    
    Periodic synaptic input
@@ -898,7 +901,7 @@ concentration of the molecular pool *b*. Note its full path within
 MOOSE: */model/chem/dend/b*. It is scaled up 5x to give rise to slowly
 decaying oscillations.
 
-.. figure:: ../../../../images/rdes4_osc.png
+.. figure:: ./images/rdes4_osc.png
    :alt: Plot for single-compartment reaction simulation
 
    Plot for single-compartment reaction simulation
@@ -997,7 +1000,7 @@ reaction-diffusion system making its way inward from the two ends. After
 the simulation ends the plots for all compartments for the whole run
 come up.
 
-.. figure:: ../../../../images/rdes5_reacdiff.png
+.. figure:: ./images/rdes5_reacdiff.png
    :alt: Display for oscillatory reaction-diffusion simulation
 
    Display for oscillatory reaction-diffusion simulation
@@ -1005,10 +1008,13 @@ come up.
 For those who would rather use the much simpler matplotlib 3-D display option,
 this is what the same simulation looks like:
 
-.. figure:: ../../../../images/ex7.0_spatial_chem_osc.png
+.. figure:: ./images/ex7.0_spatial_chem_osc.png
    :alt: Display for oscillatory reac-diff simulation using matplotlib
 
    Display for oscillatory reac-diff simulation using matplotlib
+
+
+.. _`moogli primer`:
 
 Primer on using the 3-D MOOGLI display
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1097,11 +1103,86 @@ taking snapshots of the spatial profile of this pool.
     
 Here are the snapshots, overlaid in a single plot:
 
-.. figure:: ../../../../images/ex7.1_diffusive_gradient.png
+.. figure:: ./images/ex7.1_diffusive_gradient.png
    :alt: Display of how a molecule A spreads through the inter
 
    Display for simple time-series of spread of a diffusing molecule 
    using matplotlib
+
+Calcium-induced calcium release
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. _`models of calcium-induced calcium release`:
+
+*ex7.2_CICR.py*
+
+This is a somewhat more complex reaction-diffusion system, involving calcium
+release from intracellular stores that propagates in a wave of activity along
+a dendrite. This example demonstrates the use of endo compartments.
+
+Endo-compartments, as the name suggests, represent compartments that sit 
+within other cellular compartments. If the surround compartment is subdivided 
+into N voxels, so is the endo- compartment. The rdesigneur system looks at the
+provided model, and if there are 2 compartments and the *addEndoChemCompt* flag
+is True, then the chemistry contained in the smaller of the two compartments is 
+positioned in an endo compartment surrounded by the first compartment.
+Here we use the endo-compartment to represent the endoplasmic reticulum sitting
+inside the dendrite. 
+
+In the chemical model, we also introduce a new MOOSE class,
+ConcChan. These act as membrane pores whose permeability scales with 
+number of channels in the open state. The IP3 receptor in this model is 
+implemented as a ConcChan which opens due to binding to IP3 and Calcium.
+This leads to the release of more calcium from the ER, and this feedback
+loop develops into a propagating-wave oscillation.
+
+::
+
+    import moose
+    import pylab
+    import rdesigneur as rd
+    rdes = rd.rdesigneur(
+        turnOffElec = True,
+        chemDt = 0.005,
+        chemPlotDt = 0.02,
+        diffusionLength = 1e-6,
+        useGssa = False,
+        addSomaChemCompt = False,
+        addEndoChemCompt = True,
+        # cellProto syntax: ['somaProto', 'name', dia, length]
+        cellProto = [['somaProto', 'soma', 2e-6, 10e-6]],
+        chemProto = [['./chem/CICRwithConcChan.g', 'chem']],
+        chemDistrib = [['chem', 'soma', 'install', '1' ]],
+        plotList = [
+            ['soma', '1', 'dend/CaCyt', 'conc', 'Dendritic Ca'],
+            ['soma', '1', 'dend/CaCyt', 'conc', 'Dendritic Ca', 'wave'],
+            ['soma', '1', 'dend_endo/CaER', 'conc', 'ER Ca'],
+            ['soma', '1', 'dend/ActIP3R', 'conc', 'active IP3R'],
+        ],
+    )
+    rdes.buildModel()
+    IP3 = moose.element( '/model/chem/dend/IP3' )
+    IP3.vec.concInit = 0.004
+    IP3.vec[0].concInit = 0.02
+    moose.reinit()
+    moose.start( 40 )
+    rdes.display()
+
+Note how the dendritic calcium is displayed both as a time-series plot and
+as a wave plot, which presents the time-evolution of the calcium as a function
+of position in successive image frames.
+
+.. figure:: ./images/ex7.2_CICR_static.png
+    :alt: Time-series plot of dendritic calcium. Different colors represent
+        different voxels in the dendrite.
+
+    Time-series plot of dendritic calcium. Different colors represent
+    different voxels in the dendrite.
+
+.. figure:: ./images/ex7.2_CICR_wave_lastFrame.png
+
+    Place holder for time-evolving movie of dendritic calcium as a function of
+    position along the dendrite.
 
 
 Multiscale models: single compartment
@@ -1250,7 +1331,7 @@ There is a handy new line to specify cellular passive properties:
 With these in place, the model behavior is rather neat. It starts out silent,
 then we apply 2 seconds of +ve current injection. 
 
-.. figure:: ../../../../images/ex8.0_multiscale_currInj.png
+.. figure:: ./images/ex8.0_multiscale_currInj.png
    :alt: Current injection stimuli for multiscale model.
 
    Current injection stimuli for multiscale model.
@@ -1258,14 +1339,14 @@ then we apply 2 seconds of +ve current injection.
 The cell fires briskly, and keeps firing even when the current injection
 drops to zero. 
 
-.. figure:: ../../../../images/ex8.0_multiscale_cell_spiking.png
+.. figure:: ./images/ex8.0_multiscale_cell_spiking.png
    :alt: Firing responses of cell with multiscale signaling.
 
    Firing responses of cell with multiscale signaling.
 
 The firing of the neuron leads to Ca influx.
 
-.. figure:: ../../../../images/ex8.0_multiscale_Ca.png
+.. figure:: ./images/ex8.0_multiscale_Ca.png
    :alt: Calcium buildup in cell due to firing.
 
    Calcium buildup in cell due to firing.
@@ -1274,7 +1355,7 @@ The chemical reactions downstream of Ca lead to phosphorylation of the K_A
 channel. Only the unphosphorylated K_A channel is active, so the net effect
 is to reduce K_A conductance while the Ca influx persists.
 
-.. figure:: ../../../../images/ex8.0_multiscale_KA_conc.png
+.. figure:: ./images/ex8.0_multiscale_KA_conc.png
    :alt: Removal of KA channel due to phosphorylation.
 
    Removal of KA channel due to phosphorylation.
@@ -1290,6 +1371,119 @@ Suggestions for things to do with the model:
           signaling and vice versa.
         - Play with the channel densities
         - Open the chem model in moosegui and vary its parameters too.
+
+Multiscale model of CICR in dendrite triggered by synaptic input
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*ex8.1_synTrigCICR.py*
+
+In this model synaptic input arrives at a dendritic spine, leading to calcium
+influx through the NMDA receptor. An adaptor converts this influx to the 
+concentration of a chemical species, and this then diffuses into the dendrite
+and sets off the CICR.
+
+This example models Calcium events in three compartments: dendrite, ER 
+inside dendrite, and spine. The signaling is a slight change from the 
+toy model used
+in *ex7.2_CICR.py*. Note how the range of CICR wave propagation
+is limited by a domain of the dendrite in which the level of IP3 is elevated.
+
+
+::
+
+    import moose
+    import pylab
+    import rdesigneur as rd
+    rdes = rd.rdesigneur(
+        turnOffElec = False,
+        chemDt = 0.002,
+        chemPlotDt = 0.02,
+        diffusionLength = 1e-6,
+        numWaveFrames = 50,
+        useGssa = False,
+        addSomaChemCompt = False,
+        addEndoChemCompt = True,
+        # cellProto syntax: ['ballAndStick', 'name', somaDia, somaLength, dendDia, dendLength, numDendSeg]
+        cellProto = [['ballAndStick', 'soma', 10e-6, 10e-6, 2e-6, 40e-6, 4]],
+        spineProto = [['makeActiveSpine()', 'spine']],
+        chemProto = [['./chem/CICRspineDend.g', 'chem']],
+        spineDistrib = [['spine', '#dend#', '10e-6', '0.1e-6']],
+        chemDistrib = [['chem', 'dend#,spine#,head#', 'install', '1' ]],
+        adaptorList = [
+            [ 'Ca_conc', 'Ca', 'spine/Ca', 'conc', 0.00008, 8 ]
+        ],
+        stimList = [
+            ['head0', '0.5', 'glu', 'periodicsyn', '1 + 40*(t>5 && t<6)'],
+            ['head0', '0.5', 'NMDA', 'periodicsyn', '1 + 40*(t>5 && t<6)'],
+            ['dend#',  'g>10e-6 && g<=31e-6', 'dend/IP3', 'conc', '0.0006' ],
+            ],
+        plotList = [
+            ['head#', '1', 'spine/Ca', 'conc', 'Spine Ca conc'],
+            ['dend#', '1', 'dend/Ca', 'conc', 'Dend Ca conc'],
+            ['dend#', '1', 'dend/Ca', 'conc', 'Dend Ca conc', 'wave'],
+            ['dend#', '1', 'dend_endo/CaER', 'conc', 'ER Ca conc', 'wave'],
+            ['soma', '1', '.', 'Vm', 'Memb potl'],
+        ],
+    )
+    moose.seed( 1234 )
+    rdes.buildModel()
+    moose.reinit()
+    moose.start( 16 )
+    rdes.display()
+
+The demo illustrates how to specify the range of elevated IP3 in the *stimList*
+using the second argument, which selects a geometric range of electrical
+compartments.
+
+::
+
+    ['dend#',  'g>10e-6 && g<=31e-6', 'dend/IP3', 'conc', '0.0006' ]
+
+This means to look at all dendrite compartments (first argument), and select 
+those which are between a geometrical distance *g* of 10 to 31 microns 
+from the soma (second argument). The system then
+sets the IP3 concentration (third and fourth arguments) to 0.6 uM 
+(last argument) for all the chemical voxels embedded in these dendrite 
+compartments.
+
+A note on defining the endo compartments: In cases like this, where the
+compartment identity isn't built into the chemical model definition, we need
+a heuristic to decide which compartment is which. The heuristic used in 
+rdesigneur goes like this:
+
+        - Sort chemical compartments in decreasing order by volume
+        - If the addSomaChemCompt flag is **true**, they are assigned to
+          *soma, dendrite, spine-head, spine-psd*, depending on how many
+          compartments are specified. If the flag is **false**, the soma is 
+          omitted.
+        - If the addEndoChemCompt is **true**, then alternate compartments are
+          assigned to the endo_compartment. Here it is
+          *dend, dend_endo, spine-head*.
+          If we had six compartments defined (no soma) it would have been:
+          *dend, dend_endo, spine-head, spine-endo, psd, psd-endo*.
+          The psd-endo doesn't make a lot of biological sense, though.
+
+When we run this model, we trigger a propagating Ca wave from about voxel 
+number 16 of 40. It spreads in both directions, and comes to a halt at voxels
+10 and 30, which mark the limits of the IP3 elevation zone.
+
+.. figure:: ./images/ex8.1_dend_Ca.png
+   :alt: Calcium wave propagation along the dendrite
+
+   Calcium wave propagation along the dendrite
+
+Note two subtle effects on the ER Ca concentration: first, there is a 
+periodic small influx of calcium at voxel 16 due to synaptic input. Second, 
+there is a slow restoration of the ER Ca level toward baseline due to 
+diffusion in the dendrite and the action of pumps to within the ER, and 
+out of the cell. Note also that the gradient within the ER is actually quite
+small, being about a 12% deviation from the resting calcium.
+
+.. figure:: ./images/ex8.1_ER_Ca.png
+   :alt: Calcium depletion and buildup in the ER due to CICR wave.
+
+   Calcium depletion and buildup in the ER due to CICR wave.
+
 
 Multiscale model spanning PSD, spine head and dendrite
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1375,7 +1569,7 @@ The spines get synaptic input onto NMDARs and gluRs. There is a baseline
 input rate of 1 Hz thoughout, and there is a burst at 40 Hz for 1 second at 
 t = 10s.
 
-.. figure:: ../../../../images/ex8.2_Vm.png
+.. figure:: ./images/ex8.2_Vm.png
    :alt: Membrane potential responses of cell with synaptic input and multiscale signaling
 
    Membrane potential responses of cell with synaptic input and multiscale signaling
@@ -1384,7 +1578,7 @@ t = 10s.
 At baseline, we just have small EPSPs and little Ca influx. A burst of
 strong synaptic input causes Ca entry into the spine via NMDAR. 
 
-.. figure:: ../../../../images/ex8.2_Ca_spine.png
+.. figure:: ./images/ex8.2_Ca_spine.png
    :alt: Calcium influx into spine.
 
    Calcium influx into spine.
@@ -1392,7 +1586,7 @@ strong synaptic input causes Ca entry into the spine via NMDAR.
 Ca diffuses from the spine into the dendrite and spreads. In the graph below
 we see how Calcium goes into the 50-odd voxels of the dendrite.
 
-.. figure:: ../../../../images/ex8.2_Ca_dend.png
+.. figure:: ./images/ex8.2_Ca_dend.png
    :alt: Calcium influx and diffusion in dendrite.
 
    Calcium influx and diffusion in dendrite.
@@ -1403,7 +1597,7 @@ triggers activation of CaMKII and its translocation to the PSD, where
 it phosphorylates and increases the conductance of gluR. We have two spines
 with slightly different geometry, so the CaMKII activity differs slightly.
 
-.. figure:: ../../../../images/ex8.2_active_CaMKII.png
+.. figure:: ./images/ex8.2_active_CaMKII.png
    :alt: Activation of CaMKII and translocation to PSD
 
    Activation of CaMKII and translocation to PSD
@@ -1532,7 +1726,7 @@ First, just the spiking activity of the cell. Here the burst of activity is
 followed by a few seconds of enhanced synaptic weight, followed by subthreshold
 EPSPs:
 
-.. figure:: ../../../../images/ex8.3_Vm.png
+.. figure:: ./images/ex8.3_Vm.png
    :alt: Membrane potential and spiking.
 
    Membrane potential and spiking.
@@ -1540,7 +1734,7 @@ EPSPs:
 Then, we fast-forward to the amount of *chan_p* which is the molecule that
 controls spine size scaling: 
 
-.. figure:: ../../../../images/ex8.3_chan_p.png
+.. figure:: ./images/ex8.3_chan_p.png
    :alt: Molecule that controles spine size
 
    Molecule that controles spine size
@@ -1549,7 +1743,7 @@ This causes some obvious outcomes. One of them is to increase the synaptic
 conductance of the glutamate receptor. The system assumes that the conductance
 of all channels in the PSD scales linearly with the psdArea.
 
-.. figure:: ../../../../images/ex8.3_gluR.png
+.. figure:: ./images/ex8.3_gluR.png
    :alt: Conductance of glutamate receptor
 
    Conductance of glutamate receptor
@@ -1562,7 +1756,7 @@ size and the time taken for diffusion and further reactions to replenish
 CaMKII. In the current model we don't have a diffusive coupling of CaMKII to
 the dendrite, so this replenishment doesn't happen.
 
-.. figure:: ../../../../images/ex8.3_CaMKII_spine.png
+.. figure:: ./images/ex8.3_CaMKII_spine.png
    :alt: Concentration of CaMKII in the spine
 
    Concentration of CaMKII in the spine
@@ -1654,7 +1848,7 @@ Here we have:
     Vm : Field to display
     Soma potential : Title for display.
 
-.. figure:: ../../../../images/ex9.0_passive_cell_morpho.png
+.. figure:: ./images/ex9.0_passive_cell_morpho.png
    :alt: 3-D display for passive neuron
 
    3-D display for passive neuron
@@ -1794,7 +1988,7 @@ Also note the two Moogli displays. The first is the calcium
 concentration. The second is the membrane potential in each compartment.
 Easy!
 
-.. figure:: ../../../../images/rdes8_active.png
+.. figure:: ./images/rdes8_active.png
    :alt: 3-D display for active neuron
 
    3-D display for active neuron
@@ -1944,7 +2138,7 @@ Only the first two arguments are mandatory.
    angle. Defaults to 2 PI radians, so the spines come out in any
    direction.
 
-.. figure:: ../../../../images/rdes9_spiny_active.png
+.. figure:: ./images/rdes9_spiny_active.png
    :alt: 3-D display for spiny active neuron
 
    3-D display for spiny active neuron
@@ -1959,3 +2153,951 @@ Suggestions:
           spine.
 
 
+Rdesigneur command reference
+----------------------------
+
+Rdesigneur is a Python class used to build multiscale neuronal models 
+involving Reaction-Diffusion and Electrical SIGnaling in NEURons. 
+The stages in its use are illustrated in the following dummy code snippet:
+
+::
+
+    # 1. Load in the libraries
+    import moose
+    import rdesigneur as rd
+
+    # 2. Define the arguments. This does most of the model setup
+    rdes = rd.rdesigneur( args )
+
+    # 3. Tweak parameters of model building-blocks, for example:
+    a = moose.element( '/library/chem/kinetics/a' )
+    a.diffConst = 0
+    
+    # 4. Build the model
+    rdes.buildModel()
+
+    # 5. Tweak values in the constructed model, for example
+    bv = moose.vec( '/model/chem/dend/b' )
+    bv[0].concInit *= 2
+
+    # 6. Run the model
+    moose.reinit()
+    moose.start( runtime )
+
+    # 7. Display and/or save model output
+    rdes.dispay()
+
+The rdesigneur arguments are provided in the standard Python keyword-argument
+format. For example:
+
+::
+
+    rdes = rd.rdesigneur(
+        turnOffElec = True,
+        chemDt = 0.05,
+        ...
+        chemProto = [ ['makeChemOscillator()', 'osc'] ],
+        ...
+        plotList = [ rd.rplot( relpath = 'dend/a', field = 'conc', title = '[a] (uM)' ) ],
+        ...
+    )
+
+Each argument has a default, hence even 
+`building rdesigneur without arguments`_ will produce a correct, if not very 
+interesting model. 
+
+**Rdesigneur and Prototypes:** Rdesigneur assembles models by taking prototype
+objects and replicating them into the model. These prototypes can be chemical
+reaction systems, ion channels, spines, or entire neurons. All the prototypes
+are placed under the MOOSE object */library*. When building the model, it looks
+up prototypes by name and places them into the resulting model. The rdesigneur
+constructor (step 2 above) builds all these prototypes. Once they are in place,
+the *BuildModel()* method (step 4 above) performs the assembly.
+
+Below we provide the usage of the argument list to rdesigneur, which 
+does most of the model specification.
+
+turnOffElec
+~~~~~~~~~~~
+.. _`turnOffElec`:
+
+Type: bool
+
+Default: False
+
+Use: Turns off electrical calculations. It is a good idea to set this flag 
+**True** if the model doesn't use electrical calculations, it can make the 
+calculations many times faster.
+
+useGssa
+~~~~~~~
+Type: bool
+
+Default: True
+
+Use: Turns on the use of the Gillespie Stochastic Simulation Algorithm (GSSA)
+in dendritic spines. Advisable in models where you worry about stochasticity.
+Also it typically makes the simulations run faster.
+
+combineSegments
+~~~~~~~~~~~~~~~
+
+Type: bool
+
+Default: True
+
+Use: Flag to pass on to the NeuroML loader to tell it to combine segments.
+
+stealCellFromLibrary
+~~~~~~~~~~~~~~~~~~~~
+
+Type: bool
+
+Default: False
+
+Use: Use the prototype loaded-in neuron itself for the main simulation run,
+removing it from the available prototypes.
+It is advisable to set this to *True* if the model is large and complicated. It
+saves memory and in some cases runs more reliably.
+
+verbose
+~~~~~~~
+
+Type: bool
+
+Default: True
+
+Use: Tell rdesigneur to be garrulous when loading and reporting status and 
+errors.
+
+.. _`addSomaChemCompt`:
+
+addSomaChemCompt
+~~~~~~~~~~~~~~~~
+
+Type: bool
+
+Default: False
+
+Use: Specify that the largest chemical compartment (by volume) should be 
+assigned to the cell soma. Most multiscale models don't bother with a soma 
+chemical compartment, and are happy with dendrite and possibly spines, so this
+defaults to False.
+
+.. _`addEndoChemCompt`:
+
+addEndoChemCompt
+~~~~~~~~~~~~~~~~
+
+Type: bool
+
+Default: False
+
+Use: Specify that each of the chemical compartments should contain an internal
+*endo*-compartment. This is typically used for the endoplasmic reticulum in
+`models of calcium-induced calcium release`_ (CICR), however, the 
+EndoCompartments are quite general and can be used for defining chemistry and
+transport involving any membrane-bound organelle. In MOOSE, when you create 
+an EndoCompartment it must be surrounded by a regular compartment, and a 
+voxel of the EndoCompartment appears within every voxel of the surrounding 
+compartment.
+
+diffusionLength
+~~~~~~~~~~~~~~~
+Type: double
+
+Default: 2e-6 (2 microns)
+
+Use: This sets the spatial discretization length of reaction-diffusion models.
+If the diffusion constant is D (in micron^2/sec), then the *diffusionLength*
+should be less than D microns for signaling events that take 1 second. If the
+signaling is faster, *diffusionLength* should be smaller.
+
+temperature
+~~~~~~~~~~~
+
+Type: double
+
+Default: 32 degrees Celsius
+
+Use: ChannelML definitions of ion channels use this value to modulate 
+their kinetics.
+
+chemDt
+~~~~~~
+
+Type: double
+
+Default: 0.1 s
+
+Use: Specify timestep for chemical computations. Note that internally the MOOSE
+solver will probably use finer or adaptive timesteps. The *chemDt* just ensures
+that all the chemical values in different solvers will be synchronized at 
+this interval. You will want to make this somewhat smaller (0.01 to 0.001 s)
+in the case of multiscale simulations with tight coupling between electrical
+and signaling events.
+
+diffDt
+~~~~~~
+
+Type: double
+
+Default: 0.01 s
+
+Use: Specify timestep for diffusion computations, as well as cross-compartment
+reactions and molecular transport across membrane pores. This timestep
+does not apply to voltage-gated and synaptic channels handled by the electrical
+solver, for that use *elecDt*. 
+You will want to make this somewhat smaller (0.01 to 0.001 s)
+in the case of multiscale simulations with tight coupling between electrical
+and signaling events.
+
+elecDt
+~~~~~~
+
+Type: double
+
+Default: 50e-6 s
+
+Use: Specify timestep for electrical calculations, used by the HSolver in
+MOOSE to carry out calculations using Gaussian Elimination and the Crank-
+Nicolson method for ion channels. This works well for slower
+channels, but if you have particularly fast channel kinetics you may wish to
+use *elecDt* of 10 to 20 us.
+
+chemPlotDt
+~~~~~~~~~~
+
+Type: double
+
+Default: 1 s
+
+Use: Timestep for storing and plotting chemical values.
+
+elecPlotDt
+~~~~~~~~~~
+
+Type: double
+
+Default: 100e-6 s
+
+Use: Timestep for storing and plotting electrical values.
+
+funcDt
+~~~~~~
+
+Type: double
+
+Default: 100e-6 s
+
+Use: Timestep for performing Function calculations for inputs and stimuli,
+for electrical models. Only used for electrical models, i.e., 
+when `turnOffElec`_ is False. Otherwise the system uses a *funcDt* equal to
+the *chemDt*.
+
+cellProto
+~~~~~~~~~
+
+Type: List of lists
+
+Default: [] (empty list). This generates the Hodgkin-Huxley configuration where
+length and diameter are 500 microns, RM = 0.333, RA = 3000, and
+CM = 0.01 F/m^2, but no active channels.
+
+Use: This defines which neuronal model specification to use. There are many
+options here:
+
+    1. zero args: make standard soma corresponding to the Hodgkin-Huxley 
+       model. length and diameter are both 500 um.
+    2. [name, library_proto_name]: uses library prototype object.
+    3. [fname.suffix, cellname ]: Loads cell from file. The file type
+       is identified by the suffix, and can be :
+
+        - *.nml*: NeuroML
+        - *.xml*: NeuroML
+        - *.swc*: NeuroMorpho.org format for cellular morphology
+        - *.p*: Genesis format
+
+    4. [moose<Classname>, cellname]: Makes prototype from MOOSE class.
+    5. [funcname, cellname]: Calls named function with specified 
+       name of cell to be made.
+    6. [path, cellname]: Copies path to library as proto
+    7. [libraryName, cellname]: Renames library entry as prototype.
+    8. [somaProto, name, somaDia=5e-4, somaLen=5e-4]
+       Creates a soma with optional specified diameter and length. Defaults
+       as shown.
+    9. [ballAndStick,name, somaDia=10e-6, somaLen=10e-6,
+       dendDia=4e-6, dendLen=200e-6, numDendSeg=1]
+       Creates a ball-and-stick with required type and name arguments. 
+       The remaining arguments are optional. Defaults as shown.
+
+spineProto
+~~~~~~~~~~
+
+.. _`spine prototype`:
+
+Type: List of lists
+
+Default: [] (empty list). This does not define any spines.
+
+Use: Each list entry should be a list containing two strings: *source* and
+*destination*. The *source* defines how to build the prototype. The 
+*destination* specifies its name.
+If the requested *destination* is an object that already exists in the library,
+the system doesn't do anything.
+
+The *source* can be any of:
+
+    - functionName(): Call specified Python function, with the *destination*
+      as the argument. The function is expected to build a prototype of the
+      requested name on '/library'. The following utility functions are 
+      built-in:
+
+        - makePassiveSpine(): Makes a 2-compartment spine with the following 
+          parameters:
+
+            - shaft name: shaft
+            - shaft length = 1 micron
+            - shaft diameter = 0.2 micron
+            - head name: head
+            - head length = 0.5 micron
+            - head diameter = 0.5 micron
+            - RM = 1.0
+            - RA = 1.0
+            - CM = 0.01
+
+        - makeExcSpine(): Same as above but adds in glutamate and NMDA 
+          receptors and a calcium pool. The calcium pool has a pumping tau of 
+          13.333 ms, and is present in the volume of the spine head. 
+          Both receptors have conductances in the form of dual-exponential
+          alpha functions, with a separate opening and closing tau.
+          The glutamate receptor has the following parameters:
+
+            - name: glu
+            - opening tau: 2 ms
+            - closing tau: 9 ms
+            - Gbar, ie, conductance per unit area: 200 Siemens/m^2
+
+          The NMDA receptor has the following parameters:
+
+            - name: NMDA
+            - opening tau: 20 ms
+            - closing tau: 20 ms
+            - Gbar, ie, conductance per unit area: 80 Siemens/m^2
+
+        - makeActiveSpine(): Same as above, but also adds in a voltage-gated
+          calcium channel with *Gbar = 10 Siemens/m^2* into the spine head.
+
+    - Path of existing object in memory, such as */library/source*. In this 
+      case rdesigneur renames the object to */library/destination*.
+    - A filename, with any of the suffices:
+
+        - *.nml*: NeuroML
+        - *.xml*: NeuroML
+        - *.swc*: NeuroMorpho.org format for cellular morphology
+        - *.p*: Genesis format
+
+    - moose::SymCompartment: Make a SymCompartment for the spine. Deprecated.
+    - moose::Compartment: Make a Compartment for the spine. Deprecated.
+
+
+chanProto
+~~~~~~~~~
+
+Type: List of lists
+
+Default: [] (empty list). The empty list does not define any channels.
+
+Use: Each list entry must have a string for the *source*. It can optionally
+have a second string for the *destination*, which is the name to give to the
+*source* channel when it is constructed on */library*.
+
+.. _Open Source Brain: http://www.opensourcebrain.org/
+
+The following options are available for specifying the *source* for 
+making channel prototypes:
+
+        - Filepath. This is relative to the working directory. The following
+          file types are known:
+
+            - xml: ChannelML, which is a subset of NeuroML
+            - nml: ChannelML, which is a subset of NeuroML
+
+          Channels in thse formats are available from `Open Source Brain`_, 
+
+        - Predefined channel prototypes, available as functions within 
+          rdesigneur. This is indicated by the use of braces after the name.
+          The following prototypes are currently available:
+          
+            - make_HH_Na(): Make the classical Hodgkin-Huxley Na channel, with
+              kinetics scaled to SI units.
+            - make_HH_K(): Classical HH delayed rectifier K channel.
+            - make_Na(): Hippocampal pyramidal Na channel from Migliore et al.
+            - make_K_DR(): Hippocampal pyramidal K delayed rectifier channel 
+              from Migliore et al.
+            - make_K_A(): Hippocampal pyramidal A-type K channel from Migliore
+              et al.
+            - make_Ca_conc(): A calcium pool with tau 13.333 ms. This is
+              required for the calcium dynamics of several channels.
+            - make_Ca(): Voltage-gated Calcium channel, based on Traub 1991. It
+              requires the Ca_conc.
+            - make_K_AHP: Voltage and calcium-gated afterhyperpolarization-
+              activated K channel, from Traub. Note that this channel requires
+              the presence of the Ca_conc.
+            - make_K_C: Voltage and calcium-dependent K channel from Traub.
+              This channel requires the presence of the Ca_conc.
+            - make_glu(): Glutamate receptor in the form of dual-exponential
+              alpha functions, with a separate opening (2ms) and closing (9ms)
+              tau. Reversal potential = 0 mV.
+            - make_GABA(): GABA receptor in the form of dual-exponential
+              alpha functions, with a separate opening (4ms) and closing (9ms)
+              tau. Reversal potential = -65 mV.
+
+         - User-defined channel definition functions.
+           These can be from external Python files, using the 
+           full path to the file name minus the suffix. The specific function 
+           within it is then specified. For example,
+
+           ::
+
+               chanProto = [
+                   ['/home/user/models/channelProtos.make_K_AHP()', 'K_AHP']
+               ]
+
+
+chemProto
+~~~~~~~~~
+
+Type: List of lists
+
+Default: [] (empty list). The empty list does not define any chemical systems.
+
+Use: Each list entry must have a string for the *source*. It can optionally
+have a second string for the *destination*, which is the name to give to the
+*source* chemical system when it is constructed on */library*.
+
+.. _DOQCS: https://doqcs.ncbs.res.in/
+.. _BioModels: https://www.ebi.ac.uk/biomodels-main/
+
+The following options are available for specifying the *source* for 
+making channel prototypes:
+
+        - Filepath. This is relative to the working directory. The following
+          file types are known:
+
+            - xml: SBML
+            - sbml: SBML
+            - .g: GENESIS Kinetikit (kkit.g) format.
+
+          Channels in thse formats are available from the `DOQCS`_ database,
+          and from the `BioModels`_ database, 
+        - Predefined functions. At present only one such function is available,
+          **makeChemOscillator()**
+        - User-defined functions. 
+           These can be from external Python files, using the 
+           full path to the file name minus the suffix. The specific function 
+           within it is then specified. For example,
+           ::
+
+               chemProto = [
+                   ['/home/user/models/chemProtos.make_Osc()', 'osc']
+               ]
+
+        - Pool objects. These are created on the fly using the form
+          ::
+
+                chemProto = [['moose:Pool', 'a']]
+
+
+passiveDistrib
+~~~~~~~~~~~~~~
+
+Type: List of lists
+
+Default: [] (empty list). Does nothing.
+
+Use; This is for adjusting the passive properties of the neuron. Each list
+entry is a list of strings, of the form:
+
+::
+        
+        [path, field, expr, [field, expr]...]
+
+Here the *path* is a MOOSE wildcard path, which defines one or more objects. 
+Briefly, the '#' character specifies any string, and the double '##' specifies
+any string at any level in the tree. For example, to specify any compartment
+with the string 'dend' you would use *'#dend#'* and to specify any object 
+anywhere in the tree you would use *'##'*.
+
+The *field* can be any one of the following:
+
+        - RM: Membrane resistivity, in ohms.m^2
+        - RA: Axial resistivity, in ohms.m
+        - CM: Membrane specific capacitance, in Farads/m^2
+        - Rm: Absolute membrane resistance of that segment, in ohms.
+        - Ra: Absolute axial resistance of that segment, in ohms.
+        - Cm: Absolute membrane capacitance of that segment, in Farads.
+        - Em: Membrane resting potential, in Volts.
+        - initVm: Initial value to set the membrane potential, in Volts.
+
+The *expr* is an expression string that is evaluated to give the desired value 
+for the field. This can be as simple as the value itself, but can be a much
+more interesting function of geometrical properties of the cell. The geometry
+arguments available to the *expr* include: 
+        
+        - p: Path length in metres from the soma, measured along the dendrite.
+        - g: Geometrical distance from the soma.
+        - L: Number of electronic length constants from the soma
+        - len: length of the segment of dendrite
+        - dia: diameter of the segment of dendrite
+        - maxP: Maximum path length of any dendrite in the cell.
+        - maxG: Maximum geometrical distance of any dendrite from soma
+        - maxL: Maximum electrotonic distance of any dendrite from the soma
+
+Putting these together, here is an example of using the passiveDistrib:
+
+::
+
+    passiveDistrib = [
+        [ 'soma', 'RM', '1.0', 'CM', '0.02' ],
+        [ '#dend#', 'RM', '1.5 + 0.5*(p>200e-6)', 'CM', '0.01' ],
+    ]
+
+This means set the soma *RM* to 1.0, and *CM* to 0.02, leaving the *RA* as the 
+default. The scaled value for *Rm*, *Ra*, and *Cm* are computed by scaling 
+these terms according to the soma dimensions. 
+For all dendrite compartments, set the *RM* to 1.5 provided it is closer than
+200 microns dendritic path length from the soma, and set the *RM* to 2.0 for
+all dendritic compartments further than this.
+Finally, for all dendrite compartments, set *CM* to 0.01. Note that again 
+the absolute *Rm* and *Cm* will be scaled according to the local compartment
+dimensions.
+
+spineDistrib
+~~~~~~~~~~~~
+
+Type: List of lists
+
+Default: [] (empty list). Does nothing.
+
+Use: This is for inserting dendritic spines onto the neuron.
+Each entry is a list of strings, of the form:
+
+::
+        
+    [proto, path, [spacing, minSpacing, size, sizeDistrib, angle, angleDistrib]]
+
+Of these, the *name* and the *path* are required entries, and the remainder 
+can be provided in pairs. The defaults for these entries are:
+
+::
+
+    ['spine', '#dend#,#apical#', '10e-6', '1e-6', '1', '0.5', '0', '6.2832' ]
+
+
+The interpretation of the arguments is as follows:
+
+    - name: This is the name of the `spine prototype`_. 
+    - path: The wildcard path of compartments on which to insert the spines.
+      In the example above, *'#dend#,#apical#'* means all compartments with
+      the strings *dend* or *apical* in their names.
+    - spacing: The mean spacing between spines. At present the spines are placed
+      with a Poisson distribution. This is a math expression with the same
+      terms as used for the passive distribution, so that the spine spacing
+      can be a function of spine position along the dendritic tree. The form
+      of this expression is shown again below.
+    - minSpacing: The minimum spacing, and the increment along which the 
+      Poisson samples are taken to decide if a spine should be added.
+    - size: Scale factor for size from the prototype spine. All dimension of
+      the spine are scaled by this number: shaft length, shaft diameter,
+      head length and head diameter. This is a math expression, as shown below.
+    - sizeDistrib: The range of distribution of sizes. This is a linear
+      distribution centered around the defined size.
+    - angle: The initial angle of the first spine on each dendrite compartment,
+      in radians. This is a math expression, as shown below.
+    - angleDistrib: The range of of angles around this initial angle.
+      The angle will be chosen from a linear distribution centered around the 
+      centre angle, +/- angleDistrib.
+
+The expression used for spacing, size, and angle is of the form of an 
+an expression string that is evaluated to give the desired value 
+for the field. This can be as simple as the value itself, but can be a much
+more interesting function of geometrical properties of the cell. The geometry
+arguments available to the *expr* include: 
+        
+    - p: Path length in metres from the soma, measured along the dendrite.
+    - g: Geometrical distance from the soma.
+    - L: Number of electronic length constants from the soma
+    - len: length of the segment of dendrite
+    - dia: diameter of the segment of dendrite
+    - maxP: Maximum path length of any dendrite in the cell.
+    - maxG: Maximum geometrical distance of any dendrite from soma
+    - maxL: Maximum electrotonic distance of any dendrite from the soma
+
+For example:
+
+::
+
+        ['spine', '#dend#', '1e-6 + (dia<2e-6)*10', '1e-7', '1', '0.5', '6.28*p/maxP', '0']
+
+**proto**: The prototype spine by the name of *spine* is used.
+
+**path**: All compartments with the string *dend* in their name are used.
+
+**Spacing**: The spines are only placed on branches smaller than 2 microns 
+(otherwise the spine spacing is 10 metres). On these small branches the 
+spacing is, on average, 1 micron.
+
+**Size**: The size is anything from 50% to 150% of the prototype spine size.
+
+**Angle**: The angle is proportional to the distance from the soma, such that
+the spines make a complete spiral (2pi) around the dendrite over its length.
+
+
+chanDistrib
+~~~~~~~~~~~~
+
+Type: List of lists
+
+Default: [] (empty list). Does nothing.
+
+Use: This is for inserting ion channels onto the neuron.
+Each entry is a list of strings, of the form:
+
+::
+        
+    [proto, path, field, expr, [field, expr]...]
+
+The entries here are of the form:
+
+    - proto: Specifies the name of the prototype channel to insert
+    - path: Wildcard path of compartments in which to insert the channel
+    - field: Field to assign to channel, almost always **Gbar**, to set its
+      channel density.
+    - expr: Expression evaluated to obtain value to assign to field. This is a
+      mathematical expression of various geometrical properties of the cell,
+      as listed below.
+
+.. _`usual function`:
+
+The *expr* can be as simple as the value itself, but can be a much
+more interesting function of geometrical properties of the cell. The geometry
+arguments available to the *expr* include: 
+        
+    - p: Path length in metres from the soma, measured along the dendrite.
+    - g: Geometrical distance from the soma.
+    - L: Number of electronic length constants from the soma
+    - len: length of the segment of dendrite
+    - dia: diameter of the segment of dendrite
+    - maxP: Maximum path length of any dendrite in the cell.
+    - maxG: Maximum geometrical distance of any dendrite from soma
+    - maxL: Maximum electrotonic distance of any dendrite from the soma
+
+A typical channel distribution entry is:
+
+::
+
+    ["kdr", "#", "Gbar", "p < 50e-6 ? 500 : 100" ]
+
+Here the *kdr* channel is inserted throughout the cell, and its conductance
+is at 500 Siemens/m^2 for all regions closer than 50 microns, and 100 S/m^2
+for the rest of the cell. Basically there is lots of the channel on and
+near the soma.
+
+chemDistrib
+~~~~~~~~~~~~
+
+Type: List of lists
+
+Default: [] (empty list). Does nothing.
+
+Use: This is for inserting a chemical system into the neuron
+Each entry is a list of strings, of the form:
+
+::
+        
+    [proto, path, 'install', expr]
+
+The entries here are of the form:
+
+    - proto: Specifies the name of the prototype chemical system to insert
+    - path: Wildcard path of compartments in which to insert the channel
+    - 'install': Default string.
+    - expr: Expression evaluated to decide whether to install the chemical
+      system. This is the `usual function`_ of geometrical properties of the
+      cell. It is usually '1', to tell the system to install throughout the
+      *path*.
+
+The chemical distribution is handled specially for assignment to the neuronal
+morphology. This is because a given chemical system will have reactions
+between dendrite, ER, spines and PSD, as well as diffusion between these
+zones. Thus, though it would be convenient,  we cannot simply define separate 
+chemical systems for each cellular compartment. Instead we use one of two
+conventions for doing the assignment.
+
+1. Volume based. If the model format does not permit explicit naming of the
+   chemical compartments in the model, then the assignment is inferred from
+   the volume of each compartment. This limitation applies for the legacy
+   Genesis/kkit **.g** format. It may also apply to SBML models that do not
+   assign suitable names for their chemical compartments. In this case
+   the largest chemical compartment is 
+   assigned to the dendrite, the next (if present) to the spine head, and the 
+   smallest (if present) to the spine PSD.
+
+   This is modified in one of two ways by the flags `addSomaChemCompt`_ and
+   `addEndoChemCompt`_.
+
+   *addSomaChemCompt*  instructs rdesigneur to use the largest compartment for
+   the soma. The remaining compartments follow in the usual order.
+
+   *addEndoChemCompt* instructs rdesigneur to insert an EndoCompartment in
+   each neuronal compartment. The volume order is now dend, dend_endo, 
+   spine-head, spine-head-endo and so on.
+     
+2. Name based. This works for recent SBML models, which can assign a compartment
+   name to each of the chemical compartments. Here the expectation is that the
+   names are one of *soma*, *soma_endo*, *dend*, *dend_endo*, *spine*, 
+   *spine_endo*, *psd*, *psd_endo*.
+   Note that the last one, though permitted, doesn't make much biological
+   sense.
+
+
+adaptorList
+~~~~~~~~~~~
+
+Type: List of lists
+
+Default: [] (empty list). Does nothing.
+
+Use: This is for implementing an adaptor between chemical and electrical, or
+chemical and structural quantities. Adaptors handle the conversion between
+distinct concepts in chemical and electrical models. For example, Calcium
+concentration as computed electrically in the Ca_conc objects, can map to the
+calcium concentration of the ion as a molecule, where it can react, diffuse,
+and undergo other calcium dynamics. Another common use is to map the 
+concentration of the molecular state of an ion channel, to its conductance.
+The adaptor applies the conversion equation **y = mx + c** where **y** is the
+target value, **x** is the source value, **m** is the slope of the conversion,
+and **c** is the offset.
+
+Adaptors automatically average over multiple inputs if the mapping requires.
+Typically electrical segments each contain many chemical voxels, so the
+adaptor averages all the source chemical quantities to apply to the 
+corresponding electrical quantity. Similarly, each chemical timestep is 
+typically much longer than the electrical timestep, so the adaptor averages
+the electrical quantity over the entire duration of the chemical timestep.
+
+Each entry is a list of strings, of the form:
+
+::
+        
+    [source, source_field, dest, dest_field, offset, scaling]
+
+The entries here are:
+
+    - source: Specifies the path of the objects whose quantities need to be
+      converted. In the case of chemical quantities, the path starts with the
+      compartment name, one of *dend*, *spine*, or *psd*. So the molecule
+      Ca in the dendrite would be identified as *dend/Ca*.
+    - source_field: The field on the source object whose value is to be used.
+    - dest: Path of destination object, whose quantities will be assigned.
+      As above, chemical quantities are prefixed by their compartment name.
+    - dest_field: Field to be assigned on the destination object.
+    - offset: Double. In the conversion, what is the value of the dest_field
+      when the source value is zero?. In other words, the quantity **c** in
+      the conversion equation **y = mx + c**
+    - scaling: Double. The slope **m**.
+
+
+stimList
+~~~~~~~~
+
+Type: List of lists
+
+Default: [] (empty list). Does nothing.
+
+Use: Each entry is a list of strings, as follows:
+
+::
+        
+    [path, geometry_expr, dest, dest_field, time_expr]
+
+The entries here are:
+    - path: The usual MOOSE wildcard path to identify electrical compartments
+      over which the stimulus will extend. Note that the stimulus may be to
+      a chemical entity, but the spatial location is specified in terms of
+      the electrical compartments in which the chemical system is embedded.
+    - geometry_expr. This is the `usual function`_ of geometrical properties 
+      of the cell. If it is non-zero, then the stimulus will apply.
+      There is a special case for synaptic inputs in which the *geometry_expr*
+      is repaced with the synaptic weight, recorded as a string.
+    - dest. This is the destination object for the stimulus.
+    - dest_field. This is the field on the destination object to be assigned.
+      There is a special case for synaptic inputs, where the field can be
+      **periodicsyn** or **randsyn**, representing periodic and random
+      synaptic input respectively.
+    - time_expr: This is the time expression of the value of the stimulus.
+      Unlike the *geometry_expr*, the *time_expr* can take the predefined 
+      variable **t** which is the current simulation time. The *time_expr* does
+      not have access to the geometry arguments.
+
+Example 1:
+
+::
+
+    ['head#', '0.5','glu', 'periodicsyn', '1 + 40*(t>10 && t<11)']
+
+This acts on all glutamate receptors on the spine *heads*. It delivers 
+periodic synaptic input with weight 0.5 at a basal rate of 1 Hz, rising
+by 40Hz in the interval between 10 and 11 seconds.
+
+Example 2:
+
+::
+
+    ['soma', '1', '.', 'inject', '(1+cos(t/10))*(t>31.4 && t<94)* 0.5e-9' ]
+
+This acts to deliver a current injection on the soma. It delivers cosine
+input of angular frequency 1/10 radians/s, between times 31.4 and 94 seconds,
+with a peak amplitude of 0.5 nA.
+
+Rdesigneur also supports keyword-based argument lists for the stimList.
+Here each entry is an rstim function as follows:
+
+::
+        
+    rd.rstim( elecpath, geom_expr, relpath, field, expr )
+
+The default values of the arguments are
+
+::
+        
+    rd.rstim(elecpath='soma', geom_expr='1', relpath='.', field='inject', expr='0')
+
+ 
+Example 3: To get the same outcome as example 2, one could use:
+
+::
+
+    rd.rstim( expr=(1+cos(t/10))*(t>31.4 && t<94)* 0.5e-9' )
+
+because most of the arguments are the same as the defaults.
+
+plotList
+~~~~~~~~
+
+Type: List of lists
+
+Default: [] (empty list). Does nothing.
+
+Use: This displays a line plot of cellular activity. 
+Each entry is a list as follows:
+
+::
+        
+    [path, geom_expr, relpath, field, title, 
+        [mode, ymin, ymax,saveFile, saveResolution, showFlag ]
+    ]
+
+The entries here are:
+    - path: string. The usual MOOSE wildcard path to identify electrical 
+      compartments
+      over which the plots will be sampled. Note that the stimulus may be to
+      a chemical entity, but the spatial location is specified in terms of
+      the electrical compartments in which the chemical system is embedded.
+    - geom_expr: string. This is the `usual function`_ of geometrical 
+      properties of the cell. If it is non-zero, then the stimulus will apply.
+      There is a special case for synaptic inputs in which the *geometry_expr*
+      is repaced with the synaptic weight, recorded as a string.
+    - replath: string. Relative path to object whose value is being monitored.
+    - field: string. The field to monitor on the source object.
+    - title: Title string for the generated plot.
+    - mode: Optional. String to decide what kind of plot to make. Options are:
+      
+        - *'time'*: Default. Plot time-series
+        - *'wave'*: Generate wave-plot with compartment/voxel number as x axis,
+          value as y axis, and run through a series of frames for different 
+          time-points durign simulation.
+    - ymin: Double. Optional. Minimum value for y axis. Default = 0.
+    - ymax: Double. Optional. Maximum value for y axis. Default = 0. 
+      If ymin==ymax then the plot autoscales.
+    - saveFile: string. Optional. File in which to save plot contents. 
+      Default = "", to
+      indicate that the file is not saved. Currently it can save in *csv* and
+      *xml* formats. *nsdf* will be implemented soon.
+    - show: Bool. Optional. Flag to decide if the plot should be displayed. 
+      Default=True.
+
+Rdesigneur also supports keyword-based argument lists for the plotList, having
+the same entries as above. Here are two plotList entries with identical 
+outcomes.
+
+::
+
+    ['soma', '1', '.', 'Vm', 'Soma membrane potential'],
+    [rd.rplot( field='Vm', title= 'Soma membrane potential')],
+
+moogList
+~~~~~~~~
+
+Type: List of lists
+
+Default: [] (empty list). Does nothing.
+
+Use: This displays a 3-D plot of cellular activity.
+Each entry is a list as follows:
+
+::
+        
+    [path, geom_expr, relpath, field, title, [ymin, ymax]]
+
+The entries here are:
+    - path: string. The usual MOOSE wildcard path to identify electrical 
+      compartments
+      over which the display will be sampled. Note that the stimulus may be to
+      a chemical entity, but the spatial location is specified in terms of
+      the electrical compartments in which the chemical system is embedded.
+    - geom_expr: string. This is the `usual function`_ of geometrical 
+      properties of the cell. If it is non-zero, then the stimulus will apply.
+      There is a special case for synaptic inputs in which the *geometry_expr*
+      is repaced with the synaptic weight, recorded as a string.
+    - replath: string. Relative path to object whose value is being monitored.
+    - field: string. The field to monitor on the source object.
+    - title: Title string for the generated display.
+    - ymin: Double. Minimum value for y axis. Default = 0.
+    - ymax: Double. Maximum value for y axis. Default = 0. 
+      If ymin==ymax then the plot autoscales.
+    - show: Bool. Flag to decide if it should be displayed. Default=True.
+
+Rdesigneur also supports keyword-based argument lists for the moogList, having
+the same entries as above. Here are two moogList entries with identical 
+outcomes.
+
+::
+
+    ['soma', '1', 'dend/a', 'conc', 'a Conc', 0, 600 ],
+    [rd.rmoog(relpath='dend/a', field='conc', title = 'a Conc', ymax=600)]
+
+
+To run and display moogli, one replaces the *moose.start()* and the 
+*rdes.display()* functions with the line:
+
+::
+
+    rdes.displayMoogli(dt, runtime, rotation, fullscreen, block, azim, elev)
+
+in which the first two arguments are required and the rest are optional and
+can be assigned by keywords.
+
+The arguments are as follows:
+
+    - dt: double. Time interval between frames on the moogli display
+    - runtime: double. Simulation runtime.
+    - rotation: double. How much to rotate the display per frame. 
+      Defaults to pi/500.
+    - fullscreen: bool. Flag to do display on the full screen. 
+      Defaults to False.
+    - azim: double. Azimuth setting. Defaults to 0.0
+    - elev: double. Elevation setting. Defaults to 0.0
+
+The `moogli primer`_ explains how to use the 3-D display.
