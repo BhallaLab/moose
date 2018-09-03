@@ -1185,6 +1185,200 @@ of position in successive image frames.
     position along the dendrite.
 
 
+Intracellular transport
+~~~~~~~~~~~~~~~~~~~~~~~
+
+*ex7.3_simple_transport.py*
+
+This illustrates how intracellular transport works in MOOSE. We have a 
+an elongated soma in which molecules start out at the left and are transported
+to the right. Note that they spread out as they go along,
+This is because the transport is implemented as drift-diffusion, in which a 
+fraction of the molecules move to the next location each timestep. The 
+equation is
+
+        ``flux = motorConst * conc / spacing``
+
+for a uniform cylinder. MOOSE applies suitable scaling terms if the neuronal
+geometry is non-uniform.
+
+::
+
+    import moose
+    import numpy as np
+    import pylab
+    import rdesigneur as rd
+    
+    moose.Neutral( '/library' )
+    moose.Neutral( '/library/transp' )
+    moose.CubeMesh( '/library/transp/dend' )
+    A = moose.Pool( '/library/transp/dend/A' )
+    A.diffConst = 0 
+    A.motorConst = 1e-6     # Metres/sec
+    
+    rdes = rd.rdesigneur(
+        turnOffElec = True,
+        #This subdivides the length of the soma into 0.5 micron voxels
+        diffusionLength = 0.5e-6, 
+        cellProto = [['somaProto', 'soma', 2e-6, 50e-6]],
+        chemProto = [['transp', 'transp']],
+        chemDistrib = [['transp', 'soma', 'install', '1' ]], 
+        plotList = [ 
+            ['soma', '1', 'dend/A', 'conc', 'Concentration of A'],
+            ['soma', '1', 'dend/A', 'conc', 'Concentration of A', 'wave'],
+        ],  
+        moogList = [['soma', '1', 'dend/A', 'conc', 'A Conc', 0, 20 ]]
+    )
+    rdes.buildModel()
+    moose.element( '/model/chem/dend/A[0]' ).concInit = 0.1 
+    moose.reinit()
+    rdes.displayMoogli( 1, 80, rotation = 0, azim = -np.pi/2, elev = 0.0 )
+
+In this example we explicitly create the single-molecule reaction system,
+and assign a motorConst of 1 micron/sec to the molecule A. We start off with 
+all the molecules in a single voxel on the left of the cylinder, and then
+watch the molecules move.
+Once the molecules reach the end of the cylindrical soma, they have nowhere
+further to go so they pile up.
+
+.. figure:: ../../../../images/ex7.3_1.png
+    :alt: Transport frame 1.
+.. figure:: ../../../../images/ex7.3_2.png
+    :alt: Transport frame 2.
+.. figure:: ../../../../images/ex7.3_3.png
+    :alt: Transport frame 3.
+.. figure:: ../../../../images/ex7.3_4.png
+    :alt: Transport frame 4.
+.. figure:: ../../../../images/ex7.3_5.png
+    :alt: Transport frame 5.
+.. figure:: ../../../../images/ex7.3_6.png
+    :alt: Transport frame 6.
+
+    Frames at increasing intervals from the transport simulation showing 
+    spreading and piling up of the molecule at the right end of the cylinder.
+
+Suggestions:
+
+    - Play with different motor rates.
+    - The motor constant sign detemines the direction of transport. See
+      what happens if you get it going in the opposite direction.
+    - Consider how you could avoid the buildup in the last voxel.
+    - Consider how to achieve a nice exponential falloff over a
+      much longer range than possible with diffusion.
+
+Travelling oscillator
+~~~~~~~~~~~~~~~~~~~~~
+
+*ex7.4_travelling_osc.py*
+
+Here we put a chemical oscillator into a cylinder, and activate motor transport
+in one of the molecules. The oscillatory zone slowly moves to the right, with 
+an amplification in the last compartment due to end-effects.
+
+::
+
+    import moose
+    import numpy as np
+    import pylab
+    import rdesigneur as rd
+    rdes = rd.rdesigneur(
+        turnOffElec = True,
+        diffusionLength = 2e-6,
+        chemProto = [['makeChemOscillator()', 'osc']],
+        chemDistrib = [['osc', 'soma', 'install', '1' ]],
+        plotList = [
+            ['soma', '1', 'dend/a', 'conc', 'Concentration of a'],
+            ['soma', '1', 'dend/b', 'conc', 'Concentration of b'],
+            ['soma', '1', 'dend/a', 'conc', 'Concentration of a', 'wave'],
+        ],
+        moogList = [['soma', '1', 'dend/a', 'conc', 'a Conc', 0, 360 ]]
+    )
+    a = moose.element( '/library/osc/kinetics/a' )
+    b = moose.element( '/library/osc/kinetics/b' )
+    s = moose.element( '/library/osc/kinetics/s' )
+    a.diffConst = 0
+    b.diffConst = 0
+    a.motorConst = 1e-6
+    
+    rdes.buildModel()
+    moose.reinit()
+    
+    rdes.displayMoogli( 1, 400, rotation = 0, azim = -np.pi/2, elev = 0.0 )
+
+.. figure:: ../../../../images/ex7.4_travelling_osc.png
+    :alt: Travelling Oscillator
+
+    Snapshot of travelling oscillator waveform at t = 198.
+
+Suggestions:
+
+    - What happens if all molecules undergo transport?
+    - What happens if b is transported opposite to a?
+    - What happens if there is also diffusion?
+
+Bidirectional transport
+~~~~~~~~~~~~~~~~~~~~~~~
+
+*ex7.5_bidirectional_transport.py*
+
+This is almost identical to ex7.4, except that we implement bidirectional
+transport. Molecule a goes from left to right, and b and s go from 
+right to left. Here we see that the system builds up with large oscillations
+in the middle as the molecules converge, then the peaks collapse when 
+the molecules go away.
+
+::
+
+    import moose
+    import numpy as np
+    import pylab
+    import rdesigneur as rd
+    rdes = rd.rdesigneur(
+        turnOffElec = True,
+        diffusionLength = 2e-6, 
+        numWaveFrames = 50, 
+        chemProto = [['makeChemOscillator()', 'osc']],
+        chemDistrib = [['osc', 'soma', 'install', '1' ]], 
+        plotList = [ 
+            ['soma', '1', 'dend/a', 'conc', 'Concentration of a', 'wave', 0, 1800],
+            ['soma', '1', 'dend/b', 'conc', 'Concentration of b', 'wave', 0, 500],
+            ['soma', '1', 'dend/s', 'conc', 'Concentration of s', 'wave', 0, 1200],
+        ],
+        moogList = [['soma', '1', 'dend/a', 'conc', 'a Conc', 0, 600 ]]
+    )
+    a = moose.element( '/library/osc/kinetics/a' )
+    b = moose.element( '/library/osc/kinetics/b' )
+    s = moose.element( '/library/osc/kinetics/s' )
+    a.diffConst = 0
+    b.diffConst = 0
+    a.motorConst = 2e-6
+    b.motorConst = -2e-6
+    s.motorConst = -2e-6
+    
+    rdes.buildModel()
+    moose.reinit()
+    
+    rdes.displayMoogli( 1, 250, rotation = 0, azim = -np.pi/2, elev = 0.0 )
+    
+.. figure:: ../../../../images/ex7.5_a.png
+    :alt: Travelling Oscillator molecule a
+
+.. figure:: ../../../../images/ex7.5_b.png
+    :alt: Travelling Oscillator molecule b
+
+.. figure:: ../../../../images/ex7.5_s.png
+    :alt: Travelling Oscillator molecule 
+
+Above we see *a*, *b*, *s* at a point where the transport has collected the 
+molecules toward the middle of the cylinder, so the oscillations are large. 
+Below we see molecule *a* later, when it has gone past the *b* and *s* pools
+and so the reaction system is depleted and does not oscillate.
+
+.. figure:: ../../../../images/ex7.5_a_later.png
+    :alt: Travelling Oscillator molecule a later.
+
+
+
 Multiscale models: single compartment
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
