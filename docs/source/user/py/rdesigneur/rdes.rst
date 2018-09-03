@@ -169,7 +169,7 @@ the plot.
 
 The *rdes.display()* function causes the plots to be displayed.
 
-.. figure:: ./images/rdes2_passive_squid.png
+.. figure:: ../../../../images/rdes2_passive_squid.png
    :alt: Plot for current input to passive compartment
 
    Plot for current input to passive compartment
@@ -213,14 +213,14 @@ seconds. The *plotList* now includes two entries, and will generate two plots.
 The first is for plotting the soma membrane potential, just to be sure that
 the voltage clamp is doing its job. 
 
-.. figure:: ./images/ex2.1_vclamp_a.png
+.. figure:: ../../../../images/ex2.1_vclamp_a.png
    :alt: Plot for membrane potential in voltage clamp
 
    Plot for membrane potential in voltage clamp
 
 The second graph plots the holding current.  Note the capacitive transients.
 
-.. figure:: ./images/ex2.1_vclamp_b.png
+.. figure:: ../../../../images/ex2.1_vclamp_b.png
    :alt: Plot for holding current for voltage clamp
 
    Plot for holding current for voltage clamp
@@ -283,7 +283,7 @@ Here we introduce two new model specification lines:
 As before we apply a somatic current pulse. Since we now have HH
 channels in the model, this generates action potentials.
 
-.. figure:: ./images/rdes3_squid.png
+.. figure:: ../../../../images/rdes3_squid.png
    :alt: Plot for HH squid simulation
 
    Plot for HH squid simulation
@@ -334,7 +334,7 @@ Here we see the classic HH current response, a downward brief deflection due to
 the Na channel, and a slower upward sustained current due to the K delayed
 rectifier.
 
-.. figure:: ./images/ex3.1_squid_vclamp.png
+.. figure:: ../../../../images/ex3.1_squid_vclamp.png
    :alt: Plot for HH squid voltage clamp pulse.
 
    Plot for HH squid voltage clamp pulse.
@@ -418,7 +418,7 @@ neuronal geometry.
 
     rdes.displayMoogli( 0.00005, 0.05, 0.0 )
 
-.. figure:: ./images/ex3.2_axon_propagating_AP.png
+.. figure:: ../../../../images/ex3.2_axon_propagating_AP.png
    :alt: Axon with propagating action potential
 
    Axon with propagating action potential
@@ -448,7 +448,7 @@ Watch how the AP is triggered bidirectionally from the stimulus point on the
 100th segment of the axon, and observe what happens when two action potentials 
 bump into each other.
 
-.. figure:: ./images/ex3.3_AP_collision.png
+.. figure:: ../../../../images/ex3.3_AP_collision.png
    :alt: Colliding action potentials
 
    Colliding action potentials
@@ -545,7 +545,7 @@ When you run the example, keep an eye out for a few things:
 -  **Speed:** Compare the propagation speed with the previous,
    unmyelinated axon. Note that the current model is larger!
 
-.. figure:: ./images/rdes3.2_myelinated_axon.png
+.. figure:: ../../../../images/rdes3.2_myelinated_axon.png
    :alt: Myelinated axon with propagating action potential
 
    Myelinated axon with propagating action potential
@@ -598,7 +598,7 @@ Here the crucial line is the *cellProto* line. There are four arguments here:
 
 This is what the soma looks like:
 
-.. figure:: ./images/ex4.0_scaledSoma.png
+.. figure:: ../../../../images/ex4.0_scaledSoma.png
    :alt: Image of soma.
 
    Image of soma.
@@ -660,7 +660,7 @@ arguments are optional.
         
 This is what the ball-and-stick cell looks like:
 
-.. figure:: ./images/ex4.1_ballAndStick.png
+.. figure:: ../../../../images/ex4.1_ballAndStick.png
    :alt: Image of ball and stick cell.
 
    Image of ball and stick cell.
@@ -722,7 +722,7 @@ very similar to the previous one, ex4.1:
 While the real point of this simulation is to check speed, it does illustrate
 how to deliver a stimulus shaped like a sine wave:
 
-.. figure:: ./images/ex4.2_sine_stim.png
+.. figure:: ../../../../images/ex4.2_sine_stim.png
    :alt: Sine-wave shaped stimulus.
 
    Sine-wave shaped stimulus.
@@ -730,7 +730,7 @@ how to deliver a stimulus shaped like a sine wave:
 We can see that the cell has a peculiar response to this. Not surprising, as
 the cell uses HH channels which are not good at rate coding.
 
-.. figure:: ./images/ex4.2_spiking.png
+.. figure:: ../../../../images/ex4.2_spiking.png
    :alt: Spiking response to sine-wave shaped stimulus.
 
    Spiking response to sine-wave shaped stimulus.
@@ -790,7 +790,7 @@ Most of this is similar to previous stimLists.
 
 As the model has no voltage-gated channels, we do not see spiking.
 
-.. figure:: ./images/ex5.0_random_syn_input.png
+.. figure:: ../../../../images/ex5.0_random_syn_input.png
    :alt: Random synaptic input with a Poisson distribution.
    
    Random synaptic input with a Poisson distribution.
@@ -826,7 +826,7 @@ periodic. The one change is of an argument in the stimList to say
 
 As designed, we get periodically firing synaptic input.
 
-.. figure:: ./images/ex5.1_periodic_syn_input.png
+.. figure:: ../../../../images/ex5.1_periodic_syn_input.png
    :alt: Periodic synaptic input
    
    Periodic synaptic input
@@ -901,7 +901,7 @@ concentration of the molecular pool *b*. Note its full path within
 MOOSE: */model/chem/dend/b*. It is scaled up 5x to give rise to slowly
 decaying oscillations.
 
-.. figure:: ./images/rdes4_osc.png
+.. figure:: ../../../../images/rdes4_osc.png
    :alt: Plot for single-compartment reaction simulation
 
    Plot for single-compartment reaction simulation
@@ -1000,7 +1000,7 @@ reaction-diffusion system making its way inward from the two ends. After
 the simulation ends the plots for all compartments for the whole run
 come up.
 
-.. figure:: ./images/rdes5_reacdiff.png
+.. figure:: ../../../../images/rdes5_reacdiff.png
    :alt: Display for oscillatory reaction-diffusion simulation
 
    Display for oscillatory reaction-diffusion simulation
@@ -1008,7 +1008,7 @@ come up.
 For those who would rather use the much simpler matplotlib 3-D display option,
 this is what the same simulation looks like:
 
-.. figure:: ./images/ex7.0_spatial_chem_osc.png
+.. figure:: ../../../../images/ex7.0_spatial_chem_osc.png
    :alt: Display for oscillatory reac-diff simulation using matplotlib
 
    Display for oscillatory reac-diff simulation using matplotlib
@@ -1103,7 +1103,7 @@ taking snapshots of the spatial profile of this pool.
     
 Here are the snapshots, overlaid in a single plot:
 
-.. figure:: ./images/ex7.1_diffusive_gradient.png
+.. figure:: ../../../../images/ex7.1_diffusive_gradient.png
    :alt: Display of how a molecule A spreads through the inter
 
    Display for simple time-series of spread of a diffusing molecule 
@@ -1172,14 +1172,14 @@ Note how the dendritic calcium is displayed both as a time-series plot and
 as a wave plot, which presents the time-evolution of the calcium as a function
 of position in successive image frames.
 
-.. figure:: ./images/ex7.2_CICR_static.png
+.. figure:: ../../../../images/ex7.2_CICR_static.png
     :alt: Time-series plot of dendritic calcium. Different colors represent
         different voxels in the dendrite.
 
     Time-series plot of dendritic calcium. Different colors represent
     different voxels in the dendrite.
 
-.. figure:: ./images/ex7.2_CICR_wave_lastFrame.png
+.. figure:: ../../../../images/ex7.2_CICR_wave_lastFrame.png
 
     Place holder for time-evolving movie of dendritic calcium as a function of
     position along the dendrite.
@@ -1331,7 +1331,7 @@ There is a handy new line to specify cellular passive properties:
 With these in place, the model behavior is rather neat. It starts out silent,
 then we apply 2 seconds of +ve current injection. 
 
-.. figure:: ./images/ex8.0_multiscale_currInj.png
+.. figure:: ../../../../images/ex8.0_multiscale_currInj.png
    :alt: Current injection stimuli for multiscale model.
 
    Current injection stimuli for multiscale model.
@@ -1339,14 +1339,14 @@ then we apply 2 seconds of +ve current injection.
 The cell fires briskly, and keeps firing even when the current injection
 drops to zero. 
 
-.. figure:: ./images/ex8.0_multiscale_cell_spiking.png
+.. figure:: ../../../../images/ex8.0_multiscale_cell_spiking.png
    :alt: Firing responses of cell with multiscale signaling.
 
    Firing responses of cell with multiscale signaling.
 
 The firing of the neuron leads to Ca influx.
 
-.. figure:: ./images/ex8.0_multiscale_Ca.png
+.. figure:: ../../../../images/ex8.0_multiscale_Ca.png
    :alt: Calcium buildup in cell due to firing.
 
    Calcium buildup in cell due to firing.
@@ -1355,7 +1355,7 @@ The chemical reactions downstream of Ca lead to phosphorylation of the K_A
 channel. Only the unphosphorylated K_A channel is active, so the net effect
 is to reduce K_A conductance while the Ca influx persists.
 
-.. figure:: ./images/ex8.0_multiscale_KA_conc.png
+.. figure:: ../../../../images/ex8.0_multiscale_KA_conc.png
    :alt: Removal of KA channel due to phosphorylation.
 
    Removal of KA channel due to phosphorylation.
@@ -1467,7 +1467,7 @@ When we run this model, we trigger a propagating Ca wave from about voxel
 number 16 of 40. It spreads in both directions, and comes to a halt at voxels
 10 and 30, which mark the limits of the IP3 elevation zone.
 
-.. figure:: ./images/ex8.1_dend_Ca.png
+.. figure:: ../../../../images/ex8.1_dend_Ca.png
    :alt: Calcium wave propagation along the dendrite
 
    Calcium wave propagation along the dendrite
@@ -1479,7 +1479,7 @@ diffusion in the dendrite and the action of pumps to within the ER, and
 out of the cell. Note also that the gradient within the ER is actually quite
 small, being about a 12% deviation from the resting calcium.
 
-.. figure:: ./images/ex8.1_ER_Ca.png
+.. figure:: ../../../../images/ex8.1_ER_Ca.png
    :alt: Calcium depletion and buildup in the ER due to CICR wave.
 
    Calcium depletion and buildup in the ER due to CICR wave.
@@ -1569,7 +1569,7 @@ The spines get synaptic input onto NMDARs and gluRs. There is a baseline
 input rate of 1 Hz thoughout, and there is a burst at 40 Hz for 1 second at 
 t = 10s.
 
-.. figure:: ./images/ex8.2_Vm.png
+.. figure:: ../../../../images/ex8.2_Vm.png
    :alt: Membrane potential responses of cell with synaptic input and multiscale signaling
 
    Membrane potential responses of cell with synaptic input and multiscale signaling
@@ -1578,7 +1578,7 @@ t = 10s.
 At baseline, we just have small EPSPs and little Ca influx. A burst of
 strong synaptic input causes Ca entry into the spine via NMDAR. 
 
-.. figure:: ./images/ex8.2_Ca_spine.png
+.. figure:: ../../../../images/ex8.2_Ca_spine.png
    :alt: Calcium influx into spine.
 
    Calcium influx into spine.
@@ -1586,7 +1586,7 @@ strong synaptic input causes Ca entry into the spine via NMDAR.
 Ca diffuses from the spine into the dendrite and spreads. In the graph below
 we see how Calcium goes into the 50-odd voxels of the dendrite.
 
-.. figure:: ./images/ex8.2_Ca_dend.png
+.. figure:: ../../../../images/ex8.2_Ca_dend.png
    :alt: Calcium influx and diffusion in dendrite.
 
    Calcium influx and diffusion in dendrite.
@@ -1597,7 +1597,7 @@ triggers activation of CaMKII and its translocation to the PSD, where
 it phosphorylates and increases the conductance of gluR. We have two spines
 with slightly different geometry, so the CaMKII activity differs slightly.
 
-.. figure:: ./images/ex8.2_active_CaMKII.png
+.. figure:: ../../../../images/ex8.2_active_CaMKII.png
    :alt: Activation of CaMKII and translocation to PSD
 
    Activation of CaMKII and translocation to PSD
@@ -1726,7 +1726,7 @@ First, just the spiking activity of the cell. Here the burst of activity is
 followed by a few seconds of enhanced synaptic weight, followed by subthreshold
 EPSPs:
 
-.. figure:: ./images/ex8.3_Vm.png
+.. figure:: ../../../../images/ex8.3_Vm.png
    :alt: Membrane potential and spiking.
 
    Membrane potential and spiking.
@@ -1734,7 +1734,7 @@ EPSPs:
 Then, we fast-forward to the amount of *chan_p* which is the molecule that
 controls spine size scaling: 
 
-.. figure:: ./images/ex8.3_chan_p.png
+.. figure:: ../../../../images/ex8.3_chan_p.png
    :alt: Molecule that controles spine size
 
    Molecule that controles spine size
@@ -1743,7 +1743,7 @@ This causes some obvious outcomes. One of them is to increase the synaptic
 conductance of the glutamate receptor. The system assumes that the conductance
 of all channels in the PSD scales linearly with the psdArea.
 
-.. figure:: ./images/ex8.3_gluR.png
+.. figure:: ../../../../images/ex8.3_gluR.png
    :alt: Conductance of glutamate receptor
 
    Conductance of glutamate receptor
@@ -1756,7 +1756,7 @@ size and the time taken for diffusion and further reactions to replenish
 CaMKII. In the current model we don't have a diffusive coupling of CaMKII to
 the dendrite, so this replenishment doesn't happen.
 
-.. figure:: ./images/ex8.3_CaMKII_spine.png
+.. figure:: ../../../../images/ex8.3_CaMKII_spine.png
    :alt: Concentration of CaMKII in the spine
 
    Concentration of CaMKII in the spine
@@ -1848,7 +1848,7 @@ Here we have:
     Vm : Field to display
     Soma potential : Title for display.
 
-.. figure:: ./images/ex9.0_passive_cell_morpho.png
+.. figure:: ../../../../images/ex9.0_passive_cell_morpho.png
    :alt: 3-D display for passive neuron
 
    3-D display for passive neuron
@@ -1988,7 +1988,7 @@ Also note the two Moogli displays. The first is the calcium
 concentration. The second is the membrane potential in each compartment.
 Easy!
 
-.. figure:: ./images/rdes8_active.png
+.. figure:: ../../../../images/rdes8_active.png
    :alt: 3-D display for active neuron
 
    3-D display for active neuron
@@ -2138,7 +2138,7 @@ Only the first two arguments are mandatory.
    angle. Defaults to 2 PI radians, so the spines come out in any
    direction.
 
-.. figure:: ./images/rdes9_spiny_active.png
+.. figure:: ../../../../images/rdes9_spiny_active.png
    :alt: 3-D display for spiny active neuron
 
    3-D display for spiny active neuron
