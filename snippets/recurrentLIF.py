@@ -12,6 +12,7 @@
 # It is a good example for using the LIF, setting up random
 # connectivity, and using SynHandlers.
 
+from __future__ import print_function, division
 import os
 import random
 import time
@@ -63,23 +64,23 @@ def make_network():
     network.vec.Rm = 1e10
     network.vec.Cm = 5e-9
     numSynVec = syns.vec.numSynapses
-    print(('Middle of setup, t = ', time.time() - t0))
+    print('Middle of setup, t = %.5f' % (time.time() - t0))
     numTotSyn = sum( numSynVec )
-    print((numSynVec.size, ', tot = ', numTotSyn,  ', numSynVec = ', numSynVec))
+    print(numSynVec.size, ', tot = ', numTotSyn,  ', numSynVec = ', numSynVec)
     for item in syns.vec:
             sh = moose.element( item )
             sh.synapse.delay = delayMin +  (delayMax - delayMin ) * nprand.rand( len( sh.synapse ) )
             #sh.synapse.delay = [ (delayMin + random.random() * (delayMax - delayMin ) for r in range( len( sh.synapse ) ) ] 
             sh.synapse.weight = nprand.rand( len( sh.synapse ) ) * weightMax
-    print(('after setup, t = ', time.time() - t0))
+    print('after setup, t = %.5f' % (time.time() - t0))
 
     numStats = 100
     stats = moose.SpikeStats( '/stats', numStats )
     stats.vec.windowLength = 1 # timesteps to put together.
     plots = moose.Table( '/plot', numStats )
-    convergence = size / numStats
+    convergence = size // numStats
     for i in range( numStats ):
-        for j in range( size/numStats ):
+        for j in range( size//numStats ):
             k = i * convergence + j
             moose.connect( network.vec[k], 'spikeOut', stats.vec[i], 'addSpike' )
     moose.connect( plots, 'requestOut', stats, 'getMean', 'OneToOne' )
@@ -96,14 +97,14 @@ def make_network():
     moose.setClock( 9, dt )
     t1 = time.time()
     moose.reinit()
-    print(('reinit time t = ', time.time() - t1))
+    print('reinit time t = %.5f' % (time.time() - t1))
     network.vec.Vm = nprand.rand( size ) * Vmax
-    print(('setting Vm , t = ', time.time() - t1))
+    print('setting Vm , t = %.5f' % (time.time() - t1))
     t1 = time.time()
     print('starting')
     moose.start(runsteps * dt)
-    print(('runtime, t = ', time.time() - t1))
-    print((network.vec.Vm[99:103], network.vec.Vm[900:903]))
+    print('runtime, t = %.5f' % (time.time() - t1))
+    print(network.vec.Vm[99:103], network.vec.Vm[900:903])
     t = [i * dt for i in range( plots.vec[0].vector.size )]
     i = 0
     for p in plots.vec:
@@ -113,8 +114,6 @@ def make_network():
     pylab.ylabel( "Rate (Hz)" )
     pylab.legend()
     pylab.show()
-
-
 
 if __name__ == '__main__':
     make_network()

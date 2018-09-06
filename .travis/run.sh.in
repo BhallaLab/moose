@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+
+PYC=@PYTHON_EXECUTABLE@
+SUCCEEDED=@SUCCEEDED_FILE@
+FAILED=@FAILED_FILE@
+BLACKLISTED=@BLACKLISTED_FILE@
+TIMEOUTED=@TIMEOUT_FILE@
+TEMP=@TEMP_FILE@
+CMAKE_SOURCE_DIR=@CMAKE_CURRENT_SOURCE_DIR@
+
+TIMEOUT=@TIMEOUT@
+
+FILE="$1"
+MD5SUM=$(md5sum $FILE | cut -d" " -f1)
+OUTFILE=${2:-/tmp/${MD5SUM}}
+
+SCRIPT_DIR=$(cd "$(dirname "$\{BASH_SOURCE[0]\}" )" && pwd)
+BASEURL=https://github.com/BhallaLab/moose-examples/blob/master
+
+function fileToUrl()
+{
+    local FILEPATH=$(realpath --relative-to=$CMAKE_SOURCE_DIR $1)
+    echo "[ ${FILEPATH} ]($BASEURL/$FILEPATH)"
+}
+
+timeout $TIMEOUT $PYC $FILE &> $TEMP
+status=$?
+LINE=$(fileToUrl $FILE)
+if [ "$status" -eq "0" ]; then                   # success
+    echo "|| Success. Written to $SUCCEEDED"
+    echo "- $LINE" >> $SUCCEEDED
+    # Create outfile on success.
+    echo "SUCCESS" > $OUTFILE
+elif [ "$status" -eq "124" ]; then               # timeout. 
+    echo "|| Timed-out status: $status" 
+    echo "- $LINE" >> $TIMEOUTED
+    # sed -i 's/^/\ \ /' $TEMP
+    # printf "\n\`\`\`\n" >> $TIMEOUTED
+    # cat $TEMP >> $TIMEOUTED
+    # printf "\`\`\`\n" >> $TIMEOUTED
+    echo "TIMEOUT" > $OUTFILE
+else                                    # Failed
+    echo "|| Failed with status "$status" "
+    echo "- $LINE" >> $FAILED
+    # sed -i 's/^/\ \ /' $TEMP
+    # printf "\n\`\`\`\n" >> $FAILED
+    echo $TEMP >> $FAILED
+    # printf "\`\`\`\n" >> $FAILED
+    # cat $TEMP
+    echo "FAILED" > $OUTFILE
+    echo "|| Failed. Error written to $FAILED"
+fi

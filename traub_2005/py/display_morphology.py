@@ -111,7 +111,7 @@ def plot_cell_topology(cell, label=False):
     g = cell_to_graph(cell, label=label)
     axon, sd = axon_dendrites(g)
     node_size = node_sizes(g)
-    weights = np.array([g.edge[e[0]][e[1]]['weight'] for e in g.edges()])
+    weights = np.array([g[e[0]][e[1]]['weight'] for e in g.edges()])
     try:
         pos = nx.graphviz_layout(g,prog='twopi',root=cell.path + '/comp_1')
     except (NameError, AttributeError) as e:

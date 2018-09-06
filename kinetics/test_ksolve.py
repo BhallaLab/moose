@@ -1,12 +1,15 @@
 # test_ksolve.py --- 
-# modified by Dilawar Singh Wed Aug  5 19:21:19 2015
+# Originally written by Upinder S. Bhalla. It has been 
+# modified by Dilawar Singh Wed Aug  5 19:21:19 2015 to turn it into a 
+# test script. NOT TO BE USED for scientific demos or tutorials. The sole
+# purpose of this script is to benchmark the Ksolve solver with various methods.
 
 import sys
 import moose
-import moose.utils as mu
 import math
 import os
 import time
+import matplotlib.pyplot as plt
 
 EREST_ACT = -70e-3
 
@@ -196,13 +199,20 @@ def makeElecPlots():
     #addPlot( '/n/head0/gluR', 'getGk', 'elec/head0Gk' )
     #addPlot( '/n/head2/gluR', 'getGk', 'elec/head2Gk' )
 
-def dumpPlots( fname ):
-    if ( os.path.exists( fname ) ):
-        os.remove( fname )
+def dumpPlots( outfile ):
     records = {}
     for x in moose.wildcardFind( '/graphs/##[TYPE=Table2]' ):
         records[x.name] = x
-    mu.plotRecords(records, subplot=True, outfile='%s.png' % fname)
+
+    plt.figure(figsize=(10,10))
+    for i, r in enumerate(records):
+        plt.subplot(1+len(records)//3, 3, i+1 )
+        plt.plot( records[r].vector, label = r'$%s$'%r )
+        plt.legend()
+
+    plt.tight_layout()
+    plt.savefig( outfile )
+    print( '[INFO] Saved to file %s' % outfile )
 
 def makeSpinyCompt():
     comptLength = 30e-6
@@ -363,20 +373,21 @@ def makeChemInCubeMesh():
     assert dendKinaseEnzCplx.volume == dendSide * dendSide * dendSide
 
 def makeSolvers( elecDt ):
-        # Put in the solvers, see how they fare.
-        # Here we kludge in a single chem solver for the whole system.
-        ksolve = moose.Ksolve( '/model/ksolve' )
-        stoich = moose.Stoich( '/model/stoich' )
-        stoich.compartment = moose.element( '/model/chem/neuroMesh' )
-        stoich.ksolve = ksolve
-        stoich.path = '/model/chem/##'
-        moose.useClock( 5, '/model/ksolve', 'init' )
-        moose.useClock( 6, '/model/ksolve', 'process' )
-        # Here is the elec solver
-        hsolve = moose.HSolve( '/model/hsolve' )
-        moose.useClock( 1, '/model/hsolve', 'process' )
-        hsolve.dt = elecDt
-        hsolve.target = '/model/elec/compt'
+    # Put in the solvers, see how they fare.
+    # Here we kludge in a single chem solver for the whole system.
+    ksolve = moose.Ksolve( '/model/ksolve' )
+    stoich = moose.Stoich( '/model/stoich' )
+    stoich.compartment = moose.element( '/model/chem/neuroMesh' )
+    stoich.ksolve = ksolve
+    stoich.path = '/model/chem/##'
+    moose.useClock( 5, '/model/ksolve', 'init' )
+    moose.useClock( 6, '/model/ksolve', 'process' )
+    # Here is the elec solver
+    hsolve = moose.HSolve( '/model/hsolve' )
+    moose.useClock( 1, '/model/hsolve', 'process' )
+    hsolve.dt = elecDt
+    hsolve.target = '/model/elec/compt'
+    return ksolve
 
 def makeCubeMultiscale():
     makeSpinyCompt()
@@ -445,15 +456,14 @@ def makeChemPlots():
     #addPlot( '/n/neuroMesh/inact_kinase', 'getConc', 'inactDendKinase' )
     #addPlot( '/n/psdMesh/psdGluR', 'getN', 'psdGluR' )
 
-def testCubeMultiscale( useSolver ):
+def testCubeMultiscale( method ):
     elecDt = 10e-6
     chemDt = 1e-4
     plotDt = 5e-4
     plotName = 'mc.plot'
-    if ( useSolver ):
-        elecDt = 50e-6
-        chemDt = 2e-3
-        plotName = 'mcs.plot'
+    elecDt = 50e-6
+    chemDt = 5e-3
+    plotName = 'mcs.plot'
     makeCubeMultiscale()
 
     makeChemPlots()
@@ -472,17 +482,19 @@ def testCubeMultiscale( useSolver ):
     moose.useClock( 6, '/model/##[ISA=PoolBase],/model/chem/##[ISA=Adaptor]', 'process' )
     moose.useClock( 7, '/graphs/#', 'process' )
     moose.useClock( 8, '/graphs/elec/#', 'process' )
-    if ( useSolver ):
-        makeSolvers( elecDt )
+    ksolve = makeSolvers( elecDt )
+    ksolve.method = method
+    print( '[INFO] Using method %s' % ksolve.method )
     moose.reinit()
     t = time.time()
-    moose.start( 1.0 )
-    print(("Total time taken: %s sec for 1.0 sec of simulation" % (time.time() - t)))
+    moose.start( 10 )
+    print( "Total time taken: %s sec "% (time.time()-t) )
+    plotName = '%s_%s.png' % (sys.argv[0], ksolve.method )
     dumpPlots( plotName )
 
-def main():
-    testCubeMultiscale( 1 )
+def main( method ):
+    testCubeMultiscale( method )
 
 if __name__ == '__main__':
-    main()
+    main( sys.argv[1] )
 

@@ -1,3 +1,9 @@
+# -*- coding: utf-8 -*-
+
+# __BROKEN__ : This script will not work with Python3. Therefore it has been
+# marked as broken script. 
+# With python3, it fails to import QtGui module.
+
 import math
 import pylab
 import numpy
@@ -18,7 +24,7 @@ dendLen = 100e-6
 numDendSegments = 50
 segLen = dendLen / numDendSegments
 spineSpacing = 2.0e-6
-spineSpacingDistrib = 0.0
+spineSpacingDistrib = 1.0e-7
 spineSize = 1.0
 spineSizeDistrib = 0.2
 
@@ -41,9 +47,6 @@ def makeCellProto( name ):
         i.z = i.x
         i.x = 0
 
-# This line is used so that rdesigneur knows about the cell proto function
-rd.makeCellProto = makeCellProto
-
 # This function is used to make the chem prototype.
 def makeChemProto( name ):
     chem = moose.Neutral( '/library/' + name )
@@ -65,21 +68,18 @@ def makeModel():
     # good practice as it takes the model definition away from the
     # declaration of prototypes.
     makeChemProto( 'cProto' )
+    makeCellProto( 'cellProto' )
     rdes = rd.rdesigneur( useGssa = False, \
                 combineSegments = False, \
-                meshLambda = 1e-6, \
-            cellProto = [['makeCellProto()', 'elec' ]] ,\
+                diffusionLength = 1e-6, \
+            cellProto = [['cellProto', 'elec' ]] ,\
             spineProto = [['makeSpineProto()', 'spine' ]] ,\
             chemProto = [['cProto', 'chem' ]] ,\
-            spineDistrib = [ \
-                ['spine', '#', \
-                'spineSpacing', str( spineSpacing ), \
-                'spineSpacingDistrib', str( spineSpacingDistrib ), \
-                'angle', str( spineAngle ), \
-                'angleDistrib', str( spineAngleDistrib ), \
-                'size', str( spineSize ), \
-                'sizeDistrib', str( spineSizeDistrib ) ] \
-            ], \
+            spineDistrib = [['spine', '#', 
+                str( spineSpacing ), str( spineSpacingDistrib ),
+                str( spineSize ), str( spineSizeDistrib ),
+                str( spineAngle ), str( spineAngleDistrib ) ]
+            ],
             chemDistrib = [ \
                 [ "chem", "#", "install", "1" ] \
             ],
@@ -191,4 +191,4 @@ def getMidpts( compt ):
 
 # Run the 'main' if this script is executed standalone.
 if __name__ == '__main__':
-        main()
+    main()

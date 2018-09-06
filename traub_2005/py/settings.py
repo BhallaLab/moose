@@ -28,16 +28,9 @@
 # 
 
 # Code:
-import exceptions
 
-class ReinitializationWarning(exceptions.Warning):
-    def __init__(self, *args, **kwargs):
-        exceptions.Warning.__init__(self, *args, **kwargs)
-
-        
 class Settings(object):    
     pass
-
     
 class SimulationSettings(Settings):
     """Class for storing simulation settings.

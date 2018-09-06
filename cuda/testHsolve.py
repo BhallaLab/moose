@@ -66,12 +66,12 @@ def create_squid():
     compt.Ra = 7639.44e3
     nachan = moose.HHChannel( '/n/compt/Na' )
     nachan.Xpower = 3
-    xGate = moose.HHGate(nachan.path + '/gateX')
+    xGate = moose.element(nachan.path + '/gateX')
     xGate.setupAlpha(Na_m_params + [VDIVS, VMIN, VMAX])
         #This is important: one can run without it but the output will diverge.
     xGate.useInterpolation = 1
     nachan.Ypower = 1
-    yGate = moose.HHGate(nachan.path + '/gateY')
+    yGate = moose.element(nachan.path + '/gateY')
     yGate.setupAlpha(Na_h_params + [VDIVS, VMIN, VMAX])
     yGate.useInterpolation = 1
     nachan.Gbar = 0.942e-3
@@ -80,7 +80,7 @@ def create_squid():
 
     kchan = moose.HHChannel( '/n/compt/K' )
     kchan.Xpower = 4.0
-    xGate = moose.HHGate(kchan.path + '/gateX')
+    xGate = moose.element(kchan.path + '/gateX')
     xGate.setupAlpha(K_n_params + [VDIVS, VMIN, VMAX])
     xGate.useInterpolation = 1
     kchan.Gbar = 0.2836e-3
@@ -189,8 +189,9 @@ def dump_plots( fname ):
         t = numpy.arange( 0, x.vector.size, 1 )
         pylab.plot( t, x.vector, label=x.name )
     pylab.legend()
-    pylab.show()
-    #moose.utils.plotAscii(x.vector, file=fname)
+    pylab.savefig( fname )
+    print('Saved to %s' % fname )
+    pylab.close()
 
 def make_spiny_compt():
     comptLength = 100e-6
@@ -252,7 +253,7 @@ def test_elec_alone():
     moose.useClock( 8, '/graphs/elec/#', 'process' )
     moose.reinit()
     moose.start( runTime )
-    dump_plots( 'instab.plot' )
+    dump_plots( 'instab.png' )
     # make Hsolver and rerun
     hsolve = moose.HSolve( '/n/hsolve' )
     moose.useClock( 1, '/n/hsolve', 'process' )
@@ -267,7 +268,7 @@ def test_elec_alone():
         hsolve.dt = dt
         moose.reinit()
         moose.start( runTime )
-        dump_plots( 'h_instab' + str( dt ) + '.plot' )
+        dump_plots( 'h_instab' + str( dt ) + '.png' )
 
 def main():
     """

@@ -13,22 +13,25 @@
 # SimManager as the base of the entire model.
 # This example creates a bistable model having two enzymes and a reaction.
 # One of the enzymes is autocatalytic.
-# The model is set up to run using Exponential Euler integration.
+# The model is set up to run using deterministic integration.
 # If you pass in the argument 'gssa' it will run with the stochastic
-# solver.
-# You may also find in interesting to change the volume.
+# solver instead.
 
 import math
 import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
+from matplotlib.widgets import Slider, Button
 import numpy
 import moose
 import sys
+line1 = ""
+line2 = ""
 
 def makeModel():
                 # create container for model
                 model = moose.Neutral( 'model' )
                 compartment = moose.CubeMesh( '/model/compartment' )
-                compartment.volume = 1e-21
+                compartment.volume = 1e-21 # m^3
                 # the mesh is created automatically by the compartment
                 mesh = moose.element( '/model/compartment/mesh' ) 
 
@@ -73,28 +76,13 @@ def makeModel():
 
                 # Create the output tables
                 graphs = moose.Neutral( '/model/graphs' )
-                outputA = moose.Table ( '/model/graphs/concA' )
-                outputB = moose.Table ( '/model/graphs/concB' )
+                outputA = moose.Table2( '/model/graphs/concA' )
+                outputB = moose.Table2( '/model/graphs/concB' )
 
                 # connect up the tables
                 moose.connect( outputA, 'requestOut', a, 'getConc' );
                 moose.connect( outputB, 'requestOut', b, 'getConc' );
 
-                # Schedule the whole lot
-                moose.setClock( 4, 0.01 ) # for the computational objects
-                moose.setClock( 8, 1.0 ) # for the plots
-                # The wildcard uses # for single level, and ## for recursive.
-                moose.useClock( 4, '/model/compartment/##', 'process' )
-                moose.useClock( 8, '/model/graphs/#', 'process' )
-
-
-def displayPlots():
-                print( 'Displaying plots' )
-                for x in moose.wildcardFind( '/model/graphs/conc#' ):
-                                t = numpy.arange( 0, x.vector.size, 1 ) #sec
-                                plt.plot( t, x.vector, label=x.name )
-                plt.legend()
-                plt.show()
 
 def main():
                 solver = "gsl"
@@ -110,34 +98,132 @@ def main():
                     ksolve = moose.Ksolve( '/model/compartment/ksolve' )
                     stoich.ksolve = ksolve
                 stoich.path = "/model/compartment/##"
-                #solver.method = "rk5"
-                #mesh = moose.element( "/model/compartment/mesh" )
-                #moose.connect( mesh, "remesh", solver, "remesh" )
                 moose.setClock( 5, 1.0 ) # clock for the solver
                 moose.useClock( 5, '/model/compartment/ksolve', 'process' )
+                runSim()
+                makeDisplay()
+                print( "Hit 'enter' to exit" )
+                sys.stdin.read(1)
+                quit()
 
-                moose.reinit()
-                moose.start( 100.0 ) # Run the model for 100 seconds.
+def updateAinit(val):
+    moose.element( '/model/compartment/a' ).concInit = val
+    updateDisplay()
 
-                a = moose.element( '/model/compartment/a' )
-                b = moose.element( '/model/compartment/b' )
+def updateBinit(val):
+    moose.element( '/model/compartment/b' ).concInit = val
+    updateDisplay()
 
-                # move most molecules over to b
-                b.conc = b.conc + a.conc * 0.9
-                a.conc = a.conc * 0.1
-                moose.start( 100.0 ) # Run the model for 100 seconds.
+def updateCinit(val):
+    moose.element( '/model/compartment/c' ).concInit = val
+    updateDisplay()
 
-                # move most molecules back to a
-                a.conc = a.conc + b.conc * 0.99
-                b.conc = b.conc * 0.01
-                moose.start( 100.0 ) # Run the model for 100 seconds.
+def updateKcat1(val):
+    moose.element( '/model/compartment/b/enz1' ).kcat = val
+    updateDisplay()
 
-                # Iterate through all plots, dump their contents to data.plot.
-                displayPlots()
-                try:
-                    raw_input( 'Press any key to quit' )
-                except NameError as e:
-                    input( 'Press any key to quit' )
+def updateKcat2(val):
+    moose.element( '/model/compartment/c/enz2' ).kcat = val
+    updateDisplay()
+
+def updateDisplay():
+    runSim()
+    a = moose.element( '/model/graphs/concA' )
+    b = moose.element( '/model/graphs/concB' )
+    line1.set_ydata( a.vector )
+    line2.set_ydata( b.vector )
+
+'''
+def updateDisplay( line1, line2, b, c ):
+    line1.set_ydata( b.vector )
+    line2.set_ydata( c.vector )
+    fig.canvas.draw()
+
+def rescaleAxis( event ):
+    print "doing Rescale"
+    lines = ax2.get_lines()
+    top = 0
+    for i in lines:
+        top = max( top, max( i.get_ydata() ) )
+    ax2.set_ylim( 0, top )
+'''
+
+def doQuit( event ):
+    quit()
+
+def makeDisplay():
+    global line1
+    global line2
+    a = moose.element( '/model/graphs/concA' )
+    b = moose.element( '/model/graphs/concB' )
+    img = mpimg.imread( 'simple_bistab.png' )
+    #plt.ion()
+    fig = plt.figure( figsize=(8,10) )
+    png = fig.add_subplot(311)
+    imgplot = plt.imshow( img )
+    plt.axis('off')
+    ax2 = fig.add_subplot(312)
+    #ax.set_ylim( 0, 0.1 )
+    plt.ylabel( 'Conc (mM)' )
+    plt.xlabel( 'Time (s)' )
+    ax2.autoscale( enable = True, axis = 'y' )
+    plt.title( "States of system. Molecules a and b are swapped at t=100 and 200 to cause state flips." )
+    t = numpy.arange( 0, a.vector.size, 1 ) #sec
+    line1, = ax2.plot( t, a.vector, 'r-', label = 'a' )
+    line2, = ax2.plot( t, b.vector, 'b-', label = 'b' )
+    plt.legend()
+    ax = fig.add_subplot(313)
+    plt.axis('off')
+    axcolor = 'palegreen'
+    axReset = plt.axes( [0.25,0.05, 0.30,0.03], facecolor='blue' )
+    axQuit = plt.axes( [0.60,0.05, 0.30,0.03], facecolor='blue' )
+    axAinit = plt.axes( [0.25,0.1, 0.65,0.03], facecolor=axcolor )
+    axBinit = plt.axes( [0.25,0.15, 0.65,0.03], facecolor=axcolor )
+    axCinit = plt.axes( [0.25,0.20, 0.65,0.03], facecolor=axcolor )
+    axKcat2 = plt.axes( [0.25,0.25, 0.65,0.03], facecolor=axcolor )
+    axKcat1 = plt.axes( [0.25,0.30, 0.65,0.03], facecolor=axcolor )
+    #aInit = Slider( axAinit, 'A init conc', 0, 10, valinit=1.0, valstep=0.2)
+    reset = Button( axReset, 'Reset', color = 'cyan' )
+    q = Button( axQuit, 'Quit', color = 'pink' )
+    aInit = Slider( axAinit, 'A init conc', 0, 10, valinit=1.0 )
+    bInit = Slider( axBinit, 'B init conc', 0, 10, valinit=0.0 )
+    cInit = Slider( axCinit, 'C init conc', 0, 0.1, valinit=0.01 )
+    kcat2 = Slider( axKcat2, 'Kcat for enz2', 0, 2, valinit=0.6 )
+    kcat1 = Slider( axKcat1, 'Kcat for enz1', 0, 2, valinit=0.4 )
+    def resetParms( event ):
+        aInit.reset()
+        bInit.reset()
+        cInit.reset()
+        kcat2.reset()
+        kcat1.reset()
+
+
+    reset.on_clicked( resetParms )
+    q.on_clicked( doQuit )
+    aInit.on_changed( updateAinit )
+    bInit.on_changed( updateBinit )
+    cInit.on_changed( updateCinit )
+    kcat1.on_changed( updateKcat1 )
+    kcat2.on_changed( updateKcat2 )
+
+    plt.show()
+
+def runSim():
+    moose.reinit()
+    moose.start( 100.0 ) # Run the model for 100 seconds.
+
+    a = moose.element( '/model/compartment/a' )
+    b = moose.element( '/model/compartment/b' )
+
+    # move most molecules over to b
+    b.conc = b.conc + a.conc * 0.9
+    a.conc = a.conc * 0.1
+    moose.start( 100.0 ) # Run the model for 100 seconds.
+
+    # move most molecules back to a
+    a.conc = a.conc + b.conc * 0.99
+    b.conc = b.conc * 0.01
+    moose.start( 100.0 ) # Run the model for 100 seconds.
 
 
 # Run the 'main' if this script is executed standalone.

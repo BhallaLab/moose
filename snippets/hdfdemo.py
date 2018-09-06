@@ -1,12 +1,14 @@
-
 # Author: Subhasis Ray
 
-"""HDF5 is a self-describing file format for storing large
+"""
+HDF5 is a self-describing file format for storing large
 datasets. MOOSE has an utility :class:`HDF5DataWriter` for saving
-simulations data in HDF5 files."""
+simulations data in HDF5 files.
+
+__BROKEN__
+"""
 
 import sys
-sys.path.append('../../python')
 import os
 os.environ['NUMPTHREADS'] = '1'
 import numpy
