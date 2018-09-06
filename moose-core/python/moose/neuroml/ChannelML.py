@@ -14,7 +14,7 @@ readChannelML(...) / readSynapseML to load from an xml.etree xml element (could 
 """
 
 from __future__ import print_function
-from xml.etree import cElementTree as ET
+from xml.etree import ElementTree as ET
 import string
 import os, sys
 import math

@@ -39,7 +39,7 @@ from moose.fixXreacs import fixXreacs
 from moose.neuroml.NeuroML import NeuroML
 from moose.neuroml.ChannelML import ChannelML
 
-# In python3, cElementTree is deprecated. We do not plan to support python <2.7
+# In python3, ElementTree is deprecated. We do not plan to support python <2.7
 # in future, so other imports have been removed.
 try:
   from lxml import etree

@@ -13,7 +13,7 @@ indent(...) is an in-place prettyprint formatter copied from http://effbot.org/z
 """
 
 from __future__ import print_function
-from xml.etree import cElementTree as ET
+from xml.etree import ElementTree as ET
 from xml.etree import ElementTree as slowET
 import math
 import os
@@ -40,10 +40,10 @@ slowET._namespace_map[cml_ns] = 'cml'
 slowET._namespace_map[meta_ns] = 'meta'
 slowET._namespace_map[xsi_ns] = 'xsi'
 
-### cElementTree is much faster than ElementTree and is API compatible with the latter,
+### ElementTree is much faster than ElementTree and is API compatible with the latter,
 ### but instead of _namespace_map above, use register_namespace below ...
 ### but this works only with python2.7 onwards, so stick to above,
-### with import elementtree.ElementTree alongwith importing cElementTree as at
+### with import elementtree.ElementTree alongwith importing ElementTree as at
 ### http://dev.blogs.nuxeo.com/2006/02/elementtree-serialization-namespace-prefixes.html
 #ET.register_namespace('neuroml',neuroml_ns)
 #ET.register_namespace('nml',nml_ns)
