@@ -203,6 +203,8 @@ if __name__ == '__main__':
             for j, buf in enumerate(buftab[i]):
                 res[:, 4 + i * (difbuff_no + 1) + j + 1] = buf.vector
                 header += ' difshell_' + str(i) + '_difbuff_' + str(j)
-    assert( res.mean() == 0.6059903892218336 )
-    assert( np.std(res) == 1.9505369046640817 ), np.std( res )
+    assert np.isclose(res.mean(), 0.6059903892218336), \
+            'Expected 0.6059903892218336, got %g' % np.mean(res)
+    assert np.std(res) == 1.9505369046640817, np.std( res ), \
+            'Expected 1.9505369046640817 got %g' % np.std(res) 
     print( 'All done' )
