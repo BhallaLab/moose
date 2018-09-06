@@ -14,13 +14,12 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
-import moose
-
 try:
     import rdesigneur as rd 
 except RuntimeError as e:
     print( "[WARN ] Could not import rdesigneur. Most likely due to DISPLAY issue." )
     quit()
+import moose
     
 def test2( ):
     if moose.exists( '/model' ):
