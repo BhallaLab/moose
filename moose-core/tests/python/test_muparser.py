@@ -8,14 +8,11 @@ Modified from https://elifesciences.org/articles/25827 , Fig4.py
 import sys
 import os
 import numpy as np
-import matplotlib as mpl
-mpl.use('Agg')
 import sys
 import numpy as np
 import moose
 import abstrModelEqns9 as ame
 import rdesigneur as rd
-
 
 def singleCompt( name, params ):
     mod = moose.copy( '/library/' + name + '/' + name, '/model' )
