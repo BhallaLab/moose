@@ -7,6 +7,8 @@ Modified from https://elifesciences.org/articles/25827 , Fig4.py
 """
 import sys
 import os
+import matplotlib
+matplotlib.use( 'Agg' )
 import numpy as np
 import sys
 import numpy as np
