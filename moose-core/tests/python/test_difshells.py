@@ -145,14 +145,9 @@ if __name__ == '__main__':
     pulse.delay[1] = 1e9
 
     chan = chan_proto.chan_proto('/library/CaL12',param_chan.Cal)
-
     m = moose.connect(pulse, 'output', dend, 'injectMsg')
-
     moose.connect(vmtab, 'requestOut', dend, 'getVm')
-
-
     chan = addOneChan('CaL12', gbar, dend)
-
     moose.connect(gktab, 'requestOut', chan, 'getGk')
     moose.connect(iktab, 'requestOut', chan, 'getIk')
     diftab = []
@@ -190,11 +185,9 @@ if __name__ == '__main__':
                 dbuf.bFree = dbuf.bTot
 
     moose.start(t_stop)
-
     t = np.linspace(0, t_stop, len(vmtab.vector))
     fname = 'moose_results_difshell_no_' + str(difshell_no) + '_difbuffer_no_' + str(
         difbuff_no) + '_pump_' + str(pumps) + '_gbar_' + str(gbar) + '.txt'
-    print( fname )
     header = 'time Vm Ik Gk'
     number = 4 + difshell_no * (difbuff_no + 1)
     res = np.zeros((len(t), number))
@@ -210,5 +203,6 @@ if __name__ == '__main__':
             for j, buf in enumerate(buftab[i]):
                 res[:, 4 + i * (difbuff_no + 1) + j + 1] = buf.vector
                 header += ' difshell_' + str(i) + '_difbuff_' + str(j)
-    np.savetxt(fname, res, header=header, comments='')
-
+    assert( res.mean() == 0.6059903892218336 )
+    assert( np.std(res) == 1.9505369046640817 ), np.std( res )
+    print( 'All done' )
