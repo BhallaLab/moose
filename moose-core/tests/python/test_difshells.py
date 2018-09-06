@@ -205,6 +205,6 @@ if __name__ == '__main__':
                 header += ' difshell_' + str(i) + '_difbuff_' + str(j)
     assert np.isclose(res.mean(), 0.60599), \
             'Expected 0.60599, got %g' % np.mean(res)
-    assert np.std(res) == 1.9505, np.std( res ), \
+    assert np.isclose(np.std(res), 1.9505), \
             'Expected 1.95053 got %g' % np.std(res) 
     print( 'All done' )
