@@ -9,6 +9,7 @@
    /install/index_install
    /user/py/quickstart/index_qs
    /user/py/cookbook/index_ckbk
+   /user/py/rdesigneur/index_rd
    /user/py/tutorials/index_tut
    /user/py/graphics/index_graphics
    /user/py/references/index_ref

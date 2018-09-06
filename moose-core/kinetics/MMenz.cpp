@@ -133,6 +133,8 @@ double MMenz::vGetNumKm( const Eref& enz ) const
 
 void MMenz::vSetKcat( const Eref& e, double v )
 {
+	if ( v < EPSILON )
+		v = EPSILON;
 	kcat_ = v;
 }
 

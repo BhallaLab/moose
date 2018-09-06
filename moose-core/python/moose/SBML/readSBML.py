@@ -13,14 +13,15 @@
 **           copyright (C) 2003-2017 Upinder S. Bhalla. and NCBS
 Created : Thu May 13 10:19:00 2016(+0530)
 Version
-Last-Updated: Sat Jan 6 1:21:00 2018(+0530)
+Last-Updated: Fri May 21 11:21:00 2018(+0530)
           By:HarshaRani
 **********************************************************************/
 2018
-Jan6 :  - only if valid model exists, then printing the no of compartment,pool,reaction etc
+May 18: - cleanedup and connected cplx pool to correct parent enzyme 
+Jan 6:  - only if valid model exists, then printing the no of compartment,pool,reaction etc
         - at reaction level a check made to see if path exist while creating a new reaction
 2017
-Oct 4 : - loadpath is cleaned up
+Oct 4:  - loadpath is cleaned up
 Sep 13: - After EnzymaticReaction's k2 is set, explicity ratio is set to 4 to make sure it balance.
         - If units are defined in the rate law for the reaction then check is made and if not in milli mole the base unit 
           then converted to milli unit
@@ -31,11 +32,11 @@ Sep 12: - Now mooseReadSBML return model and errorFlag
         - errorFlag is set for Rules (for now piecewise is set which is not read user are warned)
         - rateLaw are also calculated depending on units and number of substrates/product
 
-Sep 8 : -functionDefinitions is read, 
+Sep 8 : - functionDefinitions is read, 
         - if Kf and Kb unit are not defined then checked if substance units is defined and depending on this unit Kf and Kb is calculated
             -kf and kb units is not defined and if substance units is also not defined validator fails 
-Aug 9 : a check made to for textColor while adding to Annotator
-Aug 8 : removed "findCompartment" function to chemConnectUtil and imported the function from the same file
+Aug 9 : - a check made to for textColor while adding to Annotator
+Aug 8 : - removed "findCompartment" function to chemConnectUtil and imported the function from the same file
 
    TODO in
     -Compartment
@@ -251,7 +252,7 @@ def checkGroup(basePath,model):
                             groupInfo[p.getId()] =[mem.getIdRef()]
     return groupInfo
 def setupEnzymaticReaction(enz, groupName, enzName,
-                           specInfoMap, modelAnnotaInfo):
+                           specInfoMap, modelAnnotaInfo,deletcplxMol):
     enzPool = (modelAnnotaInfo[groupName]["enzyme"])
     enzPool = str(idBeginWith(enzPool))
     enzParent = specInfoMap[enzPool]["Mpath"]
@@ -259,13 +260,14 @@ def setupEnzymaticReaction(enz, groupName, enzName,
     cplx = str(idBeginWith(cplx))
     complx = moose.element(specInfoMap[cplx]["Mpath"].path)
     enzyme_ = moose.Enz(enzParent.path + '/' + enzName)
-    moose.move(complx, enzyme_)
-    moose.connect(enzyme_, "cplx", complx, "reac")
+    complx1 = moose.Pool(enzyme_.path+'/'+moose.element(complx).name)
+    specInfoMap[cplx]["Mpath"] = complx1
+    moose.connect(enzyme_, "cplx", complx1, "reac")
     moose.connect(enzyme_, "enz", enzParent, "reac")
-
     sublist = (modelAnnotaInfo[groupName]["substrate"])
     prdlist = (modelAnnotaInfo[groupName]["product"])
-
+    deletcplxMol.append(complx.path)
+    complx = complx1
     for si in range(0, len(sublist)):
         sl = sublist[si]
         sl = str(idBeginWith(sl))
@@ -280,7 +282,6 @@ def setupEnzymaticReaction(enz, groupName, enzName,
 
     if (enz.isSetNotes):
         pullnotes(enz, enzyme_)
-
     return enzyme_, True
 
 
@@ -547,7 +548,7 @@ def createReaction(model, specInfoMap, modelAnnotaInfo, globparameterIdValue,fun
     # ToDo
     # -- I need to check here if any substance/product is if ( constant == true && bcondition == false)
     # cout <<"The species "<< name << " should not appear in reactant or product as per sbml Rules"<< endl;
-
+    deletecplxMol = []
     errorFlag = True
     reactSBMLIdMooseId = {}
     msg = ""
@@ -589,7 +590,7 @@ def createReaction(model, specInfoMap, modelAnnotaInfo, globparameterIdValue,fun
         if (groupName != "" and list(
                 modelAnnotaInfo[groupName]["stage"])[0] == 3):
             reaction_, reactionCreated = setupEnzymaticReaction(
-                reac, groupName, rName, specInfoMap, modelAnnotaInfo)
+                reac, groupName, rName, specInfoMap, modelAnnotaInfo,deletecplxMol)
             reaction_.k3 = modelAnnotaInfo[groupName]['k3']
             reaction_.concK1 = modelAnnotaInfo[groupName]['k1']
             reaction_.k2 = modelAnnotaInfo[groupName]['k2']
@@ -710,6 +711,9 @@ def createReaction(model, specInfoMap, modelAnnotaInfo, globparameterIdValue,fun
                         elif reaction_.className == "MMenz":
                             reaction_.kcat = kfvalue
                             reaction_.Km = kbvalue
+    for l in deletecplxMol:
+        if moose.exists(l):
+            moose.delete(moose.element(l))
     return (errorFlag, msg)
 
 
@@ -1151,6 +1155,7 @@ def createSpecies(basePath, model, comptSbmlidMooseIdMap,
                     poolInfo.color = v
                 elif k == 'Color':
                     poolInfo.textColor = v
+                    
             specInfoMap[sId] = {
                 "Mpath": poolId,
                 "const": constant,

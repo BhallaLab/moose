@@ -109,8 +109,8 @@ if(WITH_GUI)
 endif()
 
 
-
-install(DIRECTORY ${PYMOOSE_INSTALL_DIR}/usr/
+# NOTE: leading / is important other whole path will be installed.
+install(DIRECTORY ${PYMOOSE_INSTALL_DIR}/
     DESTINATION ${CMAKE_INSTALL_PREFIX}
     CONFIGURATIONS Release
     PATTERN ".git" EXCLUDE

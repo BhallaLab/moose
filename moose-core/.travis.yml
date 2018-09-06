@@ -15,6 +15,10 @@ notifications:
     on_success: change
     on_failure: always
 
+addons:
+    apt:
+      update: true
+
 before_script:
 - echo "OSX related"
 - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then nvm get head || true; fi

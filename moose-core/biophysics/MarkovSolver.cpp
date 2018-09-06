@@ -81,12 +81,12 @@ Matrix* MarkovSolver::computePadeApproximant( Matrix* Q1,
 																						unsigned int degreeIndex )
 {
 	Matrix *expQ;
-	Matrix *U, *V, *VplusU, *VminusU, *invVminusU, *Qpower;
+	Matrix *U, *VplusU, *VminusU, *invVminusU, *Qpower;
 	vector< unsigned int >* swaps = new vector< unsigned int >;
 	unsigned int n = Q1->size();
 	unsigned int degree = mCandidates[degreeIndex];
 	double *padeCoeffs;
-
+	Matrix *V = matAlloc(n);
 
 	//Vector of Matrix pointers. Each entry is an even power of Q.
 	vector< Matrix* > QevenPowers;
@@ -131,7 +131,6 @@ Matrix* MarkovSolver::computePadeApproximant( Matrix* Q1,
 		case 7 :
 		case 9 :
 			U = matAlloc( n );
-			V = matAlloc( n );
 
 			QevenPowers.push_back( Q1 );
 
@@ -199,6 +198,7 @@ Matrix* MarkovSolver::computePadeApproximant( Matrix* Q1,
 			matMatAdd( temp, Q6, 1.0, b13[6], FIRST );
 			matMatAdd( temp, Q4, 1.0, b13[4], FIRST );
 			matMatAdd( temp, Q2, 1.0, b13[2], FIRST );
+			delete( V );
 			V = matEyeAdd( temp, b13[0] );
 			delete temp;
 

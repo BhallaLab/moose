@@ -24,6 +24,9 @@ class RandSpike
 		void setRefractT( double val );
 		double getRefractT() const;
 
+		void setDoPeriodic( bool val );
+		bool getDoPeriodic() const;
+
         bool getFired() const;
 
 	//////////////////////////////////////////////////////////////////
@@ -42,6 +45,7 @@ class RandSpike
 		double lastEvent_;
 		double threshold_;
 		bool fired_;
+		bool doPeriodic_;
 };
 
 #endif // _RANDSPIKE_H

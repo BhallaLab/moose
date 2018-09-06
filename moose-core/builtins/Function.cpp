@@ -125,9 +125,19 @@ const Cinfo * Function::initCinfo()
         "When *false*, disables event-driven calculation and turns on "
 		"Process-driven calculations. \n"
         "When *true*, enables event-driven calculation and turns off "
-		"Process-driven calculations. \n",
+		"Process-driven calculations. \n"
+		"Defaults to *false*. \n",
         &Function::setUseTrigger,
         &Function::getUseTrigger);
+    static ValueFinfo< Function, bool > doEvalAtReinit(
+        "doEvalAtReinit",
+        "When *false*, disables function evaluation at reinit, and "
+		"just emits a value of zero to any message targets. \n"
+        "When *true*, does a function evaluation at reinit and sends "
+		"the computed value to any message targets. \n"
+		"Defaults to *false*. \n",
+        &Function::setDoEvalAtReinit,
+        &Function::getDoEvalAtReinit);
     static ElementValueFinfo< Function, string > expr(
         "expr",
         "Mathematical expression defining the function. The underlying parser\n"
@@ -257,6 +267,8 @@ const Cinfo * Function::initCinfo()
                 &rate,
                 &derivative,
                 &mode,
+				&useTrigger,
+				&doEvalAtReinit,
                 &expr,
                 &numVars,
                 &inputs,
@@ -316,7 +328,7 @@ static const Cinfo * functionCinfo = Function::initCinfo();
 
 Function::Function(): _t(0.0), _valid(false), _numVar(0), _lastValue(0.0),
     _value(0.0), _rate(0.0), _mode(1),
-    _useTrigger( false ), _stoich(0)
+    _useTrigger( false ), _doEvalAtReinit( false ), _stoich(0)
 {
     _parser.SetVarFactory(_functionAddVar, this);
     _independent = "x0";
@@ -601,6 +613,16 @@ bool Function::getUseTrigger() const
     return _useTrigger;
 }
 
+void Function::setDoEvalAtReinit(bool doEvalAtReinit )
+{
+    _doEvalAtReinit = doEvalAtReinit;
+}
+
+bool Function::getDoEvalAtReinit() const
+{
+    return _doEvalAtReinit;
+}
+
 double Function::getValue() const
 {
     double value = 0.0;
@@ -770,8 +792,11 @@ void Function::reinit(const Eref &e, ProcPtr p)
         _valid = false;
     }
     _t = p->currTime;
-    _value = 0.0;
-    _lastValue = 0.0;
+	if (_doEvalAtReinit) {
+    	_lastValue = _value = getValue();
+	} else {
+    	_lastValue = _value = 0.0;
+	}
     _rate = 0.0;
     switch (_mode){
         case 1: {

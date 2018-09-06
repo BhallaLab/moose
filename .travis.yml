@@ -50,4 +50,4 @@ install:
 script:
     - ./.travis_build.sh
     - sudo dpkg -i ../moose*.deb 
-    - python -c 'import moose;print(moose.version());print(moose.__file__)'
+    - /usr/bin/python -c 'import moose;print(moose.version());print(moose.__file__)'

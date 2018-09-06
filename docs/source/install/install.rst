@@ -1,8 +1,11 @@
 Use pre-built packages
 -----------------------
 
-If you need only `python` interface, you can install it using `pip`. This is the easiest
-way to install Python interface.
+pip
+^^^^
+
+If you only need `python` interface, use `pip`. This is the easiest way to install Python interface.
+This solution has been tested for Linux and MacOSX.
 ::
      pip install pymoose 
 
@@ -27,9 +30,13 @@ Mac OSX
 
 MacOSX support for moose-gui is not complete yet. However, the python-scripting interface can be installed on OSX using ``homebrew``
 ::
-
     $ brew tap BhallaLab/moose
     $ brew install moose
+
+Or alternatively, via pip 
+::
+    $ pip install pymoose --user 
+    
 
 Docker Images
 ^^^^^^^^^^^^^^

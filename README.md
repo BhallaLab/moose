@@ -48,7 +48,7 @@ models.  Several additional rdesigneur tutorials have been implemented.
 
 # Installing
 
-See the file  [NSTALL.md](INSTALL.md).
+See the file  [INSTALL.md](INSTALL.md).
 
 # AUTHORS
 

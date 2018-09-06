@@ -1,3 +1,4 @@
+
 /**********************************************************************
 ** This program is part of 'MOOSE', the
 ** Messaging Object Oriented Simulation Environment.
@@ -162,15 +163,17 @@ static void positionCompt( ObjId compt, double side, bool shiftUp )
 	}
 }
 
-void makeSolverOnCompt( Shell* s, const vector< ObjId >& compts,
+void makeSolverOnCompt( Shell* s,const vector< ObjId >& compts,
 				bool isGsolve )
 {
+
 	if ( compts.size() > 3 ) {
 		cout << "Warning: ReadKkit::makeSolverOnCompt: Cannot handle " <<
 			   compts.size() << " chemical compartments\n";
 		return;
 	}
 	vector< Id > stoichVec;
+	/*
 	if ( compts.size() == 2 ) {
 		double side = Field< double >::get( compts[1], "dy" );
 		positionCompt( compts[0], side, true );
@@ -180,7 +183,8 @@ void makeSolverOnCompt( Shell* s, const vector< ObjId >& compts,
 		positionCompt( compts[0], side, true );
 		positionCompt( compts[2], side, false );
 	}
-
+	*/
+	/*
 	for ( vector< ObjId >::const_iterator
 					i = compts.begin(); i != compts.end(); ++i ) {
 		string simpath = i->path() + "/##";
@@ -189,12 +193,14 @@ void makeSolverOnCompt( Shell* s, const vector< ObjId >& compts,
 			ksolve = s->doCreate( "Gsolve", *i, "gsolve", 1 );
 		else
 			ksolve = s->doCreate( "Ksolve", *i, "ksolve", 1 );
+		dsolve = s->doCreate("Dsolve,")
 		Id stoich = s->doCreate( "Stoich", *i, "stoich", 1 );
 		stoichVec.push_back( stoich );
 		Field< Id >::set( stoich, "compartment", *i );
 		Field< Id >::set( stoich, "ksolve", ksolve );
 		Field< string >::set( stoich, "path", simpath );
 	}
+	*/
 	/* Not needed now that we use xfer pools to cross compartments.
 	if ( stoichVec.size() == 2 ) {
 		SetGet1< Id >::set( stoichVec[1], "buildXreacs", stoichVec[0] );
@@ -221,18 +227,25 @@ void setMethod( Shell* s, Id mgr, double simdt, double plotdt,
 	assert( compt != Id() );
 	string simpath2 = mgr.path() + "/##[ISA=StimulusTable]," +
 			mgr.path() + "/##[ISA=PulseGen]";
-
 	string m = lower( method );
+
+	if ( m == "ksolve" || m =="gsl" ||  m == "gssa" || m == "gsolve" ||
+		m == "gillespie" || m == "stochastic" )
+	{
+		cout << " Warning:  Default solver set is Exponential Euler. To set  \'gsl\' or \'gssa\' solver use function mooseaddChemSolver(modelpath,\'solverType\')"<<"\n";
+	}
+	/*
+	
 	if ( m == "rk4" ) {
 		cout << "Warning, not yet implemented. Using rk5 instead\n";
 		m = "rk5";
 	}
 	if ( m == "ksolve" || m == "gsl" ||
 		m == "rk5" || m == "rkf" || m == "rk" ) {
-			makeSolverOnCompt( s, ret, false );
+			makeSolverOnCompt( s, mgr, ret, false );
 	} else if ( m == "gssa" || m == "gsolve" ||
 		m == "gillespie" || m == "stochastic" ) {
-			makeSolverOnCompt( s, ret, true );
+			makeSolverOnCompt( s, mgr,ret, true );
 	} else if ( m == "ee" || m == "neutral" ) {
 			// s->doUseClock( simpath, "process", 4 );
 			// s->doSetClock( 4, simdt );
@@ -242,7 +255,9 @@ void setMethod( Shell* s, Id mgr, double simdt, double plotdt,
 			// s->doUseClock( simpath, "process", 4 );
 			// s->doSetClock( 4, simdt );
 	}
+	*/
 	s->doUseClock( simpath2, "proc", 11 );
+	s->doSetClock( 10, simdt );
 	s->doSetClock( 11, simdt );
 	s->doSetClock( 12, simdt );
 	s->doSetClock( 13, simdt );
