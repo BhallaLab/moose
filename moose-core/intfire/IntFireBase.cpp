@@ -7,97 +7,99 @@
 ** See the file COPYING.LIB for the full notice.
 **********************************************************************/
 
-#include "header.h"
-#include "ElementValueFinfo.h"
+#include "../basecode/header.h"
+#include "../basecode/ElementValueFinfo.h"
 #include "../biophysics/CompartmentBase.h"
 #include "../biophysics/Compartment.h"
 #include "IntFireBase.h"
 
 using namespace moose;
-SrcFinfo1< double >* IntFireBase::spikeOut() {
-	static SrcFinfo1< double > spikeOut(
-			"spikeOut",
-			"Sends out spike events. The argument is the timestamp of "
-			"the spike. "
-			);
-	return &spikeOut;
+SrcFinfo1< double >* IntFireBase::spikeOut()
+{
+    static SrcFinfo1< double > spikeOut(
+        "spikeOut",
+        "Sends out spike events. The argument is the timestamp of "
+        "the spike. "
+    );
+    return &spikeOut;
 }
 
 const Cinfo* IntFireBase::initCinfo()
 {
-		//////////////////////////////////////////////////////////////
-		// Field Definitions
-		//////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////
+    // Field Definitions
+    //////////////////////////////////////////////////////////////
+    static ElementValueFinfo< IntFireBase, double > thresh(
+        "thresh",
+        "firing threshold",
+        &IntFireBase::setThresh,
+        &IntFireBase::getThresh
+    );
 
-		static ElementValueFinfo< IntFireBase, double > thresh(
-			"thresh",
-			"firing threshold",
-			&IntFireBase::setThresh,
-			&IntFireBase::getThresh
-		);
+    static ElementValueFinfo< IntFireBase, double > vReset(
+        "vReset",
+        "voltage is set to vReset after firing",
+        &IntFireBase::setVReset,
+        &IntFireBase::getVReset
+    );
 
-		static ElementValueFinfo< IntFireBase, double > vReset(
-			"vReset",
-			"voltage is set to vReset after firing",
-			&IntFireBase::setVReset,
-			&IntFireBase::getVReset
-		);
+    static ElementValueFinfo< IntFireBase, double > refractoryPeriod(
+        "refractoryPeriod",
+        "Minimum time between successive spikes",
+        &IntFireBase::setRefractoryPeriod,
+        &IntFireBase::getRefractoryPeriod
+    );
 
-		static ElementValueFinfo< IntFireBase, double > refractoryPeriod(
-			"refractoryPeriod",
-			"Minimum time between successive spikes",
-			&IntFireBase::setRefractoryPeriod,
-			&IntFireBase::getRefractoryPeriod
-		);
+    static ReadOnlyElementValueFinfo< IntFireBase, double > lastEventTime(
+        "lastEventTime",
+        "Timestamp of last firing.",
+        &IntFireBase::getLastEventTime
+    );
 
-		static ReadOnlyElementValueFinfo< IntFireBase, double > lastEventTime(
-			"lastEventTime",
-			"Timestamp of last firing.",
-			&IntFireBase::getLastEventTime
-		);
+    static ReadOnlyElementValueFinfo< IntFireBase, bool > hasFired(
+        "hasFired",
+        "The object has fired within the last timestep",
+        &IntFireBase::hasFired
+    );
+    //////////////////////////////////////////////////////////////
+    // MsgDest Definitions
+    //////////////////////////////////////////////////////////////
+    static DestFinfo activation(
+        "activation",
+        "Handles value of synaptic activation arriving on this object",
+        new OpFunc1< IntFireBase, double >( &IntFireBase::activation ));
 
-		static ReadOnlyElementValueFinfo< IntFireBase, bool > hasFired(
-			"hasFired",
-			"The object has fired within the last timestep",
-			&IntFireBase::hasFired
-		);
-		//////////////////////////////////////////////////////////////
-		// MsgDest Definitions
-		//////////////////////////////////////////////////////////////
-		static DestFinfo activation( "activation",
-			"Handles value of synaptic activation arriving on this object",
-			new OpFunc1< IntFireBase, double >( &IntFireBase::activation ));
+    //////////////////////////////////////////////////////////////
 
-		//////////////////////////////////////////////////////////////
+    static Finfo* intFireFinfos[] =
+    {
+        &thresh,				// Value
+        &vReset,				// Value
+        &refractoryPeriod,		// Value
+        &hasFired,				// ReadOnlyValue
+        &lastEventTime,			// ReadOnlyValue
+        &activation,			// DestFinfo
+        IntFireBase::spikeOut() // MsgSrc
+    };
 
-	static Finfo* intFireFinfos[] = {
-		&thresh,				// Value
-		&vReset,				// Value
-		&refractoryPeriod,		// Value
-		&hasFired,				// ReadOnlyValue
-		&lastEventTime,			// ReadOnlyValue
-		&activation,			// DestFinfo
-		IntFireBase::spikeOut() // MsgSrc
-	};
-
-	static string doc[] =
-	{
-		"Name", "IntFireBase",
-		"Author", "Upi Bhalla",
-		"Description", "Base class for Integrate-and-fire compartment.",
-	};
+    static string doc[] =
+    {
+        "Name", "IntFireBase",
+        "Author", "Upi Bhalla",
+        "Description", "Base class for Integrate-and-fire compartment.",
+    };
     static ZeroSizeDinfo< int > dinfo;
-	static Cinfo intFireBaseCinfo(
-				"IntFireBase",
-				Compartment::initCinfo(),
-				intFireFinfos,
-				sizeof( intFireFinfos ) / sizeof (Finfo*),
-				&dinfo,
-                doc,
-                sizeof(doc)/sizeof(string)
-	);
+    static Cinfo intFireBaseCinfo(
+        "IntFireBase",
+        Compartment::initCinfo(),
+        intFireFinfos,
+        sizeof( intFireFinfos ) / sizeof (Finfo*),
+        &dinfo,
+        doc,
+        sizeof(doc)/sizeof(string)
+    );
 
-	return &intFireBaseCinfo;
+    return &intFireBaseCinfo;
 }
 
 static const Cinfo* intFireBaseCinfo = IntFireBase::initCinfo();
@@ -107,59 +109,59 @@ static const Cinfo* intFireBaseCinfo = IntFireBase::initCinfo();
 //////////////////////////////////////////////////////////////////
 
 IntFireBase::IntFireBase()
-	:
-		threshold_( 0.0 ),
-		vReset_( 0.0 ),
-		activation_( 0.0 ),
-		refractT_( 0.0 ),
-		lastEvent_( 0.0 ),
-		fired_( false )
+    :
+    threshold_( 0.0 ),
+    vReset_( 0.0 ),
+    activation_( 0.0 ),
+    refractT_( 0.0 ),
+    lastEvent_( 0.0 ),
+    fired_( false )
 {;}
 
 IntFireBase::~IntFireBase()
 {
-	;
+    ;
 }
 
 // Value Field access function definitions.
 void IntFireBase::setThresh( const Eref& e, double val )
 {
-	threshold_ = val;
+    threshold_ = val;
 }
 
 double IntFireBase::getThresh( const Eref& e ) const
 {
-	return threshold_;
+    return threshold_;
 }
 
 void IntFireBase::setVReset( const Eref& e, double val )
 {
-	vReset_ = val;
+    vReset_ = val;
 }
 
 double IntFireBase::getVReset( const Eref& e ) const
 {
-	return vReset_;
+    return vReset_;
 }
 
 void IntFireBase::setRefractoryPeriod( const Eref& e, double val )
 {
-	refractT_ = val;
+    refractT_ = val;
 }
 
 double IntFireBase::getRefractoryPeriod( const Eref& e ) const
 {
-	return refractT_;
+    return refractT_;
 }
 
 double IntFireBase::getLastEventTime( const Eref& e ) const
 {
-	return lastEvent_;
+    return lastEvent_;
 }
 
 bool IntFireBase::hasFired( const Eref& e ) const
 {
-	return fired_;
+    return fired_;
 }
 
 //////////////////////////////////////////////////////////////////
@@ -168,5 +170,5 @@ bool IntFireBase::hasFired( const Eref& e ) const
 
 void IntFireBase::activation( double v )
 {
-	activation_ += v;
+    activation_ += v;
 }

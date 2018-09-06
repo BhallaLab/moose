@@ -49,7 +49,7 @@
 #include <Python.h>
 #include <structmember.h>
 
-#ifdef USE_BOOST
+#ifdef USE_BOOST_ODE
 #include <boost/format.hpp>
 #endif
 

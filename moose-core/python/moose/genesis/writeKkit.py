@@ -224,9 +224,11 @@ def writeEnz( modelpath,f,sceneitems):
             concInit = 0;
             n = 0;
             conc = 0;
-            enzParent = enz.parent
-            if (isinstance(enzParent.className,moose.Pool)) or (isinstance(enzParent.className,moose.ZombiePool)):
-                print(" raise exception enz doesn't have pool as parent")
+            if len(moose.element(enz).neighbors['enzDest']) == 1:
+                enzParent = moose.element(moose.element(enz).neighbors['enzDest'][0])
+    
+            if not (isinstance(enzParent,moose.PoolBase)):
+                print(" raise exception enz doesn't have pool as parent %s",moose.element(enz).path)
                 return False
             else:
                 vol = enzParent.volume * NA * 1e-3;

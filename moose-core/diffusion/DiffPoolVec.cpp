@@ -23,135 +23,140 @@ using namespace std;
  * work on in single-compartment models.
  */
 DiffPoolVec::DiffPoolVec()
-	: id_( 0 ), n_( 1, 0.0 ), nInit_( 1, 0.0 ),
-		diffConst_( 1.0e-12 ), motorConst_( 0.0 )
-{;}
+    : id_( 0 ), n_( 1, 0.0 ), nInit_( 1, 0.0 ),
+      diffConst_( 1.0e-12 ), motorConst_( 0.0 )
+{
+    ;
+}
 
 double DiffPoolVec::getNinit( unsigned int voxel ) const
 {
-	assert( voxel < nInit_.size() );
-	return nInit_[ voxel ];
+    assert( voxel < nInit_.size() );
+    return nInit_[ voxel ];
 }
 
 void DiffPoolVec::setNinit( unsigned int voxel, double v )
 {
-	assert( voxel < nInit_.size() );
-	nInit_[ voxel ] = v;
+    assert( voxel < nInit_.size() );
+    nInit_[ voxel ] = v;
 }
 
 double DiffPoolVec::getN( unsigned int voxel ) const
 {
-	assert( voxel < n_.size() );
-	return n_[ voxel ];
+    assert( voxel < n_.size() );
+    return n_[ voxel ];
 }
 
 void DiffPoolVec::setN( unsigned int voxel, double v )
 {
-	assert( voxel < n_.size() );
-	n_[ voxel ] = v;
+    assert( voxel < n_.size() );
+    n_[ voxel ] = v;
 }
 
 double DiffPoolVec::getPrev( unsigned int voxel ) const
 {
-	assert( voxel < n_.size() );
-	return prev_[ voxel ];
+    assert( voxel < n_.size() );
+    return prev_[ voxel ];
 }
 
 const vector< double >& DiffPoolVec::getNvec() const
 {
-	return n_;
+    return n_;
 }
 
 void DiffPoolVec::setNvec( const vector< double >& vec )
 {
-	assert( vec.size() == n_.size() );
-	n_ = vec;
+    assert( vec.size() == n_.size() );
+    n_ = vec;
 }
 
 void DiffPoolVec::setNvec( unsigned int start, unsigned int num,
-				vector< double >::const_iterator q )
+                           vector< double >::const_iterator q )
 {
-	assert( start + num <= n_.size() );
-	vector< double >::iterator p = n_.begin() + start;
-	for ( unsigned int i = 0; i < num; ++i )
-		*p++ = *q++;
+    assert( start + num <= n_.size() );
+    vector< double >::iterator p = n_.begin() + start;
+    for ( unsigned int i = 0; i < num; ++i )
+        *p++ = *q++;
 }
 
 void DiffPoolVec::setPrevVec()
 {
-	prev_ = n_;
+    prev_ = n_;
 }
 
 double DiffPoolVec::getDiffConst() const
 {
-	return diffConst_;
+    return diffConst_;
 }
 
 void DiffPoolVec::setDiffConst( double v )
 {
-	diffConst_ = v;
+    diffConst_ = v;
 }
 
 double DiffPoolVec::getMotorConst() const
 {
-	return motorConst_;
+    return motorConst_;
 }
 
 void DiffPoolVec::setMotorConst( double v )
 {
-	motorConst_ = v;
+    motorConst_ = v;
 }
 
 void DiffPoolVec::setNumVoxels( unsigned int num )
 {
-	nInit_.resize( num, 0.0 );
-	n_.resize( num, 0.0 );
+    nInit_.resize( num, 0.0 );
+    n_.resize( num, 0.0 );
 }
 
 unsigned int DiffPoolVec::getNumVoxels() const
 {
-	return n_.size();
+    return n_.size();
 }
 
 void DiffPoolVec::setId( unsigned int id )
 {
-	id_ = id;
+    id_ = id;
 }
 
 unsigned int DiffPoolVec::getId() const
 {
-	return id_;
+    return id_;
 }
 
 void DiffPoolVec::setOps(const vector< Triplet< double > >& ops,
-	const vector< double >& diagVal )
+                         const vector< double >& diagVal )
 {
-	if ( ops.size() > 0 ) {
-		assert( diagVal.size() == n_.size() );
-		ops_ = ops;
-		diagVal_ = diagVal;
-	} else {
-		ops_.clear();
-		diagVal_.clear();
-	}
+    if ( ops.size() > 0 )
+    {
+        assert( diagVal.size() == n_.size() );
+        ops_ = ops;
+        diagVal_ = diagVal;
+    }
+    else
+    {
+        ops_.clear();
+        diagVal_.clear();
+    }
 }
 
 void DiffPoolVec::advance( double dt )
 {
-	if ( ops_.size() == 0 ) return;
-	for ( vector< Triplet< double > >::const_iterator
-				i = ops_.begin(); i != ops_.end(); ++i )
-		n_[i->c_] -= n_[i->b_] * i->a_;
+    if ( ops_.size() == 0 ) return;
+    for ( vector< Triplet< double > >::const_iterator
+            i = ops_.begin(); i != ops_.end(); ++i )
+        n_[i->c_] -= n_[i->b_] * i->a_;
 
-	assert( n_.size() == diagVal_.size() );
-	vector< double >::iterator iy = n_.begin();
-	for ( vector< double >::const_iterator
-				i = diagVal_.begin(); i != diagVal_.end(); ++i )
-		*iy++ *= *i;
+    assert( n_.size() == diagVal_.size() );
+    vector< double >::iterator iy = n_.begin();
+    for ( vector< double >::const_iterator
+            i = diagVal_.begin(); i != diagVal_.end(); ++i )
+        *iy++ *= *i;
 }
 
 void DiffPoolVec::reinit() // Not called by the clock, but by parent.
 {
-	assert( n_.size() == nInit_.size() );
-	prev_ = n_ = nInit_;
+    assert( n_.size() == nInit_.size() );
+    prev_ = n_ = nInit_;
 }

@@ -12,28 +12,28 @@
 
 class BufPool: public Pool
 {
-	public:
-		BufPool();
-		~BufPool();
+public:
+    BufPool();
+    ~BufPool();
 
-		//////////////////////////////////////////////////////////////////
-		// Field assignment stuff
-		//////////////////////////////////////////////////////////////////
-		/// The 'get' functions are simply inherited from Pool
-		void vSetN( const Eref& e, double v );
-		void vSetNinit( const Eref& e, double v );
-		void vSetConc( const Eref& e, double v );
-		void vSetConcInit( const Eref& e, double v );
+    //////////////////////////////////////////////////////////////////
+    // Field assignment stuff
+    //////////////////////////////////////////////////////////////////
+    /// The 'get' functions are simply inherited from Pool
+    void vSetN( const Eref& e, double v );
+    void vSetNinit( const Eref& e, double v );
+    void vSetConc( const Eref& e, double v );
+    void vSetConcInit( const Eref& e, double v );
 
-		//////////////////////////////////////////////////////////////////
-		// Dest funcs
-		//////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////
+    // Dest funcs
+    //////////////////////////////////////////////////////////////////
 
-		void vProcess( const Eref& e, ProcPtr p );
-		void vReinit( const Eref& e, ProcPtr p );
+    void vProcess( const Eref& e, ProcPtr p );
+    void vReinit( const Eref& e, ProcPtr p );
 
-		static const Cinfo* initCinfo();
-	private:
+    static const Cinfo* initCinfo();
+private:
 };
 
 #endif	// _BUF_POOL_H

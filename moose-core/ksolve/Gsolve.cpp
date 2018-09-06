@@ -6,10 +6,12 @@
 ** GNU Lesser General Public License version 2.1
 ** See the file COPYING.LIB for the full notice.
 **********************************************************************/
-#include "header.h"
+#include "../basecode/header.h"
+#include "../basecode/global.h"
+
+#include "../mesh/VoxelJunction.h"
 
 #include "VoxelPoolsBase.h"
-#include "../mesh/VoxelJunction.h"
 #include "XferInfo.h"
 #include "ZombiePoolInterface.h"
 
@@ -21,7 +23,6 @@
 #include "GssaSystem.h"
 #include "Stoich.h"
 #include "GssaVoxelPools.h"
-#include "../randnum/randnum.h"
 
 #include <future>
 #include <atomic>
@@ -213,6 +214,11 @@ Gsolve::Gsolve() :
     useClockedUpdate_( false )
 {
     ;
+}
+
+Gsolve& Gsolve::operator=(const Gsolve& )
+{
+    return *this;
 }
 
 Gsolve::~Gsolve()
@@ -419,7 +425,9 @@ void Gsolve::process( const Eref& e, ProcPtr p )
             *i = round( *i );
 #else
             double base = floor( *i );
-            if ( mtrand() >= (*i - base) )
+
+            // Use global RNG.
+            if ( moose::mtrand() >= (*i - base) )
                 *i = base;
             else
                 *i = base + 1.0;

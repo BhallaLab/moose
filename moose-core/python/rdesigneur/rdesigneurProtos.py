@@ -757,8 +757,8 @@ def makePassiveHHsoma(name = 'passiveHHsoma', parent='/library'):
     if not moose.exists( elecpath ):
         elecid = moose.Neuron( elecpath )
         dia = 500e-6
-        soma = buildComptWrapper( elecid, 'soma', dia, dia, 0.0,
-            0.33333333, 3000, 0.01 )
+        soma = buildCompt( elecid, 'soma', dx = dia, dia = dia, x = 0.0,
+            RM = 0.33333333, RA = 3000, CM = 0.01 )
         soma.initVm = -65e-3 # Resting of -65, from HH
         soma.Em = -54.4e-3 # 10.6 mV above resting of -65, from HH
     else:

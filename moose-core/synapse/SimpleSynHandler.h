@@ -10,6 +10,8 @@
 #ifndef _SIMPLE_SYN_HANDLER_H
 #define _SIMPLE_SYN_HANDLER_H
 
+#include <queue>
+
 /*
 class SynEvent
 {

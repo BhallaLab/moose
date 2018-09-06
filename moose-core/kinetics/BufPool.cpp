@@ -7,7 +7,7 @@
 ** See the file COPYING.LIB for the full notice.
 **********************************************************************/
 
-#include "header.h"
+#include "../basecode/header.h"
 #include "PoolBase.h"
 #include "Pool.h"
 #include "BufPool.h"
@@ -17,28 +17,28 @@
 
 const Cinfo* BufPool::initCinfo()
 {
-		//////////////////////////////////////////////////////////////
-		// Field Definitions
-		//////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////
+    // Field Definitions
+    //////////////////////////////////////////////////////////////
 
-		//////////////////////////////////////////////////////////////
-		// MsgDest Definitions
-		//////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////
+    // MsgDest Definitions
+    //////////////////////////////////////////////////////////////
 
-		//////////////////////////////////////////////////////////////
-		// SharedMsg Definitions
-		//////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////
+    // SharedMsg Definitions
+    //////////////////////////////////////////////////////////////
 
-	static Dinfo< BufPool > dinfo;
-	static Cinfo bufPoolCinfo (
-		"BufPool",
-		Pool::initCinfo(),
-		0,
-		0,
-		&dinfo
-	);
+    static Dinfo< BufPool > dinfo;
+    static Cinfo bufPoolCinfo (
+        "BufPool",
+        Pool::initCinfo(),
+        0,
+        0,
+        &dinfo
+    );
 
-	return &bufPoolCinfo;
+    return &bufPoolCinfo;
 }
 
 //////////////////////////////////////////////////////////////
@@ -58,24 +58,24 @@ BufPool::~BufPool()
 
 void BufPool::vSetN( const Eref& e, double v )
 {
-	Pool::vSetN( e, v );
-	Pool::vSetNinit( e, v );
+    Pool::vSetN( e, v );
+    Pool::vSetNinit( e, v );
 }
 
 void BufPool::vSetNinit( const Eref& e, double v )
 {
-	vSetN( e, v );
+    vSetN( e, v );
 }
 
 void BufPool::vSetConc( const Eref& e, double conc )
 {
-	double n = NA * conc * lookupVolumeFromMesh( e );
-	vSetN( e, n );
+    double n = NA * conc * lookupVolumeFromMesh( e );
+    vSetN( e, n );
 }
 
 void BufPool::vSetConcInit( const Eref& e, double conc )
 {
-	vSetConc( e, conc );
+    vSetConc( e, conc );
 }
 
 //////////////////////////////////////////////////////////////
@@ -84,12 +84,12 @@ void BufPool::vSetConcInit( const Eref& e, double conc )
 
 void BufPool::vProcess( const Eref& e, ProcPtr p )
 {
-	Pool::vReinit( e, p );
+    Pool::vReinit( e, p );
 }
 
 void BufPool::vReinit( const Eref& e, ProcPtr p )
 {
-	Pool::vReinit( e, p );
+    Pool::vReinit( e, p );
 }
 
 

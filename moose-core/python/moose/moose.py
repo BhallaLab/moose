@@ -10,7 +10,7 @@ from contextlib import closing
 import warnings
 import pydoc
 from io import StringIO
-
+from os.path import splitext
 import moose
 import moose.utils as mu
 
@@ -62,6 +62,42 @@ except Exception as e:
 # Import function from C++ module into moose namespace.
 from moose._moose import *
 
+#`loadModel` is deleted from global import,
+# this is to bypass the call from c++ module which is due to fixXreacs() which is
+# now written in python and readKkit.cpp will not be possible to set/call the solver due to this
+
+del globals()['loadModel']
+
+def loadModel(filename, target,method=None):
+    solverClass = 'Neutral'
+    if method != None:
+        solverClass = method
+    try:
+        f = open(filename,'r')
+        f.close()
+    except IOError as e:
+        print (e)
+        return
+    else:
+        file_name,extension = splitext(filename)
+        if extension in [".swc",".p"]:
+            ret = moose._moose.loadModel(filename,target,"Neutral")
+        elif extension in [".g",".cspace"]:
+            #only if genesis or cspace file, then mooseAddChemSolver is called
+            ret = moose._moose.loadModel(filename,target,"ee")
+          
+            method = "ee"
+            if solverClass.lower() in ["gssa","gillespie","stochastic","gsolve"]:
+                method = "gssa"
+            elif solverClass.lower() in ["gsl","runge kutta","deterministic","ksolve","rungekutta","rk5","rkf","rk"]:
+                method = "gsl"
+            elif solverClass.lower() in ["exponential euler","exponentialeuler","neutral"]:
+                method = "ee"
+            
+            if method != 'ee':
+                chemError_ = _chemUtil.add_Delete_ChemicalSolver.mooseAddChemSolver(target,method)
+        return ret
+        
 def version( ):
     return VERSION
 
@@ -149,20 +185,20 @@ def mooseWriteKkit(modelpath, filepath,sceneitems={}):
     return _writeKkit.mooseWriteKkit(modelpath, filepath,sceneitems)
 
 
-def moosedeleteChemSolver(modelpath):
+def mooseDeleteChemSolver(modelpath):
     """ deletes solver on all the compartment and its children.
         This is neccesary while created a new moose object on a pre-existing modelpath,\n
-        this should be followed by mooseaddChemSolver for add solvers on to compartment to simulate else
+        this should be followed by mooseAddChemSolver for add solvers on to compartment to simulate else
         default is Exponential Euler (ee)
     """
     if chemImport_:
-        return _chemUtil.add_Delete_ChemicalSolver.moosedeleteChemSolver(modelpath)
+        return _chemUtil.add_Delete_ChemicalSolver.mooseDeleteChemSolver(modelpath)
     else:
         print( chemError_ )
         return False
 
 
-def mooseaddChemSolver(modelpath, solver):
+def mooseAddChemSolver(modelpath, solver):
     """ Add solver on chemical compartment and its children for calculation
 
     keyword arguments:\n
@@ -174,7 +210,8 @@ def mooseaddChemSolver(modelpath, solver):
 
     """
     if chemImport_:
-        return _chemUtil.add_Delete_ChemicalSolver.mooseaddChemSolver(modelpath, solver)
+        chemError_ = _chemUtil.add_Delete_ChemicalSolver.mooseAddChemSolver(modelpath, solver)
+        return chemError_
     else:
         print( chemError_ )
         return False

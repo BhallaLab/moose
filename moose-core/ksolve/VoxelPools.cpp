@@ -12,7 +12,7 @@
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_matrix.h>
 #include <gsl/gsl_odeiv2.h>
-#elif USE_BOOST
+#elif USE_BOOST_ODE
 #include <boost/numeric/odeint.hpp>
 using namespace boost::numeric;
 #endif
@@ -36,17 +36,17 @@ using namespace boost::numeric;
 VoxelPools::VoxelPools()
 {
 #ifdef USE_GSL
-		driver_ = 0;
+    driver_ = 0;
 #endif
 }
 
 VoxelPools::~VoxelPools()
 {
-	for ( unsigned int i = 0; i < rates_.size(); ++i )
-		delete( rates_[i] );
+    for ( unsigned int i = 0; i < rates_.size(); ++i )
+        delete( rates_[i] );
 #ifdef USE_GSL
-	if ( driver_ )
-		gsl_odeiv2_driver_free( driver_ );
+    if ( driver_ )
+        gsl_odeiv2_driver_free( driver_ );
 #endif
 }
 
@@ -55,12 +55,12 @@ VoxelPools::~VoxelPools()
 //////////////////////////////////////////////////////////////
 void VoxelPools::reinit( double dt )
 {
-	VoxelPoolsBase::reinit();
+    VoxelPoolsBase::reinit();
 #ifdef USE_GSL
-	if ( !driver_ )
-		return;
-	gsl_odeiv2_driver_reset( driver_ );
-	gsl_odeiv2_driver_reset_hstart( driver_, dt / 10.0 );
+    if ( !driver_ )
+        return;
+    gsl_odeiv2_driver_reset( driver_ );
+    gsl_odeiv2_driver_reset_hstart( driver_, dt / 10.0 );
 #endif
 }
 
@@ -68,15 +68,18 @@ void VoxelPools::setStoich( Stoich* s, const OdeSystem* ode )
 {
     stoichPtr_ = s;
 #ifdef USE_GSL
-    if ( ode ) {
+    if ( ode )
+    {
         sys_ = ode->gslSys;
         if ( driver_ )
             gsl_odeiv2_driver_free( driver_ );
+
         driver_ = gsl_odeiv2_driver_alloc_y_new(
-                &sys_, ode->gslStep, ode->initStepSize,
-                ode->epsAbs, ode->epsRel );
+                      &sys_, ode->gslStep, ode->initStepSize,
+                      ode->epsAbs, ode->epsRel 
+                );
     }
-#elif USE_BOOST
+#elif USE_BOOST_ODE
     if( ode )
         sys_ = ode->boostSys;
 #endif
@@ -88,11 +91,12 @@ void VoxelPools::advance( const ProcInfo* p )
     double t = p->currTime - p->dt;
 #ifdef USE_GSL
     int status = gsl_odeiv2_driver_apply( driver_, &t, p->currTime, varS());
-    if ( status != GSL_SUCCESS ) {
+    if ( status != GSL_SUCCESS )
+    {
         cout << "Error: VoxelPools::advance: GSL integration error at time "
-            << t << "\n";
+             << t << "\n";
         cout << "Error info: " << status << ", " <<
-            gsl_strerror( status ) << endl;
+             gsl_strerror( status ) << endl;
         if ( status == GSL_EMAXITER )
             cout << "Max number of steps exceeded\n";
         else if ( status == GSL_ENOPROG )
@@ -102,7 +106,7 @@ void VoxelPools::advance( const ProcInfo* p )
         assert( 0 );
     }
 
-#elif USE_BOOST
+#elif USE_BOOST_ODE
 
 
     // NOTE: Make sure to assing vp to BoostSys vp. In next call, it will be used by
@@ -144,126 +148,128 @@ void VoxelPools::advance( const ProcInfo* p )
 
     if( sys_.method == "rk2" )
         odeint::integrate_const( rk_midpoint_stepper_type_()
-                , sys_ , Svec()
-                , p->currTime - p->dt, p->currTime, std::min( p->dt, fixedDt )
-                );
+                                 , sys_ , Svec()
+                                 , p->currTime - p->dt, p->currTime, std::min( p->dt, fixedDt )
+                               );
     else if( sys_.method == "rk4" )
         odeint::integrate_const( rk4_stepper_type_()
-                , sys_ , Svec()
-                , p->currTime - p->dt, p->currTime, std::min( p->dt, fixedDt )
-                );
+                                 , sys_ , Svec()
+                                 , p->currTime - p->dt, p->currTime, std::min( p->dt, fixedDt )
+                               );
     else if( sys_.method == "rk5")
         odeint::integrate_const( rk_karp_stepper_type_()
-                , sys_ , Svec()
-                , p->currTime - p->dt, p->currTime, std::min( p->dt, fixedDt )
-                );
+                                 , sys_ , Svec()
+                                 , p->currTime - p->dt, p->currTime, std::min( p->dt, fixedDt )
+                               );
     else if( sys_.method == "rk5a")
         odeint::integrate_adaptive(
-                odeint::make_controlled<rk_karp_stepper_type_>( absTol, relTol)
-                , sys_
-                , Svec()
-                , p->currTime - p->dt
-                , p->currTime
-                , p->dt
-                );
+            odeint::make_controlled<rk_karp_stepper_type_>( absTol, relTol)
+            , sys_
+            , Svec()
+            , p->currTime - p->dt
+            , p->currTime
+            , p->dt
+        );
     else if ("rk54" == sys_.method )
         odeint::integrate_const( rk_karp_stepper_type_()
-                , sys_ , Svec()
-                , p->currTime - p->dt, p->currTime, std::min( p->dt, fixedDt )
-                );
+                                 , sys_ , Svec()
+                                 , p->currTime - p->dt, p->currTime, std::min( p->dt, fixedDt )
+                               );
     else if ("rk54a" == sys_.method )
         odeint::integrate_adaptive(
-                odeint::make_controlled<rk_karp_stepper_type_>( absTol, relTol )
-                , sys_, Svec()
-                , p->currTime - p->dt
-                , p->currTime
-                , p->dt
-                );
+            odeint::make_controlled<rk_karp_stepper_type_>( absTol, relTol )
+            , sys_, Svec()
+            , p->currTime - p->dt
+            , p->currTime
+            , p->dt
+        );
     else if ("rk5" == sys_.method )
         odeint::integrate_const( rk_dopri_stepper_type_()
-                , sys_ , Svec()
-                , p->currTime - p->dt, p->currTime, std::min( p->dt, fixedDt )
-                );
+                                 , sys_ , Svec()
+                                 , p->currTime - p->dt, p->currTime, std::min( p->dt, fixedDt )
+                               );
     else if ("rk5a" == sys_.method )
         odeint::integrate_adaptive(
-                odeint::make_controlled<rk_dopri_stepper_type_>( absTol, relTol )
-                , sys_, Svec()
-                , p->currTime - p->dt
-                , p->currTime
-                , p->dt
-                );
+            odeint::make_controlled<rk_dopri_stepper_type_>( absTol, relTol )
+            , sys_, Svec()
+            , p->currTime - p->dt
+            , p->currTime
+            , p->dt
+        );
     else if( sys_.method == "rk8" )
         odeint::integrate_const( rk_felhberg_stepper_type_()
-                , sys_ , Svec()
-                , p->currTime - p->dt, p->currTime, std::min( p->dt, fixedDt )
-                );
+                                 , sys_ , Svec()
+                                 , p->currTime - p->dt, p->currTime, std::min( p->dt, fixedDt )
+                               );
     else if( sys_.method == "rk8a" )
         odeint::integrate_adaptive(
-                odeint::make_controlled<rk_felhberg_stepper_type_>( absTol, relTol )
-                , sys_, Svec()
-                , p->currTime - p->dt
-                , p->currTime
-                , p->dt
-                );
+            odeint::make_controlled<rk_felhberg_stepper_type_>( absTol, relTol )
+            , sys_, Svec()
+            , p->currTime - p->dt
+            , p->currTime
+            , p->dt
+        );
 
     else
         odeint::integrate_adaptive(
-                odeint::make_controlled<rk_karp_stepper_type_>( absTol, relTol )
-                , sys_, Svec()
-                , p->currTime - p->dt
-                , p->currTime
-                , p->dt
-                );
+            odeint::make_controlled<rk_karp_stepper_type_>( absTol, relTol )
+            , sys_, Svec()
+            , p->currTime - p->dt
+            , p->currTime
+            , p->dt
+        );
 #endif
-    if ( !stoichPtr_->getAllowNegative() ) { // clean out negatives
-		unsigned int nv = stoichPtr_->getNumVarPools();
-		double* vs = varS();
-		for ( unsigned int i = 0; i < nv; ++i ) {
-			if ( signbit(vs[i]) )
-				vs[i] = 0.0;
-		}
-	}
+    if ( !stoichPtr_->getAllowNegative() )   // clean out negatives
+    {
+        unsigned int nv = stoichPtr_->getNumVarPools();
+        double* vs = varS();
+        for ( unsigned int i = 0; i < nv; ++i )
+        {
+            if ( signbit(vs[i]) )
+                vs[i] = 0.0;
+        }
+    }
 }
 
 void VoxelPools::setInitDt( double dt )
 {
 #ifdef USE_GSL
-	gsl_odeiv2_driver_reset_hstart( driver_, dt );
+    gsl_odeiv2_driver_reset_hstart( driver_, dt );
 #endif
 }
 
 #ifdef USE_GSL
 // static func. This is the function that goes into the Gsl solver.
 int VoxelPools::gslFunc( double t, const double* y, double *dydt,
-						void* params )
+                         void* params )
 {
-	VoxelPools* vp = reinterpret_cast< VoxelPools* >( params );
-	// Stoich* s = reinterpret_cast< Stoich* >( params );
-	double* q = const_cast< double* >( y ); // Assign the func portion.
+    VoxelPools* vp = reinterpret_cast< VoxelPools* >( params );
+    // Stoich* s = reinterpret_cast< Stoich* >( params );
+    double* q = const_cast< double* >( y ); // Assign the func portion.
 
-	// Assign the buffered pools
-	// Not possible because this is a static function
-	// Not needed because dydt = 0;
-	/*
-	double* b = q + s->getNumVarPools();
-	vector< double >::const_iterator sinit = Sinit_.begin() + s->getNumVarPools();
-	for ( unsigned int i = 0; i < s->getNumBufPools(); ++i )
-		*b++ = *sinit++;
-		*/
+    // Assign the buffered pools
+    // Not possible because this is a static function
+    // Not needed because dydt = 0;
+    /*
+    double* b = q + s->getNumVarPools();
+    vector< double >::const_iterator sinit = Sinit_.begin() + s->getNumVarPools();
+    for ( unsigned int i = 0; i < s->getNumBufPools(); ++i )
+    	*b++ = *sinit++;
+    	*/
 
-	vp->stoichPtr_->updateFuncs( q, t );
-	vp->updateRates( y, dydt );
+    vp->stoichPtr_->updateFuncs( q, t );
+    vp->updateRates( y, dydt );
 #ifdef USE_GSL
-	return GSL_SUCCESS;
+    return GSL_SUCCESS;
 #else
-	return 0;
+    return 0;
 #endif
 }
 
-#elif USE_BOOST
+#elif USE_BOOST_ODE
 void VoxelPools::evalRates(
     const vector_type_& y,  vector_type_& dydt,  const double t, VoxelPools* vp
-    )
+)
 {
     vp->updateRates( &y[0], &dydt[0] );
 }
@@ -274,64 +280,66 @@ void VoxelPools::evalRates(
 ///////////////////////////////////////////////////////////////////////
 
 void VoxelPools::updateAllRateTerms( const vector< RateTerm* >& rates,
-			   unsigned int numCoreRates )
+                                     unsigned int numCoreRates )
 {
-	// Clear out old rates if any
-	for ( unsigned int i = 0; i < rates_.size(); ++i )
-		delete( rates_[i] );
+    // Clear out old rates if any
+    for ( unsigned int i = 0; i < rates_.size(); ++i )
+        delete( rates_[i] );
 
-	rates_.resize( rates.size() );
-	for ( unsigned int i = 0; i < numCoreRates; ++i )
-		rates_[i] = rates[i]->copyWithVolScaling( getVolume(), 1, 1 );
-	for ( unsigned int i = numCoreRates; i < rates.size(); ++i ) {
-		rates_[i] = rates[i]->copyWithVolScaling(  getVolume(),
-				getXreacScaleSubstrates(i - numCoreRates),
-				getXreacScaleProducts(i - numCoreRates ) );
-	}
+    rates_.resize( rates.size() );
+    for ( unsigned int i = 0; i < numCoreRates; ++i )
+        rates_[i] = rates[i]->copyWithVolScaling( getVolume(), 1, 1 );
+    for ( unsigned int i = numCoreRates; i < rates.size(); ++i )
+    {
+        rates_[i] = rates[i]->copyWithVolScaling(  getVolume(),
+                    getXreacScaleSubstrates(i - numCoreRates),
+                    getXreacScaleProducts(i - numCoreRates ) );
+    }
 }
 
 void VoxelPools::updateRateTerms( const vector< RateTerm* >& rates,
-			   unsigned int numCoreRates, unsigned int index )
+                                  unsigned int numCoreRates, unsigned int index )
 {
-	// During setup or expansion of the reac system, it is possible to
-	// call this function before the rates_ term is assigned. Disable.
- 	if ( index >= rates_.size() )
-		return;
-	delete( rates_[index] );
-	if ( index >= numCoreRates )
-		rates_[index] = rates[index]->copyWithVolScaling(
-				getVolume(),
-				getXreacScaleSubstrates(index - numCoreRates),
-				getXreacScaleProducts(index - numCoreRates ) );
-	else
-		rates_[index] = rates[index]->copyWithVolScaling(
-				getVolume(), 1.0, 1.0 );
+    // During setup or expansion of the reac system, it is possible to
+    // call this function before the rates_ term is assigned. Disable.
+    if ( index >= rates_.size() )
+        return;
+    delete( rates_[index] );
+    if ( index >= numCoreRates )
+        rates_[index] = rates[index]->copyWithVolScaling(
+                            getVolume(),
+                            getXreacScaleSubstrates(index - numCoreRates),
+                            getXreacScaleProducts(index - numCoreRates ) );
+    else
+        rates_[index] = rates[index]->copyWithVolScaling(
+                            getVolume(), 1.0, 1.0 );
 }
 
 void VoxelPools::updateRates( const double* s, double* yprime ) const
 {
-	const KinSparseMatrix& N = stoichPtr_->getStoichiometryMatrix();
-	vector< double > v( N.nColumns(), 0.0 );
-	vector< double >::iterator j = v.begin();
-	// totVar should include proxyPools only if this voxel uses them
-	unsigned int totVar = stoichPtr_->getNumVarPools() +
-			stoichPtr_->getNumProxyPools();
-	// totVar should include proxyPools if this voxel does not use them
-	unsigned int totInvar = stoichPtr_->getNumBufPools();
-	assert( N.nColumns() == 0 ||
-			N.nRows() == stoichPtr_->getNumAllPools() );
-	assert( N.nColumns() == rates_.size() );
+    const KinSparseMatrix& N = stoichPtr_->getStoichiometryMatrix();
+    vector< double > v( N.nColumns(), 0.0 );
+    vector< double >::iterator j = v.begin();
+    // totVar should include proxyPools only if this voxel uses them
+    unsigned int totVar = stoichPtr_->getNumVarPools() +
+                          stoichPtr_->getNumProxyPools();
+    // totVar should include proxyPools if this voxel does not use them
+    unsigned int totInvar = stoichPtr_->getNumBufPools();
+    assert( N.nColumns() == 0 ||
+            N.nRows() == stoichPtr_->getNumAllPools() );
+    assert( N.nColumns() == rates_.size() );
 
-	for ( vector< RateTerm* >::const_iterator
-		i = rates_.begin(); i != rates_.end(); i++) {
-		*j++ = (**i)( s );
-		assert( !std::isnan( *( j-1 ) ) );
-	}
+    for ( vector< RateTerm* >::const_iterator
+            i = rates_.begin(); i != rates_.end(); i++)
+    {
+        *j++ = (**i)( s );
+        assert( !std::isnan( *( j-1 ) ) );
+    }
 
-	for (unsigned int i = 0; i < totVar; ++i)
-		*yprime++ = N.computeRowRate( i , v );
-	for (unsigned int i = 0; i < totInvar ; ++i)
-		*yprime++ = 0.0;
+    for (unsigned int i = 0; i < totVar; ++i)
+        *yprime++ = N.computeRowRate( i , v );
+    for (unsigned int i = 0; i < totInvar ; ++i)
+        *yprime++ = 0.0;
 }
 
 /**
@@ -340,28 +348,29 @@ void VoxelPools::updateRates( const double* s, double* yprime ) const
  * to analyze velocity.
  */
 void VoxelPools::updateReacVelocities(
-			const double* s, vector< double >& v ) const
+    const double* s, vector< double >& v ) const
 {
-	const KinSparseMatrix& N = stoichPtr_->getStoichiometryMatrix();
-	assert( N.nColumns() == rates_.size() );
+    const KinSparseMatrix& N = stoichPtr_->getStoichiometryMatrix();
+    assert( N.nColumns() == rates_.size() );
 
-	vector< RateTerm* >::const_iterator i;
-	v.clear();
-	v.resize( rates_.size(), 0.0 );
-	vector< double >::iterator j = v.begin();
+    vector< RateTerm* >::const_iterator i;
+    v.clear();
+    v.resize( rates_.size(), 0.0 );
+    vector< double >::iterator j = v.begin();
 
-	for ( i = rates_.begin(); i != rates_.end(); i++) {
-		*j++ = (**i)( s );
-		assert( !std::isnan( *( j-1 ) ) );
-	}
+    for ( i = rates_.begin(); i != rates_.end(); i++)
+    {
+        *j++ = (**i)( s );
+        assert( !std::isnan( *( j-1 ) ) );
+    }
 }
 
 /// For debugging: Print contents of voxel pool
 void VoxelPools::print() const
 {
-	cout << "numAllRates = " << rates_.size() <<
-			", numLocalRates= " << stoichPtr_->getNumCoreRates() << endl;
-	VoxelPoolsBase::print();
+    cout << "numAllRates = " << rates_.size() <<
+         ", numLocalRates= " << stoichPtr_->getNumCoreRates() << endl;
+    VoxelPoolsBase::print();
 }
 
 ////////////////////////////////////////////////////////////
@@ -370,8 +379,8 @@ void VoxelPools::print() const
  */
 void VoxelPools::setVolumeAndDependencies( double vol )
 {
-	VoxelPoolsBase::setVolumeAndDependencies( vol );
-	updateAllRateTerms( stoichPtr_->getRateTerms(),
-		stoichPtr_->getNumCoreRates() );
+    VoxelPoolsBase::setVolumeAndDependencies( vol );
+    updateAllRateTerms( stoichPtr_->getRateTerms(),
+                        stoichPtr_->getNumCoreRates() );
 }
 

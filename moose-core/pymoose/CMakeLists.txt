@@ -1,5 +1,4 @@
-add_definitions(-DPYMOOSE)
-include_directories(../basecode ../msg)
+cmake_minimum_required(VERSION 2.8)
 
 set(PYMOOSE_SRCS
     moosemodule.cpp
@@ -7,8 +6,8 @@ set(PYMOOSE_SRCS
     mfield.cpp
     pymooseinit.cpp
     melement.cpp
-    test_moosemodule.cpp
     PyRun.cpp
+    test_moosemodule.cpp
     )
 
 # Build _moose.so in source directory and them copy everything to
@@ -35,15 +34,20 @@ add_definitions(-DUSE_NUMPY)
 
 add_definitions(-DNPY_NO_DEPRECATED_API=NPY_1_7_API_VERSION)
 
-execute_process( COMMAND ${PYTHON_EXECUTABLE}-config --includes
-    OUTPUT_VARIABLE PYTHON_INCLUDE_FLAGS
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-    )
-execute_process( COMMAND ${PYTHON_EXECUTABLE}-config --libs
-    OUTPUT_VARIABLE PYTHON_LIBRARIES
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-    )
-message( STATUS "Python include flags: ${PYTHON_INCLUDE_FLAGS}" )
+# make sure the Python.h is found.
+find_package( PythonLibs REQUIRED)
+include_directories( ${PYTHON_INCLUDE_DIRS} )
+
+#execute_process( COMMAND ${PYTHON_EXECUTABLE}-config --includes
+#    OUTPUT_VARIABLE PYTHON_INCLUDE_FLAGS
+#    OUTPUT_STRIP_TRAILING_WHITESPACE
+#    )
+#execute_process( COMMAND ${PYTHON_EXECUTABLE}-config --libs
+#    OUTPUT_VARIABLE PYTHON_LIBRARIES
+#    OUTPUT_STRIP_TRAILING_WHITESPACE
+#    )
+# message( STATUS "Python include flags: ${PYTHON_INCLUDE_FLAGS}" )
+
 set_target_properties(_moose PROPERTIES
     COMPILE_DEFINITIONS "PYMOOSE"
     COMPILE_FLAGS "${PYTHON_INCLUDE_FLAGS}"
@@ -61,7 +65,6 @@ endif()
 if(HDF5_LIBRARY_DIRS)
     set_target_properties( _moose PROPERTIES LINK_FLAGS "-L${HDF5_LIBRARY_DIRS}" )
 endif()
-
 
 if(MACOSX)
     set(CMAKE_MODULE_LINKER_FLAGS "-undefined dynamic_lookup")
@@ -83,7 +86,6 @@ else(MACOSX)
         ${MOOSE_LIBRARIES}
         ${STATIC_LIBRARIES}
         "-Wl,--no-whole-archive"
-        # ${PYTHON_LIBRARIES}
         ${SYSTEM_SHARED_LIBS}
         )
 endif(MACOSX)

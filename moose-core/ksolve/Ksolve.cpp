@@ -6,7 +6,7 @@
 ** GNU Lesser General Public License version 2.1
 ** See the file COPYING.LIB for the full notice.
 **********************************************************************/
-#include "header.h"
+#include "../basecode/header.h"
 #ifdef USE_GSL
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_matrix.h>
@@ -21,7 +21,7 @@
 
 #include "RateTerm.h"
 #include "FuncTerm.h"
-#include "SparseMatrix.h"
+#include "../basecode/SparseMatrix.h"
 #include "KinSparseMatrix.h"
 #include "Stoich.h"
 #include "../shell/Shell.h"
@@ -217,7 +217,7 @@ Ksolve::Ksolve()
     :
 #if USE_GSL
     method_( "rk5" ),
-#elif USE_BOOST
+#elif USE_BOOST_ODE
     method_( "rk5a" ),
 #endif
     epsAbs_( 1e-7 ),
@@ -265,7 +265,7 @@ void Ksolve::setMethod( string method )
              "' not known, using rk5\n";
         method_ = "rk5";
     }
-#elif USE_BOOST
+#elif USE_BOOST_ODE
     // TODO: Check for boost related methods.
     method_ = method;
 #endif
@@ -380,7 +380,7 @@ void Ksolve::setStoich( Id stoich )
             pools_[i].setStoich( stoichPtr_, &ode );
             // pools_[i].setIntDt( ode.initStepSize ); // We're setting it up anyway
         }
-#elif USE_BOOST
+#elif USE_BOOST_ODE
         ode.dimension = stoichPtr_->getNumAllPools();
         ode.boostSys.epsAbs = epsAbs_;
         ode.boostSys.epsRel = epsRel_;
@@ -511,7 +511,7 @@ void Ksolve::process( const Eref& e, ProcPtr p )
         dsolvePtr_->getBlock( dvalues );
 		// Second, set the prev_ value in DiffPoolVec
 		dsolvePtr_->setPrev();
-        setBlock( dvalues ); 
+        setBlock( dvalues );
     }
 
     size_t nvPools = pools_.size( );

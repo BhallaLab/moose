@@ -1,14 +1,5 @@
-cmake_minimum_required(VERSION 2.6)
-INCLUDE_DIRECTORIES(../basecode)
-
-ADD_LIBRARY(intfire
-    AdExIF.cpp
-    AdThreshIF.cpp
-    ExIF.cpp
-    IntFireBase.cpp
-    IzhIF.cpp
-    LIF.cpp
-    QIF.cpp
-    testIntFire.cpp
-    )
-
+cmake_minimum_required(VERSION 2.8)
+include_directories(../basecode)
+add_definitions( -std=c++11 )
+file(GLOB SRC *.cpp)
+add_library(intfire ${SRC})

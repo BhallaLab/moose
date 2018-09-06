@@ -1,17 +1,5 @@
-set(CMAKE_LEGACY_CYGWIN_WIN32 0)
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
-
-
 project(pymoose)
-
-if(COMMAND cmake_policy)
-    cmake_policy(SET CMP0003 NEW)
-    cmake_policy(SET CMP0004 NEW)
-    if(POLICY CMP0050)
-        cmake_policy(SET CMP0050 OLD)
-    endif(POLICY CMP0050)
-endif(COMMAND cmake_policy)
-
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules")
 include(CheckCXXCompiler.cmake)
@@ -88,22 +76,24 @@ else()
 endif()
 
 ################################ CMAKE OPTIONS ##################################
-option(DEBUG "Build with debug support" OFF)
-option(GPROF "Build for profiling using gprof" OFF)
-option(ENABLE_UNIT_TESTS "Enable unit tests (DEBUG should also be ON)" OFF)
-option(WITH_MPI  "Enable Openmpi support" OFF)
-option(WITH_BOOST "Use boost library instead of GSL" OFF)
-option(WITH_GSL  "Use gsl-library. Alternative is WITH_BOOST" ON)
+option(DEBUG                "Build with debug support" OFF)
+option(GPROF                "Build for profiling using gprof" OFF)
+option(ENABLE_UNIT_TESTS    "Enable unit tests (DEBUG should also be ON)" OFF)
+option(WITH_MPI             "Enable Openmpi support" OFF)
+option(WITH_BOOST_ODE       "Use boost library ode2 library instead of GSL" OFF)
+option(WITH_GSL             "Use gsl-library. Alternative is WITH_BOOST" ON)
 option(PARALLELIZED_SOLVERS "Use parallel version of GSOLVE. (alpha)" OFF )
-option(PARALLELIZED_CLOCK "High level parallelization of moose::Clock (alpha)" OFF )
+option(PARALLELIZED_CLOCK   "High level parallelization of moose::Clock (alpha)" OFF )
+
+option(USE_PRIVATE_RNG      "Stochastic Objects use their private RNG" ON)
 
 
 ############################ BUILD CONFIGURATION #################################
 
-# Default macros
+# Default definitions.
 add_definitions(-DUSE_GENESIS_PARSER)
 
-if(DEBUG)
+if(DEBUG OR "${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
     message(STATUS "Building for Debug/Unit testing")
     add_definitions(-DDO_UNIT_TESTS)
     set(CMAKE_BUILD_TYPE Debug)
@@ -114,13 +104,20 @@ elseif(ENABLE_UNIT_TESTS)
 else()
     message(STATUS "Building for Release/No unit tests.")
     set(CMAKE_BUILD_TYPE Release)
-    add_definitions(-UDO_UNIT_TESTS -DQUIET_MODE -O3)
+		add_definitions(-UDO_UNIT_TESTS -O3 -DDISABLE_DEBUG)
+    # Treat all warnings as errors. Some the warnings are disabled in
+    #  CheckCXXCompiler.cmake .
+    add_definitions(-Werror)
 endif()
 
-if(GPROF AND DEBUG)
+if(GPROF AND "${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
     message(STATUS "Compiling with profiling with gprof")
     add_definitions(-pg)
     set(CMAKE_EXE_LINKER_FLAGS_DEBUG "-pg")
+endif()
+
+if(PARALLELIZED_SOLVERS)
+    find_package(Threads)
 endif()
 
 
@@ -134,9 +131,10 @@ add_executable(moose.bin basecode/main.cpp)
 # default include paths.
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR} )
 
-if(WITH_BOOST)
+# If using BOOST ODE2 library to solve ODE system, then don't use GSL.
+if(WITH_BOOST_ODE)
     set(WITH_GSL OFF)
-endif(WITH_BOOST)
+endif(WITH_BOOST_ODE)
 
 include_directories(msg basecode)
 
@@ -148,6 +146,12 @@ set(STATIC_LIBRARIES "" )
 # Collect all shared libraries here.
 set(SYSTEM_SHARED_LIBS ${LibXML2_LIBRARIES})
 
+# BOOST ode library performs better than GSL and ideally should be made default.
+# Making boost default means that we get rid of gsl. Boost does not have a very
+# good matrix library; it has ublas which is not well maintained and emit a lot
+# of warning during compilation. Nonetheless, WITH_BOOST_ODE works fine and
+# produce results quicker than GSL. Both boost ode and ublas are in moose source
+# tree ./external/odeint-v2 and ./external/boost-numeric-bindings
 if(WITH_GSL)
     find_package(GSL 1.16 REQUIRED)
     if(NOT GSL_FOUND)
@@ -171,18 +175,14 @@ if(WITH_GSL)
     # GSL is also used in RNG (whenever applicable), therefore include paths are
     # top level.
     include_directories( ${GSL_INCLUDE_DIRS} )
-elseif(WITH_BOOST)
-    find_package(Boost 1.44 COMPONENTS system filesystem random REQUIRED)
+elseif(WITH_BOOST_ODE)
+    find_package(Boost 1.44 REQUIRED)
     find_package( LAPACK REQUIRED )
-    add_definitions( -DUSE_BOOST -UUSE_GSL )
-    include_directories( ${Boost_INCLUDE_DIRS} )
-    check_include_file_cxx(
-        ${Boost_INCLUDE_DIRS}/boost/random/random_device.hpp
-        BOOST_RANDOM_DEVICE_EXISTS
-        )
-    if(BOOST_RANDOM_DEVICE_EXISTS)
-        add_definitions(-DBOOST_RANDOM_DEVICE_EXISTS)
-    endif(BOOST_RANDOM_DEVICE_EXISTS)
+endif()
+
+# if boost ode is being used, don't use GSL.
+if(WITH_BOOST_ODE)
+    add_definitions(-DUSE_BOOST_ODE -UUSE_GSL)
 endif()
 
 
@@ -264,10 +264,14 @@ if(WITH_MPI)
     endif()
 endif(WITH_MPI)
 
-if(WITH_BOOST)
+if(WITH_BOOST_ODE)
     list(APPEND SYSTEM_SHARED_LIBS ${LAPACK_LIBRARIES})
     list(APPEND SYSTEM_SHARED_LIBS ${Boost_LIBRARIES})
-endif(WITH_BOOST)
+endif(WITH_BOOST_ODE)
+
+if(PARALLELIZED_SOLVERS)
+    list(APPEND SYSTEM_SHARED_LIBS ${CMAKE_THREAD_LIBS_INIT})
+endif()
 
 # These libraries could be static of dynamic. We need to discrimate between
 # these two types because of --whole-archive option. See
@@ -330,7 +334,6 @@ list(APPEND MOOSE_LIBRARIES
     msg
     benchmarks
     shell
-    randnum
     scheduling
     moose_mpi
     biophysics
@@ -483,13 +486,13 @@ include( CTest )
 # onto the console if a test fails.
 set(ENV{CTEST_OUTPUT_ON_FAILURE} ON)
 
-if(DEBUG)
+if(DEBUG OR "${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
     # Run this test in debug mode. In Release mode, this does not do anything.
     set(MOOSE_BIN_LOCATION $<TARGET_FILE:moose.bin>)
     message(STATUS "Executable moose.bin will be at ${MOOSE_BIN_LOCATION}" )
 
     add_test(NAME moose.bin-raw-run COMMAND moose.bin -u -q)
-endif(DEBUG)
+endif()
 
 ## PyMOOSE tests.
 set(PYMOOSE_TEST_DIRECTORY ${CMAKE_SOURCE_DIR}/tests/python)

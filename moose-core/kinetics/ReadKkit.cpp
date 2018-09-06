@@ -228,13 +228,13 @@ void setMethod( Shell* s, Id mgr, double simdt, double plotdt,
 	string simpath2 = mgr.path() + "/##[ISA=StimulusTable]," +
 			mgr.path() + "/##[ISA=PulseGen]";
 	string m = lower( method );
-
+    /*
 	if ( m == "ksolve" || m =="gsl" ||  m == "gssa" || m == "gsolve" ||
 		m == "gillespie" || m == "stochastic" )
 	{
 		cout << " Warning:  Default solver set is Exponential Euler. To set  \'gsl\' or \'gssa\' solver use function mooseaddChemSolver(modelpath,\'solverType\')"<<"\n";
 	}
-	/*
+	
 	
 	if ( m == "rk4" ) {
 		cout << "Warning, not yet implemented. Using rk5 instead\n";
@@ -312,7 +312,7 @@ Id ReadKkit::read(
 	assert(kinetics != Id());
 	Id cInfo = s->doCreate( "Annotator", basePath_, "info", 1 );
 	assert( cInfo != Id() );
-	Field< string > ::set(cInfo, "solver", method);
+	Field< string > ::set(cInfo, "solver", "ee");
 	Field< double > ::set(cInfo, "runtime", maxtime_);
 	s->doReinit();
 	return mgr;
@@ -578,6 +578,8 @@ void ReadKkit::objdump( const vector< string >& args)
 		assignArgs( tableMap_, args );
 	else if ( args[1] == "stim" )
 		assignArgs( stimMap_, args );
+	else if ( args[1] == "kchan" )
+		assignArgs( chanMap_, args );
 }
 
 void ReadKkit::call( const vector< string >& args)
@@ -1185,9 +1187,11 @@ Id ReadKkit::buildChan( const vector< string >& args )
 	Id pa = shell_->doFind( head ).id;
 	assert( pa != Id() );
 
-	cout << "Warning: Kchan not yet supported in MOOSE, creating dummy:\n"
-		<< "	" << clean << "\n";
-	Id chan = shell_->doCreate( "Neutral", pa, tail, 1 );
+	// cout << "Warning: Kchan not yet supported in MOOSE, creating dummy:\n" << "	" << clean << "\n";
+	//
+	double permeability = atof( args[ chanMap_["perm"] ].c_str() );
+	Id chan = shell_->doCreate( "ConcChan", pa, tail, 1 );
+	Field< double >::set( chan, "permeability", permeability );
 	assert( chan != Id() );
 	string chanPath = clean.substr( 10 );
 	chanIds_[ chanPath ] = chan;
@@ -1346,16 +1350,14 @@ void ReadKkit::addmsg( const vector< string >& args)
 
 	if ( args[3] == "REAC" ) {
 		if ( args[4] == "A" && args[5] == "B" ) {
-			// Ignore kchans
 			if ( chanIds_.find( src ) != chanIds_.end() )
-				; // found a kchan, do nothing
+				innerAddMsg( src, chanIds_, "in", dest, poolIds_, "reac");
 			else
 				innerAddMsg( src, reacIds_, "sub", dest, poolIds_, "reac");
 		}
 		else if ( args[4] == "B" && args[5] == "A" ) {
-			// Ignore kchans
 			if ( chanIds_.find( src ) != chanIds_.end() )
-				; // found a kchan, do nothing
+				innerAddMsg( src, chanIds_, "out", dest, poolIds_, "reac");
 			else
 				// dest pool is product of src reac
 				innerAddMsg( src, reacIds_, "prd", dest, poolIds_, "reac");
@@ -1386,6 +1388,10 @@ void ReadKkit::addmsg( const vector< string >& args)
 			innerAddMsg( src, enzIds_, "prd", dest, poolIds_, "reac" );
 		else
 			innerAddMsg( src, mmEnzIds_, "prd", dest, poolIds_, "reac" );
+	}
+	else if ( args[3] == "NUMCHAN" ) { // Msg from chan pool to concchan 
+		if ( chanIds_.find( dest ) != chanIds_.end() )
+			innerAddMsg( src, poolIds_, "nOut", dest, chanIds_, "setNumChan");
 	}
 	else if ( args[3] == "PLOT" ) { // Time-course output for pool
 		string head;

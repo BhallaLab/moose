@@ -20,21 +20,29 @@ def makeMoogli( rd, mooObj, args, fieldInfo ):
     # Cleaner still would be to have the C code give a vector of values
     # For now it means something different for chem and elec displays.
     #moogliEntry = [elecPath,bool,whichObjToDisplay,FieldToDisplay,titleForDisplay,rangeMin,rangeMax]
-    mooField = args[3]
-    relObjPath = args[2]
+    mooField = args.field
+    relObjPath = args.relpath
     numMoogli = len( mooObj )
+    if args.ymin != args.ymax:
+        ymin = args.ymin
+        ymax = args.ymax
+    else:
+        ymin = fieldInfo[4]
+        ymax = fieldInfo[5]
+    print( "fieldinfo = {}, ymin = {}, ymax = {}".format( fieldInfo, ymin, ymax ))
 
     viewer = moogul.MooView()
     if mooField == 'n' or mooField == 'conc':
         #moogul.updateDiffCoords( mooObj )
         reacSystem = moogul.MooReacSystem( mooObj, fieldInfo, 
                 field = mooField, relativeObj = relObjPath, 
-                valMin = args[5], valMax = args[6] )
+                valMin = ymin, valMax = ymax )
         viewer.addDrawable( reacSystem )
     else:
         neuron = moogul.MooNeuron( rd.elecid, fieldInfo,
                 field = mooField, relativeObj = relObjPath,
-                valMin = args[5], valMax = args[6] )
+                valMin = ymin, valMax = ymax )
+        print( "min = {}, max = {}".format(ymin, ymax) )
         viewer.addDrawable( neuron )
 
     return viewer

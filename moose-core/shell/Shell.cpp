@@ -341,7 +341,7 @@ void Shell::doStart( double runtime, bool notify )
      *-----------------------------------------------------------------------------*/
     vector< ObjId > streamers;
     wildcardFind( "/##[TYPE=Streamer]", streamers );
-    LOG( moose::debug,  "total streamers " << streamers.size( ) );
+    // LOG( moose::debug,  "total streamers " << streamers.size( ) );
     for( vector<ObjId>::const_iterator itr = streamers.begin()
             ; itr != streamers.end(); itr++ )
     {

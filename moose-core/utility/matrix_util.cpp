@@ -17,7 +17,7 @@
  * =====================================================================================
  */
 
-#ifdef  USE_BOOST
+#ifdef  USE_BOOST_ODE
 
 #include "matrix_util.h"
 
@@ -119,4 +119,4 @@ unsigned int rankUsingBoost( ublas::matrix<value_type>& U )
     return i + 1;
 }
 
-#endif     /* -----  not USE_BOOST  ----- */
+#endif     /* -----  not USE_BOOST_ODE  ----- */

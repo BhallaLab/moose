@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-# print_utils.py:
-#
 # A library with some print functions. Very useful during development.
 
 from __future__ import print_function, division, absolute_import

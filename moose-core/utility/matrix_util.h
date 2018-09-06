@@ -19,7 +19,7 @@
 #ifndef  matrix_util_INC
 #define  matrix_util_INC
 
-#ifdef USE_BOOST
+#ifdef USE_BOOST_ODE
 
 #include <boost/numeric/ublas/matrix.hpp>
 #include "boost/numeric/bindings/lapack/lapack.hpp"

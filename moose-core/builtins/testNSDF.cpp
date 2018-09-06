@@ -73,7 +73,7 @@ void testCreateStringDataset()
     hsize_t size = STR_DSET_LEN;
     herr_t status;
     HDF5WriterBase writer;
-    string h5Filename = std::tmpnam( NULL );
+    string h5Filename = moose::random_string( 10 );
     file = H5Fcreate(h5Filename.c_str(), H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT);
     dset = writer.createStringDataset(file, STR_DSET_NAME, size, size);
     assert(dset >= 0);
