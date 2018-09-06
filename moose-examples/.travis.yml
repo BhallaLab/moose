@@ -1,10 +1,4 @@
-dist : trusty
 sudo : required 
-group : edge
-
-language: ruby
-rvm:
-    - 2.2
 
 notifications:
     email:
@@ -12,36 +6,17 @@ notifications:
             - dilawar.s.rajput@gmail.com
             - bhalla@ncbs.res.in
             - hrani@ncbs.res.in
-            - malavs@ncbs.res.in
-
 
 install:
-    - wget http://download.opensuse.org/repositories/home:moose/xUbuntu_14.04/Release.key
-    - sudo apt-key add - < Release.key  
-    - sudo sh -c "echo 'deb http://download.opensuse.org/repositories/home:/moose/xUbuntu_14.04/ /' >> /etc/apt/sources.list.d/moose.list"
-    - sudo apt-get -y update
-    - sudo apt-get -y --force-yes install python-qt4 python-pip graphviz
-    - sudo apt-get -y --force-yes install python-h5py python-scipy python-pygraphviz
-    - sudo apt-get -y --force-yes install moose 
-    - sudo pip install python-libsbml networkx
-    - gem install travis
+    - sudo ./.travis_prepare.sh
 
 script:
-    - nvm use stable
-    - # Making sure no python3 incompatible file.
-    - python3 -m compileall -q .
-    - python2 -m compileall -q .
-    - /usr/bin/python -c 'import moose'
-    - /usr/bin/python -c 'import moogli'
-    - cd _travis && ./find_scripts_to_run.sh && ./run_scripts.sh 
-    - cd _travis && ./download_and_run_doqcs.sh
+    - ./.travis_run.sh
 
-exclude : [vendor]
+exclude: [vendor]
 
 deploy:
-    provider : pages
-    skip_cleanup : true
-    github_token : $GHI_TOKEN
-    on:
-        branch : master
-
+  provider: pages
+  skip-cleanup: true
+  github-token: $GHI_TOKEN  #
+  keep-history: true

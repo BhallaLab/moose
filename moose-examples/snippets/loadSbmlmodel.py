@@ -96,7 +96,7 @@ If someone wants to load anyother file then
         moose.connect( outputs2,'requestOut', s2, 'getConc' );
 
         # gsl solver is added, default is ee
-        moose.mooseaddChemSolver(sbmlId.path,"ee")
+        moose.mooseAddChemSolver(sbmlId.path,"ee")
 
         # Reset and Run
         moose.reinit()

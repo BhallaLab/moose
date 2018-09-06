@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 #/**********************************************************************
 #** This program is part of 'MOOSE', the
 #** Messaging Object Oriented Simulation Environment.
@@ -7,13 +9,14 @@
 #** See the file COPYING.LIB for the full notice.
 #**********************************************************************/
 
+from __future__ import print_function, division
+
 import os
 import random
 import time
 import pylab
 from numpy import random as nprand
 import sys
-sys.path.append('/home/subha/src/moose_async13/python')
 import moose
 
 def make_network():
@@ -73,9 +76,9 @@ def make_network():
     stats = moose.SpikeStats( '/stats', numStats )
     stats.vec.windowLength = 1 # timesteps to put together.
     plots = moose.Table( '/plot', numStats )
-    convergence = size / numStats
+    convergence = size // numStats
     for i in range( numStats ):
-        for j in range( size/numStats ):
+        for j in range( size//numStats ):
             k = i * convergence + j
             moose.connect( network.vec[k], 'spikeOut', stats.vec[i], 'addSpike' )
     moose.connect( plots, 'requestOut', stats, 'getMean', 'OneToOne' )

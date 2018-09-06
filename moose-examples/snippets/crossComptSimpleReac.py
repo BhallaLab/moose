@@ -1,4 +1,5 @@
-#########################################################################
+# -*- coding: utf-8 -*-
+
 # crossComptSimpleReac.py
 #
 # Filename:crossComptSimpleReac.py
@@ -15,7 +16,7 @@
 #
 #
 # Commentary:
-#
+#    __BROKEN__
 #
 # Change log:
 ## This program is part of 'MOOSE', the
@@ -108,7 +109,6 @@ def makeModel():
     stoich0.filterXreacs()
     stoich1.filterXreacs()
     stoich2.filterXreacs()
-
 
 
 def main():

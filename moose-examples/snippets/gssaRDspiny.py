@@ -277,6 +277,7 @@ def main():
     runtime = 200
 
     makeModel()
+
     plotlist = makeDisplay()
 
     # Schedule the whole lot - autoscheduling already does this.
@@ -287,6 +288,7 @@ def main():
     moose.setClock( 18, plotdt ) # for the output tables.
     '''
     moose.reinit()
+
     for i in range( 0, runtime, animationdt ):
         moose.start( animationdt )
         plotlist[11].set_text( "time = %d" % i )
@@ -296,4 +298,4 @@ def main():
 
 # Run the 'main' if this script is executed standalone.
 if __name__ == '__main__':
-        main()
+    main()

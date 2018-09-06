@@ -46,9 +46,13 @@ def loadChem():
     chem = moose.Neutral( '/model/chem' )
     modelId = moose.loadModel(
             os.path.join( scriptDir, '..', 'genesis', 'chanPhosphByCaMKII.g' )
-                , '/model/chem', 'gsl'
+                , '/model/chem', 'ee'
                 )
-    nmstoich = moose.element( '/model/chem/kinetics/stoich' )
+    stoich = moose.Stoich( '/model/chem/kinetics/stoich' )
+    ksolve = moose.Ksolve( '/model/chem/kinetics/ksolve' )
+    stoich.compartment = moose.element( '/model/chem/kinetics' )
+    stoich.ksolve = ksolve
+    stoich.path = "/model/chem/##"
 
 def makeModel():
     loadElec()
@@ -153,8 +157,11 @@ def main():
     hsolve.dt = elecDt
     hsolve.target = '/model/elec/soma'
     moose.reinit()
+    moose.showfield( '/model/elec/soma' )
     moose.element( '/model/elec/soma' ).inject = 0e-12
     moose.start( runtime )
+    for i in moose.wildcardFind( '/model/elec/soma/#[ISA=ChanBase]' ):
+        print( "{}  {}  {}".format( i.name, i.Gbar, i.modulation ))
     moose.element( '/model/elec/soma' ).inject = 1e-12
     moose.start( runtime )
     moose.element( '/model/elec/soma' ).inject = 0e-12

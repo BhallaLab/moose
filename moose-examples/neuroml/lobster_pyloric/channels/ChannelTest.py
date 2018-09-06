@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+from __future__ import division, print_function
 import random
 import sys
 import math
@@ -38,7 +40,7 @@ from pylab import *
                         
 if __name__ == "__main__":
 
-    for varidx in range(len(mechanism_vars)/2): # loop over each inf and tau
+    for varidx in range(len(mechanism_vars)//2): # loop over each inf and tau
         print(( "Running for %s" % varidx ))
         var = ['X','Y','Z'][varidx]
         gate = moose.element('/library/'+channel_name+'/gate'+var)

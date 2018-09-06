@@ -48,6 +48,7 @@ import numpy
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import moose
+import sys
 
 def makeModel():
                 # create container for model
@@ -100,7 +101,6 @@ def makeModel():
                 stoich.ksolve = ksolve
                 stoich.dsolve = dsolve
                 stoich.path = "/model/kinetics/##"
-                print(('dsolve.numPools, num = ', dsolve.numPools, num))
                 b.vec[num-1].concInit *= 1.01 # Break symmetry.
 
 def main():
@@ -120,13 +120,15 @@ def main():
                 #plt.show()
 
                 plt.ion()
-                fig = plt.figure( figsize=(12,10) )
+                fig = plt.figure( figsize=(13,12.5) )
                 png = fig.add_subplot(211)
                 imgplot = plt.imshow( img )
+                plt.axis('off')
                 ax = fig.add_subplot(212)
-                ax.set_ylim( 0, 0.001 )
+                ax.set_ylim( 0, 0.1 )
                 plt.ylabel( 'Conc (mM)' )
                 plt.xlabel( 'Position along cylinder (microns)' )
+                plt.title( "Initial condition is at b==c, with small stimulus on the right of cylinder. State change propagates rapidly along cylinder" )
                 pos = numpy.arange( 0, a.vec.conc.size, 1 )
                 line1, = ax.plot( pos, a.vec.conc, 'r-', label='a' )
                 line2, = ax.plot( pos, b.vec.conc, 'g-',  label='b' )
@@ -143,7 +145,7 @@ def main():
                     timeLabel.set_text( "time = %d" % t )
                     fig.canvas.draw()
 
-                print('Swapping concs of b and c in half the cylinder')
+                plt.title( 'Swapping concs of b and c in the left half the cylinder. Boundary slowly moves right due to taper.')
                 for i in range( b.numData/2 ):
                     temp = b.vec[i].conc
                     b.vec[i].conc = c.vec[i].conc

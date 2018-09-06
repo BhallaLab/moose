@@ -80,12 +80,13 @@ def makeModel():
     assert( stoich2.numProxyPools == 0 )
     assert( stoich2.numRates == 4 )
     dsolve0.buildNeuroMeshJunctions( dsolve1, dsolve2 )
+    '''
     stoich0.buildXreacs( stoich1 )
     stoich1.buildXreacs( stoich2 )
     stoich0.filterXreacs()
     stoich1.filterXreacs()
     stoich2.filterXreacs()
-
+    '''
     moose.element( '/model/chem/compt2/a[0]' ).concInit *= 1.5
 
     # Create the output tables
