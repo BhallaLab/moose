@@ -6,7 +6,7 @@
 # Maintainer: HarshaRani
 # Created: Mon Nov 12 09:38:09 2012 (+0530)
 # Version:
-# Last-Updated: Thu Oct 5 14:54:33 2017 (+0530)
+# Last-Updated: Fri Aug 31 14:54:33 2017 (+0530)
 #           By: Harsha
 #     Update #:
 # URL:
@@ -44,6 +44,10 @@
 #
 
 ''''
+Aug 31: Pass file from the command to load into gui
+      : added dsolver in disableModel function is used to unset the solver for the model
+        into moose-gui which are not to be run.
+
 Oct 5: clean up with round trip of dialog_exe
 
 '''
@@ -75,7 +79,8 @@ from PyQt4 import Qt, QtCore, QtGui
 from PyQt4.QtGui import *
 from MdiArea import MdiArea
 import os
-from setsolver import *
+from moose.chemUtil.add_Delete_ChemicalSolver import *
+#from setsolver import *
 from defines import *
 from collections import OrderedDict
 
@@ -181,7 +186,88 @@ class MWindow(QtGui.QMainWindow):
         self.setPlugin('default', '/')
         self.plugin.getEditorView().getCentralWidget().parent().close()
         self.popup = None
-        self.createPopup()
+        cmdfilepath = ""
+        try:
+            sys.argv[1]
+        except:
+            pass
+        else:
+            cmdfilepath = os.path.abspath(sys.argv[1])
+        try:
+            sys.argv[2]
+        except:
+            solver = 'gsl'
+        else:
+            solver = os.path.abspath(sys.argv[2])
+
+        if cmdfilepath:
+            filepath,fileName = os.path.split(cmdfilepath)
+            modelRoot,extension = os.path.splitext(fileName)
+            if extension == '.py':
+                self.show()
+                self.createPopup()
+                freeCursor()
+                reply = QtGui.QMessageBox.information(self,"Model file can not open","At present python file cann\'t be laoded into GUI",QtGui.QMessageBox.Ok)
+                if reply == QtGui.QMessageBox.Ok:
+                    QtGui.QApplication.restoreOverrideCursor()
+                    return
+            if not os.path.exists(cmdfilepath):
+                self.show()
+                self.createPopup()
+                reply = QtGui.QMessageBox.information(self,"Model file can not open","Check filename or filepath ",QtGui.QMessageBox.Ok)
+                if reply == QtGui.QMessageBox.Ok:
+                    QtGui.QApplication.restoreOverrideCursor()
+                    return
+            else:
+                filePath = filepath+'/'+fileName
+                ret = loadFile(str(filePath), '%s' % (modelRoot), solver, merge=False)
+                self.objectEditSlot('/',False)
+                pluginLookup = '%s/%s' % (ret['modeltype'], ret['subtype'])
+                try:
+                    pluginName = subtype_plugin_map['%s/%s' % (ret['modeltype'], ret['subtype'])]
+                except KeyError:
+                    pluginName = 'default'
+                self.loadedModelsAction(ret['model'].path,pluginName)
+                if len(self._loadedModels)>5:
+                    self._loadedModels.pop(0)
+
+                if not moose.exists(ret['model'].path+'/info'):
+                        moose.Annotator(ret['model'].path+'/info')
+
+                modelAnno = moose.Annotator(ret['model'].path+'/info')
+                if ret['subtype']:
+                    modelAnno.modeltype = ret['subtype']
+                else:
+                    modelAnno.modeltype = ret['modeltype']
+                #modelAnno.dirpath = str(dialog.directory().absolutePath())
+                if moose.exists(ret['model'].path + "/data"):
+                    self.data   = moose.element(ret['model'].path + "/data")
+                    self.data   = moose.Neutral(ret['model'].path + "/data")
+
+                modelAnno.dirpath = str(filepath)
+                self.setPlugin(pluginName, ret['model'].path)
+                self.show()
+                # if pluginName == 'kkit':
+                #     QtCore.QCoreApplication.sendEvent(self.plugin.getEditorView().getCentralWidget().view, QtGui.QKeyEvent(QtCore.QEvent.KeyPress, Qt.Qt.Key_A, Qt.Qt.NoModifier))
+                    
+                #     noOfCompt = len(moose.wildcardFind(ret['model'].path+'/##[ISA=ChemCompt]'))
+                #     grp = 0
+                #     for c in moose.wildcardFind(ret['model'].path+'/##[ISA=ChemCompt]'):
+                #         noOfGrp   = moose.wildcardFind(moose.element(c).path+'/#[TYPE=Neutral]')
+                #         grp = grp+len(noOfGrp)
+
+                #     noOfPool  = len(moose.wildcardFind(ret['model'].path+'/##[ISA=PoolBase]'))
+                #     noOfFunc  = len(moose.wildcardFind(ret['model'].path+'/##[ISA=Function]'))
+                #     noOfReac  = len(moose.wildcardFind(ret['model'].path+'/##[ISA=ReacBase]'))
+                #     noOfEnz   = len(moose.wildcardFind(ret['model'].path+'/##[ISA=EnzBase]'))
+                #     noOfStimtab  = len(moose.wildcardFind(ret['model'].path+'/##[ISA=StimulusTable]'))
+                    
+                #     reply = QtGui.QMessageBox.information(self,"Model Info","Model has : \n %s Compartment \t \n %s Group \t \n %s Pool  \t \n %s Function \t \n %s reaction \t \n %s Enzyme \t \n %s StimulusTable" %(noOfCompt, grp, noOfPool, noOfFunc, noOfReac, noOfEnz, noOfStimtab))
+                #     if reply == QtGui.QMessageBox.Ok:
+                #         QtGui.QApplication.restoreOverrideCursor()
+                #         return
+        else: 
+            self.createPopup()
 
     def createPopup(self):
         self.popup = dialog = QDialog(self)
@@ -450,7 +536,8 @@ class MWindow(QtGui.QMainWindow):
         
                 if compts:
                     #setCompartmentSolver(self._loadedModels[i][0],"gsl")
-                    addSolver(self._loadedModels[i][0],"gsl")
+                    mooseAddChemSolver(self._loadedModels[i][0],"gsl")
+                    #addSolver(self._loadedModels[i][0],"gsl")
                 else:
                     c.tickDt[7] = self._loadedModels[i][3]
                     c.tickDt[8] = self._loadedModels[i][4]
@@ -1117,6 +1204,9 @@ class MWindow(QtGui.QMainWindow):
             if moose.exists(compt[0].path+'/gsolve'):
                 gsolve = moose.Gsolve( compt[0].path+'/gsolve' )
                 gsolve.tick = -1
+            if moose.exists(compt[0].path+'/dsolve'):
+                dsolve = moose.Dsolve(compt[0].path+'/dsolve')
+                dsolve.tick = -1
             if moose.exists(compt[0].path+'/stoich'):
                 stoich = moose.Stoich( compt[0].path+'/stoich' )
                 stoich.tick = -1

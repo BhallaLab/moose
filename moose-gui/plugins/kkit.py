@@ -6,10 +6,13 @@ __version__     =   "1.0.0"
 __maintainer__  =   "HarshaRani"
 __email__       =   "hrani@ncbs.res.in"
 __status__      =   "Development"
-__updated__     =   "Oct 18 2017"
-'''
+__updated__     =   "Jun 19 2018"
 
-'''
+#Change log:
+# 2018 Jun 18: update the color of the group from objecteditor
+
+#code
+
 import math
 import sys
 from PyQt4 import QtGui, QtCore, Qt
@@ -30,8 +33,8 @@ from PyQt4.QtGui import QGridLayout
 from PyQt4.QtGui import QColor
 import RunWidget
 from os.path import expanduser
-from setsolver import *
-
+#from setsolver import *
+from moose.chemUtil.add_Delete_ChemicalSolver import *
 
 class KkitPlugin(MoosePlugin):
     """Default plugin for MOOSE GUI"""
@@ -81,6 +84,8 @@ class KkitPlugin(MoosePlugin):
                 self.plugin = KkitEditorView(self).getCentralWidget().plugin
                 self.defaultScenewidth = KkitEditorView(self).getCentralWidget().defaultScenewidth
                 self.defaultSceneheight = KkitEditorView(self).getCentralWidget().defaultSceneheight
+                self.coOrdinates  = KkitEditorView(self).getCentralWidget().getsceneCord()
+                '''
                 for k,v in self.sceneObj.items():
                     if moose.exists(moose.element(k).path+'/info'):
                         annoInfo = Annotator(k.path+'/info')
@@ -88,6 +93,7 @@ class KkitPlugin(MoosePlugin):
                             self.coOrdinates[k] = {'x':annoInfo.x*self.defaultScenewidth, 'y':annoInfo.y*self.defaultSceneheight}
                         else:
                             self.coOrdinates[k] = {'x':annoInfo.x, 'y':annoInfo.y}
+                '''
                 #writeerror = moose.writeSBML(self.modelRoot,str(filename),self.coOrdinates)
                 writeerror = -2
                 conisitencyMessages = ""
@@ -231,11 +237,11 @@ class AnotherKkitRunView(RunView):
 
     def setSolver(self, modelRoot,solver = None):
         if solver == None:
-            reinit = addSolver(modelRoot,self.getSchedulingDockWidget().widget().solver)
+            reinit = mooseAddChemSolver(modelRoot,self.getSchedulingDockWidget().widget().solver)
             if reinit:
                 self.getSchedulingDockWidget().widget().resetSimulation()
         else:
-            reinit = addSolver(modelRoot,solver)
+            reinit = mooseAddChemSolver(modelRoot,solver)
             if reinit:
                 self.getSchedulingDockWidget().widget().resetSimulation()
 
@@ -364,6 +370,17 @@ class  KineticsWidget(EditorWidgetBase):
         # else:
         #elf.sceneContainer.setSceneRect(self.sceneContainer.itemsBoundingRect())
         self.sceneContainer.setBackgroundBrush(QColor(230,220,219,120))
+    
+    def getsceneCord(self):
+        self.cord = {}
+        for item in self.sceneContainer.items():
+            if isinstance(item,KineticsDisplayItem):
+                #item.refresh(scale)
+                #self.update()
+                xpos = item.scenePos().x()
+                ypos = item.scenePos().y()
+                self.cord[item.mobj] = {'x':xpos,'y':ypos}
+        return self.cord
 
     def updateModelView(self):
         self.getMooseObj()
@@ -483,14 +500,20 @@ class  KineticsWidget(EditorWidgetBase):
                     self.positionChange(mooseObject)
                     self.view.removeConnector()
                     self.view.showConnector(item)
-    def updateColorSlot(self,mooseObject, color):
-        #Color slot for changing background color for PoolItem from objecteditor
+    def updateColorSlot(self,mooseObject, colour):
+        #Color slot for changing background color for Pool,Enz and group from objecteditor
         anninfo = moose.Annotator(mooseObject.path+'/info')
         textcolor,bgcolor = getColor(anninfo)
-        anninfo.color = str(color.name())
-        item = self.mooseId_GObj[mooseObject]
-        if (isinstance(item,PoolItem) or isinstance(item,EnzItem) or isinstance(item,MMEnzItem) ):
-            item.updateColor(color)
+        anninfo.color = str(colour.name())
+        
+        if mooseObject.className == "Neutral":
+            item = self.qGraGrp[mooseObject]
+            item.setPen(QtGui.QPen(QtGui.QColor(colour),item.pen().width(),item.pen().style(),item.pen().capStyle(),item.pen().joinStyle()))# self.comptPen, Qt.Qt.SolidLine, Qt.Qt.RoundCap, Qt.Qt.RoundJoin))
+
+        elif (isinstance(mooseObject,PoolBase) or isinstance(mooseObject,EnzBase) ):
+            item = self.mooseId_GObj[mooseObject]
+            item.updateColor(colour)
+
     '''
     def mooseObjOntoscene(self):
         #  All the compartments are put first on to the scene \
@@ -738,6 +761,8 @@ class  KineticsWidget(EditorWidgetBase):
         else:
             x = float(element(iteminfo).getField('x'))
             y = float(element(iteminfo).getField('y'))
+            self.defaultScenewidth = 1
+            self.defaultSceneheight = 1
         return(x,y)
         
     def drawLine_arrow(self, itemignoreZooming=False):
@@ -862,13 +887,11 @@ class  KineticsWidget(EditorWidgetBase):
                                     x = grpChilditem.scenePos().x()/self.defaultScenewidth
                                     y = grpChilditem.scenePos().y()/self.defaultSceneheight
                                 else:
-                                    #print "Check for other models at grp level ",grpChilditem.scenePos()
                                     x = grpChilditem.scenePos().x()
                                     y = grpChilditem.scenePos().y()
-                                #print " x and y at 863 ",grpChilditem.scenePos()
                                 anno.x = x
                                 anno.y = y
-                                #print " anno ",anno, anno.x, anno.y
+                                
                             if isinstance(moose.element(grpChilditem.mobj.path),PoolBase):
                                 t = moose.element(grpChilditem.mobj.path)
                                 moose.element(t).children
@@ -897,7 +920,6 @@ class  KineticsWidget(EditorWidgetBase):
                     x = mobj.scenePos().x()/self.defaultScenewidth
                     y = mobj.scenePos().y()/self.defaultSceneheight
                 else:
-                    #print "Check for other models ",mobj.scenePos()
                     x = mobj.scenePos().x()
                     y = mobj.scenePos().y()
                     #print " x and y at 863 ",mobj.scenePos()
@@ -919,15 +941,15 @@ class  KineticsWidget(EditorWidgetBase):
                     v.setRect(rectcompt.x()-10,rectcompt.y()-10,(rectcompt.width()+20),(rectcompt.height()+20))
                     pass
         
-    def updateGrpSize(self,compartment):
-        compartmentBoundary = compartment.rect()
+    def updateGrpSize(self,grp):
+        compartmentBoundary = grp.rect()
         
-        childrenBoundary = calculateChildBoundingRect(compartment)
+        childrenBoundary = calculateChildBoundingRect(grp)
         x = childrenBoundary.x()
         y = childrenBoundary.y()
         height = childrenBoundary.height()
         width = childrenBoundary.width()
-        compartment.setRect( x-10
+        grp.setRect( x-10
                  , y-10
                  , width + 20
                  , height + 20

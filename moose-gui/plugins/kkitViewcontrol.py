@@ -5,20 +5,23 @@ __version__     =   "1.0.0"
 __maintainer__  =   "HarshaRani"
 __email__       =   "hrani@ncbs.res.in"
 __status__      =   "Development"
-__updated__     =   "Feb 3 2018"
+__updated__     =   "Jun 8 2018"
 
 '''
-Oct 17: If object is moved from one group or compartment to another group or with in same Compartment, 
+
+Jun8    : If object is moved from one group or compartment to another group or with in same Compartment, 
        then both at moose level (group or compartment path is updated ) and qt level the setParentItem is set
        -If object is moved to Empty place or not allowed place in the GUI its moved back to origin position  
        -also some clean up when object is just clicked in QsvgItem and v/s clicked and some action done
        -with Rubber selection if object are moved then group size is updated
+2018
 Oct 3 : At mousePressEvent, a clean way of checking on what object mouse press Event happened is checked.
         This is after group is added where Group Interior and Boundary is checked, with in groupInterior if  click in
         on COMPARTMENT BOUNDARY is clicked then COMPARTMENT_BOUNDARY is return, else top most group object is returned.
 Sep 20: Group related function added
         -resolveGroupInteriorAndBoundary, findGraphic_groupcompt, graphicsIsInstance
         -@resolveItem,editorMousePressEvent,editorMouseMoveEvent,editorMouseReleaseEvent checks made for group
+2017
 '''
 import sys
 from modelBuild import *
@@ -189,12 +192,13 @@ class GraphicalView(QtGui.QGraphicsView):
             if itemType == GROUP_BOUNDARY:
                 popupmenu = QtGui.QMenu('PopupMenu', self)
                 popupmenu.addAction("DeleteGroup", lambda : self.deleteGroup(item,self.layoutPt))
-                popupmenu.addAction("CloneGroup" ,lambda : handleCollisions(comptList, moveMin, self.layoutPt ))
+                #popupmenu.addAction("CloneGroup" ,lambda : handleCollisions(comptList, moveMin, self.layoutPt ))
                 popupmenu.exec_(self.mapToGlobal(event.pos()))
             
             elif itemType == COMPARTMENT_BOUNDARY:
                 if len(list(self.layoutPt.qGraCompt.values())) > 1:
                     popupmenu = QtGui.QMenu('PopupMenu', self)
+                    #popupmenu.addAction("DeleteCmpt", lambda : self.deleteCmpt(item,self.layoutPt))
                     popupmenu.addAction("LinearLayout", lambda : handleCollisions(list(self.layoutPt.qGraCompt.values()), moveX, self.layoutPt))
                     popupmenu.addAction("VerticalLayout" ,lambda : handleCollisions(list(self.layoutPt.qGraCompt.values()), moveMin, self.layoutPt ))
                     popupmenu.exec_(self.mapToGlobal(event.pos()))
@@ -341,6 +345,38 @@ class GraphicalView(QtGui.QGraphicsView):
             pressItem = self.state["press"]["item"]
 
             if actionType == "move":
+                tobemoved = True
+                movedGraphObj = self.state["press"]["item"].parent()
+                if itemType != EMPTY:
+                    item = self.findGraphic_groupcompt(item)
+                    if movedGraphObj.parentItem() != item:
+                        if moose.exists(item.mobj.path+'/'+movedGraphObj.mobj.name):
+                            desObj = item.mobj.className
+                            if desObj == "CubeMesh" or desObj == "CyclMesh":
+                                desObj = "compartment"
+                            elif desObj == "Neutral":
+                                desObj = "group"
+                            tobemoved = False
+                            self.layoutPt.setupDisplay(movedGraphObj.mobj.path+'/info',movedGraphObj,"pool")
+                            self.layoutPt.updateArrow(movedGraphObj)
+                            QtGui.QMessageBox.warning(None,'Could not move the object', "The object name  \'%s\' exist in \'%s\' %s" %(movedGraphObj.mobj.name,item.mobj.name,desObj))
+                        else:
+                            movedGraphObj.setParentItem(item)
+                            moose.move(movedGraphObj.mobj, item.mobj)
+                if tobemoved:
+                    if isinstance(movedGraphObj,KineticsDisplayItem):
+                        itemPath = movedGraphObj.mobj.path
+                        if moose.exists(itemPath):
+                            iInfo = itemPath+'/info'
+                            anno = moose.Annotator(iInfo)
+                            x = movedGraphObj.scenePos().x()/self.layoutPt.defaultScenewidth
+                            y = movedGraphObj.scenePos().y()/self.layoutPt.defaultSceneheight
+                            anno.x = x
+                            anno.y = y
+                QtGui.QApplication.setOverrideCursor(QtGui.QCursor(Qt.Qt.ArrowCursor))
+                self.layoutPt.positionChange(item.mobj) 
+                self.updateScale(self.iconScale)
+                '''
                 QtGui.QApplication.setOverrideCursor(QtGui.QCursor(Qt.Qt.ArrowCursor))
                 #If any case, move is not valide need to move back the object to original position is store and calculation
                 initscenepos = self.state["press"]["scenepos"]
@@ -398,7 +434,7 @@ class GraphicalView(QtGui.QGraphicsView):
 
                     self.layoutPt.positionChange(item.mobj) 
                     self.updateScale(self.iconScale)
-
+                '''
             if actionType == "delete":
                 self.removeConnector()
                 pixmap = QtGui.QPixmap(24, 24)
@@ -417,7 +453,7 @@ class GraphicalView(QtGui.QGraphicsView):
                                                    QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
                 if reply == QtGui.QMessageBox.Yes:
                     #delete solver first as topology is changing
-                    deleteSolver(self.modelRoot)
+                    mooseDeleteChemSolver(self.layoutPt.modelRoot)
                     self.deleteObj([item.parent()])
                     QtGui.QApplication.restoreOverrideCursor()
                 else:
@@ -461,7 +497,7 @@ class GraphicalView(QtGui.QGraphicsView):
                         #Solver should be deleted
                             ## if there is change in 'Topology' of the model
                             ## or if copy has to made then oject should be in unZombify mode
-                        deleteSolver(self.modelRoot)
+                        mooseDeleteChemSolver(self.layoutPt.modelRoot)
                         #As name is suggesting, if item is Compartment, then search in qGraCompt and if group then qGraGrp
                         if isinstance(itemAtView,ComptItem):
                             lKey = [key for key, value in self.layoutPt.qGraCompt.iteritems() if value == itemAtView][0]
@@ -560,13 +596,17 @@ class GraphicalView(QtGui.QGraphicsView):
         self.resetState()
     
     def deleteGroup(self,item,layoutPt):
-        key = [k for k,v in self.layoutPt.qGraGrp.items() if v == item]
-        if key[0] in self.layoutPt.qGraGrp:
-            self.layoutPt.qGraGrp.pop(key[0])
-        self.groupItemlist1 = item.childItems()
-        self.groupItemlist = [ i for i in self.groupItemlist1 if not isinstance(i,QtGui.QGraphicsPolygonItem)]
-        self.deleteObj(self.groupItemlist)
-        self.deleteItem(item)
+        reply = QtGui.QMessageBox.question(self, "Deleting Object",'Do want to delete group \'{groupname}\' and its children and connections'.format(groupname=item.mobj.name),
+                                                   QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
+        if reply == QtGui.QMessageBox.Yes:
+            mooseDeleteChemSolver(self.layoutPt.modelRoot)
+            key = [k for k,v in self.layoutPt.qGraGrp.items() if v == item]
+            if key[0] in self.layoutPt.qGraGrp:
+                self.layoutPt.qGraGrp.pop(key[0])
+            self.groupItemlist1 = item.childItems()
+            self.groupItemlist = [ i for i in self.groupItemlist1 if not isinstance(i,QtGui.QGraphicsPolygonItem)]
+            self.deleteObj(self.groupItemlist)
+            self.deleteItem(item)
 
     def drawExpectedConnection(self, event):
         self.connectionSource = self.state["press"]["item"]
@@ -847,7 +887,7 @@ class GraphicalView(QtGui.QGraphicsView):
 
     def deleteObj(self,item):
         self.rubberbandlist = item
-        deleteSolver(self.layoutPt.modelRoot)
+        mooseDeleteChemSolver(self.layoutPt.modelRoot)
         self.Enz_cplxlist   = [ i for i in self.rubberbandlist if (isinstance(i,MMEnzItem) or isinstance(i,EnzItem) or isinstance(i,CplxItem) )]
         self.PFRSlist       = [ i for i in self.rubberbandlist if (isinstance(i,PoolItem) or isinstance(i,TableItem) or isinstance(i,ReacItem) or isinstance(i,FuncItem) )]
         self.grp            = [ i for i in self.rubberbandlist if isinstance(i,GRPItem)]
@@ -892,7 +932,7 @@ class GraphicalView(QtGui.QGraphicsView):
         reply = QtGui.QMessageBox.question(self, "Deleting Object","Do want to delete object and its connections",
                                                    QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
         if reply == QtGui.QMessageBox.Yes:
-            deleteSolver(self.layoutPt.modelRoot)
+            mooseDeleteChemSolver(self.layoutPt.modelRoot)
             msgIdforDeleting = " "
             if isinstance(item,QtGui.QGraphicsPolygonItem):
                 src = self.layoutPt.lineItem_dict[item]

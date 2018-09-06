@@ -6,7 +6,7 @@
 # Maintainer:
 # Created: Wed Jun 30 11:18:34 2010 (+0530)
 # Version:
-# Last-Updated: Thu Jul 27 11:05:59 2017 (+0530)
+# Last-Updated: Tue Jun 19 11:05:59 2017 (+0530)
 #           By: Harsha
 #     Update #: 
 # URL:
@@ -42,6 +42,7 @@
 # by setting/unsetting isbuffered field
 # Fri May 17 23:45:59 2017 (+0530) - Harsha added, notes header,
 # Kd is calculated for the second order reaction and value is displayed
+# Tue Jun 18 12:10:54 IST 2018 - Harsha now group boundary color can be editable from the object editor
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -174,7 +175,8 @@ class ObjectEditModel(QtCore.QAbstractTableModel):
         #harsha: For signalling models will be pulling out notes field from Annotator
         #        can updates if exist for other types also
         if ( isinstance(self.mooseObject, moose.PoolBase)
-           or isinstance(self.mooseObject,moose.EnzBase) ) :
+           or isinstance(self.mooseObject,moose.EnzBase) 
+           or isinstance(self.mooseObject,moose.Neutral)) :
             self.fields.append("Color")
         flag = QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEditable
         self.fieldFlags[fieldName] = flag
