@@ -18,7 +18,6 @@
 #include "RollingMatrix.h"
 #include "SeqSynHandler.h"
 #include "../shell/Shell.h"
-#include "../randnum/randnum.h"
 
 double doCorrel( RollingMatrix& rm, vector< vector< double >> & kernel )
 {

@@ -339,7 +339,6 @@ SteadyState::SteadyState()
     solutionStatus_( 0 ),
     numFailed_( 0 )
 {
-    rng.setSeed( moose::__rng_seed__ );
 }
 
 SteadyState::~SteadyState()
@@ -1046,7 +1045,7 @@ void SteadyState::fitConservationRules(
                 double ytot = 0.0;
                 for ( int k = j; k < lastJ; ++k )
                 {
-                    y[k] = rng.uniform( );
+                    y[k] = moose::mtrand();
                     ytot += y[k] * U( i, k );
                 }
                 assert( fabs( ytot ) > EPSILON );

@@ -48,16 +48,10 @@ namespace moose
      */
     int strncasecmp( const std::string& a, const std::string& b, size_t n);
 
-
-    // TODO: other std::string utilities to add
-    // /** Trim leading and trailing whitespace and replace  convert any two or more consecutive whitespace inside the std::string by a single 'blank' character. */
-    // std::string fulltrim(std::string& myString) const;
-    // /** Convert to uppercase */
-    // std::string upcase(std::string& myString) const;
-    // /** Convert to lowercase */
-    // std::string downcase(std::string & myString);
-    // Maybe a implement regular expression search - reinventing wheel - but no standard way without using some bloated library.
-
+		/**
+		 * Generate random string of given length.
+		 */
+		std::string random_string( const unsigned size );
 }
 
 #endif //_STRINGUTIL_H

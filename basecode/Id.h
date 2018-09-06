@@ -174,13 +174,19 @@ private:
     static vector< Element* >& elements();
 };
 
-namespace std {
-	template <> class hash<Id>{
-			public :
-			size_t operator()(const Id &x ) const{
-			return hash<unsigned int>()( x.value() );
-		}
-	};
+// User defined hash function. 
+// See https://en.cppreference.com/w/cpp/utility/hash for more details.
+namespace std 
+{
+    template <> 
+    struct hash<Id> 
+    {
+        public :
+            size_t operator()(const Id &x ) const
+            {
+                return std::hash<unsigned int>()( x.value() );
+            }
+    };
 }
 
 #endif // _ID_H

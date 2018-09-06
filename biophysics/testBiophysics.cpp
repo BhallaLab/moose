@@ -8,30 +8,19 @@
 **********************************************************************/
 
 
-#include "header.h"
+#include "../basecode/header.h"
+#include "../basecode/global.h"
 #include "../shell/Shell.h"
-#include "../randnum/randnum.h"
-#include "CompartmentBase.h"
 #include "../utility/testing_macros.hpp"
 
+#include "CompartmentBase.h"
 #include "Compartment.h"
-/*
-#include "HHGate.h"
-#include "ChanBase.h"
-#include "HHChannel.h"
-*/
+
 extern void testCompartment(); // Defined in Compartment.cpp
 extern void testCompartmentProcess(); // Defined in Compartment.cpp
 extern void testMarkovRateTable(); //Defined in MarkovRateTable.cpp
 extern void testVectorTable();	//Defined in VectorTable.cpp
 
-/*
-extern void testSpikeGen(); // Defined in SpikeGen.cpp
-extern void testCaConc(); // Defined in CaConc.cpp
-extern void testNernst(); // Defined in Nernst.cpp
-extern void testMarkovSolverBase();	//Defined in MarkovSolverBase.cpp
-extern void testMarkovSolver();		//Defined in MarkovSolver.cpp
-*/
 
 #ifdef DO_UNIT_TESTS
 
@@ -46,7 +35,7 @@ void testIntFireNetwork( unsigned int runsteps = 5 )
     static const double delayMax = 4;
     static const double delayMin = 0;
     static const double connectionProbability = 0.1;
-    static const unsigned int NUM_TOT_SYN = 104576;
+    static const unsigned int NUM_TOT_SYN = 104831;
     unsigned int size = 1024;
     string arg;
     Eref sheller( Id().eref() );
@@ -77,7 +66,9 @@ void testIntFireNetwork( unsigned int runsteps = 5 )
 
     unsigned int nd = syn->totNumLocalField();
     if ( Shell::numNodes() == 1 )
-        assert( nd == NUM_TOT_SYN );
+    {
+        EXPECT_EQ( nd, NUM_TOT_SYN, "" );
+    }
     else if ( Shell::numNodes() == 2 )
         assert( nd == 52446 );
     else if ( Shell::numNodes() == 3 )
@@ -114,8 +105,11 @@ void testIntFireNetwork( unsigned int runsteps = 5 )
     // by multiple threads if the above Set call is not complete.
 
     vector< double > origVm( size, 0.0 );
+    
+    // NOTE: From 
+    moose::mtseed( 5489UL );
     for ( unsigned int i = 0; i < size; ++i )
-        origVm[i] = mtrand() * Vmax;
+        origVm[i] = moose::mtrand() * Vmax;
 
     double origVm100 = origVm[100];
     double origVm900 = origVm[900];
@@ -146,11 +140,10 @@ void testIntFireNetwork( unsigned int runsteps = 5 )
         vector< double > delay( numSynVec[i], 0.0 );
         for ( unsigned int j = 0; j < numSynVec[i]; ++j )
         {
-            weight[i][ j ] = mtrand() * weightMax;
-            delay[ j ] = delayMin + mtrand() * ( delayMax - delayMin );
+            weight[i][ j ] = moose::mtrand() * weightMax;
+            delay[ j ] = delayMin + moose::mtrand() * ( delayMax - delayMin );
         }
-        ret = Field< double >::
-              setVec( ObjId( synId, i ), "weight", weight[i] );
+        ret = Field< double >::setVec( ObjId( synId, i ), "weight", weight[i] );
         assert( ret );
         ret = Field< double >::setVec( ObjId( synId, i ), "delay", delay );
         assert( ret );
@@ -218,13 +211,24 @@ void testIntFireNetwork( unsigned int runsteps = 5 )
         ASSERT_DOUBLE_EQ("", retVm901, 0.28303358631241327 );
         ASSERT_DOUBLE_EQ("", retVm902, 0.0096374021108587178 );
         */
-        ASSERT_DOUBLE_EQ("", retVm100, 0.069517018453329804 );
-        ASSERT_DOUBLE_EQ("", retVm101, 0.32823493598699577 );
-        ASSERT_DOUBLE_EQ("", retVm102, 0.35036493874475361 );
-        ASSERT_DOUBLE_EQ("", retVm99,  0.04087358817787364 );
-        ASSERT_DOUBLE_EQ("", retVm900, 0.26414663635984065 );
-        ASSERT_DOUBLE_EQ("", retVm901, 0.39864519810259352 );
-        ASSERT_DOUBLE_EQ("", retVm902, 0.04818717439429359 );
+
+#if 0
+        cout << endl;
+        cout << std::setprecision(12) <<  retVm100 << endl; 
+        cout << std::setprecision(12) <<  retVm101 << endl;
+        cout << std::setprecision(12) <<  retVm102 << endl;
+        cout << std::setprecision(11) <<  retVm99  << endl;
+        cout << std::setprecision(12) <<  retVm900 << endl;
+        cout << std::setprecision(12) <<  retVm901 << endl;
+        cout << std::setprecision(12) <<  retVm902 << endl;
+#endif
+        ASSERT_DOUBLE_EQ("", retVm100,  0.0752853031478);
+        ASSERT_DOUBLE_EQ("", retVm101,  0.226731547886 );
+        ASSERT_DOUBLE_EQ("", retVm102,  0.204294350789 );
+        ASSERT_DOUBLE_EQ("", retVm99,   0.2814616871   );
+        ASSERT_DOUBLE_EQ("", retVm900,  0.194820080944 );
+        ASSERT_DOUBLE_EQ("", retVm901,  0.0490452677121);
+        ASSERT_DOUBLE_EQ("", retVm902,  0.214295483534 );
 
     }
     /*

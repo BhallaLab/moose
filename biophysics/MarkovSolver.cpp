@@ -85,7 +85,7 @@ Matrix* MarkovSolver::computePadeApproximant( Matrix* Q1,
 	vector< unsigned int >* swaps = new vector< unsigned int >;
 	unsigned int n = Q1->size();
 	unsigned int degree = mCandidates[degreeIndex];
-	double *padeCoeffs;
+	double *padeCoeffs = NULL;
 	Matrix *V = matAlloc(n);
 
 	//Vector of Matrix pointers. Each entry is an even power of Q.

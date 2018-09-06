@@ -18,12 +18,12 @@
 #      REVISION:  ---
 #===============================================================================
 
-set -e -x
+set -e
+set -x
 
 PYTHON2="/usr/bin/python2"
 PYTHON3="/usr/bin/python3"
 MAKEFLAGS="-j`nproc`"
-
 
 if [ ! -n "$MAKE" ]; then
     MAKE="make -j`nproc`"
@@ -42,34 +42,34 @@ if type $PYTHON3 > /dev/null; then $PYTHON3 -m compileall -q . ; fi
 
 echo "Currently in `pwd`"
 (
-    mkdir -p _GSL_BUILD && cd _GSL_BUILD 
+    mkdir -p _GSL_BUILD && cd _GSL_BUILD
     cmake -DDEBUG=ON -DPYTHON_EXECUTABLE="$PYTHON2" ..
-    $MAKE && ctest --output-on-failure
-    sudo make install 
+    $MAKE && ctest --output-on-failure -j4
+    sudo make install && cd  /tmp
     $PYTHON2 -c 'import moose;print(moose.__file__);print(moose.version())'
 )
 
 (
     # Now with boost.
     mkdir -p _BOOST_BUILD && cd _BOOST_BUILD && \
-        cmake -DWITH_BOOST=ON -DDEBUG=ON -DQUIET_MODE=ON -DPYTHON_EXECUTABLE="$PYTHON2" ..
-    $MAKE && ctest --output-on-failure
+        cmake -DWITH_BOOST_ODE=ON -DDEBUG=ON -DPYTHON_EXECUTABLE="$PYTHON2" ..
+    $MAKE && ctest --output-on-failure -j4
 )
 
 # This is only applicable on linux build.
 echo "Python3: Removed python2-networkx and install python3"
 if type $PYTHON3 > /dev/null; then
-    sudo apt-get remove -qq python-networkx
-    sudo apt-get install -qq python3-networkx
+    sudo apt-get remove -qq python-networkx || echo "Error with apt"
+    sudo apt-get install -qq python3-networkx || echo "Error with apt"
     (
         mkdir -p _GSL_BUILD2 && cd _GSL_BUILD2 && \
             cmake -DDEBUG=ON -DPYTHON_EXECUTABLE="$PYTHON3" ..
-        $MAKE && ctest --output-on-failure
+        $MAKE && ctest --output-on-failure -j4
     )
     (
         mkdir -p _BOOST_BUILD2 && cd _BOOST_BUILD2 && \
-            cmake -DWITH_BOOST=ON -DDEBUG=ON -DPYTHON_EXECUTABLE="$PYTHON3" ..
-        $MAKE && ctest --output-on-failure
+            cmake -DWITH_BOOST_ODE=ON -DDEBUG=ON -DPYTHON_EXECUTABLE="$PYTHON3" ..
+        $MAKE && ctest --output-on-failure -j4
     )
     echo "All done"
 else

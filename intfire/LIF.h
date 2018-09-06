@@ -13,30 +13,32 @@
 
 namespace moose
 {
+
 /**
  * The IntFire class sets up an integrate-and-fire compartment.
  */
 class LIF: public IntFireBase
 {
-	public:
-			LIF();
-			virtual ~LIF();
-			/**
-			 * The process function does the object updating and sends out
-			 * messages to channels, nernsts, and so on.
-			 */
-			void vProcess( const Eref& e, ProcPtr p );
+public:
+    LIF();
+    virtual ~LIF();
+    /**
+     * The process function does the object updating and sends out
+     * messages to channels, nernsts, and so on.
+     */
+    void vProcess( const Eref& e, ProcPtr p );
 
-			/**
-			 * The reinit function reinitializes all fields.
-			 */
-			void vReinit( const Eref& e, ProcPtr p );
+    /**
+     * The reinit function reinitializes all fields.
+     */
+    void vReinit( const Eref& e, ProcPtr p );
 
-			/**
-			 * Initializes the class info.
-			 */
-			static const Cinfo* initCinfo();
+    /**
+     * Initializes the class info.
+     */
+    static const Cinfo* initCinfo();
 };
+
 }
 
 #endif // _LIF_H

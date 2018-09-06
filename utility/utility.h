@@ -1,7 +1,5 @@
 // utility.h ---
-//
-// Filename: utility.h
-// Description:
+// Description: Some utility function.
 // Author: Subhasis Ray
 // Maintainer:
 // Copyright (C) 2010 Subhasis Ray, all rights reserved.
@@ -10,29 +8,14 @@
 // Last-Updated: Tue Jul 23 12:48:17 2013 (+0530)
 //           By: subha
 //     Update #: 19
-// URL:
-// Keywords:
-// Compatibility:
-//
-//
-
-// Commentary:
-//
-//
-//
-//
-
-// Change log:
-//
-//
-//
-
-// Code:
 
 #ifndef _UTILITY_H
+
 #include "strutil.h"
 
-namespace moose {
+// See types.cpp file for definitions.
+namespace moose 
+{
 
     char shortType(std::string type);
     char innerType(char typecode);
@@ -54,7 +37,6 @@ namespace moose {
 
 
 #endif // !_UTILITY_H
-
 
 //
 // utility.h ends here

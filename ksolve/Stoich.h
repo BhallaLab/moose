@@ -91,6 +91,8 @@ class Stoich
 		 */
 		vector< unsigned int > getPoolIdMap() const;
 
+                Id getPoolByIndex( unsigned int index ) const;
+
 		/**
 		 * Take the provided wildcard path to build the list of elements
 		 * managed by this solver.
@@ -485,7 +487,7 @@ class Stoich
 		 */
 		bool useOneWay_;
 
-		/** 
+		/**
 		 * True if pools are permitted to take negative concentrations.
 		 * This may happen if solver is handling a general equation system
 		 * that is not constrained by chemical rules.

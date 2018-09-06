@@ -11,6 +11,8 @@ __status__           = "Development"
 
 import sys
 import os
+import matplotlib as mpl
+mpl.use('Agg')
 import numpy as np
 import moose
 import rdesigneur as rd 

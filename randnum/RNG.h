@@ -19,29 +19,17 @@
 #ifndef  __RNG_INC
 #define  __RNG_INC
 
-#ifdef  USE_BOOST
-
-#include <boost/random.hpp>
-#include <boost/random/uniform_01.hpp>
-
-#if  defined(BOOST_RANDOM_DEVICE_EXISTS)
-#include <boost/random/random_device.hpp>
-#endif  // BOOST_RANDOM_DEVICE_EXISTS
-#else      /* -----  not USE_BOOST  ----- */
-#include <ctime>
-#include "randnum.h"
-#endif     /* -----  not USE_BOOST  ----- */
-
 #include <limits>
 #include <iostream>
-
-#ifdef ENABLE_CPP11
 #include <random>
-#endif
+
+#include "Definitions.h"
+#include "Distributions.h"
 
 using namespace std;
 
-namespace moose {
+namespace moose
+{
 
 /*
  * =====================================================================================
@@ -65,17 +53,8 @@ class RNG
 
         void setRandomSeed( )
         {
-#if defined(USE_BOOST)
-#if defined(BOOST_RANDOM_DEVICE_EXISTS)
-            boost::random::random_device rd;
-            setSeed( rd() );
-#endif
-#elif defined(ENABLE_CPP11)
-            std::random_device rd;
-            setSeed( rd() );
-#else
-            mtseed( time(NULL) );
-#endif     /* -----  not ENABLE_CPP11  ----- */
+            MOOSE_RANDOM_DEVICE rd_;
+            setSeed( rd_() );
         }
 
         /* ====================  ACCESSORS     ======================================= */
@@ -91,20 +70,15 @@ class RNG
          *
          * @param seed
          */
-        void setSeed( const unsigned long int seed )
+        void setSeed( const unsigned long seed )
         {
             seed_ = seed;
             if( seed == 0 )
             {
-                setRandomSeed( );
-                return;
+                MOOSE_RANDOM_DEVICE rd_;
+                seed_ = rd_();
             }
-
-#if defined(USE_BOOST) || defined(ENABLE_CPP11)
             rng_.seed( seed_ );
-#else
-            mtseed( seed_ );
-#endif
         }
 
         /**
@@ -115,11 +89,7 @@ class RNG
          */
         T uniform( const T a, const T b)
         {
-#if defined(USE_BOOST) || defined(ENABLE_CPP11)
             return ( b - a ) * dist_( rng_ ) + a;
-#else
-            return (b-a) * mtrand() + a;
-#endif
         }
 
         /**
@@ -130,11 +100,7 @@ class RNG
          */
         T uniform( void )
         {
-#if defined(USE_BOOST) || defined(ENABLE_CPP11)
             return dist_( rng_ );
-#else
-            return mtrand();
-#endif
         }
 
 
@@ -143,16 +109,10 @@ class RNG
         T res_;
         T seed_;
 
-#if USE_BOOST
-        boost::random::mt19937 rng_;
-        boost::random::uniform_01<T> dist_;
-#elif ENABLE_CPP11
-        std::mt19937 rng_;
-        std::uniform_real_distribution<> dist_;
-#endif     /* -----  not ENABLE_CPP11  ----- */
+        moose::MOOSE_RNG_DEFAULT_ENGINE rng_;
+        moose::MOOSE_UNIFORM_DISTRIBUTION<double> dist_;
 
 }; /* -----  end of template class RNG  ----- */
-
 
 }                                               /* namespace moose ends  */
 

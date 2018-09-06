@@ -217,6 +217,7 @@ class ReadKkit
 		map< string, int > groupMap_;
 		map< string, int > tableMap_;
 		map< string, int > stimMap_;
+		map< string, int > chanMap_;
 		map< string, Id > poolIds_;
 		map< string, Id > reacIds_;
 		map< string, Id > enzIds_;

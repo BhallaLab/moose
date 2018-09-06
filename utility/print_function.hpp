@@ -53,8 +53,22 @@
 
 using namespace std;
 
-namespace moose {
+/* --------------------------------------------------------------------------*/
+/**
+ * @Synopsis  Macros
+ */
+/* ----------------------------------------------------------------------------*/
+#define __FILENAME__ (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
+#ifdef NDEBUG
+#define MOOSE_DEBUG( a ) { \
+    stringstream ss; ss << a; \
+    cout << "DEBUG: " << __FILENAME__ << ":" << __LINE__ << "| " << ss.str(); \
+    }
+#else
+#define MOOSE_DEBUG( a ) {}
+#endif
 
+namespace moose {
 
     /**
      * @brief Enumerate type for debug and log.
@@ -134,6 +148,7 @@ namespace moose {
         return ss.str();
     }
 
+		// Not print it when built for release.
     inline string debugPrint(string msg, string prefix = "DEBUG"
             , string color=T_RESET, unsigned debugLevel = 0
             )
@@ -210,6 +225,15 @@ namespace moose {
     {
         moose::__dump__(msg, moose::warning );
     }
+
+		inline void showDebug( const string msg )
+		{
+#ifdef DISABLE_DEBUG
+
+#else
+				moose::__dump__(msg, moose::debug );
+#endif
+		}
 
     inline void showError( string msg )
     {

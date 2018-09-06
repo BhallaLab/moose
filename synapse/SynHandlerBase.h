@@ -21,77 +21,79 @@ class Synapse;
  */
 class SynHandlerBase
 {
-	public:
-		SynHandlerBase();
-		virtual ~SynHandlerBase();
+public:
+    SynHandlerBase();
+    virtual ~SynHandlerBase();
 
-		////////////////////////////////////////////////////////////////
-		// Field assignment stuff.
-		////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////
+    // Field assignment stuff.
+    ////////////////////////////////////////////////////////////////
 
-		/**
-		 * Resizes the synapse storage
-		 */
-		void setNumSynapses( unsigned int num );
+    /**
+     * Resizes the synapse storage
+     */
+    void setNumSynapses( unsigned int num );
 
-		/**
-		 * Returns number of synapses defined.
-		 */
-		unsigned int getNumSynapses() const;
+    /**
+     * Returns number of synapses defined.
+     */
+    unsigned int getNumSynapses() const;
 
-		/**
-		 * Gets specified synapse
-		 */
-		Synapse* getSynapse( unsigned int i );
-		////////////////////////////////////////////////////////////////
+    /**
+     * Gets specified synapse
+     */
+    Synapse* getSynapse( unsigned int i );
+    ////////////////////////////////////////////////////////////////
 
-		void process( const Eref& e, ProcPtr p );
-		void reinit( const Eref& e, ProcPtr p );
+    void process( const Eref& e, ProcPtr p );
+    void reinit( const Eref& e, ProcPtr p );
 
-        /**
-         * A utility function to check for assignment to fields that
-         * must be > 0
-         */
-        bool rangeWarning( const string& field, double value );
+    /**
+     * A utility function to check for assignment to fields that
+     * must be > 0
+     */
+    bool rangeWarning( const string& field, double value );
 
-		////////////////////////////////////////////////////////////////
-		/**
-		 * Adds a new synapse, returns its index. This is
-		 * triggered by addMsg of inputs to the child synapse. The
-		 * SynHandler has to ensure that we have enough synapses allocated
-		 * to handle the new message, and the return value is used so that
-		 * the new message knows the fieldIndex to send the message to.
-		 */
-		virtual unsigned int addSynapse() = 0;
+    ////////////////////////////////////////////////////////////////
+    /**
+     * Adds a new synapse, returns its index. This is
+     * triggered by addMsg of inputs to the child synapse. The
+     * SynHandler has to ensure that we have enough synapses allocated
+     * to handle the new message, and the return value is used so that
+     * the new message knows the fieldIndex to send the message to.
+     */
+    virtual unsigned int addSynapse() = 0;
 
-		/**
-		 * Drops an existing synapse, triggered by deleteMsg of an input
-		 * to the child synapse. This is a little messy because we can't
-		 * change the indices of the other synapses. The Handler has to
-		 * figure out how to handle the 'holes' in its array of synapses.
-		 */
-		virtual void dropSynapse( unsigned int droppedSynNumber ) = 0;
+    /**
+     * Drops an existing synapse, triggered by deleteMsg of an input
+     * to the child synapse. This is a little messy because we can't
+     * change the indices of the other synapses. The Handler has to
+     * figure out how to handle the 'holes' in its array of synapses.
+     */
+    virtual void dropSynapse( unsigned int droppedSynNumber ) = 0;
 
-		/**
-		 * Record arrival of a new spike event. The 'time' is time for
-		 * eventual arrival of the spike, and is typically well in the
-		 * future. The index specifies which synapse the spike came to.
-		 */
-		virtual void addSpike(
-			unsigned int index, double time, double weight ) = 0;
-		virtual double getTopSpike( unsigned int index ) const = 0;
-		////////////////////////////////////////////////////////////////
-		// Virtual func definitions for fields.
-		////////////////////////////////////////////////////////////////
-		virtual void vSetNumSynapses( unsigned int num ) = 0;
-		virtual unsigned int vGetNumSynapses() const = 0;
-		virtual Synapse* vGetSynapse( unsigned int i ) = 0;
-		virtual void vProcess( const Eref& e, ProcPtr p ) = 0;
-		virtual void vReinit( const Eref& e, ProcPtr p ) = 0;
-		////////////////////////////////////////////////////////////////
-		static SrcFinfo1< double >* activationOut();
-		static const Cinfo* initCinfo();
-	private:
+    /**
+     * Record arrival of a new spike event. The 'time' is time for
+     * eventual arrival of the spike, and is typically well in the
+     * future. The index specifies which synapse the spike came to.
+     */
+    virtual void addSpike(
+        unsigned int index, double time, double weight ) = 0;
+    virtual double getTopSpike( unsigned int index ) const = 0;
+    ////////////////////////////////////////////////////////////////
+    // Virtual func definitions for fields.
+    ////////////////////////////////////////////////////////////////
+    virtual void vSetNumSynapses( unsigned int num ) = 0;
+    virtual unsigned int vGetNumSynapses() const = 0;
+    virtual Synapse* vGetSynapse( unsigned int i ) = 0;
+    virtual void vProcess( const Eref& e, ProcPtr p ) = 0;
+    virtual void vReinit( const Eref& e, ProcPtr p ) = 0;
+    ////////////////////////////////////////////////////////////////
+    static SrcFinfo1< double >* activationOut();
+    static const Cinfo* initCinfo();
+
+private:
+
 };
 
 #endif // _SYN_HANDLER_BASE_H

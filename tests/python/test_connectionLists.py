@@ -66,8 +66,14 @@ def makeGlobalBalanceNetwork():
     inhibMatrix.setRandomConnectivity( 
             params['stimToInhProb'], params['stimToInhSeed'] )
     cl = inhibMatrix.connectionList
-    expectedCl = [ 1,4,13,13,26,42,52,56,80,82,95,97,4,9,0,9,4,8,0,6,1,6,6,7]
-    assert list(cl) == expectedCl, "Expected %s, got %s" % (expectedCl, cl )
+
+    # This can change when random-number generator changes.
+    # This was before we used c++11 <random> to generate random numbers. This
+    # test has changes on Tuesday 31 July 2018 11:12:35 AM IST
+    #  expectedCl = [ 1,4,13,13,26,42,52,56,80,82,95,97,4,9,0,9,4,8,0,6,1,6,6,7]
+    expectedCl=[0,6,47,50,56,67,98,2,0,3,5,4,8,3]
+
+    assert list(cl) == expectedCl, "Expected %s, got %s" % (expectedCl, cl)
 
     temp = moose.connect( stim, 'spikeOut', ov, 'addSpike', 'Sparse' )
     excMatrix = moose.element( temp )
@@ -80,7 +86,9 @@ def makeGlobalBalanceNetwork():
             params['inhToOutProb'], params['inhToOutSeed'] )
 
     # print("ConnMtxEntries: ", inhibMatrix.numEntries, excMatrix.numEntries, negFFMatrix.numEntries)
-    assert (12, 57, 48) == (inhibMatrix.numEntries, excMatrix.numEntries, negFFMatrix.numEntries) 
+    got = (inhibMatrix.numEntries, excMatrix.numEntries, negFFMatrix.numEntries)
+    expected = (7, 62, 55)
+    assert expected == got, "Expected %s, Got %s" % (expected,got)
 
     cl = negFFMatrix.connectionList
     numInhSyns = [ ]
@@ -93,7 +101,9 @@ def makeGlobalBalanceNetwork():
         if i.synapse.num > 0:
             i.synapse.weight = params['wtStimToInh']
 
-    assert numInhSyns == [2,1,0,0,2,0,3,1,1,2]
+    #  expected = [2,1,0,0,2,0,3,1,1,2]
+    expected = [1, 0, 1, 2, 1, 1, 0, 0, 1, 0]
+    assert numInhSyns == expected, "Expected %s, got %s" % (expected,numInhSyns)
 
     for i in moose.vec( outsyn ):
         nov += i.synapse.num
@@ -105,12 +115,12 @@ def makeGlobalBalanceNetwork():
         if i.synapse.num > 0:
             i.synapse.weight = params['wtInhToOut']
      
-    # print("SUMS: ", sum( iv.numField ), sum( ov.numField ), sum( oiv.numField ))
-    assert [4,49,9] == [sum( iv.numField ), sum( ov.numField ), sum( oiv.numField )]
-    # print("SUMS2: ", niv, nov, noiv)
-    assert [12,57,48] ==  [ niv, nov, noiv ]
-    # print("SUMS3: ", sum( insyn.vec.numSynapses ), sum( outsyn.vec.numSynapses ), sum( outInhSyn.vec.numSynapses ))
-    assert [12, 57, 48 ] == [ sum( insyn.vec.numSynapses ), sum( outsyn.vec.numSynapses ), sum( outInhSyn.vec.numSynapses ) ]
+    print("SUMS: ", sum( iv.numField ), sum( ov.numField ), sum( oiv.numField ))
+    assert [1, 64, 25] == [sum( iv.numField ), sum( ov.numField ), sum( oiv.numField )]
+    print("SUMS2: ", niv, nov, noiv)
+    assert [7, 62, 55] ==  [ niv, nov, noiv ]
+    print("SUMS3: ", sum( insyn.vec.numSynapses ), sum( outsyn.vec.numSynapses ), sum( outInhSyn.vec.numSynapses ))
+    assert [7,62,55] == [ sum( insyn.vec.numSynapses ), sum( outsyn.vec.numSynapses ), sum( outInhSyn.vec.numSynapses ) ]
 
     # print(oiv.numField)
     # print(insyn.vec[1].synapse.num)

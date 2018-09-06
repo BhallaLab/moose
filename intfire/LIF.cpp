@@ -7,8 +7,8 @@
 ** See the file COPYING.LIB for the full notice.
 **********************************************************************/
 
-#include "header.h"
-#include "ElementValueFinfo.h"
+#include "../basecode/header.h"
+#include "../basecode/ElementValueFinfo.h"
 #include "../biophysics/CompartmentBase.h"
 #include "../biophysics/Compartment.h"
 #include "IntFireBase.h"
@@ -18,23 +18,23 @@ using namespace moose;
 
 const Cinfo* LIF::initCinfo()
 {
-	static string doc[] =
-	{
-		"Name", "LIF",
-		"Author", "Upi Bhalla",
-		"Description", "Leaky Integrate-and-Fire neuron"
-	};
+    static string doc[] =
+    {
+        "Name", "LIF",
+        "Author", "Upi Bhalla",
+        "Description", "Leaky Integrate-and-Fire neuron"
+    };
     static Dinfo< LIF > dinfo;
-	static Cinfo lifCinfo(
-				"LIF",
-				IntFireBase::initCinfo(),
-				0, 0,
-				&dinfo,
-                doc,
-                sizeof(doc)/sizeof(string)
-	);
+    static Cinfo lifCinfo(
+        "LIF",
+        IntFireBase::initCinfo(),
+        0, 0,
+        &dinfo,
+        doc,
+        sizeof(doc)/sizeof(string)
+    );
 
-	return &lifCinfo;
+    return &lifCinfo;
 }
 
 static const Cinfo* lifCinfo = LIF::initCinfo();
@@ -44,10 +44,14 @@ static const Cinfo* lifCinfo = LIF::initCinfo();
 //////////////////////////////////////////////////////////////////
 
 LIF::LIF()
-{;}
+{
+    ;
+}
 
 LIF::~LIF()
-{;}
+{
+    ;
+}
 
 //////////////////////////////////////////////////////////////////
 // LIF::Dest function definitions.
@@ -55,37 +59,43 @@ LIF::~LIF()
 
 void LIF::vProcess( const Eref& e, ProcPtr p )
 {
-	fired_ = false;
-	if ( p->currTime < lastEvent_ + refractT_ ) {
-		Vm_ = vReset_;
-		A_ = 0.0;
-		B_ = 1.0 / Rm_;
-		sumInject_ = 0.0;
-		VmOut()->send( e, Vm_ );
-	} else {
+    fired_ = false;
+    if ( p->currTime < lastEvent_ + refractT_ )
+    {
+        Vm_ = vReset_;
+        A_ = 0.0;
+        B_ = 1.0 / Rm_;
+        sumInject_ = 0.0;
+        VmOut()->send( e, Vm_ );
+    }
+    else
+    {
         // activation can be a continous variable (graded synapse).
         // So integrate it at every time step, thus *dt.
         // For a delta-fn synapse, SynHandler-s divide by dt and send activation.
         // See: http://www.genesis-sim.org/GENESIS/Hyperdoc/Manual-26.html#synchan
         //          for this continuous definition of activation.
-		Vm_ += activation_ * p->dt;
-		activation_ = 0.0;
-		if ( Vm_ > threshold_ ) {
-			Vm_ = vReset_;
-			lastEvent_ = p->currTime;
-			fired_ = true;
-			spikeOut()->send( e, p->currTime );
-			VmOut()->send( e, Vm_ );
-		} else {
-			Compartment::vProcess( e, p );
-		}
-	}
+        Vm_ += activation_ * p->dt;
+        activation_ = 0.0;
+        if ( Vm_ > threshold_ )
+        {
+            Vm_ = vReset_;
+            lastEvent_ = p->currTime;
+            fired_ = true;
+            spikeOut()->send( e, p->currTime );
+            VmOut()->send( e, Vm_ );
+        }
+        else
+        {
+            Compartment::vProcess( e, p );
+        }
+    }
 }
 
 void LIF::vReinit(  const Eref& e, ProcPtr p )
 {
-	activation_ = 0.0;
-	fired_ = false;
-	lastEvent_ = -refractT_; // Allow it to fire right away.
-	Compartment::vReinit( e, p );
+    activation_ = 0.0;
+    fired_ = false;
+    lastEvent_ = -refractT_; // Allow it to fire right away.
+    Compartment::vReinit( e, p );
 }

@@ -85,7 +85,11 @@ bool is_valid_numpy_file( FILE* fp )
 {
     assert( fp );
     char buffer[__pre__size__];
-    fread( buffer, sizeof(char), __pre__size__, fp );
+    size_t nr = fread( buffer, sizeof(char), __pre__size__, fp );
+
+    if( 0 == nr )
+        return false;
+
     bool equal = true;
     // Check for equality
     for(size_t i = 0; i < __pre__size__; i++ )

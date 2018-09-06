@@ -6,46 +6,35 @@
 ** GNU Lesser General Public License version 2.1
 ** See the file COPYING.LIB for the full notice.
 **********************************************************************/
+#include <stdio.h>
+#include <iomanip>
 
 #include "header.h"
 #include "global.h"
-
-#include <stdio.h>
-#include <iomanip>
-#include "../shell/Neutral.h"
-#include "../builtins/Arith.h"
 #include "Dinfo.h"
-#include <queue>
-#include "../biophysics/IntFire.h"
+#include "SparseMatrix.h"
+
+#include "../msg/OneToOneMsg.h"
+#include "../msg/SparseMsg.h"
+#include "../msg/SingleMsg.h"
+
 #include "../synapse/Synapse.h"
 #include "../synapse/SynEvent.h"
 #include "../synapse/SynHandlerBase.h"
 #include "../synapse/SimpleSynHandler.h"
-#include "SparseMatrix.h"
-#include "SparseMsg.h"
-#include "SingleMsg.h"
-#include "OneToOneMsg.h"
-#include "../scheduling/Clock.h"
 
 #include "../shell/Shell.h"
-#include "../mpi/PostMaster.h"
+#include "../shell/Neutral.h"
 
-#include "randnum/RNG.h"
+#include "../mpi/PostMaster.h"
+#include "../scheduling/Clock.h"
+#include "../builtins/Arith.h"
+#include "../biophysics/IntFire.h"
+#include "../randnum/RNG.h"
+
+#include <queue>
 
 int _seed_ = 0;
-
-moose::RNG<double> rng_;
-
-void _mtseed_( unsigned int seed )
-{
-    _seed_ = seed;
-    rng_.setSeed( _seed_ );
-}
-
-double _mtrand_( )
-{
-    return rng_.uniform( );
-}
 
 void showFields()
 {
@@ -818,7 +807,8 @@ void testSparseMsg()
 
 	string arg;
 
-	_mtseed_( 5489UL ); // The default value, but better to be explicit.
+        // The default value, but better to be explicit.
+        moose::setGlobalSeed( 5489UL ); 
 
 	Id sshid = Id::nextId();
 	Element* t2 = new GlobalDataElement( sshid, sshc, "test2", size );
@@ -838,7 +828,7 @@ void testSparseMsg()
 
 	vector< double > temp( size, 0.0 );
 	for ( unsigned int i = 0; i < size; ++i )
-		temp[i] = _mtrand_() * Vmax;
+		temp[i] = moose::mtrand() * Vmax;
 
 	bool ret = Field< double >::setVec( cells, "Vm", temp );
 	assert( ret );
@@ -860,8 +850,8 @@ void testSparseMsg()
 				Field< unsigned int >::get( id, "numSynapse" );
 		unsigned int k = i * fieldSize;
 		for ( unsigned int j = 0; j < numSyn; ++j ) {
-			weight[ k + j ] = _mtrand_() * weightMax;
-			delay[ k + j ] = _mtrand_() * delayMax;
+			weight[ k + j ] = moose::mtrand() * weightMax;
+			delay[ k + j ] = moose::mtrand() * delayMax;
 		}
 	}
 	ret = Field< double >::setVec( syns, "weight", weight );
