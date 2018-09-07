@@ -22,6 +22,4 @@ cmake -DCMAKE_INSTALL_PREFIX=@PYMOOSE_INSTALL_DIR@ \
     @CMAKE_PYMOOSE_ARGS@ \
     @PYMOOSE_SOURCE_DIR@ 
 make $MAKEOPTS
-ctest --output-on-failure 
 make bdist
-
