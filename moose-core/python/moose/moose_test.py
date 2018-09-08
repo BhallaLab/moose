@@ -29,9 +29,7 @@ import time
 logging.basicConfig(
         level=logging.DEBUG,
         format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
-        datefmt='%m-%d %H:%M',
-        filename='tests.log',
-        filemode='w'
+        datefmt='%m-%d %H:%M'
         )
 console = logging.StreamHandler()
 console.setLevel(logging.WARNING)
