@@ -4,8 +4,7 @@
 ** also known as GENESIS 3 base code.
 **           copyright (C) 2003-2010 Upinder S. Bhalla. and NCBS
 ** It is made available under the terms of the
-** GNU Lesser General Public License version 2.1
-** See the file COPYING.LIB for the full notice.
+** GNU Lesser General Public License version 3 or later.
 **********************************************************************/
 
 /**
@@ -21,63 +20,63 @@
  */
 class FuncRate: public ExternReac
 {
-	public:
-		FuncRate( double k, unsigned int targetPoolIndex )
-			: k_( k ), funcVolPower_( 0.0 )
-		{
-			func_.setTarget( targetPoolIndex );
-		}
+    public:
+        FuncRate( double k, unsigned int targetPoolIndex )
+            : k_( k ), funcVolPower_( 0.0 )
+        {
+            func_.setTarget( targetPoolIndex );
+        }
 
-		double operator() ( const double* S ) const {
-			double t = Field< double >::get( Id(1), "currentTime" );
-			return func_( S, t ); // get rate from func calculation.
-		}
+        double operator() ( const double* S ) const {
+            double t = Field< double >::get( Id(1), "currentTime" );
+            return func_( S, t ); // get rate from func calculation.
+        }
 
-		unsigned int getReactants( vector< unsigned int >& molIndex ) const{
-			molIndex.resize( 1 );
-			molIndex[0] = func_.getTarget();
+        unsigned int getReactants( vector< unsigned int >& molIndex ) const{
+            molIndex.resize( 1 );
+            molIndex[0] = func_.getTarget();
 
-			// This is the number of substrates to the reac. It is zero.
-			return 0;
-			// The target molecule is handled as a product.
-		}
+            // This is the number of substrates to the reac. It is zero.
+            return 0;
+            // The target molecule is handled as a product.
+        }
 
-		void setReactants( const vector< unsigned int >& molIndex ) {
-			assert( molIndex.size() > 0 );
-			func_.setTarget( molIndex[0] );
-		}
+        void setReactants( const vector< unsigned int >& molIndex ) {
+            assert( molIndex.size() > 0 );
+            func_.setTarget( molIndex[0] );
+        }
 
-		const vector< unsigned int >& getFuncArgIndex()
-		{
-			return func_.getReactantIndex();
-		}
+        const vector< unsigned int >& getFuncArgIndex()
+        {
+            return func_.getReactantIndex();
+        }
 
-		void setFuncArgIndex( const vector< unsigned int >& mol ) {
-			func_.setReactantIndex( mol );
-		}
+        void setFuncArgIndex( const vector< unsigned int >& mol ) {
+            func_.setReactantIndex( mol );
+        }
 
-		void setExpr( const string& s ) {
-			func_.setExpr( s );
-		}
-		const string& getExpr() const {
-			return func_.getExpr();
-		}
+        void setExpr( const string& s ) {
+            func_.setExpr( s );
+        }
+        const string& getExpr() const {
+            return func_.getExpr();
+        }
 
-		RateTerm* copyWithVolScaling(
-				double vol, double sub, double prd ) const
-		{
-			double ratio = sub * pow( NA * vol, funcVolPower_ );
-			FuncRate* ret = new FuncRate( k_ / ratio, func_.getTarget() );
-			ret->funcVolPower_ = funcVolPower_;
-			ret->func_ = func_;
-			// return new FuncRate( k_ / ratio );
-			return ret;
-		}
+        RateTerm* copyWithVolScaling(
+                double vol, double sub, double prd ) const
+        {
+            double ratio = sub * pow( NA * vol, funcVolPower_ );
+            FuncRate* ret = new FuncRate( k_ / ratio, func_.getTarget() );
+            ret->funcVolPower_ = funcVolPower_;
+            ret->func_ = func_;
+            // return new FuncRate( k_ / ratio );
+            return ret;
+        }
 
-	protected:
-		FuncTerm func_;
-		double k_;
-		double funcVolPower_;
+    protected:
+        FuncTerm func_;
+        double k_;
+        double funcVolPower_;
 
 };
 
@@ -98,57 +97,57 @@ class FuncRate: public ExternReac
  */
 class FuncReac: public FuncRate
 {
-	public:
-		FuncReac( double k, vector< unsigned int > v )
-			: FuncRate( k, 0 ),
-			v_( v )
-		{;}
+    public:
+        FuncReac( double k, vector< unsigned int > v )
+            : FuncRate( k, 0 ),
+            v_( v )
+        {;}
 
-		double operator() ( const double* S ) const {
-			// double ret = k_ * func_( S, 0.0 ); // get rate from func calculation.
-			double ret = func_( S, 0.0 ); // get rate from func calculation.
-			vector< unsigned int >::const_iterator i;
-			for ( i = v_.begin(); i != v_.end(); i++) {
-				assert( !std::isnan( S[ *i ] ) );
-				ret *= S[ *i ];
-			}
-			return ret;
-		}
+        double operator() ( const double* S ) const {
+            // double ret = k_ * func_( S, 0.0 ); // get rate from func calculation.
+            double ret = func_( S, 0.0 ); // get rate from func calculation.
+            vector< unsigned int >::const_iterator i;
+            for ( i = v_.begin(); i != v_.end(); i++) {
+                assert( !std::isnan( S[ *i ] ) );
+                ret *= S[ *i ];
+            }
+            return ret;
+        }
 
-		unsigned int getReactants( vector< unsigned int >& molIndex ) const{
-			molIndex = v_;
-			return numSubstrates_;
-		}
+        unsigned int getReactants( vector< unsigned int >& molIndex ) const{
+            molIndex = v_;
+            return numSubstrates_;
+        }
 
-		void setReactants( const vector< unsigned int >& molIndex ) {
-			v_ = molIndex;
-		}
+        void setReactants( const vector< unsigned int >& molIndex ) {
+            v_ = molIndex;
+        }
 
-		void rescaleVolume( short comptIndex,
-			const vector< short >& compartmentLookup, double ratio )
-		{
-			for ( unsigned int i = 1; i < v_.size(); ++i ) {
-				if ( comptIndex == compartmentLookup[ v_[i] ] )
-					k_ /= ratio;
-			}
-		}
+        void rescaleVolume( short comptIndex,
+            const vector< short >& compartmentLookup, double ratio )
+        {
+            for ( unsigned int i = 1; i < v_.size(); ++i ) {
+                if ( comptIndex == compartmentLookup[ v_[i] ] )
+                    k_ /= ratio;
+            }
+        }
 
 
-		RateTerm* copyWithVolScaling(
-				double vol, double sub, double prd ) const
-		{
-			assert( v_.size() > 0 );
-			double ratio = sub * pow( NA * vol,
-							funcVolPower_ + (int)( v_.size() ) - 1 );
-			FuncReac* ret = new FuncReac( k_ / ratio, v_ );
-			ret->func_ = func_;
-			ret->funcVolPower_ = funcVolPower_;
-			return ret;
-			// return new FuncReac( k_ / ratio, v_ );
-		}
+        RateTerm* copyWithVolScaling(
+                double vol, double sub, double prd ) const
+        {
+            assert( v_.size() > 0 );
+            double ratio = sub * pow( NA * vol,
+                            funcVolPower_ + (int)( v_.size() ) - 1 );
+            FuncReac* ret = new FuncReac( k_ / ratio, v_ );
+            ret->func_ = func_;
+            ret->funcVolPower_ = funcVolPower_;
+            return ret;
+            // return new FuncReac( k_ / ratio, v_ );
+        }
 
-	private:
-		vector< unsigned int > v_;
-		unsigned int numSubstrates_;
+    private:
+        vector< unsigned int > v_;
+        unsigned int numSubstrates_;
 };
 

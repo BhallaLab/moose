@@ -148,16 +148,22 @@ protected:
     unsigned int _mode;
     bool _useTrigger;
     bool _doEvalAtReinit;
-     // this stores variables received via incoming messages, identifiers of the form x{i} are included in this
+
+    // this stores variables received via incoming messages, identifiers of 
+    // the form x{i} are included in this
     vector<Variable *> _varbuf;
-    // this stores variable values pulled by sending request. identifiers of the form y{i} are included in this
+
+    // this stores variable values pulled by sending request. identifiers of 
+    // the form y{i} are included in this
     vector< double * > _pullbuf;
     map< string, double *> _constbuf;  // for constants
     string _independent; // index of independent variable
+
     mu::Parser _parser;
+
     void _clearBuffer();
     void _showError(mu::Parser::exception_type &e) const;
-	char* _stoich; // Used by kinetic solvers when this is zombified.
+    char* _stoich; // Used by kinetic solvers when this is zombified.
 };
 
 

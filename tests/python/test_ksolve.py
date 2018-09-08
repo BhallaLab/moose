@@ -32,6 +32,7 @@ ksolve = moose.Ksolve( '/compt/ksolve' )
 stoich = moose.Stoich( '/compt/stoich' )
 stoich.compartment = compt
 stoich.ksolve = ksolve
+ksolve.numThreads = 2
 stoich.path = '/compt/##'
 moose.reinit()
 print( '[INFO] Using method = %s' % ksolve.method )

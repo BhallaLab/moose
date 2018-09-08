@@ -15,6 +15,7 @@
 #include <ctime>
 #include <map>
 #include <sstream>
+#include <valarray>
 
 #include "../randnum/RNG.h"                        /* Use inbuilt rng */
 #include "../utility/print_function.hpp"
@@ -56,6 +57,8 @@ namespace moose
 {
 
     extern moose::RNG<double> rng;
+
+    extern map<string, valarray<double>> solverProfMap;
 
     /**
      * @brief A global seed for all RNGs in moose. When moose.seed( x ) is called,
@@ -194,6 +197,18 @@ namespace moose
      */
     /* ----------------------------------------------------------------------------*/
     void setGlobalSeed( int seed );
+
+    /* --------------------------------------------------------------------------*/
+    /**
+     * @Synopsis  Add solver performance into the global map.
+     *
+     * @Param name Name of the solver.
+     * @Param time Time taken by the solver.
+     * @Param steps Steps.
+     */
+    /* ----------------------------------------------------------------------------*/
+    void addSolverProf( const string& name, double time, size_t steps = 1);
+    void printSolverProfMap( );
 }
 
 #endif   /* ----- #ifndef __MOOSE_GLOBAL_INC_  ----- */

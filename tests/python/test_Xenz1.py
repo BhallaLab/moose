@@ -18,7 +18,7 @@
 import math
 import numpy as np
 import moose
-import fixXreacs
+import moose.fixXreacs as fixXreacs
 
 subInit = 0.002
 eInit = 0.001

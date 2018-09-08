@@ -20,7 +20,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import moose
-import fixXreacs
+import moose.fixXreacs as fixXreacs
 
 subInit = 0.002
 eInit = 0.001

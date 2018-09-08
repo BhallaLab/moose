@@ -18,11 +18,11 @@ elseif(WITH_GSL)
     include_directories( ${GSL_INCLUDE_DIRS} )
 endif(WITH_BOOST_ODE)
 
-if(PARALLELIZED_SOLVERS)
-    message( STATUS "Parallel version of KSolve and Gsolve" )
-    add_definitions( -DPARALLELIZE_KSOLVE_WITH_CPP11_ASYNC )
-    add_definitions( -DPARALLELIZE_GSOLVE_WITH_CPP11_ASYNC )
-endif(PARALLELIZED_SOLVERS)
+if(WITH_BOOST)
+    find_package(Boost REQUIRED COMPONENTS thread)
+    add_definitions( -DUSE_BOOST_ASYNC )
+    include_directories( ${Boost_INCLUDE_DIRS} )
+endif()
 
 set(KSOLVE_SRCS
 	KinSparseMatrix.cpp
@@ -48,7 +48,7 @@ if(WITH_GSL)
     list(APPEND KSOLVE_SRCS SteadyStateGsl.cpp )
 elseif(WITH_BOOST_ODE)
     list(APPEND KSOLVE_SRCS SteadyStateBoost.cpp )
-    list(APPEND KSOLVE_SRCS BoostSys.cpp)
 endif(WITH_GSL)
 
 add_library( ksolve ${KSOLVE_SRCS} )
+target_link_libraries( ksolve ${Boost_LIBRARIES} )

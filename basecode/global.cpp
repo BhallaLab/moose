@@ -44,6 +44,11 @@ namespace moose {
 
     unsigned long __rng_seed__ = 0;
 
+    map<string, valarray<double>> solverProfMap = { 
+        { "Ksolve", {0.0, 0} }, 
+        { "HSolve", {0.0, 0} }
+    };
+
     moose::RNG<double> rng;
 
     /* Check if path is OK */
@@ -212,4 +217,16 @@ namespace moose {
     {
         __rng_seed__ = seed;
     }
+
+    void addSolverProf( const string& name, double time, size_t steps)
+    {
+        solverProfMap[ name ] = solverProfMap[name] + valarray<double>({ time, (double)steps });
+    }
+
+    void printSolverProfMap( )
+    {
+        for( auto &v : solverProfMap )
+            cout <<  '\t' << v.first << ": " << v.second[0] << " sec (" << v.second[1] << ")" << endl;
+    }
+
 }

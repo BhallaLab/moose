@@ -108,12 +108,9 @@ public:
      */
     void updateRateTerms( unsigned int index );
 
-
-    // A wrapper to call advance function of GssaVoxelPool
-    // concurrently.
-    void parallel_advance(int begin, int end, size_t nWorkers
-                          , ProcPtr p , const GssaSystem* sys
-                         );
+    // Function for multithreading.
+    void advance_chunk( const size_t begin, const size_t end, ProcPtr p );
+    void recalcTimeChunk( const size_t begin, const size_t end, ProcPtr p);
 
     //////////////////////////////////////////////////////////////////
     /// Flag: returns true if randomized round to integers is done.
@@ -126,22 +123,18 @@ public:
     /// Flag: set true if randomized round to integers is to be done.
     void setClockedUpdate( bool val );
 
-#if PARALLELIZE_GSOLVE_WITH_CPP11_ASYNC
     unsigned int getNumThreads( ) const;
     void setNumThreads( unsigned int x );
-#endif
 
     //////////////////////////////////////////////////////////////////
     static const Cinfo* initCinfo();
 private:
 
-#if PARALLELIZE_GSOLVE_WITH_CPP11_ASYNC
     /**
      * @brief Number of threads to use when parallel version of Gsolve is
      * used.
      */
     unsigned int numThreads_;
-#endif
 
     GssaSystem sys_;
     /**
@@ -169,6 +162,8 @@ private:
 
     /// Flag: True if atot should be updated every clock tick
     bool useClockedUpdate_;
+
+    double t1_;
 };
 
 #endif	// _GSOLVE_H

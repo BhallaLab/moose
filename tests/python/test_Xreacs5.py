@@ -12,7 +12,7 @@
 import math
 import numpy as np
 import moose
-import fixXreacs
+import moose.fixXreacs as fixXreacs
 
 def makeModel():
     # create container for model
@@ -91,8 +91,10 @@ def main( standalone = False ):
     moose.reinit()
     moose.start( runtime )
 
-    assert( almostEq( 2.0 * moose.element( 'model/compartment/s' ).conc,
-        moose.element( '/model/endo/s' ).conc ) )
+    e1 = moose.element( 'model/compartment/s' )
+    e2 = moose.element( 'model/endo/s' )
+    assert almostEq(2.0 * e1.conc, e2.conc), \
+            "Expected %g, Got %g" % (e1.conc, e2.conc )
 
     moose.delete( '/model' )
 

@@ -103,18 +103,6 @@ static int innerFind( const string& path, vector< ObjId >& ret)
         Shell* s = reinterpret_cast< Shell* >( ObjId().data() );
         start = s->getCwe();
     }
-
-    /*
-    if ( path[0] == '/' ) {
-    // separateString puts in a blank first entry if the first char
-    // is a separator.
-    separateString( path.substr( 1 ) , names, "/" );
-    } else {
-    Shell* s = reinterpret_cast< Shell* >( Id.eref().data() );
-    separateString( path, names, "/" );
-    start = s->getCwe();
-    }
-    */
     return wildcardRelativeFind( start, names, 0, ret );
 }
 
@@ -141,7 +129,6 @@ int simpleWildcardFind( const string& path, vector< ObjId >& ret)
     unsigned int n = ret.size();
     vector< string > wildcards;
     Shell::chopString( path, wildcards, ',' );
-    // separateString( path, wildcards, "," );
     vector< string >::iterator i;
     for ( i = wildcards.begin(); i != wildcards.end(); ++i )
         innerFind( *i, ret );

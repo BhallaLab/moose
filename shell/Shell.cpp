@@ -348,6 +348,11 @@ void Shell::doStart( double runtime, bool notify )
         Streamer* pStreamer = reinterpret_cast<Streamer*>( itr->data( ) );
         pStreamer->cleanUp( );
     }
+
+    // Print the stats collected by profiling map.
+    char* p = getenv( "MOOSE_SHOW_SOLVER_PERF" );
+    if( p != NULL )
+        moose::printSolverProfMap( );
 }
 
 bool isDoingReinit()

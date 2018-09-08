@@ -28,198 +28,202 @@
  */
 class Dsolve: public ZombiePoolInterface
 {
-	public:
-		Dsolve();
-		~Dsolve();
+public:
+    Dsolve();
+    ~Dsolve();
 
-		//////////////////////////////////////////////////////////////////
-		// Field assignment stuff
-		//////////////////////////////////////////////////////////////////
-		unsigned int getNumVarPools() const;
+    //////////////////////////////////////////////////////////////////
+    // Field assignment stuff
+    //////////////////////////////////////////////////////////////////
+    unsigned int getNumVarPools() const;
 
-		void setStoich( Id id );
-		Id getStoich() const;
-		void setCompartment( Id id );
-		// Defined in base class. Id getCompartment() const;
-		void setDsolve( Id id ); /// Dummy, inherited but not used.
+    void setStoich( Id id );
+    Id getStoich() const;
+    void setCompartment( Id id );
+    // Defined in base class. Id getCompartment() const;
+    void setDsolve( Id id ); /// Dummy, inherited but not used.
 
-		void setPath( const Eref& e, string path );
-		string getPath( const Eref& e ) const;
+    void setPath( const Eref& e, string path );
+    string getPath( const Eref& e ) const;
 
-		unsigned int getNumVoxels() const;
-		/// Inherited virtual.
-		void setNumAllVoxels( unsigned int numVoxels );
+    unsigned int getNumVoxels() const;
+    /// Inherited virtual.
+    void setNumAllVoxels( unsigned int numVoxels );
 
-		vector< double > getNvec( unsigned int pool ) const;
-		void setNvec( unsigned int pool, vector< double > vec );
+    vector< double > getNvec( unsigned int pool ) const;
+    void setNvec( unsigned int pool, vector< double > vec );
 
-		/// LookupFied for examining cross-solver diffusion terms.
-		double getDiffVol1( unsigned int voxel ) const;
-		void setDiffVol1( unsigned int voxel, double vol );
-		double getDiffVol2( unsigned int voxel ) const;
-		void setDiffVol2( unsigned int voxel, double vol );
-		double getDiffScale( unsigned int voxel ) const;
-		void setDiffScale( unsigned int voxel, double scale );
+    /// LookupFied for examining cross-solver diffusion terms.
+    double getDiffVol1( unsigned int voxel ) const;
+    void setDiffVol1( unsigned int voxel, double vol );
+    double getDiffVol2( unsigned int voxel ) const;
+    void setDiffVol2( unsigned int voxel, double vol );
+    double getDiffScale( unsigned int voxel ) const;
+    void setDiffScale( unsigned int voxel, double scale );
 
-		//////////////////////////////////////////////////////////////////
-		// Dest Finfos
-		//////////////////////////////////////////////////////////////////
-		void process( const Eref& e, ProcPtr p );
-		void reinit( const Eref& e, ProcPtr p );
+    //////////////////////////////////////////////////////////////////
+    // Dest Finfos
+    //////////////////////////////////////////////////////////////////
+    void process( const Eref& e, ProcPtr p );
+    void reinit( const Eref& e, ProcPtr p );
 
-		//////////////////////////////////////////////////////////////////
-		void updateJunctions( double dt );
+    //////////////////////////////////////////////////////////////////
+    void updateJunctions( double dt );
 
-		/**
-		 * Builds junctions between Dsolves handling NeuroMesh, SpineMesh,
-		 * and PsdMesh. Must only be called from the one handling the
-		 * NeuroMesh.
-		 * These junctions handle diffusion between different meshes.
-		 * Note that a single NeuroMesh may contact many spines which are
-		 * all in a single SpineMesh. Likewise each spine has a single
-		 * PSD, but there are many spines in the SpineMesh and matching
-		 * psds in the PsdMesh. Finally, note that
-		 * there may be many molecules which diffuse across each diffusion
-		 * junction.
-		 */
-		void buildNeuroMeshJunctions( const Eref& e, Id spineD, Id psdD );
+    /**
+     * Builds junctions between Dsolves handling NeuroMesh, SpineMesh,
+     * and PsdMesh. Must only be called from the one handling the
+     * NeuroMesh.
+     * These junctions handle diffusion between different meshes.
+     * Note that a single NeuroMesh may contact many spines which are
+     * all in a single SpineMesh. Likewise each spine has a single
+     * PSD, but there are many spines in the SpineMesh and matching
+     * psds in the PsdMesh. Finally, note that
+     * there may be many molecules which diffuse across each diffusion
+     * junction.
+     */
+    void buildNeuroMeshJunctions( const Eref& e, Id spineD, Id psdD );
 
-		/**
-		 * Builds junctions between current Dsolve and another. For this
-		 * to work the respective meshes must be compatible.
-		 * These junctions handle diffusion between different meshes.
-		 */
-		void buildMeshJunctions( const Eref& e, Id other );
+    /**
+     * Builds junctions between current Dsolve and another. For this
+     * to work the respective meshes must be compatible.
+     * These junctions handle diffusion between different meshes.
+     */
+    void buildMeshJunctions( const Eref& e, Id other );
 
-		/**
-		 * buildMeshJunctions is the inner utility function for building
-		 * the junction between any specified pair of Dsolves.
-		 * Note that it builds the junction on the 'self' Dsolve.
-		 */
-		static void innerBuildMeshJunctions( Id self, Id other, 
-						bool isMembraneBound );
+    /**
+     * buildMeshJunctions is the inner utility function for building
+     * the junction between any specified pair of Dsolves.
+     * Note that it builds the junction on the 'self' Dsolve.
+     */
+    static void innerBuildMeshJunctions( Id self, Id other,
+                                         bool isMembraneBound );
 
-		/// Sets up map of matching pools for diffusion.
-		static void mapDiffPoolsBetweenDsolves( DiffJunction& jn, 
-						Id self, Id other);
+    /// Sets up map of matching pools for diffusion.
+    static void mapDiffPoolsBetweenDsolves( DiffJunction& jn,
+                                            Id self, Id other);
 
-		static void mapXfersBetweenDsolves(
-						vector< unsigned int >& srcPools, 
-						vector< unsigned int >& destPools,
-						Id src, Id dest );
-		static void mapChansBetweenDsolves( DiffJunction& jn, 
-						Id self, Id other);
+    static void mapXfersBetweenDsolves(
+        vector< unsigned int >& srcPools,
+        vector< unsigned int >& destPools,
+        Id src, Id dest );
+    static void mapChansBetweenDsolves( DiffJunction& jn,
+                                        Id self, Id other);
 
-		/**
-		 * Computes flux through a junction between diffusion solvers.
-		 * Most used at junctions on spines and PSDs, but can also be used
-		 * when a given diff solver is decomposed. At present the lookups
-		 * on the other diffusion solver assume that the data is on the
-		 * local node. Once this works well I can figure out how to do
-		 * across nodes.
-		 */
-		void calcJunction( const DiffJunction& jn, double dt );
-		//////////////////////////////////////////////////////////////////
-		// Inherited virtual funcs from ZombiePoolInterface
-		//////////////////////////////////////////////////////////////////
-		double getNinit( const Eref& e ) const;
-		void setNinit( const Eref& e, double value );
-		double getN( const Eref& e ) const;
-		void setN( const Eref& e, double value );
-		double getDiffConst( const Eref& e ) const;
-		void setDiffConst( const Eref& e, double value );
-		void setMotorConst( const Eref& e, double value );
+    /**
+     * Computes flux through a junction between diffusion solvers.
+     * Most used at junctions on spines and PSDs, but can also be used
+     * when a given diff solver is decomposed. At present the lookups
+     * on the other diffusion solver assume that the data is on the
+     * local node. Once this works well I can figure out how to do
+     * across nodes.
+     */
+    void calcJunction( const DiffJunction& jn, double dt );
+    
+    /* Multithreaded version */
+    void calcJunction_chunk( const size_t begin, const size_t end, double dt );
 
-		void setNumPools( unsigned int num );
-		unsigned int getNumPools() const;
-		unsigned int getNumLocalVoxels() const;
-		VoxelPoolsBase* pools( unsigned int i );
-		double volume( unsigned int i ) const;
+    //////////////////////////////////////////////////////////////////
+    // Inherited virtual funcs from ZombiePoolInterface
+    //////////////////////////////////////////////////////////////////
+    double getNinit( const Eref& e ) const;
+    void setNinit( const Eref& e, double value );
+    double getN( const Eref& e ) const;
+    void setN( const Eref& e, double value );
+    double getDiffConst( const Eref& e ) const;
+    void setDiffConst( const Eref& e, double value );
+    void setMotorConst( const Eref& e, double value );
 
-		void getBlock( vector< double >& values ) const;
-		void setBlock( const vector< double >& values );
-		void setPrev();
+    void setNumPools( unsigned int num );
+    unsigned int getNumPools() const;
+    unsigned int getNumLocalVoxels() const;
+    VoxelPoolsBase* pools( unsigned int i );
+    double volume( unsigned int i ) const;
 
-		// This one isn't used in Dsolve, but is defined as a dummy.
-		void setupCrossSolverReacs(
-					const map< Id, vector< Id > >& xr, Id otherStoich );
-		void setupCrossSolverReacVols(
-			const vector< vector< Id > >& subCompts,
-			const vector< vector< Id > >& prdCompts );
-		void filterCrossRateTerms( const vector< pair< Id, Id > >& xrt );
+    void getBlock( vector< double >& values ) const;
+    void setBlock( const vector< double >& values );
+    void setPrev();
 
-		// Do any updates following a volume or rate constant change.
-		void updateRateTerms( unsigned int index );
-		//////////////////////////////////////////////////////////////////
-		// Model traversal and building functions
-		//////////////////////////////////////////////////////////////////
-		unsigned int convertIdToPoolIndex( Id id ) const;
-		unsigned int convertIdToPoolIndex( const Eref& e ) const;
-		unsigned int getPoolIndex( const Eref& e ) const;
+    // This one isn't used in Dsolve, but is defined as a dummy.
+    void setupCrossSolverReacs(
+        const map< Id, vector< Id > >& xr, Id otherStoich );
+    void setupCrossSolverReacVols(
+        const vector< vector< Id > >& subCompts,
+        const vector< vector< Id > >& prdCompts );
+    void filterCrossRateTerms( const vector< pair< Id, Id > >& xrt );
 
-		/**
-		 * Fills in poolMap_ using elist of objects found when the
-		 * 'setPath' function is executed. temp is returned with the
-		 * list of PoolBase objects that exist on the path.
-		 */
-		void makePoolMapFromElist( const vector< ObjId >& elist,
-						vector< Id >& temp );
+    // Do any updates following a volume or rate constant change.
+    void updateRateTerms( unsigned int index );
+    //////////////////////////////////////////////////////////////////
+    // Model traversal and building functions
+    //////////////////////////////////////////////////////////////////
+    unsigned int convertIdToPoolIndex( Id id ) const;
+    unsigned int convertIdToPoolIndex( const Eref& e ) const;
+    unsigned int getPoolIndex( const Eref& e ) const;
 
-		/**
-		 * This key function does the work of setting up the Dsolve.
-		 * Should be called after the compartment has been attached to
-		 * the Dsolve, and the stoich is assigned.
-		 * Called during the setStoich function.
-		 */
-		void build( double dt );
-		void rebuildPools();
-		void calcJnDiff( const DiffJunction& jn, Dsolve* other, double dt );
-		void calcJnXfer( const DiffJunction& jn, 
-						const vector< unsigned int >& srcXfer, 
-						const vector< unsigned int >& destXfer, 
-						Dsolve* srcDsolve, Dsolve* destDsolve );
-		void calcJnChan( const DiffJunction& jn, Dsolve* other, double dt );
-		void calcOtherJnChan( const DiffJunction& jn, Dsolve* other, 
-						double dt );
-		void fillConcChans( const vector< ObjId >& chans );
+    /**
+     * Fills in poolMap_ using elist of objects found when the
+     * 'setPath' function is executed. temp is returned with the
+     * list of PoolBase objects that exist on the path.
+     */
+    void makePoolMapFromElist( const vector< ObjId >& elist,
+                               vector< Id >& temp );
 
-		/**
-		 * Utility func for debugging: Prints N_ matrix
-		 */
-		void print() const;
+    /**
+     * This key function does the work of setting up the Dsolve.
+     * Should be called after the compartment has been attached to
+     * the Dsolve, and the stoich is assigned.
+     * Called during the setStoich function.
+     */
+    void build( double dt );
+    void rebuildPools();
+    void calcJnDiff( const DiffJunction& jn, Dsolve* other, double dt );
+    void calcJnXfer( const DiffJunction& jn,
+                     const vector< unsigned int >& srcXfer,
+                     const vector< unsigned int >& destXfer,
+                     Dsolve* srcDsolve, Dsolve* destDsolve );
+    void calcJnChan( const DiffJunction& jn, Dsolve* other, double dt );
+    void calcOtherJnChan( const DiffJunction& jn, Dsolve* other,
+                          double dt );
+    void fillConcChans( const vector< ObjId >& chans );
 
-		//////////////////////////////////////////////////////////////////
-		static const Cinfo* initCinfo();
-	private:
+    /**
+     * Utility func for debugging: Prints N_ matrix
+     */
+    void print() const;
 
-		/// Path of pools managed by Dsolve, may include other classes too.
-		string path_;
+    //////////////////////////////////////////////////////////////////
+    static const Cinfo* initCinfo();
+private:
 
-		/// Timestep used by diffusion calculations.
-		double dt_;
+    /// Path of pools managed by Dsolve, may include other classes too.
+    string path_;
 
-		unsigned int numTotPools_;
-		unsigned int numLocalPools_;
-		unsigned int poolStartIndex_;
-		unsigned int numVoxels_;
+    /// Timestep used by diffusion calculations.
+    double dt_;
 
-		/// Internal vector, one for each pool species managed by Dsolve.
-		vector< DiffPoolVec > pools_;
-		/// Internal vector, one for each ConcChan managed by Dsolve.
-		vector< ConcChanInfo > channels_;
+    unsigned int numTotPools_;
+    unsigned int numLocalPools_;
+    unsigned int poolStartIndex_;
+    unsigned int numVoxels_;
 
-		/// smallest Id value for poolMap_
-		unsigned int poolMapStart_;
+    /// Internal vector, one for each pool species managed by Dsolve.
+    vector< DiffPoolVec > pools_;
+    /// Internal vector, one for each ConcChan managed by Dsolve.
+    vector< ConcChanInfo > channels_;
 
-		/// Looks up pool# from pool Id, using poolMapStart_ as offset.
-		vector< unsigned int > poolMap_;
+    /// smallest Id value for poolMap_
+    unsigned int poolMapStart_;
 
-		/**
-		 * Lists all the diffusion junctions managed by this Dsolve.
-		 * Each junction entry provides the info needed to do the
-		 * numerical integration for flux between the Dsolves.
-		 */
-		vector< DiffJunction > junctions_;
+    /// Looks up pool# from pool Id, using poolMapStart_ as offset.
+    vector< unsigned int > poolMap_;
+
+    /**
+     * Lists all the diffusion junctions managed by this Dsolve.
+     * Each junction entry provides the info needed to do the
+     * numerical integration for flux between the Dsolves.
+     */
+    vector< DiffJunction > junctions_;
 };
 
 

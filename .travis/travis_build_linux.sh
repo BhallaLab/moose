@@ -44,7 +44,7 @@ echo "Currently in `pwd`"
 (
     mkdir -p _GSL_BUILD && cd _GSL_BUILD
     cmake -DDEBUG=ON -DPYTHON_EXECUTABLE="$PYTHON2" ..
-    $MAKE && ctest --output-on-failure -j4
+    $MAKE && ctest --output-on-failure 
     sudo make install && cd  /tmp
     $PYTHON2 -c 'import moose;print(moose.__file__);print(moose.version())'
 )
@@ -53,7 +53,7 @@ echo "Currently in `pwd`"
     # Now with boost.
     mkdir -p _BOOST_BUILD && cd _BOOST_BUILD && \
         cmake -DWITH_BOOST_ODE=ON -DDEBUG=ON -DPYTHON_EXECUTABLE="$PYTHON2" ..
-    $MAKE && ctest --output-on-failure -j4
+    $MAKE && ctest --output-on-failure 
 )
 
 # This is only applicable on linux build.
@@ -63,13 +63,13 @@ if type $PYTHON3 > /dev/null; then
     sudo apt-get install -qq python3-networkx || echo "Error with apt"
     (
         mkdir -p _GSL_BUILD2 && cd _GSL_BUILD2 && \
-            cmake -DDEBUG=ON -DPYTHON_EXECUTABLE="$PYTHON3" ..
-        $MAKE && ctest --output-on-failure -j4
+            cmake -DPYTHON_EXECUTABLE="$PYTHON3" ..
+        $MAKE && ctest --output-on-failure 
     )
     (
         mkdir -p _BOOST_BUILD2 && cd _BOOST_BUILD2 && \
-            cmake -DWITH_BOOST_ODE=ON -DDEBUG=ON -DPYTHON_EXECUTABLE="$PYTHON3" ..
-        $MAKE && ctest --output-on-failure -j4
+            cmake -DWITH_BOOST_ODE=ON -DPYTHON_EXECUTABLE="$PYTHON3" ..
+        $MAKE && ctest --output-on-failure 
     )
     echo "All done"
 else

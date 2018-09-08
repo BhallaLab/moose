@@ -12,7 +12,7 @@
 import math
 import numpy as np
 import moose
-import fixXreacs
+import moose.fixXreacs as fixXreacs
 
 def makeModel():
     # create container for model
