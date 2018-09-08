@@ -1,6 +1,5 @@
 /**********************************************************************
 ** This program is part of 'MOOSE', the
-#include <boost/numeric/odeint.hpp>
 ** Messaging Object Oriented Simulation Environment.
 **           Copyright (C) 2003-2014 Upinder S. Bhalla. and NCBS
 ** It is made available under the terms of the
@@ -55,11 +54,7 @@ public:
 #ifdef USE_GSL      /* -----  not USE_BOOST_ODE  ----- */
     static int gslFunc( double t, const double* y, double *dydt, void* params);
 #elif  USE_BOOST_ODE
-    static void evalRates( const vector_type_& y
-                ,  vector_type_& dydt
-                ,  const double t
-                , VoxelPools* vp
-                );
+    static void evalRates( VoxelPools* vp, const vector_type_& y, vector_type_& dydt );
 #endif     /* -----  not USE_BOOST_ODE  ----- */
 
     //////////////////////////////////////////////////////////////////
@@ -102,9 +97,11 @@ private:
 #ifdef USE_GSL
     gsl_odeiv2_driver* driver_;
     gsl_odeiv2_system sys_;
-#elif USE_BOOST_ODE
-    BoostSys sys_;
 #endif
+
+    double absTol_;
+    double relTol_;
+    string method_;
 
 };
 

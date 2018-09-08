@@ -11,9 +11,11 @@ add_definitions(-Wall
     #-Wno-return-type-c-linkage
     -Wno-unused-variable
     -Wno-unused-function
-    -Wno-unused-local-typedefs
     #-Wno-unused-private-field
     )
+if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+    add_definitions( -Wno-unused-local-typedefs )
+endif()
 
 
 add_definitions(-fPIC)
@@ -34,9 +36,9 @@ if(COMPILER_SUPPORTS_CXX11)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
     add_definitions( -DENABLE_CPP11 )
     if(APPLE)
-			  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++" )
-				message(STATUS "NOTE: Making clang to inline more aggresively" )
-				add_definitions( -mllvm -inline-threshold=1000 )
+        #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++" )
+        message(STATUS "NOTE: Making clang to inline more aggresively" )
+        add_definitions( -mllvm -inline-threshold=1000 )
     endif(APPLE)
 else(COMPILER_SUPPORTS_CXX11)
     add_definitions( -DBOOST_NO_CXX11_SCOPED_ENUMS -DBOOST_NO_SCOPED_ENUMS )

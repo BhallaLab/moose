@@ -31,7 +31,7 @@ import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import moose
 print( '[INFO ] Using moose from %s, %s' % (moose.__file__, moose.version()) )
-import fixXreacs
+import moose.fixXreacs as fixXreacs
 
 def makeModel():
     # create container for model

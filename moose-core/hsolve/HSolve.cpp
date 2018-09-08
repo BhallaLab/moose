@@ -7,7 +7,8 @@
 ** See the file COPYING.LIB for the full notice.
 **********************************************************************/
 
-#include "header.h"
+#include "../basecode/header.h"
+#include "../basecode/global.h"
 #include "ElementValueFinfo.h"
 #include "HSolveStruct.h"
 #include "HinesMatrix.h"
@@ -26,6 +27,12 @@
 #include "../biophysics/CaConc.h"
 #include "ZombieHHChannel.h"
 #include "../shell/Shell.h"
+
+#include <chrono>
+using namespace std::chrono;
+
+// defined in global.h 
+extern map<string, double> solverProfMap;
 
 const Cinfo* HSolve::initCinfo()
 {
@@ -190,12 +197,20 @@ static const Cinfo* hsolveCinfo = HSolve::initCinfo();
 HSolve::HSolve()
     : dt_( 50e-6 )
 {
-    ;
 }
 
 HSolve::~HSolve()
 {
     unzombify();
+#if 0
+    char* p = getenv( "MOOSE_SHOW_SOLVER_PERF" );
+    if( p != NULL )
+    {
+        cout << "Info: HSolve took " << totalTime_ << " seconds and took " << numSteps_
+             << " steps." << endl;
+
+    }
+#endif
 }
 
 
@@ -205,7 +220,10 @@ HSolve::~HSolve()
 
 void HSolve::process( const Eref& hsolve, ProcPtr p )
 {
+    t0_ = high_resolution_clock::now();
     this->HSolveActive::step( p );
+    t1_ = high_resolution_clock::now();
+    addSolverProf( "HSolve", duration_cast<duration<double>>(t1_ - t0_).count(), 1 );
 }
 
 void HSolve::reinit( const Eref& hsolve, ProcPtr p )

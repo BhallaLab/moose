@@ -9,9 +9,9 @@
 
 #include "header.h"
 #ifndef WIN32
-	#include <sys/time.h>
+#include <sys/time.h>
 #else
-	#include <time.h>
+#include <time.h>
 #endif
 #include <math.h>
 #include <queue>
@@ -66,10 +66,10 @@ extern void destroyMsgManagers();
 // void regressionTests();
 #endif
 extern void speedTestMultiNodeIntFireNetwork(
-	unsigned int size, unsigned int runsteps );
+    unsigned int size, unsigned int runsteps );
 
 #ifdef USE_SMOLDYN
-	extern void testSmoldyn();
+extern void testSmoldyn();
 #endif
 // bool benchmarkTests( int argc, char** argv );
 
@@ -81,44 +81,44 @@ extern void mooseBenchmarks( unsigned int option );
 
 unsigned int getNumCores()
 {
-	unsigned int numCPU = 0;
+    unsigned int numCPU = 0;
 #ifdef WIN_32
-	SYSTEM_INFO sysinfo;
-	GetSystemInfo( &sysinfo );
+    SYSTEM_INFO sysinfo;
+    GetSystemInfo( &sysinfo );
 
-	numCPU = sysinfo.dwNumberOfProcessors;
+    numCPU = sysinfo.dwNumberOfProcessors;
 #endif
 
 #ifdef LINUX
-	numCPU = sysconf( _SC_NPROCESSORS_ONLN );
+    numCPU = sysconf( _SC_NPROCESSORS_ONLN );
 #endif
 
 #ifdef MACOSX
-	int mib[4];
-	size_t len = sizeof(numCPU);
+    int mib[4];
+    size_t len = sizeof(numCPU);
 
-	/* set the mib for hw.ncpu */
-	mib[0] = CTL_HW;
-	mib[1] = HW_AVAILCPU;  // alternatively, try HW_NCPU;
+    /* set the mib for hw.ncpu */
+    mib[0] = CTL_HW;
+    mib[1] = HW_AVAILCPU;  // alternatively, try HW_NCPU;
 
-	/* get the number of CPUs from the system */
-	sysctl(mib, 2, &numCPU, &len, NULL, 0);
+    /* get the number of CPUs from the system */
+    sysctl(mib, 2, &numCPU, &len, NULL, 0);
 
-	if( numCPU < 1 )
-	{
-		mib[1] = HW_NCPU;
-		sysctl( mib, 2, &numCPU, &len, NULL, 0 );
-	}
+    if( numCPU < 1 )
+    {
+        mib[1] = HW_NCPU;
+        sysctl( mib, 2, &numCPU, &len, NULL, 0 );
+    }
 #endif
-	if ( numCPU < 1 )
-	{
-#ifndef QUIET_MODE
-		cout << "No CPU information available. Assuming single core." << endl;
-#else
+
+#if 0
+    if ( numCPU < 1 )
+    {
+        cout << "No CPU information available. Assuming single core." << endl;
+        numCPU = 1;
+    }
 #endif
-		numCPU = 1;
-	}
-	return numCPU;
+    return numCPU;
 }
 
 bool quitFlag = 0;
@@ -127,138 +127,141 @@ bool quitFlag = 0;
 
 void checkChildren( Id parent, const string& info )
 {
-	vector< Id > ret;
-	Neutral::children( parent.eref(), ret );
-	cout << info << " checkChildren of " <<
-			parent.element()->getName() << ": " <<
-		ret.size() << " children\n";
-	for ( vector< Id >::iterator i = ret.begin(); i != ret.end(); ++i )
-	{
-		cout << i->element()->getName() << endl;
-	}
+    vector< Id > ret;
+    Neutral::children( parent.eref(), ret );
+    cout << info << " checkChildren of " <<
+         parent.element()->getName() << ": " <<
+         ret.size() << " children\n";
+    for ( vector< Id >::iterator i = ret.begin(); i != ret.end(); ++i )
+    {
+        cout << i->element()->getName() << endl;
+    }
 }
 
 Id init( int argc, char** argv, bool& doUnitTests, bool& doRegressionTests,
-	  unsigned int& benchmark )
+         unsigned int& benchmark )
 {
-	unsigned int numCores = getNumCores();
-	int numNodes = 1;
-	int myNode = 0;
-	bool isInfinite = 0;
-	int opt;
-	benchmark = 0; // Default, means don't do any benchmarks.
-	Cinfo::rebuildOpIndex();
+    unsigned int numCores = getNumCores();
+    int numNodes = 1;
+    int myNode = 0;
+    bool isInfinite = 0;
+    int opt;
+    benchmark = 0; // Default, means don't do any benchmarks.
+    Cinfo::rebuildOpIndex();
 #ifdef USE_MPI
-	/*
-	// OpenMPI does not use argc or argv.
-	// unsigned int temp_argc = 1;
-	int provided;
-	MPI_Init_thread( &argc, &argv, MPI_THREAD_SERIALIZED, &provided );
-	*/
-	MPI_Init( &argc, &argv );
+    /*
+    // OpenMPI does not use argc or argv.
+    // unsigned int temp_argc = 1;
+    int provided;
+    MPI_Init_thread( &argc, &argv, MPI_THREAD_SERIALIZED, &provided );
+    */
+    MPI_Init( &argc, &argv );
 
-	MPI_Comm_size( MPI_COMM_WORLD, &numNodes );
-	MPI_Comm_rank( MPI_COMM_WORLD, &myNode );
-	/*
-	if ( provided < MPI_THREAD_SERIALIZED && myNode == 0 ) {
-		cout << "Warning: This MPI implementation does not like multithreading: " << provided << "\n";
-	}
-	*/
-	// myNode = MPI::COMM_WORLD.Get_rank();
+    MPI_Comm_size( MPI_COMM_WORLD, &numNodes );
+    MPI_Comm_rank( MPI_COMM_WORLD, &myNode );
+    /*
+    if ( provided < MPI_THREAD_SERIALIZED && myNode == 0 ) {
+    	cout << "Warning: This MPI implementation does not like multithreading: " << provided << "\n";
+    }
+    */
+    // myNode = MPI::COMM_WORLD.Get_rank();
 #endif
-	/**
-	 * Here we allow the user to override the automatic identification
-	 * of processor configuration
-	 */
-	while ( ( opt = getopt( argc, argv, "hiqurn:b:B:" ) ) != -1 ) {
-		switch ( opt ) {
-			case 'i' : // infinite loop, used for multinode debugging, to give gdb something to attach to.
-				isInfinite = 1;
-				break;
-			case 'n': // Multiple nodes
-			  numNodes = (unsigned int)atoi( optarg );
-				break;
-			case 'b': // Benchmark:
-				benchmark = atoi( optarg );
-				break;
-			case 'B': // Benchmark plus dump data: handle later.
-				break;
-			case 'u': // Do unit tests, pass back.
-				doUnitTests = 1;
-				break;
-			case 'r': // Do regression tests: pass back
-				doRegressionTests = 1;
-				break;
-			case 'q': // quit immediately after completion.
-				quitFlag = 1;
-				break;
-			case 'h': // help
-			default:
-				cout << "Usage: moose -help -infiniteLoop -unit_tests -regression_tests -quit -n numNodes -benchmark [ksolve intFire hhNet msg_<msgType>_<size>]\n";
-
-				exit( 1 );
-		}
-	}
-	if ( myNode == 0 )
+    /**
+     * Here we allow the user to override the automatic identification
+     * of processor configuration
+     */
+    while ( ( opt = getopt( argc, argv, "hiqurn:b:B:" ) ) != -1 )
+    {
+        switch ( opt )
         {
-#ifndef QUIET_MODE
-		cout << "on node " << myNode << ", numNodes = "
-                    << numNodes << ", numCores = " << numCores << endl;
-#endif
+        case 'i' : // infinite loop, used for multinode debugging, to give gdb something to attach to.
+            isInfinite = 1;
+            break;
+        case 'n': // Multiple nodes
+            numNodes = (unsigned int)atoi( optarg );
+            break;
+        case 'b': // Benchmark:
+            benchmark = atoi( optarg );
+            break;
+        case 'B': // Benchmark plus dump data: handle later.
+            break;
+        case 'u': // Do unit tests, pass back.
+            doUnitTests = 1;
+            break;
+        case 'r': // Do regression tests: pass back
+            doRegressionTests = 1;
+            break;
+        case 'q': // quit immediately after completion.
+            quitFlag = 1;
+            break;
+        case 'h': // help
+        default:
+            cout << "Usage: moose -help -infiniteLoop -unit_tests -regression_tests -quit -n numNodes -benchmark [ksolve intFire hhNet msg_<msgType>_<size>]\n";
+
+            exit( 1 );
         }
+    }
+    if ( myNode == 0 )
+    {
 
-	Id shellId;
-	Element* shelle =
-		new GlobalDataElement( shellId, Shell::initCinfo(), "root", 1 );
+#if 0
+        cout << "on node " << myNode << ", numNodes = "
+             << numNodes << ", numCores = " << numCores << endl;
+#endif
+    }
 
-	Id clockId = Id::nextId();
-	assert( clockId.value() == 1 );
-	Id classMasterId = Id::nextId();
-	Id postMasterId = Id::nextId();
+    Id shellId;
+    Element* shelle =
+        new GlobalDataElement( shellId, Shell::initCinfo(), "root", 1 );
 
-	Shell* s = reinterpret_cast< Shell* >( shellId.eref().data() );
-	s->setShellElement( shelle );
-	s->setHardware( numCores, numNodes, myNode );
-	s->loadBalance();
+    Id clockId = Id::nextId();
+    assert( clockId.value() == 1 );
+    Id classMasterId = Id::nextId();
+    Id postMasterId = Id::nextId();
 
-	/// Sets up the Elements that represent each class of Msg.
-	unsigned int numMsg = Msg::initMsgManagers();
+    Shell* s = reinterpret_cast< Shell* >( shellId.eref().data() );
+    s->setShellElement( shelle );
+    s->setHardware( numCores, numNodes, myNode );
+    s->loadBalance();
 
-	new GlobalDataElement( clockId, Clock::initCinfo(), "clock", 1 );
-	new GlobalDataElement( classMasterId, Neutral::initCinfo(), "classes", 1);
-	new GlobalDataElement( postMasterId, PostMaster::initCinfo(), "postmaster", 1 );
+    /// Sets up the Elements that represent each class of Msg.
+    unsigned int numMsg = Msg::initMsgManagers();
 
-	assert ( shellId == Id() );
-	assert( clockId == Id( 1 ) );
-	assert( classMasterId == Id( 2 ) );
-	assert( postMasterId == Id( 3 ) );
+    new GlobalDataElement( clockId, Clock::initCinfo(), "clock", 1 );
+    new GlobalDataElement( classMasterId, Neutral::initCinfo(), "classes", 1);
+    new GlobalDataElement( postMasterId, PostMaster::initCinfo(), "postmaster", 1 );
 
-
-
-	// s->connectMasterMsg();
-
-	Shell::adopt( shellId, clockId, numMsg++ );
-	Shell::adopt( shellId, classMasterId, numMsg++ );
-	Shell::adopt( shellId, postMasterId, numMsg++ );
-
-	assert( numMsg == 10 ); // Must be the same on all nodes.
-
-	Cinfo::makeCinfoElements( classMasterId );
+    assert ( shellId == Id() );
+    assert( clockId == Id( 1 ) );
+    assert( classMasterId == Id( 2 ) );
+    assert( postMasterId == Id( 3 ) );
 
 
-	// This will be initialized within the Process loop, and better there
-	// as it flags attempts to call the Reduce operations before ProcessLoop
-	// Qinfo::clearReduceQ( numCores ); // Initialize the ReduceQ entry.
+
+    // s->connectMasterMsg();
+
+    Shell::adopt( shellId, clockId, numMsg++ );
+    Shell::adopt( shellId, classMasterId, numMsg++ );
+    Shell::adopt( shellId, postMasterId, numMsg++ );
+
+    assert( numMsg == 10 ); // Must be the same on all nodes.
+
+    Cinfo::makeCinfoElements( classMasterId );
 
 
-	// SetGet::setShell();
-	// Msg* m = new OneToOneMsg( shelle, shelle );
-	// assert ( m != 0 );
+    // This will be initialized within the Process loop, and better there
+    // as it flags attempts to call the Reduce operations before ProcessLoop
+    // Qinfo::clearReduceQ( numCores ); // Initialize the ReduceQ entry.
 
-	while ( isInfinite ) // busy loop for debugging under gdb and MPI.
-		;
 
-	return shellId;
+    // SetGet::setShell();
+    // Msg* m = new OneToOneMsg( shelle, shelle );
+    // assert ( m != 0 );
+
+    while ( isInfinite ) // busy loop for debugging under gdb and MPI.
+        ;
+
+    return shellId;
 }
 
 /**
@@ -270,28 +273,29 @@ Id init( int argc, char** argv, bool& doUnitTests, bool& doRegressionTests,
 void nonMpiTests( Shell* s )
 {
 #ifdef DO_UNIT_TESTS
-	if ( Shell::myNode() == 0 ) {
-		unsigned int numNodes = s->numNodes();
-		unsigned int numCores = s->numCores();
-		if ( numCores > 0 )
-		s->setHardware( 1, 1, 0 );
-		testAsync();
-		testMsg();
-		testShell();
-		testScheduling();
-		testBuiltins();
-		// testKinetics();
-		// testKineticSolvers();
-		testBiophysics();
-		// testHSolve();
-		// testGeom();
-		// testMesh();
-		// testSigNeur();
+    if ( Shell::myNode() == 0 )
+    {
+        unsigned int numNodes = s->numNodes();
+        unsigned int numCores = s->numCores();
+        if ( numCores > 0 )
+            s->setHardware( 1, 1, 0 );
+        testAsync();
+        testMsg();
+        testShell();
+        testScheduling();
+        testBuiltins();
+        // testKinetics();
+        // testKineticSolvers();
+        testBiophysics();
+        // testHSolve();
+        // testGeom();
+        // testMesh();
+        // testSigNeur();
 #ifdef USE_SMOLDYN
-		// testSmoldyn();
+        // testSmoldyn();
 #endif
-		s->setHardware( numCores, numNodes, 0 );
-	}
+        s->setHardware( numCores, numNodes, 0 );
+    }
 #endif
 }
 
@@ -302,13 +306,13 @@ void nonMpiTests( Shell* s )
 void processTests( Shell* s )
 {
 #ifdef DO_UNIT_TESTS
-	testSchedulingProcess();
-	testBuiltinsProcess();
-	// testKineticsProcess();
-	testBiophysicsProcess();
-	// testKineticSolversProcess();
-	// testSimManager();
-	// testSigNeurProcess();
+    testSchedulingProcess();
+    testBuiltinsProcess();
+    // testKineticsProcess();
+    testBiophysicsProcess();
+    // testKineticSolversProcess();
+    // testSimManager();
+    // testSigNeurProcess();
 #endif
 }
 
@@ -319,13 +323,13 @@ void processTests( Shell* s )
 void mpiTests()
 {
 #ifdef DO_UNIT_TESTS
-		testMpiMsg();
-		cout << "." << flush;
-		testMpiShell();
-		cout << "." << flush;
-		testMpiBuiltins();
-		cout << "." << flush;
-		testMpiScheduling();
-		cout << "." << flush;
+    testMpiMsg();
+    cout << "." << flush;
+    testMpiShell();
+    cout << "." << flush;
+    testMpiBuiltins();
+    cout << "." << flush;
+    testMpiScheduling();
+    cout << "." << flush;
 #endif
 }

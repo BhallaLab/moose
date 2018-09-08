@@ -164,8 +164,8 @@ int verbosity = 1;
 // static int isSingleThreaded = 0;
 static int isInfinite = 0;
 static unsigned int numNodes = 1;
-static unsigned int numCores = 1;
-static unsigned int myNode = 0;
+// static unsigned int numCores = 1;
+// static unsigned int myNode = 0;
 // static unsigned int numProcessThreads = 0;
 static int doUnitTests = 0;
 static int doRegressionTests = 0;
@@ -899,6 +899,7 @@ vector <string> setup_runtime_env()
             args.push_back("-i");
         }
     }
+#if 0
     it = argmap.find("NUMNODES");
     if (it != argmap.end())
     {
@@ -917,6 +918,7 @@ vector <string> setup_runtime_env()
     //     args.push_back("-t");
     //     args.push_back(it->second);
     // }
+#endif
     it = argmap.find("QUIT");
     if (it != argmap.end())
     {
@@ -1720,14 +1722,6 @@ PyObject * moose_start(PyObject * dummy, PyObject * args )
     sigHandler.sa_flags = 0;
     sigaction(SIGINT, &sigHandler, NULL);
 
-#if 0
-    // NOTE: (dilawar) Does not know if Py_BEGIN_ALLOW_THREADS is
-    // neccessary.
-    // Py_BEGIN_ALLOW_THREADS
-    SHELLPTR->doStart(runtime);
-    // Py_END_ALLOW_THREADS
-    Py_RETURN_NONE;
-#endif
     SHELLPTR->doStart( runtime, notify );
     Py_RETURN_NONE;
 
@@ -3199,10 +3193,10 @@ PyMODINIT_FUNC MODINIT(_moose)
     PyModule_AddObject(moose_module, "DestField", (PyObject*)&moose_DestField);
 
     // PyModule_AddIntConstant(moose_module, "SINGLETHREADED", isSingleThreaded);
-    PyModule_AddIntConstant(moose_module, "NUMCORES", numCores);
-    PyModule_AddIntConstant(moose_module, "NUMNODES", numNodes);
+    // PyModule_AddIntConstant(moose_module, "NUMCORES", numCores);
+    // PyModule_AddIntConstant(moose_module, "NUMNODES", numNodes);
     // PyModule_AddIntConstant(moose_module, "NUMPTHREADS", numProcessThreads);
-    PyModule_AddIntConstant(moose_module, "MYNODE", myNode);
+    // PyModule_AddIntConstant(moose_module, "MYNODE", myNode);
     PyModule_AddIntConstant(moose_module, "INFINITE", isInfinite);
     PyModule_AddStringConstant(moose_module, "__version__", SHELLPTR->doVersion().c_str());
     PyModule_AddStringConstant(moose_module, "VERSION", SHELLPTR->doVersion().c_str());
@@ -3233,13 +3227,11 @@ PyMODINIT_FUNC MODINIT(_moose)
        );
 
     if (doUnitTests)
-    {
         test_moosemodule();
-    }
 #ifdef PY3K
     return moose_module;
 #endif
-} //! init_moose
+} 
 
 
 //////////////////////////////////////////////

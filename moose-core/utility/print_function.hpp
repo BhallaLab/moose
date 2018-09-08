@@ -59,7 +59,7 @@ using namespace std;
  */
 /* ----------------------------------------------------------------------------*/
 #define __FILENAME__ (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILE__)
-#ifdef NDEBUG
+#ifndef NDEBUG
 #define MOOSE_DEBUG( a ) { \
     stringstream ss; ss << a; \
     cout << "DEBUG: " << __FILENAME__ << ":" << __LINE__ << "| " << ss.str(); \

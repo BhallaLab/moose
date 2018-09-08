@@ -269,8 +269,6 @@ void GraupnerBrunel2012CaPlasticitySynHandler::reinitSeed( void )
 
     if( 0 == seed_ )
         seed_ = rd_();
-
-    MOOSE_DEBUG( "Seed is set to " << seed_ );
     rng_.seed( seed_ );
 }
 

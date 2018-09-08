@@ -3,7 +3,7 @@ import os
 import sys
 import moose
 import numpy as np
-import fixXreacs
+import moose.fixXreacs as fixXreacs
 
 def countCrossings( plot, thresh ):
     vec = moose.element( plot ).vector

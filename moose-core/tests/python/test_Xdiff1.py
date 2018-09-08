@@ -29,7 +29,7 @@ import math
 import numpy as np
 import moose
 print( '[INFO] Using moose from %s, %s' % (moose.__file__, moose.version()) )
-import fixXreacs
+import moose.fixXreacs as fixXreacs
 
 diffConst = 1e-16
 
