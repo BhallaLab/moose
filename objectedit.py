@@ -6,7 +6,7 @@
 # Maintainer:
 # Created: Wed Jun 30 11:18:34 2010 (+0530)
 # Version:
-# Last-Updated: Tue Jun 19 11:05:59 2017 (+0530)
+# Last-Updated: Mon Sep 10 11:05:59 2017 (+0530)
 #           By: Harsha
 #     Update #: 
 # URL:
@@ -43,6 +43,7 @@
 # Fri May 17 23:45:59 2017 (+0530) - Harsha added, notes header,
 # Kd is calculated for the second order reaction and value is displayed
 # Tue Jun 18 12:10:54 IST 2018 - Harsha now group boundary color can be editable from the object editor
+# Mon Sep 10 16:21:00 IST 2018 - When name is edited, the editorTitle gets updated
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -522,7 +523,7 @@ class ObjectEditDockWidget(QtGui.QDockWidget):
 
     def emitObjectNameChanged(self, mobj):
         self.objectNameChanged.emit(mobj)
-
+        self.setWindowTitle('Edit:%s'%(mobj.path))
 def main():
     app = QtGui.QApplication(sys.argv)
     mainwin = QtGui.QMainWindow()

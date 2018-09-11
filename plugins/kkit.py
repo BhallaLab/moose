@@ -6,11 +6,13 @@ __version__     =   "1.0.0"
 __maintainer__  =   "HarshaRani"
 __email__       =   "hrani@ncbs.res.in"
 __status__      =   "Development"
-__updated__     =   "Jun 19 2018"
+__updated__     =   "Sep 7 2018"
 
 #Change log:
-# 2018 Jun 18: update the color of the group from objecteditor
-
+# 2018 
+#Jun 18: update the color of the group from objecteditor
+#Sep 07: in positionChange all the group's boundingRect is calculated
+#        and when group is moved the children's position are stored
 #code
 
 import math
@@ -346,7 +348,7 @@ class  KineticsWidget(EditorWidgetBase):
         self.positionInfoExist  = True
         self.defaultComptsize   = 5
         self.srcdesConnection   = {}
-        self.meshEntry          = {}        
+        self.meshEntry          = {} 
         self.mooseId_GObj       = {}
         self.qGraCompt          = {}
         self.qGraGrp            = {}
@@ -877,35 +879,35 @@ class  KineticsWidget(EditorWidgetBase):
                             self.updateArrow(rectChilditem)
         elif element(mooseObject).className == 'Neutral':
             for k,v in self.qGraGrp.items():
-                if k.path == element(mooseObject).path:
-                    for grpChilditem in v.childItems():
-                        if isinstance(grpChilditem, KineticsDisplayItem):
-                            if moose.exists(grpChilditem.mobj.path):
-                                iInfo = grpChilditem.mobj.path+'/info'
-                                anno = moose.Annotator(iInfo)
-                                if moose.Annotator(self.plugin.modelRoot+'/info').modeltype == 'kkit':
-                                    x = grpChilditem.scenePos().x()/self.defaultScenewidth
-                                    y = grpChilditem.scenePos().y()/self.defaultSceneheight
-                                else:
-                                    x = grpChilditem.scenePos().x()
-                                    y = grpChilditem.scenePos().y()
-                                anno.x = x
-                                anno.y = y
-                                
-                            if isinstance(moose.element(grpChilditem.mobj.path),PoolBase):
-                                t = moose.element(grpChilditem.mobj.path)
-                                moose.element(t).children
-                                for items in moose.element(t).children:
-                                    if isinstance(moose.element(items),Function):
-                                        test = moose.element(items.path+'/x')
-                                        for i in moose.element(test).neighbors['input']:
-                                            j = self.mooseId_GObj[moose.element(i)]
-                                            self.updateArrow(j)
-                            self.updateArrow(grpChilditem)
-                            # grpcompt = self.qGraCompt[self.objPar[k]]
-                            # rectcompt = calculateChildBoundingRect(grpcompt)
-                    rectgrp = calculateChildBoundingRect(v)
-                    v.setRect(rectgrp.x()-10,rectgrp.y()-10,(rectgrp.width()+20),(rectgrp.height()+20))
+                for grpChilditem in v.childItems():
+                    if isinstance(grpChilditem, KineticsDisplayItem):
+                        if moose.exists(grpChilditem.mobj.path):
+                            iInfo = grpChilditem.mobj.path+'/info'
+                            anno = moose.Annotator(iInfo)
+                            #storing scenePos back to annotator file for further use
+                            if moose.Annotator(self.plugin.modelRoot+'/info').modeltype == 'kkit':
+                                x = grpChilditem.scenePos().x()/self.defaultScenewidth
+                                y = grpChilditem.scenePos().y()/self.defaultSceneheight
+                            else:
+                                x = grpChilditem.scenePos().x()
+                                y = grpChilditem.scenePos().y()
+                            anno.x = x
+                            anno.y = y
+                            
+                        if isinstance(moose.element(grpChilditem.mobj.path),PoolBase):
+                            t = moose.element(grpChilditem.mobj.path)
+                            moose.element(t).children
+                            for items in moose.element(t).children:
+                                if isinstance(moose.element(items),Function):
+                                    test = moose.element(items.path+'/x')
+                                    for i in moose.element(test).neighbors['input']:
+                                        j = self.mooseId_GObj[moose.element(i)]
+                                        self.updateArrow(j)
+                        self.updateArrow(grpChilditem)
+                        # grpcompt = self.qGraCompt[self.objPar[k]]
+                        # rectcompt = calculateChildBoundingRect(grpcompt)
+                rectgrp = calculateChildBoundingRect(v)
+                v.setRect(rectgrp.x()-10,rectgrp.y()-10,(rectgrp.width()+20),(rectgrp.height()+20))
             
         else:
             mobj = self.mooseId_GObj[element(mooseObject)]
