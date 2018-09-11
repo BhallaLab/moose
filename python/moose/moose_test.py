@@ -29,9 +29,7 @@ import time
 logging.basicConfig(
         level=logging.DEBUG,
         format='%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
-        datefmt='%m-%d %H:%M',
-        filename='tests.log',
-        filemode='w'
+        datefmt='%m-%d %H:%M'
         )
 console = logging.StreamHandler()
 console.setLevel(logging.WARNING)
@@ -182,7 +180,7 @@ def test_all( timeout, **kwargs ):
     _logger.info( 'Total %d valid tests found' % len( scripts ) )
     total_ = len( scripts )
     for i, s in enumerate( scripts ):
-        _logger.info( 'Running test : %s' % s )
+        _logger.info( 'Running test (timeout=%s) : %s' % (timeout,s))
         run_test(i, s, timeout, **kwargs )
 
 

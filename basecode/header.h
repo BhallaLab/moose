@@ -20,20 +20,11 @@
 #include <iostream>
 #include <sstream>
 #include <typeinfo> // used in Conv.h to extract compiler independent typeid
-#include <climits> // Required for g++ 4.3.2
-#include <cstring> // Required for g++ 4.3.2
-#include <cstdlib> // Required for g++ 4.3.2
 
-// Used for INT_MAX and UINT_MAX, but may be done within the compiler
-// #include <limits.h>
-//
 #include <cassert>
 
 using namespace std;
 
-#ifndef MOOSE_VERSION
-#define MOOSE_VERSION "3.0.2"
-#endif
 
 /**
  * Looks up and uniquely identifies functions, on a per-Cinfo basis.

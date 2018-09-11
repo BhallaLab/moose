@@ -27,20 +27,20 @@ from distutils.core import setup
 script_dir = os.path.dirname( os.path.abspath( __file__ ) )
 
 # Version file must be available. It MUST be written by cmake. Or create
-# manually.
+# it manually before running this script.
 with open( os.path.join( script_dir, 'VERSION'), 'r' ) as f:
     version = f.read( )
 print( 'Got %s from VERSION file' % version )
-
 
 # importlib is available only for python3.
 suffix = '.so'
 try:
     import importlib.machinery
-    suffix = importlib.machinery.EXTENSION_SUFFIXES[0].split('.')[-1]
+    suffix = importlib.machinery.EXTENSION_SUFFIXES[0]
 except Exception as e:
     print( '[WARN] Failed to determine importlib suffix' )
     suffix = '.so'
+print( '[INFO] Suffix for python SO: %s' % suffix )
 
 setup(
         name                   = 'pymoose',
