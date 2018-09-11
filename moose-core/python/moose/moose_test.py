@@ -180,7 +180,7 @@ def test_all( timeout, **kwargs ):
     _logger.info( 'Total %d valid tests found' % len( scripts ) )
     total_ = len( scripts )
     for i, s in enumerate( scripts ):
-        _logger.info( 'Running test : %s' % s )
+        _logger.info( 'Running test (timeout=%s) : %s' % (timeout,s))
         run_test(i, s, timeout, **kwargs )
 
 
