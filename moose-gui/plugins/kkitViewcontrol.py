@@ -5,23 +5,25 @@ __version__     =   "1.0.0"
 __maintainer__  =   "HarshaRani"
 __email__       =   "hrani@ncbs.res.in"
 __status__      =   "Development"
-__updated__     =   "Jun 8 2018"
+__updated__     =   "Sep 7 2018"
 
 '''
-
-Jun8    : If object is moved from one group or compartment to another group or with in same Compartment, 
-       then both at moose level (group or compartment path is updated ) and qt level the setParentItem is set
-       -If object is moved to Empty place or not allowed place in the GUI its moved back to origin position  
-       -also some clean up when object is just clicked in QsvgItem and v/s clicked and some action done
-       -with Rubber selection if object are moved then group size is updated
 2018
-Oct 3 : At mousePressEvent, a clean way of checking on what object mouse press Event happened is checked.
-        This is after group is added where Group Interior and Boundary is checked, with in groupInterior if  click in
-        on COMPARTMENT BOUNDARY is clicked then COMPARTMENT_BOUNDARY is return, else top most group object is returned.
-Sep 20: Group related function added
-        -resolveGroupInteriorAndBoundary, findGraphic_groupcompt, graphicsIsInstance
-        -@resolveItem,editorMousePressEvent,editorMouseMoveEvent,editorMouseReleaseEvent checks made for group
+
+Sep 07  : when object qgraphicalparent is changed then connecting arrow's parent also need to be changed 
+Jun 08  : If object is moved from one group or compartment to another group or with in same Compartment, 
+           then both at moose level (group or compartment path is updated ) and qt level the setParentItem is set
+          -If object is moved to Empty place or not allowed place in the GUI its moved back to origin position  
+          -also some clean up when object is just clicked in QsvgItem and v/s clicked and some action done
+          -with Rubber selection if object are moved then group size is updated
 2017
+Oct 03  : At mousePressEvent, a clean way of checking on what object mouse press Event happened is checked.
+            This is after group is added where Group Interior and Boundary is checked, with in groupInterior if  click in
+            on COMPARTMENT BOUNDARY is clicked then COMPARTMENT_BOUNDARY is return, else top most group object is returned.
+Sep 20  : Group related function added
+          -resolveGroupInteriorAndBoundary, findGraphic_groupcompt, graphicsIsInstance
+          -@resolveItem,editorMousePressEvent,editorMouseMoveEvent,editorMouseReleaseEvent checks made for group
+
 '''
 import sys
 from modelBuild import *
@@ -29,7 +31,7 @@ from constants import *
 from PyQt4.QtGui import QPixmap, QImage, QPen, QGraphicsPixmapItem, QGraphicsLineItem
 from PyQt4.QtCore import pyqtSignal
 from kkitUtil import  *
-from setsolver import *
+#from setsolver import *
 from PyQt4 import QtSvg
 from moose import utils
 
@@ -257,6 +259,7 @@ class GraphicalView(QtGui.QGraphicsView):
             self.drawExpectedConnection(event)
 
         if itemType == COMPARTMENT_BOUNDARY or itemType == GROUP_BOUNDARY:
+            '''When Comparement or group is moved from boundary'''
             initial = self.mapToScene(self.state["press"]["pos"])
             final = self.mapToScene(event.pos())
             displacement = final - initial
@@ -343,98 +346,44 @@ class GraphicalView(QtGui.QGraphicsView):
         elif clickedItemType  == CONNECTOR:
             actionType = str(self.state["press"]["item"].data(0).toString())
             pressItem = self.state["press"]["item"]
-
+            initscenepos = self.state["press"]["scenepos"]
+            finialscenepos = pressItem.parent().scenePos()
+            xx = finialscenepos.x()-initscenepos.x()
+            yy = finialscenepos.y()-initscenepos.y()
+            movedGraphObj = self.state["press"]["item"].parent()
+                
             if actionType == "move":
-                tobemoved = True
-                movedGraphObj = self.state["press"]["item"].parent()
-                if itemType != EMPTY:
-                    item = self.findGraphic_groupcompt(item)
-                    if movedGraphObj.parentItem() != item:
-                        if moose.exists(item.mobj.path+'/'+movedGraphObj.mobj.name):
-                            desObj = item.mobj.className
-                            if desObj == "CubeMesh" or desObj == "CyclMesh":
-                                desObj = "compartment"
-                            elif desObj == "Neutral":
-                                desObj = "group"
-                            tobemoved = False
-                            self.layoutPt.setupDisplay(movedGraphObj.mobj.path+'/info',movedGraphObj,"pool")
-                            self.layoutPt.updateArrow(movedGraphObj)
-                            QtGui.QMessageBox.warning(None,'Could not move the object', "The object name  \'%s\' exist in \'%s\' %s" %(movedGraphObj.mobj.name,item.mobj.name,desObj))
-                        else:
-                            movedGraphObj.setParentItem(item)
-                            moose.move(movedGraphObj.mobj, item.mobj)
-                if tobemoved:
-                    if isinstance(movedGraphObj,KineticsDisplayItem):
-                        itemPath = movedGraphObj.mobj.path
-                        if moose.exists(itemPath):
-                            iInfo = itemPath+'/info'
-                            anno = moose.Annotator(iInfo)
-                            x = movedGraphObj.scenePos().x()/self.layoutPt.defaultScenewidth
-                            y = movedGraphObj.scenePos().y()/self.layoutPt.defaultSceneheight
-                            anno.x = x
-                            anno.y = y
-                QtGui.QApplication.setOverrideCursor(QtGui.QCursor(Qt.Qt.ArrowCursor))
-                self.layoutPt.positionChange(item.mobj) 
-                self.updateScale(self.iconScale)
-                '''
-                QtGui.QApplication.setOverrideCursor(QtGui.QCursor(Qt.Qt.ArrowCursor))
-                #If any case, move is not valide need to move back the object to original position is store and calculation
-                initscenepos = self.state["press"]["scenepos"]
-                finialscenepos = pressItem.parent().scenePos()
-                xx = finialscenepos.x()-initscenepos.x()
-                yy = finialscenepos.y()-initscenepos.y()
-
+                
                 if itemType == EMPTY:
-                    pressItem.parent().moveBy(-xx,-yy)
-                    self.layoutPt.updateArrow(pressItem.parent())
-                    QtGui.QMessageBox.warning(None,'Could not move the object', "The object can't be moved to empty space")
-                else:
-                    if isinstance(self.state["press"]["item"], Qt.QGraphicsSvgItem):
-                        pressedItem = self.state["press"]["item"]
-                        releaseItem = self.state["release"]["item"]
-                        sgrp  = findGroup(pressItem.parent().mobj)
-                        scmpt = findCompartment(pressItem.parent().mobj)
-                        dgrp  = findGroup(releaseItem.mobj)
-                        dcmpt = findCompartment(releaseItem.mobj)
-                        if isinstance(dgrp,Neutral):
-                            # This is obj moved from group to
-                            #   - another group
-                            #   - into compartment
-                            if sgrp.path != dgrp.path:
-                                if scmpt.volume == dcmpt.volume:
-                                    #With in same compartment but different group
-                                    moose.move(pressItem.parent().mobj,dgrp)
-                                    lKey = self.layoutPt.qGraGrp[dgrp]
-                                    pressItem.parent().setParentItem(lKey)
-                                    self.layoutPt.positionChange(sgrp) 
-                                    self.layoutPt.positionChange(dgrp) 
-                                else:
-                                    #If object is tried to move to diff compartment,
-                                    # then object will be pulled back to origin position which it was moved from
-                                    pressItem.parent().moveBy(-xx,-yy)
-                                    self.layoutPt.updateArrow(pressItem.parent())
-                                    QtGui.QMessageBox.warning(None,'Could not move the object', "The object can't be moved to empty space")
-                        elif isinstance(dcmpt,CubeMesh):
-                            # This is obj moved from group into compartment
-                            if scmpt.path != dcmpt.path:
-                                if scmpt.volume == dcmpt.volume:
-                                    moose.move(pressItem.parent().mobj,dcmpt)
-                                    lKey = self.layoutPt.qGraCompt[dcmpt]
-                                    pressItem.parent().setParentItem(lKey)
-                                    self.layoutPt.positionChange(sgrp) 
-                                    self.layoutPt.positionChange(dgrp) 
-                                else:
-                                    #If object is tried to move to diff compartment,
-                                    # then object will be pulled back to origin position which it was moved from
-                                    pressItem.parent().moveBy(-xx,-yy)
-                                    self.layoutPt.updateArrow(pressItem.parent())
-                                    QtGui.QMessageBox.warning(None,'Could not move the object', "The object can't be moved to empty space")
-                        else:
-                            print " Check what moved when! does it reaches this condition"
+                    self.objectpullback("Empty",item,movedGraphObj,xx,yy)
 
-                    self.layoutPt.positionChange(item.mobj) 
-                    self.updateScale(self.iconScale)
-                '''
+                else:
+                    grpCmpt = self.findGraphic_groupcompt(item)
+                    if movedGraphObj.parentItem() != grpCmpt:
+                        '''Not same compartment/group to which it belonged to '''
+                        if isinstance(movedGraphObj,(EnzItem,MMEnzItem)):
+                            parentPool = moose.element((movedGraphObj.mobj.neighbors['enzDest'])[0])
+                            if isinstance(parentPool,PoolBase):
+                                if moose.exists(grpCmpt.mobj.path+'/'+parentPool.name):
+                                    if moose.exists(grpCmpt.mobj.path+'/'+parentPool.name+'/'+movedGraphObj.name):
+                                        self.objectpullback("Enzyme",grpCmpt,movedGraphObj,xx,yy)
+                                    else:
+                                        self.moveObjSceneParent(grpCmpt,movedGraphObj,item.pos(),self.mapToScene(event.pos()))
+                                else:
+                                    self.objectpullback("Enzymeparent",grpCmpt,movedGraphObj,xx,yy)
+                        else:
+                            ''' All the other moose object '''
+                            if moose.exists(grpCmpt.mobj.path+'/'+movedGraphObj.mobj.name):
+                                self.objectpullback("All",grpCmpt,movedGraphObj,xx,yy)
+                            else:
+                                self.moveObjSceneParent(grpCmpt,movedGraphObj,item.pos(),self.mapToScene(event.pos()))
+                    else:
+                        '''Same compt/grp to which it was belong to '''
+                        if isinstance(grpCmpt,GRPItem):
+                            self.layoutPt.updateGrpSize(movedGraphObj.parentItem())
+                        elif isinstance(grpCmpt,ComptItem):
+                            self.layoutPt.updateCompartmentSize(movedGraphObj.parentItem())
+                QtGui.QApplication.setOverrideCursor(QtGui.QCursor(Qt.Qt.ArrowCursor))
             if actionType == "delete":
                 self.removeConnector()
                 pixmap = QtGui.QPixmap(24, 24)
@@ -595,6 +544,97 @@ class GraphicalView(QtGui.QGraphicsView):
                 popupmenu.exec_(self.mapToGlobal(event.pos()))        
         self.resetState()
     
+    def objectpullback(self,messgtype,item,movedGraphObj,xx,yy):
+        if messgtype.lower() != "empty":
+            desObj = item.mobj.className
+            if desObj == "CubeMesh" or desObj == "CyclMesh":
+                desObj = "compartment"
+            elif desObj == "Neutral":
+                desObj = "group"
+        
+        movedGraphObj.moveBy(-xx,-yy)
+        self.layoutPt.updateArrow(movedGraphObj)
+        messgstr=""
+        if messgtype.lower() == "all":
+            messgstr = "The object name  \'{0}\' exist in \'{1}\' {2}".format(movedGraphObj.mobj.name,item.mobj.name,desObj)
+        elif messgtype.lower() =="enzymeparent":
+            messgstr = "The Enzyme parent  \'{0}\' doesn't exist in \'{2}\' {1} \n If you need to move the enzyme to {1} first parent pool needs to be moved".format(movedGraphObj.mobj.parent.name,desObj,item.mobj.name)
+        elif messgtype.lower() == "enzyme":
+            messgstr = "The Enzyme \'{0}\' already exist in \'{2}\' {1}".format(movedGraphObj.mobj.name,desObj,item.mobj.name)        
+        elif messgtype.lower() == "empty":
+            messgstr = "The object can't be moved to empty space"
+        QtGui.QMessageBox.warning(None,'Could not move the object', messgstr )
+        QtGui.QApplication.setOverrideCursor(QtGui.QCursor(Qt.Qt.ArrowCursor))
+
+    def moveObjSceneParent(self,item,movedGraphObj,itempos,eventpos):
+        ''' Scene parent object needs to be updated '''
+        prevPar = movedGraphObj.parentItem()
+        movedGraphObj.setParentItem(item)
+
+        if isinstance(movedGraphObj,ReacItem):
+            for ll in self.layoutPt.object2line[movedGraphObj]:
+                ll[0].setParentItem(item)
+        moose.move(movedGraphObj.mobj, item.mobj)
+        self.layoutPt.plugin.mainWindow.objectEditSlot(movedGraphObj.mobj, True)
+
+        if isinstance(movedGraphObj ,PoolItem):
+            ''' if pool is moved, a check is made to see if this pool is parent of a enzyme
+                if yes then Graphicalparent is changed, and 
+                not moose path since it will be taken care while we move pool
+            '''
+            pl = (movedGraphObj.mobj).neighbors['nOut']
+            for es in pl:
+                if isinstance(moose.element(es), EnzBase):
+                    if moose.element(moose.element(es).neighbors['enzDest'][0]) == movedGraphObj.mobj:
+                        enzGrapObj = self.layoutPt.mooseId_GObj[moose.element(es)]
+                        testx = enzGrapObj.scenePos().x()
+                        testy = enzGrapObj.scenePos().y()
+                        enzGrapObj.setParentItem(item)
+                        enzGrapObj.setGeometry(testx,testy,
+                                      enzGrapObj.gobj.boundingRect().width(),
+                                      enzGrapObj.gobj.boundingRect().height())
+                        for ll in self.layoutPt.object2line[enzGrapObj]:
+                            ll[0].setParentItem(item)
+                        self.layoutPt.updateArrow(enzGrapObj)
+                        #enzGrapObj.setGeometry(testx,testy,
+                        #              enzGrapObj.gobj.boundingRect().width(),
+                        #              enzGrapObj.gobj.boundingRect().height())
+        ''' Re-calculting the group size after the movement '''
+        if isinstance(prevPar,GRPItem):
+            if item != prevPar:
+                self.layoutPt.updateGrpSize(prevPar)
+                self.layoutPt.updateGrpSize(item)
+        self.setnewPostion(movedGraphObj,itempos,eventpos)
+        self.layoutPt.updateArrow(movedGraphObj)
+
+    def setnewPostion(self,movedGraphObj,itempos,eventpos):
+        if isinstance(movedGraphObj,KineticsDisplayItem):
+            itemPath = movedGraphObj.mobj.path
+            if moose.exists(itemPath):
+                iInfo = itemPath+'/info'
+                anno = moose.Annotator(iInfo)
+                # eventpos = self.mapToScene(event.pos())
+                # itempos = item.pos()
+                x = eventpos.x()+(15/2)-itempos.x()
+                y = eventpos.y()+(2/2)-itempos.y()
+                if moose.Annotator(self.layoutPt.plugin.modelRoot+'/info').modeltype == 'kkit':
+                    anno.x = x/self.layoutPt.defaultScenewidth
+                    anno.y = y/self.layoutPt.defaultSceneheight
+                else:
+                    anno.x = x
+                    anno.y = y
+                #item = movedGraphObj
+                if isinstance(movedGraphObj,ReacItem) or isinstance(movedGraphObj,EnzItem) or isinstance(movedGraphObj,MMEnzItem):
+                    movedGraphObj.setGeometry(x,y,
+                                 movedGraphObj.gobj.boundingRect().width(),
+                                 movedGraphObj.gobj.boundingRect().height())
+                elif isinstance(movedGraphObj,PoolItem):
+                    movedGraphObj.setGeometry(x, y,movedGraphObj.gobj.boundingRect().width()
+                                 +PoolItem.fontMetrics.width('  '),
+                                 movedGraphObj.gobj.boundingRect().height())
+                    movedGraphObj.bg.setRect(0, 0, movedGraphObj.gobj.boundingRect().width()+PoolItem.fontMetrics.width('  '), movedGraphObj.gobj.boundingRect().height())
+                QtGui.QApplication.setOverrideCursor(QtGui.QCursor(Qt.Qt.ArrowCursor))
+
     def deleteGroup(self,item,layoutPt):
         reply = QtGui.QMessageBox.question(self, "Deleting Object",'Do want to delete group \'{groupname}\' and its children and connections'.format(groupname=item.mobj.name),
                                                    QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
@@ -882,21 +922,27 @@ class GraphicalView(QtGui.QGraphicsView):
                 if unselectitem.isSelected() == True:
                     unselectitem.setSelected(0)
             self.rubberbandlist_qpolygon = self.sceneContainerPt.items(self.mapToScene(QtCore.QRect(x0, y0, x1 - x0, y1 - y0)).boundingRect(), Qt.Qt.IntersectsItemShape)
-            self.deleteObj(self.rubberbandlist)
+            for item in self.rubberbandlist_qpolygon:
+                ''' in RubberbandSelection if entire group object contains then group is removed,if partly selected then group is retained'''
+                if isinstance(item,GRPItem):
+                    if not (self.mapToScene(QtCore.QRect(x0, y0, x1 - x0, y1 - y0)).boundingRect()).contains(item.sceneBoundingRect()):
+                        self.rubberbandlist_qpolygon.remove(item)
+                        
+            self.deleteObj(self.rubberbandlist_qpolygon)
         self.selections = []
 
     def deleteObj(self,item):
         self.rubberbandlist = item
         mooseDeleteChemSolver(self.layoutPt.modelRoot)
-        self.Enz_cplxlist   = [ i for i in self.rubberbandlist if (isinstance(i,MMEnzItem) or isinstance(i,EnzItem) or isinstance(i,CplxItem) )]
-        self.PFRSlist       = [ i for i in self.rubberbandlist if (isinstance(i,PoolItem) or isinstance(i,TableItem) or isinstance(i,ReacItem) or isinstance(i,FuncItem) )]
-        self.grp            = [ i for i in self.rubberbandlist if isinstance(i,GRPItem)]
-        for item in self.Enz_cplxlist:
+        self.list_EnzReccplx   = [ i for i in self.rubberbandlist if (isinstance(i,MMEnzItem) or isinstance(i,EnzItem) or isinstance(i,CplxItem) or isinstance(i,ReacItem) )] 
+        self.list_PFS          = [ i for i in self.rubberbandlist if (isinstance(i,PoolItem) or isinstance(i,TableItem) or isinstance(i,FuncItem) )]
+        self.grp               = [ i for i in self.rubberbandlist if isinstance(i,GRPItem)]
+        for item in self.list_EnzReccplx:
             #First Loop to remove all the enz b'cos if parent (which is a Pool) is removed,
             #then it will created problem at qgraphicalitem not having parent.
-            #So first delete enz and then delete pool
+            #So first delete enz, then Reac and then delete pool
             self.deleteItem(item)
-        for item in self.PFRSlist:
+        for item in self.list_PFS:
             if isinstance(item,PoolItem) or isinstance(item,BufPool):
                 plot = moose.wildcardFind(self.layoutPt.modelRoot+'/data/graph#/#')
                 for p in plot:
@@ -907,6 +953,12 @@ class GraphicalView(QtGui.QGraphicsView):
                             self.layoutPt.plugin.view.getCentralWidget().plotWidgetContainer.plotAllData()
             self.deleteItem(item)
         for item in self.grp:
+            key = [k for k,v in self.layoutPt.qGraGrp.items() if v == item]
+            if key[0] in self.layoutPt.qGraGrp:
+                self.layoutPt.qGraGrp.pop(key[0])
+            self.groupItemlist1 = item.childItems()
+            self.groupItemlist = [ i for i in self.groupItemlist1 if not isinstance(i,QtGui.QGraphicsPolygonItem)]
+            self.deleteObj(self.groupItemlist)
             self.deleteItem(item)
         
     def deleteObject2line(self,qpolygonline,src,des,endt):
