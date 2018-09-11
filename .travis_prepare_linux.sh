@@ -8,3 +8,5 @@ sudo apt-get install python-suds python-matplotlib python-nose
 sudo apt-get install python-qt4-dev python-qt4-gl python-sip-dev libqt4-dev libopenscenegraph-dev
 sudo apt-get install doxygen python-sphinx python-lxml
 sudo apt-get install git-buildpackage
+sudo apt-get install -f
+sudo ldconfig /usr/lib64
