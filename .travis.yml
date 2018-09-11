@@ -25,5 +25,4 @@ before_script:
 
 script:
     - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./.travis_build_linux.sh; fi
-    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; brew tap BhallaLab/moose; brew install moose; fi
-
+    - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ./.travis_build_osx.sh; fi 
