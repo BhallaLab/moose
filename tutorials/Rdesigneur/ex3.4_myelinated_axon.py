@@ -58,12 +58,6 @@ rdes = rd.rdesigneur(
     moogList = [['#', '1', '.', 'Vm', 'Vm (mV)']]
 )
 
-
 rdes.buildModel()
-
-for i in moose.wildcardFind( "/model/elec/#/Na" ):
-    print(i.parent.name, i.Gbar)
-
 moose.reinit()
-
 rdes.displayMoogli( 0.00005, 0.05, 0.0 )

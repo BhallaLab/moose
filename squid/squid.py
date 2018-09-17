@@ -28,8 +28,6 @@
 
 # Code:
 import sys
-sys.path.append('../../python')
-
 import numpy
 import moose
 
@@ -99,22 +97,24 @@ class IonChannel(moose.HHChannel):
     def alpha_m(self):
         if self.Xpower == 0:
             return numpy.array([])        
-        return numpy.array(moose.HHGate('%s/gateX' % (self.path)).tableA)
+        return numpy.array(moose.element('%s/gateX' % (self.path)).tableA)
     @property
     def beta_m(self):
         if self.Xpower == 0:
             return numpy.array([])        
-        return numpy.array(moose.HHGate('%s/gateX' % (self.path)).tableB) - numpy.array(moose.HHGate('%s/gateX' % (self.path)).tableA)
+        return numpy.array(moose.element('%s/gateX' % (self.path)).tableB) - \
+                numpy.array(moose.element('%s/gateX' % (self.path)).tableA)
     @property
     def alpha_h(self):
         if self.Ypower == 0:
             return numpy.array([])        
-        return numpy.array(moose.HHGate('%s/gateY' % (self.path)).tableA)
+        return numpy.array(moose.element('%s/gateY' % (self.path)).tableA)
     @property
     def beta_h(self):
         if self.Ypower == 0:
             return numpy.array([])        
-        return numpy.array(moose.HHGate('%s/gateY' % (self.path)).tableB) - numpy.array(moose.HHGate('%s/gateY' % (self.path)).tableA)
+        return numpy.array(moose.element('%s/gateY' % (self.path)).tableB) \
+                - numpy.array(moose.element('%s/gateY' % (self.path)).tableA)
 
 class SquidAxon(moose.Compartment):
     EREST_ACT = 0.0 # can be -70 mV if not following original HH convention
