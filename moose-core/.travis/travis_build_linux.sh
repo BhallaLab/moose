@@ -52,7 +52,7 @@ echo "Currently in `pwd`"
 (
     # Now with boost.
     mkdir -p _BOOST_BUILD && cd _BOOST_BUILD && \
-        cmake -DWITH_BOOST_ODE=ON -DDEBUG=ON -DPYTHON_EXECUTABLE="$PYTHON2" ..
+        cmake -DWITH_BOOST_ODE=ON -DDEBUG=OFF -DPYTHON_EXECUTABLE="$PYTHON2" ..
     $MAKE && ctest --output-on-failure 
 )
 

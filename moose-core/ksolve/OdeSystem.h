@@ -26,15 +26,16 @@ class OdeSystem {
     {;}
 
         std::string method;
-        // GSL stuff
 
-#ifdef USE_GSL
-        gsl_odeiv2_system gslSys;
-        const gsl_odeiv2_step_type* gslStep;
-#endif
         double initStepSize;
         double epsAbs; // Absolute error
         double epsRel; // Relative error
+
+#ifdef USE_GSL
+        // GSL stuff
+        gsl_odeiv2_system gslSys;
+        const gsl_odeiv2_step_type* gslStep;
+#endif
 
 #if  USE_BOOST_ODE
         size_t dimension;
