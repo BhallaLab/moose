@@ -36,9 +36,9 @@
 #include "../utility/utility.h"
 #include "../shell/Shell.h"
 #include "../shell/Wildcard.h"
+#include "../basecode/global.h"
 
 #include "moosemodule.h"
-#include "global.h"
 
 using namespace std;
 

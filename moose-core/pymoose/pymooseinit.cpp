@@ -7,28 +7,23 @@
 ** See the file COPYING.LIB for the full notice.
 **********************************************************************/
 
-#include "header.h"
-#ifndef WIN32
-#include <sys/time.h>
-#else
+#include "../basecode/header.h"
 #include <time.h>
-#endif
 #include <math.h>
 #include <queue>
-#ifdef WIN32
-#include "../external/xgetopt/XGetopt.h"
-#else
 #include <unistd.h> // for getopt
-#endif
 #include "../scheduling/Clock.h"
-#include "DiagonalMsg.h"
-#include "SparseMatrix.h"
-#include "SparseMsg.h"
+#include "../msg/DiagonalMsg.h"
+#include "../basecode/SparseMatrix.h"
+#include "../msg/SparseMsg.h"
 #include "../mpi/PostMaster.h"
+
 #ifdef USE_MPI
 #include <mpi.h>
 #endif
+
 #include "../shell/Shell.h"
+
 #ifdef MACOSX
 #include <sys/sysctl.h>
 #endif // MACOSX
