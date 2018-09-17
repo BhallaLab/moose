@@ -130,6 +130,7 @@ include_directories( ${CMAKE_CURRENT_SOURCE_DIR} )
 
 if(WITH_BOOST)
     set(WITH_BOOST_ODE ON)
+    set(WITH_GSL       OFF)
 endif(WITH_BOOST)
 
 # If using BOOST ODE2 library to solve ODE system, then don't use GSL.
