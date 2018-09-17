@@ -291,6 +291,16 @@ ex9.2_spines_in_neuronal_morpho.py: Add spines to a neuron built from a
 	- See if you can deliver the current injection to the spine. Hint: the
 	name of the spine compartments is 'head#' where # is the index of the
 	spine.
+
+
+ex9.3_spiral_spines.py: Just for fun. Illustrates how to place spines in a
+spiral around the dendrite. For good measure the spines get bigger the further
+they are from the soma. Note that the uniform spacing of spines is signified 
+by the negative minSpacing term, the fourth argument to spineDistrib.
+	Suggestions:
+	- Play with expressions for spine size and angular placement.
+	- See what happens if the segment size gets smaller than the
+  	spine spacing.
 	
 To come:
 rdes_ex10.py: Build a spiny neuron, and insert the oscillatory chemical model
