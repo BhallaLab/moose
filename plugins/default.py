@@ -6,7 +6,7 @@
 # Maintainer:
 # Created: Tue Nov 13 15:58:31 2012 (+0530)
 # Version:
-# Last-Updated: Thu Oct 5 12:35:00 2013 (+0530)
+# Last-Updated: Mon Sep 10 23:35:00 2018 (+0530)
 #           By: Harsha
 #     Update #: 
 # URL:
@@ -45,6 +45,9 @@
 
 # Code:
 '''
+2018
+Sep 10: replace addSolver to mooseAddChemSolver from moose.chemUtil's
+2013
 Oct 5: could not recreate if object already exist in moose which was allowed earlier
         now if object exist need to use element which is cleaned here
 
@@ -94,7 +97,9 @@ from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as Navigatio
 #from EventBlocker import EventBlocker
 # from PlotNavigationToolbar import PlotNavigationToolbar
 from global_constants import preferences
-from setsolver import *
+#from setsolver import *
+from moose.chemUtil.add_Delete_ChemicalSolver import *
+
 ELECTRICAL_MODEL = 0
 CHEMICAL_MODEL   = 1
 
@@ -636,7 +641,7 @@ class SchedulingWidget(QtGui.QWidget):
             if not moose.exists(compt[0].path+'/stoich'):
                 chemPref = self.preferences.getChemicalPreferences()
                 solver = chemPref["simulation"]["solver"]
-                addSolver(self.modelRoot,solver)
+                mooseAddChemSolver(self.modelRoot,solver)
             status = self.solverStatus()
             #print "status ",status
                    # if status != 0 or status == -1:
@@ -731,7 +736,7 @@ class SchedulingWidget(QtGui.QWidget):
             # print("Status =>", status)
 
             if status == 1 or status == 2:
-                nameRE = "\n\nclassName --> parent --> name  "
+                nameRE = "\n\nclassName --> parentName/groupName --> name  "
                 for res in moose.wildcardFind(self.modelRoot+'/##[ISA=ReacBase],'+self.modelRoot+'/##[ISA=EnzBase]'):
                     if not len(res.neighbors["sub"]) or not len(res.neighbors["prd"]):
                         nameRE = nameRE+"\n "+res.className + " --> "+res.parent.name+ " --> "+res.name

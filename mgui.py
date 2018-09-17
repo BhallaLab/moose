@@ -6,7 +6,7 @@
 # Maintainer: HarshaRani
 # Created: Mon Nov 12 09:38:09 2012 (+0530)
 # Version:
-# Last-Updated: Fri Aug 31 14:54:33 2017 (+0530)
+# Last-Updated: Fri Sep 7 14:54:33 2017 (+0530)
 #           By: Harsha
 #     Update #:
 # URL:
@@ -44,6 +44,9 @@
 #
 
 ''''
+2018
+Sep 7: popup is closed if exist
+2017
 Aug 31: Pass file from the command to load into gui
       : added dsolver in disableModel function is used to unset the solver for the model
         into moose-gui which are not to be run.
@@ -1237,7 +1240,8 @@ class MWindow(QtGui.QMainWindow):
         by looking into the model file for a regular expression)
 
         """
-        self.popup.close()
+        if self.popup:
+            self.popup.close()
         activeWindow = None # This to be used later to refresh the current widget with newly loaded model
         dialog = LoaderDialog(self,
                               self.tr('Load model from file'))
@@ -1356,7 +1360,8 @@ class MWindow(QtGui.QMainWindow):
 
     def newModelDialogSlot(self):
         #Harsha: Create a new dialog widget for model building
-        self.popup.close()
+        if popup:
+            self.popup.close()
         newModelDialog = DialogWidget()
         if newModelDialog.exec_():
             modelPath = str(newModelDialog.modelPathEdit.text()).strip()
