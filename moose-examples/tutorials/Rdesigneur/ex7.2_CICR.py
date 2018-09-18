@@ -15,6 +15,7 @@ rdes = rd.rdesigneur(
     turnOffElec = True,
     chemDt = 0.005,
     chemPlotDt = 0.02,
+    numWaveFrames = 200,
     diffusionLength = 1e-6,
     useGssa = False,
     addSomaChemCompt = False,

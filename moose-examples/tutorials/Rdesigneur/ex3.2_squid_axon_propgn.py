@@ -43,7 +43,7 @@ rdes = rd.rdesigneur(
     chanDistrib = [
         ['Na', '#', 'Gbar', '1200' ],
         ['K', '#', 'Gbar', '360' ]],
-    stimList = [['soma', '1', '.', 'inject', '(t>0.01 && t<0.2) * 2e-11' ]],
+    stimList = [['soma', '1', '.', 'inject', '(t>0.005 && t<0.2) * 2e-11' ]],
     plotList = [['soma', '1', '.', 'Vm', 'Membrane potential']],
     moogList = [['#', '1', '.', 'Vm', 'Vm (mV)']]
 )
@@ -51,4 +51,4 @@ rdes = rd.rdesigneur(
 rdes.buildModel()
 moose.reinit()
 
-rdes.displayMoogli( 0.00005, 0.05, 0.0 )
+rdes.displayMoogli( 0.00005, 0.04, 0.0 )

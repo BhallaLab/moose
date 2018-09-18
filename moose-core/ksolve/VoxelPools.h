@@ -99,8 +99,8 @@ private:
     gsl_odeiv2_system sys_;
 #endif
 
-    double absTol_;
-    double relTol_;
+    double epsAbs_;
+    double epsRel_;
     string method_;
 
 };

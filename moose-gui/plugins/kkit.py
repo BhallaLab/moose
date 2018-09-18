@@ -6,13 +6,14 @@ __version__     =   "1.0.0"
 __maintainer__  =   "HarshaRani"
 __email__       =   "hrani@ncbs.res.in"
 __status__      =   "Development"
-__updated__     =   "Sep 7 2018"
+__updated__     =   "Sep 11 2018"
 
 #Change log:
 # 2018 
-#Jun 18: update the color of the group from objecteditor
+#sep 11: comparment size is calculated based on group sceneBoundingRect size
 #Sep 07: in positionChange all the group's boundingRect is calculated
 #        and when group is moved the children's position are stored
+#Jun 18: update the color of the group from objecteditor
 #code
 
 import math
@@ -908,7 +909,16 @@ class  KineticsWidget(EditorWidgetBase):
                         # rectcompt = calculateChildBoundingRect(grpcompt)
                 rectgrp = calculateChildBoundingRect(v)
                 v.setRect(rectgrp.x()-10,rectgrp.y()-10,(rectgrp.width()+20),(rectgrp.height()+20))
-            
+                for k, v in self.qGraCompt.items():
+                    #rectcompt = v.childrenBoundingRect()
+                    rectcompt = calculateChildBoundingRect(v)
+                    comptBoundingRect = v.boundingRect()
+                    if not comptBoundingRect.contains(rectcompt):
+                        self.updateCompartmentSize(v)
+                    
+                    else:
+                        rectcompt = calculateChildBoundingRect(v)
+                        v.setRect(rectcompt.x()-10,rectcompt.y()-10,(rectcompt.width()+20),(rectcompt.height()+20))
         else:
             mobj = self.mooseId_GObj[element(mooseObject)]
             self.updateArrow(mobj)
@@ -938,11 +948,11 @@ class  KineticsWidget(EditorWidgetBase):
                 comptBoundingRect = v.boundingRect()
                 if not comptBoundingRect.contains(rectcompt):
                     self.updateCompartmentSize(v)
+                    
                 else:
                     rectcompt = calculateChildBoundingRect(v)
                     v.setRect(rectcompt.x()-10,rectcompt.y()-10,(rectcompt.width()+20),(rectcompt.height()+20))
-                    pass
-        
+                    
     def updateGrpSize(self,grp):
         compartmentBoundary = grp.rect()
         

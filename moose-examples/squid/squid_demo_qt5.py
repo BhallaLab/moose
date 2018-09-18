@@ -1,63 +1,24 @@
 # -*- coding: utf-8 -*-
-# squidgui.py --- 
-# 
-# Filename: squidgui.py
-# Description: 
-# Author: 
-# Maintainer: 
+# Description:  Squid Model
+# Author: Subha
+# Maintainer:  Dilawar Singh <dilawars@ncbs.res.in>
 # Created: Mon Jul  9 18:23:55 2012 (+0530)
 # Version: 
-# Last-Updated: Tue May  3 00:18:47 2016 (-0400)
-#           By: subha
-#     Update #: 1078
-# URL: 
-# Keywords: 
-# Compatibility: 
-# 
-# 
-
-# Commentary: 
-# 
-# 
-# 
-# 
-
-# Change log:
-# 
-# 
-# 
-# 
-# This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as
-# published by the Free Software Foundation; either version 3, or
-# (at your option) any later version.
-# 
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# General Public License for more details.
-# 
-# You should have received a copy of the GNU General Public License
-# along with this program; see the file COPYING.  If not, write to
-# the Free Software Foundation, Inc., 51 Franklin Street, Fifth
-# Floor, Boston, MA 02110-1301, USA.
-# 
-# 
-
-# Code:
+# Last-Updated: Wednesday 12 September 2018 04:23:52 PM IST
+#       PyQt5 version
 
 import sys
 import os
 from collections import defaultdict
 import time
 
-pyqt_ver_ = 4
-try:
-    from PyQt5 import QtGui, QtCore
-    pyqt_ver_ = 5
-except ImportError as e:
-    from PyQt4 import QtGui
-    from PyQt4 import QtCore
+from PyQt5 import QtGui, QtCore
+from PyQt5.QtWidgets import QMainWindow, QApplication, QGroupBox, QSizePolicy
+from PyQt5.QtWidgets import QLabel, QLineEdit, QGridLayout, QDockWidget
+from PyQt5.QtWidgets import QCheckBox, QTabWidget, QComboBox, QWidget
+from PyQt5.QtWidgets import QVBoxLayout, QFrame, QHBoxLayout, QAction
+from PyQt5.QtWidgets import QToolButton, QScrollArea, QTextBrowser
+
 import numpy
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
@@ -165,7 +126,7 @@ def set_default_line_edit_size(widget):
     widget.setMinimumSize(default_line_edit_size)
     widget.setMaximumSize(default_line_edit_size)
 
-class SquidGui(QtGui.QMainWindow):
+class SquidGui( QMainWindow ):
     defaults = {}
     defaults.update(SquidAxon.defaults)
     defaults.update(ClampCircuit.defaults)
@@ -187,7 +148,7 @@ class SquidGui(QtGui.QMainWindow):
                   'iclamp.secondD': 0.0
                   })
     def __init__(self, *args):
-        QtGui.QMainWindow.__init__(self, *args)
+        QMainWindow.__init__(self, *args)
         self.squid_setup = SquidSetup()
         self._plotdt = SquidGui.defaults['plotdt']
         self._plot_dict = defaultdict(list)
@@ -195,13 +156,13 @@ class SquidGui(QtGui.QMainWindow):
         self.setDockNestingEnabled(True)
         self._createRunControl()
         self.addDockWidget(QtCore.Qt.LeftDockWidgetArea, self._runControlDock) 
-        self._runControlDock.setFeatures(QtGui.QDockWidget.AllDockWidgetFeatures)	 
+        self._runControlDock.setFeatures(QDockWidget.AllDockWidgetFeatures)	 
         self._createChannelControl()
         self._channelCtrlBox.setWindowTitle('Channel properties')
-        self._channelControlDock.setFeatures(QtGui.QDockWidget.AllDockWidgetFeatures)	 
+        self._channelControlDock.setFeatures(QDockWidget.AllDockWidgetFeatures)	 
         self.addDockWidget(QtCore.Qt.LeftDockWidgetArea, self._channelControlDock) 
         self._createElectronicsControl()
-        self._electronicsDock.setFeatures(QtGui.QDockWidget.AllDockWidgetFeatures)	 
+        self._electronicsDock.setFeatures(QDockWidget.AllDockWidgetFeatures)	 
         self._electronicsDock.setWindowTitle('Electronics')
         self.addDockWidget(QtCore.Qt.LeftDockWidgetArea, self._electronicsDock) 
         self._createPlotWidget()             
@@ -219,15 +180,15 @@ class SquidGui(QtGui.QMainWindow):
         try:
             return float(str(widget.text()))
         except ValueError:
-            QtGui.QMessageBox.critical(self, 'Invalid input', 'Please enter a valid number for {}'.format(name))
+            QMessageBox.critical(self, 'Invalid input', 'Please enter a valid number for {}'.format(name))
             raise
 
         
     def _createPlotWidget(self):
-        self._plotWidget = QtGui.QWidget()
+        self._plotWidget = QWidget()
         self._plotFigure = Figure()
         self._plotCanvas = FigureCanvas(self._plotFigure)
-        self._plotCanvas.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
+        self._plotCanvas.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self._plotCanvas.updateGeometry()
         self._plotCanvas.setParent(self._plotWidget)
         self._plotCanvas.mpl_connect('scroll_event', self._onScroll)
@@ -246,17 +207,17 @@ class SquidGui(QtGui.QMainWindow):
         self._i_axes.set_ylim(-10, 10)
         for axis in self._plotFigure.axes:
             axis.set_autoscale_on(False)
-        layout = QtGui.QVBoxLayout()
+        layout = QVBoxLayout()
         layout.addWidget(self._plotCanvas)
         self._plotNavigator = NavigationToolbar(self._plotCanvas, self._plotWidget)
         layout.addWidget(self._plotNavigator)
         self._plotWidget.setLayout(layout)
 
     def _createStatePlotWidget(self):        
-        self._statePlotWidget = QtGui.QWidget()
+        self._statePlotWidget = QWidget()
         self._statePlotFigure = Figure()
         self._statePlotCanvas = FigureCanvas(self._statePlotFigure)
-        self._statePlotCanvas.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
+        self._statePlotCanvas.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self._statePlotCanvas.updateGeometry()
         self._statePlotCanvas.setParent(self._statePlotWidget)
         self._statePlotFigure.set_canvas(self._statePlotCanvas)
@@ -267,36 +228,35 @@ class SquidGui(QtGui.QMainWindow):
         self._activationParamAxes.set_xlabel('Time (ms)')
         #for axis in self._plotFigure.axes:
         #    axis.autoscale(False)
-        self._stateplot_xvar_label = QtGui.QLabel('Variable on X-axis')
-        self._stateplot_xvar_combo = QtGui.QComboBox()
+        self._stateplot_xvar_label = QLabel('Variable on X-axis')
+        self._stateplot_xvar_combo = QComboBox()
         self._stateplot_xvar_combo.addItems(['V', 'm', 'n', 'h'])
         self._stateplot_xvar_combo.setCurrentIndex(0)
         self._stateplot_xvar_combo.setEditable(False)
-        self.connect(self._stateplot_xvar_combo,
-                     QtCore.SIGNAL('currentIndexChanged(const QString&)'),
-                     self._statePlotXSlot)                     
-        self._stateplot_yvar_label = QtGui.QLabel('Variable on Y-axis')
-        self._stateplot_yvar_combo = QtGui.QComboBox()
+        #  self.connect(self._stateplot_xvar_combo,
+                     #  QtCore.SIGNAL('currentIndexChanged(const QString&)'),
+                     #  self._statePlotXSlot)
+        self._stateplot_xvar_combo.currentIndexChanged.connect( self._statePlotXSlot )
+        self._stateplot_yvar_label = QLabel('Variable on Y-axis')
+        self._stateplot_yvar_combo = QComboBox()
         self._stateplot_yvar_combo.addItems(['V', 'm', 'n', 'h'])
         self._stateplot_yvar_combo.setCurrentIndex(2)
         self._stateplot_yvar_combo.setEditable(False)
-        self.connect(self._stateplot_yvar_combo,
-                     QtCore.SIGNAL('currentIndexChanged(const QString&)'),
-                     self._statePlotYSlot)
+        self._stateplot_yvar_combo.currentIndexChanged.connect(self._statePlotYSlot)
         self._statePlotNavigator = NavigationToolbar(self._statePlotCanvas, self._statePlotWidget)
-        frame = QtGui.QFrame()
-        frame.setFrameStyle(QtGui.QFrame.StyledPanel + QtGui.QFrame.Raised)
-        layout = QtGui.QHBoxLayout()
+        frame = QFrame()
+        frame.setFrameStyle(QFrame.StyledPanel + QFrame.Raised)
+        layout = QHBoxLayout()
         layout.addWidget(self._stateplot_xvar_label)
         layout.addWidget(self._stateplot_xvar_combo)
         layout.addWidget(self._stateplot_yvar_label)
         layout.addWidget(self._stateplot_yvar_combo)
         frame.setLayout(layout)
-        self._closeStatePlotAction = QtGui.QAction('Close', self)
-        self.connect(self._closeStatePlotAction, QtCore.SIGNAL('triggered()'), self._statePlotWidget.close)
-        self._closeStatePlotButton = QtGui.QToolButton()
+        self._closeStatePlotAction = QAction('Close', self)
+        self._closeStatePlotAction.triggered.connect(self._statePlotWidget.close)
+        self._closeStatePlotButton = QToolButton()
         self._closeStatePlotButton.setDefaultAction(self._closeStatePlotAction)
-        layout = QtGui.QVBoxLayout()
+        layout = QVBoxLayout()
         layout.addWidget(frame)
         layout.addWidget(self._statePlotCanvas)
         layout.addWidget(self._statePlotNavigator)
@@ -307,15 +267,15 @@ class SquidGui(QtGui.QMainWindow):
         self._statePlotWidget.closeEvent = lambda event: self._showStatePlotAction.setChecked(False)
 
     def _createRunControl(self):
-        self._runControlBox = QtGui.QGroupBox(self)
-        self._runControlBox.setSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
-        self._runTimeLabel = QtGui.QLabel("Run time (ms)", self._runControlBox)
-        self._simTimeStepLabel = QtGui.QLabel("Simulation time step (ms)", self._runControlBox)
-        self._runTimeEdit = QtGui.QLineEdit('%g' % (SquidGui.defaults['runtime']), self._runControlBox)
+        self._runControlBox = QGroupBox(self)
+        self._runControlBox.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+        self._runTimeLabel = QLabel("Run time (ms)", self._runControlBox)
+        self._simTimeStepLabel = QLabel("Simulation time step (ms)", self._runControlBox)
+        self._runTimeEdit = QLineEdit('%g' % (SquidGui.defaults['runtime']), self._runControlBox)
         set_default_line_edit_size(self._runTimeEdit)
-        self._simTimeStepEdit = QtGui.QLineEdit('%g' % (SquidGui.defaults['simdt']), self._runControlBox)
+        self._simTimeStepEdit = QLineEdit('%g' % (SquidGui.defaults['simdt']), self._runControlBox)
         set_default_line_edit_size(self._simTimeStepEdit)
-        layout = QtGui.QGridLayout()
+        layout = QGridLayout()
         layout.addWidget(self._runTimeLabel, 0, 0)
         layout.addWidget(self._runTimeEdit, 0, 1)
         layout.addWidget(self._simTimeStepLabel, 1, 0)
@@ -323,45 +283,45 @@ class SquidGui(QtGui.QMainWindow):
         layout.setColumnStretch(2, 1.0)
         layout.setRowStretch(2, 1.0)
         self._runControlBox.setLayout(layout)
-        self._runControlDock = QtGui.QDockWidget('Simulation', self)
+        self._runControlDock = QDockWidget('Simulation', self)
         self._runControlDock.setWidget(self._runControlBox)
 
     def _createChannelControl(self):
-        self._channelControlDock = QtGui.QDockWidget('Channels', self)
-        self._channelCtrlBox = QtGui.QGroupBox(self)
-        self._naConductanceToggle = QtGui.QCheckBox('Block Na+ channel', self._channelCtrlBox)
+        self._channelControlDock = QDockWidget('Channels', self)
+        self._channelCtrlBox = QGroupBox(self)
+        self._naConductanceToggle = QCheckBox('Block Na+ channel', self._channelCtrlBox)
         self._naConductanceToggle.setToolTip('<html>%s</html>' % (tooltip_NaChan))
-        self._kConductanceToggle = QtGui.QCheckBox('Block K+ channel', self._channelCtrlBox)
+        self._kConductanceToggle = QCheckBox('Block K+ channel', self._channelCtrlBox)
         self._kConductanceToggle.setToolTip('<html>%s</html>' % (tooltip_KChan))
-        self._kOutLabel = QtGui.QLabel('[K+]out (mM)', self._channelCtrlBox)
-        self._kOutEdit = QtGui.QLineEdit('%g' % (self.squid_setup.squid_axon.K_out), 
+        self._kOutLabel = QLabel('[K+]out (mM)', self._channelCtrlBox)
+        self._kOutEdit = QLineEdit('%g' % (self.squid_setup.squid_axon.K_out), 
                                          self._channelCtrlBox)
         self._kOutLabel.setToolTip('<html>%s</html>' % (tooltip_Nernst))
         self._kOutEdit.setToolTip('<html>%s</html>' % (tooltip_Nernst))
         set_default_line_edit_size(self._kOutEdit)
-        self._naOutLabel = QtGui.QLabel('[Na+]out (mM)', self._channelCtrlBox)
-        self._naOutEdit = QtGui.QLineEdit('%g' % (self.squid_setup.squid_axon.Na_out), 
+        self._naOutLabel = QLabel('[Na+]out (mM)', self._channelCtrlBox)
+        self._naOutEdit = QLineEdit('%g' % (self.squid_setup.squid_axon.Na_out), 
                                          self._channelCtrlBox)
         self._naOutLabel.setToolTip('<html>%s</html>' % (tooltip_Nernst))
         self._naOutEdit.setToolTip('<html>%s</html>' % (tooltip_Nernst))
         set_default_line_edit_size(self._naOutEdit)
-        self._kInLabel = QtGui.QLabel('[K+]in (mM)', self._channelCtrlBox)
-        self._kInEdit = QtGui.QLineEdit('%g' % (self.squid_setup.squid_axon.K_in), 
+        self._kInLabel = QLabel('[K+]in (mM)', self._channelCtrlBox)
+        self._kInEdit = QLineEdit('%g' % (self.squid_setup.squid_axon.K_in), 
                                          self._channelCtrlBox)
         self._kInEdit.setToolTip(tooltip_Nernst)
-        self._naInLabel = QtGui.QLabel('[Na+]in (mM)', self._channelCtrlBox)
-        self._naInEdit = QtGui.QLineEdit('%g' % (self.squid_setup.squid_axon.Na_in), 
+        self._naInLabel = QLabel('[Na+]in (mM)', self._channelCtrlBox)
+        self._naInEdit = QLineEdit('%g' % (self.squid_setup.squid_axon.Na_in), 
                                          self._channelCtrlBox)
         self._naInEdit.setToolTip('<html>%s</html>' % (tooltip_Nernst))
-        self._temperatureLabel = QtGui.QLabel('Temperature (C)', self._channelCtrlBox)
-        self._temperatureEdit = QtGui.QLineEdit('%g' % (self.defaults['temperature'] - CELSIUS_TO_KELVIN),
+        self._temperatureLabel = QLabel('Temperature (C)', self._channelCtrlBox)
+        self._temperatureEdit = QLineEdit('%g' % (self.defaults['temperature'] - CELSIUS_TO_KELVIN),
                                                 self._channelCtrlBox)
         self._temperatureEdit.setToolTip('<html>%s</html>' % (tooltip_Nernst))
         set_default_line_edit_size(self._temperatureEdit)
         for child in self._channelCtrlBox.children():
-            if isinstance(child, QtGui.QLineEdit):
+            if isinstance(child, QLineEdit):
                 set_default_line_edit_size(child)
-        layout = QtGui.QGridLayout(self._channelCtrlBox)
+        layout = QGridLayout(self._channelCtrlBox)
         layout.addWidget(self._naConductanceToggle, 0, 0)
         layout.addWidget(self._kConductanceToggle, 1, 0)
         layout.addWidget(self._naOutLabel, 2, 0)
@@ -415,31 +375,31 @@ class SquidGui(QtGui.QMainWindow):
 
     def _createElectronicsControl(self):
         """Creates a tabbed widget of voltage clamp and current clamp controls"""
-        self._electronicsTab = QtGui.QTabWidget(self)
+        self._electronicsTab = QTabWidget(self)
         self._electronicsTab.addTab(self._getIClampCtrlBox(), 'Current clamp')
         self._electronicsTab.addTab(self._getVClampCtrlBox(), 'Voltage clamp')
-        self._electronicsDock = QtGui.QDockWidget(self)
+        self._electronicsDock = QDockWidget(self)
         self._electronicsDock.setWidget(self._electronicsTab)
 
     def _getVClampCtrlBox(self):
-        vClampPanel = QtGui.QGroupBox(self)
+        vClampPanel = QGroupBox(self)
         self._vClampCtrlBox = vClampPanel
-        self._holdingVLabel = QtGui.QLabel("Holding Voltage (mV)", vClampPanel)
-        self._holdingVEdit = QtGui.QLineEdit('%g' % (SquidGui.defaults['vclamp.holdingV']), vClampPanel)
-        self._holdingTimeLabel = QtGui.QLabel("Holding Time (ms)", vClampPanel)
-        self._holdingTimeEdit = QtGui.QLineEdit('%g' % (SquidGui.defaults['vclamp.holdingT']), vClampPanel)
-        self._prePulseVLabel = QtGui.QLabel("Pre-pulse Voltage (mV)", vClampPanel)
-        self._prePulseVEdit = QtGui.QLineEdit('%g' % (SquidGui.defaults['vclamp.prepulseV']), vClampPanel)
-        self._prePulseTimeLabel = QtGui.QLabel("Pre-pulse Time (ms)", vClampPanel)
-        self._prePulseTimeEdit = QtGui.QLineEdit('%g' % (SquidGui.defaults['vclamp.prepulseT']), vClampPanel)
-        self._clampVLabel = QtGui.QLabel("Clamp Voltage (mV)", vClampPanel)
-        self._clampVEdit = QtGui.QLineEdit('%g' % (SquidGui.defaults['vclamp.clampV']), vClampPanel)
-        self._clampTimeLabel = QtGui.QLabel("Clamp Time (ms)", vClampPanel)
-        self._clampTimeEdit = QtGui.QLineEdit('%g' % (SquidGui.defaults['vclamp.clampT']), vClampPanel)
+        self._holdingVLabel = QLabel("Holding Voltage (mV)", vClampPanel)
+        self._holdingVEdit = QLineEdit('%g' % (SquidGui.defaults['vclamp.holdingV']), vClampPanel)
+        self._holdingTimeLabel = QLabel("Holding Time (ms)", vClampPanel)
+        self._holdingTimeEdit = QLineEdit('%g' % (SquidGui.defaults['vclamp.holdingT']), vClampPanel)
+        self._prePulseVLabel = QLabel("Pre-pulse Voltage (mV)", vClampPanel)
+        self._prePulseVEdit = QLineEdit('%g' % (SquidGui.defaults['vclamp.prepulseV']), vClampPanel)
+        self._prePulseTimeLabel = QLabel("Pre-pulse Time (ms)", vClampPanel)
+        self._prePulseTimeEdit = QLineEdit('%g' % (SquidGui.defaults['vclamp.prepulseT']), vClampPanel)
+        self._clampVLabel = QLabel("Clamp Voltage (mV)", vClampPanel)
+        self._clampVEdit = QLineEdit('%g' % (SquidGui.defaults['vclamp.clampV']), vClampPanel)
+        self._clampTimeLabel = QLabel("Clamp Time (ms)", vClampPanel)
+        self._clampTimeEdit = QLineEdit('%g' % (SquidGui.defaults['vclamp.clampT']), vClampPanel)
         for child in vClampPanel.children():
-            if isinstance(child, QtGui.QLineEdit):
+            if isinstance(child, QLineEdit):
                 set_default_line_edit_size(child)
-        layout = QtGui.QGridLayout(vClampPanel)
+        layout = QGridLayout(vClampPanel)
         layout.addWidget(self._holdingVLabel, 0, 0)
         layout.addWidget(self._holdingVEdit, 0, 1)
         layout.addWidget(self._holdingTimeLabel, 1, 0)
@@ -457,29 +417,29 @@ class SquidGui(QtGui.QMainWindow):
         return self._vClampCtrlBox
 
     def _getIClampCtrlBox(self):
-        iClampPanel = QtGui.QGroupBox(self)
+        iClampPanel = QGroupBox(self)
         self._iClampCtrlBox = iClampPanel
-        self._baseCurrentLabel = QtGui.QLabel("Base Current Level (uA)",iClampPanel)
-        self._baseCurrentEdit = QtGui.QLineEdit('%g' % (SquidGui.defaults['iclamp.baseI']),iClampPanel)
-        self._firstPulseLabel = QtGui.QLabel("First Pulse Current (uA)", iClampPanel)
-        self._firstPulseEdit = QtGui.QLineEdit('%g' % (SquidGui.defaults['iclamp.firstI']), iClampPanel)
-        self._firstDelayLabel = QtGui.QLabel("First Onset Delay (ms)", iClampPanel)
-        self._firstDelayEdit = QtGui.QLineEdit('%g' % (SquidGui.defaults['iclamp.firstD']),iClampPanel)
-        self._firstPulseWidthLabel = QtGui.QLabel("First Pulse Width (ms)", iClampPanel)
-        self._firstPulseWidthEdit = QtGui.QLineEdit('%g' % (SquidGui.defaults['iclamp.firstT']), iClampPanel)
-        self._secondPulseLabel = QtGui.QLabel("Second Pulse Current (uA)", iClampPanel)
-        self._secondPulseEdit = QtGui.QLineEdit('%g' % (SquidGui.defaults['iclamp.secondI']), iClampPanel)
-        self._secondDelayLabel = QtGui.QLabel("Second Onset Delay (ms)", iClampPanel)
-        self._secondDelayEdit = QtGui.QLineEdit('%g' % (SquidGui.defaults['iclamp.secondD']),iClampPanel)
-        self._secondPulseWidthLabel = QtGui.QLabel("Second Pulse Width (ms)", iClampPanel)
-        self._secondPulseWidthEdit = QtGui.QLineEdit('%g' % (SquidGui.defaults['iclamp.secondT']), iClampPanel)
-        self._pulseMode = QtGui.QComboBox(iClampPanel)
+        self._baseCurrentLabel = QLabel("Base Current Level (uA)",iClampPanel)
+        self._baseCurrentEdit = QLineEdit('%g' % (SquidGui.defaults['iclamp.baseI']),iClampPanel)
+        self._firstPulseLabel = QLabel("First Pulse Current (uA)", iClampPanel)
+        self._firstPulseEdit = QLineEdit('%g' % (SquidGui.defaults['iclamp.firstI']), iClampPanel)
+        self._firstDelayLabel = QLabel("First Onset Delay (ms)", iClampPanel)
+        self._firstDelayEdit = QLineEdit('%g' % (SquidGui.defaults['iclamp.firstD']),iClampPanel)
+        self._firstPulseWidthLabel = QLabel("First Pulse Width (ms)", iClampPanel)
+        self._firstPulseWidthEdit = QLineEdit('%g' % (SquidGui.defaults['iclamp.firstT']), iClampPanel)
+        self._secondPulseLabel = QLabel("Second Pulse Current (uA)", iClampPanel)
+        self._secondPulseEdit = QLineEdit('%g' % (SquidGui.defaults['iclamp.secondI']), iClampPanel)
+        self._secondDelayLabel = QLabel("Second Onset Delay (ms)", iClampPanel)
+        self._secondDelayEdit = QLineEdit('%g' % (SquidGui.defaults['iclamp.secondD']),iClampPanel)
+        self._secondPulseWidthLabel = QLabel("Second Pulse Width (ms)", iClampPanel)
+        self._secondPulseWidthEdit = QLineEdit('%g' % (SquidGui.defaults['iclamp.secondT']), iClampPanel)
+        self._pulseMode = QComboBox(iClampPanel)
         self._pulseMode.addItem("Single Pulse")
         self._pulseMode.addItem("Pulse Train")
         for child in iClampPanel.children():
-            if isinstance(child, QtGui.QLineEdit):
+            if isinstance(child, QLineEdit):
                 set_default_line_edit_size(child)
-        layout = QtGui.QGridLayout(iClampPanel)
+        layout = QGridLayout(iClampPanel)
         layout.addWidget(self._baseCurrentLabel, 0, 0)
         layout.addWidget(self._baseCurrentEdit, 0, 1)
         layout.addWidget(self._firstPulseLabel, 1, 0)
@@ -496,7 +456,7 @@ class SquidGui(QtGui.QMainWindow):
         layout.addWidget(self._secondPulseWidthEdit, 6, 1)
         layout.addWidget(self._pulseMode, 7, 0, 1, 2)
         layout.setRowStretch(8, 1.0)        
-        # layout.setSizeConstraint(QtGui.QLayout.SetFixedSize)
+        # layout.setSizeConstraint(QLayout.SetFixedSize)
         iClampPanel.setLayout(layout)
         return self._iClampCtrlBox
 
@@ -703,36 +663,36 @@ class SquidGui(QtGui.QMainWindow):
         self._runControlDock.setVisible(True)
 
     def _initActions(self):
-        self._runAction = QtGui.QAction(self.tr('Run'), self)
+        self._runAction = QAction(self.tr('Run'), self)
         self._runAction.setShortcut(self.tr('F5'))
         self._runAction.setToolTip('Run simulation (F5)')
-        self.connect(self._runAction, QtCore.SIGNAL('triggered()'), self._runSlot)
-        self._resetToDefaultsAction = QtGui.QAction(self.tr('Restore defaults'), self)
+        self._runAction.triggered.connect( self._runSlot)
+        self._resetToDefaultsAction = QAction(self.tr('Restore defaults'), self)
         self._resetToDefaultsAction.setToolTip('Reset all settings to their default values')
-        self.connect(self._resetToDefaultsAction, QtCore.SIGNAL('triggered()'), self._useDefaults)
-        self._showLegendAction = QtGui.QAction(self.tr('Display legend'), self)
+        self._resetToDefaultsAction.triggered.connect( self._useDefaults)
+        self._showLegendAction = QAction(self.tr('Display legend'), self)
         self._showLegendAction.setCheckable(True)
-        self.connect(self._showLegendAction, QtCore.SIGNAL('toggled(bool)'), self._showLegend)
-        self._showStatePlotAction = QtGui.QAction(self.tr('State plot'), self)
+        self._showLegendAction.toggled.connect(self._showLegend)
+        self._showStatePlotAction = QAction(self.tr('State plot'), self)
         self._showStatePlotAction.setCheckable(True)
         self._showStatePlotAction.setChecked(False)
-        self.connect(self._showStatePlotAction, QtCore.SIGNAL('toggled(bool)'), self._statePlotWidget.setVisible)
-        self._autoscaleAction  = QtGui.QAction(self.tr('Auto-scale plots'), self)
+        self._showStatePlotAction.toggled.connect(self._statePlotWidget.setVisible)
+        self._autoscaleAction  = QAction(self.tr('Auto-scale plots'), self)
         self._autoscaleAction.setCheckable(True)
         self._autoscaleAction.setChecked(False)
-        self.connect(self._autoscaleAction, QtCore.SIGNAL('toggled(bool)'), self._autoscale)
-        self._overlayAction = QtGui.QAction('Overlay plots', self)
+        self._autoscaleAction.toggled.connect(self._autoscale)
+        self._overlayAction = QAction('Overlay plots', self)
         self._overlayAction.setCheckable(True)
         self._overlayAction.setChecked(False) 
-        self._dockAction = QtGui.QAction('Undock all', self)
+        self._dockAction = QAction('Undock all', self)
         self._dockAction.setCheckable(True)
         self._dockAction.setChecked(False)
-        self.connect(self._dockAction, QtCore.SIGNAL('toggled(bool)'), self._toggleDocking)
-        self._restoreDocksAction = QtGui.QAction('Show all', self)
-        self.connect(self._restoreDocksAction, QtCore.SIGNAL('triggered()'), self._restoreDocks)
-        self._quitAction = QtGui.QAction(self.tr('&Quit'), self)
+        #  self._dockAction.toggle.connect( self._toggleDocking)
+        self._restoreDocksAction = QAction('Show all', self)
+        self._restoreDocksAction.triggered.connect( self._restoreDocks)
+        self._quitAction = QAction(self.tr('&Quit'), self)
         self._quitAction.setShortcut(self.tr('Ctrl+Q'))
-        self.connect(self._quitAction, QtCore.SIGNAL('triggered()'), QtGui.qApp.closeAllWindows)
+        self._quitAction.triggered.connect(qApp.closeAllWindows)
 
         
 
@@ -821,7 +781,7 @@ class SquidGui(QtGui.QMainWindow):
         self._plotCanvas.draw()
 
     def closeEvent(self, event):
-        QtGui.qApp.closeAllWindows()
+        qApp.closeAllWindows()
 
     def _showBioPhysicsHelp(self):
         self._createHelpMessage()
@@ -841,46 +801,46 @@ class SquidGui(QtGui.QMainWindow):
     def _createHelpMessage(self):
         if hasattr(self, '_helpWindow'):
             return
-        self._helpWindow = QtGui.QWidget()
+        self._helpWindow = QWidget()
         self._helpWindow.setWindowFlags(QtCore.Qt.Window)
-        layout = QtGui.QVBoxLayout()
+        layout = QVBoxLayout()
         self._helpWindow.setLayout(layout)
-        self._helpMessageArea = QtGui.QScrollArea()
-        self._helpMessageText = QtGui.QTextBrowser()
+        self._helpMessageArea = QScrollArea()
+        self._helpMessageText = QTextBrowser()
         self._helpMessageText.setOpenExternalLinks(True)
         self._helpMessageArea.setWidget(self._helpMessageText)
         layout.addWidget(self._helpMessageText)
         self._squidGuiPath = os.path.dirname(os.path.abspath(__file__))
         self._helpBaseURL = os.path.join(self._squidGuiPath,'help.html')
         self._helpMessageText.setSource(QtCore.QUrl(self._helpBaseURL))
-        self._helpMessageText.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
-        self._helpMessageArea.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
+        self._helpMessageText.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self._helpMessageArea.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self._helpMessageText.setMinimumSize(800, 600)
-        self._closeHelpAction = QtGui.QAction('Close', self)
-        self.connect(self._closeHelpAction, QtCore.SIGNAL('triggered()'), self._helpWindow.close)        
+        self._closeHelpAction = QAction('Close', self)
+        self._closeHelpAction.triggered.connect(self._helpWindow.close)        
         # Setting the close event so that the ``Help`` button is
         # unchecked when the help window is closed
         self._helpWindow.closeEvent = lambda event: self._helpAction.setChecked(False)
-        self._helpTOCAction = QtGui.QAction('Help running demo', self)
-        self.connect(self._helpTOCAction, QtCore.SIGNAL('triggered()'), self._jumpToHelpTOC)                
+        self._helpTOCAction = QAction('Help running demo', self)
+        self._helpTOCAction.triggered.connect( self._jumpToHelpTOC)                
         # This panel is for putting two buttons using horizontal
         # layout
-        panel = QtGui.QFrame()
-        panel.setFrameStyle(QtGui.QFrame.StyledPanel + QtGui.QFrame.Raised)
+        panel = QFrame()
+        panel.setFrameStyle(QFrame.StyledPanel + QFrame.Raised)
         layout.addWidget(panel)
-        layout = QtGui.QHBoxLayout()
+        layout = QHBoxLayout()
         panel.setLayout(layout)
-        self._helpAction = QtGui.QAction('Help running', self)
-        self.connect(self._helpAction, QtCore.SIGNAL('triggered()'), self._showRunningHelp)
-        self._helpBiophysicsAction = QtGui.QAction('Help biophysics', self)
-        self.connect(self._helpBiophysicsAction, QtCore.SIGNAL('triggered()'), self._showBioPhysicsHelp)
-        self._helpTOCButton = QtGui.QToolButton()
+        self._helpAction = QAction('Help running', self)
+        self._helpAction.triggered.connect(self._showRunningHelp)
+        self._helpBiophysicsAction = QAction('Help biophysics', self)
+        self._helpBiophysicsAction.triggered.connect(self._showBioPhysicsHelp)
+        self._helpTOCButton = QToolButton()
         self._helpTOCButton.setDefaultAction(self._helpTOCAction)
-        self._helpBiophysicsButton = QtGui.QToolButton()
+        self._helpBiophysicsButton = QToolButton()
         self._helpBiophysicsButton.setDefaultAction(self._helpBiophysicsAction)
         layout.addWidget(self._helpTOCButton)
         layout.addWidget(self._helpBiophysicsButton)
-        self._closeHelpButton = QtGui.QToolButton()
+        self._closeHelpButton = QToolButton()
         self._closeHelpButton.setDefaultAction(self._closeHelpAction)
         layout.addWidget(self._closeHelpButton)
         
@@ -888,12 +848,13 @@ class SquidGui(QtGui.QMainWindow):
         self._helpMessageText.setSource(QtCore.QUrl(self._helpBaseURL))
 
 if __name__ == '__main__':
-    app = QtGui.QApplication(sys.argv)
-    app.connect(app, QtCore.SIGNAL('lastWindowClosed()'), app, QtCore.SLOT('quit()'))
-    QtGui.qApp = app
+    app = QApplication(sys.argv)
+    #  app.connect(app, QtCore.SIGNAL('lastWindowClosed()'), app, QtCore.SLOT('quit()'))
+    app.quitOnLastWindowClosed( )
+    qApp = app
     squid_gui = SquidGui()
     squid_gui.show()
-    print((squid_gui.size()))
+    print(squid_gui.size())
     sys.exit(app.exec_())
 
 # 

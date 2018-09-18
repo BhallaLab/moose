@@ -175,10 +175,14 @@ class ObjectEditModel(QtCore.QAbstractTableModel):
             self.fields.append(fieldName)
         #harsha: For signalling models will be pulling out notes field from Annotator
         #        can updates if exist for other types also
-        if ( isinstance(self.mooseObject, moose.PoolBase)
-           or isinstance(self.mooseObject,moose.EnzBase) 
-           or isinstance(self.mooseObject,moose.Neutral)) :
-            self.fields.append("Color")
+        if (isinstance (self.mooseObject,moose.ChemCompt) or \
+            isinstance(self.mooseObject,moose.ReacBase)  or \
+            isinstance(moose.element(moose.element(self.mooseObject).parent),moose.EnzBase) \
+           ):
+            pass
+        else:
+             self.fields.append("Color")
+        
         flag = QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEditable
         self.fieldFlags[fieldName] = flag
 

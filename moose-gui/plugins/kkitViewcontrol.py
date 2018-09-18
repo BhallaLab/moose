@@ -144,13 +144,14 @@ class GraphicalView(QtGui.QGraphicsView):
                     elif gsolution[1] == GROUP_INTERIOR:
                         groupInteriorfound = True
                         groupList.append(gsolution)
-
                 if item.name == COMPARTMENT:
                     csolution = (item, self.resolveCompartmentInteriorAndBoundary(item, position))
                     if csolution[1] == COMPARTMENT_BOUNDARY:
-                        comptInteriorfound = True
-                        comptBoundary.append(csolution)
-
+                        return csolution
+                    # elif csolution[1] == COMPARTMENT_INTERIOR:
+                    #     comptInteriorfound = True
+                    #     comptBoundary.append(csolution)
+        
         if groupInteriorfound:
             if comptInteriorfound:
                 return comptBoundary[0]
@@ -181,7 +182,6 @@ class GraphicalView(QtGui.QGraphicsView):
                 ##This is kept for reference, so that if object (P,R,E,Tab,Fun) is moved outside the compartment,
                 #then it need to be pull back to original position
                 self.state["press"]["scenepos"]  = item.parent().scenePos() 
-            
             if itemType == COMPARTMENT_INTERIOR or itemType == GROUP_BOUNDARY  or itemType == GROUP_INTERIOR:
                 self.removeConnector()
                 
@@ -194,6 +194,9 @@ class GraphicalView(QtGui.QGraphicsView):
             if itemType == GROUP_BOUNDARY:
                 popupmenu = QtGui.QMenu('PopupMenu', self)
                 popupmenu.addAction("DeleteGroup", lambda : self.deleteGroup(item,self.layoutPt))
+                popupmenu.addAction("LinearLayout", lambda : handleCollisions(list(self.layoutPt.qGraGrp.values()), moveX, self.layoutPt))
+                popupmenu.addAction("VerticalLayout" ,lambda : handleCollisions(list(self.layoutPt.qGraGrp.values()), moveMin, self.layoutPt ))
+                        
                 #popupmenu.addAction("CloneGroup" ,lambda : handleCollisions(comptList, moveMin, self.layoutPt ))
                 popupmenu.exec_(self.mapToGlobal(event.pos()))
             
@@ -361,6 +364,12 @@ class GraphicalView(QtGui.QGraphicsView):
                     grpCmpt = self.findGraphic_groupcompt(item)
                     if movedGraphObj.parentItem() != grpCmpt:
                         '''Not same compartment/group to which it belonged to '''
+                        if isinstance(movedGraphObj,FuncItem):
+                            funcPool = moose.element((movedGraphObj.mobj.neighbors['valueOut'])[0])
+                            parentGrapItem = self.layoutPt.mooseId_GObj[moose.element(funcPool)]
+                            if parentGrapItem.parentItem() != grpCmpt:
+                                self.objectpullback("Functionparent",grpCmpt,movedGraphObj,xx,yy)
+                            
                         if isinstance(movedGraphObj,(EnzItem,MMEnzItem)):
                             parentPool = moose.element((movedGraphObj.mobj.neighbors['enzDest'])[0])
                             if isinstance(parentPool,PoolBase):
@@ -558,16 +567,21 @@ class GraphicalView(QtGui.QGraphicsView):
         if messgtype.lower() == "all":
             messgstr = "The object name  \'{0}\' exist in \'{1}\' {2}".format(movedGraphObj.mobj.name,item.mobj.name,desObj)
         elif messgtype.lower() =="enzymeparent":
-            messgstr = "The Enzyme parent  \'{0}\' doesn't exist in \'{2}\' {1} \n If you need to move the enzyme to {1} first parent pool needs to be moved".format(movedGraphObj.mobj.parent.name,desObj,item.mobj.name)
+            messgstr = "The Enzyme parent  \'{0}\' doesn't exist in \'{2}\' {1} \n If you need to move the enzyme to {1} first move the parent pool".format(movedGraphObj.mobj.parent.name,desObj,item.mobj.name)
         elif messgtype.lower() == "enzyme":
             messgstr = "The Enzyme \'{0}\' already exist in \'{2}\' {1}".format(movedGraphObj.mobj.name,desObj,item.mobj.name)        
         elif messgtype.lower() == "empty":
             messgstr = "The object can't be moved to empty space"
+        elif messgtype.lower() =="functionparent":
+            messgstr = "The Function parent  \'{0}\' doesn't exist in \'{2}\' {1} \n If you need to move the function to {1} first move the parent pool".format(movedGraphObj.mobj.parent.name,desObj,item.mobj.name)
+        
         QtGui.QMessageBox.warning(None,'Could not move the object', messgstr )
         QtGui.QApplication.setOverrideCursor(QtGui.QCursor(Qt.Qt.ArrowCursor))
 
     def moveObjSceneParent(self,item,movedGraphObj,itempos,eventpos):
         ''' Scene parent object needs to be updated '''
+        if isinstance(movedGraphObj,FuncItem):
+            return
         prevPar = movedGraphObj.parentItem()
         movedGraphObj.setParentItem(item)
 
