@@ -349,7 +349,7 @@ void SteadyState::setStoich( Id value )
     setupSSmatrix();
     double vol = LookupField< unsigned int, double >::get(stoichPtr->getCompartment(), "oneVoxelVolume", 0 );
     pool_.setVolume( vol );
-    pool_.setStoich( stoichPtr, 0 );
+    pool_.setStoich( stoichPtr, nullptr );
     pool_.updateAllRateTerms( stoichPtr->getRateTerms(), stoichPtr->getNumCoreRates() );
     isInitialized_ = 1;
 }
@@ -561,6 +561,7 @@ void SteadyState::setupSSmatrix()
     total_.assign( nConsv, 0.0 );
 
     Id ksolve = Field< Id >::get( stoich_, "ksolve" );
+
     vector< double > nVec =
         LookupField< unsigned int, vector< double > >::get(
             ksolve,"nVec", 0 );
@@ -589,7 +590,7 @@ void SteadyState::classifyState( const double* T )
     double tot = 0.0;
     Stoich* s = reinterpret_cast< Stoich* >( stoich_.eref().data() );
     vector< double > nVec = LookupField< unsigned int, vector< double > >::get(
-                                s->getKsolve(), "nVec", 0 );
+            s->getKsolve(), "nVec", 0 );
     for ( unsigned int i = 0; i < numVarPools_; ++i )
         tot += nVec[i];
 
@@ -600,14 +601,14 @@ void SteadyState::classifyState( const double* T )
     for ( unsigned int i = 0; i < numVarPools_; ++i )
     {
         double orig = nVec[i];
-        if ( std::isnan( orig ) or std::isinf( orig ) )
+        if ( std::isnan( orig ) || std::isinf( orig ) )
         {
             cout << "Warning: SteadyState::classifyState: orig=nan\n";
             solutionStatus_ = 2; // Steady state OK, eig failed
             J.clear();
             return;
         }
-        if ( std::isnan( tot ) or std::isinf( tot ))
+        if ( std::isnan( tot ) || std::isinf( tot ))
         {
             cout << "Warning: SteadyState::classifyState: tot=nan\n";
             solutionStatus_ = 2; // Steady state OK, eig failed
@@ -622,73 +623,72 @@ void SteadyState::classifyState( const double* T )
         // Assign the rates for each mol.
         for ( unsigned int j = 0; j < numVarPools_; ++j )
         {
-            if( std::isnan( yprime[j] ) or std::isinf( yprime[j] ) )
+            if( std::isnan( yprime[j] ) || std::isinf( yprime[j] ) )
             {
-                cout << "Warning: Overflow/underflow. Can't continue " << endl;
                 solutionStatus_ = 2;
+                J.clear();
                 return;
             }
             J(i, j) = yprime[j];
         }
-    }
 
-    // Jacobian is now ready. Find eigenvalues.
-    ublas::vector< std::complex< double > > eigenVec ( J.size1() );
+        // Jacobian is now ready. Find eigenvalues.
+        ublas::vector< std::complex< double > > eigenVec ( J.size1() );
 
-    ublas::matrix< std::complex<double>, ublas::column_major >* vl, *vr;
-    vl = NULL; vr = NULL;
+        ublas::matrix< std::complex<double>, ublas::column_major >* vl, *vr;
+        vl = NULL; vr = NULL;
 
-    /*-----------------------------------------------------------------------------
-     *  INFO: Calling lapack routine geev to compute eigen vector of matrix J.
-     *
-     *  Argument 3 and 4 are left- and right-eigenvectors. Since we do not need
-     *  them, they are set to NULL. Argument 2 holds eigen-vector and result is
-     *  copied to it (output ).
-     *-----------------------------------------------------------------------------*/
-    int status = lapack::geev( J, eigenVec, vl, vr, lapack::optimal_workspace() );
+        /*-----------------------------------------------------------------------------
+         *  INFO: Calling lapack routine geev to compute eigen vector of matrix J.
+         *
+         *  Argument 3 and 4 are left- and right-eigenvectors. Since we do not need
+         *  them, they are set to NULL. Argument 2 holds eigen-vector and result is
+         *  copied to it (output ).
+         *-----------------------------------------------------------------------------*/
+        int status = lapack::geev( J, eigenVec, vl, vr, lapack::optimal_workspace() );
 
-    eigenvalues_.clear();
-    eigenvalues_.resize( numVarPools_, 0.0 );
-    if ( status != 0 )
-    {
-        cout << "Warning: SteadyState::classifyState failed to find eigenvalues. Status = " <<
-             status << endl;
-        solutionStatus_ = 2; // Steady state OK, eig classification failed
-    }
-    else     // Eigenvalues are ready. Classify state.
-    {
-        nNegEigenvalues_ = 0;
-        nPosEigenvalues_ = 0;
-        for ( unsigned int i = 0; i < numVarPools_; ++i )
+        eigenvalues_.clear();
+        eigenvalues_.resize( numVarPools_, 0.0 );
+        if ( status != 0 )
         {
-            std::complex<value_type> z = eigenVec[ i ];
-            double r = z.real();
-            nNegEigenvalues_ += ( r < -EPSILON );
-            nPosEigenvalues_ += ( r > EPSILON );
-            eigenvalues_[i] = r;
-            // We have a problem here because numVarPools_ usually > rank
-            // This means we have several zero eigenvalues.
+            cout << "Warning: SteadyState::classifyState failed to find eigenvalues. Status = " <<
+                status << endl;
+            solutionStatus_ = 2; // Steady state OK, eig classification failed
         }
-        if ( nNegEigenvalues_ == rank_ )
-            stateType_ = 0; // Stable
-        else if ( nPosEigenvalues_ == rank_ ) // Never see it.
-            stateType_ = 1; // Unstable
-        else  if (nPosEigenvalues_ == 1)
-            stateType_ = 2; // Saddle
-        else if ( nPosEigenvalues_ >= 2 )
-            stateType_ = 3; // putative oscillatory
-        else if ( nNegEigenvalues_ == ( rank_ - 1) && nPosEigenvalues_ == 0 )
-            stateType_ = 4; // one zero or unclassified eigenvalue. Messy.
-        else
-            stateType_ = 5; // Other
+        else     // Eigenvalues are ready. Classify state.
+        {
+            nNegEigenvalues_ = 0;
+            nPosEigenvalues_ = 0;
+            for ( unsigned int i = 0; i < numVarPools_; ++i )
+            {
+                std::complex<value_type> z = eigenVec[ i ];
+                double r = z.real();
+                nNegEigenvalues_ += ( r < -EPSILON );
+                nPosEigenvalues_ += ( r > EPSILON );
+                eigenvalues_[i] = r;
+                // We have a problem here because numVarPools_ usually > rank
+                // This means we have several zero eigenvalues.
+            }
+            if ( nNegEigenvalues_ == rank_ )
+                stateType_ = 0; // Stable
+            else if ( nPosEigenvalues_ == rank_ ) // Never see it.
+                stateType_ = 1; // Unstable
+            else  if (nPosEigenvalues_ == 1)
+                stateType_ = 2; // Saddle
+            else if ( nPosEigenvalues_ >= 2 )
+                stateType_ = 3; // putative oscillatory
+            else if ( nNegEigenvalues_ == ( rank_ - 1) && nPosEigenvalues_ == 0 )
+                stateType_ = 4; // one zero or unclassified eigenvalue. Messy.
+            else
+                stateType_ = 5; // Other
+        }
     }
 }
 
 static bool isSolutionValid( const vector< double >& x )
 {
-    for( size_t i = 0; i < x.size(); i++ )
+    for( auto &v : x )
     {
-        double v = x[i];
         if ( std::isnan( v ) || std::isinf( v ) )
         {
             cout << "Warning: SteadyState iteration gave nan/inf concs\n";
@@ -697,6 +697,19 @@ static bool isSolutionValid( const vector< double >& x )
         else if( v < 0.0 )
         {
             cout << "Warning: SteadyState iteration gave negative concs\n";
+            return false;
+        }
+    }
+    return true;
+}
+
+static bool isSolutionPositive( const vector< double >& x )
+{
+    for( auto &v : x )
+    {
+        if( v < 0.0 )
+        {
+            cout << "Warning: SteadyState iteration gave negative concs" << endl;
             return false;
         }
     }
@@ -773,7 +786,7 @@ void SteadyState::settle( bool forceSetup )
     int status = 1;
 
     // Find roots . If successful, set status to 0.
-    if( ss->find_roots_gnewton( ) )
+    if( ss->find_roots_gnewton( convergenceCriterion_, maxIter_ ) )
         status = 0;
 
     if ( status == 0 && isSolutionValid( ss->ri.nVec ) )

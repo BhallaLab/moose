@@ -57,7 +57,7 @@ setup(
                                     , 'moose.neuroml', 'moose.neuroml2'
                                     , 'moose.chemUtil', 'moose.chemMerge'
                                 ],
-        install_requires       = [ 'matplotlib', 'numpy' ],
+        install_requires       = [ 'numpy' ],
         package_dir            = { 'moose' : 'moose', 'rdesigneur' : 'rdesigneur' },
         package_data           = { 'moose' : ['_moose' + suffix, 'neuroml2/schema/NeuroMLCoreDimensions.xml'] },
         )

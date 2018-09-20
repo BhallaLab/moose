@@ -51,7 +51,7 @@
 
 class Leakage: public ChanCommon
 {
-  public:
+public:
     Leakage();
     ~Leakage();
     void vProcess( const Eref & e, ProcPtr p );
