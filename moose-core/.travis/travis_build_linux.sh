@@ -40,6 +40,22 @@ unset PYTHONPATH
 $PYTHON2 -m compileall -q .
 if type $PYTHON3 > /dev/null; then $PYTHON3 -m compileall -q . ; fi
 
+echo "Currently in `pwd`"
+(
+    mkdir -p _GSL_BUILD && cd _GSL_BUILD
+    cmake -DDEBUG=ON -DPYTHON_EXECUTABLE="$PYTHON2" ..
+    $MAKE && ctest --output-on-failure 
+    sudo make install && cd  /tmp
+    $PYTHON2 -c 'import moose;print(moose.__file__);print(moose.version())'
+)
+
+(
+    # Now with boost.
+    mkdir -p _BOOST_BUILD && cd _BOOST_BUILD && \
+        cmake -DWITH_BOOST_ODE=ON -DDEBUG=ON -DPYTHON_EXECUTABLE="$PYTHON2" ..
+    $MAKE && ctest --output-on-failure 
+)
+
 # This is only applicable on linux build.
 echo "Python3: Removed python2-networkx and install python3"
 if type $PYTHON3 > /dev/null; then
@@ -63,13 +79,3 @@ if type $PYTHON3 > /dev/null; then
 else
     echo "Python3 is not found. Build disabled"
 fi
-
-# PYTHON2. Soon to be deprecated.
-echo "Currently in `pwd`"
-(
-    mkdir -p _GSL_BUILD && cd _GSL_BUILD
-    cmake -DDEBUG=OFF -DPYTHON_EXECUTABLE="$PYTHON2" ..
-    $MAKE && ctest --output-on-failure 
-    sudo make install && cd  /tmp
-    $PYTHON2 -c 'import moose;print(moose.__file__);print(moose.version())'
-)
