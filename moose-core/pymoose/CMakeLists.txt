@@ -4,18 +4,18 @@ set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../cmake_modules/")
 
 find_package(PythonInterp REQUIRED)
 
-# Find Numpy 
+# Find Numpy
 find_package(NumPy REQUIRED)
 include_directories(${NUMPY_INCLUDE_DIRS})
 add_definitions( -std=c++11 )
 add_definitions(-DUSE_NUMPY)
 add_definitions(-DNPY_NO_DEPRECATED_API=NPY_1_7_API_VERSION)
 
-# set module extensiton. default is .so
+# set module extensiton. default is .so. Also check ../python/setup.cmake.py
 execute_process( COMMAND
     ${PYTHON_EXECUTABLE} -c
 "import importlib.machinery
-print(importlib.machinery.EXTENSION_SUFFIXES[0])"
+print(importlib.machinery.EXTENSION_SUFFIXES[-1])"
     OUTPUT_VARIABLE PYTHON_SO_EXTENSION
     OUTPUT_STRIP_TRAILING_WHITESPACE
     )
@@ -25,7 +25,7 @@ if(NOT PYTHON_SO_EXTENSION)
 endif()
 message(STATUS "Python so extension ${PYTHON_SO_EXTENSION}" )
 
-# TARGET 
+# TARGET
 set(PYMOOSE_SRCS
     moosemodule.cpp
     vec.cpp
@@ -63,7 +63,7 @@ else()
          COMPILE_DEFINITIONS "PYMOOSE"
          COMPILE_FLAGS "${PYTHON_INCLUDE_FLAGS}"
         )
-     
+
 endif()
 
 # Remove prefix lib from python module.
@@ -82,7 +82,7 @@ if(MACOSX AND ("${PYTHON_VERSION_MAJOR}" STREQUAL "2"))
 endif()
 
 # see issue #80
-if(HDF5_LIBRARY_DIRS)
+if(HDF5_FOUND AND WITH_NSDF)
     set_target_properties( _moose PROPERTIES LINK_FLAGS "-L${HDF5_LIBRARY_DIRS}" )
 endif()
 
