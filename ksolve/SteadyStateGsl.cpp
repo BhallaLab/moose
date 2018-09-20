@@ -87,20 +87,20 @@ const Cinfo* SteadyState::initCinfo()
      * This picks up the entire Stoich data structure
     static Finfo* gslShared[] =
     {
-    	new SrcFinfo( "reinitSrc", Ftype0::global() ),
-    	new DestFinfo( "assignStoich",
-    		Ftype1< void* >::global(),
-    		RFCAST( &SteadyState::assignStoichFunc )
-    		),
-    	new DestFinfo( "setMolN",
-    		Ftype2< double, unsigned int >::global(),
-    		RFCAST( &SteadyState::setMolN )
-    		),
-    	new SrcFinfo( "requestYsrc", Ftype0::global() ),
-    	new DestFinfo( "assignY",
-    		Ftype1< double* >::global(),
-    		RFCAST( &SteadyState::assignY )
-    		),
+        new SrcFinfo( "reinitSrc", Ftype0::global() ),
+        new DestFinfo( "assignStoich",
+            Ftype1< void* >::global(),
+            RFCAST( &SteadyState::assignStoichFunc )
+            ),
+        new DestFinfo( "setMolN",
+            Ftype2< double, unsigned int >::global(),
+            RFCAST( &SteadyState::setMolN )
+            ),
+        new SrcFinfo( "requestYsrc", Ftype0::global() ),
+        new DestFinfo( "assignY",
+            Ftype1< double* >::global(),
+            RFCAST( &SteadyState::assignY )
+            ),
     };
      */
 
@@ -205,61 +205,61 @@ const Cinfo* SteadyState::initCinfo()
     // MsgDest definitions
     ///////////////////////////////////////////////////////
     static DestFinfo setupMatrix( "setupMatrix",
-                                  "This function initializes and rebuilds the matrices used "
-                                  "in the calculation.",
-                                  new OpFunc0< SteadyState >(&SteadyState::setupMatrix)
-                                );
+            "This function initializes and rebuilds the matrices used "
+            "in the calculation.",
+            new OpFunc0< SteadyState >(&SteadyState::setupMatrix)
+            );
 
     static DestFinfo settle( "settle",
-                             "Finds the nearest steady state to the current initial "
-                             "conditions. This function rebuilds the entire calculation "
-                             "only if the object has not yet been initialized.",
-                             new OpFunc0< SteadyState >( &SteadyState::settleFunc )
-                           );
+            "Finds the nearest steady state to the current initial "
+            "conditions. This function rebuilds the entire calculation "
+            "only if the object has not yet been initialized.",
+            new OpFunc0< SteadyState >( &SteadyState::settleFunc )
+            );
     static DestFinfo resettle( "resettle",
-                               "Finds the nearest steady state to the current initial "
-                               "conditions. This function rebuilds the entire calculation ",
-                               new OpFunc0< SteadyState >( &SteadyState::resettleFunc )
-                             );
+            "Finds the nearest steady state to the current initial "
+            "conditions. This function rebuilds the entire calculation ",
+            new OpFunc0< SteadyState >( &SteadyState::resettleFunc )
+            );
     static DestFinfo showMatrices( "showMatrices",
-                                   "Utility function to show the matrices derived for the calculations on the reaction system. Shows the Nr, gamma, and total matrices",
-                                   new OpFunc0< SteadyState >( &SteadyState::showMatrices )
-                                 );
+            "Utility function to show the matrices derived for the "
+            "calculations on the reaction system. Shows the Nr, gamma, and total matrices",
+            new OpFunc0< SteadyState >( &SteadyState::showMatrices )
+            );
     static DestFinfo randomInit( "randomInit",
-                                 "Generate random initial conditions consistent with the mass"
-                                 "conservation rules. Typically invoked in order to scan"
-                                 "states",
-                                 new EpFunc0< SteadyState >(
-                                     &SteadyState::randomizeInitialCondition )
-                               );
+            "Generate random initial conditions consistent with the mass"
+            "conservation rules. Typically invoked in order to scan"
+            "states",
+            new EpFunc0< SteadyState >(
+                &SteadyState::randomizeInitialCondition )
+            );
+
     ///////////////////////////////////////////////////////
     // Shared definitions
     ///////////////////////////////////////////////////////
 
     static Finfo * steadyStateFinfos[] =
     {
-        &stoich,				// Value
-        &badStoichiometry,		// ReadOnlyValue
-        &isInitialized,			// ReadOnlyValue
-        &nIter,					// ReadOnlyValue
-        &status,				// ReadOnlyValue
-        &maxIter,				// Value
-        &convergenceCriterion,	// ReadOnlyValue
-        &numVarPools,			// ReadOnlyValue
-        &rank,					// ReadOnlyValue
-        &stateType,				// ReadOnlyValue
-        &nNegEigenvalues,		// ReadOnlyValue
-        &nPosEigenvalues,		// ReadOnlyValue
-        &solutionStatus,		// ReadOnlyValue
-        &total,					// LookupValue
-        &eigenvalues,			// ReadOnlyLookupValue
-        &setupMatrix,			// DestFinfo
-        &settle,				// DestFinfo
-        &resettle,				// DestFinfo
-        &showMatrices,			// DestFinfo
-        &randomInit,			// DestFinfo
-
-
+        &stoich,                  // Value
+        &badStoichiometry,        // ReadOnlyValue
+        &isInitialized,           // ReadOnlyValue
+        &nIter,                   // ReadOnlyValue
+        &status,                  // ReadOnlyValue
+        &maxIter,                 // Value
+        &convergenceCriterion,    // ReadOnlyValue
+        &numVarPools,             // ReadOnlyValue
+        &rank,                    // ReadOnlyValue
+        &stateType,               // ReadOnlyValue
+        &nNegEigenvalues,         // ReadOnlyValue
+        &nPosEigenvalues,         // ReadOnlyValue
+        &solutionStatus,          // ReadOnlyValue
+        &total,                   // LookupValue
+        &eigenvalues,             // ReadOnlyLookupValue
+        &setupMatrix,             // DestFinfo
+        &settle,                  // DestFinfo
+        &resettle,                // DestFinfo
+        &showMatrices,            // DestFinfo
+        &randomInit,              // DestFinfo
     };
 
     static string doc[] =
@@ -276,7 +276,7 @@ const Cinfo* SteadyState::initCinfo()
         "Note that the method finds unstable as well as stable fixed "
         "points.\n "
         "The SteadyState class also provides a utility function "
-        "*randomInit()*	to "
+        "*randomInit()*    to "
         "randomly initialize the concentrations, within the constraints "
         "of stoichiometry. This is useful if you are trying to find "
         "the major fixed points of the system. Note that this is "
@@ -316,7 +316,6 @@ static const Cinfo* steadyStateCinfo = SteadyState::initCinfo();
 ///////////////////////////////////////////////////
 // Class function definitions
 ///////////////////////////////////////////////////
-
 SteadyState::SteadyState()
     :
     nIter_( 0 ),
@@ -382,9 +381,10 @@ void SteadyState::setStoich( Id value )
     double vol = LookupField< unsigned int, double >::get(
                      stoichPtr->getCompartment(), "oneVoxelVolume", 0 );
     pool_.setVolume( vol );
-    pool_.setStoich( stoichPtr, 0 );
-    pool_.updateAllRateTerms( stoichPtr->getRateTerms(),
-                              stoichPtr->getNumCoreRates() );
+
+    pool_.setStoich( stoichPtr, nullptr );
+
+    pool_.updateAllRateTerms( stoichPtr->getRateTerms(), stoichPtr->getNumCoreRates() );
     isInitialized_ = 1;
 }
 
@@ -548,9 +548,9 @@ void SteadyState::showMatrices()
         return;
     }
     int numConsv = numVarPools_ - rank_;
-    cout << "Totals:	";
+    cout << "Totals:    ";
     for ( int i = 0; i < numConsv; ++i )
-        cout << total_[i] << "	";
+        cout << total_[i] << "    ";
     cout << endl;
 #ifdef USE_GSL
     print_gsl_mat( gamma_, "gamma" );
@@ -584,7 +584,7 @@ void SteadyState::setupSSmatrix()
     {
         gsl_matrix_set (LU_, i, i + nReacs_, 1 );
         unsigned int k = rowStart[i];
-        // cout << endl << i << ":	";
+        // cout << endl << i << ":    ";
         for ( unsigned int j = 0; j < nReacs_; ++j )
         {
             double x = 0;
@@ -592,7 +592,7 @@ void SteadyState::setupSSmatrix()
             {
                 x = entry[k++];
             }
-            // cout << "	" << x;
+            // cout << "    " << x;
             gsl_matrix_set (N, i, j, x);
             gsl_matrix_set (LU_, i, j, x );
         }
@@ -637,10 +637,10 @@ void SteadyState::setupSSmatrix()
     /*
     cout << "S = (";
     for ( unsigned int j = 0; j < numVarPools_; ++j )
-    	cout << s_->S()[ j ] << ", ";
+        cout << s_->S()[ j ] << ", ";
     cout << "), Sinit = ( ";
     for ( unsigned int j = 0; j < numVarPools_; ++j )
-    	cout << s_->Sinit()[ j ] << ", ";
+        cout << s_->Sinit()[ j ] << ", ";
     cout << ")\n";
     */
     Id ksolve = Field< Id >::get( stoich_, "ksolve" );

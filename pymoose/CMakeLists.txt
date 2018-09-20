@@ -11,11 +11,11 @@ add_definitions( -std=c++11 )
 add_definitions(-DUSE_NUMPY)
 add_definitions(-DNPY_NO_DEPRECATED_API=NPY_1_7_API_VERSION)
 
-# set module extensiton. default is .so
+# set module extensiton. default is .so. Also check ../python/setup.cmake.py
 execute_process( COMMAND
     ${PYTHON_EXECUTABLE} -c
 "import importlib.machinery
-print(importlib.machinery.EXTENSION_SUFFIXES[0])"
+print(importlib.machinery.EXTENSION_SUFFIXES[-1])"
     OUTPUT_VARIABLE PYTHON_SO_EXTENSION
     OUTPUT_STRIP_TRAILING_WHITESPACE
     )
