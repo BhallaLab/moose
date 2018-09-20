@@ -1,4 +1,3 @@
-
 '''
 The LIF network is based on:
 Ostojic, S. (2014).
@@ -15,10 +14,15 @@ Currently, simtime and dt are modified to compare across MOOSE, Brian1 and Brian
 '''
 
 #import modules and functions to be used
-from brian2 import *   # importing brian also does:
-                        # 'from pylab import *' which imports:
-                        # matplot like commands into the namespace, further
-                        # also can use np. for numpy and mpl. for matplotlib
+# 'from pylab import *' which imports:
+# matplot like commands into the namespace, further
+# also can use np. for numpy and mpl. for matplotlib
+try:
+    from brian2 import *   # importing brian also does:
+except ImportError as e:
+    print( "[INFO ] brian2 is not found." )
+    quit()
+
 #prefs.codegen.target='numpy'
 #prefs.codegen.target='weave'
 set_device('cpp_standalone')

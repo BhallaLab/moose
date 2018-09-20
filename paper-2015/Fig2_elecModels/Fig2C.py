@@ -6,6 +6,12 @@
 # This programme illustrates building a panel of multiscale models to
 # test neuronal plasticity in different contexts.
 ########################################################################
+try:
+    import moogli
+except Exception as e:
+    print( "[INFO ] Could not import moogli. Quitting..." )
+    quit()
+
 import numpy
 import time
 import pylab
@@ -18,7 +24,6 @@ import os
 from moose.neuroml.ChannelML import ChannelML
 sys.path.append('../../../Demos/util')
 import rdesigneur as rd
-import moogli
 
 PI = 3.14159265359
 useGssa = True

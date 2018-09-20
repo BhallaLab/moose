@@ -131,7 +131,7 @@ print('data_dir =', data_dir)
 filename_suffix = '_%s_%d' % (timestamp.strftime('%Y%m%d_%H%M%S'), mypid)
 
 def handleError(self, record):
-    raise
+    raise RuntimeError( record )
 
 LOG_FILENAME = os.path.join(data_dir, 'traub2005%s.log' % (filename_suffix))
 LOG_LEVEL = logging.DEBUG

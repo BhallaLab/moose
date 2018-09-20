@@ -3,9 +3,5 @@
 # file in the current working directory and run the snippet. 
 
 # This configuration file does the followings:
-# - plt.show() function become non-blocking.
-
-backend : agg
-
 # This makes all plots non-blocking.
 interactive : True

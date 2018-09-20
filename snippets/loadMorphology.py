@@ -25,7 +25,13 @@
 ## GNU Lesser General Public License version 2.1
 ## See the file COPYING.LIB for the full notice.
 ########################################################################
-import moogli
+
+try:
+    import moogli
+except Exception as e:
+    print( "[INFO ] Failed to import moogli. Quitting..." )
+    quit()
+
 import moose
 from moose import neuroml
 from PyQt4 import Qt, QtCore, QtGui

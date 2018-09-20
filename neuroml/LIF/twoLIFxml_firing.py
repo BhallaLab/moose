@@ -54,7 +54,7 @@ if __name__ == '__main__':
     IF1vmTable = setupTable("vmTableIF1",IF1Soma,'Vm')
     IF2vmTable = setupTable("vmTableIF2",IF2Soma,'Vm')
 
-    table_path = moose.Neutral(IF1Soma.path+'/data').path
+    table_path = moose.element(IF1Soma.path+'/data').path
     IF1spikesTable = moose.Table(table_path+'/spikesTable')
     moose.connect(IF1Soma,'spikeOut',IF1spikesTable,'input') ## spikeGen gives spiketimes
 

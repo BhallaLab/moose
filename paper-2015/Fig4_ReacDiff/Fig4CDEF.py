@@ -10,7 +10,13 @@
 # 650 seconds. This simulation runs using a deterministic method.
 # The runtime on a 2.2 GHz Intel core I7 processor is about 550 s.
 ########################################################################
-import moogli
+
+try:
+    import moogli
+except ImportError as e:
+    print( "[INFO ] Could not import moogli. Quitting ..." )
+    quit()
+    
 import numpy
 import time
 import pylab
