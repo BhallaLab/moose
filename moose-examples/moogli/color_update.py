@@ -1,4 +1,9 @@
-import moogli
+try:
+    import moogli
+except ImportError as e:
+    print( "[INFO ] Could not import moogli. Quitting..." )
+    quit()
+
 import moose
 from moose import neuroml
 from PyQt4 import Qt, QtCore, QtGui

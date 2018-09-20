@@ -5,7 +5,12 @@ rm values. The visualizers remain active while the simulation is running.
 Once the simulation finishes, a graph comes up, showing the soma vm values.
 """
 
-import moogli
+try:
+    import moogli
+except ImportError as e:
+    print( "[INFO ] Could not import moogli. Quitting..." )
+    quit()
+
 import moose
 from moose import neuroml
 from PyQt4 import Qt, QtCore, QtGui
@@ -14,14 +19,13 @@ import os
 import random
 import numpy as np
 import math
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+from PyQt4.QtGui import QApplication
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 
 # The QApplication class manages the GUI application's
 # control flow and main settings
-app = QtGui.QApplication(sys.argv)
+app = QApplication(sys.argv)
 
 # Load model from the neuroml file into moose
 filename = os.path.join( os.path.split(os.path.realpath(__file__))[0]
@@ -198,7 +202,6 @@ def delete_gl_widget():
     del rm_visualizer
 
 QApplication.instance().aboutToQuit.connect( delete_gl_widget )
-
 
 # Enter the main event loop and wait until exit() is called.
 # It is necessary to call this function to start event handling.

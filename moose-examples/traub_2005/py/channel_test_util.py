@@ -36,6 +36,7 @@ import moose
 import config
 import channelbase
 import testutils
+import matplotlib.pyplot as plt
 
 def run_single_channel(channelname, Gbar, simtime, simdt=testutils.SIMDT, plotdt=testutils.PLOTDT):
     testId = uuid.uuid4().int

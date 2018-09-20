@@ -1,4 +1,9 @@
-from neuron import h, rxd
+try:
+    from neuron import h, rxd
+except ImportError as e:
+    print( "[INFO ] Failed to import neuron. Quitting ..." )
+    quit()
+    
 import numpy
 from matplotlib import pyplot
 import time

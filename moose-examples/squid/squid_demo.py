@@ -1,5 +1,4 @@
-
- # -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 # squidgui.py --- 
 # 
 # Filename: squidgui.py
@@ -48,18 +47,21 @@
 # Code:
 
 import sys
-sys.path.append('../../python')
 import os
-os.environ['NUMPTHREADS'] = '1'
-
 from collections import defaultdict
 import time
 
-from PyQt4 import QtGui
-from PyQt4 import QtCore
+try:
+    from PyQt4 import QtGui
+    from PyQt4 import QtCore
+except ImportError as e:
+    print( "[INFO ] Could not import PyQt4. Quitting..." )
+    quit()
+
 import numpy
 from matplotlib.figure import Figure
-from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas, NavigationToolbar2QT as NavigationToolbar
+from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qt4agg import NavigationToolbar2QT as NavigationToolbar
 
 import moose
 
@@ -162,7 +164,6 @@ default_line_edit_size = QtCore.QSize(80, 25)
 def set_default_line_edit_size(widget):
     widget.setMinimumSize(default_line_edit_size)
     widget.setMaximumSize(default_line_edit_size)
-
 
 class SquidGui(QtGui.QMainWindow):
     defaults = {}

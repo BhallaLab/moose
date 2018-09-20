@@ -887,5 +887,5 @@ if __name__=='__main__':
     print( "Hit 'enter' to exit" )
     try:
         raw_input()
-    except Exception as e:
+    except NameError as e:
         input( )

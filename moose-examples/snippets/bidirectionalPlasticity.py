@@ -20,9 +20,9 @@ def dumpPlots():
         moose.element( x[0] ).xplot( fname, x[0].name )
 
 def displayPlots():
-    clock = moose.Clock( '/clock' ) # look up global clock
+    clock = moose.element( '/clock' ) # look up global clock
     totR = moose.element( '/model/graphs/conc1/tot_PSD_R.Co' )
-    PP1 = moose.element( '/model/moregraphs/conc4/PP1_dash_active.Co' )
+    PP1 = moose.element( '/model/moregraphs/conc4/PP1_active.Co' )
     Ca = moose.element( '/model/graphs/conc1/Ca.Co' )
     pylab.plot( pylab.linspace( 0, clock.currentTime, len( totR.vector )), totR.vector, label='membrane Receptor' )
     pylab.plot( pylab.linspace( 0, clock.currentTime, len( PP1.vector ) ), PP1.vector, label='active PP1' )

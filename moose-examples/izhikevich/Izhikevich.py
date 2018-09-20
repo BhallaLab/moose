@@ -54,10 +54,7 @@
 import time
 from numpy import *
 import os
-os.environ['NUMPTHREADS'] = '1'
 import sys
-sys.path.append('../../python')
-
 import moose
 
 class IzhikevichDemo:
@@ -234,12 +231,12 @@ These neurons show bursting in response to inhibitory input."""
         moose.start(self.simtime)
         while moose.isRunning():
             time.sleep(100)
-        time = linspace(0, IzhikevichDemo.parameters[key][7], len(Vm.vector))
+        t = linspace(0, IzhikevichDemo.parameters[key][7], len(Vm.vector))
         # DEBUG
         nrn = self._get_neuron(key)
         print(('a = %g, b = %g, c = %g, d = %g, initVm = %g, initU = %g' % (nrn.a,nrn.b, nrn.c, nrn.d, nrn.initVm, nrn.initU)))
         #! DEBUG
-        return (time, Vm, Im)
+        return (t, Vm, Im)
 
 
     def _get_neuron(self, key):
@@ -354,8 +351,8 @@ These neurons show bursting in response to inhibitory input."""
             self.inputs[key] = input_table
             return input_table                        
         else:
-            print((key, ': Stimulus is not based on pulse generator.'))
-            raise
+            raise RuntimeError( key + ': Stimulus is not based on pulse generator.')
+
         pulsegen = self._make_pulsegen(key, 
                                       firstLevel,
                                       firstDelay,
@@ -521,12 +518,12 @@ try:
         if len(sys.argv) > 1:
             key = sys.argv[1]
         demo = IzhikevichDemo()
-        (time, Vm, Im) = demo.simulate(key)
+        (t, Vm, Im) = demo.simulate(key)
         title(IzhikevichDemo.parameters[key][0] + '. ' + key)
         subplot(3,1,1)
-        plot(time, Vm.vector)
+        plot(t, Vm.vector)
         subplot(3,1,2)
-        plot(time, Im.vector)
+        plot(t, Im.vector)
         subplot(3,1,3)
         show()
         print('Finished simulation.')

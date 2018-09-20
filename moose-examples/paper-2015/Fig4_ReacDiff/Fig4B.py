@@ -7,13 +7,18 @@
 # a simplified cellular morphology. Each spine has a signaling model in it
 # too. The program doesn't run the model, it just displays it in 3D.
 ########################################################################
-import moogli
+try:
+    import moogli
+except Exception as e:
+    print( "[INFO ] Could not import moogli. Quitting ..." )
+    quit()
+
+from PyQt4 import Qt, QtCore, QtGui
 import numpy
 import time
 import pylab
 import moose
 from moose import neuroml
-from PyQt4 import Qt, QtCore, QtGui
 import matplotlib.pyplot as plt
 import sys
 import os

@@ -4,22 +4,24 @@ simultaneously update the visualizer. Also another viewer shows the compartment
 rm values. The visualizers remain active while the simulation is running.
 """
 
+try:
+    import moogli
+except ImportError as e:
+    print( "[INFO ] Could not import moogli. Quitting..." )
+    quit()
 
-import moogli
 import moose
 from moose import neuroml
-from PyQt4 import Qt, QtCore, QtGui
 import sys
 import os
 import random
 import numpy as np
 import math
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+from PyQt4.QtGui import QApplication
 
 # The QApplication class manages the GUI application's
 # control flow and main settings
-app = QtGui.QApplication(sys.argv)
+app = QApplication(sys.argv)
 
 # Load model from the neuroml file into moose
 filename = os.path.join( os.path.split(os.path.realpath(__file__))[0]

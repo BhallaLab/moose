@@ -4,7 +4,12 @@ simultaneously update the visualizer.
 The visualizer remains active while the simulation is running.
 """
 
-import moogli
+try:
+    import moogli
+except ImportError as e:
+    print( "[INFO ] Could not import moogli. Quitting..." )
+    quit()
+
 import moose
 from moose import neuroml
 from PyQt4 import Qt, QtCore, QtGui
