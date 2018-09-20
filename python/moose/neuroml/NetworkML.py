@@ -179,7 +179,7 @@ class NetworkML():
             model_filenames = (cellname+'.xml', cellname+'.morph.xml')
             success = False
             for model_filename in model_filenames:
-                model_path = find_first_file(model_filename,self.model_dir)
+                model_path = find_first_file(model_filename, self.model_dir)
                 if model_path is not None:
                     cellDict = mmlR.readMorphMLFromFile(model_path, self.params)
                     success = True

@@ -31,8 +31,6 @@
 #include <boost/numeric/ublas/lu.hpp>
 #include <boost/numeric/ublas/vector.hpp>
 #include <boost/numeric/ublas/io.hpp>
-
-
 #include "VoxelPools.h"
 
 using namespace std;
@@ -46,10 +44,10 @@ typedef ublas::matrix<value_type> matrix_type;
 class ReacInfo
 {
     public:
-        int rank;
-        int num_reacs;
+        size_t rank;
+        size_t num_reacs;
         size_t num_mols;
-        int nIter;
+        size_t nIter;
         double convergenceCriterion;
         double* T;
         VoxelPools* pool;
@@ -60,8 +58,10 @@ class ReacInfo
 
 
 /* Matrix inversion routine.
-   Uses lu_factorize and lu_substitute in uBLAS to invert a matrix */
-    template<class T>
+ * Uses lu_factorize and lu_substitute in uBLAS to invert a matrix 
+ */
+
+template<class T>
 bool inverse(const ublas::matrix<T>& input, ublas::matrix<T>& inverse)
 {
     using namespace boost::numeric::ublas;
@@ -73,6 +73,7 @@ bool inverse(const ublas::matrix<T>& input, ublas::matrix<T>& inverse)
 
     // perform LU-factorization
     int res = lu_factorize(A,pm);
+
     if( res != 0 ) return false;
 
     // create identity matrix of "inverse"
@@ -103,14 +104,19 @@ public:
         x1.resize( size_, 0);
 
         ri.nVec.resize( size_ );
-        dx_ = sqrt( numeric_limits<double>::epsilon() );
+
+        // Find machine epsilon to decide on dx. Machine eps is typically 2.22045e-16 on 64 bit machines/intel. 
+        // Square root of this value is a very good value. The values matches with GSL solver nicely.
+        // Making this value too small or too big gonna cause error in blas methods especially when 
+        // computing inverse.  
+        // Gnu-GSL uses GSL_SQRT_DBL_EPSILON  which is 1.4901161193847656e-08
+        // dx_ = 1.4901161193847656e-08;
+        dx_ = std::sqrt( numeric_limits<double>::epsilon() );
     }
 
-    vector_type compute_at(const vector_type& x)
+    bool compute_at(const vector_type& x, vector_type& result)
     {
-        vector_type result( size_ );
-        system(x, result);
-        return result;
+        return system(x, result);
     }
 
     int apply( )
@@ -118,22 +124,51 @@ public:
         return system(x_, f_);
     }
 
-    int compute_jacobians( const vector_type& x, bool compute_inverse = true )
+    int compute_jacobians( const vector_type& x, bool compute_inverse = false )
     {
         for( size_t i = 0; i < size_; i++)
+        {
+            // This trick I leart by looking at GSL implmentation.
+            double dx = dx_ * std::fabs(x[i]);
+            if( dx == 0 )
+                dx = dx_;
+
             for( size_t j = 0; j < size_; j++)
             {
                 vector_type temp = x;
-                temp[j] += dx_;
-                J_(i, j) = (compute_at(temp)[i] - compute_at(x)[i]) / dx_;
+                temp[j] += dx;
+                vector_type res1, res2;
+                auto r1 = compute_at(temp, res1);
+                auto r2 = compute_at(x, res2);
+
+                if( 0 == r1 && 0 == r2 )
+                {
+                    J_(i, j) = (res1[i] - res2[i]) / dx;
+                    if( std::isnan(J_(i,j)) || std::isinf(J_(i,j)) )
+                    {
+                        /* Try increasing dx */
+                        J_.clear();
+                        return -1;
+                    }
+                }
+                else
+                {
+                    J_.clear();
+                    return -1;
+                }
             }
+        }
 
-        // is_jacobian_valid_ = true;
-        // Keep the inverted J_ ready
-        //if(is_jacobian_valid_ and compute_inverse )
         if( compute_inverse )
-            inverse( J_, invJ_ );
-
+        {
+            try {
+                inverse( J_, invJ_ );
+            } catch ( exception & e ) {
+                J_.clear();
+                invJ_.clear();
+                return -1;
+            }
+        }
         return 0;
     }
 
@@ -147,9 +182,15 @@ public:
             init[i] = x[i];
 
         x_ = init;
-        apply();
-
-        compute_jacobians( init );
+        if( 0 == apply() )
+        {
+            if( 0 != compute_jacobians( init ) )
+            {
+                return;
+            }
+        }
+        else
+            return;
     }
 
     string to_string( )
@@ -167,22 +208,16 @@ public:
 
     int system( const vector_type& x, vector_type& f )
     {
-        int num_consv = ri.num_mols - ri.rank;
+        size_t num_consv = ri.num_mols - ri.rank;
         for ( size_t i = 0; i < ri.num_mols; ++i )
         {
             double temp = x[i] * x[i] ;
 
-#if 0
             // if overflow
-            if ( std::isnan( temp ) or std::isinf( temp ) )
-            {
-                cerr << "Failed: ";
-                for( auto v : ri.nVec ) cerr << v << ", ";
-                cerr << endl;
+            if ( std::isnan( temp ) || std::isinf( temp ) )
                 return -1;
-            }
-#endif
-            ri.nVec[i] = temp;
+            else
+                ri.nVec[i] = temp;
         }
 
         vector< double > vels;
@@ -192,21 +227,21 @@ public:
 
         // y = Nr . v
         // Note that Nr is row-echelon: diagonal and above.
-        for ( int i = 0; i < ri.rank; ++i )
+        f.resize( ri.rank + num_consv);
+        for ( size_t i = 0; i < ri.rank; ++i )
         {
             double temp = 0;
-            for ( int j = i; j < ri.num_reacs; ++j )
+            for ( size_t j = i; j < ri.num_reacs; ++j )
                 temp += ri.Nr(i, j ) * vels[j];
             f[i] = temp ;
         }
 
         // dT = gamma.S - T
-        for ( int i = 0; i < num_consv; ++i )
+        for ( size_t i = 0; i < num_consv; ++i )
         {
             double dT = - ri.T[i];
             for ( size_t  j = 0; j < ri.num_mols; ++j )
                 dT += ri.gamma(i, j) * x[j] * x[j];
-
             f[ i + ri.rank] = dT ;
         }
         return 0;
@@ -222,97 +257,40 @@ public:
      * @return  If successful, return true. Check the variable `x_` at
      * which the system f_ is close to zero (within  the tolerance).
      */
-    bool find_roots_gnewton( double tolerance = 1e-7 , size_t max_iter = 50)
+    bool find_roots_gnewton( double tolerance, size_t max_iter)
     {
-        //tolerance = sqrt( numeric_limits<double>::epsilon() );
         double norm2OfDiff = 1.0;
         size_t iter = 0;
-        int status = apply();
+        if(0 != apply() )
+            return false;
 
-        while( ublas::norm_2(f_) >= tolerance )
+        while( ublas::norm_2(f_) > tolerance )
         {
             iter += 1;
-            compute_jacobians( x_, true );
+            ri.nIter = iter;
+
+            if( 0 != compute_jacobians( x_, true ) )
+            {
+                J_.clear();
+                invJ_.clear();
+                return false;
+            }
+
             vector_type correction = ublas::prod( invJ_, f_ );
             x_ -=  correction;
 
             // If could not compute the value of system successfully.
-            status = apply();
-            if( 0 != status )
+            if( 0 != apply() )
+            {
+                x_.clear();
                 return false;
+            }
 
             if( iter >= max_iter )
                 break;
 
         }
-
-        ri.nIter = iter;
-
-        if( iter >= max_iter )
-            return false;
-
         return true;
-    }
-
-    /**
-     * @brief Compute the slope of function in given dimension.
-     *
-     * @param which_dimen The index of dimension.
-     *
-     * @return  Slope.
-     */
-    value_type slope( unsigned int which_dimen )
-    {
-        vector_type x = x_;
-        x[which_dimen] += dx_;
-        // x1 and x2 holds the f_ of system at x_ and x (which is x +
-        // some step)
-        system( x_, x1 );
-        system( x, x2 );
-        return ublas::norm_2( (x2 - x1)/dx_ );
-    }
-
-
-    /**
-     * @brief Makes the first guess. After this call the Newton method.
-     */
-    void correction_step(  )
-    {
-        // Get the jacobian at current point. Notice that in this method, we
-        // don't have to compute inverse of jacobian
-
-        vector_type direction( size_ );
-
-        // Now take the largest step possible such that the value of system at
-        // (x_ - step ) is lower than the value of system as x_.
-        vector_type nextState( size_ );
-
-        apply();
-
-        unsigned int i = 0;
-
-        double factor = 1e-2;
-        while( true )
-        {
-            i += 1;
-            compute_jacobians( x_, false );
-            // Make a move in either side of direction. In whichever direction
-            // the function decreases.
-            direction = ublas::prod( J_, f_ );
-            nextState = x_ - factor * direction;
-            if( ublas::norm_2( compute_at( nextState ) ) >= ublas::norm_2(compute_at(x_)))
-                factor = factor / 2.0;
-            else
-            {
-                cerr << "Correction term applied ";
-                x_ = nextState;
-                apply();
-                break;
-            }
-
-            if ( i > 20 )
-                break;
-        }
     }
 
 public:

@@ -13,16 +13,16 @@ readChannelMLFromFile(...) to load a standalone ChannelML file (synapse/channel)
 readChannelML(...) / readSynapseML to load from an xml.etree xml element (could be part of a larger NeuroML file).
 """
 
-from __future__ import print_function
+from __future__ import print_function, division
 from xml.etree import cElementTree as ET
 import string
-import os, sys
+import os
+import sys
 import math
-
 import moose
 from moose.neuroml import utils
-from moose import utils as moose_utils
-from moose import print_utils as pu
+import moose.utils as mu
+import moose.print_utils as pu
 
 class ChannelML():
 
@@ -497,7 +497,7 @@ def make_new_synapse(syn_name, postcomp, syn_name_full, nml_params):
     ## connect the SimpleSynHandler or the STDPSynHandler to the SynChan (double exp)
     moose.connect( synhandler, 'activationOut', syn, 'activation' )
     # mgblock connections if required
-    childmgblock = moose_utils.get_child_Mstring(syn,'mgblockStr')
+    childmgblock = mu.get_child_Mstring(syn,'mgblockStr')
     #### connect the post compartment to the synapse
     if childmgblock.value=='True': # If NMDA synapse based on mgblock, connect to mgblock
         mgblock = moose.Mg_block(syn.path+'/mgblock')

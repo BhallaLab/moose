@@ -259,15 +259,18 @@ class MorphML():
                 if cableid in self.intFireCableIds:
                     mechanismname = self.intFireCableIds[cableid]
                 if mechanismname is not None: # this cableid is an intfire
-                    ## create LIF (subclass of Compartment) and set to default values
+                    # create LIF (subclass of Compartment) and set to default values
                     moosecomp = moose.LIF(moosecomppath)
-                    moosechannel = moose.Neutral('/library/'+mechanismname)
+                    mname = '/library/' + mechanismname
+                    moosechannel = moose.element(mname) if moose.exists(mname) else moose.Neutral(mname)
+                    # Mstring values are 'string'; make sure to convert them to
+                    # float else it will seg-fault with python3+
                     moosechannelval = moose.Mstring(moosechannel.path+'/vReset')
-                    moosecomp.vReset = moosechannelval.value
+                    moosecomp.vReset = float(moosechannelval.value)
                     moosechannelval = moose.Mstring(moosechannel.path+'/thresh')
-                    moosecomp.thresh = moosechannelval.value
+                    moosecomp.thresh = float( moosechannelval.value )
                     moosechannelval = moose.Mstring(moosechannel.path+'/refracT')
-                    moosecomp.refractoryPeriod = moosechannelval.value
+                    moosecomp.refractoryPeriod = eval(moosechannelval.value)
                     ## refracG is currently not supported by moose.LIF
                     ## when you implement it, check if refracG or g_refrac
                     ## is a conductance density or a conductance, I think the former

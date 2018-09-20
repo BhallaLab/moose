@@ -18,7 +18,9 @@
 
 #include "../shell/Shell.h"
 
+#ifdef ENABLE_NSDF
 extern void testNSDF();
+#endif
 
 void testArith()
 {
@@ -425,7 +427,9 @@ void testBuiltins()
 {
 	testArith();
 	testTable();
+#if ENABLE_NSDF
         testNSDF();
+#endif
 }
 
 void testBuiltinsProcess()
