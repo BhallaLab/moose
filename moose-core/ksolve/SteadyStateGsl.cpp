@@ -383,7 +383,6 @@ void SteadyState::setStoich( Id value )
     pool_.setVolume( vol );
 
     pool_.setStoich( stoichPtr, nullptr );
-
     pool_.updateAllRateTerms( stoichPtr->getRateTerms(), stoichPtr->getNumCoreRates() );
     isInitialized_ = 1;
 }
@@ -936,13 +935,9 @@ int ss_func( const gsl_vector* x, void* params, gsl_vector* f )
     {
         double temp = op( gsl_vector_get( x, i ) );
         if ( isNaN( temp ) || isInfinity( temp ) )
-        {
             return GSL_ERANGE;
-        }
         else
-        {
             ri->nVec[i] = temp;
-        }
     }
     vector< double > vels;
     ri->pool->updateReacVelocities( &ri->nVec[0], vels );

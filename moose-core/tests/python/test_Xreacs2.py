@@ -7,7 +7,8 @@ import moose.fixXreacs as fixXreacs
 
 def countCrossings( plot, thresh ):
     vec = moose.element( plot ).vector
-    #print (vec[:-1] < thresh)
+    print( vec )
+    #  print (vec[:-1] <= thresh)
     return sum( (vec[:-1] < thresh) * (vec[1:] >= thresh ) )
 
 def main( standalone = False ):
@@ -43,7 +44,8 @@ def main( standalone = False ):
     moose.reinit()
     moose.start( runtime )
     # I don't have an analytic way to assess oscillations
-    assert( countCrossings( '/model/graphs/conc2/M.Co', 0.001 ) == 4 )
+    nCrossings = countCrossings( '/model/graphs/conc2/M.Co', 0.001 )
+    assert( nCrossings == 4 ), "Expected 4, got %d" % nCrossings
     moose.delete( '/model' )
 
 # Run the 'main' if this script is executed standalone.

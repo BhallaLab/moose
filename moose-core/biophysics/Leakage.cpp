@@ -52,7 +52,8 @@
 
 const Cinfo* Leakage::initCinfo()
 {
-    static string doc[] = {
+    static string doc[] =
+    {
         "Name", "Leakage",
         "Author", "Subhasis Ray, 2009, Upi Bhalla 2014 NCBS",
         "Description", "Leakage: Passive leakage channel."
@@ -63,8 +64,8 @@ const Cinfo* Leakage::initCinfo()
     static Cinfo LeakageCinfo(
         "Leakage",
         ChanBase::initCinfo(),
-		0,
-		0,
+        0,
+        0,
         &dinfo,
         doc,
         sizeof( doc ) / sizeof( string ));
@@ -88,22 +89,22 @@ Leakage::~Leakage()
 
 void Leakage::vProcess( const Eref & e, ProcPtr p )
 {
-	ChanCommon::vSetGk( e, this->vGetGbar( e ) * this->vGetModulation( e ));
-	updateIk();
+    ChanCommon::vSetGk( e, this->vGetGbar( e ) * this->vGetModulation( e ));
+    updateIk();
     sendProcessMsgs(e, p);
 }
 
 void Leakage::vReinit( const Eref & e, ProcPtr p )
 {
-	ChanCommon::vSetGk( e, this->vGetGbar( e ) * this->vGetModulation( e ));
-	updateIk();
+    ChanCommon::vSetGk( e, this->vGetGbar( e ) * this->vGetModulation( e ));
+    updateIk();
     sendReinitMsgs(e, p);
 }
 
 void Leakage::vSetGbar( const Eref& e, double gbar )
 {
-		ChanCommon::vSetGk( e, gbar * this->vGetModulation( e ) );
-		ChanCommon::vSetGbar( e, gbar );
+    ChanCommon::vSetGk( e, gbar * this->vGetModulation( e ) );
+    ChanCommon::vSetGbar( e, gbar );
 }
 
 //
