@@ -14,8 +14,8 @@
 #include <iostream>
 #include <cassert>
 #include <cmath>
-#include "SparseMatrix.h"
-#include "utility/numutil.h"
+#include "../basecode/SparseMatrix.h"
+#include "../utility/numutil.h"
 #include "KinSparseMatrix.h"
 
 using namespace std;

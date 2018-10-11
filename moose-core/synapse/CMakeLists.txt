@@ -1,7 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
-
-include_directories( ../basecode ../utility ../kinetics)
-include_directories( ../external/muparser/include/ )
+include( ${CMAKE_CURRENT_SOURCE_DIR}/../CheckCXXCompiler.cmake)
 
 set( SYNAPSE_SRCS
     GraupnerBrunel2012CaPlasticitySynHandler.cpp

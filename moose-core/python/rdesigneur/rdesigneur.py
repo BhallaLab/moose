@@ -311,7 +311,7 @@ class rdesigneur:
             protoName = protoVec[0][6:]
             if self.isKnownClassOrFile( protoName, knownClasses ):
                 try:
-                    getAttr( moose, protoName )( '/library/' + protoVec[1] )
+                    getattr( moose, protoName )( '/library/' + protoVec[1] )
                 except AttributeError:
                     raise BuildError( protoType + "Proto: Moose class '" \
                             + protoVec[0] + "' not found." )
@@ -399,7 +399,7 @@ class rdesigneur:
             period = name.rfind( '.' )
             slash = name.rfind( '/' )
             if ( slash >= period ):
-                raise BuildError( "chanProto: bad filename:" + i[0] )
+                raise BuildError( "chanProto: bad filename:" + name )
             if ( slash < 0 ):
                 return name[:period]
             else:
@@ -441,7 +441,7 @@ class rdesigneur:
         for i in range( len(args) ):
             parms[i] = args[i]
         if parms[6] <= 0:
-            return _self.buildElecSoma( parms[:4] )
+            return self.buildElecSoma( parms[:4] )
         cell = moose.Neuron( '/library/' + parms[1] )
         prev = buildCompt( cell, 'soma', dia = args[2], dx = args[3] )
         dx = parms[5]/parms[6]
@@ -494,10 +494,12 @@ class rdesigneur:
 	# Expression can use p, g, L, len, dia, maxP, maxG, maxL.
         temp = []
         for i in self.passiveDistrib:
-            if (len( i ) < 3) or (len(i) %2 != 1):
-                raise BuildError( "buildPassiveDistrib: Need 3 + N*2 arguments, have {}".format( len(i) ) )
+            # Handle legacy format of ['.', path, field, expr [field expr]]
+            if (len( i ) < 3) or (i[0] != '.' and len(i) %2 != 1):
+                raise BuildError( "buildPassiveDistrib: Need 3 + N*2 arguments as (path field expr [field expr]...), have {}".format( len(i) ) )
 
-            temp.append( '.' )
+            if not(( len(i) % 2 ) != 1 and i[0] == '.' ):
+                temp.append( '.' )
             temp.extend( i )
             temp.extend( [""] )
         self.elecid.passiveDistribution = temp
@@ -1009,8 +1011,7 @@ rdesigneur.rmoogli.updateMoogliViewer()
     ################################################################
 
     def validateFromMemory( self, epath, cpath ):
-        ret = self.validateChem()
-        return ret
+        return self.validateChem()
 
     #################################################################
     # assumes ePath is the parent element of the electrical model,
@@ -1065,8 +1066,9 @@ rdesigneur.rmoogli.updateMoogliViewer()
 
         self._configureSolvers()
         for i in self.adaptorList:
-            print(i)
-            self._buildAdaptor( i[0],i[1],i[2],i[3],i[4],i[5],i[6] )
+            #  print(i)
+            assert len(i) >= 8
+            self._buildAdaptor( i[0],i[1],i[2],i[3],i[4],i[5],i[6],i[7] )
 
     ################################################################
 
@@ -1195,6 +1197,8 @@ rdesigneur.rmoogli.updateMoogliViewer()
         comptlist = moose.wildcardFind( cpath + '/#[ISA=ChemCompt]' )
         if len( comptlist ) == 0:
             raise BuildError( "validateChem: no compartment on: " + cpath )
+
+        return True
 
         '''
         if len( comptlist ) == 1:
@@ -1566,9 +1570,9 @@ class rstim( baseplot ):
         self.expr = expr
 
     def printme( self ):
-        print( "{}, {}, {}, {}, {}, {}, {}, {}, {}, {}".format( 
-            self.elecpath,
-            self.geom_expr, self.relpath, self.field, self.expr ) )
+        print( "{0}, {1}, {2}, {3}, {4}".format( 
+            self.elecpath, self.geom_expr, self.relpath, self.field, self.expr
+            ) )
 
     @staticmethod
     def convertArg( arg ):

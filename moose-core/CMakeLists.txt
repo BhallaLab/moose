@@ -66,15 +66,6 @@ add_custom_target(uninstall
 # This is for testing purpose.
 link_directories(${CMAKE_CURRENT_BINARY_DIR})
 
-################################# OS Specific ##################################
-message(STATUS "Operating system: ${CMAKE_SYSTEM_NAME}")
-if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    CMAKE_POLICY(SET CMP0042 NEW)
-    set(MACOSX TRUE)
-else()
-    set(MACOSX FALSE)
-endif()
-
 ################################ CMAKE OPTIONS ##################################
 option(WITH_NSDF            "Enable NSDF support. Requires hdf5" OFF )
 
@@ -106,9 +97,10 @@ else()
     message(STATUS "Building for Release/No unit tests.")
     set(CMAKE_BUILD_TYPE Release)
 		add_definitions(-UDO_UNIT_TESTS -O3 -DDISABLE_DEBUG)
-    # Treat all warnings as errors. Some the warnings are disabled in
-    #  CheckCXXCompiler.cmake .
-    add_definitions(-Werror)
+    
+    # DO NOT Treat all warnings as errors. With some compilers and newer versions
+    # this often causes headache.
+    # add_definitions(-Werror)
 endif()
 
 if(GPROF AND "${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
@@ -361,9 +353,18 @@ if(SYSTEM_SHARED_LIBS)
     list(REMOVE_DUPLICATES SYSTEM_SHARED_LIBS)
 endif( )
 
+# cmake --help-policy CMP0042. Also in pymoose/CMakeLists.txt 
+# More details:
+# https://gitlab.kitware.com/cmake/community/wikis/doc/cmake/RPATH-handling
+# especially section 'Mac OS X and the RPATH'
+# Switching is OFF since all libraries are statically linked in module.
+if(APPLE)
+    set_target_properties( libmoose PROPERTIES MACOSX_RPATH OFF)
+endif(APPLE)
+
 # MAC linker does not understand many of gnu-ld options.
 # message( DEBUG "Shared libs: ${SYSTEM_SHARED_LIBS}")
-if(MACOSX)
+if(APPLE)
     target_link_libraries(libmoose
         "-Wl,-all_load"
         ${MOOSE_LIBRARIES}
@@ -374,7 +375,7 @@ if(MACOSX)
         ${SYSTEM_SHARED_LIBS}
         ${CMAKE_DL_LIBS}
         )
-ELSE(MACOSX)
+else(APPLE)
     target_link_libraries(libmoose
         "-Wl,--whole-archive"
         ${MOOSE_LIBRARIES}
@@ -382,7 +383,7 @@ ELSE(MACOSX)
         "-Wl,--no-whole-archive"
         ${SYSTEM_SHARED_LIBS}
         )
-endif(MACOSX)
+endif(APPLE)
 
 add_dependencies(moose.bin libmoose)
 target_link_libraries(moose.bin moose ${CMAKE_DL_LIBS})
@@ -516,6 +517,28 @@ foreach( _test_script ${PY_TEST_SCRIPTS} )
      set_tests_properties( ${_test_name}
          PROPERTIES ENVIRONMENT "PYTHONPATH=${CMAKE_CURRENT_BINARY_DIR}/python"
         )
+endforeach( )
+
+# add pylint target.
+set(PYSCRIPTS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/python )
+file(GLOB_RECURSE PY_SCRIPTS  "python/*.py")
+add_custom_target( pylint )
+foreach( _py_script ${PY_SCRIPTS} )
+    get_filename_component( _py_name ${_py_script} NAME_WE)
+    file( READ ${_py_script} pytext)
+    string(MD5 _md5 "${pytext}")
+    set(TGT_NAME "${_py_name}-${_md5}" )
+    set(PYLINT_OPTIONS --disable=no-member --disable=no-name-in-module 
+            --disable=invalid-unary-operand-type 
+            --disable=import-error
+            --disable=no-method-argument
+        )
+    add_custom_target( ${TGT_NAME}
+        COMMAND ${PYTHON_EXECUTABLE} -m pylint -E ${PYLINT_OPTIONS} ${_py_script}
+        COMMENT "Running pylint on ${_py_script}"
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        )
+    add_dependencies(pylint ${TGT_NAME} )
 endforeach( )
 
 ############################ CPACK ######################################

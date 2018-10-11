@@ -8,9 +8,9 @@
  ** See the file COPYING.LIB for the full notice.
  ****/
 
-#include "header.h"
+#include "../basecode/header.h"
 #include "DifShellBase.h"
-#include "ElementValueFinfo.h"
+#include "../basecode/ElementValueFinfo.h"
 
 SrcFinfo1< double >* DifShellBase::concentrationOut()
 {

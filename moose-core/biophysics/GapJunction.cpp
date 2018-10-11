@@ -45,7 +45,7 @@
 
 // Code:
 
-#include "header.h"
+#include "../basecode/header.h"
 #include "GapJunction.h"
 
 static SrcFinfo2< double, double >* channel1Out()

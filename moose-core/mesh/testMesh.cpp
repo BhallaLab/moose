@@ -7,19 +7,17 @@
 ** See the file COPYING.LIB for the full notice.
 **********************************************************************/
 
-#include "header.h"
-#include "SparseMatrix.h"
+#include "../basecode/header.h"
+#include "../basecode/SparseMatrix.h"
 #include "../shell/Shell.h"
 #include "Boundary.h"
 #include "MeshEntry.h"
-// #include "Stencil.h"
 #include "ChemCompt.h"
 #include "MeshCompt.h"
 #include "CubeMesh.h"
 #include "CylBase.h"
 #include "NeuroNode.h"
-#include "SparseMatrix.h"
-// #include "NeuroStencil.h"
+#include "../basecode/SparseMatrix.h"
 #include "NeuroMesh.h"
 #include "../utility/Vec.h"
 #include "CylMesh.h"

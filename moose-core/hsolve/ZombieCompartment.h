@@ -11,10 +11,10 @@
 #ifndef _ZOMBIE_COMPARTMENT_H
 #define _ZOMBIE_COMPARTMENT_H
 
-#include "global.h"
+#include "../basecode/global.h"
 
-#include "header.h"
-#include "ElementValueFinfo.h"
+#include "../basecode/header.h"
+#include "../basecode/ElementValueFinfo.h"
 #include "../utility/print_function.hpp"
 #include "../biophysics/CompartmentBase.h"
 #include "../biophysics/Compartment.h"

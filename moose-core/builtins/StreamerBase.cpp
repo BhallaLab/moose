@@ -15,8 +15,8 @@
  */
 
 
-#include "global.h"
-#include "header.h"
+#include "../basecode/global.h"
+#include "../basecode/header.h"
 #include "StreamerBase.h"
 
 #include "../scheduling/Clock.h"

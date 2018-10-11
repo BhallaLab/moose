@@ -6,15 +6,15 @@
 ** GNU Lesser General Public License version 2.1
 ** See the file COPYING.LIB for the full notice.
 **********************************************************************/
-#include "header.h"
-#include "PoolBase.h"
+#include "../basecode/header.h"
+#include "../kinetics/PoolBase.h"
 #include "VoxelPoolsBase.h"
 #include "../mesh/VoxelJunction.h"
 #include "XferInfo.h"
 #include "ZombiePoolInterface.h"
 #include "ZombiePool.h"
 #include "ZombieBufPool.h"
-#include "lookupVolumeFromMesh.h"
+#include "../kinetics/lookupVolumeFromMesh.h"
 
 // Entirely derived from ZombiePool. Only the zombification routines differ.
 const Cinfo* ZombieBufPool::initCinfo()

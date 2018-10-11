@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 """ ChemconnectUtil.py Some of the command function are written """
 
-#Created : Friday May 27 12:19:00 2016(+0530)
-
 __author__           = "Harsha Rani"
 __copyright__        = "Copyright 2017, Harsha Rani and NCBS Bangalore"
 __credits__          = ["NCBS Bangalore"]
@@ -13,16 +11,14 @@ __email__            = "hrani@ncbs.res.in"
 __status__           = "Development"
 __updated__          = "Aug 8 2017"
 
-#Aug 8 : added findCompartment function here
-
 import moose
 import numpy as np
 
 def xyPosition(objInfo,xory):
     try:
-        return(float(moose.element(objInfo).getField(xory)))
-    except ValueError:
-        return (float(0))
+        return float(moose.element(objInfo).getField(xory))
+    except ValueError as e:
+        return float(0)
 
 def setupMeshObj(modelRoot):
     ''' Setup compartment and its members pool,reaction,enz cplx under self.meshEntry dictionaries \
@@ -93,9 +89,6 @@ def setupMeshObj(modelRoot):
                 ymin = min(ycord)
                 ymax = max(ycord)
     return meshEntry,xmin,xmax,ymin,ymax,positionInfoExist,listOfitems
-
-def sizeHint(self):
-    return QtCore.QSize(800,400)
 
 def getxyCord(xcord,ycord,list1,listOfitems):
     for item in list1:
@@ -200,7 +193,7 @@ def countitems(mitems,objtype):
 def findCompartment(element):
     if element.path == '/':
         return moose.element('/')
-    elif mooseIsInstance(element, ["CubeMesh", "CyclMesh"]):
+    elif mooseIsInstance(element, ["CubeMesh", "CylMesh"]):
         return (element)
     else:
         return findCompartment(moose.element(element.parent))

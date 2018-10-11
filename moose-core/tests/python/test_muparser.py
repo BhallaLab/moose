@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
-
 """test_muparser.py:
-
 Modified from https://elifesciences.org/articles/25827 , Fig4.py
-
 """
 import sys
 import os

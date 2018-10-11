@@ -7,14 +7,14 @@
 ** See the file COPYING.LIB for the full notice.
 **********************************************************************/
 
-#include "header.h"
-#include "PoolBase.h"
+#include "../basecode/header.h"
+#include "../kinetics/PoolBase.h"
 #include "VoxelPoolsBase.h"
 #include "../mesh/VoxelJunction.h"
 #include "XferInfo.h"
 #include "ZombiePoolInterface.h"
 #include "ZombiePool.h"
-#include "lookupVolumeFromMesh.h"
+#include "../kinetics/lookupVolumeFromMesh.h"
 
 #define EPSILON 1e-15
 

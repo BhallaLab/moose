@@ -17,11 +17,11 @@
 #include <algorithm>
 #include <sstream>
 
-#include "global.h"
-#include "header.h"
+#include "../basecode/global.h"
+#include "../basecode/header.h"
 #include "Streamer.h"
-#include "Clock.h"
-#include "utility/utility.h"
+#include "../scheduling/Clock.h"
+#include "../utility/utility.h"
 #include "../shell/Shell.h"
 
 

@@ -10,7 +10,7 @@
 #ifndef _FUNC_TERM_H
 #define _FUNC_TERM_H
 
-#include "muParser.h"
+#include "../external/muparser/include/muParser.h"
 
 class FuncTerm
 {

@@ -7,19 +7,19 @@
 ** See the file COPYING.LIB for the full notice.
 **********************************************************************/
 
-#include "header.h"
-#include "ElementValueFinfo.h"
+#include "../basecode/header.h"
+#include "../basecode/ElementValueFinfo.h"
 
-#include "Variable.h"
-#include "Function.h"
+#include "../builtins/Variable.h"
+#include "../builtins/Function.h"
 #include "ZombieFunction.h"
 
 #include "FuncTerm.h"
 #include "RateTerm.h"
-#include "SparseMatrix.h"
+#include "../basecode/SparseMatrix.h"
 #include "KinSparseMatrix.h"
 #include "VoxelPoolsBase.h"
-#include "VoxelJunction.h"
+#include "../mesh/VoxelJunction.h"
 #include "XferInfo.h"
 #include "ZombiePoolInterface.h"
 #include "Stoich.h"

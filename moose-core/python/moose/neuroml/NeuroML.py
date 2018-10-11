@@ -50,8 +50,8 @@ In [3]: moose.neuroml.loadNeuroML_L123('Generated.net.xml')
 """
 
 import moose
-from moose.utils import *
-from xml.etree import ElementTree as ET
+import moose.utils as mu
+from xml.etree import cElementTree as ET
 from moose.neuroml.ChannelML import ChannelML
 from moose.neuroml.MorphML import MorphML
 from moose.neuroml.NetworkML import NetworkML

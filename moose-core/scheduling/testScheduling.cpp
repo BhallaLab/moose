@@ -7,13 +7,13 @@
 ** See the file COPYING.LIB for the full notice.
 **********************************************************************/
 
-#include "header.h"
+#include "../basecode/header.h"
 #include "testScheduling.h"
 #include "Clock.h"
 
-#include "SparseMatrix.h"
-#include "SparseMsg.h"
-#include "SingleMsg.h"
+#include "../basecode/SparseMatrix.h"
+#include "../msg/SparseMsg.h"
+#include "../msg/SingleMsg.h"
 #include "../builtins/Arith.h"
 #include "../shell/Shell.h"
 

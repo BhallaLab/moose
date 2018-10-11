@@ -7,14 +7,12 @@
 ** See the file COPYING.LIB for the full notice.
 **********************************************************************/
 
-#ifdef ENABLE_CPP11
-#include <memory>
-#endif
-
-#include "header.h"
+#include "../basecode/header.h"
+#include "../basecode/global.h"
+#include "../randnum/RNG.h"
 #include "RateTerm.h"
 #include "FuncTerm.h"
-#include "SparseMatrix.h"
+#include "../basecode/SparseMatrix.h"
 #include "KinSparseMatrix.h"
 #include "VoxelPoolsBase.h"
 #include "../mesh/VoxelJunction.h"
@@ -23,8 +21,6 @@
 #include "Stoich.h"
 #include "GssaSystem.h"
 #include "GssaVoxelPools.h"
-#include "../randnum/RNG.h"
-#include "../basecode/global.h"
 
 /**
  * The SAFETY_FACTOR Protects against the total propensity exceeding

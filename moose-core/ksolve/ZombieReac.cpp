@@ -7,12 +7,12 @@
 ** See the file COPYING.LIB for the full notice.
 **********************************************************************/
 
-#include "header.h"
-#include "ReacBase.h"
-#include "lookupVolumeFromMesh.h"
+#include "../basecode/header.h"
+#include "../kinetics/ReacBase.h"
+#include "../kinetics/lookupVolumeFromMesh.h"
 #include "RateTerm.h"
 #include "FuncTerm.h"
-#include "SparseMatrix.h"
+#include "../basecode/SparseMatrix.h"
 #include "KinSparseMatrix.h"
 #include "VoxelPoolsBase.h"
 #include "../mesh/VoxelJunction.h"

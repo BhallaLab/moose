@@ -7,8 +7,8 @@
  ** See the file COPYING.LIB for the full notice.
  **********************************************************************/
 
-#include "header.h"
-#include "ElementValueFinfo.h"
+#include "../basecode/header.h"
+#include "../basecode/ElementValueFinfo.h"
 #include "HHGate.h"
 
 static const double SINGULARITY = 1.0e-6;

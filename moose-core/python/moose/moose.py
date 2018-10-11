@@ -4,18 +4,20 @@ from __future__ import print_function, division, absolute_import
 # Author: Subhasis Ray
 # Maintainer: Dilawar Singh, Harsha Rani, Upi Bhalla
 
-from __future__ import print_function, division, absolute_import
-
-from contextlib import closing
 import warnings
 import pydoc
-from io import StringIO
-from os.path import splitext
 import moose
 import moose.utils as mu
+from io import StringIO
+from os.path import splitext
+from contextlib import closing
 
+# Import function from C++ module into moose namespace.
+#  from moose._moose import *
+import moose._moose as _moose
+
+# sbml import.
 sbmlImport_, sbmlError_ = True, ''
-
 try:
     import moose.SBML.readSBML as _readSBML
     import moose.SBML.writeSBML as _writeSBML
@@ -58,16 +60,6 @@ except Exception as e:
     mergechemImport_ = False
     mergechemError_ = '%s' % e
 
-
-# Import function from C++ module into moose namespace.
-from moose._moose import *
-
-#`loadModel` is deleted from global import,
-# this is to bypass the call from c++ module which is due to fixXreacs() which is
-# now written in python and readKkit.cpp will not be possible to set/call the solver due to this
-
-del globals()['loadModel']
-
 def loadModel(filename, target,method=None):
     solverClass = 'Neutral'
     if method != None:
@@ -98,8 +90,10 @@ def loadModel(filename, target,method=None):
                 chemError_ = _chemUtil.add_Delete_ChemicalSolver.mooseAddChemSolver(target,method)
         return ret
         
+# Version
 def version( ):
-    return VERSION
+    # Show user version.
+    return moose._moose.VERSION
 
 # Tests
 from moose.moose_test import test
@@ -252,7 +246,7 @@ def pwe():
     the path, use moose.getCwe()
 
     """
-    pwe_ = moose.getCwe()
+    pwe_ = _moose.getCwe()
     print(pwe_.getPath())
     return pwe_
 
@@ -273,19 +267,19 @@ def le(el=None):
 
     """
     if el is None:
-        el = getCwe()
+        el = _moose.getCwe()
     elif isinstance(el, str):
-        if not exists(el):
+        if not _moose.exists(el):
             raise ValueError('no such element')
-        el = element(el)
-    elif isinstance(el, vec):
+        el = _moose.element(el)
+    elif isinstance(el, _moose.vec):
         el = el[0]
     print('Elements under', el.path)
     for ch in el.children:
         print(ch.path)
     return [child.path for child in el.children]
 
-ce = setCwe  # ce is a GENESIS shorthand for change element.
+ce = _moose.setCwe  # ce is a GENESIS shorthand for change element.
 
 
 def syncDataHandler(target):
@@ -309,10 +303,10 @@ def syncDataHandler(target):
     raise NotImplementedError('The implementation is not working for IntFire - goes to invalid objects. \
 First fix that issue with SynBase or something in that line.')
     if isinstance(target, str):
-        if not moose.exists(target):
+        if not _moose.exists(target):
             raise ValueError('%s: element does not exist.' % (target))
-        target = vec(target)
-        moose.syncDataHandler(target)
+        target = _moose.vec(target)
+        _moose.syncDataHandler(target)
 
 
 def showfield(el, field='*', showtype=False):
@@ -337,11 +331,11 @@ def showfield(el, field='*', showtype=False):
 
     """
     if isinstance(el, str):
-        if not exists(el):
+        if not _moose.exists(el):
             raise ValueError('no such element')
-        el = element(el)
+        el = _moose.element(el)
     if field == '*':
-        value_field_dict = getFieldDict(el.className, 'valueFinfo')
+        value_field_dict = _moose.getFieldDict(el.className, 'valueFinfo')
         max_type_len = max(len(dtype) for dtype in value_field_dict.values())
         max_field_len = max(len(dtype) for dtype in value_field_dict.keys())
         print('\n[', el.path, ']')
@@ -397,7 +391,7 @@ def listmsg(el):
         connections of `el`.
 
     """
-    obj = element(el)
+    obj = _moose.element(el)
     ret = []
     for msg in obj.inMsg:
         ret.append(msg)
@@ -419,7 +413,7 @@ def showmsg(el):
     None
 
     """
-    obj = element(el)
+    obj = _moose.element(el)
     print('INCOMING:')
     for msg in obj.msgIn:
         print(
@@ -467,7 +461,7 @@ def getfielddoc(tokens, indent=''):
     fieldname = tokens[1]
     while True:
         try:
-            classelement = moose.element('/classes/' + classname)
+            classelement = _moose.element('/classes/' + classname)
             for finfo in classelement.children:
                 for fieldelement in finfo:
                     baseinfo = ''
@@ -526,12 +520,13 @@ def getmoosedoc(tokens, inherited=False):
 
     """
     indent = '    '
-    with closing(StringIO()) as docstring:
+    docstring = StringIO()
+    with closing(docstring):
         if not tokens:
             return ""
         try:
-            class_element = moose.element('/classes/%s' % (tokens[0]))
-        except ValueError:
+            class_element = _moose.element('/classes/%s' % (tokens[0]))
+        except ValueError as e:
             raise NameError('name \'%s\' not defined.' % (tokens[0]))
         if len(tokens) > 1:
             docstring.write(toUnicode(getfielddoc(tokens)))
@@ -539,14 +534,14 @@ def getmoosedoc(tokens, inherited=False):
             docstring.write(toUnicode('%s\n' % (class_element.docs)))
             append_finfodocs(tokens[0], docstring, indent)
             if inherited:
-                mro = eval('moose.%s' % (tokens[0])).mro()
+                mro = eval('_moose.%s' % (tokens[0])).mro()
                 for class_ in mro[1:]:
-                    if class_ == moose.melement:
+                    if class_ == _moose.melement:
                         break
                     docstring.write(toUnicode(
                         '\n\n#Inherited from %s#\n' % (class_.__name__)))
                     append_finfodocs(class_.__name__, docstring, indent)
-                    if class_ == moose.Neutral:    # Neutral is the toplevel moose class
+                    if class_ == _moose.Neutral:    # Neutral is the toplevel moose class
                         break
         return docstring.getvalue()
 
@@ -554,13 +549,13 @@ def getmoosedoc(tokens, inherited=False):
 def append_finfodocs(classname, docstring, indent):
     """Append list of finfos in class name to docstring"""
     try:
-        class_element = moose.element('/classes/%s' % (classname))
+        class_element = _moose.element('/classes/%s' % (classname))
     except ValueError:
         raise NameError('class \'%s\' not defined.' % (classname))
     for ftype, rname in finfotypes:
         docstring.write(toUnicode('\n*%s*\n' % (rname.capitalize())))
         try:
-            finfo = moose.element('%s/%s' % (class_element.path, ftype))
+            finfo = _moose.element('%s/%s' % (class_element.path, ftype))
             for field in finfo.vec:
                 docstring.write(toUnicode(
                     '%s%s: %s\n' % (indent, field.fieldName, field.type)))
@@ -621,7 +616,7 @@ def doc(arg, inherited=True, paged=True):
             tokens = tokens[1:]
     elif isinstance(arg, type):
         tokens = [arg.__name__]
-    elif isinstance(arg, melement) or isinstance(arg, vec):
+    elif isinstance(arg, _moose.melement) or isinstance(arg, _moose.vec):
         text = '%s: %s\n\n' % (arg.path, arg.className)
         tokens = [arg.className]
     if tokens:

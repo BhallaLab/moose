@@ -1,7 +1,5 @@
-include_directories( ${CMAKE_SOURCE_DIR}/msg )
-include_directories( ${CMAKE_SOURCE_DIR}/basecode )
-include_directories( ${CMAKE_SOURCE_DIR}/external/muparser/include )
-include_directories( ${CMAKE_SOURCE_DIR}/scheduling )
+cmake_minimum_required(VERSION 2.8)
+include( ${CMAKE_CURRENT_SOURCE_DIR}/../CheckCXXCompiler.cmake )
 
 set(SRCS
     Arith.cpp

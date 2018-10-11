@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
+include( ${CMAKE_CURRENT_SOURCE_DIR}/../CheckCXXCompiler.cmake)
 
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../cmake_modules/")
 
@@ -68,7 +69,7 @@ endif()
 
 # Remove prefix lib from python module.
 if(NOT(PYTHON_SO_EXTENSION STREQUAL ""))
-    set_target_properties(_moose PROPERTIES SUFFIX ${PYTHON_SO_EXTENSION}) 
+    set_target_properties(_moose PROPERTIES SUFFIX ${PYTHON_SO_EXTENSION})
 endif()
 set_target_properties(_moose PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY ${PYMOOSE_OUTPUT_DIRECTORY}
@@ -76,22 +77,22 @@ set_target_properties(_moose PROPERTIES
     SUFFIX ${PYTHON_SO_EXTENSION}
     )
 
-# On OSX+Brew and python2.5; link with libstdc++
-if(MACOSX AND ("${PYTHON_VERSION_MAJOR}" STREQUAL "2"))
-    add_definitions( -std=c++11 -stdlib=libc++ )
-endif()
-
 # see issue #80
 if(HDF5_FOUND AND WITH_NSDF)
     set_target_properties( _moose PROPERTIES LINK_FLAGS "-L${HDF5_LIBRARY_DIRS}" )
 endif()
 
-if(MACOSX)
+if(APPLE)
     set(CMAKE_MODULE_LINKER_FLAGS "-undefined dynamic_lookup")
     message(STATUS "ADDING some linker flags ${CMAKE_EXE_LINKER_FLAGS}")
-endif(MACOSX)
+endif(APPLE)
 
-if(MACOSX)
+# cmake --help-policy CMP0042
+if(APPLE)
+    set_target_properties( _moose PROPERTIES MACOSX_RPATH OFF)
+endif(APPLE)
+
+if(APPLE)
     target_link_libraries( _moose
         "-Wl,-all_load"
         ${MOOSE_LIBRARIES}
@@ -100,7 +101,7 @@ if(MACOSX)
     target_link_libraries(_moose
         ${SYSTEM_SHARED_LIBS}
         )
-else(MACOSX)
+else(APPLE)
     target_link_libraries(_moose
         "-Wl,--whole-archive"
         ${MOOSE_LIBRARIES}
@@ -108,7 +109,7 @@ else(MACOSX)
         "-Wl,--no-whole-archive"
         ${SYSTEM_SHARED_LIBS}
         )
-endif(MACOSX)
+endif(APPLE)
 add_custom_command(TARGET _moose POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E cmake_echo_color --cyan
         "MOOSE python extention is successfully built. Now "

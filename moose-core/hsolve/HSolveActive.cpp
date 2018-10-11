@@ -7,7 +7,7 @@
 ** See the file COPYING.LIB for the full notice.
 **********************************************************************/
 
-#include "header.h"
+#include "../basecode/header.h"
 #include <queue>
 #include "HSolveStruct.h"
 #include "HinesMatrix.h"

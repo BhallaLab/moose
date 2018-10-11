@@ -29,7 +29,7 @@
 
 // Code:
 
-#include "header.h"
+#include "../basecode/header.h"
 #include "PulseGen.h"
 
 static SrcFinfo1< double >* outputOut()

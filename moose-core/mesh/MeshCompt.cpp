@@ -7,8 +7,8 @@
 ** See the file COPYING.LIB for the full notice.
 **********************************************************************/
 
-#include "header.h"
-#include "SparseMatrix.h"
+#include "../basecode/header.h"
+#include "../basecode/SparseMatrix.h"
 #include "VoxelJunction.h"
 #include "Boundary.h"
 // #include "Stencil.h"

@@ -84,12 +84,12 @@
 #
 
 # Code:
-from __future__ import print_function
+from __future__ import print_function, division, absolute_import
 try:
     from future_builtins import zip
 except ImportError:
     pass
-from . import moose as moose__
+import moose
 import numpy as np
 import h5py as h5
 import time
@@ -123,8 +123,8 @@ def get_rec_dtype(em):
     if em.className in dtype_table:
         dtype = dtype_table[em.className]
     else:
-        print('Creating entries for class:', obj.className)
-        fielddict = moose__.getFieldDict(obj.className, 'valueFinfo')
+        print('Creating entries for class:', em.className)
+        fielddict = moose.getFieldDict(em.className, 'valueFinfo')
         print(fielddict)
 
         # If we do not have the type of this field in cpp-np data
@@ -137,8 +137,8 @@ def get_rec_dtype(em):
         fields = [(fieldname, cpptonp[ftype]) # [('path', 'S1024')]
                   for fieldname, ftype in sorted(fielddict.items())
                   if ftype in cpptonp]
-        dtype_table[obj.className] = np.dtype(fields)
-        return dtype_table[obj.className]
+        dtype_table[em.className] = np.dtype(fields)
+        return dtype_table[em.className]
 
 def save_dataset(classname, rec, dtype, hdfnode):
     """Saves the data from rec into dataset"""
@@ -211,15 +211,15 @@ def loadtree(hdfnode, moosenode):
         shape = dims[path]
         em = moose.vec(rpath, shape, classname)
     wfields = {}
-    for cinfo in moose__.element('/classes').children:
+    for cinfo in moose.element('/classes').children:
         cname = cinfo[0].name
-        wfields[cname] = [f[len('set_'):] for f in moose__.getFieldNames(cname, 'destFinfo')
+        wfields[cname] = [f[len('set_'):] for f in moose.getFieldNames(cname, 'destFinfo')
                           if f.startswith('set_') and f not in ['set_this', 'set_name', 'set_lastDimension', 'set_runTime'] and not f.startswith('set_num_')]
         for key in hdfnode['/elements']:
             dset = hdfnode['/elements/'][key][:]
             fieldnames = dset.dtype.names
             for ii in range(len(dset)):
-                obj = moose__.element(dset['path'][ii][len(basepath):])
+                obj = moose.element(dset['path'][ii][len(basepath):])
                 for f in wfields[obj.className]:
                     obj.setField(f, dset[f][ii])
 
@@ -244,7 +244,7 @@ def savestate(filename=None):
         class_count_dict = {}
         class_array_dict = {}
         objcount = 0
-        for obj in moose__.wildcardFind("/##"):
+        for obj in moose.wildcardFind("/##"):
             if obj.path.startswith('/Msg') or obj.path.startswith('/class') or obj.className == 'Table' or obj.className == 'TableEntry':
                 continue
             print('Processing:', obj.path, obj.className)
@@ -257,7 +257,7 @@ def savestate(filename=None):
             # If we do not yet have dataset for this class, create one and keep it in dict
             if obj.className not in class_dataset_dict:
                 print('Creating entries for class:', obj.className)
-                fielddict = moose__.getFieldDict(obj.className, 'valueFinfo')
+                fielddict = moose.getFieldDict(obj.className, 'valueFinfo')
                 print(fielddict)
                 keys = sorted(fielddict)
                 fields = [] # [('path', 'S1024')]
@@ -280,7 +280,7 @@ def savestate(filename=None):
                 for f in ds.dtype.names:
                     print('getting field:', f)
                     entry.getField(f)
-                fields = [f.path if isinstance(f, moose__.vec) or isinstance(f, moose__.element) else f for f in fields]
+                fields = [f.path if isinstance(f, moose.vec) or isinstance(f, moose.element) else f for f in fields]
                 class_array_dict[obj.className].append(fields)
                 # print 'fields:'
                 # print fields
@@ -305,9 +305,9 @@ def savestate(filename=None):
 
 def restorestate(filename):
     wfields = {}
-    for cinfo in moose__.element('/classes').children:
+    for cinfo in moose.element('/classes').children:
         cname = cinfo[0].name
-        wfields[cname] = [f[len('set_'):] for f in moose__.getFieldNames(cname, 'destFinfo')
+        wfields[cname] = [f[len('set_'):] for f in moose.getFieldNames(cname, 'destFinfo')
                           if f.startswith('set_') and f not in ['set_this', 'set_name', 'set_lastDimension', 'set_runTime'] and not f.startswith('set_num_')]
     with h5.File(filename, 'r') as fd:
         typeinfo = fd['/metadata/typeinfo'][:]
@@ -318,12 +318,12 @@ def restorestate(filename):
         sorted_paths = sorted(typeinfo['path'], key=lambda x: x.count('/'))
         for path in sorted_paths:
             name = path.rpartition('/')[-1].partition('[')[0]
-            moose__.vec(parentdict[path] + '/' + name, eval(dimsdict[path]), classdict[path])
+            moose.vec(parentdict[path] + '/' + name, eval(dimsdict[path]), classdict[path])
         for key in fd['/elements']:
             dset = fd['/elements/'][key][:]
             fieldnames = dset.dtype.names
             for ii in range(len(dset)):
-                obj = moose__.element(dset['path'][ii])
+                obj = moose.element(dset['path'][ii])
                 for f in wfields[obj.className]:
                     obj.setField(f, dset[f][ii])
 

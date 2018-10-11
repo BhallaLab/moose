@@ -8,14 +8,14 @@
 **********************************************************************/
 
 #include <queue>
-#include "global.h"
-#include "header.h"
+#include "../basecode/global.h"
+#include "../basecode/header.h"
 #include "Synapse.h"
 #include "SynEvent.h"
 #include "SynHandlerBase.h"
 #include "RollingMatrix.h"
 #include "SeqSynHandler.h"
-#include "muParser.h"
+#include "../external/muparser/include/muParser.h"
 
 const Cinfo* SeqSynHandler::initCinfo()
 {

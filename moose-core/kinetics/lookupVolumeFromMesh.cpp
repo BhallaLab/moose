@@ -7,13 +7,7 @@
 ** See the file COPYING.LIB for the full notice.
 **********************************************************************/
 
-#include "header.h"
-/*
-#include "../mesh/VoxelJunction.h"
-#include "../mesh/MeshEntry.h"
-#include "../mesh/Boundary.h"
-#include "../mesh/ChemCompt.h"
-*/
+#include "../basecode/header.h"
 #include "lookupVolumeFromMesh.h"
 
 // Utility function: return the compartment in which the specified

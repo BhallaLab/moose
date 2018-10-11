@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 2.6)
-include_directories(../basecode)
+cmake_minimum_required(VERSION 2.8)
+include( ${CMAKE_CURRENT_SOURCE_DIR}/../CheckCXXCompiler.cmake)
 ADD_LIBRARY(examples
     Example.cpp
     Ex.cpp

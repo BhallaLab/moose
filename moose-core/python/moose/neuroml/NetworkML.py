@@ -267,7 +267,7 @@ class NetworkML():
                 else:
                     raise IOError(
                         'For mechanism {0}: files {1} not found under {2}.'.format(
-                            mechanismname, model_filename, self.model_dir
+                            syn_name, model_filename, self.model_dir
                         )
                     )
             weight = float(syn_props.attrib['weight'])

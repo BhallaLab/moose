@@ -8,7 +8,7 @@
 **********************************************************************/
 
 #include <fstream>
-#include "header.h"
+#include "../basecode/header.h"
 #include "Shell.h"
 
 // Defined in kinetics/WriteKkit.cpp
