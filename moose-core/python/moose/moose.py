@@ -29,10 +29,10 @@ try:
     import moose.neuroml2 as _neuroml2
 except Exception as e:
     nml2Import_ = False
-    nml2ImportError_ = '\n'.join( [ 
+    nml2ImportError_ = ' '.join( [ 
         "NML2 support is disabled because `libneuroml` and "
-        , "`pyneuroml` modules are not found."
-        , "     pip install pyneuroml libneuroml "
+        , "`pyneuroml` modules are not found.\n"
+        , "     $ pip install pyneuroml libneuroml \n"
         , " should fix it." 
         , " Actual error: %s " % e ]
         )
@@ -229,27 +229,23 @@ def mergeChemModel(src, des):
 
 # NML2 reader and writer function.
 def mooseReadNML2( modelpath ):
-    """Read NeuroML model (version 2).
-
+    """Read NeuroML model (version 2) and return reader object.
     """
     global nml2Import_
-    if nml2Import_:
-        reader = _neuroml2.NML2Reader( )
-        reader.read( modelpath )
-        return reader
-    else:
-        mu.info( nml2ImportError_ )
-        mu.warn( "Could not load NML2 support. Doing nothing" )
-        return False
+    if not nml2Import_:
+        mu.warn( nml2ImportError_ )
+        raise RuntimeError( "Could not load NML2 support." )
+
+    reader = _neuroml2.NML2Reader( )
+    reader.read( modelpath )
+    return reader
 
 def mooseWriteNML2( outfile ):
-    mu.warn( "Writing to NML2 is not supported yet" )
+    raise NotImplementedError( "Writing to NML2 is not supported yet" )
 
 ################################################################
 # Wrappers for global functions
 ################################################################
-
-
 def pwe():
     """Print present working element. Convenience function for GENESIS
     users. If you want to retrieve the element in stead of printing

@@ -108,10 +108,7 @@ if(WITH_GUI)
     add_dependencies(examples  gui)
 endif()
 
-
-# NOTE: leading / is important other whole path will be installed. Do not
-# install usr since it comes with CMAKE_INSTALL_PREFIX.
-install(DIRECTORY ${PYMOOSE_INSTALL_DIR}/usr/
+install(DIRECTORY ${PYMOOSE_INSTALL_DIR}/
     DESTINATION ${CMAKE_INSTALL_PREFIX}
     CONFIGURATIONS Release
     PATTERN ".git" EXCLUDE
