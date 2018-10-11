@@ -7,7 +7,7 @@
  ** See the file COPYING.LIB for the full notice.
  **********************************************************************/
 
-#include "header.h"
+#include "../basecode/header.h"
 #include "../shell/Shell.h"
 #include "Cell.h"
 
@@ -273,7 +273,7 @@ Id Cell::findCompt( Id cell )
         }
         else
         {
-            dump("TODO", "TODO: Commented out code. ");
+            moose::showWarn( "TODO: Commented out code. ");
             Id curr = child.back();
 
 #if  0     /* ----- #if 0 : If0Label_1 ----- */
@@ -286,7 +286,6 @@ Id Cell::findCompt( Id cell )
             }
 #endif     /* ----- #if 0 : If0Label_1 ----- */
 
-
             cstack.push_back( children( curr ) );
         }
     }
@@ -297,11 +296,10 @@ Id Cell::findCompt( Id cell )
 void Cell::setupSolver( Id cell, Id seed ) const
 {
     Id solver = Id::nextId();
-    dump("FIXME"
-         , "Using 0 for parentMsgIndex in function call Shell::innerCreate"
+    moose::showWarn(
+            "FIXME: Using 0 for parentMsgIndex in function call Shell::innerCreate"
          "0 in first and third argument to NodeBalance. "
          "I am not sure if I should be doing this here in this function."
-         " -- Dilawar"
         );
     NodeBalance nb(0, MooseBlockBalance, 0);
     shell_->innerCreate("HSolve", cell, solver, solverName_, nb, 0);

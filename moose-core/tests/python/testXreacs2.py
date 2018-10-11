@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 import os
-import matplotlib as mpl
-import matplotlib.pyplot as plt
 mpl.rcParams['text.usetex'] = False
 import moose
 import numpy as np

@@ -7,7 +7,7 @@
 ** See the file COPYING.LIB for the full notice.
 **********************************************************************/
 
-#include "header.h"
+#include "../basecode/header.h"
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_odeiv.h>
 #include "MarkovGslSolver.h"

@@ -45,8 +45,8 @@
 
 // Code:
 
-#include "header.h"
-#include "Dinfo.h"
+#include "../basecode/header.h"
+#include "../basecode/Dinfo.h"
 #include "VClamp.h"
 
 using namespace moose;

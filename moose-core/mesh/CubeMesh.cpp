@@ -7,9 +7,9 @@
 ** See the file COPYING.LIB for the full notice.
 **********************************************************************/
 
-#include "header.h"
-#include "SparseMatrix.h"
-#include "ElementValueFinfo.h"
+#include "../basecode/header.h"
+#include "../basecode/SparseMatrix.h"
+#include "../basecode/ElementValueFinfo.h"
 #include "Boundary.h"
 #include "MeshEntry.h"
 #include "VoxelJunction.h"

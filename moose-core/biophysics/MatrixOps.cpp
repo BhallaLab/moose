@@ -8,7 +8,7 @@
 **********************************************************************/
 #include <vector>
 #include <math.h>
-#include "doubleEq.h"
+#include "../basecode/doubleEq.h"
 #include <iostream>
 #include "MatrixOps.h"
 

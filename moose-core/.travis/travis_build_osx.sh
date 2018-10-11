@@ -23,12 +23,18 @@ set -e
 # NOTE: On travis, don't enable -j`nproc` option. It may not compile properly.
 
 (
-
     # Make sure not to pick up python from /opt.
-    PATH=/usr/bin:/usr/local/bin:$PATH
+    PATH=/usr/local/bin:/usr/bin:$PATH
+
+    # Get pylint
+    python -m pip install pylint --user
+    python -m pip install python-libsbml --user
+    python -m pip install pyneuroml --user
+
     mkdir -p _GSL_BUILD && cd _GSL_BUILD \
         && cmake -DDEBUG=ON \
         -DPYTHON_EXECUTABLE=`which python` ..
+    make pylint -j3
     make && ctest --output-on-failure
 
     cd .. # Now with boost.

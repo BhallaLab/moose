@@ -7,10 +7,10 @@
 ** See the file COPYING.LIB for the full notice.
 **********************************************************************/
 
-#include "header.h"
-#include "Dinfo.h"
-#include "ElementValueFinfo.h"
-#include "LookupElementValueFinfo.h"
+#include "../basecode/header.h"
+#include "../basecode/Dinfo.h"
+#include "../basecode/ElementValueFinfo.h"
+#include "../basecode/LookupElementValueFinfo.h"
 #include "Shell.h"
 
 const Cinfo* Neutral::initCinfo()

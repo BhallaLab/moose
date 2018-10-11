@@ -1,9 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 include(CheckIncludeFileCXX)
-
-include_directories(../builtins ../basecode ../utility ../kinetics)
-include_directories(../mesh)
-include_directories(../external/muparser/include )
+include( ${CMAKE_CURRENT_SOURCE_DIR}/../CheckCXXCompiler.cmake)
 
 if(WITH_BOOST)
     find_package(Boost REQUIRED COMPONENTS thread)

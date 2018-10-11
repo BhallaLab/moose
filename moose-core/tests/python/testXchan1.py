@@ -27,8 +27,6 @@
 
 import math
 import numpy as np
-import matplotlib.pyplot as plt
-import matplotlib.image as mpimg
 import moose
 print( '[INFO ] Using moose from %s, %s' % (moose.__file__, moose.version()) )
 import moose.fixXreacs as fixXreacs

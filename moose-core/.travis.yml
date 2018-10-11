@@ -4,8 +4,11 @@ group: travis_lts
 dist: xenial
 
 os:
-- linux
-- osx
+    - linux
+    - osx
+
+osx_image: xcode10
+
 notifications:
   email:
     recipients:
@@ -20,22 +23,17 @@ addons:
       update: true
 
 before_script:
-- echo "OSX related"
 - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then nvm get head || true; fi
 - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ./.travis/travis_prepare_osx.sh; fi
 - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo ./.travis/travis_prepare_linux.sh; fi
 
 
 before_script:
-- echo "OSX related"
 - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then nvm get head || true; fi
 - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ./.travis/travis_prepare_osx.sh; fi
-- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo ./.travis/travis_prepare_linux.sh;
-  fi
-script:
+- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo ./.travis/travis_prepare_linux.sh; fi
 
-- python2 -m compileall -q . || echo "Python2 not found"
-- if type python3 > /dev/null; then python3 -m compileall -q . ; fi
+script:
 - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ./.travis/travis_build_osx.sh; fi
 - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./.travis/travis_build_linux.sh; fi
 

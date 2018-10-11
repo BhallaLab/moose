@@ -1,6 +1,6 @@
-#include "header.h"
+#include "../basecode/header.h"
 #include "DifBufferBase.h"
-#include "ElementValueFinfo.h"
+#include "../basecode/ElementValueFinfo.h"
 #include "../utility/numutil.h"
 #include <cmath>
 

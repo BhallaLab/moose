@@ -226,14 +226,13 @@ namespace moose {
         moose::__dump__(msg, moose::warning );
     }
 
-		inline void showDebug( const string msg )
-		{
+    inline void showDebug( const string msg )
+    {
 #ifdef DISABLE_DEBUG
-
 #else
-				moose::__dump__(msg, moose::debug );
+        moose::__dump__(msg, moose::debug );
 #endif
-		}
+    }
 
     inline void showError( string msg )
     {

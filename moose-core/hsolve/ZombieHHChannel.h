@@ -29,8 +29,8 @@
  * respectively.
  */
 
-#include "header.h"
-#include "ElementValueFinfo.h"
+#include "../basecode/header.h"
+#include "../basecode/ElementValueFinfo.h"
 #include "HinesMatrix.h"
 #include "HSolveStruct.h"
 #include "HSolvePassive.h"

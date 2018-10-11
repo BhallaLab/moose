@@ -714,17 +714,7 @@ def checkexist(spList,objB,objA):
 
     return allexist
 
-def findCompartment(element):
-    while not mooseIsInstance(element,["CubeMesh","CyclMesh"]):
-        element = element.parent
-    return element
-
-def mooseIsInstance(element, classNames):
-    return moose.element(element).__class__.__name__ in classNames
-
-
 if __name__ == "__main__":
-
     try:
         sys.argv[1]
     except IndexError:

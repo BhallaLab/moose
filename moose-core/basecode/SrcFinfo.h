@@ -9,13 +9,6 @@
 #ifndef _SRC_FINFO_H
 #define _SRC_FINFO_H
 
-#ifdef  CYMOOSE
-
-#include "../basecode/Finfo.h"
-#include "../basecode/header.h"
-
-#endif     /* -----  CYMOOSE  ----- */
-
 /**
  * This set of classes define Message Sources. Their main job is to supply
  * a type-safe send operation, and to provide typechecking for it.

@@ -202,14 +202,6 @@ const Cinfo* Cinfo::find( const string& name )
 	map<string, Cinfo*>::iterator i = cinfoMap().find(name);
 	if ( i != cinfoMap().end() )
 		return i->second;
-
-#ifdef  RESULT_CHECK
-        stringstream ss;
-        ss << "+ " << name << " not found. Available names are " << endl;
-        ss << mapToString<string, Cinfo*>( cinfoMap() );
-        dump(ss.str(), "DEBUG");
-#endif     /* -----  not RESULT_CHECK  ----- */
-
 	return 0;
 }
 

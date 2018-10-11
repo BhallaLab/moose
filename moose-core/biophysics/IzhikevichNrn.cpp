@@ -28,7 +28,7 @@
 
 // Code:
 
-#include "header.h"
+#include "../basecode/header.h"
 #include "IzhikevichNrn.h"
 
 

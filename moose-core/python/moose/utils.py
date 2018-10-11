@@ -82,15 +82,17 @@ def readtable(table, filename, separator=None):
     line_no = 0
     for line in in_file:
         line_no = line_no + 1
-        tokens = split(line, separator)
-        if len(token) is 0:
+        tokens = line.split(separator)
+        if len(tokens) is 0:
             continue
-        elif len(token) == 1:
-            table[ii] = float(token[0])
-        elif len(token) == 2:
-            table[int(token[0])] = float(token[1])
+        elif len(tokens) == 1:
+            table[ii] = float(tokens[0])
+        elif len(tokens) == 2:
+            table[int(tokens[0])] = float(tokens[1])
         else:
-            print("pymoose.readTable(", table, ",", filename, ",", separator, ") - line#", line_no, " does not fit.")
+            print("pymoose.readTable(", table, ",", filename, ",", separator
+                    , ") - line#", line_no, " does not fit."
+                    )
 
 def getfields(moose_object):
     """Returns a dictionary of the fields and values in this object."""
@@ -310,8 +312,9 @@ def autoposition(root):
     compartments = moose.wildcardFind('%s/##[TYPE=Compartment]' % (root.path))
     stack = [compartment for compartment in map(moose.element, compartments)
               if len(compartment.neighbors['axial']) == 0]
-    if len(stack) != 1:
-        raise Exception('There must be one and only one top level compartment. Found %d' % (len(topcomp_list)))
+
+    assert len(stack) == 1, 'There must be one and only one top level\
+            compartment. Found %d' % len(stack)
     ret = stack[0]
     while len(stack) > 0:
         comp = stack.pop()
