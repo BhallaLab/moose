@@ -6,12 +6,11 @@
 ** GNU Lesser General Public License version 2.1
 ** See the file COPYING.LIB for the full notice.
 **********************************************************************/
-#include "header.h"
-
-#include "lookupVolumeFromMesh.h"
+#include "../basecode/header.h"
+#include "../kinetics/lookupVolumeFromMesh.h"
 #include "RateTerm.h"
 #include "FuncTerm.h"
-#include "SparseMatrix.h"
+#include "../basecode/SparseMatrix.h"
 #include "KinSparseMatrix.h"
 #include "VoxelPoolsBase.h"
 #include "../mesh/VoxelJunction.h"
@@ -19,8 +18,8 @@
 #include "ZombiePoolInterface.h"
 #include "Stoich.h"
 
-#include "EnzBase.h"
-#include "CplxEnzBase.h"
+#include "../kinetics/EnzBase.h"
+#include "../kinetics/CplxEnzBase.h"
 #include "ZombieEnz.h"
 
 #define EPSILON 1e-15

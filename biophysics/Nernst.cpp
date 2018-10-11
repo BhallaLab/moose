@@ -7,7 +7,7 @@
 ** See the file COPYING.LIB for the full notice.
 **********************************************************************/
 
-#include "header.h"
+#include "../basecode/header.h"
 #include "Nernst.h"
 
 const double Nernst::R_OVER_F = 8.6171458e-5;

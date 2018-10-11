@@ -33,7 +33,7 @@
 #include "muParserTemplateMagic.h"
 
 // Get the random number generator type from here.
-#include "randnum/RNG.h"
+#include "../../../randnum/RNG.h"
 
 extern moose::RNG<double> rng;
 

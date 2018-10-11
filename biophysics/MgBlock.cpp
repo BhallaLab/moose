@@ -7,7 +7,7 @@
 ** See the file COPYING.LIB for the full notice.
 **********************************************************************/
 
-#include "header.h"
+#include "../basecode/header.h"
 #include "ChanBase.h"
 #include "ChanCommon.h"
 #include "MgBlock.h"

@@ -66,16 +66,9 @@ add_custom_target(uninstall
 # This is for testing purpose.
 link_directories(${CMAKE_CURRENT_BINARY_DIR})
 
-################################# OS Specific ##################################
-message(STATUS "Operating system: ${CMAKE_SYSTEM_NAME}")
-if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-    CMAKE_POLICY(SET CMP0042 NEW)
-    set(MACOSX TRUE)
-else()
-    set(MACOSX FALSE)
-endif()
-
 ################################ CMAKE OPTIONS ##################################
+option(WITH_NSDF            "Enable NSDF support. Requires hdf5" OFF )
+
 option(DEBUG                "Build with debug support" OFF)
 option(GPROF                "Build for profiling using gprof" OFF)
 option(ENABLE_UNIT_TESTS    "Enable unit tests (DEBUG should also be ON)" OFF)
@@ -104,9 +97,10 @@ else()
     message(STATUS "Building for Release/No unit tests.")
     set(CMAKE_BUILD_TYPE Release)
 		add_definitions(-UDO_UNIT_TESTS -O3 -DDISABLE_DEBUG)
-    # Treat all warnings as errors. Some the warnings are disabled in
-    #  CheckCXXCompiler.cmake .
-    add_definitions(-Werror)
+    
+    # DO NOT Treat all warnings as errors. With some compilers and newer versions
+    # this often causes headache.
+    # add_definitions(-Werror)
 endif()
 
 if(GPROF AND "${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
@@ -130,6 +124,7 @@ include_directories( ${CMAKE_CURRENT_SOURCE_DIR} )
 
 if(WITH_BOOST)
     set(WITH_BOOST_ODE ON)
+    set(WITH_GSL       OFF)
 endif(WITH_BOOST)
 
 # If using BOOST ODE2 library to solve ODE system, then don't use GSL.
@@ -186,68 +181,71 @@ if(WITH_BOOST_ODE)
     add_definitions(-DUSE_BOOST_ODE -UUSE_GSL)
 endif()
 
-
-find_package(HDF5 COMPONENTS CXX HL)
-if(NOT HDF5_FOUND)
-    message(
-        "==================================================================\n"
-        " HDF5 not found. Disabling support. Required for nsdf. \n\n"
-        " If you need hdf5 support, please install hdf5-dev or hdf5-devel\n"
-        " package or equivalent.\n\n"
-        "     $ sudo apt-get install libhdf5-dev \n"
-        "     $ sudo yum install libhdf5-devel \n"
-        "     $ brew install hdf5 \n\n"
-        " Otherwise, continue with 'make' and 'make install' \n"
-        " If you install hdf5 to non-standard path, export environment \n"
-        " variable HDF5_ROOT to the location. Rerun cmake \n"
-        "================================================================ \n"
-        )
-endif(NOT HDF5_FOUND)
-
-if(HDF5_FOUND)
-    include_directories( ${HDF5_INCLUDE_DIRS} )
-    add_definitions( -DUSE_HDF5 )
-    if(HDF5_USE_STATIC_LIBRARIES)
-	message(STATUS "Finding static HDF5 libraries in $ENV{HDF5_ROOT}")
-        find_library(HDF5_CXX_LIBRARIES NAMES libhdf5.a
-            PATHS $ENV{HDF5_ROOT}/lib $ENV{HDF5_ROOT}/lib64
+# NSDF5 support. Disabled by default.
+if(WITH_NSDF)
+    find_package(HDF5 COMPONENTS CXX HL)
+    if(NOT HDF5_FOUND)
+        message(
+            "==================================================================\n"
+            " HDF5 not found. Disabling NSDF support.\n\n"
+            " If you need NSDF support, please install hdf5-dev or hdf5-devel\n"
+            " package or equivalent.\n\n"
+            "     $ sudo apt-get install libhdf5-dev \n"
+            "     $ sudo yum install libhdf5-devel \n"
+            "     $ brew install hdf5 \n\n"
+            " Otherwise, continue with 'make' and 'make install' \n"
+            " If you install hdf5 to non-standard path, export environment \n"
+            " variable HDF5_ROOT to the location. Rerun cmake \n"
+            "================================================================ \n"
             )
-        find_library(HDF5_HL_LIBRARIES NAMES libhdf5_hl.a
-            PATHS $ENV{HDF5_ROOT}/lib $ENV{HDF5_ROOT}/lib64
-            )
-        set(HDF5_LIBRARIES ${HDF5_CXX_LIBRARIES} ${HDF5_HL_LIBRARIES})
+    endif(NOT HDF5_FOUND)
+
+    if(HDF5_FOUND)
+        include_directories( ${HDF5_INCLUDE_DIRS} )
+        add_definitions( -DUSE_HDF5 -DENABLE_NSDF )
+        if(HDF5_USE_STATIC_LIBRARIES)
+            message(STATUS "Finding static HDF5 libraries in $ENV{HDF5_ROOT}")
+            find_library(HDF5_CXX_LIBRARIES NAMES libhdf5.a
+                PATHS $ENV{HDF5_ROOT}/lib $ENV{HDF5_ROOT}/lib64
+                )
+            find_library(HDF5_HL_LIBRARIES NAMES libhdf5_hl.a
+                PATHS $ENV{HDF5_ROOT}/lib $ENV{HDF5_ROOT}/lib64
+                )
+            set(HDF5_LIBRARIES ${HDF5_CXX_LIBRARIES} ${HDF5_HL_LIBRARIES})
+        endif()
+
+
+        # Make sure, HDF5_HL_LIBRARIES are set. The COMPONENTS in find_package may
+        # or may not work. See BhallaLab/moose-core#163.
+        if(NOT HDF5_HL_LIBRARIES)
+            set(HDF5_HL_LIBRARIES ${HDF5_HL_LIBRARIES})
+        endif(NOT HDF5_HL_LIBRARIES)
+        list(APPEND HDF5_LIBRARIES ${HDF5_HL_LIBRARIES})
+
+        # message(STATUS "MOOSE will use following HDF5 ${HDF5_LIBRARIES}" )
+        foreach(HDF5_LIB ${HDF5_LIBRARIES})
+            if(HDF5_LIB)
+                get_filename_component( HDF5_LIB_EXT ${HDF5_LIB} EXT )
+                if(HDF5_LIB_EXT)
+                    if(${HDF5_LIB_EXT} STREQUAL ".a")
+                        list(APPEND STATIC_LIBRARIES ${HDF5_LIB} )
+                    else( )
+                        list(APPEND SYSTEM_SHARED_LIBS ${HDF5_LIB} )
+                    endif( )
+                endif()
+            endif( )
+        endforeach( )
+    else( HDF5_FOUND )
+        message(STATUS "HDF5 is not found" )
+    endif( HDF5_FOUND )
+    # This is a fix for new HDF5 package on Debian/Ubuntu which installs hdf5
+    # headers in non-standard path. issue #80.
+    if(HDF5_LIBRARY_DIRS)
+        set_target_properties( libmoose PROPERTIES LINK_FLAGS "-L${HDF5_LIBRARY_DIRS}" )
     endif()
-
-
-    # Make sure, HDF5_HL_LIBRARIES are set. The COMPONENTS in find_package may
-    # or may not work. See BhallaLab/moose-core#163.
-    if(NOT HDF5_HL_LIBRARIES)
-        set(HDF5_HL_LIBRARIES ${HDF5_HL_LIBRARIES})
-    endif(NOT HDF5_HL_LIBRARIES)
-    list(APPEND HDF5_LIBRARIES ${HDF5_HL_LIBRARIES})
-
-    message(STATUS "MOOSE will use following HDF5 ${HDF5_LIBRARIES}" )
-    foreach(HDF5_LIB ${HDF5_LIBRARIES})
-        if(HDF5_LIB)
-            get_filename_component( HDF5_LIB_EXT ${HDF5_LIB} EXT )
-            if(HDF5_LIB_EXT)
-                if(${HDF5_LIB_EXT} STREQUAL ".a")
-                    list(APPEND STATIC_LIBRARIES ${HDF5_LIB} )
-                else( )
-                    list(APPEND SYSTEM_SHARED_LIBS ${HDF5_LIB} )
-                endif( )
-            endif()
-        endif( )
-    endforeach( )
-else( HDF5_FOUND )
-    message(STATUS "HDF5 is not found" )
-endif( HDF5_FOUND )
-
-# This is a fix for new HDF5 package on Debian/Ubuntu which installs hdf5
-# headers in non-standard path. issue #80.
-if(HDF5_LIBRARY_DIRS)
-    set_target_properties( libmoose PROPERTIES LINK_FLAGS "-L${HDF5_LIBRARY_DIRS}" )
-endif()
+else(WITH_NSDF)
+    message(STATUS "NSDF support is disabled" )
+endif(WITH_NSDF)
 
 # Openmpi
 if(WITH_MPI)
@@ -280,7 +278,7 @@ if(WITH_GSL)
        message( STATUS "Using static libraries ${GSL_STATIC_LIBRARIES}" )
        list(APPEND STATIC_LIBRARIES ${GSL_STATIC_LIBRARIES})
     else( )
-       message(STATUS "Using gsl libraries: ${GSL_LIBRARIES}")
+       # message(DEBUG "Using gsl libraries: ${GSL_LIBRARIES}")
        foreach(GSL_LIB ${GSL_LIBRARIES} )
            if(GSL_LIB)
                get_filename_component( GSL_LIB_EXT ${GSL_LIB} EXT )
@@ -355,9 +353,18 @@ if(SYSTEM_SHARED_LIBS)
     list(REMOVE_DUPLICATES SYSTEM_SHARED_LIBS)
 endif( )
 
+# cmake --help-policy CMP0042. Also in pymoose/CMakeLists.txt 
+# More details:
+# https://gitlab.kitware.com/cmake/community/wikis/doc/cmake/RPATH-handling
+# especially section 'Mac OS X and the RPATH'
+# Switching is OFF since all libraries are statically linked in module.
+if(APPLE)
+    set_target_properties( libmoose PROPERTIES MACOSX_RPATH OFF)
+endif(APPLE)
+
 # MAC linker does not understand many of gnu-ld options.
-message( STATUS "Shared libs: ${SYSTEM_SHARED_LIBS}")
-if(MACOSX)
+# message( DEBUG "Shared libs: ${SYSTEM_SHARED_LIBS}")
+if(APPLE)
     target_link_libraries(libmoose
         "-Wl,-all_load"
         ${MOOSE_LIBRARIES}
@@ -368,7 +375,7 @@ if(MACOSX)
         ${SYSTEM_SHARED_LIBS}
         ${CMAKE_DL_LIBS}
         )
-ELSE(MACOSX)
+else(APPLE)
     target_link_libraries(libmoose
         "-Wl,--whole-archive"
         ${MOOSE_LIBRARIES}
@@ -376,7 +383,7 @@ ELSE(MACOSX)
         "-Wl,--no-whole-archive"
         ${SYSTEM_SHARED_LIBS}
         )
-endif(MACOSX)
+endif(APPLE)
 
 add_dependencies(moose.bin libmoose)
 target_link_libraries(moose.bin moose ${CMAKE_DL_LIBS})
@@ -430,10 +437,11 @@ set(PYMOOSE_BDIST_FILE ${PYMOOSE_BDIST_DIR}/pymoose-${VERSION_MOOSE}.${_platform
 message(STATUS "binary distribution file ${PYMOOSE_BDIST_FILE}")
 add_custom_target(bdist ALL DEPENDS  ${PYMOOSE_BDIST_FILE} )
 
-# Any command using setup.cmake.py must run in the same directory.
+# Any command using setup.cmake.py must run in the same directory. Use option
+# `--relative` to prefix is aways fixed.
 add_custom_command( OUTPUT ${PYMOOSE_BDIST_FILE}
     COMMAND ${PYTHON_EXECUTABLE} setup.cmake.py bdist_dumb -p ${_platform}
-        -d ${PYMOOSE_BDIST_DIR}
+        -d ${PYMOOSE_BDIST_DIR} --relative
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/python
     COMMENT "bdist is saved to ${PYMOOSE_BDIST_DIR}"
     VERBATIM
@@ -462,8 +470,8 @@ add_dependencies( copy_pymoose _moose )
 install(TARGETS moose.bin DESTINATION bin CONFIGURATIONS Debug)
 install(TARGETS libmoose DESTINATION lib CONFIGURATIONS Debug)
 
-# install pymoose bdist. The bdist comes with predefined /usr; remove it.
-install(DIRECTORY ${PYMOOSE_BDIST_INSTALL_DIR}/usr/
+# install pymoose bdist.
+install(DIRECTORY ${PYMOOSE_BDIST_INSTALL_DIR}/
     DESTINATION ${CMAKE_INSTALL_PREFIX}
     CONFIGURATIONS Release Debug
     )
@@ -509,6 +517,28 @@ foreach( _test_script ${PY_TEST_SCRIPTS} )
      set_tests_properties( ${_test_name}
          PROPERTIES ENVIRONMENT "PYTHONPATH=${CMAKE_CURRENT_BINARY_DIR}/python"
         )
+endforeach( )
+
+# add pylint target.
+set(PYSCRIPTS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/python )
+file(GLOB_RECURSE PY_SCRIPTS  "python/*.py")
+add_custom_target( pylint )
+foreach( _py_script ${PY_SCRIPTS} )
+    get_filename_component( _py_name ${_py_script} NAME_WE)
+    file( READ ${_py_script} pytext)
+    string(MD5 _md5 "${pytext}")
+    set(TGT_NAME "${_py_name}-${_md5}" )
+    set(PYLINT_OPTIONS --disable=no-member --disable=no-name-in-module 
+            --disable=invalid-unary-operand-type 
+            --disable=import-error
+            --disable=no-method-argument
+        )
+    add_custom_target( ${TGT_NAME}
+        COMMAND ${PYTHON_EXECUTABLE} -m pylint -E ${PYLINT_OPTIONS} ${_py_script}
+        COMMENT "Running pylint on ${_py_script}"
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        )
+    add_dependencies(pylint ${TGT_NAME} )
 endforeach( )
 
 ############################ CPACK ######################################

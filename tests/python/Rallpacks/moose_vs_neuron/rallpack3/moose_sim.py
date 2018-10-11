@@ -123,16 +123,6 @@ def behaH(A, B, V0, v):
     '''
     return (A * np.exp((v-V0)/B) + 1)
 
-def createChannel(species, path, **kwargs):
-    """Create a channel """
-    if species == 'na':
-        return sodiumChannel( path, **kwargs)
-    elif species == 'ca':
-        channel.Xpower = 4
-    else:
-        utils.dump("FATAL", "Unsupported channel type: {}".format(species))
-        raise RuntimeError("Unsupported species of chanel")
-
 def create_na_chan(parent='/library', name='na', vmin=-110e-3, vmax=50e-3, vdivs=3000):
     """Create a Hodhkin-Huxley Na channel under `parent`.
 

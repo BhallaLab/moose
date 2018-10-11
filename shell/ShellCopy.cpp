@@ -7,8 +7,8 @@
 ** See the file COPYING.LIB for the full notice.
 **********************************************************************/
 
-#include "header.h"
-#include "OneToAllMsg.h"
+#include "../basecode/header.h"
+#include "../msg/OneToAllMsg.h"
 #include "Shell.h"
 #include "../scheduling/Clock.h"
 

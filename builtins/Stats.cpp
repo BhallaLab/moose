@@ -7,7 +7,7 @@
 ** See the file COPYING.LIB for the full notice.
 **********************************************************************/
 
-#include "header.h"
+#include "../basecode/header.h"
 #include "Stats.h"
 
 static SrcFinfo1< vector< double >* > *requestOut() {

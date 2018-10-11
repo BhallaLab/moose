@@ -10,18 +10,10 @@
 #include "header.h"
 #include "SparseMatrix.h"
 
-#ifndef WIN32
-#include <sys/time.h>
-#else
 #include <time.h>
-#endif
 #include <math.h>
 #include <queue>
-#ifdef WIN32
-#include "../external/xgetopt/XGetopt.h"
-#else
 #include <unistd.h> // for getopt
-#endif
 #include "../scheduling/Clock.h"
 #include "../msg/DiagonalMsg.h"
 #include "../msg/SparseMsg.h"
@@ -93,12 +85,6 @@ extern void mooseBenchmarks( unsigned int option );
 unsigned int getNumCores()
 {
     unsigned int numCPU = 0;
-#ifdef WIN_32
-    SYSTEM_INFO sysinfo;
-    GetSystemInfo( &sysinfo );
-
-    numCPU = sysinfo.dwNumberOfProcessors;
-#endif
 
 #ifdef LINUX
     numCPU = sysconf( _SC_NPROCESSORS_ONLN );

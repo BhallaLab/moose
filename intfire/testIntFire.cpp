@@ -8,7 +8,7 @@
 **********************************************************************/
 
 
-#include "header.h"
+#include "../basecode/header.h"
 #include "../shell/Shell.h"
 #include "../biophysics/CompartmentBase.h"
 #include "../biophysics/Compartment.h"

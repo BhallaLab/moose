@@ -7,7 +7,7 @@
 ** See the file COPYING.LIB for the full notice.
 **********************************************************************/
 
-#include "header.h"
+#include "../basecode/header.h"
 #include "Boundary.h"
 #include "MeshEntry.h"
 #include "VoxelJunction.h"

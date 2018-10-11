@@ -7,7 +7,7 @@
  ** See the file COPYING.LIB for the full notice.
  **********************************************************************/
 #include <iomanip>
-#include "header.h"
+#include "../basecode/header.h"
 #include "VectorTable.h"
 #include "../builtins/Interpol2D.h"
 #include "MarkovRateTable.h"

@@ -1,8 +1,7 @@
-#include "header.h"
+#include "../basecode/header.h"
 #include "Example.h"
-#include "ElementValueFinfo.h"
-#include "LookupElementValueFinfo.h"
-#include <stdio.h>
+#include "../basecode/ElementValueFinfo.h"
+#include "../basecode/LookupElementValueFinfo.h"
 
 static SrcFinfo1< double > *output() {
     static SrcFinfo1< double > output(
@@ -90,9 +89,9 @@ const Cinfo* Example::initCinfo(){
 static const Cinfo* exampleCinfo = Example::initCinfo();
 
 Example::Example()
-	:
-	output_( 0.0 ),
-	x_( 0.0 ), y_( 0.0 )
+	: x_( 0.0 )
+        , y_( 0.0 )
+	, output_( 0.0 )
 {
 	;
 }

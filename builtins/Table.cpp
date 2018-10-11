@@ -7,13 +7,13 @@
 ** See the file COPYING.LIB for the full notice.
 **********************************************************************/
 
-#include "header.h"
-#include "global.h"
+#include "../basecode/header.h"
+#include "../basecode/global.h"
 #include <fstream>
 
 #include "TableBase.h"
 #include "Table.h"
-#include "Clock.h"
+#include "../scheduling/Clock.h"
 #include "StreamerBase.h"
 
 // Write to numpy arrays.

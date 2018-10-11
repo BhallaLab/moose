@@ -7,9 +7,9 @@
 ** See the file COPYING.LIB for the full notice.
 **********************************************************************/
 
-#include "header.h"
-#include "DiagonalMsg.h"
-#include "OneToAllMsg.h"
+#include "../basecode/header.h"
+#include "../msg/DiagonalMsg.h"
+#include "../msg/OneToAllMsg.h"
 #include "../scheduling/Clock.h"
 #include "Arith.h"
 #include "TableBase.h"
@@ -18,7 +18,9 @@
 
 #include "../shell/Shell.h"
 
+#ifdef ENABLE_NSDF
 extern void testNSDF();
+#endif
 
 void testArith()
 {
@@ -425,7 +427,9 @@ void testBuiltins()
 {
 	testArith();
 	testTable();
+#if ENABLE_NSDF
         testNSDF();
+#endif
 }
 
 void testBuiltinsProcess()

@@ -1,3 +1,5 @@
+#ifndef EXAMPLE_H
+#endif /* end of include guard: EXAMPLE_H */
 class Example {
 
     private:
@@ -25,3 +27,5 @@ class Example {
         static const Cinfo* initCinfo();
 
 };
+
+#define EXAMPLE_H

@@ -7,14 +7,14 @@
 ** See the file COPYING.LIB for the full notice.
 **********************************************************************/
 
-#include "header.h"
-#include "ElementValueFinfo.h"
-#include "SparseMatrix.h"
-#include "KinSparseMatrix.h"
-#include "VoxelPoolsBase.h"
+#include "../basecode/header.h"
+#include "../basecode/ElementValueFinfo.h"
+#include "../basecode/SparseMatrix.h"
+#include "../ksolve/KinSparseMatrix.h"
+#include "../ksolve/VoxelPoolsBase.h"
 #include "../mesh/VoxelJunction.h"
-#include "XferInfo.h"
-#include "ZombiePoolInterface.h"
+#include "../ksolve/XferInfo.h"
+#include "../ksolve/ZombiePoolInterface.h"
 #include "../kinetics/ConcChan.h"
 #include "DiffPoolVec.h"
 #include "ConcChanInfo.h"

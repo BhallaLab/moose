@@ -12,9 +12,9 @@
 #include <vector>
 #include <algorithm>
 #include <cassert>
-using namespace std;
-#include "header.h"
+#include "../basecode/header.h"
 #include "RateTerm.h"
+using namespace std;
 
 const double RateTerm::EPSILON = 1.0e-6;
 

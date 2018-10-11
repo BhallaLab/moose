@@ -18,7 +18,7 @@
 #include "RateTerm.h"
 #include "FuncTerm.h"
 #include "FuncRateTerm.h"
-#include "SparseMatrix.h"
+#include "../basecode/SparseMatrix.h"
 #include "KinSparseMatrix.h"
 #include "GssaSystem.h"
 #include "Stoich.h"

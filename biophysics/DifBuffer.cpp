@@ -45,10 +45,10 @@
 
 // Code:
 
-#include "header.h"
+#include "../basecode/header.h"
 #include "DifBufferBase.h"
 #include "DifBuffer.h"
-#include "ElementValueFinfo.h"
+#include "../basecode/ElementValueFinfo.h"
 #include "../utility/numutil.h"
 #include <cmath>
 const double DifBuffer::EPSILON = 1.0e-10;

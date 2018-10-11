@@ -10,19 +10,18 @@
 #include <string>
 #include <algorithm>
 
-using namespace std;
+#include "../basecode/header.h"
+#include "../basecode/global.h"
+#include "../basecode/Dinfo.h"
+#include "../basecode/SparseMatrix.h"
 
+#include "../msg/SingleMsg.h"
+#include "../msg/DiagonalMsg.h"
+#include "../msg/OneToOneMsg.h"
+#include "../msg/OneToAllMsg.h"
+#include "../msg/SparseMsg.h"
 
-#include "header.h"
-#include "global.h"
-#include "SingleMsg.h"
-#include "DiagonalMsg.h"
-#include "OneToOneMsg.h"
-#include "OneToAllMsg.h"
-#include "SparseMatrix.h"
-#include "SparseMsg.h"
 #include "Shell.h"
-#include "Dinfo.h"
 #include "Wildcard.h"
 
 // Want to separate out this search path into the Makefile options
@@ -609,7 +608,8 @@ ObjId Shell::doFind( const string& path ) const
 
 string Shell::doVersion()
 {
-    return MOOSE_VERSION;
+    string v = MOOSE_VERSION;
+    return v;
 }
 
 void Shell::setCwe( ObjId val )

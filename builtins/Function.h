@@ -48,7 +48,7 @@
 #ifndef _MOOSE_FUNCTION_H_
 #define _MOOSE_FUNCTION_H_
 
-#include "muParser.h"
+#include "../external/muparser/include/muParser.h"
 
 /**
    Simple function parser and evaluator for MOOSE. This can take a mathematical
@@ -149,11 +149,11 @@ protected:
     bool _useTrigger;
     bool _doEvalAtReinit;
 
-    // this stores variables received via incoming messages, identifiers of 
+    // this stores variables received via incoming messages, identifiers of
     // the form x{i} are included in this
     vector<Variable *> _varbuf;
 
-    // this stores variable values pulled by sending request. identifiers of 
+    // this stores variable values pulled by sending request. identifiers of
     // the form y{i} are included in this
     vector< double * > _pullbuf;
     map< string, double *> _constbuf;  // for constants
@@ -163,7 +163,9 @@ protected:
 
     void _clearBuffer();
     void _showError(mu::Parser::exception_type &e) const;
-    char* _stoich; // Used by kinetic solvers when this is zombified.
+
+    // Used by kinetic solvers when this is zombified.
+    char* _stoich;
 };
 
 
