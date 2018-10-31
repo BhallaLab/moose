@@ -4,12 +4,16 @@ Use pre-built packages
 pip
 ^^^^
 
-If you only need `python` interface, use `pip`. This is the easiest way to install Python interface.
-This solution has been tested for Linux and MacOSX.
+If you only need `python` interface, the recommended way is via `pip`. 
 ::
-     pip install pymoose 
+     pip install pymoose --user
+     
+To install nightly version
+::
+     pip install pymoose --pre --upgrade --user
+     
 
-We also build moose package with additional components such as gui and `moogli`. 
+We also have moose package with additional components such as gui and `moogli`. 
 
 Linux
 ^^^^^^
@@ -28,7 +32,9 @@ to pick your distribution and follow instructions.
 Mac OSX
 ^^^^^^^^
 
-MacOSX support for moose-gui is not complete yet. However, the python-scripting interface can be installed on OSX using ``homebrew``
+MacOSX support for moose-gui is not complete yet because moose-gui depends on PyQt4 but that 
+world has moved onto PyQt5 (See the status here: https://github.com/BhallaLab/moose-gui/issues/16). 
+However, the python-scripting interface can be installed on OSX using ``homebrew``
 ::
     $ brew tap BhallaLab/moose
     $ brew install moose
@@ -83,36 +89,33 @@ Core MOOSE
 """"""""""
 - Required:
     - cmake (version 2.8 or higher)
-    - g++ (>= 4.6.x) For building the C++ MOOSE core.
+    - g++ or clang (with `c++11` support).
     - gsl-1.16 or higher.
 
 - Optional
-    - HDF5 (>=1.8.x) For reading and writing data into HDF5 based formats
+    - HDF5 (>=1.8.x) For reading and writing data into HDF5 based formats. Disabled by default.
 
 Python interface for core MOOSE API (pymoose)
 """""""""""""""""""""""""""""""""""""""""""""
 - Required
-    - Python2 ( >= 2.7.x) For building the MOOSE Python bindings
-    - Python-dev ( >= 2.7.x) Python development headers and libraries, e.g. `python-dev` or `python-devel`
+    - python (Both 2.7 and 3.x versions are supported).
+    - python-dev. Python development headers and libraries, e.g. `python-dev` or `python-devel`
     - NumPy ( >= 1.6.x) For array interface, e.g. `python-numpy` or `numpy`
 
 - Optional
-    - NetworkX (1.x) For automatical layout
-    - pygraphviz For automatic layout for chemical models
-    - Matplotlib (>=1.1.x) For plotting simulation results
-    - python-libsbml For reading and writing chemical models from and into SBML format
+    - networkx (>=1.x) For automatical layout
+    - pygraphviz. For automatic layout for chemical models
+    - matplotlib (>=2.x). For plotting simulation results
+    - python-libsbml. For reading and writing chemical models from and into SBML format
+    - pylibsbml 
 
-Most of the dependencies can be installed using package manager.
+All of these dependencies can be installed using `pip` or your package manager.
 
 On ``Debian/Ubuntu``
 ::
 
     $ sudo apt-get install libhdf5-dev cmake libgsl0-dev libpython-dev python-numpy
 
-.. note::
-
-    Ubuntu 12.04 does not have required version of ``gsl`` (required 1.16 or
-    higher, available 1.15). On Ubuntu 16.04, package name is ``libgsl-dev``.
 
 On ``CentOS/Fedora/RHEL/Scientific Linux``
 ::
@@ -124,7 +127,7 @@ On ``OpenSUSE``
 
   $ sudo zypper install hdf5-devel cmake libgsl-dev python-devel python-numpy
 
-build moose
+Build moose
 ^^^^^^^^^^^
 
 .. code-block:: bash
@@ -183,12 +186,12 @@ Alternatively the moose-gui folder exists within the moose folder downloaded and
 Below are packages which you may want to install to use MOOSE Graphical User Interface.
 
 - Required:
-    - PyQt4 (4.8.x) For Python GUI
-    - Matplotlib ( >= 1.1.x) For plotting simulation results
-    - NetworkX (1.x) For automatical layout
-    - suds/suds-jurko (0.4) For accessing models hosted on biomodels database.
+    - PyQt4 (4.8.x). For Python GUI
+    - Matplotlib ( >= 2.x). For plotting simulation results
+    - NetworkX (1.x). For automatical layout
+ 
 - Optional:
-    - python-libsbml For reading and writing signalling models from and into SBML format
+    - python-libsbml. For reading and writing signalling models from and into SBML format
 
 On ``Ubuntu/Debian``, these can be installed with
 ::
@@ -258,7 +261,7 @@ After this, building and installing ``moogli`` should be as simple as
     $ mkdir _build
     $ cd _build
     $ cmake ..
-    $ make
+    $ make -j3
     $ sudo make install
 
 If you run into troubles, please report it on our `github repository
