@@ -1,9 +1,13 @@
 **Rdesigneur: Building multiscale models**
 ==========================================
 
-.. Upi Bhalla
+Author: Upi Bhalla
 
-.. Aug 26 2016. Updated August 2018
+Date: Aug 26 2016,
+
+Last-Updated: Nov 08 2018
+
+By: Upi Bhalla
 
 .. --------------
 
@@ -1377,6 +1381,83 @@ and so the reaction system is depleted and does not oscillate.
 .. figure:: ../../../../images/ex7.5_a_later.png
     :alt: Travelling Oscillator molecule a later.
 
+Controlling a reaction by a function
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*ex7.6_func_controls_reac_rate.py*
+
+This example illustrates how a function can be used to control a reaction
+rate. This kind of calculation is appropriate when we need to link
+different kinds of physical processses with chemical reactions, for 
+example, membrane curvature with molecule accumulation. The use of
+functions to modify reaction rates should be avoided in purely chemical 
+systems since they obscure the underlying chemistry, and do not map
+cleanly to stochastic calculations.
+
+In this example we simply have a molecule C that controls the forward
+rate of a reaction that converts A to B. C is a function of location
+on the cylinder, and is fixed. In more elaborate computations we could
+have a function of multiple molecules, some of which could be changing and
+others could be buffered.
+
+::
+
+    import numpy as np
+    import moose
+    import pylab
+    import rdesigneur as rd
+    
+    
+    def makeFuncRate():
+        model = moose.Neutral( '/library' )
+        model = moose.Neutral( '/library/chem' )
+        compt = moose.CubeMesh( '/library/chem/compt' )
+        compt.volume = 1e-15
+        A = moose.Pool( '/library/chem/compt/A' )
+        B = moose.Pool( '/library/chem/compt/B' )
+        C = moose.Pool( '/library/chem/compt/C' )
+        reac = moose.Reac( '/library/chem/compt/reac' )
+        func = moose.Function( '/library/chem/compt/reac/func' )
+        func.x.num = 1
+        func.expr = "(x0/1e8)^2"
+        moose.connect( C, 'nOut', func.x[0], 'input' )
+        moose.connect( func, 'valueOut', reac, 'setNumKf' )
+        moose.connect( reac, 'sub', A, 'reac' )
+        moose.connect( reac, 'prd', B, 'reac' )
+    
+        A.concInit = 1
+        B.concInit = 0
+        C.concInit = 0
+        reac.Kb = 1
+    
+    makeFuncRate()
+    rdes = rd.rdesigneur(
+            turnOffElec = True,
+            #This subdivides the 50-micron cylinder into 2 micron voxels
+            diffusionLength = 2e-6,
+            cellProto = [['somaProto', 'soma', 5e-6, 50e-6]],
+            chemProto = [['chem', 'chem']],
+            chemDistrib = [['chem', 'soma', 'install', '1' ]],
+            plotList = [['soma', '1', 'dend/A', 'conc', 'A conc', 'wave'],
+                ['soma', '1', 'dend/C', 'conc', 'C conc', 'wave']],
+    )
+    rdes.buildModel()
+    C = moose.element( '/model/chem/dend/C' )
+    C.vec.concInit = [ 1+np.sin(x/5.0) for x in range( len(C.vec) ) ]
+    moose.reinit()
+    moose.start(10)
+    rdes.display()
+    
+We plot the controlling molecule C and the substrate molecule A as
+functions of position, using a waveplot. C remains fixed, and A 
+decreases with time and space. A is smallest at about voxel 8, where the 
+reaction rate, as controlled by C, is highest.
+
+.. figure:: ../../../../images/ex7.6_C.png
+    :alt: Concentration of control molecule C
+.. figure:: ../../../../images/ex7.6_A.png
+    :alt: Concentration of substrate molecule A
+
 
 
 Multiscale models: single compartment
@@ -1417,7 +1498,7 @@ so it spikes more, so more calcium enters.
             ['make_Ca_conc()', 'Ca_conc' ]
         ],
         # Some changes to the default passive properties of the cell.
-        passiveDistrib = [['.', 'soma', 'CM', '0.03', 'Em', '-0.06']],
+        passiveDistrib = [['soma', 'CM', '0.03', 'Em', '-0.06']],
         chemDistrib = [['chem', 'soma', 'install', '1' ]],
         chanDistrib = [
             ['Na', 'soma', 'Gbar', '300' ],
@@ -1514,9 +1595,8 @@ The arguments in the adaptorList are:
 
 There is a handy new line to specify cellular passive properties:
 
-**passiveDistrib:** `['.', path, field, value, field, value, ... ]`,
+**passiveDistrib:** `[path, field, value, field, value, ... ]`,
 
-        * '.': This is just a placeholder.
         * path: String. Specifies the object whose parameters are to be changed.
         * field: String. Name of the field on the object.
         * value: String, that is the value has to be enclosed in quotes. The
@@ -1723,7 +1803,7 @@ and how widely to space them.
             ['make_Ca()', 'Ca' ],
             ['make_Ca_conc()', 'Ca_conc' ]
         ],
-        passiveDistrib = [['.', 'soma', 'CM', '0.01', 'Em', '-0.06']],
+        passiveDistrib = [['soma', 'CM', '0.01', 'Em', '-0.06']],
         spineDistrib = [['spine', '#dend#', '50e-6', '1e-6']],
         chemDistrib = [['chem', '#', 'install', '1' ]],
         chanDistrib = [
@@ -1856,7 +1936,7 @@ ramifications. There are a lot of plots, to illustrate some of these outcomes.
             ['make_Ca()', 'Ca' ],
             ['make_Ca_conc()', 'Ca_conc' ]
         ],
-        passiveDistrib = [['.', 'soma', 'CM', '0.01', 'Em', '-0.06']],
+        passiveDistrib = [['soma', 'CM', '0.01', 'Em', '-0.06']],
         spineDistrib = [['spine', '#dend#', '50e-6', '1e-6']],
         chemDistrib = [['chem', '#', 'install', '1' ]],
         chanDistrib = [
@@ -2346,6 +2426,51 @@ Suggestions:
           name of the spine compartments is 'head#' where # is the index of the
           spine.
 
+Place spines in a spiral along a dendrite
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*ex9.3_spiral_spines.py*
+
+Just for fun. Illustrates how to place spines in a spiral around the dendrite. 
+For good measure the spines get bigger the further they are from the soma. 
+
+Note that the uniform spacing of spines is signified
+by the negative minSpacing term, the fourth argument to spineDistrib.
+
+
+::
+
+    import moose
+    import pylab
+    import rdesigneur as rd
+    rdes = rd.rdesigneur(
+        cellProto = [['ballAndStick', 'elec', 10e-6, 10e-6, 2e-6, 300e-6, 50]],
+        spineProto = [['makePassiveSpine()', 'spine']],
+        spineDistrib = [['spine', '#dend#', '3e-6', '-1e-6', '1+p*2e4', '0', 'p*6.28e7', '0']],
+        stimList = [['soma', '1', '.', 'inject', '(t>0.02) * 1e-9' ]],
+        moogList = [['#', '1', '.', 'Vm', 'Soma potential']]
+    )
+    rdes.buildModel()
+    moose.reinit()
+    rdes.displayMoogli( 0.0002, 0.025, 0.02 )
+
+Note that the uniform spacing of spines is signified
+by the negative minSpacing term, the fourth argument to spineDistrib.
+
+spineDistrib = [['spine', '#dend#', '3e-6', **'-1e-6'**, '1+p*2e4', '0', 'p*6.28e7', '0']]
+
+
+.. figure:: ../../../../images/ex9.3_spiral_spines.png
+   :alt: 3-D display of spines in a spiral
+
+   3-D display of spines in a spiral
+
+Suggestions:
+
+        - Play with expressions for spine size and angular placement.
+        - See what happens if the segment size gets smaller than the
+          spine spacing.
+
 
 Rdesigneur command reference
 ----------------------------
@@ -2726,19 +2851,19 @@ making channel prototypes:
             - make_HH_Na(): Make the classical Hodgkin-Huxley Na channel, with
               kinetics scaled to SI units.
             - make_HH_K(): Classical HH delayed rectifier K channel.
-            - make_Na(): Hippocampal pyramidal Na channel from Migliore et al.
+            - make_Na(): Hippocampal pyramidal Na channel from Traub 1991.
             - make_K_DR(): Hippocampal pyramidal K delayed rectifier channel 
-              from Migliore et al.
-            - make_K_A(): Hippocampal pyramidal A-type K channel from Migliore
-              et al.
+              from Traub 1991.
+            - make_K_A(): Hippocampal pyramidal A-type K channel from Traub 
+              1991.
             - make_Ca_conc(): A calcium pool with tau 13.333 ms. This is
               required for the calcium dynamics of several channels.
             - make_Ca(): Voltage-gated Calcium channel, based on Traub 1991. It
               requires the Ca_conc.
             - make_K_AHP: Voltage and calcium-gated afterhyperpolarization-
-              activated K channel, from Traub. Note that this channel requires
-              the presence of the Ca_conc.
-            - make_K_C: Voltage and calcium-dependent K channel from Traub.
+              activated K channel, from Traub 1991. Note that this channel 
+              requires the presence of the Ca_conc.
+            - make_K_C: Voltage and calcium-dependent K channel from Traub 1991.
               This channel requires the presence of the Ca_conc.
             - make_glu(): Glutamate receptor in the form of dual-exponential
               alpha functions, with a separate opening (2ms) and closing (9ms)
@@ -2902,6 +3027,11 @@ The interpretation of the arguments is as follows:
       of this expression is shown again below.
     - minSpacing: The minimum spacing, and the increment along which the 
       Poisson samples are taken to decide if a spine should be added.
+      In case *minSpacing* is negative, the system places spines with uniform
+      *spacing* along the dendritic segment. If 
+      ``segment length < 0.5 * spacing`` 
+      then the system falls back onto Poisson samples so that finely
+      subdivided dendrites don't miss out on spines altogether.
     - size: Scale factor for size from the prototype spine. All dimension of
       the spine are scaled by this number: shaft length, shaft diameter,
       head length and head diameter. This is a math expression, as shown below.
