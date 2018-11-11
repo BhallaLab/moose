@@ -1195,6 +1195,7 @@ Id ReadKkit::buildChan( const vector< string >& args )
 	assert( chan != Id() );
 	string chanPath = clean.substr( 10 );
 	chanIds_[ chanPath ] = chan;
+	Id info = buildInfo( chan, chanMap_, args );
 	return chan;
 }
 

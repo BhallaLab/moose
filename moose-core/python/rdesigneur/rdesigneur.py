@@ -179,7 +179,7 @@ class rdesigneur:
             self.elecid.numCompartments, "compartments and",
             self.elecid.numSpines, "spines on",
             len( self.cellPortionElist ), "compartments.")
-        if hasattr( self , 'chemid' ):
+        if hasattr( self , 'chemid') and len( self.chemDistrib ) > 0:
             dmstoich = moose.element( self.dendCompt.path + '/stoich' )
             print("\tChem part of model has the following compartments: ")
             for j in moose.wildcardFind( '/model/chem/##[ISA=ChemCompt]'):
@@ -948,7 +948,7 @@ rdesigneur.rmoogli.updateMoogliViewer()
         }
         stims = moose.Neutral( self.modelPath + '/stims' )
         k = 0
-        # Stimlist = [path, geomExpr, relPath, field, expr_string]
+        # rstim class has {elecpath, geom_expr, relpath, field, expr}
         for i in self.stimList:
             pair = i.elecpath + " " + i.geom_expr
             dendCompts = self.elecid.compartmentsFromExpression[ pair ]
@@ -1062,7 +1062,6 @@ rdesigneur.rmoogli.updateMoogliViewer()
 
 
         self._buildNeuroMesh()
-
 
         self._configureSolvers()
         for i in self.adaptorList:
@@ -1326,7 +1325,7 @@ rdesigneur.rmoogli.updateMoogliViewer()
 
     #################################################################
     def _configureSolvers( self ) :
-        if not hasattr( self, 'chemid' ):
+        if not hasattr( self, 'chemid' ) or len( self.chemDistrib ) == 0:
             return
         if not hasattr( self, 'dendCompt' ):
             raise BuildError( "configureSolvers: no chem meshes defined." )
