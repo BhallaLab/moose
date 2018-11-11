@@ -7,8 +7,8 @@
 ** See the file COPYING.LIB for the full notice.
 **********************************************************************/
 
-#include <float.h>		//Needed for DBL_MAX and DBL_MIN
-#include "header.h"
+#include <cfloat>		//Needed for DBL_MAX and DBL_MIN
+#include "../basecode/header.h"
 #include "MatrixOps.h"
 
 #include "VectorTable.h"

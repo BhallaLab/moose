@@ -7,16 +7,16 @@
 ** See the file COPYING.LIB for the full notice.
 **********************************************************************/
 
-#include "header.h"
+#include "../basecode/header.h"
 #include "SingleMsg.h"
 #include "DiagonalMsg.h"
 #include "OneToOneMsg.h"
 #include "OneToOneDataIndexMsg.h"
 #include "OneToAllMsg.h"
-#include "SparseMatrix.h"
+#include "../basecode/SparseMatrix.h"
 #include "SparseMsg.h"
 #include "../shell/Shell.h" // For the myNode() and numNodes() definitions
-#include "MsgElement.h"
+#include "../basecode/MsgElement.h"
 
 #include "../shell/Shell.h"
 

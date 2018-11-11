@@ -8,7 +8,7 @@
 **********************************************************************/
 
 #include <queue>
-#include "header.h"
+#include "../basecode/header.h"
 #include "IntFire.h"
 
 static SrcFinfo1< double > *spikeOut() {

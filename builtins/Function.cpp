@@ -45,13 +45,13 @@
 
 // Code:
 
-#include "header.h"
+#include "../basecode/header.h"
 #include "../utility/utility.h"
 #include "../utility/numutil.h"
 #include "Variable.h"
 
 #include "Function.h"
-#include "ElementValueFinfo.h"
+#include "../basecode/ElementValueFinfo.h"
 
 #define PARSER_MAXVARS 100
 

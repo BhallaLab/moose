@@ -1,5 +1,4 @@
 cmake_minimum_required(VERSION 2.8)
-include_directories(../basecode)
-add_definitions( -std=c++11 )
+include( ${CMAKE_CURRENT_SOURCE_DIR}/../CheckCXXCompiler.cmake)
 file(GLOB SRC *.cpp)
 add_library(intfire ${SRC})

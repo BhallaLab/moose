@@ -19,7 +19,7 @@ using namespace std;
 #ifdef USE_GSL
 #include <gsl/gsl_linalg.h>
 #endif
-#include "header.h"
+#include "../basecode/header.h"
 #include "../basecode/SparseMatrix.h"
 #include "FastMatrixElim.h"
 #include "../shell/Shell.h"

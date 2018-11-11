@@ -14,7 +14,7 @@
 #include <iostream>
 using namespace std;
 
-#include "SparseMatrix.h"
+#include "../basecode/SparseMatrix.h"
 #include "DiffPoolVec.h"
 
 /**

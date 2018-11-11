@@ -47,7 +47,7 @@
 #ifndef _FUNC_H
 #define _FUNC_H
 
-#include "muParser.h"
+#include "../external/muparser/include/muParser.h"
 /**
    Simple function parser and evaluator for MOOSE. This can take a mathematical
    expression in standard C form and a list of variables values and

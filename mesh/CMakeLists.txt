@@ -1,6 +1,5 @@
-include_directories(../msg)
-include_directories(../basecode)
-include_directories(../utility)
+cmake_minimum_required(VERSION 2.8)
+include( ${CMAKE_CURRENT_SOURCE_DIR}/../CheckCXXCompiler.cmake)
 add_library(mesh
     ChemCompt.cpp
     MeshCompt.cpp
@@ -13,6 +12,6 @@ add_library(mesh
     SpineEntry.cpp
     SpineMesh.cpp
     PsdMesh.cpp
-	EndoMesh.cpp
+    EndoMesh.cpp
     testMesh.cpp
     )

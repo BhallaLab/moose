@@ -86,27 +86,6 @@ struct reac_info
 const Cinfo* SteadyState::initCinfo()
 {
     /**
-     * This picks up the entire Stoich data structure
-    static Finfo* gslShared[] =
-    {
-    	new SrcFinfo( "reinitSrc", Ftype0() ),
-    	new DestFinfo( "assignStoich",
-    		Ftype1< void* >(),
-    		RFCAST( &SteadyState::assignStoichFunc )
-    		),
-    	new DestFinfo( "setMolN",
-    		Ftype2< double, unsigned int >(),
-    		RFCAST( &SteadyState::setMolN )
-    		),
-    	new SrcFinfo( "requestYsrc", Ftype0() ),
-    	new DestFinfo( "assignY",
-    		Ftype1< double* >(),
-    		RFCAST( &SteadyState::assignY )
-    		),
-    };
-     */
-
-    /**
      * These are the fields of the SteadyState class
      */
     ///////////////////////////////////////////////////////
@@ -207,59 +186,59 @@ const Cinfo* SteadyState::initCinfo()
     // MsgDest definitions
     ///////////////////////////////////////////////////////
     static DestFinfo setupMatrix( "setupMatrix",
-                                  "This function initializes and rebuilds the matrices used "
-                                  "in the calculation.",
-                                  new OpFunc0< SteadyState >(&SteadyState::setupMatrix)
-                                );
+            "This function initializes and rebuilds the matrices used "
+            "in the calculation.",
+            new OpFunc0< SteadyState >(&SteadyState::setupMatrix)
+            );
 
     static DestFinfo settle( "settle",
-                             "Finds the nearest steady state to the current initial "
-                             "conditions. This function rebuilds the entire calculation "
-                             "only if the object has not yet been initialized.",
-                             new OpFunc0< SteadyState >( &SteadyState::settleFunc )
-                           );
+            "Finds the nearest steady state to the current initial "
+            "conditions. This function rebuilds the entire calculation "
+            "only if the object has not yet been initialized.",
+            new OpFunc0< SteadyState >( &SteadyState::settleFunc )
+            );
     static DestFinfo resettle( "resettle",
-                               "Finds the nearest steady state to the current initial "
-                               "conditions. This function rebuilds the entire calculation ",
-                               new OpFunc0< SteadyState >( &SteadyState::resettleFunc )
-                             );
+            "Finds the nearest steady state to the current initial "
+            "conditions. This function rebuilds the entire calculation ",
+            new OpFunc0< SteadyState >( &SteadyState::resettleFunc )
+            );
     static DestFinfo showMatrices( "showMatrices",
-                                   "Utility function to show the matrices derived for the calculations on the reaction system. Shows the Nr, gamma, and total matrices",
-                                   new OpFunc0< SteadyState >( &SteadyState::showMatrices )
-                                 );
+            "Utility function to show the matrices derived for the calculations on the reaction system. Shows the Nr, gamma, and total matrices",
+            new OpFunc0< SteadyState >( &SteadyState::showMatrices )
+            );
     static DestFinfo randomInit( "randomInit",
-                                 "Generate random initial conditions consistent with the mass"
-                                 "conservation rules. Typically invoked in order to scan"
-                                 "states",
-                                 new EpFunc0< SteadyState >(
-                                     &SteadyState::randomizeInitialCondition )
-                               );
+            "Generate random initial conditions consistent with the mass"
+            "conservation rules. Typically invoked in order to scan"
+            "states",
+            new EpFunc0< SteadyState >(
+                &SteadyState::randomizeInitialCondition )
+            );
     ///////////////////////////////////////////////////////
     // Shared definitions
     ///////////////////////////////////////////////////////
 
     static Finfo * steadyStateFinfos[] =
     {
-        &stoich,				// Value
-        &badStoichiometry,		// ReadOnlyValue
-        &isInitialized,			// ReadOnlyValue
-        &nIter,					// ReadOnlyValue
-        &status,				// ReadOnlyValue
-        &maxIter,				// Value
-        &convergenceCriterion,	// ReadOnlyValue
-        &numVarPools,			// ReadOnlyValue
-        &rank,					// ReadOnlyValue
-        &stateType,				// ReadOnlyValue
-        &nNegEigenvalues,		// ReadOnlyValue
-        &nPosEigenvalues,		// ReadOnlyValue
-        &solutionStatus,		// ReadOnlyValue
-        &total,					// LookupValue
-        &eigenvalues,			// ReadOnlyLookupValue
-        &setupMatrix,			// DestFinfo
-        &settle,				// DestFinfo
-        &resettle,				// DestFinfo
-        &showMatrices,			// DestFinfo
-        &randomInit,			// DestFinfo
+        &stoich,                // Value
+        &badStoichiometry,        // ReadOnlyValue
+        &isInitialized,            // ReadOnlyValue
+        &nIter,                    // ReadOnlyValue
+        &status,                // ReadOnlyValue
+        &maxIter,                // Value
+        &convergenceCriterion,    // ReadOnlyValue
+        &numVarPools,            // ReadOnlyValue
+        &rank,                    // ReadOnlyValue
+        &stateType,                // ReadOnlyValue
+        &nNegEigenvalues,        // ReadOnlyValue
+        &nPosEigenvalues,        // ReadOnlyValue
+        &solutionStatus,        // ReadOnlyValue
+        &total,                    // LookupValue
+        &eigenvalues,            // ReadOnlyLookupValue
+        &setupMatrix,            // DestFinfo
+        &settle,                // DestFinfo
+        &resettle,                // DestFinfo
+        &showMatrices,            // DestFinfo
+        &randomInit,            // DestFinfo
 
 
     };
@@ -278,7 +257,7 @@ const Cinfo* SteadyState::initCinfo()
         "Note that the method finds unstable as well as stable fixed "
         "points.\n "
         "The SteadyState class also provides a utility function "
-        "*randomInit()*	to "
+        "*randomInit()*    to "
         "randomly initialize the concentrations, within the constraints "
         "of stoichiometry. This is useful if you are trying to find "
         "the major fixed points of the system. Note that this is "
@@ -368,12 +347,10 @@ void SteadyState::setStoich( Id value )
     numVarPools_ = Field< unsigned int >::get( stoich_, "numVarPools" );
     nReacs_ = Field< unsigned int >::get( stoich_, "numRates" );
     setupSSmatrix();
-    double vol = LookupField< unsigned int, double >::get(
-                     stoichPtr->getCompartment(), "oneVoxelVolume", 0 );
+    double vol = LookupField< unsigned int, double >::get(stoichPtr->getCompartment(), "oneVoxelVolume", 0 );
     pool_.setVolume( vol );
-    pool_.setStoich( stoichPtr, 0 );
-    pool_.updateAllRateTerms( stoichPtr->getRateTerms(),
-                              stoichPtr->getNumCoreRates() );
+    pool_.setStoich( stoichPtr, nullptr );
+    pool_.updateAllRateTerms( stoichPtr->getRateTerms(), stoichPtr->getNumCoreRates() );
     isInitialized_ = 1;
 }
 
@@ -513,9 +490,9 @@ void SteadyState::showMatrices()
         return;
     }
     int numConsv = numVarPools_ - rank_;
-    cout << "Totals:	";
+    cout << "Totals:    ";
     for ( int i = 0; i < numConsv; ++i )
-        cout << total_[i] << "	";
+        cout << total_[i] << "    ";
     cout << endl;
     cout << "gamma " << gamma_ << endl;
     cout << "Nr " << Nr_ << endl;
@@ -549,9 +526,7 @@ void SteadyState::setupSSmatrix()
         {
             double x = 0;
             if ( j == colIndex[k] && k < rowStart[i+1] )
-            {
                 x = entry[k++];
-            }
             N(i,j) = x;
             LU_(i,j) = x;
         }
@@ -586,6 +561,7 @@ void SteadyState::setupSSmatrix()
     total_.assign( nConsv, 0.0 );
 
     Id ksolve = Field< Id >::get( stoich_, "ksolve" );
+
     vector< double > nVec =
         LookupField< unsigned int, vector< double > >::get(
             ksolve,"nVec", 0 );
@@ -614,7 +590,7 @@ void SteadyState::classifyState( const double* T )
     double tot = 0.0;
     Stoich* s = reinterpret_cast< Stoich* >( stoich_.eref().data() );
     vector< double > nVec = LookupField< unsigned int, vector< double > >::get(
-                                s->getKsolve(), "nVec", 0 );
+            s->getKsolve(), "nVec", 0 );
     for ( unsigned int i = 0; i < numVarPools_; ++i )
         tot += nVec[i];
 
@@ -625,14 +601,14 @@ void SteadyState::classifyState( const double* T )
     for ( unsigned int i = 0; i < numVarPools_; ++i )
     {
         double orig = nVec[i];
-        if ( std::isnan( orig ) or std::isinf( orig ) )
+        if ( std::isnan( orig ) || std::isinf( orig ) )
         {
             cout << "Warning: SteadyState::classifyState: orig=nan\n";
             solutionStatus_ = 2; // Steady state OK, eig failed
             J.clear();
             return;
         }
-        if ( std::isnan( tot ) or std::isinf( tot ))
+        if ( std::isnan( tot ) || std::isinf( tot ))
         {
             cout << "Warning: SteadyState::classifyState: tot=nan\n";
             solutionStatus_ = 2; // Steady state OK, eig failed
@@ -647,74 +623,73 @@ void SteadyState::classifyState( const double* T )
         // Assign the rates for each mol.
         for ( unsigned int j = 0; j < numVarPools_; ++j )
         {
-            if( std::isnan( yprime[j] ) or std::isinf( yprime[j] ) )
+            if( std::isnan( yprime[j] ) || std::isinf( yprime[j] ) )
             {
-                cout << "Warning: Overflow/underflow. Can't continue " << endl;
                 solutionStatus_ = 2;
+                J.clear();
                 return;
             }
             J(i, j) = yprime[j];
         }
-    }
 
-    // Jacobian is now ready. Find eigenvalues.
-    ublas::vector< std::complex< double > > eigenVec ( J.size1() );
+        // Jacobian is now ready. Find eigenvalues.
+        ublas::vector< std::complex< double > > eigenVec ( J.size1() );
 
-    ublas::matrix< std::complex<double>, ublas::column_major >* vl, *vr;
-    vl = NULL; vr = NULL;
+        ublas::matrix< std::complex<double>, ublas::column_major >* vl, *vr;
+        vl = NULL; vr = NULL;
 
-    /*-----------------------------------------------------------------------------
-     *  INFO: Calling lapack routine geev to compute eigen vector of matrix J.
-     *
-     *  Argument 3 and 4 are left- and right-eigenvectors. Since we do not need
-     *  them, they are set to NULL. Argument 2 holds eigen-vector and result is
-     *  copied to it (output ).
-     *-----------------------------------------------------------------------------*/
-    int status = lapack::geev( J, eigenVec, vl, vr, lapack::optimal_workspace() );
+        /*-----------------------------------------------------------------------------
+         *  INFO: Calling lapack routine geev to compute eigen vector of matrix J.
+         *
+         *  Argument 3 and 4 are left- and right-eigenvectors. Since we do not need
+         *  them, they are set to NULL. Argument 2 holds eigen-vector and result is
+         *  copied to it (output ).
+         *-----------------------------------------------------------------------------*/
+        int status = lapack::geev( J, eigenVec, vl, vr, lapack::optimal_workspace() );
 
-    eigenvalues_.clear();
-    eigenvalues_.resize( numVarPools_, 0.0 );
-    if ( status != 0 )
-    {
-        cout << "Warning: SteadyState::classifyState failed to find eigenvalues. Status = " <<
-             status << endl;
-        solutionStatus_ = 2; // Steady state OK, eig classification failed
-    }
-    else     // Eigenvalues are ready. Classify state.
-    {
-        nNegEigenvalues_ = 0;
-        nPosEigenvalues_ = 0;
-        for ( unsigned int i = 0; i < numVarPools_; ++i )
+        eigenvalues_.clear();
+        eigenvalues_.resize( numVarPools_, 0.0 );
+        if ( status != 0 )
         {
-            std::complex<value_type> z = eigenVec[ i ];
-            double r = z.real();
-            nNegEigenvalues_ += ( r < -EPSILON );
-            nPosEigenvalues_ += ( r > EPSILON );
-            eigenvalues_[i] = r;
-            // We have a problem here because numVarPools_ usually > rank
-            // This means we have several zero eigenvalues.
+            cout << "Warning: SteadyState::classifyState failed to find eigenvalues. Status = " <<
+                status << endl;
+            solutionStatus_ = 2; // Steady state OK, eig classification failed
         }
-        if ( nNegEigenvalues_ == rank_ )
-            stateType_ = 0; // Stable
-        else if ( nPosEigenvalues_ == rank_ ) // Never see it.
-            stateType_ = 1; // Unstable
-        else  if (nPosEigenvalues_ == 1)
-            stateType_ = 2; // Saddle
-        else if ( nPosEigenvalues_ >= 2 )
-            stateType_ = 3; // putative oscillatory
-        else if ( nNegEigenvalues_ == ( rank_ - 1) && nPosEigenvalues_ == 0 )
-            stateType_ = 4; // one zero or unclassified eigenvalue. Messy.
-        else
-            stateType_ = 5; // Other
+        else     // Eigenvalues are ready. Classify state.
+        {
+            nNegEigenvalues_ = 0;
+            nPosEigenvalues_ = 0;
+            for ( unsigned int i = 0; i < numVarPools_; ++i )
+            {
+                std::complex<value_type> z = eigenVec[ i ];
+                double r = z.real();
+                nNegEigenvalues_ += ( r < -EPSILON );
+                nPosEigenvalues_ += ( r > EPSILON );
+                eigenvalues_[i] = r;
+                // We have a problem here because numVarPools_ usually > rank
+                // This means we have several zero eigenvalues.
+            }
+            if ( nNegEigenvalues_ == rank_ )
+                stateType_ = 0; // Stable
+            else if ( nPosEigenvalues_ == rank_ ) // Never see it.
+                stateType_ = 1; // Unstable
+            else  if (nPosEigenvalues_ == 1)
+                stateType_ = 2; // Saddle
+            else if ( nPosEigenvalues_ >= 2 )
+                stateType_ = 3; // putative oscillatory
+            else if ( nNegEigenvalues_ == ( rank_ - 1) && nPosEigenvalues_ == 0 )
+                stateType_ = 4; // one zero or unclassified eigenvalue. Messy.
+            else
+                stateType_ = 5; // Other
+        }
     }
 }
 
 static bool isSolutionValid( const vector< double >& x )
 {
-    for( size_t i = 0; i < x.size(); i++ )
+    for( auto &v : x )
     {
-        double v = x[i];
-        if ( std::isnan( v ) or std::isinf( v ) )
+        if ( std::isnan( v ) || std::isinf( v ) )
         {
             cout << "Warning: SteadyState iteration gave nan/inf concs\n";
             return false;
@@ -722,6 +697,19 @@ static bool isSolutionValid( const vector< double >& x )
         else if( v < 0.0 )
         {
             cout << "Warning: SteadyState iteration gave negative concs\n";
+            return false;
+        }
+    }
+    return true;
+}
+
+static bool isSolutionPositive( const vector< double >& x )
+{
+    for( auto &v : x )
+    {
+        if( v < 0.0 )
+        {
+            cout << "Warning: SteadyState iteration gave negative concs" << endl;
             return false;
         }
     }
@@ -798,7 +786,7 @@ void SteadyState::settle( bool forceSetup )
     int status = 1;
 
     // Find roots . If successful, set status to 0.
-    if( ss->find_roots_gnewton( ) )
+    if( ss->find_roots_gnewton( convergenceCriterion_, maxIter_ ) )
         status = 0;
 
     if ( status == 0 && isSolutionValid( ss->ri.nVec ) )

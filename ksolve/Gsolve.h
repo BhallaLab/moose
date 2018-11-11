@@ -162,8 +162,6 @@ private:
 
     /// Flag: True if atot should be updated every clock tick
     bool useClockedUpdate_;
-
-    double t1_;
 };
 
 #endif	// _GSOLVE_H

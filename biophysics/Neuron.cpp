@@ -7,19 +7,19 @@
 ** See the file COPYING.LIB for the full notice.
 **********************************************************************/
 
-#include "header.h"
-#include "ElementValueFinfo.h"
-#include "LookupElementValueFinfo.h"
-#include "shell/Shell.h"
-#include "shell/Wildcard.h"
+#include "../basecode/header.h"
+#include "../basecode/ElementValueFinfo.h"
+#include "../basecode/LookupElementValueFinfo.h"
+#include "../shell/Shell.h"
+#include "../shell/Wildcard.h"
 #include "ReadCell.h"
-#include "utility/Vec.h"
+#include "../utility/Vec.h"
 #include "SwcSegment.h"
 #include "Spine.h"
 #include "Neuron.h"
-#include "basecode/global.h"
+#include "../basecode/global.h"
 
-#include "muParser.h"
+#include "../external/muparser/include/muParser.h"
 
 class nuParser: public mu::Parser
 {
@@ -315,11 +315,17 @@ const Cinfo* Neuron::initCinfo()
         "The expression for the *spacing* field must evaluate to > 0 for "
         "the spine to be installed. For example, if the expresssion is\n"
         "		H(1 - L) \n"
-        "then the systemwill only put spines closer than "
+        "then the system will only put spines closer than "
         "one length constant from the soma, and zero elsewhere. \n"
         "Available spine parameters are: \n"
         "spacing, minSpacing, size, sizeDistrib "
-        "angle, angleDistrib \n",
+        "angle, angleDistrib \n"
+		"minSpacing sets the granularity of sampling (typically about 0.1*"
+	    "spacing) for the usual case where spines are spaced randomly. "
+		"If minSpacing < 0 then the spines are spaced equally at "
+		"'spacing', unless the dendritic segment length is smaller than "
+		"'spacing'. In that case it falls back to the regular random "
+		"placement method.",
         &Neuron::setSpineDistribution,
         &Neuron::getSpineDistribution
     );
@@ -1788,6 +1794,19 @@ static void addPos( unsigned int segIndex, unsigned int eIndex,
                     vector< unsigned int >& elistIndex,
                     vector< double >& pos )
 {
+	if ( minSpacing < 0.0 ) {
+		// Use uniform spacing
+		for ( double position = spacing * 0.5;
+				position < dendLength; position += spacing ) {
+			seglistIndex.push_back( segIndex );
+			elistIndex.push_back( eIndex );
+			pos.push_back( position );
+		}
+		if ( dendLength > spacing * 0.5 )
+			return;
+		// If the dend length is too small for regular placement, 
+		// fall back to using probability to decide if segment gets spine
+	}
     if ( minSpacing < spacing * 0.1 && minSpacing < 1e-7 )
         minSpacing = spacing * 0.1;
     if ( minSpacing > spacing * 0.5 )
@@ -1860,13 +1879,6 @@ void Neuron::makeSpacingDistrib( const vector< ObjId >& elist,
             {
                 double spacing = val[ j + nuParser::EXPR ];
                 double spacingDistrib = parser.eval( val.begin() + j );
-                if ( spacingDistrib > spacing || spacingDistrib < 0 )
-                {
-                    cout << "Warning: Neuron::makeSpacingDistrib: " <<
-                         "0 < " << spacingDistrib << " < " << spacing <<
-                         " fails on " << elist[i].path() << ". Using 0.\n";
-                    spacingDistrib = 0.0;
-                }
                 map< Id, unsigned int>::const_iterator
                 lookupDend = segIndex_.find( elist[i] );
                 if ( lookupDend != segIndex_.end() )

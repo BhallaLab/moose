@@ -14,9 +14,9 @@
 #ifdef USE_MPI
 #include <mpi.h>
 #endif
-#include "header.h"
+#include "../basecode/header.h"
 #include "Shell.h"
-#include "Dinfo.h"
+#include "../basecode/Dinfo.h"
 
 #define USE_NODES 1
 

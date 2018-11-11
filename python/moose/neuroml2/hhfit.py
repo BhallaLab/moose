@@ -133,7 +133,7 @@ def double_exp(x, a, k1, x1, k2, x2, y0=0):
     ret = np.zeros(len(x))
     try:
         ret = a / (np.exp(k1 * (x - x1)) + np.exp(k2 * (x - x2))) + y0
-    except RuntimeWaring as e:
+    except RuntimeWarning as e:
         traceback.print_exc()
     return ret
 

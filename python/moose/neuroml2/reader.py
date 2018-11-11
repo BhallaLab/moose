@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from __future__ import print_function, division, absolute_import
+
 # reader.py ---
 # 
 # Filename: reader.py
@@ -9,49 +11,11 @@
 # Version: 
 # Last-Updated: 15 Jan 2018, pgleeson
 #               16 Jan 2018, dilawar, python3 compatible imports.
-#
-# URL:
-# Keywords:
-# Compatibility:
-#
+#             
 
-# Commentary:
-#
-#
-#
-#
-
-# Change log:
-#
-#
-#
-#
-# This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as
-# published by the Free Software Foundation; either version 3, or
-# (at your option) any later version.
-# 
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# General Public License for more details.
-# 
-# You should have received a copy of the GNU General Public License
-# along with this program; see the file COPYING.  If not, write to
-# the Free Software Foundation, Inc., 51 Franklin Street, Fifth
-# Floor, Boston, MA 02110-1301, USA.
-#
-#
-
-# Code:
 """Implementation of reader for NeuroML 2 models.
-
-
 TODO: handle morphologies of more than one segment...
-
 """
-
-from __future__ import print_function, division, absolute_import
 
 try:
     from future_builtins import zip, map
@@ -64,12 +28,17 @@ import math
 import numpy as np
 import neuroml as nml
 from pyneuroml import pynml
-
 import moose
 import moose.utils as mu
-
 from .units import SI
-from . import hhfit
+
+
+def _unique( ls ):
+    res = [ ]
+    for l in ls:
+        if l not in res:
+            res.append( l )
+    return res
 
 def sarea(comp):
     """
@@ -116,15 +85,13 @@ def setEk(comp, erev):
 def getSegments(nmlcell, component, sg_to_segments):
     """Get the list of segments the `component` is applied to"""
     sg = component.segment_groups
-    #seg = component.segment
     if sg is None:
-            segments = nmlcell.morphology.segments
-    elif sg == 'all': # Special case
+        segments = nmlcell.morphology.segments
+    elif sg == 'all': 
         segments = [seg for seglist in sg_to_segments.values() for seg in seglist]
     else:
         segments = sg_to_segments[sg]
-        
-    return list(set(segments))
+    return _unique(segments)
 
 
 class NML2Reader(object):
@@ -148,10 +115,10 @@ class NML2Reader(object):
         self.filename = None        
         self.nml_to_moose = {} # NeuroML object to MOOSE object
         self.moose_to_nml = {} # Moose object to NeuroML object
-        self.proto_cells = {} # map id to prototype cell in moose
-        self.proto_chans = {} # map id to prototype channels in moose
-        self.proto_pools = {} # map id to prototype pools (Ca2+, Mg2+)
-        self.includes = {} # Included files mapped to other readers
+        self.proto_cells = {}  # map id to prototype cell in moose
+        self.proto_chans = {}  # map id to prototype channels in moose
+        self.proto_pools = {}  # map id to prototype pools (Ca2+, Mg2+)
+        self.includes = {}     # Included files mapped to other readers
         self.lib = moose.Neutral('/library')
         self.id_to_ionChannel = {}
         self._cell_to_sg = {} # nml cell to dict - the dict maps segment groups to segments
@@ -160,6 +127,7 @@ class NML2Reader(object):
         self.pop_to_cell_type = {}
         self.seg_id_to_comp_name = {}
         self.paths_to_chan_elements = {}
+        self.network = None
 
     def read(self, filename, symmetric=True):
         filename = os.path.realpath( filename )
@@ -172,8 +140,8 @@ class NML2Reader(object):
         
         if len(self.doc.networks)>=1:
             self.network = self.doc.networks[0]
-            
             moose.celsius = self._getTemperature()
+            
             
         self.importConcentrationModels(self.doc)
         self.importIonChannels(self.doc)
@@ -189,20 +157,26 @@ class NML2Reader(object):
         mu.info("Read all from %s"%filename)
         
     def _getTemperature(self):
-        if self.network.type=="networkWithTemperature":
-            return SI(self.network.temperature)
-        else:
-            return 0 # Why not, if there's no temp dependence in nml..?
+        if self.network is not None:
+            if self.network.type=="networkWithTemperature":
+                return SI(self.network.temperature)
+            else:
+                # Why not, if there's no temp dependence in nml..?
+                return 0
+        return SI('25')
         
     def getCellInPopulation(self, pop_id, index):
         return self.cells_in_populations[pop_id][index]
     
     def getComp(self, pop_id, cellIndex, segId):
-        return moose.element('%s/%s/%s/%s' % (self.lib.path, pop_id, cellIndex, self.seg_id_to_comp_name[self.pop_to_cell_type[pop_id]][segId]))
+        return moose.element('%s/%s/%s/%s' % ( self.lib.path, pop_id, cellIndex
+            , self.seg_id_to_comp_name[self.pop_to_cell_type[pop_id]][segId])
+            )
             
     def createPopulations(self):
         for pop in self.network.populations:
-            mpop = moose.Neutral('%s/%s' % (self.lib.path, pop.id))
+            ep = '%s/%s' % (self.lib.path, pop.id)
+            mpop = moose.element(ep) if moose.exists(ep) else moose.Neutral(ep)
             self.cells_in_populations[pop.id] ={}
             for i in range(pop.size):
                 mu.info("Creating %s/%s instances of %s under %s"%(i,pop.size,pop.component, mpop))
@@ -228,12 +202,15 @@ class NML2Reader(object):
         for il in self.network.input_lists:
             for ii in il.input:
                 input = self.getInput(il.component)
-                moose.connect(input, 'output', self.getComp(il.populations,ii.get_target_cell_id(),ii.get_segment_id()), 'injectMsg')
+                moose.connect(input, 'output'
+                        , self.getComp(il.populations,ii.get_target_cell__hash(),ii.get_segment__hash())
+                        , 'injectMsg')
             
 
     def createCellPrototype(self, cell, symmetric=True):
         """To be completed - create the morphology, channels in prototype"""
-        nrn = moose.Neuron('%s/%s' % (self.lib.path, cell.id))
+        ep = '%s/%s' % (self.lib.path, cell.id)
+        nrn = moose.element(ep) if moose.exists(ep) else moose.Neuron(ep)
         self.proto_cells[cell.id] = nrn
         self.nml_to_moose[cell] = nrn
         self.moose_to_nml[nrn] = cell
@@ -262,11 +239,13 @@ class NML2Reader(object):
         self.seg_id_to_comp_name[nmlcell.id]={}
         for seg in segments:
             if seg.name is not None:
-                id_to_comp[seg.id] = compclass('%s/%s' % (cellpath, seg.name))
+                ep = '%s/%s' % (cellpath, seg.name)
+                id_to_comp[seg.id] = moose.element(ep) if moose.exists(ep) else compclass(ep)
                 self.seg_id_to_comp_name[nmlcell.id][seg.id] = seg.name
             else:
                 name = 'comp_%s'%seg.id
-                id_to_comp[seg.id] = compclass('%s/%s' % (cellpath, name))
+                ep = '%s/%s' % (cellpath, name)
+                id_to_comp[seg.id] = moose.element(ep) if moose.exists(ep) else compclass(ep)
                 self.seg_id_to_comp_name[nmlcell.id][seg.id] = name
         # Now assign the positions and connect up axial resistance
         if not symmetric:
@@ -286,13 +265,15 @@ class NML2Reader(object):
                 if parent:
                     p0 = parent.distal
                 else:
-                    raise Exception('No proximal point and no parent segment for segment: name=%s, id=%s' % (segment.name, segment.id))
-            comp.x0, comp.y0, comp.z0 = (x * self.lunit for x in map(float, (p0.x, p0.y, p0.z)))
+                    raise Exception(
+                    'No proximal point and no parent segment for segment:'+\
+                            'name=%s, id=%s' % (segment.name, segment.id)
+                        )
+            comp.x0, comp.y0, comp.z0 = (x*self.lunit for x in map(float, (p0.x, p0.y, p0.z)))
             p1 = segment.distal
-            comp.x, comp.y, comp.z = (x * self.lunit for x in map(float, (p1.x, p1.y, p1.z)))
-            comp.length = np.sqrt((comp.x - comp.x0)**2
-                                  + (comp.y - comp.y0)**2
-                                  + (comp.z - comp.z0)**2)
+            comp.x, comp.y, comp.z = (x*self.lunit for x in map(float, (p1.x, p1.y, p1.z)))
+            comp.length = np.sqrt((comp.x-comp.x0)**2+(comp.y-comp.y0)**2+(comp.z-comp.z0)**2)
+
             # This can pose problem with moose where both ends of
             # compartment have same diameter. We are averaging the two
             # - may be splitting the compartment into two is better?
@@ -377,10 +358,15 @@ class NML2Reader(object):
                     proto_pool = innerReader.proto_pools[species.concentrationModel]
                     break
         if not proto_pool:
-            raise Exception('No prototype pool for %s referred to by %s' % (species.concentration_model, species.id))
-        pool_id = moose.copy(proto_pool, comp, species.id)
+            raise Exception('No prototype pool for %s referred to by %s' % ( 
+                    species.concentration_model, species.id)
+                )
+        pool_id = moose.copy(proto_pool, compartment, species.id)
         pool = moose.element(pool_id)
-        pool.B = pool.B / (np.pi * compartment.length * (0.5 * compartment.diameter + pool.thickness) * (0.5 * compartment.diameter - pool.thickness))        
+        pool.B = pool.B / (np.pi * compartment.length * ( 
+            0.5 * compartment.diameter + pool.thickness) * 
+            (0.5 * compartment.diameter - pool.thickness)
+            )
         return pool
 
     def importAxialResistance(self, nmlcell, intracellularProperties):
@@ -399,26 +385,27 @@ class NML2Reader(object):
         return False
     
 
-    rate_fn_map = {
-        'HHExpRate': hhfit.exponential2,
-        'HHSigmoidRate': hhfit.sigmoid2,
-        'HHSigmoidVariable': hhfit.sigmoid2,
-        'HHExpLinearRate': hhfit.linoid2 }
-
     def calculateRateFn(self, ratefn, vmin, vmax, tablen=3000, vShift='0mV'):
         """Returns A / B table from ngate."""
+        from . import hhfit
+        rate_fn_map = {
+            'HHExpRate': hhfit.exponential2,
+            'HHSigmoidRate': hhfit.sigmoid2,
+            'HHSigmoidVariable': hhfit.sigmoid2,
+            'HHExpLinearRate': hhfit.linoid2 }
+
         tab = np.linspace(vmin, vmax, tablen)
         if self._is_standard_nml_rate(ratefn):
             midpoint, rate, scale = map(SI, (ratefn.midpoint, ratefn.rate, ratefn.scale))
-            return self.rate_fn_map[ratefn.type](tab, rate, scale, midpoint)
+            return rate_fn_map[ratefn.type](tab, rate, scale, midpoint)
         else:
             for ct in self.doc.ComponentType:
                 if ratefn.type == ct.name:
                     mu.info("Using %s to evaluate rate"%ct.name)
                     rate = []
                     for v in tab:
-                        vals = pynml.evaluate_component(ct,req_variables={'v':'%sV'%v,'vShift':vShift,'temperature':self._getTemperature()})
-                        '''mu.info vals'''
+                        req_vars  = {'v':'%sV'%v,'vShift':vShift,'temperature':self._getTemperature()}
+                        vals = pynml.evaluate_component(ct, req_variables =  req_vars)
                         if 'x' in vals:
                             rate.append(vals['x'])
                         if 't' in vals:
@@ -426,6 +413,9 @@ class NML2Reader(object):
                         if 'r' in vals:
                             rate.append(vals['r'])
                     return np.array(rate)
+
+        print( "[WARN ] Could not determine rate: %s %s %s" %(ratefn.type,vmin,vmax))
+        return np.array([])
 
     def importChannelsToCell(self, nmlcell, moosecell, membrane_properties):
         sg_to_segments = self._cell_to_sg[nmlcell]
@@ -436,11 +426,13 @@ class NML2Reader(object):
             try:
                 ionChannel = self.id_to_ionChannel[chdens.ion_channel]
             except KeyError:
-                mu.info('No channel with id', chdens.ion_channel)                
+                mu.info('No channel with id: %s' % chdens.ion_channel)                
                 continue
                 
             if self.verbose:
-                mu.info('Setting density of channel %s in %s to %s; erev=%s (passive: %s)'%(chdens.id, segments, condDensity,erev,self.isPassiveChan(ionChannel)))
+                mu.info('Setting density of channel %s in %s to %s; erev=%s (passive: %s)'%(
+                    chdens.id, segments, condDensity,erev,self.isPassiveChan(ionChannel))
+                    )
             
             if self.isPassiveChan(ionChannel):
                 for seg in segments:
@@ -483,32 +475,6 @@ class NML2Reader(object):
         moose.connect(chan, 'channel', comp, 'channel')
         return chan    
 
-    '''
-    def importIncludes(self, doc):        
-        for include in doc.include:
-            if self.verbose:
-                mu.info(self.filename, 'Loading include', include)
-            error = None
-            inner = NML2Reader(self.verbose)
-            paths = [include.href, os.path.join(os.path.dirname(self.filename), include.href)]
-            for path in paths:
-                try:
-                    inner.read(path)                    
-                    if self.verbose:
-                        mu.info(self.filename, 'Loaded', path, '... OK')
-                except IOError as e:
-                    error = e
-                else:
-                    self.includes[include.href] = inner
-                    self.id_to_ionChannel.update(inner.id_to_ionChannel)
-                    self.nml_to_moose.update(inner.nml_to_moose)
-                    self.moose_to_nml.update(inner.moose_to_nml)
-                    error = None
-                    break
-            if error:
-                mu.info(self.filename, 'Last exception:', error)
-                raise IOError('Could not read any of the locations: %s' % (paths))'''
-                
     def _is_standard_nml_rate(self, rate):
         return rate.type=='HHExpLinearRate' \
                or rate.type=='HHExpRate' or \
@@ -517,11 +483,12 @@ class NML2Reader(object):
 
     def createHHChannel(self, chan, vmin=-150e-3, vmax=100e-3, vdivs=5000):
         mchan = moose.HHChannel('%s/%s' % (self.lib.path, chan.id))
-        mgates = map(moose.element, (mchan.gateX, mchan.gateY, mchan.gateZ))
-        assert(len(chan.gate_hh_rates) <= 3) # We handle only up to 3 gates in HHCHannel
+        mgates = [moose.element(x) for x in [mchan.gateX, mchan.gateY, mchan.gateZ]]
+        assert len(chan.gate_hh_rates)<=3, "We handle only up to 3 gates in HHCHannel"
         
         if self.verbose:
             mu.info('== Creating channel: %s (%s) -> %s (%s)'%(chan.id, chan.gate_hh_rates, mchan, mgates))
+
         all_gates = chan.gates + chan.gate_hh_rates
         for ngate, mgate in zip(all_gates,mgates):
             if mgate.name.endswith('X'):
@@ -543,27 +510,32 @@ class NML2Reader(object):
             # refering to tau_inf and m_inf??
             fwd = ngate.forward_rate
             rev = ngate.reverse_rate
-            
             self.paths_to_chan_elements['%s/%s'%(chan.id,ngate.id)] = '%s/%s'%(chan.id,mgate.name)
-                
             q10_scale = 1
             if ngate.q10_settings:
                 if ngate.q10_settings.type == 'q10Fixed':
                     q10_scale= float(ngate.q10_settings.fixed_q10)
                 elif ngate.q10_settings.type == 'q10ExpTemp':
-                    q10_scale = math.pow(float(ngate.q10_settings.q10_factor),(self._getTemperature()- SI(ngate.q10_settings.experimental_temp))/10)
-                    #mu.info('Q10: %s; %s; %s; %s'%(ngate.q10_settings.q10_factor, self._getTemperature(),SI(ngate.q10_settings.experimental_temp),q10_scale))
+                    q10_scale = math.pow( float(ngate.q10_settings.q10_factor)
+                            , (self._getTemperature()- SI(ngate.q10_settings.experimental_temp))/10
+                            )
                 else:
-                    raise Exception('Unknown Q10 scaling type %s: %s'%(ngate.q10_settings.type,ngate.q10_settings))
+                    raise Exception('Unknown Q10 scaling type %s: %s'%( 
+                        ngate.q10_settings.type,ngate.q10_settings)
+                        )
                     
             if self.verbose:
-                mu.info(' === Gate: %s; %s; %s; %s; %s; scale=%s'%(ngate.id, mgate.path, mchan.Xpower, fwd, rev, q10_scale))
+                mu.info(' === Gate: %s; %s; %s; %s; %s; scale=%s'% ( 
+                    ngate.id, mgate.path, mchan.Xpower, fwd, rev, q10_scale)
+                    )
                 
             if (fwd is not None) and (rev is not None):
                 alpha = self.calculateRateFn(fwd, vmin, vmax, vdivs)
                 beta = self.calculateRateFn(rev, vmin, vmax, vdivs)
+
                 mgate.tableA = q10_scale * (alpha)
                 mgate.tableB = q10_scale * (alpha + beta)
+
             # Assuming the meaning of the elements in GateHHTauInf ...
             if hasattr(ngate,'time_course') and hasattr(ngate,'steady_state') \
                and (ngate.time_course is not None) and (ngate.steady_state is not None):
@@ -577,26 +549,36 @@ class NML2Reader(object):
             if hasattr(ngate,'steady_state') and (ngate.time_course is None) and (ngate.steady_state is not None):
                 inf = ngate.steady_state
                 tau = 1 / (alpha + beta)
-                if (inf is not None):
+                if inf is not None:
                     inf = self.calculateRateFn(inf, vmin, vmax, vdivs)
-                    mgate.tableA = q10_scale * (inf / tau)
-                    mgate.tableB = q10_scale * (1 / tau)
+                    if len(inf) > 0:
+                        mgate.tableA = q10_scale * (inf / tau)
+                        mgate.tableB = q10_scale * (1 / tau)
                 
         if self.verbose:
-            mu.info(self.filename, '== Created', mchan.path, 'for', chan.id)
+            mu.info('%s: Created %s for %s'%(self.filename,mchan.path,chan.id))
         return mchan
 
     def createPassiveChannel(self, chan):
-        mchan = moose.Leakage('%s/%s' % (self.lib.path, chan.id))
+        epath = '%s/%s' % (self.lib.path, chan.id)
+        if moose.exists( epath ):
+            mchan = moose.element(epath)
+        else:
+            mchan = moose.Leakage(epath)
         if self.verbose:
-            mu.info(self.filename, 'Created', mchan.path, 'for', chan.id)
+            mu.info('%s: Created %s for %s'%(self.filename,mchan.path,chan.id))
         return mchan
 
     def importInputs(self, doc):
-        minputs = moose.Neutral('%s/inputs' % (self.lib.path))
-        for pg_nml in doc.pulse_generators:
+        epath = '%s/inputs' % (self.lib.path)
+        if moose.exists( epath ):
+            minputs = moose.element( epath )
+        else:
+            minputs = moose.Neutral( epath )
 
-            pg = moose.PulseGen('%s/%s' % (minputs.path, pg_nml.id))
+        for pg_nml in doc.pulse_generators:
+            epath = '%s/%s' % (minputs.path, pg_nml.id)
+            pg = moose.element(epath) if moose.exists(epath) else moose.PulseGen(epath)
             pg.firstDelay = SI(pg_nml.delay)
             pg.firstWidth = SI(pg_nml.duration)
             pg.firstLevel = SI(pg_nml.amplitude)
@@ -605,7 +587,7 @@ class NML2Reader(object):
 
     def importIonChannels(self, doc, vmin=-150e-3, vmax=100e-3, vdivs=5000):
         if self.verbose:
-            mu.info(self.filename, 'Importing the ion channels')
+            mu.info('%s: Importing the ion channels' % self.filename )
             
         for chan in doc.ion_channel+doc.ion_channel_hhs:
             if chan.type == 'ionChannelHH':
@@ -619,11 +601,12 @@ class NML2Reader(object):
             self.nml_to_moose[chan] = mchan
             self.proto_chans[chan.id] = mchan
             if self.verbose:
-                mu.info(self.filename, 'Created ion channel', mchan.path, 'for', chan.type, chan.id)
+                mu.info( self.filename + ': Created ion channel %s for %s %s'%( 
+                    mchan.path, chan.type, chan.id))
 
     def importConcentrationModels(self, doc):
         for concModel in doc.decaying_pool_concentration_models:
-            proto = self.createDecayingPoolConcentrationModel(concModel)
+            self.createDecayingPoolConcentrationModel(concModel)
 
     def createDecayingPoolConcentrationModel(self, concModel):
         """Create prototype for concentration model"""        
@@ -632,21 +615,13 @@ class NML2Reader(object):
         else:
             name = concModel.id
         ca = moose.CaConc('%s/%s' % (self.lib.path, id))
-        mu.info('11111', concModel.restingConc)
-        mu.info('2222', concModel.decayConstant)
-        mu.info('33333', concModel.shellThickness)
-
         ca.CaBasal = SI(concModel.restingConc)
         ca.tau = SI(concModel.decayConstant)
         ca.thick = SI(concModel.shellThickness)
-        ca.B = 5.2e-6 # B = 5.2e-6/(Ad) where A is the area of the shell and d is thickness - must divide by shell volume when copying
+        ca.B = 5.2e-6 # B = 5.2e-6/(Ad) where A is the area of the 
+                      # shell and d is thickness - must divide by 
+                      # shell volume when copying
         self.proto_pools[concModel.id] = ca
         self.nml_to_moose[concModel.id] = ca
         self.moose_to_nml[ca] = concModel
-        logger.debug('Created moose element: %s for nml conc %s' % (ca.path, concModel.id))
-
-
-
-
-# 
-# reader.py ends here
+        mu.debug('Created moose element: %s for nml conc %s' % (ca.path, concModel.id))

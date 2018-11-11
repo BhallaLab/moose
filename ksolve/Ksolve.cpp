@@ -235,11 +235,7 @@ static const Cinfo* ksolveCinfo = Ksolve::initCinfo();
 
 Ksolve::Ksolve()
     :
-#if USE_GSL
     method_( "rk5" ),
-#elif USE_BOOST_ODE
-    method_( "rk5a" ),
-#endif
     epsAbs_( 1e-7 ),
     epsRel_( 1e-7 ),
     numThreads_( 1 ),
@@ -248,19 +244,12 @@ Ksolve::Ksolve()
     dsolve_(),
     dsolvePtr_( 0 )
 {
+    ;
 }
 
 Ksolve::~Ksolve()
 {
-#if 0
-    char* p = getenv( "MOOSE_SHOW_SOLVER_PERF" );
-    if( p != NULL )
-    {
-        cout << "Info: Ksolve (+Dsolve) took " << totalTime_ << " seconds and took " << numSteps_
-             << " steps." << endl;
-
-    }
-#endif
+    ;
 }
 
 //////////////////////////////////////////////////////////////
@@ -378,6 +367,7 @@ void Ksolve::setStoich( Id stoich )
     assert( stoich.element()->cinfo()->isA( "Stoich" ) );
     stoich_ = stoich;
     stoichPtr_ = reinterpret_cast< Stoich* >( stoich.eref().data() );
+
     if ( !isBuilt_ )
     {
         OdeSystem ode;
@@ -386,6 +376,7 @@ void Ksolve::setStoich( Id stoich )
         // ode.initStepSize = getEstimatedDt();
         ode.initStepSize = 0.01; // This will be overridden at reinit.
         ode.method = method_;
+
 #ifdef USE_GSL
         ode.gslSys.dimension = stoichPtr_->getNumAllPools();
         if ( ode.gslSys.dimension == 0 )
@@ -416,6 +407,7 @@ void Ksolve::setStoich( Id stoich )
 #endif
         isBuilt_ = true;
     }
+
 }
 
 Id Ksolve::getDsolve() const

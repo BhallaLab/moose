@@ -112,5 +112,6 @@ def validateModel(sbmlDoc):
     # consistencyMessages)
 
 if __name__ == '__main__':
+    import libsbml
     sbmlDoc = libsbml.readSBML('00001-sbml-l3v1.xml')
     validateModel(sbmlDoc)

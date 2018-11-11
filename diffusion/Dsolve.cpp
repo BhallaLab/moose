@@ -7,14 +7,14 @@
 ** See the file COPYING.LIB for the full notice.
 **********************************************************************/
 
-#include "header.h"
-#include "ElementValueFinfo.h"
-#include "SparseMatrix.h"
-#include "KinSparseMatrix.h"
-#include "VoxelPoolsBase.h"
+#include "../basecode/header.h"
+#include "../basecode/ElementValueFinfo.h"
+#include "../basecode/SparseMatrix.h"
+#include "../ksolve/KinSparseMatrix.h"
+#include "../ksolve/VoxelPoolsBase.h"
 #include "../mesh/VoxelJunction.h"
-#include "XferInfo.h"
-#include "ZombiePoolInterface.h"
+#include "../ksolve/XferInfo.h"
+#include "../ksolve/ZombiePoolInterface.h"
 #include "../kinetics/ConcChan.h"
 #include "DiffPoolVec.h"
 #include "ConcChanInfo.h"
@@ -422,7 +422,9 @@ void Dsolve::calcJnChan( const DiffJunction& jn, Dsolve* other, double dt )
             double lastN = myN;
             double otherN = otherDv.getN( j->second );
             double chanN = chanDv.getN( j->first );
-            double perm = myChan.permeability * chanN / NA;
+			// Stick in a conversion factor for the myN and otherN into
+			// concentrations. Note that SI is millimolar.
+            double perm = myChan.permeability * chanN * 1000.0 / NA;
             myN = integ( myN, perm * myN/j->firstVol,
                          perm * otherN/j->secondVol, dt );
             otherN += lastN - myN;	// Mass consv
@@ -459,7 +461,9 @@ void Dsolve::calcOtherJnChan( const DiffJunction& jn, Dsolve* other, double dt )
             double lastN = myN;
             double otherN = otherDv.getN( j->second );
             double chanN = chanDv.getN( j->second );
-            double perm = otherChan.permeability * chanN / NA;
+			// Stick in a conversion factor for the myN and otherN into
+			// concentrations. Note that SI is millimolar.
+            double perm = otherChan.permeability * chanN * 1000.0 / NA;
             myN = integ( myN, perm * myN/j->firstVol,
                          perm * otherN/j->secondVol, dt );
             otherN += lastN - myN;	// Mass consv
@@ -1130,7 +1134,7 @@ double Dsolve::getNinit( const Eref& e ) const
     {
         return pools_[ pid ].getNinit( vox );
     }
-    cout << "Warning: Dsolve::setNinit: Eref " << e << " out of range " <<
+    cout << "Warning: Dsolve::getNinit: Eref " << e << " out of range " <<
          pools_.size() << ", " << numVoxels_ << "\n";
     return 0.0;
 }

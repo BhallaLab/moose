@@ -9,7 +9,7 @@
 
 #include "../basecode/header.h"
 #include "../basecode/global.h"
-#include "ElementValueFinfo.h"
+#include "../basecode/ElementValueFinfo.h"
 #include "HSolveStruct.h"
 #include "HinesMatrix.h"
 #include "HSolvePassive.h"

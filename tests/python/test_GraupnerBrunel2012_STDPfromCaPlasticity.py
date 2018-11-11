@@ -8,8 +8,6 @@
 # NOTE: This script is used for testing random number generators on various
 # platform. This should not be used in any tutorial or scientific demo.
 
-import  matplotlib as mpl
-mpl.use('Agg')
 import moose
 print( 'Using moose from %s' % moose.__file__ )
 import numpy as np

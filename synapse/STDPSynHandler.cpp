@@ -8,7 +8,7 @@
 **********************************************************************/
 
 #include <queue>
-#include "header.h"
+#include "../basecode/header.h"
 #include "Synapse.h"
 #include "SynEvent.h" // only using the SynEvent class from this
 #include "SynHandlerBase.h"

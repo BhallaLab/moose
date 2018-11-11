@@ -1,15 +1,10 @@
 # -*- coding: utf-8 -*-
-
 """test_muparser.py:
-
 Modified from https://elifesciences.org/articles/25827 , Fig4.py
-
 """
 import sys
 import os
 import numpy as np
-import matplotlib as mpl
-mpl.use('Agg')
 import sys
 import numpy as np
 import moose

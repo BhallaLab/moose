@@ -7,7 +7,7 @@
 ** See the file COPYING.LIB for the full notice.
 **********************************************************************/
 
-#include "header.h"
+#include "../basecode/header.h"
 #include "Shell.h"
 #ifdef USE_MPI
 #include <mpi.h>
@@ -16,10 +16,10 @@
 #include "../scheduling/testScheduling.h"
 
 #include "../builtins/Arith.h"
-#include "SparseMatrix.h"
-#include "SparseMsg.h"
-#include "SingleMsg.h"
-#include "OneToAllMsg.h"
+#include "../basecode/SparseMatrix.h"
+#include "../msg/SparseMsg.h"
+#include "../msg/SingleMsg.h"
+#include "../msg/OneToAllMsg.h"
 #include "Wildcard.h"
 
 const bool TEST_WARNING = false;

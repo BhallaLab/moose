@@ -13,16 +13,16 @@ readChannelMLFromFile(...) to load a standalone ChannelML file (synapse/channel)
 readChannelML(...) / readSynapseML to load from an xml.etree xml element (could be part of a larger NeuroML file).
 """
 
-from __future__ import print_function
+from __future__ import print_function, division
 from xml.etree import cElementTree as ET
 import string
-import os, sys
+import os
+import sys
 import math
-
 import moose
 from moose.neuroml import utils
-from moose import utils as moose_utils
-from moose import print_utils as pu
+import moose.utils as mu
+import moose.print_utils as pu
 
 class ChannelML():
 
@@ -402,7 +402,7 @@ class ChannelML():
     def make_cml_function(self, element, fn_name, concdep=None):
         fn_type = element.attrib['expr_form']
         if fn_type in ['exponential','sigmoid','exp_linear']:
-            fn = self.make_function( fn_name, fn_type, rate=float(element.attrib['rate']),\
+            self.make_function( fn_name, fn_type, rate=float(element.attrib['rate']),\
                 midpoint=float(element.attrib['midpoint']), scale=float(element.attrib['scale'] ) )
         elif fn_type == 'generic':
             ## OOPS! These expressions should be in SI units, since I converted to SI
@@ -415,7 +415,7 @@ class ChannelML():
             else: ca_name = ','+concdep.attrib['variable_name']     # Ca dependence
             expr_string = expr_string.replace( 'alpha', 'self.alpha(v'+ca_name+')')
             expr_string = expr_string.replace( 'beta', 'self.beta(v'+ca_name+')')
-            fn = self.make_function( fn_name, fn_type, expr_string=expr_string, concdep=concdep )
+            self.make_function( fn_name, fn_type, expr_string=expr_string, concdep=concdep )
         else:
             pu.fatal("Unsupported function type %s "% fn_type)
             sys.exit()
@@ -465,11 +465,13 @@ class ChannelML():
                         val = eval(alternativeFalse,{"__builtins__":None},allowed_locals)
                 else:
                     val = eval(expr_str,{"__builtins__" : None},allowed_locals)
-                if fn_name == 'tau': return val/self.q10factor
-                else: return val
-
+                if fn_name == 'tau': 
+                    return val/self.q10factor
+                else: 
+                    return val
         fn.__name__ = fn_name
         setattr(self.__class__, fn.__name__, fn)
+        return None
 
 
 def make_new_synapse(syn_name, postcomp, syn_name_full, nml_params):
@@ -483,7 +485,7 @@ def make_new_synapse(syn_name, postcomp, syn_name_full, nml_params):
         else:
             raise IOError(
                 'For mechanism {0}: files {1} not found under {2}.'.format(
-                    mechanismname, model_filename, self.model_dir
+                    syn_name, model_filename, nml_params['model_dir']
                 )
             )
     ## deep copies the library SynChan and SynHandler
@@ -497,7 +499,7 @@ def make_new_synapse(syn_name, postcomp, syn_name_full, nml_params):
     ## connect the SimpleSynHandler or the STDPSynHandler to the SynChan (double exp)
     moose.connect( synhandler, 'activationOut', syn, 'activation' )
     # mgblock connections if required
-    childmgblock = moose_utils.get_child_Mstring(syn,'mgblockStr')
+    childmgblock = mu.get_child_Mstring(syn,'mgblockStr')
     #### connect the post compartment to the synapse
     if childmgblock.value=='True': # If NMDA synapse based on mgblock, connect to mgblock
         mgblock = moose.Mg_block(syn.path+'/mgblock')

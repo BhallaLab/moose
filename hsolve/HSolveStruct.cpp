@@ -8,7 +8,7 @@
 **********************************************************************/
 
 #include <cmath>
-#include "header.h"
+#include "../basecode/header.h"
 #include "../biophysics/SpikeGen.h"
 #include "HSolveStruct.h"
 

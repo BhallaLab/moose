@@ -8,7 +8,7 @@
 **********************************************************************/
 
 #include <fstream>
-#include "header.h"
+#include "../basecode/header.h"
 #include "../shell/Shell.h"
 
 #define DO_CSPACE_DEBUG 0

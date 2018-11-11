@@ -29,7 +29,7 @@ def makeMoogli( rd, mooObj, args, fieldInfo ):
     else:
         ymin = fieldInfo[4]
         ymax = fieldInfo[5]
-    print( "fieldinfo = {}, ymin = {}, ymax = {}".format( fieldInfo, ymin, ymax ))
+    #print( "fieldinfo = {}, ymin = {}, ymax = {}".format( fieldInfo, ymin, ymax ))
 
     viewer = moogul.MooView()
     if mooField == 'n' or mooField == 'conc':
