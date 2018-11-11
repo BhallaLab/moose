@@ -40,13 +40,6 @@ def _unique( ls ):
             res.append( l )
     return res
 
-def _unique( ls ):
-    res = [ ]
-    for l in ls:
-        if l not in res:
-            res.append( l )
-    return res
-
 def sarea(comp):
     """
     Return the surface area of compartment from length and
@@ -134,6 +127,7 @@ class NML2Reader(object):
         self.pop_to_cell_type = {}
         self.seg_id_to_comp_name = {}
         self.paths_to_chan_elements = {}
+        self.network = None
 
     def read(self, filename, symmetric=True):
         filename = os.path.realpath( filename )
@@ -146,8 +140,8 @@ class NML2Reader(object):
         
         if len(self.doc.networks)>=1:
             self.network = self.doc.networks[0]
-            
             moose.celsius = self._getTemperature()
+            
             
         self.importConcentrationModels(self.doc)
         self.importIonChannels(self.doc)
@@ -163,10 +157,13 @@ class NML2Reader(object):
         mu.info("Read all from %s"%filename)
         
     def _getTemperature(self):
-        if self.network.type=="networkWithTemperature":
-            return SI(self.network.temperature)
-        else:
-            return 0 # Why not, if there's no temp dependence in nml..?
+        if self.network is not None:
+            if self.network.type=="networkWithTemperature":
+                return SI(self.network.temperature)
+            else:
+                # Why not, if there's no temp dependence in nml..?
+                return 0
+        return SI('25')
         
     def getCellInPopulation(self, pop_id, index):
         return self.cells_in_populations[pop_id][index]
@@ -407,11 +404,8 @@ class NML2Reader(object):
                     mu.info("Using %s to evaluate rate"%ct.name)
                     rate = []
                     for v in tab:
-                        vals = pynml.evaluate_component(ct
-                                , req_variables = 
-                                    {'v':'%sV'%v,'vShift':vShift,'temperature':self._getTemperature()}
-                                )
-                        # mu.info vals
+                        req_vars  = {'v':'%sV'%v,'vShift':vShift,'temperature':self._getTemperature()}
+                        vals = pynml.evaluate_component(ct, req_variables =  req_vars)
                         if 'x' in vals:
                             rate.append(vals['x'])
                         if 't' in vals:
@@ -419,6 +413,9 @@ class NML2Reader(object):
                         if 'r' in vals:
                             rate.append(vals['r'])
                     return np.array(rate)
+
+        print( "[WARN ] Could not determine rate: %s %s %s" %(ratefn.type,vmin,vmax))
+        return np.array([])
 
     def importChannelsToCell(self, nmlcell, moosecell, membrane_properties):
         sg_to_segments = self._cell_to_sg[nmlcell]
@@ -487,10 +484,11 @@ class NML2Reader(object):
     def createHHChannel(self, chan, vmin=-150e-3, vmax=100e-3, vdivs=5000):
         mchan = moose.HHChannel('%s/%s' % (self.lib.path, chan.id))
         mgates = [moose.element(x) for x in [mchan.gateX, mchan.gateY, mchan.gateZ]]
-        assert(len(chan.gate_hh_rates) <= 3) # We handle only up to 3 gates in HHCHannel
+        assert len(chan.gate_hh_rates)<=3, "We handle only up to 3 gates in HHCHannel"
         
         if self.verbose:
             mu.info('== Creating channel: %s (%s) -> %s (%s)'%(chan.id, chan.gate_hh_rates, mchan, mgates))
+
         all_gates = chan.gates + chan.gate_hh_rates
         for ngate, mgate in zip(all_gates,mgates):
             if mgate.name.endswith('X'):
@@ -512,9 +510,7 @@ class NML2Reader(object):
             # refering to tau_inf and m_inf??
             fwd = ngate.forward_rate
             rev = ngate.reverse_rate
-            
             self.paths_to_chan_elements['%s/%s'%(chan.id,ngate.id)] = '%s/%s'%(chan.id,mgate.name)
-                
             q10_scale = 1
             if ngate.q10_settings:
                 if ngate.q10_settings.type == 'q10Fixed':
@@ -536,6 +532,7 @@ class NML2Reader(object):
             if (fwd is not None) and (rev is not None):
                 alpha = self.calculateRateFn(fwd, vmin, vmax, vdivs)
                 beta = self.calculateRateFn(rev, vmin, vmax, vdivs)
+
                 mgate.tableA = q10_scale * (alpha)
                 mgate.tableB = q10_scale * (alpha + beta)
 
@@ -554,8 +551,9 @@ class NML2Reader(object):
                 tau = 1 / (alpha + beta)
                 if inf is not None:
                     inf = self.calculateRateFn(inf, vmin, vmax, vdivs)
-                    mgate.tableA = q10_scale * (inf / tau)
-                    mgate.tableB = q10_scale * (1 / tau)
+                    if len(inf) > 0:
+                        mgate.tableA = q10_scale * (inf / tau)
+                        mgate.tableB = q10_scale * (1 / tau)
                 
         if self.verbose:
             mu.info('%s: Created %s for %s'%(self.filename,mchan.path,chan.id))
@@ -589,7 +587,7 @@ class NML2Reader(object):
 
     def importIonChannels(self, doc, vmin=-150e-3, vmax=100e-3, vdivs=5000):
         if self.verbose:
-            mu.info('%s : Importing the ion channels' % self.filename )
+            mu.info('%s: Importing the ion channels' % self.filename )
             
         for chan in doc.ion_channel+doc.ion_channel_hhs:
             if chan.type == 'ionChannelHH':
@@ -603,7 +601,7 @@ class NML2Reader(object):
             self.nml_to_moose[chan] = mchan
             self.proto_chans[chan.id] = mchan
             if self.verbose:
-                mu.info( self.filename + ' : Created ion channel %s for %s %s'%( 
+                mu.info( self.filename + ': Created ion channel %s for %s %s'%( 
                     mchan.path, chan.type, chan.id))
 
     def importConcentrationModels(self, doc):
