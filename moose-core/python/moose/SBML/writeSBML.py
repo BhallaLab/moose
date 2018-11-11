@@ -18,8 +18,11 @@ Last-Updated: Mon 30 Apr 15:10:00 2018(+0530)
 **********************************************************************/
 /****************************
 2018
+Oct 16: CylMesh's comparment volume is written, but zeroth volex details are populated 
+Oct 13: CylMesh are written to SBML with annotation field and only zeroth element/voxel (incase of cylMesh) of moose object is written
+Oct 1 : corrected the spell of CyclMesh-->CylMesh, negating the yaxis for kkit is removed 
 Apr 30: indentation corrected while writting annotation for enzymecomplex
-Jan 6: for Product_formation_, k3 units depends on noofSub, prd was passed which is fixed
+Jan 6 : for Product_formation_, k3 units depends on noofSub, prd was passed which is fixed
 2017
 Dec 15: If model path exists is checked
         Enz cplx is written only if enz,cplx,sub, prd exist, a clean check is made
@@ -73,10 +76,12 @@ def mooseWriteSBML(modelpath, filename, sceneitems={}):
     if not moose.exists(modelpath):
         return False, "Path doesn't exist"
     elif moose.exists(modelpath):
-        mObj = moose.wildcardFind(moose.element(modelpath).path+'/##[ISA=PoolBase]'+','+
-                                  moose.element(modelpath).path+'/##[ISA=ReacBase]'+','+
-                                  moose.element(modelpath).path+'/##[ISA=EnzBase]'+','+
-                                  moose.element(modelpath).path+'/##[ISA=StimulusTable]')
+        checkCompt = moose.wildcardFind(modelpath+'/##[0][ISA=ChemCompt]')
+        
+        mObj = moose.wildcardFind(moose.element(modelpath).path+'/##[0][ISA=PoolBase]'+','+
+                                  moose.element(modelpath).path+'/##[0][ISA=ReacBase]'+','+
+                                  moose.element(modelpath).path+'/##[0][ISA=EnzBase]'+','+
+                                  moose.element(modelpath).path+'/##[0][ISA=StimulusTable]')
         for p in mObj:
             if not isinstance(moose.element(p.parent),moose.CplxEnzBase):
                 if moose.exists(p.path+'/info'):
@@ -102,7 +107,7 @@ def mooseWriteSBML(modelpath, filename, sceneitems={}):
     cremodel_.setLengthUnits("length")
     neutralNotes = ""
 
-    specieslist = moose.wildcardFind(modelpath + '/##[ISA=PoolBase]')
+    specieslist = moose.wildcardFind(modelpath + '/##[0][ISA=PoolBase]')
     if specieslist:
         neutralPath = getGroupinfo(specieslist[0])
         if moose.exists(neutralPath.path + '/info'):
@@ -117,18 +122,24 @@ def mooseWriteSBML(modelpath, filename, sceneitems={}):
     srcdesConnection = {}
 
     writeUnits(cremodel_)
+    
     modelAnno = writeSimulationAnnotation(modelpath)
     if modelAnno:
         cremodel_.setAnnotation(modelAnno)
     groupInfo = {}
+    
     compartexist, groupInfo = writeCompt(modelpath, cremodel_)
+    
     if compartexist == True:
         species = writeSpecies( modelpath,cremodel_,sbmlDoc,sceneitems,groupInfo)
         if species:
             writeFunc(modelpath, cremodel_)
         reacGroup = {}
+        
         writeReac(modelpath, cremodel_, sceneitems,groupInfo)
+        
         writeEnz(modelpath, cremodel_, sceneitems,groupInfo)
+        
         if groupInfo:
             for key,value in groupInfo.items():
                 mplugin = cremodel_.getPlugin("groups")
@@ -152,6 +163,7 @@ def mooseWriteSBML(modelpath, filename, sceneitems={}):
                 for values in value:
                     member = group.createMember()
                     member.setIdRef(values)
+        
         consistencyMessages = ""
         SBMLok = validateModel(sbmlDoc)
         if (SBMLok):
@@ -165,9 +177,9 @@ def mooseWriteSBML(modelpath, filename, sceneitems={}):
             return -1, consistencyMessages
     else:
         return False, "Atleast one compartment should exist to write SBML"
-
+    
 def writeEnz(modelpath, cremodel_, sceneitems,groupInfo):
-    for enz in moose.wildcardFind(modelpath + '/##[ISA=EnzBase]'):
+    for enz in moose.wildcardFind(modelpath + '/##[0][ISA=EnzBase]'):
         enzannoexist = False
         enzGpnCorCol = " "
         cleanEnzname = convertSpecialChar(enz.name)
@@ -630,7 +642,7 @@ def listofname(reacSub, mobjEnz):
 
 
 def writeReac(modelpath, cremodel_, sceneitems,reacGroup):
-    for reac in moose.wildcardFind(modelpath + '/##[ISA=ReacBase]'):
+    for reac in moose.wildcardFind(modelpath + '/##[0][ISA=ReacBase]'):
         reacSub = reac.neighbors["sub"]
         reacPrd = reac.neighbors["prd"]
         if (len(reacSub) != 0 and len(reacPrd) != 0):
@@ -763,7 +775,7 @@ def writeReac(modelpath, cremodel_, sceneitems,reacGroup):
 
 
 def writeFunc(modelpath, cremodel_):
-    funcs = moose.wildcardFind(modelpath + '/##[ISA=Function]')
+    funcs = moose.wildcardFind(modelpath + '/##[0][ISA=Function]')
     # if func:
     foundFunc = False
     for func in funcs:
@@ -824,7 +836,7 @@ def getGroupinfo(element):
     #   if /modelpath/Compartment/Group/Group1/Pool, then I check and get Group1
     #   And /modelpath is also a NeutralObject,I stop till I find Compartment
 
-    while not mooseIsInstance(element, ["Neutral", "CubeMesh", "CyclMesh"]):
+    while not mooseIsInstance(element, ["Neutral", "CubeMesh", "CylMesh"]):
         element = element.parent
     return element
 
@@ -836,7 +848,7 @@ def idBeginWith(name):
     return changedName
 
 def findGroup_compt(melement):
-    while not (mooseIsInstance(melement, ["Neutral","CubeMesh", "CyclMesh"])):
+    while not (mooseIsInstance(melement, ["Neutral","CubeMesh", "CylMesh"])):
         melement = melement.parent
     return melement
 
@@ -865,7 +877,7 @@ def convertSpecialChar(str1):
 
 def writeSpecies(modelpath, cremodel_, sbmlDoc, sceneitems,speGroup):
     # getting all the species
-    for spe in moose.wildcardFind(modelpath + '/##[ISA=PoolBase]'):
+    for spe in moose.wildcardFind(modelpath + '/##[0][ISA=PoolBase]'):
         sName = convertSpecialChar(spe.name)
         comptVec = findCompartment(spe)
         speciannoexist = False
@@ -977,14 +989,25 @@ def writeSpecies(modelpath, cremodel_, sbmlDoc, sceneitems,speGroup):
 
 def writeCompt(modelpath, cremodel_):
     # getting all the compartments
-    compts = moose.wildcardFind(modelpath + '/##[ISA=ChemCompt]')
+    compts = moose.wildcardFind(modelpath + '/##[0][ISA=ChemCompt]')
     groupInfo = {}
     for compt in compts:
+        comptAnno = ""
         comptName = convertSpecialChar(compt.name)
         # converting m3 to litre
-        size = compt.volume * pow(10, 3)
+        if isinstance(compt,moose.CylMesh):
+            size = (compt.volume/compt.numDiffCompts)*pow(10,3)
+            comptAnno = "<moose:CompartmentAnnotation><moose:Mesh>" + \
+                                str(compt.className) + "</moose:Mesh>\n" + \
+                                "<moose:numDiffCompts>" + \
+                                str(compt.numDiffCompts)+ "</moose:numDiffCompts>\n" + \
+                                "</moose:CompartmentAnnotation>"
+        else:    
+            size = compt.volume * pow(10, 3)
         ndim = compt.numDimensions
         c1 = cremodel_.createCompartment()
+        if comptAnno:
+            c1.setAnnotation(comptAnno)
         c1.setId(str(idBeginWith(comptName +
                                  "_" +
                                  str(compt.getId().value) +
@@ -993,11 +1016,12 @@ def writeCompt(modelpath, cremodel_):
                                  "_")))
         c1.setName(comptName)
         c1.setConstant(True)
-        c1.setSize(size)
+        c1.setSize(compt.volume*pow(10,3))
+        #c1.setSize(size)
         c1.setSpatialDimensions(ndim)
         c1.setUnits('volume')
         #For each compartment get groups information along
-        for grp in moose.wildcardFind(compt.path+'/##[TYPE=Neutral]'):
+        for grp in moose.wildcardFind(compt.path+'/##[0][TYPE=Neutral]'):
             grp_cmpt = findGroup_compt(grp.parent)
             try:
                 value = groupInfo[moose.element(grp)]
@@ -1011,6 +1035,7 @@ def writeCompt(modelpath, cremodel_):
     else:
         return False,groupInfo
 # write Simulation runtime,simdt,plotdt
+
 def writeSimulationAnnotation(modelpath):
     modelAnno = ""
     plots = ""
@@ -1027,7 +1052,8 @@ def writeSimulationAnnotation(modelpath):
         modelAnno = modelAnno + "<moose:plotdt> " + \
             str(mooseclock.dts[18]) + " </moose:plotdt>\n"
         plots = ""
-        graphs = moose.wildcardFind(modelpath + "/##[TYPE=Table2]")
+        graphs = moose.wildcardFind(modelpath + "/##[0][TYPE=Table2]")
+        
         for gphs in range(0, len(graphs)):
             gpath = graphs[gphs].neighbors['requestOut']
             if len(gpath) != 0:
@@ -1035,7 +1061,7 @@ def writeSimulationAnnotation(modelpath):
                 ori = q.path
                 name = convertSpecialChar(q.name)
                 graphSpefound = False
-                while not(isinstance(moose.element(q), moose.CubeMesh)):
+                while not(isinstance(moose.element(q), moose.CubeMesh) or isinstance(moose.element(q),moose.CylMesh)):
                     q = q.parent
                     graphSpefound = True
                 if graphSpefound:
@@ -1046,6 +1072,7 @@ def writeSimulationAnnotation(modelpath):
                     else:
                         plots = plots + "; "+ori[ori.find(q.name)-1:len(ori)]
                         #plots = plots + "; /" + q.name + '/' + name
+                
         if plots != " ":
             modelAnno = modelAnno + "<moose:plots> " + plots + "</moose:plots>\n"
         modelAnno = modelAnno + "</moose:ModelAnnotation>"

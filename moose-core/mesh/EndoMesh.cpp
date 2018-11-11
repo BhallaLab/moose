@@ -23,6 +23,9 @@
 #include "NeuroMesh.h"
 #include "EndoMesh.h"
 #include "../utility/numutil.h"
+
+static CubeMesh defaultParent;
+
 const Cinfo* EndoMesh::initCinfo()
 {
 		//////////////////////////////////////////////////////////////
@@ -137,7 +140,7 @@ static const Cinfo* endoMeshCinfo = EndoMesh::initCinfo();
 //////////////////////////////////////////////////////////////////
 EndoMesh::EndoMesh()
 	:
-		parent_( 0 ),
+		parent_( &defaultParent ),
 		rPower_( 1.0 / 3.0 ),
 		rScale_( 0.5 ),
 		aPower_( 0.5 ),
@@ -263,7 +266,7 @@ unsigned int EndoMesh::getMeshDimensions( unsigned int fid ) const
 /// Virtual function to return # of spatial dimensions of mesh
 unsigned int EndoMesh::innerGetDimensions() const
 {
-	return 1;
+	return 3;
 }
 /// Virtual function to return volume of mesh Entry.
 double EndoMesh::getMeshEntryVolume( unsigned int fid ) const

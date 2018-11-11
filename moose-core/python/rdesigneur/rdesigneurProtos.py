@@ -50,6 +50,7 @@ import math
 from moose import utils
 
 EREST_ACT    = -0.060
+EREST_ACT_HH = -0.070 # A different value is used for the HH squid params
 ECA          = 0.080
 EK           = -0.075
 SOMA_A       = 3.32e-9
@@ -71,7 +72,7 @@ def make_HH_Na(name = 'HH_Na', parent='/library', vmin=-110e-3, vmax=50e-3, vdiv
     na.Ek = 50e-3
     na.Xpower = 3
     na.Ypower = 1
-    v = np.linspace(vmin, vmax, vdivs+1) - EREST_ACT
+    v = np.linspace(vmin, vmax, vdivs+1) - EREST_ACT_HH
     m_alpha = per_ms * (25 - v * 1e3) / (10 * (np.exp((25 - v * 1e3) / 10) - 1))
     m_beta = per_ms * 4 * np.exp(- v * 1e3/ 18)
     m_gate = moose.element('%s/gateX' % (na.path))
@@ -100,7 +101,7 @@ def make_HH_K(name = 'HH_K', parent='/library', vmin=-120e-3, vmax=40e-3, vdivs=
     k = moose.HHChannel('%s/%s' % (parent, name))
     k.Ek = -77e-3
     k.Xpower = 4
-    v = np.linspace(vmin, vmax, vdivs+1) - EREST_ACT
+    v = np.linspace(vmin, vmax, vdivs+1) - EREST_ACT_HH
     n_alpha = per_ms * (10 - v * 1e3)/(100 * (np.exp((10 - v * 1e3)/10) - 1))
     n_beta = per_ms * 0.125 * np.exp(- v * 1e3 / 80)
     n_gate = moose.element('%s/gateX' % (k.path))

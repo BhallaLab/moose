@@ -122,7 +122,7 @@ known_types = ['void',
                'melement'] + sequence_types
 
 # SBML related functions.
-def mooseReadSBML(filepath, loadpath, solver='ee'):
+def mooseReadSBML(filepath, loadpath, solver='ee',validate="on"):
     """Load SBML model.
 
     keyword arguments: \n
@@ -134,7 +134,7 @@ def mooseReadSBML(filepath, loadpath, solver='ee'):
     """
     global sbmlImport_
     if sbmlImport_:
-        return _readSBML.mooseReadSBML( filepath, loadpath, solver )
+        return _readSBML.mooseReadSBML( filepath, loadpath, solver,validate )
     else:
         print( sbmlError_ )
         return False
@@ -222,7 +222,7 @@ def mergeChemModel(src, des):
         return False
 
 # NML2 reader and writer function.
-def mooseReadNML2( modelpath ):
+def mooseReadNML2( modelpath, verbose = False ):
     """Read NeuroML model (version 2) and return reader object.
     """
     global nml2Import_
@@ -230,7 +230,7 @@ def mooseReadNML2( modelpath ):
         mu.warn( nml2ImportError_ )
         raise RuntimeError( "Could not load NML2 support." )
 
-    reader = _neuroml2.NML2Reader( )
+    reader = _neuroml2.NML2Reader( verbose = verbose )
     reader.read( modelpath )
     return reader
 

@@ -63,7 +63,7 @@ def makeModel():
     s.concInit = 0.001
     chanPool.nInit = 1000.0
     # Flux (mM/s) = permeability * N * (conc_out - conc_in )
-    chan.permeability = 0.1 * chanPool.volume * 6.022e23 / chanPool.nInit
+    chan.permeability = 0.1 * chanPool.volume * 6.022e23 *0.001 / chanPool.nInit
 
     #####################################################################
     fixXreacs.fixXreacs( '/model' )

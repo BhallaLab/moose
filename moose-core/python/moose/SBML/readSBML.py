@@ -13,10 +13,11 @@
 **           copyright (C) 2003-2017 Upinder S. Bhalla. and NCBS
 Created : Thu May 13 10:19:00 2016(+0530)
 Version
-Last-Updated: Fri May 21 11:21:00 2018(+0530)
+Last-Updated: Fri Oct 26 11:21:00 2018(+0530)
           By:HarshaRani
 **********************************************************************/
 2018
+Oct 26: - validator can be switchedoff by passing validate="off" while readSBML files
 May 18: - cleanedup and connected cplx pool to correct parent enzyme 
 Jan 6:  - only if valid model exists, then printing the no of compartment,pool,reaction etc
         - at reaction level a check made to see if path exist while creating a new reaction
@@ -77,7 +78,7 @@ try:
 except ImportError:
     pass
 
-def mooseReadSBML(filepath, loadpath, solver="ee"):
+def mooseReadSBML(filepath, loadpath, solver="ee",validate="on"):
     """Load SBML model 
     """
     global foundLibSBML_
@@ -100,7 +101,10 @@ def mooseReadSBML(filepath, loadpath, solver="ee"):
         filep = open(filepath, "r")
         document = libsbml.readSBML(filepath)
         tobecontinue = False
-        tobecontinue = validateModel(document)
+        if validate == "on":
+            tobecontinue = validateModel(document)
+        else:
+            tobecontinue = True
         if tobecontinue:
             level = document.getLevel()
             version = document.getVersion()
