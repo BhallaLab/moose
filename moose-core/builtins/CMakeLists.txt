@@ -19,6 +19,7 @@ set(SRCS
     Stats.cpp
     Interpol2D.cpp
     SpikeStats.cpp
+    SocketStreamer.cpp
     testBuiltins.cpp
     )
 

@@ -119,6 +119,7 @@ protected:
     vector< double >          externalCurrent_; ///< External currents from
     ///< channels that HSolve
     ///< cannot internalize.
+    vector< double >          prevExtCurr_; ///< Last tick's externalCurrent
     vector< double >          externalCalcium_; /// calcium from difshells
     vector< Id >              caConcId_;		///< Used for localIndex-ing.
     vector< Id >              channelId_;		///< Used for localIndex-ing.

@@ -151,9 +151,10 @@ static void myUnique(vector<ObjId>& ret)
         ret.resize(j);
 }
 
-int wildcardFind(const string& path, vector<ObjId>& ret)
+int wildcardFind(const string& path, vector<ObjId>& ret, bool clear)
 {
-    ret.resize( 0 );
+    if(clear)
+        ret.resize( 0 );
     simpleWildcardFind( path, ret );
     myUnique( ret );
     return ret.size();

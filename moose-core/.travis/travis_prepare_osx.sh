@@ -20,9 +20,9 @@
 set -o nounset                              # Treat unset variables as an error
 set +e
 #rvm get head
-#brew update
-#brew outdated cmake || brew install cmake
-brew install gsl
+brew update || echo "failed to update"
+brew outdated cmake || brew install cmake
+brew install gsl || brew upgrade gsl
 brew install hdf5
 brew install python
 brew install numpy

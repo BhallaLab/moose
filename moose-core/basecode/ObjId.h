@@ -19,95 +19,102 @@
  */
 class ObjId
 {
-	friend ostream& operator <<( ostream& s, const ObjId& i );
-	friend istream& operator >>( istream& s, ObjId& i );
-	public:
-		//////////////////////////////////////////////////////////////
-		//	ObjId creation
-		//////////////////////////////////////////////////////////////
-		/**
-		 * Returns the root Id
-		 */
-		ObjId()
-			: id(), dataIndex( 0 ), fieldIndex( 0 )
-		{;}
+    friend ostream& operator <<( ostream& s, const ObjId& i );
+    friend istream& operator >>( istream& s, ObjId& i );
 
-		/**
-		 * Creates a ObjId using specified Id and DataIndex
-		 */
-		ObjId( Id i, unsigned int d, unsigned int f = 0 )
-			: id( i ), dataIndex( d ), fieldIndex( f )
-		{;}
+public:
+    //////////////////////////////////////////////////////////////
+    //	ObjId creation
+    //////////////////////////////////////////////////////////////
+    /**
+     * Returns the root Id
+     */
+    ObjId()
+        : id(), dataIndex( 0 ), fieldIndex( 0 )
+    {
+        ;
+    }
 
-		ObjId( Id i )
-			: id( i ), dataIndex( 0 ), fieldIndex( 0 )
-		{;}
+    /**
+     * Creates a ObjId using specified Id and DataIndex
+     */
+    ObjId( Id i, unsigned int d, unsigned int f = 0 )
+        : id( i ), dataIndex( d ), fieldIndex( f )
+    {
+        ;
+    }
 
-		/**
-		 * Creates an ObjId by reading the path string
-		 * Returns bad on failure.
-		 */
-		ObjId( const string& path );
+    ObjId( Id i )
+        : id( i ), dataIndex( 0 ), fieldIndex( 0 )
+    {
+        ;
+    }
 
-		/**
-		 * Returns the absolute path including all array indices.
-		 */
-		string path() const;
+    /**
+     * Creates an ObjId by reading the path string
+     * Returns bad on failure.
+     */
+    ObjId( const string& path );
 
-		/**
-		 * Returns the Eref matching itself.
-		 */
-		Eref eref() const;
+    /**
+     * Returns the absolute path including all array indices.
+     */
+    string path() const;
 
-		/**
-		 * For equality check
-		 */
-		bool operator==( const ObjId& other ) const;
-		bool operator!=( const ObjId& other ) const;
+    /**
+     * Returns the Eref matching itself.
+     */
+    Eref eref() const;
 
-		/**
-		 * For sorting
-		 */
-		bool operator<( const ObjId& other ) const;
+    /**
+     * For equality check
+     */
+    bool operator==( const ObjId& other ) const;
+    bool operator!=( const ObjId& other ) const;
 
-		/**
-		 * True if the data is present on the current node. Always true for
-		 * globals, which confuses the matter somewhat.
-		 */
-		bool isDataHere() const;
+    /**
+     * For sorting
+     */
+    bool operator<( const ObjId& other ) const;
 
-		/// Returns true if the Element is global.
-		bool isGlobal() const;
+    /**
+     * True if the data is present on the current node. Always true for
+     * globals, which confuses the matter somewhat.
+     */
+    bool isDataHere() const;
 
-		/// Returns true if we need to go off-node for calling operations
-		bool isOffNode() const;
+    /// Returns true if the Element is global.
+    bool isGlobal() const;
 
-		/**
-		 * Returns data entry for this object
-		 */
-		char* data() const;
+    /// Returns true if we need to go off-node for calling operations
+    bool isOffNode() const;
 
-		/**
-		 * Returns Element part
-		 */
-		Element* element() const;
+    /**
+     * Returns data entry for this object
+     */
+    char* data() const;
 
-		/**
-		 * Here are the data values.
-		 */
-		Id id;
-		unsigned int dataIndex;
-		unsigned int fieldIndex;
+    /**
+     * Returns Element part
+     */
+    Element* element() const;
 
-		/**
-		 * True if the return value is bad: either returning a failure,
-		 * or the DataIndex or FieldIndex is out of range. However, this
-		 * is a node-local funtion so it can't report the FieldIndex status
-		 * in all cases.
-		 */
-		bool bad() const;
+    /**
+     * Here are the data values.
+     */
+    Id id;
+    unsigned int dataIndex;
+    unsigned int fieldIndex;
 
-	private:
+    /**
+     * True if the return value is bad: either returning a failure,
+     * or the DataIndex or FieldIndex is out of range. However, this
+     * is a node-local funtion so it can't report the FieldIndex status
+     * in all cases.
+     */
+    bool bad() const;
+
+private:
 };
 
 #endif // _OBJ_ID_H
