@@ -33,11 +33,9 @@ from PyQt4 import Qt, QtCore, QtGui
 from numpy import random as nprand
 from moose.neuroml.NeuroML import NeuroML
 import sys
-sys.path.append( "/home/bhalla/moose/trunk/Demos/util" )
 import rdesigneur as rd
 import moogli
 cellname = "./cells_channels/CA1_nochans.morph.xml"
-#cellname = "./ca1_minimal.p"
 fname = "fig6bcde"
 
 #############################################
@@ -344,7 +342,7 @@ class ExcInhNetBase:
         plt.figure(1)
         
         ax = plt.subplot(221)
-        cleanAx( ax, 'B' )
+        #  cleanAx( ax, 'B' )
         plt.ylabel( 'Neuron #', fontsize = 16 )
         for i in range(0,self.NmaxExc):
             if i==0: label = 'Exc. spike trains'

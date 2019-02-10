@@ -28,6 +28,7 @@
  * Field assignment to the HHGate should be possible only from the
  * original HHChannel, but all the others do have read permission.
  */
+
 class HHGate
 {
 	friend void testHHGateLookup();
@@ -100,12 +101,10 @@ class HHGate
 		//////////////////////////////////////////////////////////
 		// DestFinfos
 		//////////////////////////////////////////////////////////
-		void setupTau( const Eref& e,
-			vector< double > parms );
+		void setupTau( const Eref& e, vector< double > parms );
 		void tweakAlpha();
 		void tweakTau();
-		void setupGate( const Eref& e,
-			vector< double > parms );
+		void setupGate( const Eref& e, vector< double > parms );
 		void setupTables( const vector< double >& parms, bool doTau );
 		void tweakTables( bool doTau );
 

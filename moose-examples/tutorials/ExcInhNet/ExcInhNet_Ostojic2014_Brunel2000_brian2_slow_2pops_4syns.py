@@ -1,4 +1,3 @@
-
 '''
 The LIF network is based on:
 Ostojic, S. (2014).
@@ -14,15 +13,16 @@ Updated to match MOOSE implementation by Aditya Gilra, Jan, 2015.
 Currently, simtime and dt are modified to compare across MOOSE, Brian1 and Brian2.
 '''
 
-#import modules and functions to be used
-from brian2 import *   # importing brian also does:
-                        # 'from pylab import *' which imports:
-                        # matplot like commands into the namespace, further
-                        # also can use np. for numpy and mpl. for matplotlib
-#prefs.codegen.target='numpy'
+# importing brian also does:   
+# 'from pylab import *' which imports:
+# matplot like commands into the namespace, further
+# also can use np. for numpy and mpl. for matplotlib
+from brian2 import *  
 prefs.codegen.target='weave'
 import random
 import time
+import matplotlib.pyplot as plt
+import numpy as np
 
 np.random.seed(100) # set seed for reproducibility of simulations
 random.seed(100) # set seed for reproducibility of simulations
@@ -199,20 +199,20 @@ fig = figure()
 # Vm plots
 timeseries = arange(0,simtime/second+dt,dt)
 for i in range(3):
-    plot(timeseries[:len(sm_e_vm.t)],sm_e_vm[i].v)
+    plt.plot(timeseries[:len(sm_e_vm.t)],sm_e_vm[i].v)
 
-fig = figure()
+fig = plt.figure()
 # raster plots
-subplot(231)
-plot(sm_e.t,sm_e.i,',')
-title(str(NE)+" exc neurons")
-xlabel("")
-xlim([0,simtime/second])
-subplot(234)
-plot(sm_i.t,sm_i.i,',')
-xlim([0,simtime/second])
-title(str(NI)+" inh neurons")
-subplot(232)
+plt.subplot(231)
+plt.plot(sm_e.t,sm_e.i,',')
+plt.title(str(NE)+" exc neurons")
+plt.xlabel("")
+plt.xlim([0,simtime/second])
+plt.subplot(234)
+plt.plot(sm_i.t,sm_i.i,',')
+plt.xlim([0,simtime/second])
+plt.title(str(NI)+" inh neurons")
+plt.subplot(232)
 
 print("plotting firing rates")
 # firing rates
@@ -221,42 +221,39 @@ num_to_plot = 10
 #rates = []
 for nrni in range(num_to_plot):
     rate = rate_from_spiketrain(sm_e,simtime/second,nrni)
-    plot(timeseries[:len(rate)],rate)
+    plt.plot(timeseries[:len(rate)],rate)
     #print mean(rate),len(sm_e[nrni])
     #rates.append(rate)
-title(str(num_to_plot)+" exc rates")
-ylabel("Hz")
-ylim(0,300)
-subplot(235)
+plt.title(str(num_to_plot)+" exc rates")
+plt.ylabel("Hz")
+plt.ylim(0,300)
+plt.subplot(235)
 for nrni in range(num_to_plot):
     rate = rate_from_spiketrain(sm_i,simtime/second,nrni)
-    plot(timeseries[:len(rate)],rate)
+    plt.plot(timeseries[:len(rate)],rate)
     #print mean(rate),len(sm_i[nrni])
     #rates.append(rate)
-title(str(num_to_plot)+" inh rates")
-ylim(0,300)
-#print "Mean rate = ",mean(rates)
-xlabel("Time (s)")
-ylabel("Hz")
+plt.title(str(num_to_plot)+" inh rates")
+plt.ylim(0,300)
+plt.xlabel("Time (s)")
+plt.ylabel("Hz")
 
 print("plotting pop firing rates")
 # Population firing rates
-subplot(233)
-timeseries = arange(0,simtime/second,dt)
+plt.subplot(233)
+timeseries = np.arange(0,simtime/second,dt)
 #plot(timeseries,popm_e.smooth_rate(width=50.*ms,filter="gaussian"),color='grey')
 rate = rate_from_spiketrain(sm_e,simtime/second)/float(NE)
-plot(timeseries[:len(rate)],rate)
-title("Exc population rate")
-ylabel("Hz")
-subplot(236)
-timeseries = arange(0,simtime/second,dt)
-#plot(timeseries,popm_i.smooth_rate(width=50.*ms,filter="gaussian"),color='grey')
+plt.plot(timeseries[:len(rate)],rate)
+plt.title("Exc population rate")
+plt.ylabel("Hz")
+plt.subplot(236)
+timeseries = np.arange(0,simtime/second,dt)
 rate = rate_from_spiketrain(sm_i,simtime/second)/float(NI)
-plot(timeseries[:len(rate)],rate)
-title("Inh population rate")
-xlabel("Time (s)")
-ylabel("Hz")
+plt.plot(timeseries[:len(rate)],rate)
+plt.title("Inh population rate")
+plt.xlabel("Time (s)")
+plt.ylabel("Hz")
 
 fig.tight_layout()
-
-show()
+plt.show()

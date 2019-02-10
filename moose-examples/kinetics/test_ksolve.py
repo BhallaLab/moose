@@ -200,12 +200,13 @@ def makeElecPlots():
     #addPlot( '/n/head2/gluR', 'getGk', 'elec/head2Gk' )
 
 def dumpPlots( outfile ):
+    print( 'Plotting ..' )
     records = {}
     for x in moose.wildcardFind( '/graphs/##[TYPE=Table2]' ):
         records[x.name] = x
 
-    plt.figure(figsize=(10,10))
     for i, r in enumerate(records):
+        print( '\t %d/%d %s' % (i, len(records), r) )
         plt.subplot(1+len(records)//3, 3, i+1 )
         plt.plot( records[r].vector, label = r'$%s$'%r )
         plt.legend()
@@ -487,14 +488,18 @@ def testCubeMultiscale( method ):
     print( '[INFO] Using method %s' % ksolve.method )
     moose.reinit()
     t = time.time()
-    moose.start( 10 )
+    moose.start( 1e-6 )
     print( "Total time taken: %s sec "% (time.time()-t) )
     plotName = '%s_%s.png' % (sys.argv[0], ksolve.method )
     dumpPlots( plotName )
+    print( 'All done' )
 
 def main( method ):
     testCubeMultiscale( method )
 
 if __name__ == '__main__':
-    main( sys.argv[1] )
+    if len(sys.argv) > 2:
+        main( sys.argv[1] )
+    else:
+        main( 'gsl' )
 

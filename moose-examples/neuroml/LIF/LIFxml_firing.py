@@ -8,9 +8,7 @@
 ########################################################################################
 
 import os
-os.environ['NUMPTHREADS'] = '1'
 import sys
-sys.path.append('../../../python')
 
 ## simulation parameters
 SIMDT = 5e-5 # seconds

@@ -9,7 +9,7 @@ __version__          = "1.0.0"
 __maintainer__       = "Harsha Rani"
 __email__            = "hrani@ncbs.res.in"
 __status__           = "Development"
-__updated__          = "Aug 8 2017"
+__updated__          = "Nov 8 2018"
 
 import moose
 import numpy as np
@@ -193,7 +193,7 @@ def countitems(mitems,objtype):
 def findCompartment(element):
     if element.path == '/':
         return moose.element('/')
-    elif mooseIsInstance(element, ["CubeMesh", "CylMesh"]):
+    elif mooseIsInstance(element, ["CubeMesh", "CylMesh","EndoMesh","NeuroMesh"]):
         return (element)
     else:
         return findCompartment(moose.element(element.parent))

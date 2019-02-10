@@ -170,6 +170,8 @@ double HSolve::getIm( Id id ) const
     for ( ; icurrent < currentBoundary_[ index ]; ++icurrent )
         Im += ( icurrent->Ek - V_[ index ] ) * icurrent->Gk;
 
+    assert( 2 * index + 1 < externalCurrent_.size() );
+	Im += prevExtCurr_[2*index+1] - prevExtCurr_[2*index]*V_[index];
     return Im;
 }
 

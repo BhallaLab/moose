@@ -12,7 +12,13 @@
 # 2.2 GHz. The big model, VHC-neuron, takes almost 90 minutes.
 # This program dumps data to text files for further analysis.
 ########################################################################
-import moogli
+
+try:
+    import moogli
+except ImportError as e:
+    print( "[INFO ] Could not import moogli. Quitting..." )
+    quit()
+    
 import numpy
 import time
 import pylab

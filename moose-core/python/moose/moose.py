@@ -1,20 +1,17 @@
 # -*- coding: utf-8 -*-
-from __future__ import print_function, division, absolute_import
-
 # Author: Subhasis Ray
 # Maintainer: Dilawar Singh, Harsha Rani, Upi Bhalla
 
+from __future__ import print_function, division, absolute_import
 import warnings
+import os
 import pydoc
-import moose
-import moose.utils as mu
 from io import StringIO
-from os.path import splitext
 from contextlib import closing
 
 # Import function from C++ module into moose namespace.
-#  from moose._moose import *
 import moose._moose as _moose
+import moose.utils as mu
 
 # sbml import.
 sbmlImport_, sbmlError_ = True, ''
@@ -60,40 +57,58 @@ except Exception as e:
     mergechemImport_ = False
     mergechemError_ = '%s' % e
 
-def loadModel(filename, target,method=None):
-    solverClass = 'Neutral'
-    if method != None:
-        solverClass = method
-    try:
-        f = open(filename,'r')
-        f.close()
-    except IOError as e:
-        print (e)
-        return
-    else:
-        file_name,extension = splitext(filename)
-        if extension in [".swc",".p"]:
-            ret = moose._moose.loadModel(filename,target,"Neutral")
-        elif extension in [".g",".cspace"]:
-            #only if genesis or cspace file, then mooseAddChemSolver is called
-            ret = moose._moose.loadModel(filename,target,"ee")
-          
+def loadModel(filename, modelpath, solverclass="gsl"):
+    """loadModel: Load model from a file to a specified path.
+
+    Parameters
+    ----------
+    filename: str
+        model description file.
+    modelpath: str
+        moose path for the top level element of the model to be created.
+    method: str 
+        solver type to be used for simulating the model.
+        TODO: Link to detailed description of solvers?
+
+    Returns
+    -------
+    object
+        moose.element if succcessful else None.
+    """
+
+    if not os.path.isfile( os.path.realpath(filename) ):
+        mu.warn( "Model file '%s' does not exists or is not readable." % filename )
+        return None
+
+    extension = os.path.splitext(filename)[1]
+    if extension in [".swc", ".p"]:
+        return _moose.loadModelInternal(filename, modelpath, "Neutral" )
+
+    if extension in [".g", ".cspace"]:
+        # only if genesis or cspace file and method != ee then only
+        # mooseAddChemSolver is called.
+        ret = _moose.loadModelInternal(filename, modelpath, "ee")
+        sc = solverclass.lower()
+        if sc in ["gssa","gillespie","stochastic","gsolve"]:
+            method = "gssa"
+        elif sc in ["gsl","runge kutta","deterministic","ksolve","rungekutta","rk5","rkf","rk"]:
+            method = "gsl"
+        elif sc in ["exponential euler","exponentialeuler","neutral"]:
             method = "ee"
-            if solverClass.lower() in ["gssa","gillespie","stochastic","gsolve"]:
-                method = "gssa"
-            elif solverClass.lower() in ["gsl","runge kutta","deterministic","ksolve","rungekutta","rk5","rkf","rk"]:
-                method = "gsl"
-            elif solverClass.lower() in ["exponential euler","exponentialeuler","neutral"]:
-                method = "ee"
-            
-            if method != 'ee':
-                chemError_ = _chemUtil.add_Delete_ChemicalSolver.mooseAddChemSolver(target,method)
+        else:
+            method = "ee"
+
+        if method != 'ee':
+            chemError = _chemUtil.add_Delete_ChemicalSolver.mooseAddChemSolver(modelpath, method)
         return ret
+    else:
+        mu.error( "Unknown model extenstion '%s'" % extension)
+        return None
         
 # Version
 def version( ):
     # Show user version.
-    return moose._moose.VERSION
+    return _moose.VERSION
 
 # Tests
 from moose.moose_test import test
@@ -125,36 +140,42 @@ known_types = ['void',
 def mooseReadSBML(filepath, loadpath, solver='ee',validate="on"):
     """Load SBML model.
 
-    keyword arguments: \n
-
-    filepath -- filepath to be loaded \n
-    loadpath -- Root path for this model e.g. /model/mymodel \n
-    solver   -- Solver to use (default 'ee' ) \n
-
+    Parameter
+    --------
+    filepath: str
+        filepath to be loaded.
+    loadpath : str 
+        Root path for this model e.g. /model/mymodel
+    solver : str
+        Solver to use (default 'ee').
+        Available options are "ee", "gsl", "stochastic", "gillespie"
+            "rk", "deterministic" 
+            For full list see ??
     """
     global sbmlImport_
     if sbmlImport_:
-        return _readSBML.mooseReadSBML( filepath, loadpath, solver,validate )
+        return _readSBML.mooseReadSBML(filepath, loadpath, solver, validate)
     else:
         print( sbmlError_ )
         return False
 
-
 def mooseWriteSBML(modelpath, filepath, sceneitems={}):
-    """Writes loaded model under modelpath to a file in SBML format.
-
-    keyword arguments:\n
-
-    modelpath -- model path in moose e.g /model/mymodel \n
-    filepath -- Path of output file. \n
-    sceneitems -- dictlist (UserWarning: user need not worry about this) \n
-                    layout position is saved in Annotation field of all the moose Object (pool,Reaction,enzyme)\n
-                    If this function is called from \n
-                        -- GUI, the layout position of moose object is passed \n
-                        -- command line, \n
-                            ---if genesis/kkit model is loaded then layout position is taken from the file \n
-                            --- else, auto-coordinates is used for layout position and passed
-
+    """mooseWriteSBML: Writes loaded model under modelpath to a file in SBML format.
+    
+    Parameters
+    ----------
+    modelpath : str 
+        model path in moose e.g /model/mymodel \n
+    filepath : str
+        Path of output file. \n
+    sceneitems : dict 
+        UserWarning: user need not worry about this layout position is saved in 
+        Annotation field of all the moose Object (pool,Reaction,enzyme).
+        If this function is called from 
+        * GUI - the layout position of moose object is passed 
+        * command line - NA
+        * if genesis/kkit model is loaded then layout position is taken from the file 
+        * otherwise auto-coordinates is used for layout position.
     """
     if sbmlImport_:
         return _writeSBML.mooseWriteSBML(modelpath, filepath, sceneitems)
@@ -163,13 +184,15 @@ def mooseWriteSBML(modelpath, filepath, sceneitems={}):
         return False
 
 
-def mooseWriteKkit(modelpath, filepath,sceneitems={}):
+def mooseWriteKkit(modelpath, filepath, sceneitems={}):
     """Writes  loded model under modelpath to a file in Kkit format.
 
-    keyword arguments:\n
-
-    modelpath -- model path in moose \n
-    filepath -- Path of output file.
+    Parameters
+    ----------
+    modelpath : str 
+        Model path in moose.
+    filepath : str 
+        Path of output file.
     """
     global kkitImport_, kkitImport_err_
     if not kkitImport_:
@@ -180,10 +203,14 @@ def mooseWriteKkit(modelpath, filepath,sceneitems={}):
 
 
 def mooseDeleteChemSolver(modelpath):
-    """ deletes solver on all the compartment and its children.
-        This is neccesary while created a new moose object on a pre-existing modelpath,\n
-        this should be followed by mooseAddChemSolver for add solvers on to compartment to simulate else
-        default is Exponential Euler (ee)
+    """mooseDeleteChemSolver
+    deletes solver on all the compartment and its children.
+
+    Notes
+    -----
+    This is neccesary while created a new moose object on a pre-existing modelpath,
+    this should be followed by mooseAddChemSolver for add solvers on to compartment 
+    to simulate else default is Exponential Euler (ee)
     """
     if chemImport_:
         return _chemUtil.add_Delete_ChemicalSolver.mooseDeleteChemSolver(modelpath)
@@ -193,15 +220,17 @@ def mooseDeleteChemSolver(modelpath):
 
 
 def mooseAddChemSolver(modelpath, solver):
-    """ Add solver on chemical compartment and its children for calculation
+    """mooseAddChemSolver:
+    Add solver on chemical compartment and its children for calculation
 
-    keyword arguments:\n
+    Parameters
+    ----------
 
-    modelpath -- model path that is loaded into moose \n
-    solver -- "Exponential Euler" (ee) (default), \n
-              "Gillespie"         ("gssa"), \n
-              "Runge Kutta"       ("gsl")
-
+    modelpath : str
+        Model path that is loaded into moose.
+    solver : str 
+        Exponential Euler "ee" is default. Other options are Gillespie ("gssa"),
+        Runge Kutta ("gsl") etc. Link to documentation?
     """
     if chemImport_:
         chemError_ = _chemUtil.add_Delete_ChemicalSolver.mooseAddChemSolver(modelpath, solver)
@@ -211,9 +240,8 @@ def mooseAddChemSolver(modelpath, solver):
         return False
 
 def mergeChemModel(src, des):
-    """ Merges two chemical model, \n
-        File or filepath can be passed
-        source is merged to destination
+    """mergeChemModel: Merges two chemical model.
+    File or filepath can be passed source is merged to destination
     """
     #global mergechemImport_
     if mergechemImport_:
@@ -280,7 +308,6 @@ def le(el=None):
     return [child.path for child in el.children]
 
 ce = _moose.setCwe  # ce is a GENESIS shorthand for change element.
-
 
 def syncDataHandler(target):
     """Synchronize data handlers for target.
@@ -360,7 +387,6 @@ def showfield(el, field='*', showtype=False):
 
 def showfields(el, showtype=False):
     """Convenience function. Should be deprecated if nobody uses it.
-
     """
     warnings.warn(
         'Deprecated. Use showfield(element, field="*", showtype=True) instead.',
@@ -373,7 +399,6 @@ finfotypes = [('valueFinfo', 'value field'),
               ('destFinfo', 'destination message field'),
               ('sharedFinfo', 'shared message field'),
               ('lookupFinfo', 'lookup field')]
-
 
 def listmsg(el):
     """Return a list containing the incoming and outgoing messages of
@@ -627,7 +652,3 @@ def doc(arg, inherited=True, paged=True):
         pager(text)
     else:
         print(text)
-
-
-#
-# moose.py ends here

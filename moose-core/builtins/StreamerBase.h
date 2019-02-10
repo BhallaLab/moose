@@ -86,6 +86,17 @@ public:
             );
 
 
+    /* --------------------------------------------------------------------------*/
+    /**
+     * @Synopsis  Return a csv representation of a vector.
+     *
+     * @Param ys vector of double.
+     *
+     * @Returns CSV string.
+     */
+    /* ----------------------------------------------------------------------------*/
+    string vectorToCSV( const vector<double>& ys, const string& fmt  );
+
 private:
 
     string outfilePath_;

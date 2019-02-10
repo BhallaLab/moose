@@ -1141,10 +1141,29 @@ void Neuron::setChannelDistribution( const Eref& e, vector< string > v )
     vector< vector< string > > lines;
     if ( parseDistrib( lines, v ) )
     {
+		unsigned int index = 0;
+		vector< unsigned int > chanIndices;
+		vector< unsigned int > temp;
         channelDistribution_ = v;
+		// We need to ensure that Ca_concs are created before any channels
+		// since the channels may want to connect to them.
         for ( unsigned int i = 0; i < lines.size(); ++i )
         {
-            vector< string >& temp = lines[i];
+    		Id proto( "/library/" + lines[i][0] );
+    		if ( proto != Id() ) {
+				if ( proto.element()->cinfo()->isA( "CaConcBase" ) ) {
+					chanIndices.push_back( i );
+				} else {
+					temp.push_back( i );
+				}
+			}
+		}
+		chanIndices.insert( chanIndices.end(), temp.begin(), temp.end() );
+		assert( chanIndices.size() == lines.size() );
+
+        for ( unsigned int i = 0; i < lines.size(); ++i )
+        {
+            vector< string >& temp = lines[chanIndices[i]];
             vector< ObjId > elist;
             vector< double > val;
             buildElist( e, temp, elist, val );

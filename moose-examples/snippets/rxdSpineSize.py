@@ -9,6 +9,14 @@
 ## rxdSpineSize.py: Builds a cell with spines and a propagating reaction
 ## wave. Products diffuse into the spine and cause it to get bigger.
 ##################################################################
+try:
+    from PyQt4 import QtGui
+    import moogli
+    import moogli.extensions.moose
+except ImportError as e:
+    print( "[INFO ] moogli is not found. Quitting..." )
+    quit()
+    
 import math
 import pylab
 import numpy
@@ -17,9 +25,6 @@ import moose
 import sys
 sys.path.append( '../util' )
 import rdesigneur as rd
-from PyQt4 import QtGui
-import moogli
-import moogli.extensions.moose
 import matplotlib
 
 doMoo = True

@@ -63,6 +63,7 @@ void HSolveActive::step( ProcPtr info )
     sendValues( info );
     sendSpikes( info );
 
+	prevExtCurr_ = externalCurrent_;
     externalCurrent_.assign( externalCurrent_.size(), 0.0 );
 }
 

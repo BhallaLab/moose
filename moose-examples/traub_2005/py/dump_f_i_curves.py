@@ -48,7 +48,12 @@
 """Do a series of current steps on each celltype"""
 
 import numpy as np
-import h5py as h5
+try:
+    import h5py as h5
+except ImportError as e:
+    print( "[INFO ] h5py is not found. Quitting ..." )
+    quit()
+    
 from collections import defaultdict
 
 import moose
@@ -79,7 +84,7 @@ def run_current_pulse(amps, delay=100e-3, dur=100e-3, trail=100e-3, outfile='f_i
         stim.delay[1] = 1e9 # make delay so large that it does not activate again
         for celltype in [SpinyStellate, DeepBasket, DeepLTS]:
             cell = celltype('{}/{}_{}'.format(mc.path, celltype.__name__, ii))
-            solver = moose.HSolve('{}/solver'.format(cell.path))
+            solver = moose.element('{}/solver'.format(cell.path))
             solver.dt = simdt
             solver.target = cell.path
             stim.connect('output', cell.soma, 'injectMsg')

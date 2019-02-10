@@ -78,7 +78,6 @@ void StreamerBase::writeToOutFile( const string& filepath
     }
 }
 
-
 /*  Write to a csv file.  */
 void StreamerBase::writeToCSVFile( const string& filepath, const string& openmode
         , const vector<double>& data, const vector<string>& columns )
@@ -123,3 +122,10 @@ void StreamerBase::writeToNPYFile( const string& filepath, const string& openmod
     cnpy2::save_numpy<double>( filepath, data, columns, openmode );
 }
 
+string StreamerBase::vectorToCSV( const vector<double>& ys, const string& fmt )
+{
+    stringstream ss;
+    for( auto v : ys )
+        ss << v << ",";
+    return ss.str();
+}

@@ -9,25 +9,6 @@
 # Last-Updated: Sun Jun 25 16:30:03 2017 (-0400)
 #           By: subha
 #     Update #: 531
-# URL: 
-# Keywords: 
-# Compatibility: 
-# 
-# 
-
-# Commentary: 
-# 
-# 
-# 
-# 
-
-# Change log:
-# 
-# 
-# 
-# 
-
-# Code:
 
 import unittest
 from cell_test_util import setup_current_step_model, SingleCellCurrentStepTest
@@ -41,15 +22,6 @@ simdt = 5e-6
 plotdt = 0.25e-3
 simtime = 300e-3
     
-
-# pulsearray = [[1.0, 100e-3, 1e-9],
-#               [0.5, 100e-3, 0.3e-9],
-#               [0.5, 100e-3, 0.1e-9],
-#               [0.5, 100e-3, -0.1e-9],
-#               [0.5, 100e-3, -0.3e-9]]
-
-
-
 class TestTCR(SingleCellCurrentStepTest):
     def __init__(self, *args, **kwargs):
         self.celltype = 'TCR'
@@ -62,10 +34,6 @@ class TestTCR(SingleCellCurrentStepTest):
 
     def setUp(self):
         SingleCellCurrentStepTest.setUp(self)
-
-    # def testVmSeriesPlot(self):
-    #     self.runsim(simtime, pulsearray=self.pulse_array)
-    #     self.plot_vm()
 
     def testVClamp(self):
         clamp = moose.VClamp('%s/vclamp' % (self.model_container.path))

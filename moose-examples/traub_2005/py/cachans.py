@@ -61,9 +61,10 @@ class CaL(CaChannel):
 class CaT(CaChannel):
     abstract = False
     Ypower = 1
-    inf_x = 1 / (1 + exp( (- v_array - 56e-3) / 6.2e-3))
-    tau_x = 1e-3 * (0.204 + 0.333 / ( exp(( v_array + 15.8e-3) / 18.2e-3 ) + 
-                                      exp((- v_array - 131e-3) / 16.7e-3)))
+    inf_x = 1/(1 + exp(-v_array - 56e-3)/6.2e-3)
+    tau_x = 1e-3 * (0.204 + 0.333 / \
+            (exp((v_array + 15.8e-3) / 18.2e-3 ) + exp((- v_array - 131e-3) / 16.7e-3))
+            )
     inf_y = 1 / (1 + exp(( v_array + 80e-3 ) / 4e-3))
     tau_y = where( v_array < -81e-3, 
                    1e-3 * 0.333 * exp( ( v_array + 466e-3 ) / 66.6e-3 ),

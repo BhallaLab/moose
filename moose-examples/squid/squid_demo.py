@@ -51,13 +51,13 @@ import os
 from collections import defaultdict
 import time
 
-pyqt_ver_ = 4
 try:
-    from PyQt5 import QtGui, QtCore
-    pyqt_ver_ = 5
-except ImportError as e:
     from PyQt4 import QtGui
     from PyQt4 import QtCore
+except ImportError as e:
+    print( "[INFO ] Could not import PyQt4. Quitting..." )
+    quit()
+
 import numpy
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qt4agg import FigureCanvasQTAgg as FigureCanvas

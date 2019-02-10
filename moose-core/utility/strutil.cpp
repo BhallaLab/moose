@@ -5,7 +5,9 @@
  * E-mail:          ray.subhasis@gmail.com
  * Created:         2007-09-25 12:12:10
  ********************************************************************/
+
 #include <string>
+#include <sstream>
 #include <iostream>
 #include <vector>
 #include "strutil.h"

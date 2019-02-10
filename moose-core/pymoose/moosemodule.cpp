@@ -17,8 +17,9 @@
 #include <map>
 #include <ctime>
 #include <csignal>
+#include <chrono>
+#include <thread>
 #include <exception>
-
 
 #if USE_BOOST_ODE
 #include <boost/format.hpp>
@@ -88,6 +89,8 @@ extern void speedTestMultiNodeIntFireNetwork(
 
 extern void mooseBenchmarks( unsigned int option );
 
+// global variable.
+bool tcpSocketStreamerEnabled_ = false;
 
 /*-----------------------------------------------------------------------------
  *  Random number generator for this module.
@@ -105,6 +108,31 @@ void pymoose_mtseed_( long int seed )
 double pymoose_mtrand_( void )
 {
     return moose::mtrand( );
+}
+
+bool setupSocketStreamer(const string addr )
+{
+    LOG(moose::debug, "Setting streamer with addr " << addr );
+
+    // Find all tables.
+    vector< ObjId > tables;
+    wildcardFind( "/##[TYPE=Table2]", tables );
+    wildcardFind( "/##[TYPE=Table]", tables, false );
+
+    if( tables.size() < 1 )
+    {
+        LOG( moose::warning, "No table found. MOOSE will not create a streamer." );
+        return false;
+    }
+
+    // Craete a SocketStreamer and add all tables.
+    Id stBase = SHELLPTR->doCreate("Neutral", Id(), "socket", 1);
+    Id st = SHELLPTR->doCreate("SocketStreamer", stBase, "streamer", 1);
+    Field<string>::set(st, "address", addr);
+
+    for( auto &t : tables )
+        SetGet1<Id>::set(st, "addTable", t.id );
+    return true;
 }
 
 /**
@@ -1721,10 +1749,8 @@ PyObject * moose_start(PyObject * dummy, PyObject * args )
     sigemptyset(&sigHandler.sa_mask);
     sigHandler.sa_flags = 0;
     sigaction(SIGINT, &sigHandler, NULL);
-
     SHELLPTR->doStart( runtime, notify );
     Py_RETURN_NONE;
-
 }
 
 PyDoc_STRVAR(moose_reinit_documentation,
@@ -1742,9 +1768,20 @@ PyDoc_STRVAR(moose_reinit_documentation,
              "\n");
 PyObject * moose_reinit(PyObject * dummy, PyObject * args)
 {
+    // If environment variable MOOSE_TCP_STREAMER_ADDRESS is set then setup the
+    // streamer.
+    string envSocketServer = moose::getEnv( "MOOSE_STREAMER_ADDRESS" );
+    if(! envSocketServer.empty())
+    {
+        LOG( moose::debug, "Environment variable set of socket" << envSocketServer );
+        if( envSocketServer.size() > 0 )
+            setupSocketStreamer(envSocketServer);
+    }
+
     SHELLPTR->doReinit();
     Py_RETURN_NONE;
 }
+
 PyObject * moose_stop(PyObject * dummy, PyObject * args)
 {
     SHELLPTR->doStop();
@@ -1765,10 +1802,12 @@ PyObject * moose_exists(PyObject * dummy, PyObject * args)
     return Py_BuildValue("i", Id(path) != Id() || string(path) == "/" || string(path) == "/root");
 }
 
-PyDoc_STRVAR(moose_loadModel_documentation,
-             "loadModel(filename, modelpath, solverclass) -> vec\n"
+PyDoc_STRVAR(moose_loadModelInternal_documentation,
+             "loadModelInternal(filename, modelpath, solverclass) -> vec\n"
              "\n"
              "Load model from a file to a specified path.\n"
+             "Note: This function should not be used by users. It is meants for developers. \n"
+             "Please see `moose.loadModel` function.\n"
              "\n"
              "Parameters\n"
              "----------\n"
@@ -1785,11 +1824,11 @@ PyDoc_STRVAR(moose_loadModel_documentation,
              "    loaded model container vec.\n"
             );
 
-PyObject * moose_loadModel(PyObject * dummy, PyObject * args)
+PyObject * moose_loadModelInternal(PyObject * dummy, PyObject * args)
 {
     char * fname = NULL, * modelpath = NULL, * solverclass = NULL;
 
-    if(!PyArg_ParseTuple(args, "ss|s:moose_loadModel", &fname, &modelpath, &solverclass))
+    if(!PyArg_ParseTuple(args, "ss|s:moose_loadModelInternal", &fname, &modelpath, &solverclass))
     {
         cout << "here in moose load";
         return NULL;
@@ -1812,7 +1851,8 @@ PyObject * moose_loadModel(PyObject * dummy, PyObject * args)
     PyObject * ret = reinterpret_cast<PyObject*>(model);
     return ret;
 }
-/*
+
+#if 0
 PyDoc_STRVAR(moose_saveModel_documentation,
              "saveModel(source, filename) -> None\n"
              "\n"
@@ -1869,7 +1909,8 @@ PyObject * moose_saveModel(PyObject * dummy, PyObject * args)
     SHELLPTR->doSaveModel(model, filename);
     Py_RETURN_NONE;
 }
-*/
+#endif 
+
 PyObject * moose_setCwe(PyObject * dummy, PyObject * args)
 {
     PyObject * element = NULL;
@@ -3013,7 +3054,7 @@ static PyMethodDef MooseMethods[] =
     {"stop", (PyCFunction)moose_stop, METH_VARARGS, "Stop simulation"},
     {"isRunning", (PyCFunction)moose_isRunning, METH_VARARGS, "True if the simulation is currently running."},
     {"exists", (PyCFunction)moose_exists, METH_VARARGS, "True if there is an object with specified path."},
-    {"loadModel", (PyCFunction)moose_loadModel, METH_VARARGS, moose_loadModel_documentation},
+    {"loadModelInternal", (PyCFunction)moose_loadModelInternal, METH_VARARGS, moose_loadModelInternal_documentation},
     //{"saveModel", (PyCFunction)moose_saveModel, METH_VARARGS, moose_saveModel_documentation},
     {"connect", (PyCFunction)moose_connect, METH_VARARGS, moose_connect_documentation},
     {"getCwe", (PyCFunction)moose_getCwe, METH_VARARGS, "Get the current working element. 'pwe' is an alias of this function."},
@@ -3232,33 +3273,3 @@ PyMODINIT_FUNC MODINIT(_moose)
     return moose_module;
 #endif
 } 
-
-
-//////////////////////////////////////////////
-// Main function
-//////////////////////////////////////////////
-
-// int main(int argc, char* argv[])
-// {
-// #ifdef PY3K
-//     size_t len = strlen(argv[0]);
-//     wchar_t * warg = (wchar_t*)calloc(sizeof(wchar_t), len);
-//     mbstowcs(warg, argv[0], len);
-// #else
-//     char * warg = argv[0];
-// #endif
-//     for (int ii = 0; ii < argc; ++ii){
-//     cout << "ARGV: " << argv[ii];
-// }
-//     cout << endl;
-//     Py_SetProgramName(warg);
-//     Py_Initialize();
-//     MODINIT(_moose);
-// #ifdef PY3K
-//     free(warg);
-// #endif
-//     return 0;
-// }
-
-//
-// moosemodule.cpp ends here

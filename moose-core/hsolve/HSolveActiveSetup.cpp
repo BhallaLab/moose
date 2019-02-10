@@ -584,6 +584,7 @@ void HSolveActive::readExternalChannels()
 
     //~ externalChannelId_.resize( compartmentId_.size() );
     externalCurrent_.resize( 2 * compartmentId_.size(), 0.0 );
+    prevExtCurr_.resize( externalCurrent_.size(), 0.0 );
 
     //~ for ( unsigned int ic = 0; ic < compartmentId_.size(); ++ic )
     //~ HSolveUtils::targets(

@@ -182,7 +182,7 @@ def makeDisplay():
     reset = Button( axReset, 'Reset', color = 'cyan' )
     q = Button( axQuit, 'Quit', color = 'pink' )
     RM = Slider( axRM, 'RM ( ohm.m^2 )', 0.1, 10, valinit=1.0 )
-    CM = Slider( axCM, 'CM ( Farad/m^2)', 0.001, 0.1, valinit=0.01 )
+    CM = Slider( axCM, 'CM ( Farad/m^2)', 0.001, 0.1, valinit=0.01, valfmt = '%0.3f' )
     RA = Slider( axRA, 'RA ( ohm.m', 0.1, 10, valinit=1.0 )
     length = Slider( axLen, 'Total length of cell (mm)', 0.1, 10, valinit=2.0 )
     dia = Slider( axDia, 'Diameter of cell (um)', 0.1, 10, valinit=1.0 )

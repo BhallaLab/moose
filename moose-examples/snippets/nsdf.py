@@ -100,6 +100,13 @@ from datetime import datetime
 import getpass
 
 import moose
+try:
+    nsdf = moose.NSDFWriter('/test')
+except AttributeError as e:
+    print( "[INFO ] This build is not built with NSDFWriter." )
+    print( '\tPlease see https://github.com/BhallaLab/moose-core' )
+    quit()
+
 
 def setup_model():
     """

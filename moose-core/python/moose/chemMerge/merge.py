@@ -144,17 +144,17 @@ def mergeChemModel(src,des):
             poolListinb = {}
             poolListinb = updatePoolList(comptBdict)
             
-            R_Duplicated, R_Notcopiedyet,R_Daggling = [], [], []
-            E_Duplicated, E_Notcopiedyet,E_Daggling = [], [], []
+            R_Duplicated, R_Notcopiedyet,R_Dangling = [], [], []
+            E_Duplicated, E_Notcopiedyet,E_Dangling = [], [], []
             for key in list(dictComptA.keys()):
                 funcExist, funcNotallowed = [], []
                 funcExist,funcNotallowed = functionMerge(dictComptB,dictComptA,key)
 
                 poolListinb = updatePoolList(dictComptB)
-                R_Duplicated,R_Notcopiedyet,R_Daggling = reacMerge(dictComptA,dictComptB,key,poolListinb)
+                R_Duplicated,R_Notcopiedyet,R_Dangling = reacMerge(dictComptA,dictComptB,key,poolListinb)
 
                 poolListinb = updatePoolList(dictComptB)
-                E_Duplicated,E_Notcopiedyet,E_Daggling = enzymeMerge(dictComptB,dictComptA,key,poolListinb)
+                E_Duplicated,E_Notcopiedyet,E_Dangling = enzymeMerge(dictComptB,dictComptA,key,poolListinb)
             
             # if isinstance(src, str):
             #     if os.path.isfile(src) == True:
@@ -209,15 +209,15 @@ def mergeChemModel(src,des):
                     for ed in list(E_Notcopiedyet):
                         print ("%s " %str(ed.name))
 
-            if R_Daggling or E_Daggling:
-                print ("\n Daggling reaction/enzyme are not allowed in moose, these are not merged to %s from %s" %(dfile, sfile))
-                if R_Daggling:
+            if R_Dangling or E_Dangling:
+                print ("\n Dangling reaction/enzyme are not allowed in moose, these are not merged to %s from %s" %(dfile, sfile))
+                if R_Dangling:
                     print("Reaction: ")
-                    for rd in list(R_Daggling):
+                    for rd in list(R_Dangling):
                         print ("%s " %str(rd.name))
-                if E_Daggling:
+                if E_Dangling:
                     print ("Enzyme:")
-                    for ed in list(E_Daggling):
+                    for ed in list(E_Dangling):
                         print ("%s " %str(ed.name))
             
             ## Model is saved
@@ -436,7 +436,7 @@ def copy_deleteUnlyingPoolObj(pool,path):
             poolcopied = moose.copy(pool,path)
             copied = True
             # deleting function and enzyme which gets copied if exist under pool
-            # This is done to ensure daggling function / enzyme not copied.
+            # This is done to ensure Dangling function / enzyme not copied.
             funclist = []
             for types in ['setConc','setN','increment']:
                 funclist.extend(moose.element(poolcopied).neighbors[types])
@@ -456,7 +456,7 @@ def updatePoolList(comptAdict):
 
 def enzymeMerge(comptD,comptS,key,poolListind):
     war_msg = ""
-    RE_Duplicated, RE_Notcopiedyet, RE_Daggling = [], [], []
+    RE_Duplicated, RE_Notcopiedyet, RE_Dangling = [], [], []
     comptDpath = moose.element(comptD[key]).path
     comptSpath = moose.element(comptS[key]).path
     objD = moose.element(comptDpath).parent.name
@@ -501,7 +501,7 @@ def enzymeMerge(comptD,comptS,key,poolListind):
                             RE_Notcopiedyet.append(es)
                     else:
                         #   -- it is dagging reaction
-                        RE_Daggling.append(es)
+                        RE_Dangling.append(es)
                 else:
                     #Same Enzyme name
                     #   -- Same substrate and product including same volume then don't copy
@@ -551,12 +551,12 @@ def enzymeMerge(comptD,comptS,key,poolListind):
                         if eSsubname and eSprdname:
                             RE_Notcopiedyet.append(es)
                         else:
-                            RE_Daggling.append(es)
+                            RE_Dangling.append(es)
 
-    return RE_Duplicated,RE_Notcopiedyet,RE_Daggling
+    return RE_Duplicated,RE_Notcopiedyet,RE_Dangling
 
 def reacMerge(comptS,comptD,key,poolListina):
-    RE_Duplicated, RE_Notcopiedyet, RE_Daggling = [], [], []
+    RE_Duplicated, RE_Notcopiedyet, RE_Dangling = [], [], []
     war_msg = ""
     comptSpath = moose.element(comptS[key]).path
     comptDpath = moose.element(comptD[key]).path
@@ -594,9 +594,9 @@ def reacMerge(comptS,comptD,key,poolListina):
                     RE_Notcopiedyet.append(rs)
             else:
                 #   -- it is dagging reaction
-                RE_Daggling.append(rs)
-                #print ("This reaction \""+rb.path+"\" has no substrate/product daggling reaction are not copied")
-                #war_msg = war_msg+"\nThis reaction \""+rb.path+"\" has no substrate/product daggling reaction are not copied"
+                RE_Dangling.append(rs)
+                #print ("This reaction \""+rb.path+"\" has no substrate/product Dangling reaction are not copied")
+                #war_msg = war_msg+"\nThis reaction \""+rb.path+"\" has no substrate/product Dangling reaction are not copied"
 
         else:
             #Same reaction name
@@ -640,9 +640,9 @@ def reacMerge(comptS,comptD,key,poolListina):
                         if rSsubname and rSprdname:
                             RE_Notcopiedyet.append(rs)
                         else:
-                            RE_Daggling.append(rs)
+                            RE_Dangling.append(rs)
     
-    return RE_Duplicated,RE_Notcopiedyet,RE_Daggling
+    return RE_Duplicated,RE_Notcopiedyet,RE_Dangling
 
 def subprdList(reac,subprd):
     rtype = moose.element(reac).neighbors[subprd]
