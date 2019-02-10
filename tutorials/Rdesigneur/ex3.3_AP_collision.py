@@ -52,4 +52,4 @@ rdes = rd.rdesigneur(
 rdes.buildModel()
 moose.reinit()
 
-rdes.displayMoogli( 0.00005, 0.05, 0.0 )
+rdes.displayMoogli( 0.00005, 0.03, 0.0 )

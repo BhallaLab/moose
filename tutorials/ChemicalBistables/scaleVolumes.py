@@ -13,10 +13,6 @@ import numpy
 import moose
 
 # Hack to make sure input works with both python2 and python3.
-try:
-	input = raw_input
-except Exception as e:
-	pass
 
 def makeModel():
         # create container for model
@@ -89,77 +85,75 @@ def displayPlots( vol ):
 
 def main():
 
-	"""
-	This example illustrates how to run a model at different volumes.
-	The key line is just to set the volume of the compartment::
+    """
+    This example illustrates how to run a model at different volumes.
+    The key line is just to set the volume of the compartment::
+                compt.volume = vol
+    If everything
+    else is set up correctly, then this change propagates through to all
+    reactions molecules.
 
-		compt.volume = vol
+    For a deterministic reaction one would not see any change in output 
+    concentrations.
+    For a stochastic reaction illustrated here, one sees the level of 
+    'noise' 
+    changing, even though the concentrations are similar up to a point.
+    This example creates a bistable model having two enzymes and a reaction.
+    One of the enzymes is autocatalytic.
+    This model is set up within the script rather than using an external 
+    file.
+    The model is set up to run using the GSSA (Gillespie Stocahstic systems
+    algorithim) method in MOOSE.
 
-	If everything
-	else is set up correctly, then this change propagates through to all
-	reactions molecules.
+    To run the example, run the script
 
-	For a deterministic reaction one would not see any change in output 
-	concentrations.
-	For a stochastic reaction illustrated here, one sees the level of 
-	'noise' 
-	changing, even though the concentrations are similar up to a point.
-	This example creates a bistable model having two enzymes and a reaction.
-	One of the enzymes is autocatalytic.
-	This model is set up within the script rather than using an external 
-	file.
-	The model is set up to run using the GSSA (Gillespie Stocahstic systems
-	algorithim) method in MOOSE.
+        ``python scaleVolumes.py``
 
-	To run the example, run the script
+    and close the plots every cycle to see the outcome of stochastic
+    calculations at ever smaller volumes, keeping concentrations the same.
+    """
+    makeModel()
+    moose.seed( 11111 )
+    gsolve = moose.Gsolve( '/model/compartment/gsolve' )
+    stoich = moose.Stoich( '/model/compartment/stoich' )
+    compt = moose.element( '/model/compartment' );
+    stoich.compartment = compt
+    stoich.ksolve = gsolve
+    stoich.path = "/model/compartment/##"
+    moose.setClock( 5, 1.0 ) # clock for the solver
+    moose.useClock( 5, '/model/compartment/gsolve', 'process' )
+    a = moose.element( '/model/compartment/a' )
 
-		``python scaleVolumes.py``
+    for vol in ( 1e-19, 1e-20, 1e-21, 3e-22, 1e-22, 3e-23, 1e-23 ):
+        # Set the volume
+        compt.volume = vol
+        print('vol = {}, a.concInit = {}, a.nInit = {}'.format( vol, a.concInit, a.nInit))
 
-	and close the plots every cycle to see the outcome of stochastic
-	calculations at ever smaller volumes, keeping concentrations the same.
-	"""
-	makeModel()
-	moose.seed( 11111 )
-	gsolve = moose.Gsolve( '/model/compartment/gsolve' )
-	stoich = moose.Stoich( '/model/compartment/stoich' )
-	compt = moose.element( '/model/compartment' );
-	stoich.compartment = compt
-	stoich.ksolve = gsolve
-	stoich.path = "/model/compartment/##"
-	moose.setClock( 5, 1.0 ) # clock for the solver
-	moose.useClock( 5, '/model/compartment/gsolve', 'process' )
-	a = moose.element( '/model/compartment/a' )
+        moose.reinit()
+        moose.start( 100.0 ) # Run the model for 100 seconds.
 
-	for vol in ( 1e-19, 1e-20, 1e-21, 3e-22, 1e-22, 3e-23, 1e-23 ):
-		# Set the volume
-		compt.volume = vol
-		print('vol = {}, a.concInit = {}, a.nInit = {}'.format( vol, a.concInit, a.nInit))
+        a = moose.element( '/model/compartment/a' )
+        b = moose.element( '/model/compartment/b' )
 
-		moose.reinit()
-		moose.start( 100.0 ) # Run the model for 100 seconds.
+        # move most molecules over to b
+        b.conc = b.conc + a.conc * 0.9
+        a.conc = a.conc * 0.1
+        moose.start( 100.0 ) # Run the model for 100 seconds.
 
-		a = moose.element( '/model/compartment/a' )
-		b = moose.element( '/model/compartment/b' )
+        # move most molecules back to a
+        a.conc = a.conc + b.conc * 0.99
+        b.conc = b.conc * 0.01
+        moose.start( 100.0 ) # Run the model for 100 seconds.
 
-		# move most molecules over to b
-		b.conc = b.conc + a.conc * 0.9
-		a.conc = a.conc * 0.1
-		moose.start( 100.0 ) # Run the model for 100 seconds.
-
-		# move most molecules back to a
-		a.conc = a.conc + b.conc * 0.99
-		b.conc = b.conc * 0.01
-		moose.start( 100.0 ) # Run the model for 100 seconds.
-
-		# Iterate through all plots, dump their contents to data.plot.
-		displayPlots( vol )
-		pylab.show( block=False )
-                print( 'vol = {:.5f} cubic microns . hit enter to go to next plot'.format( vol*1e18 ) )
-		try:
-			raw_input()
-		except NameError as e:
-			input( )
-	quit()
+        # Iterate through all plots, dump their contents to data.plot.
+        displayPlots( vol )
+        pylab.show( block=False )
+        print( 'vol = {:.5f} cubic microns . hit enter to go to next plot'.format( vol*1e18 ) )
+        try:
+            raw_input()
+        except NameError as e:
+            input( )
+    quit()
 
 # Run the 'main' if this script is executed standalone.
 if __name__ == '__main__':

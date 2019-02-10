@@ -33,6 +33,7 @@ import configparser as configparser
 import logging
 import numpy
 import os
+import moose
 
 # runtime info
 timestamp = datetime.now()
@@ -103,7 +104,7 @@ plotdt = float(_parser.get('scheduling', 'plotdt'))
 datadir = os.path.join(_parser.get('directories', 'data'),
                        timestamp.strftime('%Y_%m_%d'))
 if not os.access(datadir, os.F_OK):
-    os.mkdirs(datadir)
+    os.makedirs(datadir)
 protodir = _parser.get('directories', 'proto')
 datafileprefix = 'data'
 netfileprefix = 'network'
@@ -133,6 +134,7 @@ benchmarker.setLevel(logging.DEBUG)
 
 _inited = False
 def init():
+    global _inited
     if _inited:
         return
     _inited = True

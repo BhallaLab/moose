@@ -30,6 +30,7 @@
 
 import unittest
 import pylab
+import numpy
 from squid import SquidModel
 
 class SquidAxonTest(unittest.TestCase):
@@ -110,7 +111,6 @@ class SquidAxonTest(unittest.TestCase):
         pylab.legend()
         pylab.show()
         self.assertLessEqual(difference, numpy.mean(beta_m)*1e-6)
-
 
 
 # 

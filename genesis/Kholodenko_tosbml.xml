@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:moose="http://www.moose.ncbs.res.in" xmlns:groups="http://www.sbml.org/sbml/level3/version1/groups/version1" level="3" version="1" groups:required="false">
-  <model id="kholodenko_tosbml" substanceUnits="substance" timeUnits="time" volumeUnits="volume" areaUnits="area" lengthUnits="length" extentUnits="substance">
+  <model id="Kholodenko_tosbml" substanceUnits="substance" timeUnits="time" volumeUnits="volume" areaUnits="area" lengthUnits="length" extentUnits="substance">
     <notes>
       <body xmlns="http://www.w3.org/1999/xhtml">
  	 	This is the oscillatory MAPK model from Kholodenko 2000 Eur J. Biochem 267:1583-1588 The original model is formulated in terms of idealized Michaelis-Menten enzymes and the enzyme-substrate complex concentrations are therefore assumed negligible. The current implementation of the model uses explicit enzyme reactions involving substrates and is therefore an approximation to the Kholodenko model. The approximation is greatly improved if the enzyme is flagged as Available which is an option in Kinetikit. This flag means that the enzyme protein concentration is not reduced even when it is involved in a complex. However, the substrate protein continues to participate in enzyme-substrate complexes and its concentration is therefore affected. Overall, this model works almost the same as the Kholodenko model but the peak MAPK-PP amplitudes are a little reduced and the period of oscillations is about 10% longer. If the enzymes are not flagged as Available then the oscillations commence only when the Km for enzyme 1 is set to 0.1 uM.
@@ -61,10 +61,10 @@
       </unitDefinition>
     </listOfUnitDefinitions>
     <listOfCompartments>
-      <compartment id="kinetics_526_0_" name="kinetics" spatialDimensions="3" size="1.66666666666667e-18" units="volume" constant="true"/>
+      <compartment id="kinetics_462_0_" name="kinetics" spatialDimensions="3" size="1.66666666666667e-18" units="volume" constant="true"/>
     </listOfCompartments>
     <listOfSpecies>
-      <species id="MAPK_534_0_" name="MAPK" compartment="kinetics_526_0_" initialConcentration="0.0003" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
+      <species id="MAPK_470_0_" name="MAPK" compartment="kinetics_462_0_" initialConcentration="0.0003" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
         <notes>
           <body xmlns="http://www.w3.org/1999/xhtml">
  	 	The total concn. of MAPK is 300nM from Kholodenko, 2000.
@@ -79,7 +79,7 @@
           </moose:ModelAnnotation>
         </annotation>
       </species>
-      <species id="MKKK_536_0_" name="MKKK" compartment="kinetics_526_0_" initialConcentration="0.0001" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
+      <species id="MKKK_472_0_" name="MKKK" compartment="kinetics_462_0_" initialConcentration="0.0001" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
         <notes>
           <body xmlns="http://www.w3.org/1999/xhtml">
  	 	The total concn. of MKKK is 100nM from Kholodenko, 2000
@@ -94,7 +94,7 @@
           </moose:ModelAnnotation>
         </annotation>
       </species>
-      <species id="MKK_538_0_" name="MKK" compartment="kinetics_526_0_" initialConcentration="0.0003" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
+      <species id="MKK_474_0_" name="MKK" compartment="kinetics_462_0_" initialConcentration="0.0003" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
         <notes>
           <body xmlns="http://www.w3.org/1999/xhtml">
  	 	The total concn. of MKK is 300nM from Kholodenko,2000
@@ -109,7 +109,7 @@
           </moose:ModelAnnotation>
         </annotation>
       </species>
-      <species id="int1_540_0_" name="int1" compartment="kinetics_526_0_" initialConcentration="1e-06" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
+      <species id="int1_476_0_" name="int1" compartment="kinetics_462_0_" initialConcentration="1e-06" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
         <notes>
           <body xmlns="http://www.w3.org/1999/xhtml">
  	 	This is the intermediate enzyme which catalyses the dephosphorylation of MKKK-P to MKKK. The concentration is set to 1 nM based on from Kholodenko, 2000
@@ -124,7 +124,7 @@
           </moose:ModelAnnotation>
         </annotation>
       </species>
-      <species id="MKKK_P_544_0_" name="MKKK_P" compartment="kinetics_526_0_" initialConcentration="0" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
+      <species id="MKKK_P_480_0_" name="MKKK_P" compartment="kinetics_462_0_" initialConcentration="0" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
         <notes>
           <body xmlns="http://www.w3.org/1999/xhtml">
  	 	This is the phosphorylated form of MKKK which converts MKK to MKK-P and then to MKK-PP from Kholodenko, 2000.
@@ -139,7 +139,7 @@
           </moose:ModelAnnotation>
         </annotation>
       </species>
-      <species id="int3_550_0_" name="int3" compartment="kinetics_526_0_" initialConcentration="1e-06" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
+      <species id="int3_486_0_" name="int3" compartment="kinetics_462_0_" initialConcentration="1e-06" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
         <notes>
           <body xmlns="http://www.w3.org/1999/xhtml">
  	 	This intermediate enzyme catalyses the dephosphorylation of MKK-P to MKK. The concentration is 1nM from Kholodenko, 2000
@@ -154,7 +154,7 @@
           </moose:ModelAnnotation>
         </annotation>
       </species>
-      <species id="int5_554_0_" name="int5" compartment="kinetics_526_0_" initialConcentration="1e-06" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
+      <species id="int5_490_0_" name="int5" compartment="kinetics_462_0_" initialConcentration="1e-06" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
         <notes>
           <body xmlns="http://www.w3.org/1999/xhtml">
  	 	This catalyses the conversion of MAPK-P to MAPK. The concenration is 1nM. from Kholodenko, 2000
@@ -169,7 +169,7 @@
           </moose:ModelAnnotation>
         </annotation>
       </species>
-      <species id="MKK_P_558_0_" name="MKK_P" compartment="kinetics_526_0_" initialConcentration="0" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
+      <species id="MKK_P_494_0_" name="MKK_P" compartment="kinetics_462_0_" initialConcentration="0" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
         <notes>
           <body xmlns="http://www.w3.org/1999/xhtml">
  	 	This is the single phoshorylated form of MKK. from Kholodenko, 2000.
@@ -184,7 +184,7 @@
           </moose:ModelAnnotation>
         </annotation>
       </species>
-      <species id="MAPK_P_560_0_" name="MAPK_P" compartment="kinetics_526_0_" initialConcentration="0" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
+      <species id="MAPK_P_496_0_" name="MAPK_P" compartment="kinetics_462_0_" initialConcentration="0" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
         <notes>
           <body xmlns="http://www.w3.org/1999/xhtml">
  	 	This is the single phopshorylated form of MAPK from Kholodenko, 2000.
@@ -199,7 +199,7 @@
           </moose:ModelAnnotation>
         </annotation>
       </species>
-      <species id="int2_562_0_" name="int2" compartment="kinetics_526_0_" initialConcentration="1e-06" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
+      <species id="int2_498_0_" name="int2" compartment="kinetics_462_0_" initialConcentration="1e-06" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
         <notes>
           <body xmlns="http://www.w3.org/1999/xhtml">
  	 	This intermediate enzyme which catalyses the dephosphorylation of MKK-PP to MKK-P. The concentration is 1nM. from Kholodenko, 2000
@@ -214,7 +214,7 @@
           </moose:ModelAnnotation>
         </annotation>
       </species>
-      <species id="int4_566_0_" name="int4" compartment="kinetics_526_0_" initialConcentration="1e-06" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
+      <species id="int4_502_0_" name="int4" compartment="kinetics_462_0_" initialConcentration="1e-06" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
         <notes>
           <body xmlns="http://www.w3.org/1999/xhtml">
  	 	This intermediate enzyme catalyses the dephosphorylation of MAPK-PP to MAPK-P. The concentration is 1nM. from Kholodenko, 2000
@@ -229,7 +229,7 @@
           </moose:ModelAnnotation>
         </annotation>
       </species>
-      <species id="Ras_MKKKK_570_0_" name="Ras_MKKKK" compartment="kinetics_526_0_" initialConcentration="1e-06" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
+      <species id="Ras_MKKKK_506_0_" name="Ras_MKKKK" compartment="kinetics_462_0_" initialConcentration="1e-06" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
         <notes>
           <body xmlns="http://www.w3.org/1999/xhtml">
  	 	The concn. of Ras-MKKKK* is set to 1 nM implicitly from Kholodenko, 2000
@@ -244,7 +244,7 @@
           </moose:ModelAnnotation>
         </annotation>
       </species>
-      <species id="inactiveRas_MKKK_574_0_" name="inactiveRas_MKKK" compartment="kinetics_526_0_" initialConcentration="0" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
+      <species id="inactiveRas_MKKK_510_0_" name="inactiveRas_MKKK" compartment="kinetics_462_0_" initialConcentration="0" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
         <notes>
           <body xmlns="http://www.w3.org/1999/xhtml">
  	 	This is the inactive form of Ras-MKKK. Based on the reaction scheme from Kholodenko 2000, this is equivalent to a binding of the MAPK-PP to the Ras. The amount of Ras in the model is small enough that negligible amounts of MAPK are involved in this reaction. So it is a fair approximation to the negative feedback mechanism from Kholodenko, 2000.
@@ -259,7 +259,7 @@
           </moose:ModelAnnotation>
         </annotation>
       </species>
-      <species id="MKK_PP_578_0_" name="MKK_PP" compartment="kinetics_526_0_" initialConcentration="0" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
+      <species id="MKK_PP_514_0_" name="MKK_PP" compartment="kinetics_462_0_" initialConcentration="0" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
         <notes>
           <body xmlns="http://www.w3.org/1999/xhtml">
  	 	This is the double phosphorylated and active form of MKK from Kholodenko, 2000
@@ -274,7 +274,7 @@
           </moose:ModelAnnotation>
         </annotation>
       </species>
-      <species id="MAPK_PP_584_0_" name="MAPK_PP" compartment="kinetics_526_0_" initialConcentration="0" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
+      <species id="MAPK_PP_520_0_" name="MAPK_PP" compartment="kinetics_462_0_" initialConcentration="0" substanceUnits="substance" hasOnlySubstanceUnits="false" boundaryCondition="false" constant="false">
         <notes>
           <body xmlns="http://www.w3.org/1999/xhtml">
  	 	This is the double phosphorylated and active form of MAPK. from Kholodenko, 2000.
@@ -291,7 +291,7 @@
       </species>
     </listOfSpecies>
     <listOfReactions>
-      <reaction id="Neg_feedback_576_0_" name="Neg_feedback" reversible="true" fast="false">
+      <reaction id="Neg_feedback_512_0_" name="Neg_feedback" reversible="true" fast="false">
         <notes>
           <body xmlns="http://www.w3.org/1999/xhtml">
  	 	From Kholodenko, 2000 Eur J Biochem 267 the Kd is 9 nM. We use a rather fast Kf of 1/sec/uM so that equilibrium is maintained.
@@ -306,16 +306,16 @@
           </moose:ModelAnnotation>
         </annotation>
         <listOfReactants>
-          <speciesReference species="MAPK_PP_584_0_" stoichiometry="1" constant="false"/>
-          <speciesReference species="Ras_MKKKK_570_0_" stoichiometry="1" constant="false"/>
+          <speciesReference species="MAPK_PP_520_0_" stoichiometry="1" constant="false"/>
+          <speciesReference species="Ras_MKKKK_506_0_" stoichiometry="1" constant="false"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="inactiveRas_MKKK_574_0_" stoichiometry="1" constant="false"/>
+          <speciesReference species="inactiveRas_MKKK_510_0_" stoichiometry="1" constant="false"/>
         </listOfProducts>
         <kineticLaw>
           <notes>
             <body xmlns="http://www.w3.org/1999/xhtml">
-		kinetics_526_0_ * Neg_feedback_576_0__Kf * MAPK_PP_584_0_*Ras_MKKKK_570_0_-kinetics_526_0_ * Neg_feedback_576_0__Kb * inactiveRas_MKKK_574_0_
+		kinetics_462_0_ * Neg_feedback_512_0__Kf * MAPK_PP_520_0_*Ras_MKKKK_506_0_-kinetics_462_0_ * Neg_feedback_512_0__Kb * inactiveRas_MKKK_510_0_
  	 </body>
           </notes>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -323,26 +323,26 @@
               <minus/>
               <apply>
                 <times/>
-                <ci> kinetics_526_0_ </ci>
-                <ci> Neg_feedback_576_0__Kf </ci>
-                <ci> MAPK_PP_584_0_ </ci>
-                <ci> Ras_MKKKK_570_0_ </ci>
+                <ci> kinetics_462_0_ </ci>
+                <ci> Neg_feedback_512_0__Kf </ci>
+                <ci> MAPK_PP_520_0_ </ci>
+                <ci> Ras_MKKKK_506_0_ </ci>
               </apply>
               <apply>
                 <times/>
-                <ci> kinetics_526_0_ </ci>
-                <ci> Neg_feedback_576_0__Kb </ci>
-                <ci> inactiveRas_MKKK_574_0_ </ci>
+                <ci> kinetics_462_0_ </ci>
+                <ci> Neg_feedback_512_0__Kb </ci>
+                <ci> inactiveRas_MKKK_510_0_ </ci>
               </apply>
             </apply>
           </math>
           <listOfLocalParameters>
-            <localParameter id="Neg_feedback_576_0__Kf" value="1000" units="litre_per_mmole_per_second"/>
-            <localParameter id="Neg_feedback_576_0__Kb" value="0.009" units="per_second"/>
+            <localParameter id="Neg_feedback_512_0__Kf" value="1000" units="litre_per_mmole_per_second"/>
+            <localParameter id="Neg_feedback_512_0__Kb" value="0.009" units="per_second"/>
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="_2_542_0_" name="_2" reversible="true" fast="false">
+      <reaction id="_2_478_0_" name="_2" reversible="true" fast="false">
         <notes>
           <body xmlns="http://www.w3.org/1999/xhtml">
  	 	Km is 8nM and Vmax is 0.25nM.s-1 from Kholodenko, 2000.
@@ -352,41 +352,41 @@
           <moose:EnzymaticReaction>
             <moose:xCord>210.526315789</moose:xCord>
             <moose:yCord>-650.0</moose:yCord>
-            <moose:bgColor>30</moose:bgColor>
-            <moose:textColor>red</moose:textColor>
+            <moose:bgColor>red</moose:bgColor>
+            <moose:textColor>30</moose:textColor>
           </moose:EnzymaticReaction>
         </annotation>
         <listOfReactants>
-          <speciesReference species="MKKK_P_544_0_" stoichiometry="1" constant="false"/>
+          <speciesReference species="MKKK_P_480_0_" stoichiometry="1" constant="false"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="MKKK_536_0_" stoichiometry="1" constant="false"/>
+          <speciesReference species="MKKK_472_0_" stoichiometry="1" constant="false"/>
         </listOfProducts>
         <listOfModifiers>
-          <modifierSpeciesReference species="int1_540_0_"/>
+          <modifierSpeciesReference species="int1_476_0_"/>
         </listOfModifiers>
         <kineticLaw>
           <notes>
             <body xmlns="http://www.w3.org/1999/xhtml">
-		kinetics_526_0_ * ( kcat * MKKK_P_544_0_ * int1_540_0_ / ( Km + MKKK_P_544_0_))
+		kinetics_462_0_ * ( kcat * MKKK_P_480_0_ * int1_476_0_ / ( Km + MKKK_P_480_0_))
  	 </body>
           </notes>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <ci> kinetics_526_0_ </ci>
+              <ci> kinetics_462_0_ </ci>
               <apply>
                 <divide/>
                 <apply>
                   <times/>
                   <ci> kcat </ci>
-                  <ci> MKKK_P_544_0_ </ci>
-                  <ci> int1_540_0_ </ci>
+                  <ci> MKKK_P_480_0_ </ci>
+                  <ci> int1_476_0_ </ci>
                 </apply>
                 <apply>
                   <plus/>
                   <ci> Km </ci>
-                  <ci> MKKK_P_544_0_ </ci>
+                  <ci> MKKK_P_480_0_ </ci>
                 </apply>
               </apply>
             </apply>
@@ -397,7 +397,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="_3_546_0_" name="_3" reversible="true" fast="false">
+      <reaction id="_3_482_0_" name="_3" reversible="true" fast="false">
         <notes>
           <body xmlns="http://www.w3.org/1999/xhtml">
  	 	Km is 15 nM and Vmax is 0.025s-1 from Kholodenko, 2000
@@ -407,41 +407,41 @@
           <moose:EnzymaticReaction>
             <moose:xCord>210.526315789</moose:xCord>
             <moose:yCord>-500.0</moose:yCord>
-            <moose:bgColor>51</moose:bgColor>
-            <moose:textColor>red</moose:textColor>
+            <moose:bgColor>red</moose:bgColor>
+            <moose:textColor>51</moose:textColor>
           </moose:EnzymaticReaction>
         </annotation>
         <listOfReactants>
-          <speciesReference species="MKK_538_0_" stoichiometry="1" constant="false"/>
+          <speciesReference species="MKK_474_0_" stoichiometry="1" constant="false"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="MKK_P_558_0_" stoichiometry="1" constant="false"/>
+          <speciesReference species="MKK_P_494_0_" stoichiometry="1" constant="false"/>
         </listOfProducts>
         <listOfModifiers>
-          <modifierSpeciesReference species="MKKK_P_544_0_"/>
+          <modifierSpeciesReference species="MKKK_P_480_0_"/>
         </listOfModifiers>
         <kineticLaw>
           <notes>
             <body xmlns="http://www.w3.org/1999/xhtml">
-		kinetics_526_0_ * ( kcat * MKK_538_0_ * MKKK_P_544_0_ / ( Km + MKK_538_0_))
+		kinetics_462_0_ * ( kcat * MKK_474_0_ * MKKK_P_480_0_ / ( Km + MKK_474_0_))
  	 </body>
           </notes>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <ci> kinetics_526_0_ </ci>
+              <ci> kinetics_462_0_ </ci>
               <apply>
                 <divide/>
                 <apply>
                   <times/>
                   <ci> kcat </ci>
-                  <ci> MKK_538_0_ </ci>
-                  <ci> MKKK_P_544_0_ </ci>
+                  <ci> MKK_474_0_ </ci>
+                  <ci> MKKK_P_480_0_ </ci>
                 </apply>
                 <apply>
                   <plus/>
                   <ci> Km </ci>
-                  <ci> MKK_538_0_ </ci>
+                  <ci> MKK_474_0_ </ci>
                 </apply>
               </apply>
             </apply>
@@ -452,7 +452,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="_4_548_0_" name="_4" reversible="true" fast="false">
+      <reaction id="_4_484_0_" name="_4" reversible="true" fast="false">
         <notes>
           <body xmlns="http://www.w3.org/1999/xhtml">
  	 	Km is 15nM and Vmax is 0.025s-1 from Kholodenko, 2000.
@@ -462,41 +462,41 @@
           <moose:EnzymaticReaction>
             <moose:xCord>631.578947368</moose:xCord>
             <moose:yCord>-500.0</moose:yCord>
-            <moose:bgColor>51</moose:bgColor>
-            <moose:textColor>red</moose:textColor>
+            <moose:bgColor>red</moose:bgColor>
+            <moose:textColor>51</moose:textColor>
           </moose:EnzymaticReaction>
         </annotation>
         <listOfReactants>
-          <speciesReference species="MKK_P_558_0_" stoichiometry="1" constant="false"/>
+          <speciesReference species="MKK_P_494_0_" stoichiometry="1" constant="false"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="MKK_PP_578_0_" stoichiometry="1" constant="false"/>
+          <speciesReference species="MKK_PP_514_0_" stoichiometry="1" constant="false"/>
         </listOfProducts>
         <listOfModifiers>
-          <modifierSpeciesReference species="MKKK_P_544_0_"/>
+          <modifierSpeciesReference species="MKKK_P_480_0_"/>
         </listOfModifiers>
         <kineticLaw>
           <notes>
             <body xmlns="http://www.w3.org/1999/xhtml">
-		kinetics_526_0_ * ( kcat * MKK_P_558_0_ * MKKK_P_544_0_ / ( Km + MKK_P_558_0_))
+		kinetics_462_0_ * ( kcat * MKK_P_494_0_ * MKKK_P_480_0_ / ( Km + MKK_P_494_0_))
  	 </body>
           </notes>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <ci> kinetics_526_0_ </ci>
+              <ci> kinetics_462_0_ </ci>
               <apply>
                 <divide/>
                 <apply>
                   <times/>
                   <ci> kcat </ci>
-                  <ci> MKK_P_558_0_ </ci>
-                  <ci> MKKK_P_544_0_ </ci>
+                  <ci> MKK_P_494_0_ </ci>
+                  <ci> MKKK_P_480_0_ </ci>
                 </apply>
                 <apply>
                   <plus/>
                   <ci> Km </ci>
-                  <ci> MKK_P_558_0_ </ci>
+                  <ci> MKK_P_494_0_ </ci>
                 </apply>
               </apply>
             </apply>
@@ -507,7 +507,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="_6_552_0_" name="_6" reversible="true" fast="false">
+      <reaction id="_6_488_0_" name="_6" reversible="true" fast="false">
         <notes>
           <body xmlns="http://www.w3.org/1999/xhtml">
  	 	The Km is 15nM and the Vmax is 0.75nM.s-1 from Kholodenko 2000.
@@ -517,41 +517,41 @@
           <moose:EnzymaticReaction>
             <moose:xCord>210.526315789</moose:xCord>
             <moose:yCord>-350.0</moose:yCord>
-            <moose:bgColor>blue</moose:bgColor>
-            <moose:textColor>red</moose:textColor>
+            <moose:bgColor>red</moose:bgColor>
+            <moose:textColor>blue</moose:textColor>
           </moose:EnzymaticReaction>
         </annotation>
         <listOfReactants>
-          <speciesReference species="MKK_P_558_0_" stoichiometry="1" constant="false"/>
+          <speciesReference species="MKK_P_494_0_" stoichiometry="1" constant="false"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="MKK_538_0_" stoichiometry="1" constant="false"/>
+          <speciesReference species="MKK_474_0_" stoichiometry="1" constant="false"/>
         </listOfProducts>
         <listOfModifiers>
-          <modifierSpeciesReference species="int3_550_0_"/>
+          <modifierSpeciesReference species="int3_486_0_"/>
         </listOfModifiers>
         <kineticLaw>
           <notes>
             <body xmlns="http://www.w3.org/1999/xhtml">
-		kinetics_526_0_ * ( kcat * MKK_P_558_0_ * int3_550_0_ / ( Km + MKK_P_558_0_))
+		kinetics_462_0_ * ( kcat * MKK_P_494_0_ * int3_486_0_ / ( Km + MKK_P_494_0_))
  	 </body>
           </notes>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <ci> kinetics_526_0_ </ci>
+              <ci> kinetics_462_0_ </ci>
               <apply>
                 <divide/>
                 <apply>
                   <times/>
                   <ci> kcat </ci>
-                  <ci> MKK_P_558_0_ </ci>
-                  <ci> int3_550_0_ </ci>
+                  <ci> MKK_P_494_0_ </ci>
+                  <ci> int3_486_0_ </ci>
                 </apply>
                 <apply>
                   <plus/>
                   <ci> Km </ci>
-                  <ci> MKK_P_558_0_ </ci>
+                  <ci> MKK_P_494_0_ </ci>
                 </apply>
               </apply>
             </apply>
@@ -562,7 +562,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="_10_556_0_" name="_10" reversible="true" fast="false">
+      <reaction id="_10_492_0_" name="_10" reversible="true" fast="false">
         <notes>
           <body xmlns="http://www.w3.org/1999/xhtml">
  	 	The Km is 15nM and Vmax is 0.5nM.s-1 from Kholodenko, 2000
@@ -572,41 +572,41 @@
           <moose:EnzymaticReaction>
             <moose:xCord>210.526315789</moose:xCord>
             <moose:yCord>-50.0</moose:yCord>
-            <moose:bgColor>1</moose:bgColor>
-            <moose:textColor>red</moose:textColor>
+            <moose:bgColor>red</moose:bgColor>
+            <moose:textColor>1</moose:textColor>
           </moose:EnzymaticReaction>
         </annotation>
         <listOfReactants>
-          <speciesReference species="MAPK_P_560_0_" stoichiometry="1" constant="false"/>
+          <speciesReference species="MAPK_P_496_0_" stoichiometry="1" constant="false"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="MAPK_534_0_" stoichiometry="1" constant="false"/>
+          <speciesReference species="MAPK_470_0_" stoichiometry="1" constant="false"/>
         </listOfProducts>
         <listOfModifiers>
-          <modifierSpeciesReference species="int5_554_0_"/>
+          <modifierSpeciesReference species="int5_490_0_"/>
         </listOfModifiers>
         <kineticLaw>
           <notes>
             <body xmlns="http://www.w3.org/1999/xhtml">
-		kinetics_526_0_ * ( kcat * MAPK_P_560_0_ * int5_554_0_ / ( Km + MAPK_P_560_0_))
+		kinetics_462_0_ * ( kcat * MAPK_P_496_0_ * int5_490_0_ / ( Km + MAPK_P_496_0_))
  	 </body>
           </notes>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <ci> kinetics_526_0_ </ci>
+              <ci> kinetics_462_0_ </ci>
               <apply>
                 <divide/>
                 <apply>
                   <times/>
                   <ci> kcat </ci>
-                  <ci> MAPK_P_560_0_ </ci>
-                  <ci> int5_554_0_ </ci>
+                  <ci> MAPK_P_496_0_ </ci>
+                  <ci> int5_490_0_ </ci>
                 </apply>
                 <apply>
                   <plus/>
                   <ci> Km </ci>
-                  <ci> MAPK_P_560_0_ </ci>
+                  <ci> MAPK_P_496_0_ </ci>
                 </apply>
               </apply>
             </apply>
@@ -617,7 +617,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="_5_564_0_" name="_5" reversible="true" fast="false">
+      <reaction id="_5_500_0_" name="_5" reversible="true" fast="false">
         <notes>
           <body xmlns="http://www.w3.org/1999/xhtml">
  	 	The Km is 15nM and Vmax is 0.75nM.s-1 from Kholodenko, 2000
@@ -627,41 +627,41 @@
           <moose:EnzymaticReaction>
             <moose:xCord>631.578947368</moose:xCord>
             <moose:yCord>-350.0</moose:yCord>
-            <moose:bgColor>2</moose:bgColor>
-            <moose:textColor>red</moose:textColor>
+            <moose:bgColor>red</moose:bgColor>
+            <moose:textColor>2</moose:textColor>
           </moose:EnzymaticReaction>
         </annotation>
         <listOfReactants>
-          <speciesReference species="MKK_PP_578_0_" stoichiometry="1" constant="false"/>
+          <speciesReference species="MKK_PP_514_0_" stoichiometry="1" constant="false"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="MKK_P_558_0_" stoichiometry="1" constant="false"/>
+          <speciesReference species="MKK_P_494_0_" stoichiometry="1" constant="false"/>
         </listOfProducts>
         <listOfModifiers>
-          <modifierSpeciesReference species="int2_562_0_"/>
+          <modifierSpeciesReference species="int2_498_0_"/>
         </listOfModifiers>
         <kineticLaw>
           <notes>
             <body xmlns="http://www.w3.org/1999/xhtml">
-		kinetics_526_0_ * ( kcat * MKK_PP_578_0_ * int2_562_0_ / ( Km + MKK_PP_578_0_))
+		kinetics_462_0_ * ( kcat * MKK_PP_514_0_ * int2_498_0_ / ( Km + MKK_PP_514_0_))
  	 </body>
           </notes>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <ci> kinetics_526_0_ </ci>
+              <ci> kinetics_462_0_ </ci>
               <apply>
                 <divide/>
                 <apply>
                   <times/>
                   <ci> kcat </ci>
-                  <ci> MKK_PP_578_0_ </ci>
-                  <ci> int2_562_0_ </ci>
+                  <ci> MKK_PP_514_0_ </ci>
+                  <ci> int2_498_0_ </ci>
                 </apply>
                 <apply>
                   <plus/>
                   <ci> Km </ci>
-                  <ci> MKK_PP_578_0_ </ci>
+                  <ci> MKK_PP_514_0_ </ci>
                 </apply>
               </apply>
             </apply>
@@ -672,7 +672,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="_9_568_0_" name="_9" reversible="true" fast="false">
+      <reaction id="_9_504_0_" name="_9" reversible="true" fast="false">
         <notes>
           <body xmlns="http://www.w3.org/1999/xhtml">
  	 	The Km is 15nM and Vmax is 0.5nM.s-1 from Kholodenko, 2000
@@ -682,41 +682,41 @@
           <moose:EnzymaticReaction>
             <moose:xCord>631.578947368</moose:xCord>
             <moose:yCord>-50.0</moose:yCord>
-            <moose:bgColor>17</moose:bgColor>
-            <moose:textColor>red</moose:textColor>
+            <moose:bgColor>red</moose:bgColor>
+            <moose:textColor>17</moose:textColor>
           </moose:EnzymaticReaction>
         </annotation>
         <listOfReactants>
-          <speciesReference species="MAPK_PP_584_0_" stoichiometry="1" constant="false"/>
+          <speciesReference species="MAPK_PP_520_0_" stoichiometry="1" constant="false"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="MAPK_P_560_0_" stoichiometry="1" constant="false"/>
+          <speciesReference species="MAPK_P_496_0_" stoichiometry="1" constant="false"/>
         </listOfProducts>
         <listOfModifiers>
-          <modifierSpeciesReference species="int4_566_0_"/>
+          <modifierSpeciesReference species="int4_502_0_"/>
         </listOfModifiers>
         <kineticLaw>
           <notes>
             <body xmlns="http://www.w3.org/1999/xhtml">
-		kinetics_526_0_ * ( kcat * MAPK_PP_584_0_ * int4_566_0_ / ( Km + MAPK_PP_584_0_))
+		kinetics_462_0_ * ( kcat * MAPK_PP_520_0_ * int4_502_0_ / ( Km + MAPK_PP_520_0_))
  	 </body>
           </notes>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <ci> kinetics_526_0_ </ci>
+              <ci> kinetics_462_0_ </ci>
               <apply>
                 <divide/>
                 <apply>
                   <times/>
                   <ci> kcat </ci>
-                  <ci> MAPK_PP_584_0_ </ci>
-                  <ci> int4_566_0_ </ci>
+                  <ci> MAPK_PP_520_0_ </ci>
+                  <ci> int4_502_0_ </ci>
                 </apply>
                 <apply>
                   <plus/>
                   <ci> Km </ci>
-                  <ci> MAPK_PP_584_0_ </ci>
+                  <ci> MAPK_PP_520_0_ </ci>
                 </apply>
               </apply>
             </apply>
@@ -727,7 +727,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="_1_572_0_" name="_1" reversible="true" fast="false">
+      <reaction id="_1_508_0_" name="_1" reversible="true" fast="false">
         <notes>
           <body xmlns="http://www.w3.org/1999/xhtml">
  	 	The Km is 10nM and Vmax is 2.5nM sec^-1. We assume that there is 1 nM of the Ras-MKKKK. From Kholodenko, 2000. If the enzymes are not flagged as Available, then this Km should be set to 0.1 to obtain oscillations.
@@ -737,41 +737,41 @@
           <moose:EnzymaticReaction>
             <moose:xCord>210.526315789</moose:xCord>
             <moose:yCord>-800.0</moose:yCord>
-            <moose:bgColor>11</moose:bgColor>
-            <moose:textColor>red</moose:textColor>
+            <moose:bgColor>red</moose:bgColor>
+            <moose:textColor>11</moose:textColor>
           </moose:EnzymaticReaction>
         </annotation>
         <listOfReactants>
-          <speciesReference species="MKKK_536_0_" stoichiometry="1" constant="false"/>
+          <speciesReference species="MKKK_472_0_" stoichiometry="1" constant="false"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="MKKK_P_544_0_" stoichiometry="1" constant="false"/>
+          <speciesReference species="MKKK_P_480_0_" stoichiometry="1" constant="false"/>
         </listOfProducts>
         <listOfModifiers>
-          <modifierSpeciesReference species="Ras_MKKKK_570_0_"/>
+          <modifierSpeciesReference species="Ras_MKKKK_506_0_"/>
         </listOfModifiers>
         <kineticLaw>
           <notes>
             <body xmlns="http://www.w3.org/1999/xhtml">
-		kinetics_526_0_ * ( kcat * MKKK_536_0_ * Ras_MKKKK_570_0_ / ( Km + MKKK_536_0_))
+		kinetics_462_0_ * ( kcat * MKKK_472_0_ * Ras_MKKKK_506_0_ / ( Km + MKKK_472_0_))
  	 </body>
           </notes>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <ci> kinetics_526_0_ </ci>
+              <ci> kinetics_462_0_ </ci>
               <apply>
                 <divide/>
                 <apply>
                   <times/>
                   <ci> kcat </ci>
-                  <ci> MKKK_536_0_ </ci>
-                  <ci> Ras_MKKKK_570_0_ </ci>
+                  <ci> MKKK_472_0_ </ci>
+                  <ci> Ras_MKKKK_506_0_ </ci>
                 </apply>
                 <apply>
                   <plus/>
                   <ci> Km </ci>
-                  <ci> MKKK_536_0_ </ci>
+                  <ci> MKKK_472_0_ </ci>
                 </apply>
               </apply>
             </apply>
@@ -782,7 +782,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="_7_580_0_" name="_7" reversible="true" fast="false">
+      <reaction id="_7_516_0_" name="_7" reversible="true" fast="false">
         <notes>
           <body xmlns="http://www.w3.org/1999/xhtml">
  	 	The Km is 15nM which is 0.015uM Vmax is 0.025s-1 from Kholodenko, 2000.
@@ -792,41 +792,41 @@
           <moose:EnzymaticReaction>
             <moose:xCord>210.526315789</moose:xCord>
             <moose:yCord>-200.0</moose:yCord>
-            <moose:bgColor>0</moose:bgColor>
-            <moose:textColor>red</moose:textColor>
+            <moose:bgColor>red</moose:bgColor>
+            <moose:textColor>0</moose:textColor>
           </moose:EnzymaticReaction>
         </annotation>
         <listOfReactants>
-          <speciesReference species="MAPK_534_0_" stoichiometry="1" constant="false"/>
+          <speciesReference species="MAPK_470_0_" stoichiometry="1" constant="false"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="MAPK_P_560_0_" stoichiometry="1" constant="false"/>
+          <speciesReference species="MAPK_P_496_0_" stoichiometry="1" constant="false"/>
         </listOfProducts>
         <listOfModifiers>
-          <modifierSpeciesReference species="MKK_PP_578_0_"/>
+          <modifierSpeciesReference species="MKK_PP_514_0_"/>
         </listOfModifiers>
         <kineticLaw>
           <notes>
             <body xmlns="http://www.w3.org/1999/xhtml">
-		kinetics_526_0_ * ( kcat * MAPK_534_0_ * MKK_PP_578_0_ / ( Km + MAPK_534_0_))
+		kinetics_462_0_ * ( kcat * MAPK_470_0_ * MKK_PP_514_0_ / ( Km + MAPK_470_0_))
  	 </body>
           </notes>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <ci> kinetics_526_0_ </ci>
+              <ci> kinetics_462_0_ </ci>
               <apply>
                 <divide/>
                 <apply>
                   <times/>
                   <ci> kcat </ci>
-                  <ci> MAPK_534_0_ </ci>
-                  <ci> MKK_PP_578_0_ </ci>
+                  <ci> MAPK_470_0_ </ci>
+                  <ci> MKK_PP_514_0_ </ci>
                 </apply>
                 <apply>
                   <plus/>
                   <ci> Km </ci>
-                  <ci> MAPK_534_0_ </ci>
+                  <ci> MAPK_470_0_ </ci>
                 </apply>
               </apply>
             </apply>
@@ -837,7 +837,7 @@
           </listOfLocalParameters>
         </kineticLaw>
       </reaction>
-      <reaction id="_8_582_0_" name="_8" reversible="true" fast="false">
+      <reaction id="_8_518_0_" name="_8" reversible="true" fast="false">
         <notes>
           <body xmlns="http://www.w3.org/1999/xhtml">
  	 	The Km is 15nM which is 0.015uM and Vmax is 0.025s-1 from Kholodenko, 2000
@@ -847,41 +847,41 @@
           <moose:EnzymaticReaction>
             <moose:xCord>631.578947368</moose:xCord>
             <moose:yCord>-200.0</moose:yCord>
-            <moose:bgColor>0</moose:bgColor>
-            <moose:textColor>red</moose:textColor>
+            <moose:bgColor>red</moose:bgColor>
+            <moose:textColor>0</moose:textColor>
           </moose:EnzymaticReaction>
         </annotation>
         <listOfReactants>
-          <speciesReference species="MAPK_P_560_0_" stoichiometry="1" constant="false"/>
+          <speciesReference species="MAPK_P_496_0_" stoichiometry="1" constant="false"/>
         </listOfReactants>
         <listOfProducts>
-          <speciesReference species="MAPK_PP_584_0_" stoichiometry="1" constant="false"/>
+          <speciesReference species="MAPK_PP_520_0_" stoichiometry="1" constant="false"/>
         </listOfProducts>
         <listOfModifiers>
-          <modifierSpeciesReference species="MKK_PP_578_0_"/>
+          <modifierSpeciesReference species="MKK_PP_514_0_"/>
         </listOfModifiers>
         <kineticLaw>
           <notes>
             <body xmlns="http://www.w3.org/1999/xhtml">
-		kinetics_526_0_ * ( kcat * MAPK_P_560_0_ * MKK_PP_578_0_ / ( Km + MAPK_P_560_0_))
+		kinetics_462_0_ * ( kcat * MAPK_P_496_0_ * MKK_PP_514_0_ / ( Km + MAPK_P_496_0_))
  	 </body>
           </notes>
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <apply>
               <times/>
-              <ci> kinetics_526_0_ </ci>
+              <ci> kinetics_462_0_ </ci>
               <apply>
                 <divide/>
                 <apply>
                   <times/>
                   <ci> kcat </ci>
-                  <ci> MAPK_P_560_0_ </ci>
-                  <ci> MKK_PP_578_0_ </ci>
+                  <ci> MAPK_P_496_0_ </ci>
+                  <ci> MKK_PP_514_0_ </ci>
                 </apply>
                 <apply>
                   <plus/>
                   <ci> Km </ci>
-                  <ci> MAPK_P_560_0_ </ci>
+                  <ci> MAPK_P_496_0_ </ci>
                 </apply>
               </apply>
             </apply>
@@ -902,32 +902,32 @@
           </moose:GroupAnnotation>
         </annotation>
         <groups:listOfMembers>
-          <groups:member groups:idRef="MAPK_534_0_"/>
-          <groups:member groups:idRef="MKKK_536_0_"/>
-          <groups:member groups:idRef="MKK_538_0_"/>
-          <groups:member groups:idRef="int1_540_0_"/>
-          <groups:member groups:idRef="MKKK_P_544_0_"/>
-          <groups:member groups:idRef="int3_550_0_"/>
-          <groups:member groups:idRef="int5_554_0_"/>
-          <groups:member groups:idRef="MKK_P_558_0_"/>
-          <groups:member groups:idRef="MAPK_P_560_0_"/>
-          <groups:member groups:idRef="int2_562_0_"/>
-          <groups:member groups:idRef="int4_566_0_"/>
-          <groups:member groups:idRef="Ras_MKKKK_570_0_"/>
-          <groups:member groups:idRef="inactiveRas_MKKK_574_0_"/>
-          <groups:member groups:idRef="MKK_PP_578_0_"/>
-          <groups:member groups:idRef="MAPK_PP_584_0_"/>
-          <groups:member groups:idRef="Neg_feedback_576_0_"/>
-          <groups:member groups:idRef="_2_542_0_"/>
-          <groups:member groups:idRef="_3_546_0_"/>
-          <groups:member groups:idRef="_4_548_0_"/>
-          <groups:member groups:idRef="_6_552_0_"/>
-          <groups:member groups:idRef="_10_556_0_"/>
-          <groups:member groups:idRef="_5_564_0_"/>
-          <groups:member groups:idRef="_9_568_0_"/>
-          <groups:member groups:idRef="_1_572_0_"/>
-          <groups:member groups:idRef="_7_580_0_"/>
-          <groups:member groups:idRef="_8_582_0_"/>
+          <groups:member groups:idRef="MAPK_470_0_"/>
+          <groups:member groups:idRef="MKKK_472_0_"/>
+          <groups:member groups:idRef="MKK_474_0_"/>
+          <groups:member groups:idRef="int1_476_0_"/>
+          <groups:member groups:idRef="MKKK_P_480_0_"/>
+          <groups:member groups:idRef="int3_486_0_"/>
+          <groups:member groups:idRef="int5_490_0_"/>
+          <groups:member groups:idRef="MKK_P_494_0_"/>
+          <groups:member groups:idRef="MAPK_P_496_0_"/>
+          <groups:member groups:idRef="int2_498_0_"/>
+          <groups:member groups:idRef="int4_502_0_"/>
+          <groups:member groups:idRef="Ras_MKKKK_506_0_"/>
+          <groups:member groups:idRef="inactiveRas_MKKK_510_0_"/>
+          <groups:member groups:idRef="MKK_PP_514_0_"/>
+          <groups:member groups:idRef="MAPK_PP_520_0_"/>
+          <groups:member groups:idRef="Neg_feedback_512_0_"/>
+          <groups:member groups:idRef="_2_478_0_"/>
+          <groups:member groups:idRef="_3_482_0_"/>
+          <groups:member groups:idRef="_4_484_0_"/>
+          <groups:member groups:idRef="_6_488_0_"/>
+          <groups:member groups:idRef="_10_492_0_"/>
+          <groups:member groups:idRef="_5_500_0_"/>
+          <groups:member groups:idRef="_9_504_0_"/>
+          <groups:member groups:idRef="_1_508_0_"/>
+          <groups:member groups:idRef="_7_516_0_"/>
+          <groups:member groups:idRef="_8_518_0_"/>
         </groups:listOfMembers>
       </groups:group>
     </groups:listOfGroups>

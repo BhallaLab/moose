@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-# __BROKEN__ . It will break with python3 due to unavailability of QtGui in
-# PyQt4.
-
 from __future__ import print_function
 
 import math
@@ -11,8 +8,14 @@ import matplotlib.pyplot as plt
 import moose
 import sys
 import rdesigneur as rd
-from PyQt4 import QtGui
-import moogli
+
+try:
+    from PyQt4 import QtGui
+    import moogli
+except ImportError as e:
+    print( "[INFO ] Could not find moogli. Quitting..." )
+    quit()
+    
 
 import os
 scriptDir = os.path.dirname( os.path.realpath( __file__ ) )

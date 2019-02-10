@@ -10,7 +10,11 @@
 # 650 seconds. This simulation runs using a stochastic method.
 # The runtime on a 2.2 GHz Intel core I7 processor is about 465 s.
 ########################################################################
-import moogli
+try:
+    import moogli
+except ImportError as e:
+    print( "[INFO ] Failed to import moogli. Quitting ..." )
+    
 import numpy
 import time
 import pylab

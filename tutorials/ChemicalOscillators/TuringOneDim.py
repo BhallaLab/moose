@@ -116,10 +116,10 @@ def displayPlots():
     a = moose.element( '/model/compartment/a' )
     b = moose.element( '/model/compartment/b' )
     pos = numpy.arange( 0, a.vec.conc.size, 1 )
-    pylab.plot( pos, a.vec.conc, label='a' )
-    pylab.plot( pos, b.vec.conc, label='b' )
-    pylab.legend()
-    pylab.show()
+    plt.plot( pos, a.vec.conc, label='a' )
+    plt.plot( pos, b.vec.conc, label='b' )
+    plt.legend()
+    plt.show()
 
 def main():
     runtime = 400

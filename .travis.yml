@@ -1,22 +1,38 @@
 sudo : required 
+language: python
+python:
+    - "2.7"
+    - "3.6"
+    - "3.7"
+
+addons:
+    apt:
+        update: true
 
 notifications:
     email:
         recipients:
             - dilawar.s.rajput@gmail.com
-            - bhalla@ncbs.res.in
+            - upi.bhalla@gmail.com
             - hrani@ncbs.res.in
 
-install:
-    - sudo ./.travis_prepare.sh
+before_script:
+    - "export DISPLAY=:99.0"
+    - "sh -e /etc/init.d/xvfb start"
+    - sleep 2
+    - sudo apt install -yy python3-pip python3-setuptools python3-dev
 
 script:
-    - ./.travis_run.sh
+    - # We use python3 to run the travis scripts. Which requires subprocess32 modules.
+    - /usr/bin/python3 -m pip install subprocess32 --user
+    - /usr/bin/python3 -m pip install pylint --user
+    - pip install pymoose --pre --no-deps
+    - pip install pylint
+    - pip install numpy --upgrade
+    - pip install subprocess32
+    - pip install networkx 
+    - pip install brian2 
+    - pip install libneuroml pyneuroml scipy matplotlib
+    - pip install python-libsbml 
+    - ./.travis/execute_travis_serial.py `which python`
 
-exclude: [vendor]
-
-deploy:
-  provider: pages
-  skip-cleanup: true
-  github-token: $GHI_TOKEN  #
-  keep-history: true

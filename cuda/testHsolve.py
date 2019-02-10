@@ -1,11 +1,10 @@
 import sys
-sys.path.append('../../python')
 import os
-os.environ['NUMPTHREADS'] = '1'
 import pylab
 import numpy
 import math
 import moose
+print( '[INFO] Using moose from %s' % moose.__file__ )
 import moose.utils
 
 EREST_ACT = -70e-3
@@ -190,7 +189,7 @@ def dump_plots( fname ):
         pylab.plot( t, x.vector, label=x.name )
     pylab.legend()
     pylab.savefig( fname )
-    print('Saved to %s' % fname )
+    print('[INFO] Saved to %s' % fname )
     pylab.close()
 
 def make_spiny_compt():
