@@ -1,5 +1,6 @@
 ########################################################################
-# This example demonstrates a cable
+# This example demonstrates Rall's Law. 
+# In memory of Will Rall, 1922-2018.
 # Copyright (C) Upinder S. Bhalla NCBS 2018
 # Released under the terms of the GNU Public License V3.
 ########################################################################
@@ -54,7 +55,7 @@ def makeYmodel():
     x = length
     y = 0.0
     dx = length / ( numDendSeg * np.sqrt(2.0) )
-    dy = 0.0
+    dy = dx
     prevc1 = moose.element( '/library/cellBase/dend{}'.format( numDendSeg-1 ) )
     prevc2 = prevc1
     for i in range( numDendSeg ):
@@ -163,7 +164,7 @@ def updateDisplay():
         i.CylLines.set_ydata( [v.Vm*1000 for v in vecCyl] )
         i.YdendLines.set_ydata( [v.Vm*1000 for v in vecYdend] )
         i.Ybranch1Lines.set_ydata( [v.Vm*1000 for v in vecYbranch1] )
-        i.Ybranch2Lines.set_ydata( [v.Vm*1000 for v in vecYbranch2] )
+        #i.Ybranch2Lines.set_ydata( [v.Vm*1000 for v in vecYbranch2] )
         dt = interval2
 
     moose.delete( '/model' )
@@ -204,21 +205,24 @@ def makeDisplay():
     #ax.set_ylim( 0, 0.1 )
     plt.ylabel( 'Vm (mV)' )
     plt.ylim( -70, 0.0 )
-    plt.xlabel( 'Position (microns)' )
+    plt.xlabel( 'Position (segment #)' )
     #ax2.autoscale( enable = True, axis = 'y' )
     plt.title( "Membrane potential as a function of position along cell." )
     #for i,col in zip( range( 5 ), ['k', 'b', 'g', 'y', 'm' ] ):
-    for i,col in zip( range( 2 ), ['b', 'k' ] ):
+    time = interval1
+    for i,col,cylcol in zip( range( 2 ), ['b', 'g' ], ['r', 'm'] ):
         lw = lineWrapper()
         lw.YdendLines, = ax2.plot( np.arange(0, numDendSeg+1, 1 ),
-                np.zeros(numDendSeg+1), col + '.' )
+                np.zeros(numDendSeg+1), col + '.', label = "Primary Dend, t={}".format( time * 1e3 ) )
         lw.Ybranch1Lines, = ax2.plot( np.arange(0, numDendSeg, 1) + numDendSeg + 1, 
-                np.zeros(numDendSeg), col + ':' )
-        lw.Ybranch2Lines, = ax2.plot( np.arange(0, numDendSeg, 1) + numDendSeg + 1, 
-                np.zeros(numDendSeg) + numDendSeg + 1, col + '.' )
+            np.zeros(numDendSeg), col + ':', label = "Branch, t={}".format(time*1e3) )
+        #lw.Ybranch2Lines, = ax2.plot( np.arange(0, numDendSeg, 1) + numDendSeg + 1, 
+            #np.zeros(numDendSeg) + numDendSeg + 1, col + '--' )
         lw.CylLines, = ax2.plot( np.arange(0, numDendSeg*2+1, 1), 
-                np.zeros(numDendSeg*2+1), 'r-' )
+            np.zeros(numDendSeg*2+1), cylcol + '-', label = "Cyl, t={}".format(time*1e3) )
+        time += interval2
         lines.append( lw )
+    plt.legend()
 
     ax = fig.add_subplot(313)
     plt.axis('off')

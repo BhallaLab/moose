@@ -12,12 +12,17 @@ import os
 from collections import defaultdict
 import time
 
-from PyQt5 import QtGui, QtCore
-from PyQt5.QtWidgets import QMainWindow, QApplication, QGroupBox, QSizePolicy
-from PyQt5.QtWidgets import QLabel, QLineEdit, QGridLayout, QDockWidget
-from PyQt5.QtWidgets import QCheckBox, QTabWidget, QComboBox, QWidget
-from PyQt5.QtWidgets import QVBoxLayout, QFrame, QHBoxLayout, QAction
-from PyQt5.QtWidgets import QToolButton, QScrollArea, QTextBrowser
+try:
+    from PyQt5 import QtGui, QtCore
+    from PyQt5.QtWidgets import QMainWindow, QApplication, QGroupBox, QSizePolicy
+    from PyQt5.QtWidgets import QLabel, QLineEdit, QGridLayout, QDockWidget
+    from PyQt5.QtWidgets import QCheckBox, QTabWidget, QComboBox, QWidget
+    from PyQt5.QtWidgets import QVBoxLayout, QFrame, QHBoxLayout, QAction
+    from PyQt5.QtWidgets import QToolButton, QScrollArea, QTextBrowser
+    from PyQt5.QtWidgets import QMessageBox
+except ImportError as e:
+    print( '[INFO] PyQt5 not found. Quitting...' )
+    quit()
 
 import numpy
 from matplotlib.figure import Figure
@@ -231,18 +236,15 @@ class SquidGui( QMainWindow ):
         self._stateplot_xvar_label = QLabel('Variable on X-axis')
         self._stateplot_xvar_combo = QComboBox()
         self._stateplot_xvar_combo.addItems(['V', 'm', 'n', 'h'])
-        self._stateplot_xvar_combo.setCurrentIndex(0)
+        self._stateplot_xvar_combo.setCurrentText('V')
         self._stateplot_xvar_combo.setEditable(False)
-        #  self.connect(self._stateplot_xvar_combo,
-                     #  QtCore.SIGNAL('currentIndexChanged(const QString&)'),
-                     #  self._statePlotXSlot)
-        self._stateplot_xvar_combo.currentIndexChanged.connect( self._statePlotXSlot )
+        self._stateplot_xvar_combo.currentIndexChanged[str].connect( self._statePlotXSlot )
         self._stateplot_yvar_label = QLabel('Variable on Y-axis')
         self._stateplot_yvar_combo = QComboBox()
         self._stateplot_yvar_combo.addItems(['V', 'm', 'n', 'h'])
         self._stateplot_yvar_combo.setCurrentIndex(2)
         self._stateplot_yvar_combo.setEditable(False)
-        self._stateplot_yvar_combo.currentIndexChanged.connect(self._statePlotYSlot)
+        self._stateplot_yvar_combo.currentIndexChanged[str].connect(self._statePlotYSlot)
         self._statePlotNavigator = NavigationToolbar(self._statePlotCanvas, self._statePlotWidget)
         frame = QFrame()
         frame.setFrameStyle(QFrame.StyledPanel + QFrame.Raised)
@@ -350,7 +352,7 @@ class SquidGui( QMainWindow ):
         elif name == 'n':
             data = self.squid_setup.n_table.vector
         else:
-            raise ValueError('Unrecognized selection: %s' % (name))
+            raise ValueError('Unrecognized selection: %s' % name )
         return numpy.asarray(data)
     
     def _statePlotYSlot(self, selectedItem):

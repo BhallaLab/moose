@@ -4,15 +4,22 @@
 HDF5 is a self-describing file format for storing large
 datasets. MOOSE has an utility :class:`HDF5DataWriter` for saving
 simulations data in HDF5 files.
-
-__BROKEN__
 """
 
 import sys
 import os
-os.environ['NUMPTHREADS'] = '1'
 import numpy
 import moose
+
+try:
+    hdfwriter = moose.HDF5DataWriter('h')
+except AttributeError as e:
+    print( "[INFO ] This build of moose does not have HDF5 support." )
+    print( " Please compile and reinstall: \
+            https://github.com/BhallaLab/moose-core/blob/master/INSTALL.md"
+            )
+    quit()
+    
 
 def example():
     model = moose.Neutral('/model')

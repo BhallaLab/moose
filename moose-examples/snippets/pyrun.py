@@ -89,32 +89,32 @@ def run_sequence():
     model = moose.Neutral('/model')
     hello_runner = moose.PyRun('/model/Hello')
     hello_runner.initString = """
-print 'Init', moose.element('/model/Hello')
+print( 'Init', moose.element('/model/Hello') )
 hello_count = 0
 """
     hello_runner.runString = """
-print 'Running Hello'
-print 'Hello count =', hello_count
+print( 'Running Hello' )
+print( 'Hello count =', hello_count )
 hello_count += 1
 """
     hello_runner.run('from datetime import datetime')
-    hello_runner.run('print "Hello: current time:", datetime.now().isoformat()')
+    hello_runner.run('print("Hello: current time:", datetime.now().isoformat())')
     moose.useClock(0, hello_runner.path, 'process')
     world_runner = moose.PyRun('World')
     world_runner.initString = """
-print 'Init World'
+print( 'Init World' )
 world_count = 0
 def incr_count():
     global world_count
     world_count += 1
 """
     world_runner.runString = """
-print 'Running World'
-print 'World count =', world_count
+print( 'Running World' )
+print( 'World count =', world_count )
 incr_count()
 """
     world_runner.run('from datetime import datetime')
-    world_runner.run('print "World: current time:", datetime.now().isoformat()')
+    world_runner.run('print( "World: current time:", datetime.now().isoformat())')
 
     moose.useClock(0, world_runner.path, 'process')
     moose.reinit()
@@ -180,8 +180,8 @@ def input_output():
     pyrun = moose.PyRun('/model/pyrun')
     pyrun.runString = """
 output = input_ * input_
-print 'input =', input_
-print 'output =', output
+print( 'input =', input_ )
+print( 'output =', output )
 """
     pyrun.mode = 2 # do not run process method
     moose.connect(input_pulse, 'output', pyrun, 'trigger')

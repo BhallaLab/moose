@@ -29,7 +29,6 @@
 
 # Code:
 
-from moose import *
 def listmsg(pymoose_object):
     """Print a list of the messages on this object.
 

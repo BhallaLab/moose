@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
-# __BROKEN__ : This script will not work with Python3. Therefore it has been
-# marked as broken script. 
-# With python3, it fails to import QtGui module.
+try:
+    import moogli
+except Exception as e:
+    print( "[INFO ] Could not import moogli. Quitting..." )
+    quit()
 
 import math
 import pylab
@@ -10,10 +12,8 @@ import numpy
 import matplotlib.pyplot as plt
 import moose
 import sys
-#sys.path.append( '../util' )
 from PyQt4 import QtGui
 import rdesigneur as rd
-import moogli
 
 RM = 1.0
 RA = 1.0

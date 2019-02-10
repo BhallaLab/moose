@@ -126,7 +126,7 @@ def runPanelCDEF( name, dist, seqDt, numSpine, seq, stimAmpl ):
     phase.nInit = 10000
     Z.nInit = 0
     for j in range( numSpine ):
-        k = blanks + j * stride
+        k = int(blanks + j * stride)
         Z[k].nInit = 1
         phase[k].nInit = preStim + seq[j] * seqDt
     moose.reinit()
@@ -153,12 +153,13 @@ def makePassiveSoma( name, length, diameter ):
     dend.x = length
     return elecid
 
-def plotOnePanel( tLabel, dt, tplot, numSyn, plotRange, tick ):
-    t = np.arange( 0, len( tplot[0] ), 1.0 ) * dt
-    ax = plotBoilerplate( tLabel, 1 + start )
-    for i in range( 5 ):
-        plt.plot( t, tplot[i] )
-    ax.yaxis.set_ticks( np.arange( 0, plotRange, tick ) )
+## NOTE: In this function, `start` is missing. Disabling it else pylint gonna fail.
+#def plotOnePanel( tLabel, dt, tplot, numSyn, plotRange, tick ):
+#    t = np.arange( 0, len( tplot[0] ), 1.0 ) * dt
+#    ax = plotBoilerplate( tLabel, 1 + start )
+#    for i in range( 5 ):
+#        plt.plot( t, tplot[i] )
+#    ax.yaxis.set_ticks( np.arange( 0, plotRange, tick ) )
 
 
 def plotPanelCDEF( seq, row ):

@@ -1,18 +1,13 @@
-
 # -*- coding: utf-8 -*-
+
 ## all SI units
-########################################################################################
 ## Plot the firing rate vs current injection curve for a leaky integrate and fire neuron
 ## Author: Aditya Gilra
 ## Creation Date: 2012-06-08
 ## Modification Date: 2012-06-08
-########################################################################################
 
 import os
-os.environ['NUMPTHREADS'] = '1'
 import sys
-sys.path.append('.')
-
 from LIFxml_firing import *
 injectmax = 1e-7 # Amperes
 

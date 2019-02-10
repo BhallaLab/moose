@@ -9,7 +9,12 @@
 # This example illustrates loading a model from an SWC file, inserting
 # spines, and viewing it.
 
-import moogli
+try:
+    import moogli
+except Exception as e:
+    print( "[INFO ] Could not import moogli. Quitting..." )
+    quit()
+
 import moose
 from PyQt4 import Qt, QtCore, QtGui
 import sys

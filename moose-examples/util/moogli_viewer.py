@@ -4,6 +4,11 @@
 """
 Moogli Visualizer.
 """
+try:
+    import moogli
+except ImportError as e:
+    print('[INFO] moogli not found' )
+    quit()
 
 # http://stackoverflow.com/questions/28104362/how-to-rotate-camera-in-openscenegraphwalk-through-in-model
 from PyQt4 import QtGui
@@ -21,7 +26,6 @@ from PyQt4.QtGui import QComboBox
 import time
 import moose
 from moose import neuroml
-import moogli
 import pprint
 import numpy as np
 import os
