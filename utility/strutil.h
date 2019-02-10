@@ -48,10 +48,33 @@ namespace moose
      */
     int strncasecmp( const std::string& a, const std::string& b, size_t n);
 
-		/**
-		 * Generate random string of given length.
-		 */
-		std::string random_string( const unsigned size );
+    /**
+     * Generate random string of given length.
+     */
+    std::string random_string( const unsigned size );
+
+
+    /* --------------------------------------------------------------------------*/
+    /**
+     * @Synopsis Converts a vector to string.
+     *
+     * @Param vec
+     *
+     * @Returns   
+     */
+    /* ----------------------------------------------------------------------------*/
+    template<typename T=double>
+    std::string vectorToCSV( const std::vector<T>& vec)
+    {
+        std::stringstream ss;
+        for(size_t i = 0; i < vec.size(); i++)
+            ss << vec[i] << ',';
+        auto res = ss.str();
+        if( ',' == res.back())
+            res.pop_back();
+        return res;
+    }
+
 }
 
 #endif //_STRINGUTIL_H

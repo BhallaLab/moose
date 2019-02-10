@@ -239,7 +239,7 @@ def make_Ca( name ):
         if ( x > EREST_ACT):
             yA[i] = 5.0 * math.exp( -50 * (x - EREST_ACT) )
         else:
-            yA[i] = 0.0
+            yA[i] = 5.0
         #yB[i] = 6.0 - yA[i]
         yB[i] = 5.0
         x += dx
@@ -336,6 +336,7 @@ def make_K_AHP( name ):
     K_AHP.Xpower = 0
     K_AHP.Ypower = 0
     K_AHP.Zpower = 1
+    K_AHP.useConcentration = 1
 
     zgate = moose.element( K_AHP.path + '/gateZ' )
     xmax = 0.02 # 20 micromolar.
@@ -348,7 +349,7 @@ def make_K_AHP( name ):
     x = zgate.min
     for i in range( zgate.divs + 1 ):
             zA[i] = min( 250.00 * CA_SCALE * x, 10 )
-            zB[i] = 1.0
+            zB[i] = 1.0 + zA[i]
             x = x + dx
 
     zgate.tableA = zA

@@ -12,6 +12,8 @@
 #include "../basecode/ElementValueFinfo.h"
 #include "CaConcBase.h"
 
+#define VALENCE 2
+
 ///////////////////////////////////////////////////////
 // MsgSrc definitions
 ///////////////////////////////////////////////////////
@@ -76,7 +78,7 @@ const Cinfo* CaConcBase::initCinfo()
 						    "Volume scaling factor. "
 						    "Deprecated. This is a legacy field from GENESIS and exposes "
 						    "internal calculations. Please do not use. \n"
-						    "B = 1/(vol * F) so that it obeys:\n"
+						    "B = 1/(vol * F* VALENCE) so that it obeys:\n"
 						    "dC/dt = B*I_Ca - C/tau",
 						    &CaConcBase::setB,
 						    &CaConcBase::getB
@@ -260,7 +262,7 @@ void CaConcBase::updateDimensions( const Eref& e )
     double coreRadius = diameter_ / 2.0 - thickness_;
     vol -= PI * coreRadius * coreRadius * length_;
   }
-  double B = 1.0 / ( FaradayConst * vol );
+  double B = 1.0 / ( VALENCE* FaradayConst * vol );
   vSetB( e, B );
 }
 

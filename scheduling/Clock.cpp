@@ -166,7 +166,8 @@ const Cinfo* Clock::initCinfo()
     );
     static ReadOnlyValueFinfo< Clock, unsigned int > stride(
         "stride",
-        "Number by which the simulation advances the current step on each cycle. stride = smallest active timestep/smallest defined timestep.",
+        "Number by which the simulation advances the current step on each cycle. "
+        "stride = smallest active timestep/smallest defined timestep.",
         &Clock::getStride
     );
     static ReadOnlyValueFinfo< Clock, unsigned long > currentStep(
@@ -221,90 +222,90 @@ const Cinfo* Clock::initCinfo()
     ///////////////////////////////////////////////////////
     // MsgDest definitions
     ///////////////////////////////////////////////////////
-    static DestFinfo start( "start",
-                            "Sets off the simulation for the specified duration",
-                            new EpFunc2< Clock, double, bool >(&Clock::handleStart )
-                          );
+    static DestFinfo start( "start"
+            , "Sets off the simulation for the specified duration",
+            new EpFunc2< Clock, double, bool >(&Clock::handleStart )
+            );
 
-    static DestFinfo step( "step",
-                           "Sets off the simulation for the specified # of steps. "
-                           "Here each step advances the simulation by the timestep of the "
-                           "smallest tick that is actually in use. ",
-                           new EpFunc1< Clock, unsigned long >(&Clock::handleStep )
-                         );
+    static DestFinfo step( "step"
+            , "Sets off the simulation for the specified # of steps. "
+            "Here each step advances the simulation by the timestep of the "
+            "smallest tick that is actually in use. "
+            , new EpFunc1< Clock, unsigned long >(&Clock::handleStep )
+            );
 
-    static DestFinfo stop( "stop",
-                           "Halts the simulation, with option to restart seamlessly",
-                           new OpFunc0< Clock >(&Clock::stop )
-                         );
+    static DestFinfo stop( "stop"
+            , "Halts the simulation, with option to restart seamlessly"
+            , new OpFunc0< Clock >(&Clock::stop )
+            );
 
-    static DestFinfo reinit( "reinit",
-                             "Zeroes out all ticks, starts at t = 0",
-                             new EpFunc0< Clock >(&Clock::handleReinit )
-                           );
+    static DestFinfo reinit( "reinit"
+            , "Zeroes out all ticks, starts at t = 0"
+            , new EpFunc0< Clock >(&Clock::handleReinit )
+            );
 
     static Finfo* clockControlFinfos[] =
     {
         &start, &step, &stop, &reinit,
     };
+
     ///////////////////////////////////////////////////////
     // SharedFinfo for Shell to control Clock
-    ///////////////////////////////////////////////////////
-    static SharedFinfo clockControl( "clockControl",
-                                     "Controls all scheduling aspects of Clock, usually from Shell",
-                                     clockControlFinfos,
-                                     sizeof( clockControlFinfos ) / sizeof( Finfo* )
-                                   );
+    static SharedFinfo clockControl( "clockControl"
+            , "Controls all scheduling aspects of Clock, usually from Shell"
+            , clockControlFinfos
+            , sizeof( clockControlFinfos ) / sizeof( Finfo* )
+            );
 
     static Finfo* clockFinfos[] =
     {
         // Fields
-        &dt,                // Value
-        &runTime,            // ReadOnlyValue
-        &currentTime,        // ReadOnlyValue
-        &nsteps,            // ReadOnlyValue
-        &numTicks,            // ReadOnlyValue
-        &stride,            // ReadOnlyValue
-        &currentStep,        // ReadOnlyValue
-        &dts,                // ReadOnlyValue
-        &isRunning,            // ReadOnlyValue
-        &tickStep,            // LookupValue
-        &tickDt,            // LookupValue
-        &defaultTick,        // ReadOnlyLookupValue
-        &clockControl,        // Shared
-        finished(),            // Src
-        procs[0],                // Src
-        procs[1],                // Src
-        procs[2],                // Src
-        procs[3],                // Src
-        procs[4],                // Src
-        procs[5],                // Src
-        procs[6],                // Src
-        procs[7],                // Src
-        procs[8],                // Src
-        procs[9],                // Src
-        procs[10],                // Src
-        procs[11],                // Src
-        procs[12],                // Src
-        procs[13],                // Src
-        procs[14],                // Src
-        procs[15],                // Src
-        procs[16],                // Src
-        procs[17],                // Src
-        procs[18],                // Src
-        procs[19],                // Src
-        procs[20],                // Src
-        procs[21],                // Src
-        procs[22],                // Src
-        procs[23],                // Src
-        procs[24],                // Src
-        procs[25],                // Src
-        procs[26],                // Src
-        procs[27],                // Src
-        procs[28],                // Src
-        procs[29],                // Src
-        procs[30],                // Src
-        procs[31],                // Src
+        &dt,                    // Value
+        &runTime,               // ReadOnlyValue
+        &currentTime,           // ReadOnlyValue
+        &nsteps,                // ReadOnlyValue
+        &numTicks,              // ReadOnlyValue
+        &stride,                // ReadOnlyValue
+        &currentStep,           // ReadOnlyValue
+        &dts,                   // ReadOnlyValue
+        &isRunning,             // ReadOnlyValue
+        &tickStep,              // LookupValue
+        &tickDt,                // LookupValue
+        &defaultTick,           // ReadOnlyLookupValue
+        &clockControl,          // Shared
+        finished(),             // Src
+        procs[0],               // Src
+        procs[1],               // Src
+        procs[2],               // Src
+        procs[3],               // Src
+        procs[4],               // Src
+        procs[5],               // Src
+        procs[6],               // Src
+        procs[7],               // Src
+        procs[8],               // Src
+        procs[9],               // Src
+        procs[10],              // Src
+        procs[11],              // Src
+        procs[12],              // Src
+        procs[13],              // Src
+        procs[14],              // Src
+        procs[15],              // Src
+        procs[16],              // Src
+        procs[17],              // Src
+        procs[18],              // Src
+        procs[19],              // Src
+        procs[20],              // Src
+        procs[21],              // Src
+        procs[22],              // Src
+        procs[23],              // Src
+        procs[24],              // Src
+        procs[25],              // Src
+        procs[26],              // Src
+        procs[27],              // Src
+        procs[28],              // Src
+        procs[29],              // Src
+        procs[30],              // Src
+        procs[31],              // Src
     };
 
     static string doc[] =
@@ -348,89 +349,90 @@ const Cinfo* Clock::initCinfo()
         "different time-resolutions. Typically one uses tick 8 and 18.\n"
         "Here are the detailed mappings of class to tick.\n"
         "   Class              Tick       dt \n"
-        "   DiffAmp             0       50e-6\n"
-        "   Interpol            0       50e-6\n"
-        "   PIDController       0       50e-6\n"
-        "   PulseGen            0       50e-6\n"
-        "   StimulusTable       0       50e-6\n"
-        "   testSched           0       50e-6\n"
-        "   VClamp              0       50e-6\n"
-        "   SynHandlerBase      1       50e-6\n"
-        "   SimpleSynHandler    1       50e-6\n"
-        "   STDPSynHandler      1       50e-6\n"
+        "   DiffAmp              0       50e-6\n"
+        "   Interpol             0       50e-6\n"
+        "   PIDController        0       50e-6\n"
+        "   PulseGen             0       50e-6\n"
+        "   StimulusTable        0       50e-6\n"
+        "   testSched            0       50e-6\n"
+        "   VClamp               0       50e-6\n"
+        "   SynHandlerBase       1       50e-6\n"
+        "   SimpleSynHandler     1       50e-6\n"
+        "   STDPSynHandler       1       50e-6\n"
         "   GraupnerBrunel2012CaPlasticitySynHandler    1        50e-6\n"
-        "   SeqSynHandler       1       50e-6\n"
-        "    CaConc                1        50e-6\n"
-        "    CaConcBase            1        50e-6\n"
-        "    DifShell            1        50e-6\n"
-        "    DifShellBase        1        50e-6\n"
-        "   MMPump              1       50e-6\n"
-        "    DifBuffer            1        50e-6\n"
-        "    DifBufferBase        1        50e-6\n"
-        "    MgBlock                1        50e-6\n"
-        "    Nernst                1        50e-6\n"
-        "    RandSpike            1        50e-6\n"
-        "    ChanBase            2        50e-6\n"
-        "    IntFire                2        50e-6\n"
-        "    IntFireBase            2        50e-6\n"
-        "    LIF                    2        50e-6\n"
-        "    QIF                    2        50e-6\n"
-        "    ExIF                2        50e-6\n"
-        "    AdExIF                2        50e-6\n"
-        "    AdThreshIF            2        50e-6\n"
-        "    IzhIF                2        50e-6\n"
-        "    IzhikevichNrn        2        50e-6\n"
-        "    SynChan                2        50e-6\n"
-        "    NMDAChan            2        50e-6\n"
-        "    GapJunction            2        50e-6\n"
-        "    HHChannel            2        50e-6\n"
-        "    HHChannel2D            2        50e-6\n"
-        "    Leakage                2        50e-6\n"
-        "    MarkovChannel        2        50e-6\n"
-        "    MarkovGslSolver        2        50e-6\n"
-        "    MarkovRateTable        2        50e-6\n"
-        "    MarkovSolver        2        50e-6\n"
-        "    MarkovSolverBase    2        50e-6\n"
-        "    RC                    2        50e-6\n"
-        "    Compartment (init)    3        50e-6\n"
-        "    CompartmentBase (init )        3        50e-6\n"
-        "    SymCompartment    (init)        3        50e-6\n"
-        "    Compartment         4        50e-6\n"
-        "    CompartmentBase        4        50e-6\n"
-        "    SymCompartment        4        50e-6\n"
-        "    SpikeGen            5        50e-6\n"
-        "    HSolve                6        50e-6\n"
-        "    SpikeStats            7        50e-6\n"
-        "    Table                8        0.1e-3\n"
-        "    TimeTable            8        0.1e-3\n"
+        "   SeqSynHandler        1       50e-6\n"
+        "    CaConc              1       50e-6\n"
+        "    CaConcBase          1       50e-6\n"
+        "    DifShell            1       50e-6\n"
+        "    DifShellBase        1       50e-6\n"
+        "    MMPump              1       50e-6\n"
+        "    DifBuffer           1       50e-6\n"
+        "    DifBufferBase       1       50e-6\n"
+        "    MgBlock             1       50e-6\n"
+        "    Nernst              1       50e-6\n"
+        "    RandSpike           1       50e-6\n"
+        "    ChanBase            2       50e-6\n"
+        "    IntFire             2       50e-6\n"
+        "    IntFireBase         2       50e-6\n"
+        "    LIF                 2       50e-6\n"
+        "    QIF                 2       50e-6\n"
+        "    ExIF                2       50e-6\n"
+        "    AdExIF              2       50e-6\n"
+        "    AdThreshIF          2       50e-6\n"
+        "    IzhIF               2       50e-6\n"
+        "    IzhikevichNrn       2       50e-6\n"
+        "    SynChan             2       50e-6\n"
+        "    NMDAChan            2       50e-6\n"
+        "    GapJunction         2       50e-6\n"
+        "    HHChannel           2       50e-6\n"
+        "    HHChannel2D         2       50e-6\n"
+        "    Leakage             2       50e-6\n"
+        "    MarkovChannel       2       50e-6\n"
+        "    MarkovGslSolver     2       50e-6\n"
+        "    MarkovRateTable     2       50e-6\n"
+        "    MarkovSolver        2       50e-6\n"
+        "    MarkovSolverBase    2       50e-6\n"
+        "    RC                  2       50e-6\n"
+        "    Compartment (init)         3        50e-6\n"
+        "    CompartmentBase (init )    3        50e-6\n"
+        "    SymCompartment (init)      3        50e-6\n"
+        "    Compartment          4      50e-6\n"
+        "    CompartmentBase      4      50e-6\n"
+        "    SymCompartment       4      50e-6\n"
+        "    SpikeGen             5      50e-6\n"
+        "    HSolve               6      50e-6\n"
+        "    SpikeStats           7      50e-6\n"
+        "    Table                8      0.1e-3\n"
+        "    TimeTable            8      0.1e-3\n"
 
-        "    Dsolve                10        0.01\n"
-        "    Adaptor                11        0.1\n"
-        "    Func                12        0.1\n"
-        "    Function            12        0.1\n"
-        "    Arith                12        0.1\n"
-        "    BufPool                13        0.1\n"
-        "    Pool                13        0.1\n"
-        "    PoolBase            13        0.1\n"
-        "    CplxEnzBase            14        0.1\n"
-        "    Enz                    14        0.1\n"
-        "    EnzBase                14        0.1\n"
-        "    MMenz                14        0.1\n"
-        "    Reac                14        0.1\n"
-        "    ReacBase            14        0.1\n"
-        "    Gsolve    (init)        15        0.1\n"
-        "    Ksolve    (init)        15        0.1\n"
-        "    Gsolve                16        0.1\n"
-        "    Ksolve                16        0.1\n"
-        "    Stats                17        0.1\n"
-        "    Table2                18        1\n"
-        "    Streamer            19        10\n"
+        "    Dsolve               10     0.01\n"
+        "    Adaptor              11     0.1\n"
+        "    Func                 12     0.1\n"
+        "    Function             12     0.1\n"
+        "    Arith                12     0.1\n"
+        "    BufPool              13     0.1\n"
+        "    Pool                 13     0.1\n"
+        "    PoolBase             13     0.1\n"
+        "    CplxEnzBase          14     0.1\n"
+        "    Enz                  14     0.1\n"
+        "    EnzBase              14     0.1\n"
+        "    MMenz                14     0.1\n"
+        "    Reac                 14     0.1\n"
+        "    ReacBase             14     0.1\n"
+        "    Gsolve (init)        15     0.1\n"
+        "    Ksolve (init)        15     0.1\n"
+        "    Gsolve               16     0.1\n"
+        "    Ksolve               16     0.1\n"
+        "    Stats                17     0.1\n"
+        "    Table2               18     1\n"
+        "    SocketStreamer       19     5\n"
+        "    Streamer             20     10\n"
 
-        "    HDF5DataWriter        30        1\n"
-        "    HDF5WriterBase        30        1\n"
-        "    NSDFWriter            30        1\n"
-        "   PyRun               30      1\n"
-        "    PostMaster            31        0.01\n"
+        "    HDF5DataWriter        30    1\n"
+        "    HDF5WriterBase        30    1\n"
+        "    NSDFWriter            30    1\n"
+        "    PyRun                 30    1\n"
+        "    PostMaster            31    0.01\n"
         "    \n"
         "    Note that the other classes are not scheduled at all.",
     };
@@ -748,22 +750,22 @@ void Clock::handleStep( const Eref& e, unsigned long numSteps )
         for( unsigned int i = 0; i < numThreads_; ++i  )
         {
             std::async( std::launch::async
-                , [this,blockSize,i,nTasks,endStep,e]
+                        , [this,blockSize,i,nTasks,endStep,e]
+            {
+                unsigned int mapI = i * blockSize;
+                // Get the block we want to run in paralle.
+                for( unsigned int ii = i * blockSize; ii < min((i+1) * blockSize, nTasks); ii++ )
                 {
-                    unsigned int mapI = i * blockSize;
-                    // Get the block we want to run in paralle.
-                    for( unsigned int ii = i * blockSize; ii < min((i+1) * blockSize, nTasks); ii++ )
+                    unsigned int j = activeTicks_[ ii ];
+                    if( endStep % j == 0  )
                     {
-                        unsigned int j = activeTicks_[ ii ];
-                        if( endStep % j == 0  )
-                        {
-                             info_.dt = j * dt_;
-                             processVec( )[ activeTicksMap_[mapI] ]->send( e, &info_ );
-                        }
-                        mapI++;
+                        info_.dt = j * dt_;
+                        processVec( )[ activeTicksMap_[mapI] ]->send( e, &info_ );
                     }
+                    mapI++;
                 }
-            );
+            }
+                      );
         }
 #else
         vector< unsigned int >::const_iterator k = activeTicksMap_.begin();
@@ -783,13 +785,13 @@ void Clock::handleStep( const Eref& e, unsigned long numSteps )
         // true.
         if( notify_ )
         {
-            if( fmod(100 * currentTime_ / runTime_ , 10.0) == 0.0 )
+            if( fmod(100 * currentTime_ / runTime_, 10.0) == 0.0 )
             {
                 time( &rawtime );
                 timeinfo = localtime( &rawtime );
                 strftime(now, 80, "%c", timeinfo);
                 cout << "@ " << now << ": " << 100 * currentTime_ / runTime_
-                    << "% of total " << runTime_ << " seconds is over." << endl;
+                     << "% of total " << runTime_ << " seconds is over." << endl;
             }
         }
 
@@ -826,6 +828,7 @@ void Clock::handleReinit( const Eref& e )
         info_.dt = *j * dt_;
         reinitVec()[*k++]->send( e, &info_ );
     }
+
     info_.dt = dt_;
     doingReinit_ = false;
 }
@@ -946,7 +949,10 @@ void Clock::buildDefaultTick()
     defaultTick_["Stats"] = 17;
 
     defaultTick_["Table2"] = 18;
-    defaultTick_["Streamer"] = 19;
+
+    defaultTick_["SocketStreamer"] = 19;
+    defaultTick_["Streamer"] = 20;
+
     defaultTick_["HDF5DataWriter"] = 30;
     defaultTick_["HDF5WriterBase"] = 30;
     defaultTick_["NSDFWriter"] = 30;
@@ -1013,9 +1019,9 @@ void Clock::buildDefaultTick()
     defaultDt_[5] = 50.0e-6;
     defaultDt_[6] = 50.0e-6;
     defaultDt_[7] = 50.0e-6;
-    defaultDt_[8] = 1.0e-4;                     // For the tables for electrical calculations
-    defaultDt_[9] = 0.0;                        // Not assigned
-    defaultDt_[10] = 0.01;                      // For diffusion.
+    defaultDt_[8] = 1.0e-4;         // For the tables for electrical calculations
+    defaultDt_[9] = 0.0;            // Not assigned
+    defaultDt_[10] = 0.01;          // For diffusion.
     defaultDt_[11] = 0.1;
     defaultDt_[12] = 0.1;
     defaultDt_[13] = 0.1;
@@ -1023,8 +1029,9 @@ void Clock::buildDefaultTick()
     defaultDt_[15] = 0.1;
     defaultDt_[16] = 0.1;
     defaultDt_[17] = 0.1;
-    defaultDt_[18] = 1;                         // For tables for chemical calculations.
-    defaultDt_[19] = 10;                        // For Streamer
+    defaultDt_[18] = 1;             // For tables for chemical calculations.
+    defaultDt_[19] = 5;             // For Socket Streamer
+    defaultDt_[20] = 10;            // For CSV Streamer
 
     // 20-29 are not assigned.
     defaultDt_[30] = 1;    // For the HDF writer

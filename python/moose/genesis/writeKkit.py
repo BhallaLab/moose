@@ -9,9 +9,14 @@ __version__          = "1.0.0"
 __maintainer__       = "Harsha Rani"
 __email__            = "hrani@ncbs.res.in"
 __status__           = "Development"
-__updated__          = "Oct 23 2018"
+__updated__          = "Dec 08 2018"
 
 # 2018
+# Dec 08: using restoreXreacs from fixXreacs 
+# Nov 22: searched for _xfer_ instead of xfer
+# Nov 21: xfer pool are not written and cleaned up if part of Reaction/Enzyme or notes, 
+#         group are checked under all the mesh
+          
 # Oct 16: Channels are written back to genesis
 #         only zeroth element is taken for written back to genesis, this is true for CubeMesh and CylMesh
 # 2017
@@ -23,7 +28,8 @@ import re
 import moose
 from moose.chemUtil.chemConnectUtil import *
 from moose.chemUtil.graphUtils import *
-
+from moose.fixXreacs import restoreXreacs
+        
 foundmatplotlib_ = False
 try:
     import matplotlib
@@ -71,7 +77,7 @@ def mooseWriteKkit( modelpath, filename, sceneitems={}):
         global cmin,cmax,xmin,xmax,ymin,ymax
         cmin, xmin, ymin = 0, 0, 0
         cmax, xmax, ymax = 1, 1, 1
-
+        moose.fixXreacs.restoreXreacs(modelpath)
         compt = moose.wildcardFind(modelpath+'/##[0][ISA=ChemCompt]')
         maxVol = estimateDefaultVol(compt)
         positionInfoExist = True
@@ -138,6 +144,7 @@ def mooseWriteKkit( modelpath, filename, sceneitems={}):
                     "  /kinetics/#[],/kinetics/#[]/#[],/kinetics/#[]/#[]/#[][TYPE!=proto],/kinetics/#[]/#[]/#[][TYPE!=linkinfo]/##[] \"edit_elm.D <v>; drag_from_edit.w <d> <S> <x> <y> <z>\" auto 0.6\n"
                     "simundump xtext /file/notes 0 1\n")
             storeReacMsg(reacList,f)
+        
             storeEnzMsg(enzList,f)
             storeChanMsg(chanList,f)
             if tgraphs:
@@ -152,6 +159,7 @@ def mooseWriteKkit( modelpath, filename, sceneitems={}):
             return False
 
 def findMinMax(sceneitems):
+
     cmin = 0.0
     cmax = 1.0
     xmin,xymin = 0.0,0.0
@@ -434,14 +442,18 @@ def trimPath(mobj):
     # Any moose object comes under /kinetics then one level down the path is taken.
     # e.g /group/poolObject or /Reac
     if found:
-        if mobj.name != "kinetics" and (mobj.className != "CubeMesh"):
+        if mobj.name != "kinetics":# and ( (mobj.className != "CubeMesh") and (mobj.className != "CylMesh") and (mobj.className != "EndoMesh") and (mobj.className != "NeuroMesh")):
             splitpath = original.path[(original.path.find(mobj.name)):len(original.path)]
         else:
             pos = original.path.find(mobj.name)
+            #ss = re.compile(r'\b%s\b' %mobj.name)
+            #a = re.search(ss, original.path)
+            #pos = a.start()
             slash = original.path.find('/',pos+1)
             splitpath = original.path[slash+1:len(original.path)]
         splitpath = re.sub("\[[0-9]+\]", "", splitpath)
         s = splitpath.replace("_dash_",'-')
+        s = splitpath.replace("_space_","_")
         return s
 
 # def writeSumtotal( modelpath,f):
@@ -619,7 +631,6 @@ def writePool(modelpath,f,volIndex,sceneitems):
                     color = getRandColor()
                 if textcolor == ""  or textcolor == " ":
                     textcolor = getRandColor()
-                
                 f.write("simundump kpool /kinetics/" + trimPath(p) + " 0 " +
                         str(p.diffConst) + " " +
                         str(0) + " " +
@@ -696,13 +707,17 @@ def writeCompartment(modelpath,compts,f):
         i = i+1
         x = xmin+4
         y = ymax+1
+        #geometryname = compt.name
         if vecIndex > 0:
             geometry = geometry+"simundump geometry /kinetics" +  "/geometry[" + str(vecIndex) +"] 0 " + str(size) + " " + str(ndim) + " sphere " +" \"\" white black "+ str(int(x)) + " " +str(int(y)) +" 0\n";
             volIndex[float(size)] = "/geometry["+str(vecIndex)+"]"
+            #geometry = geometry+"simundump geometry /kinetics/"  +  str(geometryname) + " " +str(size) + " " + str(ndim) + " sphere " +" \"\" white black " + str(int(x)) + " "+str(int(y))+ " 0\n";
+            #volIndex[float(size)] = geometryname
         else:
-
+            #geometry = geometry+"simundump geometry /kinetics/"  +  str(geometryname) + " " + str(size) + " " + str(ndim) + " sphere " +" \"\" white black " + str(int(x)) + " "+str(int(y))+ " 0\n";
             geometry = geometry+"simundump geometry /kinetics"  +  "/geometry 0 " + str(size) + " " + str(ndim) + " sphere " +" \"\" white black " + str(int(x)) + " "+str(int(y))+ " 0\n";
             volIndex[float(size)] = "/geometry"
+            #volIndex[float(size)] = geometryname
     f.write(geometry)
     writeGroup(modelpath,f)
     return volIndex
@@ -787,11 +802,12 @@ def writeNotes(modelpath,f):
             moose.wildcardFind(modelpath+"/##[0][ISA=Function]") +\
             moose.wildcardFind(modelpath+"/##[0][ISA=StimulusTable]")
     for item in items:
-        if moose.exists(item.path+'/info'):
-            info = item.path+'/info'
-            notes = moose.Annotator(info).getField('notes')
-            if (notes):
-                f.write("call /kinetics/"+ trimPath(item)+"/notes LOAD \ \n\""+moose.Annotator(info).getField('notes')+"\"\n")
+        if not re.search("xfer",item.name):
+            if moose.exists(item.path+'/info'):
+                info = item.path+'/info'
+                notes = moose.Annotator(info).getField('notes')
+                if (notes):
+                    f.write("call /kinetics/"+ trimPath(item)+"/notes LOAD \ \n\""+moose.Annotator(info).getField('notes')+"\"\n")
 
 def writeFooter1(f):
     f.write("\nenddump\n // End of dump\n")

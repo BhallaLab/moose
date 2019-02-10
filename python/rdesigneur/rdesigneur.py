@@ -1249,7 +1249,6 @@ rdesigneur.rmoogli.updateMoogliViewer()
                 comptList[0].name = 'dend'
             return comptList
         if not self._isModelFromKkit():
-            print( "Not isModelfromKkit" )
             return comptList
         sortedComptList = sorted( comptList, key=lambda x: -x.volume )
         if self.addSomaChemCompt:
@@ -1393,7 +1392,11 @@ rdesigneur.rmoogli.updateMoogliViewer()
 
     def _loadChem( self, fname, chemName ):
         chem = moose.Neutral( '/library/' + chemName )
-        modelId = moose.loadModel( fname, chem.path, 'ee' )
+        pre, ext = os.path.splitext( fname )
+        if ext == '.xml' or ext == '.sbml':
+            modelId = moose.mooseReadSBML( fname, chem.path )
+        else:
+            modelId = moose.loadModel( fname, chem.path, 'ee' )
         comptlist = moose.wildcardFind( chem.path + '/#[ISA=ChemCompt]' )
         if len( comptlist ) == 0:
             print("loadChem: No compartment found in file: ", fname)

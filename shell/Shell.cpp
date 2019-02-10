@@ -9,6 +9,7 @@
 
 #include <string>
 #include <algorithm>
+#include <chrono>
 
 #include "../basecode/header.h"
 #include "../basecode/global.h"
@@ -20,9 +21,11 @@
 #include "../msg/OneToOneMsg.h"
 #include "../msg/OneToAllMsg.h"
 #include "../msg/SparseMsg.h"
+#include "../builtins/SocketStreamer.h"
 
 #include "Shell.h"
 #include "Wildcard.h"
+
 
 // Want to separate out this search path into the Makefile options
 #include "../scheduling/Clock.h"
@@ -41,6 +44,7 @@ vector< unsigned int > Shell::acked_( 1, 0 );
 bool Shell::doReinit_( 0 );
 bool Shell::isParserIdle_( 0 );
 double Shell::runtime_( 0.0 );
+
 
 const Cinfo* Shell::initCinfo()
 {
@@ -62,18 +66,19 @@ const Cinfo* Shell::initCinfo()
 ////////////////////////////////////////////////////////////////
 // Dest Finfos: Functions handled by Shell
 ////////////////////////////////////////////////////////////////
-    static DestFinfo handleUseClock( "useClock",
-                                     "Deals with assignment of path to a given clock."
-                                     " Arguments: path, field, tick number. ",
-                                     new EpFunc4< Shell, string, string, unsigned int, unsigned int >(
-                                         &Shell::handleUseClock )
+    static DestFinfo handleUseClock( "useClock"
+                                     , "Deals with assignment of path to a given clock."
+                                     " Arguments: path, field, tick number. "
+                                     , new EpFunc4< Shell, string, string, unsigned int, unsigned int >(&Shell::handleUseClock )
                                    );
-    static DestFinfo handleCreate( "create",
-                                   "create( class, parent, newElm, name, numData, isGlobal )",
-                                   new EpFunc6< Shell, string, ObjId, Id, string, NodeBalance, unsigned int >( &Shell::handleCreate ) );
 
-    static DestFinfo handleDelete( "delete",
-                                   "When applied to a regular object, this function operates "
+    static DestFinfo handleCreate( "create"
+                                   , "create( class, parent, newElm, name, numData, isGlobal )"
+                                   , new EpFunc6<Shell, string, ObjId, Id, string, NodeBalance, unsigned int>(&Shell::handleCreate)
+                                 );
+
+    static DestFinfo handleDelete( "delete"
+                                   , "When applied to a regular object, this function operates "
                                    "on the Id (element) specified by the ObjId argument. "
                                    "The function deletes the entire object "
                                    "array on this Id, including all dataEntries on it,"
@@ -81,41 +86,48 @@ const Cinfo* Shell::initCinfo()
                                    "is ignored, and all dataEntries are destroyed. \n"
                                    "When applied to a message: Destroys only that one specific "
                                    "message identified by the full ObjId. \n"
-                                   "Args: ObjId\n",
-                                   new EpFunc1< Shell, ObjId >( & Shell::destroy ) );
+                                   "Args: ObjId\n"
+                                   , new EpFunc1< Shell, ObjId >( & Shell::destroy )
+                                 );
 
-    static DestFinfo handleAddMsg( "addMsg",
-                                   "Makes a msg. Arguments are:"
-                                   " msgtype, src object, src field, dest object, dest field",
-                                   new EpFunc6< Shell, string, ObjId, string, ObjId, string, unsigned int >
-                                   ( & Shell::handleAddMsg ) );
-    static DestFinfo handleQuit( "quit",
-                                 "Stops simulation running and quits the simulator",
-                                 new OpFunc0< Shell >( & Shell::handleQuit ) );
-    static DestFinfo handleMove( "move",
-                                 "handleMove( Id orig, Id newParent ): "
-                                 "moves an Element to a new parent",
-                                 new EpFunc2< Shell, Id, ObjId >( & Shell::handleMove ) );
-    static DestFinfo handleCopy( "copy",
-                                 "handleCopy( vector< Id > args, string newName, unsigned int nCopies, bool toGlobal, bool copyExtMsgs ): "
+    static DestFinfo handleAddMsg( "addMsg"
+                                   , "Makes a msg. Arguments are:"
+                                   " msgtype, src object, src field, dest object, dest field"
+                                   , new EpFunc6< Shell, string, ObjId, string, ObjId, string, unsigned int >(&Shell::handleAddMsg)
+                                 );
+
+    static DestFinfo handleQuit( "quit"
+                                 , "Stops simulation running and quits the simulator"
+                                 , new OpFunc0< Shell >( & Shell::handleQuit )
+                               );
+    static DestFinfo handleMove( "move"
+                                 , "handleMove( Id orig, Id newParent ): "
+                                 "moves an Element to a new parent"
+                                 , new EpFunc2<Shell, Id, ObjId>( & Shell::handleMove )
+                               );
+
+    static DestFinfo handleCopy( "copy"
+                                 , "handleCopy( vector< Id > args, string newName, unsigned int nCopies, bool toGlobal, bool copyExtMsgs ): "
                                  " The vector< Id > has Id orig, Id newParent, Id newElm. "
                                  "This function copies an Element and all its children to a new parent."
                                  " May also expand out the original into nCopies copies."
                                  " Normally all messages within the copy tree are also copied. "
-                                 " If the flag copyExtMsgs is true, then all msgs going out are also copied.",
-                                 new EpFunc5< Shell, vector< ObjId >, string, unsigned int, bool, bool >(
-                                     & Shell::handleCopy ) );
+                                 " If the flag copyExtMsgs is true, then all msgs going out are also copied."
+                                 , new EpFunc5< Shell, vector< ObjId >, string, unsigned int, bool, bool >(
+                                     & Shell::handleCopy )
+                               );
 
-    static DestFinfo setclock( "setclock",
-                               "Assigns clock ticks. Args: tick#, dt",
-                               new OpFunc2< Shell, unsigned int, double >( & Shell::doSetClock ) );
+    static DestFinfo setclock( "setclock"
+                               , "Assigns clock ticks. Args: tick#, dt"
+                               , new OpFunc2< Shell, unsigned int, double >( & Shell::doSetClock )
+                             );
 
     static Finfo* shellFinfos[] =
     {
         &setclock,
-////////////////////////////////////////////////////////////////
-//  Shared msg
-////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////
+        //  Shared msg
+        ////////////////////////////////////////////////////////////////
         // &master,
         // &worker,
         &handleCreate,
@@ -220,7 +232,7 @@ Id Shell::doCreate( string type, ObjId parent, string name,
         {
             stringstream ss;
             ss << "Object with same path already present : " << parent.path()
-                << "/" << name;
+               << "/" << name;
             moose::showWarn( ss.str() );
             return Id();
         }
@@ -358,17 +370,14 @@ bool isDoingReinit()
 {
     static Id clockId( 1 );
     assert( clockId.element() != 0 );
-
-    return ( reinterpret_cast< const Clock* >(
-                 clockId.eref().data() ) )->isDoingReinit();
+    return (reinterpret_cast<const Clock*>(clockId.eref().data()))->isDoingReinit();
 }
+
 
 void Shell::doReinit( )
 {
-
     Id clockId( 1 );
     SetGet0::set( clockId, "reinit" );
-
 }
 
 void Shell::doStop( )
@@ -1028,7 +1037,7 @@ void Shell::cleanSimulation()
         if ( i->value() > 4 )                   /* These are created by users */
         {
             LOG( moose::debug
-                    , "Shell::cleanSimulation: deleted cruft at " <<
+                 , "Shell::cleanSimulation: deleted cruft at " <<
                  i->value() << ": " << i->path());
             s->doDelete( *i );
         }
