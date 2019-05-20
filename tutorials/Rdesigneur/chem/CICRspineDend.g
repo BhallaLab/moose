@@ -1,7 +1,7 @@
 //genesis
 // kkit Version 11 flat dumpfile
  
-// Saved on Tue Aug 21 06:59:07 2018
+// Saved on Sat Feb 16 15:40:53 2019
  
 include kkit {argv 1}
  
@@ -141,7 +141,7 @@ simundump kpool /kinetics/ActIP3R 0 0.0 0 0 0 0 0 0 1866.9 0 \
 simundump text /kinetics/ActIP3R/notes 0 ""
 call /kinetics/ActIP3R/notes LOAD \
 ""
-simundump kchan /kinetics/ActIP3R/chan 0 8000 0.1 0 1 0 "" brown 8 2 2 0
+simundump kchan /kinetics/ActIP3R/chan 0 8 0.1 0 1 0 "" brown 8 2 2 0
 simundump text /kinetics/ActIP3R/chan/notes 0 ""
 call /kinetics/ActIP3R/chan/notes LOAD \
 ""
@@ -207,7 +207,7 @@ simundump kpool /kinetics/DEND_ER/leakPool 0 0 1 1 234 234 0 0 234 0 \
 simundump text /kinetics/DEND_ER/leakPool/notes 0 ""
 call /kinetics/DEND_ER/leakPool/notes LOAD \
 ""
-simundump kchan /kinetics/DEND_ER/leakPool/leakChan 0 40 0.1 0 1 0 "" brown \
+simundump kchan /kinetics/DEND_ER/leakPool/leakChan 0 0.04 0.1 0 1 0 "" brown \
   45 4 5 0
 simundump text /kinetics/DEND_ER/leakPool/leakChan/notes 0 ""
 call /kinetics/DEND_ER/leakPool/leakChan/notes LOAD \
