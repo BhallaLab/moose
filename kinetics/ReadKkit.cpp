@@ -131,9 +131,10 @@ Id  makeStandardElements( Id pa, const string& modelname )
 		mgr = shell->doCreate( "Neutral", pa, modelname, 1, MooseGlobal );
 	Id kinetics( modelPath + "/kinetics" );
 	if ( kinetics == Id() ) {
-		kinetics =
-		shell->doCreate( "CubeMesh", mgr, "kinetics", 1,  MooseGlobal );
+		kinetics = shell->doCreate( "CubeMesh", mgr, "kinetics", 1,  MooseGlobal );
 		SetGet2< double, unsigned int >::set( kinetics, "buildDefaultMesh", 1e-15, 1 );
+		Id cInfo = shell->doCreate( "Annotator", kinetics, "info", 1 );
+		assert( cInfo != Id() );
 	}
 	assert( kinetics != Id() );
 

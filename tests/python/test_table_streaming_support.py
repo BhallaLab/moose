@@ -59,7 +59,7 @@ def test( ):
     moose.reinit( )
     [ print_table( x) for x in [tabA, tabB, tabC] ]
     runtime = 1000
-    print( 'Starting moose for %s' % runtime )
+    print( 'Starting moose for %d secs' % runtime )
     moose.start( runtime, 1 )
     print( ' MOOSE is done' )
 

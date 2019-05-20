@@ -13,9 +13,13 @@
 **           copyright (C) 2003-2017 Upinder S. Bhalla. and NCBS
 Created : Thu May 13 10:19:00 2016(+0530)
 Version
-Last-Updated: Tue Dec 3 17:30:00 2018(+0530)
+Last-Updated: Sat Jan 19 10:30:00 2019(+0530)
           By:HarshaRani
 **********************************************************************/
+2019:
+Jan 19: - validator flag is set 'on' from True
+         - groupname if missing in the sbml file then groupid is taken, 
+         if both are missing then its not a valide sbml file
 2018
 Dec 3:  - reading motor and diffconstant from pool
 Nov 30: - groups and subgroups are read from xml to moose 
@@ -82,7 +86,7 @@ try:
 except ImportError:
     pass
 
-def mooseReadSBML(filepath, loadpath, solver="ee",validate="True"):
+def mooseReadSBML(filepath, loadpath, solver="ee",validate="on"):
     """Load SBML model 
     """
     global foundLibSBML_
@@ -102,13 +106,15 @@ def mooseReadSBML(filepath, loadpath, solver="ee",validate="True"):
     with open(filepath, "r") as filep:
         loadpath  = loadpath[loadpath.find('/')+1:]
         loaderror = None
+        errorFlag = ""
         filep = open(filepath, "r")
         document = libsbml.readSBML(filepath)
         tobecontinue = False
-        if validate == "True":
-            tobecontinue = validateModel(document)
+        if validate == "on":
+            tobecontinue,errorFlag = validateModel(document)
         else:
             tobecontinue = True
+
         if tobecontinue:
             level = document.getLevel()
             version = document.getVersion()
@@ -126,6 +132,7 @@ def mooseReadSBML(filepath, loadpath, solver="ee",validate="True"):
                     loadpath ='/'+loadpath
                     baseId = moose.Neutral(loadpath)
                     basePath = baseId
+        
                     # All the model will be created under model as
                     # a thumbrule
                     basePath = moose.Neutral(baseId.path)
@@ -150,7 +157,7 @@ def mooseReadSBML(filepath, loadpath, solver="ee",validate="True"):
                     errorFlag,msgCmpt = createCompartment(
                         basePath, model, comptSbmlidMooseIdMap)
 
-                    groupInfo = checkGroup(basePath,model)
+                    groupInfo = checkGroup(basePath,model,comptSbmlidMooseIdMap)
                     funcDef = checkFuncDef(model)
                     if errorFlag:
                         specInfoMap = {}
@@ -207,8 +214,11 @@ def mooseReadSBML(filepath, loadpath, solver="ee",validate="True"):
                 loaderror = loaderror
             return moose.element(loadpath), loaderror
         else:
-            print("Validation failed while reading the model.")
-            return moose.element('/'), "This document is not valid SBML"
+            print("Validation failed while reading the model."+"\n"+errorFlag)
+            if errorFlag != "":
+                return moose.element('/'),errorFlag
+            else:
+                return moose.element('/'), "This document is not valid SBML"
 
 def checkFuncDef(model):
     funcDef = {}
@@ -229,7 +239,7 @@ def checkFuncDef(model):
             funcDef[f.getName()] = {'bvar':bvar, "MathML": fmath.getRightChild()}
     return funcDef
 
-def checkGroup(basePath,model):
+def checkGroup(basePath,model,comptSbmlidMooseIdMap):
     groupInfo = {}
     modelAnnotaInfo = {}
     if model.getPlugin("groups") != None:
@@ -237,27 +247,33 @@ def checkGroup(basePath,model):
         modelgn = mplugin.getNumGroups()
         for gindex in range(0, mplugin.getNumGroups()):
             p = mplugin.getGroup(gindex)
+            grpName = ""
             groupAnnoInfo = {}
             groupAnnoInfo = getObjAnnotation(p, modelAnnotaInfo)
+            
             if groupAnnoInfo != {}:
-                if moose.exists(basePath.path+'/'+groupAnnoInfo["Compartment"]):
+                if moose.exists(basePath.path+'/'+comptSbmlidMooseIdMap[groupAnnoInfo["Compartment"]]["MooseId"].name):
+                    groupName = p.getName()
+                    if groupName == " ":
+                        groupName = p.getId()
                     if "Group" in groupAnnoInfo:
-                        if moose.exists(basePath.path+'/'+groupAnnoInfo["Compartment"]+'/'+groupAnnoInfo["Group"]):
-                            if moose.exists(basePath.path+'/'+groupAnnoInfo["Compartment"]+'/'+groupAnnoInfo["Group"]+'/'+p.getName()):
-                                moosegrp = moose.element(basePath.path+'/'+groupAnnoInfo["Compartment"]+'/'+groupAnnoInfo["Group"]+'/'+p.getName())
+                        if moose.exists(basePath.path+'/'+comptSbmlidMooseIdMap[groupAnnoInfo["Compartment"]]["MooseId"].name+'/'+groupAnnoInfo["Group"]):
+                            if moose.exists(basePath.path+'/'+comptSbmlidMooseIdMap[groupAnnoInfo["Compartment"]]["MooseId"].name+'/'+groupAnnoInfo["Group"]+'/'+groupName):
+                                moosegrp = moose.element(basePath.path+'/'+comptSbmlidMooseIdMap[groupAnnoInfo["Compartment"]]["MooseId"].name+'/'+groupAnnoInfo["Group"]+'/'+groupName)
                             else:
-                                moosegrp = moose.Neutral(basePath.path+'/'+groupAnnoInfo["Compartment"]+'/'+groupAnnoInfo["Group"]+'/'+p.getName())
+                                moosegrp = moose.Neutral(basePath.path+'/'+comptSbmlidMooseIdMap[groupAnnoInfo["Compartment"]]["MooseId"].name+'/'+groupAnnoInfo["Group"]+'/'+groupName)
                         else:
-                            moose.Neutral(basePath.path+'/'+groupAnnoInfo["Compartment"]+'/'+groupAnnoInfo["Group"])
-                            if moose.exists(basePath.path+'/'+groupAnnoInfo["Compartment"]+'/'+groupAnnoInfo["Group"]+'/'+p.getName()):
-                                moosegrp = moose.element(basePath.path+'/'+groupAnnoInfo["Compartment"]+'/'+groupAnnoInfo["Group"]+'/'+p.getName())
+                            moose.Neutral(basePath.path+'/'+comptSbmlidMooseIdMap[groupAnnoInfo["Compartment"]]["MooseId"].name+'/'+groupAnnoInfo["Group"])
+                            if moose.exists(basePath.path+'/'+comptSbmlidMooseIdMap[groupAnnoInfo["Compartment"]]["MooseId"].name+'/'+groupAnnoInfo["Group"]+'/'+groupName):
+                                moosegrp = moose.element(basePath.path+'/'+comptSbmlidMooseIdMap[groupAnnoInfo["Compartment"]]["MooseId"].name+'/'+groupAnnoInfo["Group"]+'/'+groupName)
                             else:
-                                moosegrp = moose.Neutral(basePath.path+'/'+groupAnnoInfo["Compartment"]+'/'+groupAnnoInfo["Group"]+'/'+p.getName())
+                                moosegrp = moose.Neutral(basePath.path+'/'+comptSbmlidMooseIdMap[groupAnnoInfo["Compartment"]]["MooseId"].name+'/'+groupAnnoInfo["Group"]+'/'+groupName)
                     else:
-                        if not moose.exists(basePath.path+'/'+groupAnnoInfo["Compartment"]+'/'+p.getName()):
-                            moosegrp = moose.Neutral(basePath.path+'/'+groupAnnoInfo["Compartment"]+'/'+p.getName())
+                        if not moose.exists(basePath.path+'/'+comptSbmlidMooseIdMap[groupAnnoInfo["Compartment"]]["MooseId"].name+'/'+groupName):
+                            moosegrp = moose.Neutral(basePath.path+'/'+comptSbmlidMooseIdMap[groupAnnoInfo["Compartment"]]["MooseId"].name+'/'+groupName)
                         else:
-                            moosegrp = moose.element(basePath.path+'/'+groupAnnoInfo["Compartment"]+'/'+p.getName())
+                            moosegrp = moose.element(basePath.path+'/'+comptSbmlidMooseIdMap[groupAnnoInfo["Compartment"]]["MooseId"].name+'/'+groupName)
+                    
                     moosegrpinfo = moose.Annotator(moosegrp.path+'/info')
                     moosegrpinfo.color = groupAnnoInfo["bgColor"]
                 else:
@@ -1206,7 +1222,7 @@ def createSpecies(basePath, model, comptSbmlidMooseIdMap,
                 poolInfo = moose.Annotator(poolId.path + '/info')
             else:
                 poolInfo = moose.element(poolId.path + '/info')
-            
+
             for k, v in list(specAnnoInfo.items()):
                 if k == 'xCord':
                     poolInfo.x = float(v)
@@ -1214,12 +1230,13 @@ def createSpecies(basePath, model, comptSbmlidMooseIdMap,
                     poolInfo.y = float(v)
                 elif k == 'bgColor':
                     poolInfo.color = v
-                elif k == 'Color':
+                elif k == 'textColor':
                     poolInfo.textColor = v
                 elif k == 'diffConstant':
                     poolId.diffConst = float(v)
                 elif k == 'motorConstant':
-                    poolId.motorConst = float(v)    
+                    poolId.motorConst = float(v)
+            
             specInfoMap[sId] = {
                 "Mpath": poolId,
                 "const": constant,

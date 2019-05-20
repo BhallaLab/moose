@@ -91,14 +91,14 @@ void StreamerBase::writeToCSVFile( const string& filepath, const string& openmod
     }
 
     // If writing in "w" mode, write the header first.
-    if( openmode == "w" )
+    if(openmode == "w")
     {
         string headerText = "";
         for( vector<string>::const_iterator it = columns.begin();
             it != columns.end(); it++ )
             headerText += ( *it + delimiter_ );
         headerText += eol;
-        fprintf( fp, "%s", headerText.c_str() );
+        fprintf(fp, "%s", headerText.c_str());
     }
 
     string text = "";
@@ -111,8 +111,8 @@ void StreamerBase::writeToCSVFile( const string& filepath, const string& openmod
         // At the end of each row, we remove the delimiter_ and append newline_.
         *(text.end()-1) = eol;
     }
-    fprintf( fp, "%s", text.c_str() );
-    fclose( fp );
+    fprintf(fp, "%s", text.c_str() );
+    fclose(fp);
 }
 
 /*  write data to a numpy file */

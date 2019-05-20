@@ -271,9 +271,9 @@ def writeConcChan(modelpath,f,sceneitems):
                 else:
                     error = error + "\n x and y co-ordinates are not specified for `" + cChan.name+ "` zero will be assigned \n "
                 if color == "" or color == " ":
-                    color = getRandColor()
+                    color = getRandomColor()
                 if textcolor == ""  or textcolor == " ":
-                    textcolor = getRandColor()
+                    textcolor = getRandomColor()
                 f.write("simundump kchan /kinetics/" + trimPath(cChan)+ " " + str(int(1)) + " " + str(cChan.permeability)+  " " +
                     str(int(0)) + " " +
                     str(int(0)) + " " +
@@ -344,9 +344,9 @@ def writeEnz( modelpath,f,sceneitems):
                 else:
                     error = error + "\n x and y co-ordinates are not specified for `" + enz.name+ "` zero will be assigned \n "
                 if color == "" or color == " ":
-                    color = getRandColor()
+                    color = getRandomColor()
                 if textcolor == ""  or textcolor == " ":
-                    textcolor = getRandColor()
+                    textcolor = getRandomColor()
             
                 f.write("simundump kenz /kinetics/" + trimPath(enz) + " " + str(int(0))+  " " +
                     str(concInit) + " " +
@@ -421,9 +421,9 @@ def writeReac(modelpath,f,sceneitems):
                 y = 0
                 error = error + "\n x and y co-ordinates are not specified for `" + reac.name+ "` zero will be assigned \n "
             if color == "" or color == " ":
-                color = getRandColor()
+                color = getRandomColor()
             if textcolor == ""  or textcolor == " ":
-                textcolor = getRandColor()
+                textcolor = getRandomColor()
             f.write("simundump kreac /kinetics/" + trimPath(reac) + " " +str(0) +" "+ str(kf) + " " + str(kb) + " \"\" " +
                     str(color) + " " + str(textcolor) + " " + str(int(x)) + " " + str(int(y))  + " "+ str(0)+"\n")
     return reacList,error
@@ -574,9 +574,9 @@ def writeplot( tgraphs,f ):
                     fg = getColorCheck(fg,GENESIS_COLOR_SEQUENCE)
                     tabPath = re.sub("\[[0-9]+\]", "", tabPath)
                     if tabPath.find("conc1") >= 0 or tabPath.find("conc2") >= 0:
-                        first = first + "simundump xplot " + tabPath + " 3 524288 \\\n" + "\"delete_plot.w <s> <d>; edit_plot.D <w>\" " + fg + " 0 0 1\n"
+                        first = first + "simundump xplot " + tabPath + " 3 524288 \\\n" + "\"delete_plot.w <s> <d>; edit_plot.D <w>\" " + str(fg) + " 0 0 1\n"
                     if tabPath.find("conc3") >= 0 or tabPath.find("conc4") >= 0:
-                        second = second + "simundump xplot " + tabPath + " 3 524288 \\\n" + "\"delete_plot.w <s> <d>; edit_plot.D <w>\" " + fg + " 0 0 1\n"
+                        second = second + "simundump xplot " + tabPath + " 3 524288 \\\n" + "\"delete_plot.w <s> <d>; edit_plot.D <w>\" " + str(fg) + " 0 0 1\n"
     return first,second
 
 def writePool(modelpath,f,volIndex,sceneitems):
@@ -628,9 +628,9 @@ def writePool(modelpath,f,volIndex,sceneitems):
                 geometryName = volIndex[float(poolsCmpt.volume)]
                 volume = p.volume * NA * 1e-3
                 if color == "" or color == " ":
-                    color = getRandColor()
+                    color = getRandomColor()
                 if textcolor == ""  or textcolor == " ":
-                    textcolor = getRandColor()
+                    textcolor = getRandomColor()
                 f.write("simundump kpool /kinetics/" + trimPath(p) + " 0 " +
                         str(p.diffConst) + " " +
                         str(0) + " " +
@@ -673,7 +673,7 @@ def getColorCheck(color,GENESIS_COLOR_SEQUENCE):
     else:
         raise Exception("Invalid Color Value!")
 
-def getRandColor():
+def getRandomColor():
     ignoreColor= ["mistyrose","antiquewhite","aliceblue","azure","bisque","black","blanchedalmond","blue","cornsilk","darkolivegreen","darkslategray","dimgray","floralwhite","gainsboro","ghostwhite","honeydew","ivory","lavender","lavenderblush","lemonchiffon","lightcyan","lightgoldenrodyellow","lightgray","lightyellow","linen","mediumblue","mintcream","navy","oldlace","papayawhip","saddlebrown","seashell","snow","wheat","white","whitesmoke","aquamarine","lightsalmon","moccasin","limegreen","snow","sienna","beige","dimgrey","lightsage"]
     matplotcolor = {}
     for name,hexno in matplotlib.colors.cnames.items():
@@ -681,7 +681,7 @@ def getRandColor():
 
     k = random.choice(list(matplotcolor.keys()))
     if k in ignoreColor:
-        return getRandColor()
+        return getRandomColor()
     else:
         return k
 def writeCompartment(modelpath,compts,f):

@@ -18,7 +18,11 @@ Last-Updated: Fri Jul 28 15:50:00 2017(+0530)
           By:
 **********************************************************************/
 
+**********************************************************************/
+2019
+Jan 19: - returned errorMsg
 '''
+
 foundLibSBML_ = False
 try:
     from libsbml import *
@@ -29,13 +33,15 @@ except Exception as e:
 def validateModel(sbmlDoc):
     if sbmlDoc.getNumErrors() > 0:
         tobecontinued = False
+        validError = ""
         for i in range(0,sbmlDoc.getNumErrors()):
-            print (sbmlDoc.getError(i).getMessage())
-            return False
+            validError = validError+sbmlDoc.getError(i).getMessage()
+        #print (validError)
+        return False, validError
 
     if (not sbmlDoc):
         print("validateModel: given a null SBML Document")
-        return False
+        return False, "validateModel: given a null SBML Document"
 
     consistencyMessages = ""
     validationMessages = ""
@@ -86,7 +92,7 @@ def validateModel(sbmlDoc):
         validationMessages = oss
 
     if (noProblems):
-        return True
+        return True,""
     else:
         if consistencyMessages is None:
             consistencyMessages = ""
@@ -107,7 +113,7 @@ def validateModel(sbmlDoc):
     if validationMessages:
         print(validationMessages)
 
-    return False
+    return False,validationMessages
     # return ( numConsistencyErrors == 0 and numValidationErrors == 0,
     # consistencyMessages)
 

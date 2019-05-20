@@ -9,10 +9,105 @@ __version__          = "1.0.0"
 __maintainer__       = "Harsha Rani"
 __email__            = "hrani@ncbs.res.in"
 __status__           = "Development"
-__updated__          = "Nov 8 2018"
+__updated__          = "Mar 11 2019"
 
 import moose
 import numpy as np
+import pickle
+import matplotlib
+import os
+import random
+
+
+direct = os.path.dirname(__file__)
+colormap_file = open(os.path.join(direct, "rainbow2.pkl"), "r")  
+colorMap = pickle.loads(colormap_file.read().encode('utf8'))
+colormap_file.close()
+ignoreColor= ["mistyrose","antiquewhite","aliceblue","azure","bisque","black","blanchedalmond","blue","cornsilk","darkolivegreen","darkslategray","dimgray","floralwhite","gainsboro","ghostwhite","honeydew","ivory","lavender","lavenderblush","lemonchiffon","lightcyan","lightgoldenrodyellow","lightgray","lightyellow","linen","mediumblue","mintcream","navy","oldlace","papayawhip","saddlebrown","seashell","snow","wheat","white","whitesmoke","aquamarine","lightsalmon","moccasin","limegreen","snow","sienna","beige","dimgrey","lightsage"]
+matplotcolor = {}
+for name,hexno in matplotlib.colors.cnames.items():
+    matplotcolor[name]=hexno
+
+def getRandColor():
+    k = random.choice(matplotcolor.keys())
+    if k in ignoreColor:
+        return getRandColor()
+    else:
+        #return matplotcolor[k]
+        return str(matplotlib.colors.cnames[k])
+
+def getColor(iteminfo):
+    """ Getting a textcolor and background color for the given  mooseObject \
+        If textcolor is empty replaced with green \
+           background color is empty replaced with blue
+           if textcolor and background is same as it happend in kkit files \
+           replacing textcolor with random color\
+           The colors are not valid there are siliently replaced with some values \
+           but while model building can raise an exception
+    """
+    textcolor = moose.element(iteminfo).textColor
+    bgcolor   = moose.element(iteminfo).color
+    if(textcolor == ''): textcolor = 'green'
+    
+    if(bgcolor == ''): bgcolor = 'orange'
+
+    if(textcolor == bgcolor):
+        textcolor = getRandColor()
+
+    textcolor = colorCheck(textcolor)
+    bgcolor = colorCheck(bgcolor)
+    # if moose.exists(iteminfo):
+    #     moose.element(iteminfo).textColor = textcolor
+    # moose.element(iteminfo).color = bgcolor
+    return(textcolor,bgcolor)
+
+def colorCheck(fc_bgcolor):
+    """ textColor or background can be anything like string or tuple or list \
+        if string its taken as colorname further down in validColorcheck checked for valid color, \
+        but for tuple and list its taken as r,g,b value.
+    """
+    if isinstance(fc_bgcolor,str):
+        if fc_bgcolor.startswith("#"):
+            fc_bgcolor = fc_bgcolor
+        elif fc_bgcolor.isdigit():
+            """ color is int  a map from int to r,g,b triplets from pickled color map file """
+            tc = (int(fc_bgcolor))*2
+            if tc < len(colorMap):
+                pickledColor = colorMap[tc]
+            else:
+                pickledColor = (255, 0, 0)
+            fc_bgcolor = '#%02x%02x%02x' % (pickledColor)
+
+        elif fc_bgcolor.isalpha() or fc_bgcolor.isalnum():
+            fc_bgcolor = validColorcheck(fc_bgcolor)
+            
+        else:
+            for r in ['[',']','(',')']:
+                fc_bgcolor = fc_bgcolor.replace(r,"")
+            fc_bgcolor = fc_bgcolor.split(",")
+            c = 0
+            hexlist ="#"
+            for n in fc_bgcolor:
+                if c < 3:
+                    hexlist = hexlist+str("%02x" % int(n))
+                    c = c+1;
+            fc_bgcolor = hexlist
+        return(fc_bgcolor)
+
+def validColorcheck(color):
+    ''' 
+        Both in Qt4.7 and 4.8 if not a valid color it makes it as back but in 4.7 there will be a warning mssg which is taken here
+        checking if textcolor or backgroundcolor is valid color, if 'No' making white color as default
+        where I have not taken care for checking what will be backgroundcolor for textcolor or textcolor for backgroundcolor 
+    '''
+    #if QColor(color).isValid():
+    if matplotlib.colors.is_color_like(color):
+        if color == "blue":
+            color = "orange"
+        color =  matplotlib.colors.cnames[color.lower()]
+        return color
+    else:
+        return(matplotlib.colors.cnames["orange"])
 
 def xyPosition(objInfo,xory):
     try:
@@ -89,7 +184,7 @@ def setupMeshObj(modelRoot):
                 ymin = min(ycord)
                 ymax = max(ycord)
     return meshEntry,xmin,xmax,ymin,ymax,positionInfoExist,listOfitems
-
+            
 def getxyCord(xcord,ycord,list1,listOfitems):
     for item in list1:
         # if isinstance(item,Function):

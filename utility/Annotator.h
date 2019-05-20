@@ -23,6 +23,10 @@ class Annotator
 		double getY() const;
 		void setY( double v );
 		double getZ() const;
+		void setwidth( double v );
+		double getwidth() const;
+		void setheight( double v );
+		double getheight() const;
 		void setZ( double v );
 		string getNotes() const;
 		void setNotes( string v );
@@ -45,6 +49,8 @@ class Annotator
 		double x_;
 		double y_;
 		double z_;
+		double height_;
+		double width_;
 		string notes_;
 		string color_;
 		string textColor_;

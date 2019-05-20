@@ -16,5 +16,6 @@ add_library(utility
     Annotator.cpp
     Vec.cpp
     cnpy.cpp
+    fileutils.cpp
     #matrix_util.cpp
     )
