@@ -6,7 +6,7 @@
 # Maintainer: HarshaRani
 # Created: Mon Nov 12 09:38:09 2012 (+0530)
 # Version:
-# Last-Updated: Fri Sep 7 14:54:33 2017 (+0530)
+# Last-Updated: Fri Sep 20 00:54:33 2018 (+0530)
 #           By: Harsha
 #     Update #:
 # URL:
@@ -45,13 +45,18 @@
 
 ''''
 2018
-Sep 7: popup is closed if exist
+Sep 20 : Lot of duplicate code removed
+         Function call made when filename or filepath is passed in command line
+Sep 19 : From the cmd line if a directory is passed, then Gui opens up the dialog file for the folder, 
+         window is resized to maximum width, clean warning message if filename or path is wrong
+         Added model info QmessageBox
+Sep 7  : popup is closed if exist
 2017
-Aug 31: Pass file from the command to load into gui
-      : added dsolver in disableModel function is used to unset the solver for the model
-        into moose-gui which are not to be run.
+Aug 31 : Pass file from the command to load into gui
+       : added dsolver in disableModel function is used to unset the solver for the model
+         into moose-gui which are not to be run.
 
-Oct 5: clean up with round trip of dialog_exe
+Oct 5  : clean up with round trip of dialog_exe
 
 '''
 # Code:
@@ -196,6 +201,7 @@ class MWindow(QtGui.QMainWindow):
             pass
         else:
             cmdfilepath = os.path.abspath(sys.argv[1])
+
         try:
             sys.argv[2]
         except:
@@ -207,6 +213,7 @@ class MWindow(QtGui.QMainWindow):
             filepath,fileName = os.path.split(cmdfilepath)
             modelRoot,extension = os.path.splitext(fileName)
             if extension == '.py':
+                self.setWindowState(QtCore.Qt.WindowMaximized)
                 self.show()
                 self.createPopup()
                 freeCursor()
@@ -215,16 +222,23 @@ class MWindow(QtGui.QMainWindow):
                     QtGui.QApplication.restoreOverrideCursor()
                     return
             if not os.path.exists(cmdfilepath):
+                self.setWindowState(QtCore.Qt.WindowMaximized)
                 self.show()
                 self.createPopup()
-                reply = QtGui.QMessageBox.information(self,"Model file can not open","Check filename or filepath ",QtGui.QMessageBox.Ok)
+                reply = QtGui.QMessageBox.information(self,"Model file can not open","File Not Found \n \nCheck filename or filepath\n ",QtGui.QMessageBox.Ok)
                 if reply == QtGui.QMessageBox.Ok:
                     QtGui.QApplication.restoreOverrideCursor()
                     return
+            if os.path.isdir(cmdfilepath):
+                self.setWindowState(QtCore.Qt.WindowMaximized)
+                self.show()
+                self.loadModelDialogFunc(cmdfilepath)
+                
             else:
                 filePath = filepath+'/'+fileName
                 ret = loadFile(str(filePath), '%s' % (modelRoot), solver, merge=False)
-                self.objectEditSlot('/',False)
+                #self.objectEditSlot('/',False)
+                self.objectEditSlot(ret['model'].path,False)
                 pluginLookup = '%s/%s' % (ret['modeltype'], ret['subtype'])
                 try:
                     pluginName = subtype_plugin_map['%s/%s' % (ret['modeltype'], ret['subtype'])]
@@ -249,26 +263,10 @@ class MWindow(QtGui.QMainWindow):
 
                 modelAnno.dirpath = str(filepath)
                 self.setPlugin(pluginName, ret['model'].path)
+                self.setWindowState(QtCore.Qt.WindowMaximized)
                 self.show()
-                # if pluginName == 'kkit':
-                #     QtCore.QCoreApplication.sendEvent(self.plugin.getEditorView().getCentralWidget().view, QtGui.QKeyEvent(QtCore.QEvent.KeyPress, Qt.Qt.Key_A, Qt.Qt.NoModifier))
-                    
-                #     noOfCompt = len(moose.wildcardFind(ret['model'].path+'/##[ISA=ChemCompt]'))
-                #     grp = 0
-                #     for c in moose.wildcardFind(ret['model'].path+'/##[ISA=ChemCompt]'):
-                #         noOfGrp   = moose.wildcardFind(moose.element(c).path+'/#[TYPE=Neutral]')
-                #         grp = grp+len(noOfGrp)
-
-                #     noOfPool  = len(moose.wildcardFind(ret['model'].path+'/##[ISA=PoolBase]'))
-                #     noOfFunc  = len(moose.wildcardFind(ret['model'].path+'/##[ISA=Function]'))
-                #     noOfReac  = len(moose.wildcardFind(ret['model'].path+'/##[ISA=ReacBase]'))
-                #     noOfEnz   = len(moose.wildcardFind(ret['model'].path+'/##[ISA=EnzBase]'))
-                #     noOfStimtab  = len(moose.wildcardFind(ret['model'].path+'/##[ISA=StimulusTable]'))
-                    
-                #     reply = QtGui.QMessageBox.information(self,"Model Info","Model has : \n %s Compartment \t \n %s Group \t \n %s Pool  \t \n %s Function \t \n %s reaction \t \n %s Enzyme \t \n %s StimulusTable" %(noOfCompt, grp, noOfPool, noOfFunc, noOfReac, noOfEnz, noOfStimtab))
-                #     if reply == QtGui.QMessageBox.Ok:
-                #         QtGui.QApplication.restoreOverrideCursor()
-                #         return
+                if pluginName == 'kkit':
+                    self.displaymodelInfo(ret)
         else: 
             self.createPopup()
 
@@ -571,7 +569,6 @@ class MWindow(QtGui.QMainWindow):
         if name == 'kkit':
             self.objectEditDockWidget.objectNameChanged.connect(self.plugin.getEditorView().getCentralWidget().updateItemSlot)
             self.objectEditDockWidget.colorChanged.connect(self.plugin.getEditorView().getCentralWidget().updateColorSlot)
-
         self.setCurrentView('editor')
         freeCursor()
         return self.plugin
@@ -646,7 +643,8 @@ class MWindow(QtGui.QMainWindow):
         self.plugin.setCurrentView(view)
         if view =='run':
             #Harsha: This will clear out object editor's objectpath and make it invisible
-            self.objectEditSlot('/',False)
+            #self.objectEditSlot('/',False)
+            self.objectEditDockWidget.setVisible(False)
 
         targetView = None
         newSubWindow = True
@@ -1222,6 +1220,15 @@ class MWindow(QtGui.QMainWindow):
         for table in moose.wildcardFind( modelPath+'/data/graph#/#' ):
             table.tick = -1
 
+    def loadModelDialogFunc(self,directorypassed):
+        """ This is from command line the filepath and file name is passed
+        """
+        dialog = LoaderDialog(self,
+                               self.tr('Load model from file'),directorypassed)
+        
+        if dialog.exec_():
+            self.passtoPluginCheck(dialog)
+
     def loadModelDialogSlot(self):
         """Start a file dialog to choose a model file.
 
@@ -1245,66 +1252,48 @@ class MWindow(QtGui.QMainWindow):
         activeWindow = None # This to be used later to refresh the current widget with newly loaded model
         dialog = LoaderDialog(self,
                               self.tr('Load model from file'))
-
         if dialog.exec_():
-            valid = False
-            ret = []
-            ret,pluginName = self.checkPlugin(dialog)
+            self.passtoPluginCheck(dialog)
+
+    def passtoPluginCheck(self, dialog):
+        valid = False
+        ret = []
+        ret,pluginName = self.checkPlugin(dialog)
+        valid,ret = self.dialog_check(ret)
+
+        if valid == True:
+            modelAnno = moose.Annotator(ret['model'].path+'/info')
+            if ret['subtype']:
+                modelAnno.modeltype = ret['subtype']
+            else:
+                modelAnno.modeltype = ret['modeltype']
+            modelAnno.dirpath = str(dialog.directory().absolutePath())
+            self.loadedModelsAction(ret['model'].path,pluginName)
+            self.setPlugin(pluginName, ret['model'].path)
+            
             if pluginName == 'kkit':
-                if (ret['subtype'] == 'sbml' and ret['foundlib'] == False):
-                    reply = QtGui.QMessageBox.question(self, "python-libsbml is not found.","\n Read SBML is not possible.\n This can be installed using \n \n pip python-libsbml  or \n apt-get install python-libsbml",
-                                               QtGui.QMessageBox.Ok)
-                    if reply == QtGui.QMessageBox.Ok:
-                        QtGui.QApplication.restoreOverrideCursor()
-                        return
-                else:
-                    if ret['loaderror'] != "":
-                        reply = QtGui.QMessageBox.question(self, "Model can't be loaded", ret['loaderror']+" \n \n Do you want another file",
-                                                   QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
-                        if reply == QtGui.QMessageBox.Yes:
-                            dialog = LoaderDialog(self,self.tr('Load model from file'))
-                            if dialog.exec_():
-                                valid = False
-                                ret = []
-                                pluginName = None
-                                ret,pluginName = self.checkPlugin(dialog)
+                self.displaymodelInfo(ret)
+    
+    def displaymodelInfo(self,ret):
+        QtCore.QCoreApplication.sendEvent(self.plugin.getEditorView().getCentralWidget().view, QtGui.QKeyEvent(QtCore.QEvent.KeyPress, Qt.Qt.Key_A, Qt.Qt.NoModifier))
+        
+        noOfCompt = len(moose.wildcardFind(ret['model'].path+'/##[ISA=ChemCompt]'))
+        grp = 0
+        for c in moose.wildcardFind(ret['model'].path+'/##[ISA=ChemCompt]'):
+            noOfGrp   = moose.wildcardFind(moose.element(c).path+'/#[TYPE=Neutral]')
+            grp = grp+len(noOfGrp)
 
-                                valid, ret = self.dialog_check(ret)
-                        else:
-                            QtGui.QApplication.restoreOverrideCursor()
-                            return valid
-                    else:
+        noOfPool  = len(moose.wildcardFind(ret['model'].path+'/##[ISA=PoolBase]'))
+        noOfFunc  = len(moose.wildcardFind(ret['model'].path+'/##[ISA=Function]'))
+        noOfReac  = len(moose.wildcardFind(ret['model'].path+'/##[ISA=ReacBase]'))
+        noOfEnz   = len(moose.wildcardFind(ret['model'].path+'/##[ISA=EnzBase]'))
+        noOfStimtab  = len(moose.wildcardFind(ret['model'].path+'/##[ISA=StimulusTable]'))
+        
+        reply = QtGui.QMessageBox.information(self,"Model Info","Model has : \n %s Compartment \t \n %s Group \t \n %s Pool  \t \n %s Function \t \n %s reaction \t \n %s Enzyme \t \n %s StimulusTable" %(noOfCompt, grp, noOfPool, noOfFunc, noOfReac, noOfEnz, noOfStimtab))
+        if reply == QtGui.QMessageBox.Ok:
+            QtGui.QApplication.restoreOverrideCursor()
+            return
 
-                        valid = True
-            if valid == True:
-                modelAnno = moose.Annotator(ret['model'].path+'/info')
-                if ret['subtype']:
-                    modelAnno.modeltype = ret['subtype']
-                else:
-                    modelAnno.modeltype = ret['modeltype']
-                modelAnno.dirpath = str(dialog.directory().absolutePath())
-                self.loadedModelsAction(ret['model'].path,pluginName)
-                self.setPlugin(pluginName, ret['model'].path)
-                if pluginName == 'kkit':
-                    QtCore.QCoreApplication.sendEvent(self.plugin.getEditorView().getCentralWidget().view, QtGui.QKeyEvent(QtCore.QEvent.KeyPress, Qt.Qt.Key_A, Qt.Qt.NoModifier))
-                    
-                    noOfCompt = len(moose.wildcardFind(ret['model'].path+'/##[ISA=ChemCompt]'))
-                    grp = 0
-                    for c in moose.wildcardFind(ret['model'].path+'/##[ISA=ChemCompt]'):
-                        noOfGrp   = moose.wildcardFind(moose.element(c).path+'/#[TYPE=Neutral]')
-                        grp = grp+len(noOfGrp)
-
-                    noOfPool  = len(moose.wildcardFind(ret['model'].path+'/##[ISA=PoolBase]'))
-                    noOfFunc  = len(moose.wildcardFind(ret['model'].path+'/##[ISA=Function]'))
-                    noOfReac  = len(moose.wildcardFind(ret['model'].path+'/##[ISA=ReacBase]'))
-                    noOfEnz   = len(moose.wildcardFind(ret['model'].path+'/##[ISA=EnzBase]'))
-                    noOfStimtab  = len(moose.wildcardFind(ret['model'].path+'/##[ISA=StimulusTable]'))
-                    
-                    reply = QtGui.QMessageBox.information(self,"Model Info","Model has : \n %s Compartment \t \n %s Group \t \n %s Pool  \t \n %s Function \t \n %s reaction \t \n %s Enzyme \t \n %s StimulusTable" %(noOfCompt, grp, noOfPool, noOfFunc, noOfReac, noOfEnz, noOfStimtab))
-                    if reply == QtGui.QMessageBox.Ok:
-                        QtGui.QApplication.restoreOverrideCursor()
-                        return
-                    
     def checkPlugin(self,dialog):
         fileNames = dialog.selectedFiles()
         for fileName in fileNames:
@@ -1360,7 +1349,7 @@ class MWindow(QtGui.QMainWindow):
 
     def newModelDialogSlot(self):
         #Harsha: Create a new dialog widget for model building
-        if popup:
+        if self.popup:
             self.popup.close()
         newModelDialog = DialogWidget()
         if newModelDialog.exec_():
