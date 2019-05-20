@@ -6,7 +6,7 @@
 # Maintainer:
 # Created: Wed Jun 30 11:18:34 2010 (+0530)
 # Version:
-# Last-Updated: Tue Jun 19 11:05:59 2017 (+0530)
+# Last-Updated: Fri Feb 01 11:05:59 2017 (+0530)
 #           By: Harsha
 #     Update #: 
 # URL:
@@ -43,6 +43,7 @@
 # Fri May 17 23:45:59 2017 (+0530) - Harsha added, notes header,
 # Kd is calculated for the second order reaction and value is displayed
 # Tue Jun 18 12:10:54 IST 2018 - Harsha now group boundary color can be editable from the object editor
+# Mon Sep 10 16:21:00 IST 2018 - When name is edited, the editorTitle gets updated
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License as
@@ -76,11 +77,13 @@ import sys
 from collections import deque
 import traceback
 
-sys.path.append('../python')
+#sys.path.append('../python')
 import moose
 import defaults
 import config
-from plugins.kkitUtil import getColor
+#from plugins.kkitUtil import getColor
+from moose.chemUtil.chemConnectUtil import getColor
+
 #these fields will be ignored
 extra_fields = ['this',
                 'me',
@@ -174,10 +177,14 @@ class ObjectEditModel(QtCore.QAbstractTableModel):
             self.fields.append(fieldName)
         #harsha: For signalling models will be pulling out notes field from Annotator
         #        can updates if exist for other types also
-        if ( isinstance(self.mooseObject, moose.PoolBase)
-           or isinstance(self.mooseObject,moose.EnzBase) 
-           or isinstance(self.mooseObject,moose.Neutral)) :
-            self.fields.append("Color")
+        if (isinstance (self.mooseObject,moose.ChemCompt) or \
+            isinstance(self.mooseObject,moose.ReacBase)  or \
+            isinstance(moose.element(moose.element(self.mooseObject).parent),moose.EnzBase) \
+           ):
+            pass
+        else:
+             self.fields.append("Color")
+        
         flag = QtCore.Qt.ItemIsEnabled | QtCore.Qt.ItemIsSelectable | QtCore.Qt.ItemIsEditable
         self.fieldFlags[fieldName] = flag
 
@@ -432,7 +439,7 @@ class ObjectEditView(QtGui.QTableView):
     def setColor(self, color):
         self.colorButton.setStyleSheet(
                     "QPushButton {"
-                +   "background-color: {0}; color: {0};".format(color.name())
+                +   "background-color: {0}; color: {0};".format(color)
                 +   "}"
                                       )
         self.colorDialog.setCurrentColor(color)
@@ -522,7 +529,7 @@ class ObjectEditDockWidget(QtGui.QDockWidget):
 
     def emitObjectNameChanged(self, mobj):
         self.objectNameChanged.emit(mobj)
-
+        self.setWindowTitle('Edit:%s'%(mobj.path))
 def main():
     app = QtGui.QApplication(sys.argv)
     mainwin = QtGui.QMainWindow()

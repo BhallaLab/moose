@@ -5,12 +5,18 @@ __version__     =   "1.0.0"
 __maintainer__  =   "HarshaRani"
 __email__       =   "hrani@ncbs.res.in"
 __status__      =   "Development"
-__updated__     =   "Oct 18 2017"
+__updated__     =   "Oct 11 2018"
 
 '''
+2018
+Oct 11: when collision is handled an update of position is done
+Sep 28: spell corrected cyclMesh to cylMesh
+Sep 17: when vertical or horizontal layout is applied for group, compartment size is recalculated
+Sep 11: group size is calculated based on sceneBoundingRect for compartment size
+2017
 Oct 18  some of the function moved to this file from kkitOrdinateUtils
 '''
-from moose import Annotator,element
+from moose import Annotator,element,ChemCompt
 from kkitQGraphics import PoolItem, ReacItem,EnzItem,CplxItem,GRPItem,ComptItem
 from PyQt4 import QtCore,QtGui,QtSvg
 from PyQt4.QtGui import QColor
@@ -127,7 +133,6 @@ def moveX(reference, collider, layoutPt, margin):
     layoutPt.drawLine_arrow(itemignoreZooming=False)
 
 def handleCollisions(compartments, moveCallback, layoutPt,margin = 5.0):
-    
     if len(compartments) is 0 : return
     compartments = sorted(compartments, key = lambda c: c.sceneBoundingRect().center().x())
     reference = compartments.pop(0);
@@ -138,6 +143,19 @@ def handleCollisions(compartments, moveCallback, layoutPt,margin = 5.0):
                       )
     for collider in colliders:
         moveCallback(reference, collider, layoutPt,margin)
+    #print (reference.mobj).parent
+    if isinstance(element(((reference.mobj).parent)),ChemCompt):
+        v = layoutPt.qGraCompt[element(((reference.mobj).parent))]
+        #layoutPt.updateCompartmentSize(x)
+        rectcompt = calculateChildBoundingRect(v)
+        comptBoundingRect = v.boundingRect()
+        if not comptBoundingRect.contains(rectcompt):
+            layoutPt.updateCompartmentSize(v)
+                    
+        else:
+            rectcompt = calculateChildBoundingRect(v)
+            v.setRect(rectcompt.x()-10,rectcompt.y()-10,(rectcompt.width()+20),(rectcompt.height()+20))
+    layoutPt.positionChange(compartments)
     return handleCollisions(compartments, moveCallback, layoutPt,margin)
 
 def calculateChildBoundingRect(compt):
@@ -149,7 +167,6 @@ def calculateChildBoundingRect(compt):
     ypos = []
     xpos = []
     for l in compt.childItems():
-
         ''' All the children including pool,reac,enz,polygon(arrow),table '''
         if not isinstance(l,QtSvg.QGraphicsSvgItem):
             if (not isinstance(l,QtGui.QGraphicsPolygonItem)):
@@ -158,11 +175,18 @@ def calculateChildBoundingRect(compt):
                     xpos.append(l.pos().x())
                     ypos.append(l.pos().y()+l.boundingRect().bottomRight().y())
                     ypos.append(l.pos().y())
+
                 else:
+                    xpos.append(l.sceneBoundingRect().x())
+                    xpos.append(l.sceneBoundingRect().bottomRight().x())
+                    ypos.append(l.sceneBoundingRect().y())
+                    ypos.append(l.sceneBoundingRect().bottomRight().y())
+                    '''
                     xpos.append(l.rect().x())
                     xpos.append(l.boundingRect().bottomRight().x())
                     ypos.append(l.rect().y())
                     ypos.append(l.boundingRect().bottomRight().y())
+                    '''
         if (isinstance(l,PoolItem) or isinstance(l,EnzItem)):
             ''' For Enz cplx height and for pool function height needs to be taken'''
             for ll in l.childItems():
@@ -185,7 +209,7 @@ def mooseIsInstance(melement, classNames):
     return element(melement).__class__.__name__ in classNames
 
 def findCompartment(melement):
-    while not mooseIsInstance(melement, ["CubeMesh", "CyclMesh"]):
+    while not mooseIsInstance(melement, ["CubeMesh", "CylMesh"]):
         melement = melement.parent
     return melement
 
@@ -195,6 +219,6 @@ def findGroup(melement):
     return melement
 
 def findGroup_compt(melement):
-    while not (mooseIsInstance(melement, ["Neutral","CubeMesh", "CyclMesh"])):
+    while not (mooseIsInstance(melement, ["Neutral","CubeMesh", "CylMesh"])):
         melement = melement.parent
     return melement

@@ -5,9 +5,13 @@ __version__     =   "1.0.0"
 __maintainer__  =   "HarshaRani"
 __email__       =   "hrani@ncbs.res.in"
 __status__      =   "Development"
-__updated__     =   "Oct 18 2017"
+__updated__     =   "Oct 26 2018"
 
 '''
+2018
+Oct 26: xfer molecules are not put into screen
+Sep 28: to zoom the kkit co-ordinates a factor of w=1000 and h=800 is multipled here
+2017
 Oct 18: moved some function to kkitUtil
 getxyCord, etc function are added
 '''
@@ -20,6 +24,8 @@ import numpy as np
 import networkx as nx
 from kkitUtil import getRandColor,colorCheck,findCompartment, findGroup, findGroup_compt, mooseIsInstance
 from PyQt4.QtGui import QColor
+import re
+import moose._moose as moose
 
 def getxyCord(xcord,ycord,list1):
     for item in list1:
@@ -198,20 +204,20 @@ def setupMeshObj(modelRoot):
                 # n =n +1
     for compt in wildcardFind(modelRoot+'/##[ISA=ChemCompt]'):
         for m in wildcardFind(compt.path+'/##[ISA=PoolBase]'):
-            grp_cmpt = findGroup_compt(m)
-
-            xcord.append(xyPosition(m.path+'/info','x'))
-            ycord.append(xyPosition(m.path+'/info','y')) 
-            if isinstance(element(grp_cmpt),Neutral):
-                if isinstance(element(m.parent),EnzBase):
-                    populateMeshEntry(meshEntry,grp_cmpt,"cplx",m)
+            if not re.search("xfer",m.name):
+                grp_cmpt = findGroup_compt(m)
+                xcord.append(xyPosition(m.path+'/info','x'))
+                ycord.append(xyPosition(m.path+'/info','y'))
+                if isinstance(element(grp_cmpt),Neutral):
+                    if isinstance(element(m.parent),EnzBase):
+                        populateMeshEntry(meshEntry,grp_cmpt,"cplx",m)
+                    else:
+                        populateMeshEntry(meshEntry,grp_cmpt,"pool",m)
                 else:
-                    populateMeshEntry(meshEntry,grp_cmpt,"pool",m)
-            else:
-                if isinstance(element(m.parent),EnzBase):
-                    populateMeshEntry(meshEntry,compt,"cplx",m)
-                else:
-                    populateMeshEntry(meshEntry,compt,"pool",m)
+                    if isinstance(element(m.parent),EnzBase):
+                        populateMeshEntry(meshEntry,compt,"cplx",m)
+                    else:
+                        populateMeshEntry(meshEntry,compt,"pool",m)
         
         for r in wildcardFind(compt.path+'/##[ISA=ReacBase]'):
             rgrp_cmpt = findGroup_compt(r)
@@ -384,7 +390,6 @@ def countitems(mitems,objtype):
     return(uniqItems,countuniqItems)
 
 def recalculatecoordinatesforKkit(mObjlist,xcord,ycord):
-    
     positionInfoExist = not(len(np.nonzero(xcord)[0]) == 0 \
                         and len(np.nonzero(ycord)[0]) == 0)
 
@@ -399,8 +404,8 @@ def recalculatecoordinatesforKkit(mObjlist,xcord,ycord):
             if moose.exists(objInfo):
                 Ix = (xyPosition(objInfo,'x')-xmin)/(xmax-xmin)
                 Iy = (ymin-xyPosition(objInfo,'y'))/(ymax-ymin)
-                element(objInfo).x = Ix
-                element(objInfo).y = Iy  
+                element(objInfo).x = Ix*1000
+                element(objInfo).y = Iy*800  
         
 def xyPosition(objInfo,xory):
     try:
