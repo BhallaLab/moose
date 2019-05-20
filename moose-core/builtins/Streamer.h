@@ -49,6 +49,7 @@ public:
     void setFormat( string format );
 
     size_t getNumTables( void ) const;
+    size_t getNumWriteEvents( void ) const;
 
     void addTable( Id table );
     void addTables( vector<Id> tables);
@@ -74,6 +75,9 @@ private:
 
     string outfilePath_;
     string format_;
+
+    size_t numWriteEvents_;
+
     bool isOutfilePathSet_;
 
     // dt_ and tick number of Table's clock

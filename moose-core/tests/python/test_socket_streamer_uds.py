@@ -24,101 +24,81 @@ sys.path.append(os.path.dirname(__file__))
 import time
 import socket
 import numpy as np
-import threading
+import multiprocessing as mp
 import moose
+import moose.utils as mu
 import json
 import models
 from collections import defaultdict
-
-finish_all_ = False
 
 print( '[INFO] Using moose form %s' % moose.__file__ )
 
 sockFile_ = '/tmp/MOOSE'
 
-def get_msg(s, n=1024):
-    d = s.recv(n)
-    while(len(d) < n):
-        d1 = s.recv(n-len(d))
-        d += d1
-    return d
-
-def socket_client( ):
+def socket_client(done, q):
     # This function waits for socket to be available.
-    global finish_all_
     global sockFile_
-    s = socket.socket( socket.AF_UNIX, socket.SOCK_STREAM )
+    s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
     address = sockFile_
-    while 1:
-        if finish_all_:
-            print( '[INFO] MOOSE is done before I could connect' )
-            break
-        #  print('Py: Trying to connect to %s, %s' % (host, port))
-        #  print( end = '.' )
-        try:
-            s.connect( address )
-            break
-        except Exception as e:
-            pass
-
-    if not finish_all_:
-        print( 'Py: Connected with socket.' )
+    while not os.path.exists(address):
+        if done.value == 1:
+            return
+        continue
+    s.connect( address )
+    print( 'Py: Connected with socket. %s' % sockFile_ )
 
     # This is client reponsibility to read the data.
+    print( 'Py: Fetching...' )
     data = b''
-    s.settimeout(1)
-    while not finish_all_:
+    s.settimeout(0.01)
+    while True:
         try:
-            d = get_msg(s, 1024)
-            data += d
-        except socket.timeout as e:
-            pass
+            data += s.recv(64)
+        except socket.timeout:
+            print('x', end = '' )
+
+        if done.value == 1:
+            print( 'Simulation is over' )
+            break
     s.close()
-
-    assert data, "No data streamed"
-    res = defaultdict(list)
-    for x in data.split(b'\n'):
-        if not x.strip():
-            continue
-        x = x.decode( 'utf8' )
-        try:
-            d = json.loads(x)
-        except Exception as e:
-            print( data )
-            raise e
-        for k, v in d.items():
-            res[k] += v
-
-    expected = {u'/compt/tabB/tabC': ([25.,1.07754388], [14.71960144,  0.16830373])
-            , u'/compt/a/tab': ([25., 0.42467006], [14.71960144,  0.16766705])
-            , u'/compt/tabB': ([25.,  2.57797725], [14.71960144,  0.16842971])
-            }
-    nd = {}
-    for k in res:
-        v = res[k]
-        nd[k] = (np.mean(v, axis=0), np.std(v, axis=0))
-        assert np.isclose(expected[k], nd[k]).all(), \
-                "Exptected %s, got %s" % (str(expected[k]), str(nd[k]))
+    if not data:
+        print("No data streamed")
+        done.value = 1
+        q.put({})
+        return
+    res = mu.decode_data(data)
+    q.put(res)
 
 def test():
-    global finish_all_
-    client = threading.Thread(target=socket_client, args=())
-    #client.daemon = True
+    q = mp.Queue()
+    done = mp.Value( 'd', 0.0)
+    client = mp.Process(target=socket_client, args=(done, q))
     client.start()
     print( '[INFO] Socket client is running now' )
-    tables = models.simple_model_a()
+    time.sleep(0.1)
+
     # Now create a streamer and use it to write to a stream
-    os.environ['MOOSE_STREAMER_ADDRESS'] = 'file:///tmp/moose' 
+    os.environ['MOOSE_STREAMER_ADDRESS'] = 'file://%s' % sockFile_
+    models.simple_model_a()
 
     # Give some time for socket client to make connection.
     moose.reinit()
     moose.start(50)
     time.sleep(0.1)
-    finish_all_ = True
-    print( 'MOOSE is done' )
+    done.value = 1
+
+    res = q.get()
+    if not res:
+        raise RuntimeWarning( 'Nothing was streamed')
+    for k in res:
+        aWithTime = res[k]
+        a = aWithTime[1::2]
+        b = moose.element(k).vector
+        print(k, len(a), len(b))
+        assert (a == b).all()
+
     # sleep for some time so data can be read.
     client.join()
-    print( 'Test 2 passed' )
 
 def main( ):
     test()

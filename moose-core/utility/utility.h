@@ -25,6 +25,9 @@ namespace moose
     const map<std::string, std::string>& getArgMap();
     string getEnv( const string& env);
 
+    // In fileutils.cpp
+    bool filepath_exists( const string& path );
+
     /**
      * @brief Givem path of MOOSE element, return its name. It's behaviour is
      * like `basename` of unix command e.g. /a/b/c --> c

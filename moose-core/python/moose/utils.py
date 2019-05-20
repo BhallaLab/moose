@@ -338,8 +338,10 @@ def autoposition(root):
 
 def loadModel(filename, target,method='ee'):
     moose.loadModel(filename,target)
-    moose.mooseaddChemSolver(target,method)
-	
+    moose.mooseAddChemSolver(target,method)
+    if moose.exists(target+'/kinetics/info'):
+        moose.element(target+'/kinetics/info').solver = method
+
 def readcell_scrambled(filename, target, method='ee'):
     """A special version for handling cases where a .p file has a line
     with specified parent yet to be defined.

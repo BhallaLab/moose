@@ -32,7 +32,18 @@ const Cinfo* Annotator::initCinfo()
 			&Annotator::setZ,
 			&Annotator::getZ
 		);
-
+		static ValueFinfo< Annotator, double > width(
+			"width",
+			"width field. Typically display width",
+			&Annotator::setwidth,
+			&Annotator::getwidth
+		);
+		static ValueFinfo< Annotator, double > height(
+			"height",
+			"height field. Typically display height",
+			&Annotator::setheight,
+			&Annotator::getheight
+		);
 		static ValueFinfo< Annotator, string > notes(
 			"notes",
 			"A string to hold some text notes about parent object",
@@ -91,6 +102,8 @@ const Cinfo* Annotator::initCinfo()
 		&x,	// Value
 		&y,	// Value
 		&z,	// Value
+		&width,
+		&height,
 		&notes,	// Value
 		&color,	// Value
 		&textColor,	// Value
@@ -116,7 +129,7 @@ const Cinfo* Annotator::initCinfo()
 static const Cinfo* annotatorCinfo = Annotator::initCinfo();
 
 Annotator::Annotator()
-	: x_( 0.0 ), y_( 0.0 ), z_( 0.0 ),
+	: x_( 0.0 ), y_( 0.0 ), z_( 0.0 ), width_( 0.0 ), height_( 0.0 ),
 		notes_( "" ), color_( "white" ), textColor_( "black" ),
 		icon_( "sphere" ),solver_( "ee"),runtime_(100.0),dirpath_(""),modeltype_("")
 {
@@ -151,6 +164,26 @@ double Annotator::getZ() const
 void Annotator::setZ( double v )
 {
 	z_ = v;
+}
+
+double Annotator::getheight() const
+{
+	return height_;
+}
+
+void Annotator::setheight( double v )
+{
+	height_ = v;
+}
+
+double Annotator::getwidth() const
+{
+	return width_;
+}
+
+void Annotator::setwidth( double v )
+{
+	width_ = v;
 }
 
 string Annotator::getNotes() const

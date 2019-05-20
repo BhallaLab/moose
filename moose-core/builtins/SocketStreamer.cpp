@@ -66,25 +66,25 @@ const Cinfo* SocketStreamer::initCinfo()
     static DestFinfo addTable(
         "addTable"
         , "Add a table to SocketStreamer"
-        , new OpFunc1<SocketStreamer, Id>(&SocketStreamer::addTable)
+        , new OpFunc1<SocketStreamer, ObjId>(&SocketStreamer::addTable)
     );
 
     static DestFinfo addTables(
         "addTables"
         , "Add many tables to SocketStreamer"
-        , new OpFunc1<SocketStreamer, vector<Id> >(&SocketStreamer::addTables)
+        , new OpFunc1<SocketStreamer, vector<ObjId> >(&SocketStreamer::addTables)
     );
 
     static DestFinfo removeTable(
         "removeTable"
         , "Remove a table from SocketStreamer"
-        , new OpFunc1<SocketStreamer, Id>(&SocketStreamer::removeTable)
+        , new OpFunc1<SocketStreamer, ObjId>(&SocketStreamer::removeTable)
     );
 
     static DestFinfo removeTables(
         "removeTables"
         , "Remove tables -- if found -- from SocketStreamer"
-        , new OpFunc1<SocketStreamer, vector<Id>>(&SocketStreamer::removeTables)
+        , new OpFunc1<SocketStreamer, vector<ObjId>>(&SocketStreamer::removeTables)
     );
 
     /*-----------------------------------------------------------------------------
@@ -134,12 +134,9 @@ static const Cinfo* tableStreamCinfo = SocketStreamer::initCinfo();
 SocketStreamer::SocketStreamer() :
      currTime_(0.0)
     , numMaxClients_(1)
-    , sockType_ ( UNIX_DOMAIN_SOCKET )
     , sockfd_(-1)
     , clientfd_(-1)
-    , ip_( TCP_SOCKET_IP )
-    , port_( TCP_SOCKET_PORT )
-    , address_ ( "file://MOOSE" )
+    , sockInfo_( MooseSocketInfo( "file://MOOSE" ) )
 {
     clk_ = reinterpret_cast<Clock*>( Id(1).eref().data() );
 
@@ -150,7 +147,6 @@ SocketStreamer::SocketStreamer() :
     tableIds_.resize(0);
     tableTick_.resize(0);
     tableDt_.resize(0);
-
 }
 
 SocketStreamer& SocketStreamer::operator=( const SocketStreamer& st )
@@ -167,36 +163,29 @@ SocketStreamer::~SocketStreamer()
     if(sockfd_ > 0)
     {
         LOG(moose::debug, "Closing socket " << sockfd_ );
-        shutdown(sockfd_, SHUT_RD);
+        shutdown(sockfd_, SHUT_RDWR);
         close(sockfd_);
 
-        if( sockType_ == UNIX_DOMAIN_SOCKET )
-            ::unlink( unixSocketFilePath_.c_str() );
+        if( sockInfo_.type == UNIX_DOMAIN_SOCKET )
+            ::unlink( sockInfo_.filepath.c_str() );
     }
 
-    if( processThread_.joinable() )
+    if( processThread_.joinable())
         processThread_.join();
+
+    // Close the client as well.
+    if( clientfd_ > -1 )
+    {
+        shutdown(clientfd_, SHUT_RDWR);
+        close(clientfd_);
+    }
 }
 
-/* --------------------------------------------------------------------------*/
-/**
- * @Synopsis  Stop a thread.
- * See: http://www.bo-yang.net/2017/11/19/cpp-kill-detached-thread
- *
- * @Param tname name of thread.
- */
-/* ----------------------------------------------------------------------------*/
-//void SocketStreamer::stopThread(const std::string& tname)
-//{
-//    ThreadMap::const_iterator it = tm_.find(tname);
-//    if (it != tm_.end())
-//    {
-//        it->second.std::thread::~thread(); // thread not killed
-//        tm_.erase(tname);
-//        LOG(moose::debug, "Thread " << tname << " killed." );
-//    }
-//}
-
+void SocketStreamer::addStringToDoubleVec(vector<double>&res, const string s)
+{
+    for(char c : s)
+        res.push_back((double)c);
+}
 
 /* --------------------------------------------------------------------------*/
 /**
@@ -217,17 +206,16 @@ void SocketStreamer::listenToClients(size_t numMaxClients)
 
 void SocketStreamer::initServer( void )
 {
-    setSocketType( );
-    if( sockType_ == UNIX_DOMAIN_SOCKET )
+    if( sockInfo_.type == UNIX_DOMAIN_SOCKET )
         initUDSServer();
     else
         initTCPServer();
 
-    LOG(moose::debug,  "Successfully created SocketStreamer server: " << sockfd_);
+    LOG(moose::info,  "Successfully initialized streamer socket: " << sockfd_);
 
     //  Listen for incoming clients. This function does nothing if connection is
     //  already made.
-    listenToClients(2);
+    listenToClients(1);
 }
 
 void SocketStreamer::configureSocketServer( )
@@ -236,7 +224,7 @@ void SocketStreamer::configureSocketServer( )
     // for details. We are making it 'reusable'.
     int on = 1;
 
-#ifdef SO_REUSEADDR
+#ifdef SO_REUSEPORT
     if(0 > setsockopt(sockfd_, SOL_SOCKET, SO_REUSEPORT, (const char *)&on, sizeof(on)))
         LOG(moose::warning, "Warn: setsockopt() failed");
 #endif
@@ -257,30 +245,39 @@ void SocketStreamer::initUDSServer( void )
 
     if( sockfd_ > 0 )
     {
-        unixSocketFilePath_ = address_.substr(7); bzero(&sockAddrUDS_, sizeof(sockAddrUDS_));
+        bzero(&sockAddrUDS_, sizeof(sockAddrUDS_));
         sockAddrUDS_.sun_family = AF_UNIX;
-        strncpy(sockAddrUDS_.sun_path, unixSocketFilePath_.c_str(), sizeof(sockAddrUDS_.sun_path)-1);
+        strncpy(sockAddrUDS_.sun_path, sockInfo_.filepath.c_str(), sizeof(sockAddrUDS_.sun_path)-1);
         configureSocketServer();
 
         // Bind. Make sure bind is not std::bind
         if(0 > ::bind(sockfd_, (struct sockaddr*) &sockAddrUDS_, sizeof(sockAddrUDS_)))
         {
             isValid_ = false;
-            LOG(moose::warning, "Warn: Failed to create socket at " << unixSocketFilePath_
+            LOG(moose::warning, "Warn: Failed to create socket at " << sockInfo_.filepath
                 << ". File descriptor: " << sockfd_
                 << ". Erorr: " << strerror(errno)
                );
         }
+
+        if(! moose::filepath_exists(sockInfo_.filepath))
+        {
+            LOG( moose::warning, "No file " << sockInfo_.filepath << " exists." );
+            isValid_ = false;
+        }
     }
 
     if( (! isValid_) || (sockfd_ < 0) )
-        ::unlink( unixSocketFilePath_.c_str() );
+    {
+        LOG( moose::warning, "Failed to create socket : " << sockInfo_ );
+        ::unlink( sockInfo_.filepath.c_str() );
+    }
 }
 
 void SocketStreamer::initTCPServer( void )
 {
     // Create a blocking socket.
-    LOG( moose::debug, "Creating TCP socket on port: "  << port_ );
+    LOG( moose::debug, "Creating TCP socket on port: "  << sockInfo_.port );
     sockfd_ = socket(AF_INET, SOCK_STREAM, 0);
     if( 0 > sockfd_ )
     {
@@ -293,20 +290,38 @@ void SocketStreamer::initTCPServer( void )
     bzero((char*) &sockAddrTCP_, sizeof(sockAddrTCP_));
     sockAddrTCP_.sin_family = AF_INET;
     sockAddrTCP_.sin_addr.s_addr = INADDR_ANY;
-    sockAddrTCP_.sin_port = htons( port_ );
+    sockAddrTCP_.sin_port = htons( sockInfo_.port );
 
     // Bind. Make sure bind is not std::bind
     if(0 > ::bind(sockfd_, (struct sockaddr*) &sockAddrTCP_, sizeof(sockAddrTCP_)))
     {
         isValid_ = false;
-        LOG(moose::warning, "Warn: Failed to create server at " << ip_ << ":" << port_
-            << ". File descriptor: " << sockfd_
-            << ". Erorr: " << strerror(errno)
+        LOG(moose::warning, "Warn: Failed to create server at "
+                << sockInfo_.host << ":" << sockInfo_.port
+                << ". File descriptor: " << sockfd_
+                << ". Erorr: " << strerror(errno)
            );
         return;
     }
 }
 
+/* --------------------------------------------------------------------------*/
+/**
+ * @Synopsis  Convert data to JSON.
+ *
+ * @Returns JSON representation.
+ */
+/* ----------------------------------------------------------------------------*/
+void SocketStreamer::dataToStream(map<string, vector<double>>& data)
+{
+    for( size_t i = 0; i < tables_.size(); i++)
+    {
+        vector<double> vec;
+        tables_[i]->collectData(vec, true, false);
+        if( ! vec.empty() )
+            data[columns_[i+1]] = vec;
+    }
+}
 
 /* --------------------------------------------------------------------------*/
 /**
@@ -316,99 +331,96 @@ void SocketStreamer::initTCPServer( void )
  *          on a successful return from this function.
  */
 /* ----------------------------------------------------------------------------*/
-bool SocketStreamer::streamData( )
+int SocketStreamer::streamData( )
 {
-    if( clientfd_ > 0)
+    map<string, vector<double>> data;
+    dataToStream(data);
+
+    if(data.empty())
     {
-        buffer_ += dataToString();
-
-        if( buffer_.size() < frameSize_ )
-            buffer_ += string(frameSize_-buffer_.size(), ' ');
-
-        string toSend = buffer_.substr(0, frameSize_);
-
-        int sent = send(clientfd_, buffer_.substr(0, frameSize_).c_str(), frameSize_, MSG_MORE);
-        buffer_ = buffer_.erase(0, sent);
-
-        assert( sent == (int)frameSize_);
-        LOG(moose::debug, "Sent " << sent << " bytes." );
-
-        if(0 > sent)
-        {
-            LOG(moose::warning, "Failed to send. Error: " << strerror(errno)
-                << ". client id: " << clientfd_ );
-            return false;
-        }
-
-        // clear up the tables.
-        for( auto t : tables_ )
-            t->clearVec();
-        return true;
-    }
-    else
-        LOG(moose::warning, "No client found to stream data. ClientFD: " << clientfd_ );
-
-    return false;
-}
-
-/* --------------------------------------------------------------------------*/
-/**
- * @Synopsis  Convert table to string (use scientific notation).
- *
- * @Returns String in JSON like format.
- */
-/* ----------------------------------------------------------------------------*/
-string SocketStreamer::dataToString( )
-{
-    stringstream ss;
-    // Enabling this would be require quite a lot of characters to be streamed.
-    //ss.precision( 7 );
-    //ss << std::scientific;
-    vector<double> data;
-
-    // Else stream the data.
-    ss << "{";
-    for( size_t i = 0; i < tables_.size(); i++)
-    {
-        ss << "\"" << columns_[i+1] << "\":[";
-        ss << tables_[i]->toJSON(true);
-        ss << "],";
+        LOG(moose::debug, "No data in tables.");
+        return 0;
     }
 
-    // remove , at the end else it won't be a valid JSON.
-    string res = ss.str();
-    if( ',' == res.back())
-        res.pop_back();
-    res += "}\n";
-    return res;
+    // Construct a void* array to send over the socket. Serialize the data.
+    // e.g. H 10 / a / t a b l e / a V 4 0.1 0.2 0.3 0.2
+    // H => Header start (chars)
+    // V => Value starts (double)
+    for(auto v: data)
+    {
+        // First header.
+        vecToStream_.push_back((double)'H');
+        vecToStream_.push_back(v.first.size());
+        addStringToDoubleVec(vecToStream_, v.first);
+
+        // Now data.
+        vecToStream_.push_back((double)'V');
+        vecToStream_.push_back(v.second.size());
+        vecToStream_.insert(vecToStream_.end(), v.second.begin(), v.second.end());
+    }
+
+    size_t dtypeSize = sizeof(double);
+    int sent = send(clientfd_, (void*) &vecToStream_[0], dtypeSize*vecToStream_.size(), MSG_MORE);
+    LOG(moose::debug, "Sent " << sent << " bytes." );
+    if( sent < 0 )
+        return errno;
+
+    vecToStream_.erase(vecToStream_.begin(), vecToStream_.begin()+(sent/dtypeSize));
+    return 0;
 }
+
 
 bool SocketStreamer::enoughDataToStream(size_t minsize)
 {
     for( size_t i = 0; i < tables_.size(); i++)
-        if(tables_[i]->getVec().size() >= minsize )
+        if(tables_[i]->getVec().size() >= minsize)
             return true;
     return false;
 }
 
-void SocketStreamer::connectAndStream( )
+void SocketStreamer::connect( )
 {
-    currTime_ = clk_->getCurrentTime();
-
     // If server was invalid then there is no point.
     if( ! isValid_ )
-    {
-        LOG( moose::error, "Server could not set up." );
         return;
+
+    struct sockaddr_storage clientAddr;
+    socklen_t addrLen = sizeof(clientAddr);
+    clientfd_ = ::accept(sockfd_,(struct sockaddr*) &clientAddr, &addrLen);
+    assert( clientfd_ );
+
+    char ipstr[INET6_ADDRSTRLEN];
+    int port = -1;
+    // deal with both IPv4 and IPv6:
+    if (clientAddr.ss_family == AF_INET)
+    {
+        struct sockaddr_in *s = (struct sockaddr_in *)&clientAddr;
+        port = ntohs(s->sin_port);
+        inet_ntop(AF_INET, &s->sin_addr, ipstr, sizeof ipstr);
+    }
+    else
+    { // AF_INET6
+        struct sockaddr_in6 *s = (struct sockaddr_in6 *)&clientAddr;
+        port = ntohs(s->sin6_port);
+        inet_ntop(AF_INET6, &s->sin6_addr, ipstr, sizeof ipstr);
     }
 
-    // Now lets get into a loop to stream data.
-    while( (! all_done_) )
+    LOG(moose::info, "Connected to " << ipstr << ':' << port);
+    return;
+}
+
+void SocketStreamer::stream( void )
+{
+    if(clientfd_ > 0)
     {
-        clientfd_ = ::accept(sockfd_, NULL, NULL);
-        if( clientfd_ >= 0 )
-            streamData();
+        if( EPIPE == streamData() )
+        {
+            LOG( moose::warning, "Broken pipe. Couldn't stream." );
+            return;
+        }
     }
+    else
+        LOG( moose::warning, "No client." );
 }
 
 /**
@@ -443,7 +455,10 @@ void SocketStreamer::reinit(const Eref& e, ProcPtr p)
 
     // Launch a thread in background which monitors the any client trying to
     // make connection to server.
-    processThread_ = std::thread(&SocketStreamer::connectAndStream, this);
+    processThread_ = std::thread(&SocketStreamer::connect, this);
+
+    // NOw introduce some delay.
+    timeStamp_ = std::chrono::high_resolution_clock::now();
 }
 
 /**
@@ -454,8 +469,10 @@ void SocketStreamer::reinit(const Eref& e, ProcPtr p)
  */
 void SocketStreamer::process(const Eref& e, ProcPtr p)
 {
-    // It does nothing. See the connectAndStream function.
-    ;
+    // processTickMicroSec = std::chrono::duration_cast<std::chrono::microseconds>(
+            // std::chrono::high_resolution_clock::now() - timeStamp_).count();
+    // timeStamp_ = std::chrono::high_resolution_clock::now();
+    stream();
 }
 
 /**
@@ -463,7 +480,7 @@ void SocketStreamer::process(const Eref& e, ProcPtr p)
  *
  * @param table Id of table.
  */
-void SocketStreamer::addTable( Id table )
+void SocketStreamer::addTable( ObjId table )
 {
     // If this table is not already in the vector, add it.
     for( size_t i = 0; i < tableIds_.size(); i++)
@@ -488,29 +505,21 @@ void SocketStreamer::addTable( Id table )
  *
  * @param tables
  */
-void SocketStreamer::addTables( vector<Id> tables )
-{
-    if( tables.size() == 0 )
-        return;
-    for( vector<Id>::const_iterator it = tables.begin(); it != tables.end(); it++)
-        addTable( *it );
-}
-
 void SocketStreamer::addTables( vector<ObjId> tables )
 {
     if( tables.size() == 0 )
         return;
-    for( auto t : tables )
-        addTable( Id(t) );
-}
 
+    for(auto t : tables)
+        addTable(t);
+}
 
 /**
  * @brief Remove a table from SocketStreamer.
  *
  * @param table. Id of table.
  */
-void SocketStreamer::removeTable( Id table )
+void SocketStreamer::removeTable( ObjId table )
 {
     int matchIndex = -1;
     for (size_t i = 0; i < tableIds_.size(); i++)
@@ -530,32 +539,14 @@ void SocketStreamer::removeTable( Id table )
     }
 }
 
-/* --------------------------------------------------------------------------*/
-/**
- * @Synopsis  Determines socket type from the given address.
- */
-/* ----------------------------------------------------------------------------*/
-void SocketStreamer::setSocketType( )
-{
-    LOG( moose::debug,  "Socket address is " << address_ );
-    if( "file://" == address_.substr(0, 7))
-        sockType_ = UNIX_DOMAIN_SOCKET;
-    else if( "http://" == address_.substr(0,7))
-        sockType_ = TCP_SOCKET;
-    else
-        sockType_ = UNIX_DOMAIN_SOCKET;
-    return;
-}
-
 /**
  * @brief Remove multiple tables -- if found -- from SocketStreamer.
  *
  * @param tables
  */
-void SocketStreamer::removeTables( vector<Id> tables )
+void SocketStreamer::removeTables( vector<ObjId> tables )
 {
-    for( vector<Id>::const_iterator it = tables.begin(); it != tables.end(); it++)
-        removeTable( *it );
+    for(auto &t: tables) removeTable(t);
 }
 
 /**
@@ -571,21 +562,20 @@ size_t SocketStreamer::getNumTables( void ) const
 
 void SocketStreamer::setPort( const size_t port )
 {
-    port_ = port;
+    sockInfo_.port = port;
 }
 
 size_t SocketStreamer::getPort( void ) const
 {
-    assert( port_ > 1 );
-    return port_;
+    return sockInfo_.port;
 }
 
 void SocketStreamer::setAddress( const string addr )
 {
-    address_ = addr;
+    sockInfo_.setAddress(addr);
 }
 
 string SocketStreamer::getAddress( void ) const
 {
-    return address_;
+    return sockInfo_.address;
 }

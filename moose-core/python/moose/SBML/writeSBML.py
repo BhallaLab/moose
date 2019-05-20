@@ -13,10 +13,12 @@
 **           copyright (C) 2003-2017 Upinder S. Bhalla. and NCBS
 Created : Friday May 27 12:19:00 2016(+0530)
 Version
-Last-Updated: Tue 3 Dec 15:15:10 2018(+0530)
+Last-Updated: Tue 29 Jan 15:15:10 2019(+0530)
           By: HarshaRani
 **********************************************************************/
 /****************************
+2019
+Jan 29: getColor are taken from chemConnectUtil, group's width and height are written
 2018
 Dec 07: using fixXreac's restoreXreacs function to remove xfer
 Dec 03: add diff and motor constants to pool
@@ -47,9 +49,10 @@ import re
 import os
 import moose
 from moose.SBML.validation import validateModel
-from moose.chemUtil.chemConnectUtil import *
+from moose.chemUtil.chemConnectUtil import xyPosition,mooseIsInstance,findCompartment,getColor,setupItem
 from moose.chemUtil.graphUtils import *
 from moose.fixXreacs import restoreXreacs
+import numpy as np
 
 foundLibSBML_ = False
 try:
@@ -98,6 +101,7 @@ def mooseWriteSBML(modelpath, filename, sceneitems={}):
                 if moose.exists(p.path+'/info'):
                     xcord.append(moose.element(p.path+'/info').x)
                     ycord.append(moose.element(p.path+'/info').y)
+                    getColor(moose.element(p.path+'/info').path)
         recalculatecoordinates(modelpath,mObj,xcord,ycord)
     positionInfoexist = False
 
@@ -158,8 +162,8 @@ def mooseWriteSBML(modelpath, filename, sceneitems={}):
                 mplugin = cremodel_.getPlugin("groups")
                 group = mplugin.createGroup()
                 name = str(idBeginWith(moose.element(key).name))
-                moosegrpId = name +"_" + str(moose.element(key).getId().value) + "_" + str(moose.element(key).getDataIndex())
-                group.setId(moosegrpId)
+                moosegrpId = name +"_" + str(moose.element(key).getId().value) + "_" + str(moose.element(key).getDataIndex())+"_"
+                group.setId(moosegrpId) 
                 group.setName(name)
 
                 group.setKind("collection")
@@ -167,13 +171,32 @@ def mooseWriteSBML(modelpath, filename, sceneitems={}):
                     ginfo = moose.element(key.path+'/info')
                 else:
                     ginfo = moose.Annotator(key.path+'/info')
+                
                 groupCompartment = findCompartment(key)
+                
                 grpAnno = "<moose:GroupAnnotation>"
-                grpAnno = grpAnno + "<moose:Compartment>" + groupCompartment.name + "</moose:Compartment>\n"
+                grpAnno = grpAnno + "<moose:Compartment>" + groupCompartment.name +"_"+ str(moose.element(groupCompartment).getId().value) +"_"+ str(moose.element(groupCompartment).getDataIndex())+"_"+"</moose:Compartment>\n"
+                #grpAnno = grpAnno + "<moose:Compartment>" + groupCompartment.name + "_" + str(moose.element(groupCompartment).getId().value) + "_" + str(moose.element(groupCompartment).getDataIndex()) + "_"+ "</moose:Compartment>\n"
                 if moose.element(key.parent).className == "Neutral":
+
                     grpAnno = grpAnno + "<moose:Group>" + key.parent.name + "</moose:Group>\n"
-                if ginfo.color:
-                    grpAnno = grpAnno + "<moose:bgColor>" + ginfo.color + "</moose:bgColor>\n"
+                    grpparent = key.parent.name + "_" + str(moose.element(key.parent).getId().value) + "_" + str(moose.element(key.parent).getDataIndex()) + "_"
+                    grpAnno = grpAnno + "<moose:Parent>" + grpparent + "</moose:Parent>\n"
+                else:
+                    grpparent = groupCompartment.name + "_" + str(moose.element(groupCompartment).getId().value) + "_" + str(moose.element(groupCompartment).getDataIndex()) + "_"
+                    grpAnno = grpAnno + "<moose:Parent>" + grpparent + "</moose:Parent>\n"
+                
+                if moose.exists(key.path+'/info'):
+                    ginfo = moose.element(key.path+'/info')
+                    if ginfo.height and ginfo.width:
+                        grpAnno = grpAnno + "<moose:x>" + str(ginfo.x) + "</moose:x>\n"
+                        grpAnno = grpAnno + "<moose:y>" + str(ginfo.y) + "</moose:y>\n"
+                        grpAnno = grpAnno + "<moose:width>" + str(ginfo.width) + "</moose:width>\n"
+                        grpAnno = grpAnno + "<moose:height>" + str(ginfo.height) + "</moose:height>\n"
+                    if ginfo.color:
+                        grpAnno = grpAnno + "<moose:bgColor>" + ginfo.color + "</moose:bgColor>\n"
+                    if ginfo.notes:
+                        grpAnno = grpAnno + "<moose:Notes>" + ginfo.notes + "</moose:Notes>\n"
                 grpAnno = grpAnno + "</moose:GroupAnnotation>"
                 group.setAnnotation(grpAnno)
 
@@ -1048,8 +1071,12 @@ def writeCompt(modelpath, cremodel_):
                                     "<moose:surround>" + \
                                     str(comptID_sbml[compt.surround])+ "</moose:surround>\n" + \
                                     "<moose:isMembraneBound>" + \
-                                    str(compt.isMembraneBound)+ "</moose:isMembraneBound>\n" + \
-                                    "</moose:CompartmentAnnotation>"
+                                    str(compt.isMembraneBound)+ "</moose:isMembraneBound>\n" 
+                if moose.exists(compt.path+'/info'):
+                    if moose.element(compt.path+'/info').notes != "":
+                        comptAnno = comptAnno + "<moose:Notes>" \
+                        + moose.element(compt.path+'/info').notes + "</moose:Notes>"
+                comptAnno = comptAnno+ "</moose:CompartmentAnnotation>"
         elif isinstance (compt,moose.CylMesh) :
             size = (compt.volume/compt.numDiffCompts)*pow(10,3)
             comptAnno = "<moose:CompartmentAnnotation><moose:Mesh>" + \
@@ -1059,14 +1086,22 @@ def writeCompt(modelpath, cremodel_):
                                 "<moose:diffLength>" + \
                                 str(compt.diffLength)+ "</moose:diffLength>\n" + \
                                 "<moose:isMembraneBound>" + \
-                                str(compt.isMembraneBound)+ "</moose:isMembraneBound>\n" + \
-                                "</moose:CompartmentAnnotation>"
+                                str(compt.isMembraneBound)+ "</moose:isMembraneBound>\n"
+            if moose.exists(compt.path+'/info'):
+                if moose.element(compt.path+'/info').notes != "":
+                    comptAnno = comptAnno + "<moose:Notes>" \
+                    + moose.element(compt.path+'/info').notes + "</moose:Notes>"
+            comptAnno = comptAnno+ "</moose:CompartmentAnnotation>"
         else:
             comptAnno = "<moose:CompartmentAnnotation><moose:Mesh>" + \
                                 str(compt.className) + "</moose:Mesh>\n" + \
                                 "<moose:isMembraneBound>" + \
-                                str(compt.isMembraneBound)+ "</moose:isMembraneBound>\n" + \
-                                "</moose:CompartmentAnnotation>"
+                                str(compt.isMembraneBound)+ "</moose:isMembraneBound>\n" 
+            if moose.exists(compt.path+'/info'):
+                if moose.element(compt.path+'/info').notes != "":
+                    comptAnno = comptAnno + "<moose:Notes>" \
+                    + moose.element(compt.path+'/info').notes + "</moose:Notes>"
+            comptAnno = comptAnno+ "</moose:CompartmentAnnotation>"
         if createCompt:
             c1 = cremodel_.createCompartment()
             c1.setId(csetId)

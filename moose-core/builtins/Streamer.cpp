@@ -1,17 +1,8 @@
 /***
- *       Filename:  Streamer.cpp
- *
  *    Description:  Stream table data.
- *
- *        Version:  0.0.1
- *        Created:  2016-04-26
-
- *       Revision:  none
  *
  *         Author:  Dilawar Singh <dilawars@ncbs.res.in>
  *   Organization:  NCBS Bangalore
- *
- *        License:  GNU GPL2
  */
 
 #include <algorithm>
@@ -45,10 +36,16 @@ const Cinfo* Streamer::initCinfo()
         , &Streamer::getFormat
     );
 
-    static ReadOnlyValueFinfo< Streamer, size_t > numTables (
+    static ReadOnlyValueFinfo<Streamer, size_t> numTables (
         "numTables"
         , "Number of Tables handled by Streamer "
         , &Streamer::getNumTables
+    );
+
+    static ReadOnlyValueFinfo<Streamer, size_t> numWriteEvents(
+        "numWriteEvents"
+        , "Number of time streamer was called to write. (For debugging/performance reason only)"
+        , &Streamer::getNumWriteEvents
     );
 
     /*-----------------------------------------------------------------------------
@@ -96,7 +93,7 @@ const Cinfo* Streamer::initCinfo()
      *-----------------------------------------------------------------------------*/
     static Finfo* procShared[] =
     {
-        &process , &reinit , &addTable, &addTables, &removeTable, &removeTables
+        &process, &reinit, &addTable, &addTables, &removeTable, &removeTables
     };
 
     static SharedFinfo proc(
@@ -107,7 +104,7 @@ const Cinfo* Streamer::initCinfo()
 
     static Finfo * tableStreamFinfos[] =
     {
-        &outfile, &format, &proc, &numTables
+        &outfile, &format, &proc, &numTables, &numWriteEvents
     };
 
     static string doc[] =
@@ -140,8 +137,9 @@ Streamer::Streamer()
 {
     // Not all compilers allow initialization during the declaration of class
     // methods.
-    format_ = "npy";
-    columns_.push_back( "time" );               /* First column is time. */
+    format_ = "csv";
+    numWriteEvents_ = 0;
+    columns_.push_back("time");               /* First column is time. */
     tables_.resize(0);
     tableIds_.resize(0);
     tableTick_.resize(0);
@@ -238,7 +236,7 @@ void Streamer::reinit(const Eref& e, ProcPtr p)
     // write now.
     currTime_ = 0.0;
     zipWithTime( );
-    StreamerBase::writeToOutFile( outfilePath_, format_, "w", data_, columns_);
+    StreamerBase::writeToOutFile(outfilePath_, format_, "w", data_, columns_);
     data_.clear( );
 }
 
@@ -261,15 +259,11 @@ void Streamer::cleanUp( )
  */
 void Streamer::process(const Eref& e, ProcPtr p)
 {
-    //LOG( moose::debug, "Writing to table" );
+    // LOG( moose::debug, "Writing Streamer data to file." );
     zipWithTime( );
-
-    // Write only if there are more than 100 entry in first table.
-    if( tables_[0]->getVecSize() > 100 )
-    {
-        StreamerBase::writeToOutFile( outfilePath_, format_, "a", data_, columns_ );
-        data_.clear( );
-    }
+    StreamerBase::writeToOutFile( outfilePath_, format_, "a", data_, columns_ );
+    data_.clear();
+    numWriteEvents_ += 1;
 }
 
 
@@ -354,6 +348,19 @@ void Streamer::removeTables( vector<Id> tables )
 size_t Streamer::getNumTables( void ) const
 {
     return tables_.size();
+}
+
+/* --------------------------------------------------------------------------*/
+/**
+ * @Synopsis  Get number of write events in streamer. Useful for debugging and
+ * performance measuerments.
+ *
+ * @Returns   
+ */
+/* ----------------------------------------------------------------------------*/
+size_t Streamer::getNumWriteEvents( void ) const
+{
+    return numWriteEvents_;
 }
 
 
