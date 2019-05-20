@@ -95,7 +95,6 @@ namespace moose {
         string mapToString(const map<A, B>& m, bool value=true)
         {
             unsigned int width = 81;
-            unsigned int mapSize = m.size();
             unsigned int size = 0;
 
             vector<string> row;
@@ -250,7 +249,9 @@ namespace moose {
 #ifdef  NDEBUG
 #define LOG(t, a ) ((void)0);
 #else      /* -----  not NDEBUG  ----- */
-#define LOG(t, a) { stringstream __ss__;  __ss__ << a; moose::__dump__(__ss__.str(), t ); }
+#define LOG(t, a) { stringstream __ss__; \
+    __ss__ << __func__ << ": " << a; moose::__dump__(__ss__.str(), t); \
+}
 #endif     /* -----  not NDEBUG  ----- */
 
     /*-----------------------------------------------------------------------------

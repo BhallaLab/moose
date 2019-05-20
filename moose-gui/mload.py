@@ -61,7 +61,8 @@ from PyQt4 import QtGui, QtCore, Qt
 from plugins.setsolver import *
 from moose.SBML import *
 from plugins.kkitOrdinateUtil import *
-
+import moose._moose as moose
+import moose.utils as mutils
 def loadGenCsp(target,filename,solver="gsl"):
     target = target.replace(" ", "")
     path = '/'+target
@@ -72,7 +73,7 @@ def loadGenCsp(target,filename,solver="gsl"):
         moose.delete(mpath)
     modelpath1 = moose.Neutral('%s' %(target))
     modelpath = moose.Neutral('%s/%s' %(modelpath1.path,"model"))
-    model = moose.loadModel(filename, modelpath.path,solver)
+    model = mutils.loadModel(filename, modelpath.path,solver)
     
     if not moose.exists(modelpath1.path+'/data'):
         graphspath = moose.Neutral('%s/%s' %(modelpath1.path,"data"))
@@ -189,7 +190,7 @@ def loadFile(filename, target, solver="gsl", merge=True):
                     moose.Annotator(moose.element(modelpath).path+'/info').modeltype = "kkit"
                 else:
                     print (" path doesn't exists")
-                moose.le(modelpath)
+                #moose.le(modelpath)
         else:
             print ('Only kkit and prototype files can be loaded.')
         

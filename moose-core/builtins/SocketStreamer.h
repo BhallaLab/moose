@@ -5,10 +5,9 @@
 #ifndef  SocketStreamer_INC
 #define  SocketStreamer_INC
 
-#define STRINGSTREAM_DOUBLE_PRECISION       10
-
 #include <iostream>
 #include <string>
+#include <vector>
 #include <map>
 #include <fstream>
 #include <sstream>
@@ -16,6 +15,7 @@
 #include <atomic>
 
 #include "StreamerBase.h"
+#include "MooseSocketInfo.h"
 #include "Table.h"
 
 // If cmake does not set it, use the default port.
@@ -37,6 +37,7 @@
 #include <sys/ioctl.h>
 #include <sys/un.h>
 #include <netinet/in.h>
+#include <arpa/inet.h>
 
 // MSG_MORE is not defined in OSX. So stupid!
 #ifndef MSG_MORE
@@ -45,9 +46,9 @@
 
 using namespace std;
 
-typedef enum t_socket_type_ {TCP_SOCKET, UNIX_DOMAIN_SOCKET} SocketType; // Type of socket.
 
 class Clock;
+
 
 class SocketStreamer : public StreamerBase
 {
@@ -75,6 +76,9 @@ public:
     // Make connection to client
     void listenToClients(size_t numMaxClients);
 
+    // Find minimum number of elements in tables.
+    pair<size_t, size_t> minMaxNumberOfElemementsInTables( );
+
     /* Cleaup before quitting */
     void cleanUp( void );
 
@@ -84,28 +88,26 @@ public:
     size_t getPort( void ) const;
     void setPort( const size_t port );
 
-    SocketType getSocketType( );
-    void setSocketType(void);
-
     /*-----------------------------------------------------------------------------
      *  Streaming data.
      *-----------------------------------------------------------------------------*/
     bool enoughDataToStream(size_t minsize=10);
-    bool streamData();
-    void connectAndStream( );
+    int streamData();
+    // connect is monitored in a thread.
+    void connect( void );
+    void stream(void);
 
     size_t getNumTables( void ) const;
 
-    void addTable( Id table );
-    void addTables( vector<Id> tables);
+    void addTable( ObjId table );
     void addTables( vector<ObjId> tables);
 
-    void removeTable( Id table );
-    void removeTables( vector<Id> table );
+    void removeTable( ObjId table );
+    void removeTables( vector<ObjId> table );
 
-    string dataToString();
+    void dataToStream(map<string, vector<double>>& vec);
 
-    // void stopThread(const std::string& tname);
+    static void addStringToDoubleVec(vector<double>&res, const string s);
 
     /** Dest functions.
      * The process function called by scheduler on every tick
@@ -118,6 +120,7 @@ public:
     void reinit(const Eref& e, ProcPtr p);
 
     static const Cinfo * initCinfo();
+
 
 private:
 
@@ -133,15 +136,8 @@ private:
 
     /* Socket related */
     int numMaxClients_;
-    SocketType sockType_ = UNIX_DOMAIN_SOCKET;        // Default is UNIX_DOMAIN_SOCKET
     int sockfd_;                                      // socket file descriptor.
     int clientfd_;                                    // client file descriptor
-
-    // TCP socket.
-    string ip_;                                       // ip_ address of server.
-    unsigned short port_;                             // port number if socket is TCP_SOCKET
-    string address_;                                  // adress of socket. Specified by user.
-    string unixSocketFilePath_;
 
     // address holdder for TCP and UDS sockets.
     struct sockaddr_in sockAddrTCP_;
@@ -152,13 +148,18 @@ private:
     bool isValid_ = true;
     std::thread processThread_;
     string buffer_;
+    vector<double> vecToStream_;
     double thisDt_;
-
-    size_t frameSize_ = 2048;
 
     // We need clk_ pointer for handling
     Clock* clk_ = nullptr;
 
+    // Socket Info
+    MooseSocketInfo sockInfo_;
+
+    // How long it takes between process calls.
+    size_t processTickMicroSec;
+    std::chrono::high_resolution_clock::time_point timeStamp_;
 };
 
 #endif   /* ----- #ifndef SocketStreamer_INC  ----- */

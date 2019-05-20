@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
+from __future__ import print_function, division, absolute_import
+
 # Author: Subhasis Ray
 # Maintainer: Dilawar Singh, Harsha Rani, Upi Bhalla
 
-from __future__ import print_function, division, absolute_import
 import warnings
 import os
 import pydoc
@@ -104,6 +105,7 @@ def loadModel(filename, modelpath, solverclass="gsl"):
     else:
         mu.error( "Unknown model extenstion '%s'" % extension)
         return None
+
         
 # Version
 def version( ):
@@ -154,7 +156,21 @@ def mooseReadSBML(filepath, loadpath, solver='ee',validate="on"):
     """
     global sbmlImport_
     if sbmlImport_:
-        return _readSBML.mooseReadSBML(filepath, loadpath, solver, validate)
+        modelpath = _readSBML.mooseReadSBML(filepath, loadpath, solver, validate)
+        sc = solver.lower()
+        if sc in ["gssa","gillespie","stochastic","gsolve"]:
+            method = "gssa"
+        elif sc in ["gsl","runge kutta","deterministic","ksolve","rungekutta","rk5","rkf","rk"]:
+            method = "gsl"
+        elif sc in ["exponential euler","exponentialeuler","neutral"]:
+            method = "ee"
+        else:
+            method = "ee"
+
+        if method != 'ee':
+            chemError = _chemUtil.add_Delete_ChemicalSolver.mooseAddChemSolver(modelpath[0].path, method)
+
+        return modelpath
     else:
         print( sbmlError_ )
         return False
@@ -652,3 +668,7 @@ def doc(arg, inherited=True, paged=True):
         pager(text)
     else:
         print(text)
+
+
+#
+# moose.py ends here

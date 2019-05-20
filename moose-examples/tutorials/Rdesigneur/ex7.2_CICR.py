@@ -37,6 +37,6 @@ IP3 = moose.element( '/model/chem/dend/IP3' )
 IP3.vec.concInit = 0.004
 IP3.vec[0].concInit = 0.02
 moose.reinit()
-moose.start( 40 )
+moose.start( 20 )
 
 rdes.display()

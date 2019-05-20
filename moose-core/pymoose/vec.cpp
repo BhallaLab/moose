@@ -48,8 +48,6 @@
 
 #include <Python.h>
 #include <structmember.h> // This defines the type id macros like T_STRING
-// #include "numpy/arrayobject.h"
-
 #include "../utility/simple_logger.hpp"
 
 #include <iostream>
@@ -1259,20 +1257,12 @@ int moose_Id_setattro(_Id * self, PyObject * attr, PyObject *value)
     default:
         break;
     }
+
     // MOOSE Field::set returns 1 for success 0 for
     // failure. Python treats return value 0 from setters as
     // success, anything else failure.
     if (ret && (PyErr_Occurred() == NULL))
-    {
         return 0;
-    }
     else
-    {
         return -1;
-    }
-
 }
-
-
-//
-// vec.cpp ends here

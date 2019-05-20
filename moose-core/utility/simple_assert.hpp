@@ -62,16 +62,12 @@ namespace moose
 //                                   SIMPLE_ASSERT_MSG                                   //
 //--------------------------------------------------------------------------------------//
 
-# undef SIMPLE_ASSERT_MSG
+#undef SIMPLE_ASSERT_MSG
 
 #if defined(SIMPLE_DISABLE_ASSERTS) || defined(NDEBUG)
-
   #define SIMPLE_ASSERT_MSG(expr, msg) ((void)0)
-
 #elif defined(SIMPLE_ENABLE_ASSERT_HANDLER)
-
   #include "current_function.hpp"
-
   namespace moose
   {
     void assertion_failed_msg(char const * expr, char const * msg,

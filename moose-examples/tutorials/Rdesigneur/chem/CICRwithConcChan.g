@@ -1,7 +1,7 @@
 //genesis
 // kkit Version 11 flat dumpfile
  
-// Saved on Fri Aug 17 04:02:55 2018
+// Saved on Fri Mar 29 19:34:16 2019
  
 include kkit {argv 1}
  
@@ -71,16 +71,6 @@ simundump kpool /kinetics/CaCyt 0 1e-13 0.079999 0.079999 149.35 149.35 0 0 \
 simundump text /kinetics/CaCyt/notes 0 ""
 call /kinetics/CaCyt/notes LOAD \
 ""
-simundump kpool /kinetics/phase 0 0.0 100 100 1.8669e+05 1.8669e+05 0 0 \
-  1866.9 0 /kinetics/geometry 49 black 9 9 0
-simundump text /kinetics/phase/notes 0 ""
-call /kinetics/phase/notes LOAD \
-""
-simundump kpool /kinetics/ampl 0 0.0 0 0 0 0 0 0 1866.9 0 /kinetics/geometry \
-  63 black 10 5 0
-simundump text /kinetics/ampl/notes 0 ""
-call /kinetics/ampl/notes LOAD \
-""
 simundump kpool /kinetics/CaIP3_3_R 0 0.0 0 0 0 0 0 0 1866.9 0 \
   /kinetics/geometry 20 black 4 7 0
 simundump text /kinetics/CaIP3_3_R/notes 0 ""
@@ -146,11 +136,6 @@ simundump kpool /kinetics/Ca2_IP3_3_R 0 0.0 0 0 0 0 0 0 1866.9 0 \
 simundump text /kinetics/Ca2_IP3_3_R/notes 0 ""
 call /kinetics/Ca2_IP3_3_R/notes LOAD \
 ""
-simundump kpool /kinetics/CaStim 0 0.0 0 0 0 0 0 0 1866.9 4 \
-  /kinetics/geometry 61 black 7 5 0
-simundump text /kinetics/CaStim/notes 0 ""
-call /kinetics/CaStim/notes LOAD \
-""
 simundump kpool /kinetics/Mirror_CaIP3_3_R 0 0.0 0 0 0 0 0 0 1866.9 0 \
   /kinetics/geometry 4 black -1 4 0
 simundump text /kinetics/Mirror_CaIP3_3_R/notes 0 ""
@@ -161,19 +146,9 @@ simundump kpool /kinetics/ActIP3R 0 0.0 0 0 0 0 0 0 1866.9 0 \
 simundump text /kinetics/ActIP3R/notes 0 ""
 call /kinetics/ActIP3R/notes LOAD \
 ""
-simundump kchan /kinetics/ActIP3R/chan 0 12720 0.1 0 1 0 "" brown 8 2 2 0
+simundump kchan /kinetics/ActIP3R/chan 0 8 0.1 0 1 0 "" brown 8 2 2 0
 simundump text /kinetics/ActIP3R/chan/notes 0 ""
 call /kinetics/ActIP3R/chan/notes LOAD \
-""
-simundump kpool /kinetics/basal 0 0.0 0 0 0 0 0 0 1866.9 0 /kinetics/geometry \
-  8 black 2 -1 0
-simundump text /kinetics/basal/notes 0 ""
-call /kinetics/basal/notes LOAD \
-""
-simundump kpool /kinetics/BufPool 0 0.0 0 0 0 0 0 0 1866.9 4 \
-  /kinetics/geometry 26 black 1 9 0
-simundump text /kinetics/BufPool/notes 0 ""
-call /kinetics/BufPool/notes LOAD \
 ""
 simundump kreac /kinetics/CaMreac1 0 0.0045449 8.4853 "" white black 5 0 0
 simundump text /kinetics/CaMreac1/notes 0 ""
@@ -212,7 +187,7 @@ simundump kpool /kinetics/leakPool 0 0 1 1 234 234 0 0 234 0 \
 simundump text /kinetics/leakPool/notes 0 ""
 call /kinetics/leakPool/notes LOAD \
 ""
-simundump kchan /kinetics/leakPool/leakChan 0 15.3 0.1 0 1 0 "" brown 45 4 5 \
+simundump kchan /kinetics/leakPool/leakChan 0 0.04 0.1 0 1 0 "" brown 45 4 5 \
   0
 simundump text /kinetics/leakPool/leakChan/notes 0 ""
 call /kinetics/leakPool/leakChan/notes LOAD \
@@ -229,7 +204,7 @@ simundump xplot /graphs/conc2/CaER.Co 3 524288 \
   "delete_plot.w <s> <d>; edit_plot.D <w>" 0 0 0 1
 simundump xgraph /moregraphs/conc3 0 0 100 0 1 0
 simundump xgraph /moregraphs/conc4 0 0 100 0 1 0
-simundump xcoredraw /edit/draw 0 -3 12 -3 11
+simundump xcoredraw /edit/draw 0 -1.5666 11.334 -1.8008 10.24
 simundump xtree /edit/draw/tree 0 \
   /kinetics/#[],/kinetics/#[]/#[],/kinetics/#[]/#[]/#[][TYPE!=proto],/kinetics/#[]/#[]/#[][TYPE!=linkinfo]/##[] \
   "edit_elm.D <v>; drag_from_edit.w <d> <S> <x> <y> <z>" auto 0.6

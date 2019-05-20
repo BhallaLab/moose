@@ -425,8 +425,8 @@ const Cinfo* Clock::initCinfo()
         "    Ksolve               16     0.1\n"
         "    Stats                17     0.1\n"
         "    Table2               18     1\n"
-        "    SocketStreamer       19     5\n"
-        "    Streamer             20     10\n"
+        "    SocketStreamer       19     1\n"
+        "    Streamer             20     5\n"
 
         "    HDF5DataWriter        30    1\n"
         "    HDF5WriterBase        30    1\n"
@@ -1030,8 +1030,8 @@ void Clock::buildDefaultTick()
     defaultDt_[16] = 0.1;
     defaultDt_[17] = 0.1;
     defaultDt_[18] = 1;             // For tables for chemical calculations.
-    defaultDt_[19] = 5;             // For Socket Streamer
-    defaultDt_[20] = 10;            // For CSV Streamer
+    defaultDt_[19] = 1;             // For Socket Streamer
+    defaultDt_[20] = 5;            // For CSV Streamer
 
     // 20-29 are not assigned.
     defaultDt_[30] = 1;    // For the HDF writer

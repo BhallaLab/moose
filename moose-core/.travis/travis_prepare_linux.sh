@@ -27,10 +27,13 @@ apt-get install -qq python3-lxml python-lxml
 apt-get install -qq python3-numpy python3-matplotlib python3-dev
 apt-get install -qq python-pip python3-pip
 apt-get install -qq python-tk python3-tk
-apt-get install -qq libgraphviz-dev
+apt-get install -qq libgraphviz-dev 
 
 # Gsl
 apt-get install -qq libgsl0-dev || apt-get install -qq libgsl-dev
+
+# hdf5
+apt-get install -qq libhdf5-serial-dev
 
 # Boost related.
 apt-get install -qq liblapack-dev

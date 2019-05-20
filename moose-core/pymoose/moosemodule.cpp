@@ -89,9 +89,6 @@ extern void speedTestMultiNodeIntFireNetwork(
 
 extern void mooseBenchmarks( unsigned int option );
 
-// global variable.
-bool tcpSocketStreamerEnabled_ = false;
-
 /*-----------------------------------------------------------------------------
  *  Random number generator for this module.
  *
@@ -113,7 +110,6 @@ double pymoose_mtrand_( void )
 bool setupSocketStreamer(const string addr )
 {
     LOG(moose::debug, "Setting streamer with addr " << addr );
-
     // Find all tables.
     vector< ObjId > tables;
     wildcardFind( "/##[TYPE=Table2]", tables );
@@ -130,8 +126,9 @@ bool setupSocketStreamer(const string addr )
     Id st = SHELLPTR->doCreate("SocketStreamer", stBase, "streamer", 1);
     Field<string>::set(st, "address", addr);
 
+    LOG(moose::debug, "Found " << tables.size() << " tables.");
     for( auto &t : tables )
-        SetGet1<Id>::set(st, "addTable", t.id );
+        SetGet1<ObjId>::set(st, "addTable", t );
     return true;
 }
 
@@ -1773,11 +1770,10 @@ PyObject * moose_reinit(PyObject * dummy, PyObject * args)
     string envSocketServer = moose::getEnv( "MOOSE_STREAMER_ADDRESS" );
     if(! envSocketServer.empty())
     {
-        LOG( moose::debug, "Environment variable set of socket" << envSocketServer );
+        LOG( moose::debug, "Environment variable MOOSE_STREAMER_ADDRESS: " << envSocketServer );
         if( envSocketServer.size() > 0 )
             setupSocketStreamer(envSocketServer);
     }
-
     SHELLPTR->doReinit();
     Py_RETURN_NONE;
 }
@@ -1909,7 +1905,7 @@ PyObject * moose_saveModel(PyObject * dummy, PyObject * args)
     SHELLPTR->doSaveModel(model, filename);
     Py_RETURN_NONE;
 }
-#endif 
+#endif
 
 PyObject * moose_setCwe(PyObject * dummy, PyObject * args)
 {
@@ -2971,17 +2967,17 @@ PyObject * moose_element(PyObject* dummy, PyObject * args)
     unsigned nid = 0, did = 0, fidx = 0;
     Id id;
     unsigned int numData = 0;
-    if (PyArg_ParseTuple(args, "s", &path))
+
+    // Parse into str or bytes-like object. Using 's' parses into const char*
+    // which is portable with bytes often returned when working with python3.
+    if (PyArg_ParseTuple(args, "s*", &path))
     {
         oid = ObjId(path);
-        //            cout << "Original Path " << path << ", Element Path: " << oid.path() << endl;
         if ( oid.bad() )
         {
-            PyErr_SetString(PyExc_ValueError, ( std::string("moose_element: '")
-                                                + std::string(path)
-                                                + std::string("' does not exist!")
-                                              ).c_str()
-                           );
+            PyErr_SetString(PyExc_ValueError
+                    , (std::string("moose_element: '") + std::string(path) + std::string("' does not exist!")).c_str()
+                    );
             return NULL;
         }
         PyObject * new_obj = oid_to_element(oid);
@@ -3272,4 +3268,4 @@ PyMODINIT_FUNC MODINIT(_moose)
 #ifdef PY3K
     return moose_module;
 #endif
-} 
+}

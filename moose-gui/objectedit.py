@@ -6,7 +6,7 @@
 # Maintainer:
 # Created: Wed Jun 30 11:18:34 2010 (+0530)
 # Version:
-# Last-Updated: Mon Sep 10 11:05:59 2017 (+0530)
+# Last-Updated: Fri Feb 01 11:05:59 2017 (+0530)
 #           By: Harsha
 #     Update #: 
 # URL:
@@ -77,11 +77,13 @@ import sys
 from collections import deque
 import traceback
 
-sys.path.append('../python')
+#sys.path.append('../python')
 import moose
 import defaults
 import config
-from plugins.kkitUtil import getColor
+#from plugins.kkitUtil import getColor
+from moose.chemUtil.chemConnectUtil import getColor
+
 #these fields will be ignored
 extra_fields = ['this',
                 'me',
@@ -437,7 +439,7 @@ class ObjectEditView(QtGui.QTableView):
     def setColor(self, color):
         self.colorButton.setStyleSheet(
                     "QPushButton {"
-                +   "background-color: {0}; color: {0};".format(color.name())
+                +   "background-color: {0}; color: {0};".format(color)
                 +   "}"
                                       )
         self.colorDialog.setCurrentColor(color)

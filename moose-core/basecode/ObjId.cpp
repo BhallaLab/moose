@@ -112,8 +112,9 @@ bool ObjId::isOffNode() const
 
 char* ObjId::data() const
 {
-    return id.element()->data( id.element()->rawIndex( dataIndex ),
-                               fieldIndex );
+    return id.element()->data(
+            id.element()->rawIndex( dataIndex ), fieldIndex 
+        );
 }
 
 string ObjId::path() const

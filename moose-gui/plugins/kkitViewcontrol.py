@@ -5,11 +5,15 @@ __version__     =   "1.0.0"
 __maintainer__  =   "HarshaRani"
 __email__       =   "hrani@ncbs.res.in"
 __status__      =   "Development"
-__updated__     =   "Sep 7 2018"
+__updated__     =   "Oct 27 2018"
 
 '''
 2018
-
+Oct 27  : When group is moved within another group, outer group is resize inturn compartmet is also resized
+Oct 10  : Groups are handled with collision detection, 
+          messagebox when object moved from one group to another
+          layout updated when object moved etc
+Sep 18  : one can close the messagebox if doesn't want to plot
 Sep 07  : when object qgraphicalparent is changed then connecting arrow's parent also need to be changed 
 Jun 08  : If object is moved from one group or compartment to another group or with in same Compartment, 
            then both at moose level (group or compartment path is updated ) and qt level the setParentItem is set
@@ -34,6 +38,8 @@ from kkitUtil import  *
 #from setsolver import *
 from PyQt4 import QtSvg
 from moose import utils
+from functools import partial
+
 
 class GraphicalView(QtGui.QGraphicsView):
 
@@ -191,6 +197,18 @@ class GraphicalView(QtGui.QGraphicsView):
         else:
             #If right button clicked
             self.resetState()
+            # if itemType == GROUP_INTERIOR:
+            #     print " self.layoutPt.qGraGrp ",item, item.childItems()
+            #     grouplist = []
+            #     for i in item.childItems():
+            #         if isinstance(i,KineticsDisplayItem):
+            #             grouplist.append(i)
+            #     popupmenu = QtGui.QMenu('PopupMenu', self)
+            #     popupmenu.addAction("LinearLayout", lambda : handleCollisions(list(grouplist), moveX, self.layoutPt))
+            #     popupmenu.addAction("VerticalLayout" ,lambda : handleCollisions(list(grouplist), moveMin, self.layoutPt ))
+            #     popupmenu.exec_(self.mapToGlobal(event.pos()))
+            #     self.layoutPt.updateGrpSize(item)
+                
             if itemType == GROUP_BOUNDARY:
                 popupmenu = QtGui.QMenu('PopupMenu', self)
                 popupmenu.addAction("DeleteGroup", lambda : self.deleteGroup(item,self.layoutPt))
@@ -267,6 +285,9 @@ class GraphicalView(QtGui.QGraphicsView):
             final = self.mapToScene(event.pos())
             displacement = final - initial
             item.moveBy(displacement.x(), displacement.y())
+            if isinstance(item.parentItem(),GRPItem):
+                self.layoutPt.updateGrpSize(item.parentItem())
+
             self.layoutPt.positionChange(item.mobj.path)
             self.state["press"]["pos"] = event.pos()
 
@@ -333,7 +354,6 @@ class GraphicalView(QtGui.QGraphicsView):
                         #if already built model then compartment size depends on max and min objects
                         rectcompt = calculateChildBoundingRect(v)
                         v.setRect(rectcompt.x()-10,rectcompt.y()-10,(rectcompt.width()+20),(rectcompt.height()+20))
-
             else:
                 #When group is moved then compartment need to be update which is done here
                 if isinstance(self.state["release"]["item"], KineticsDisplayItem):
@@ -356,7 +376,6 @@ class GraphicalView(QtGui.QGraphicsView):
             movedGraphObj = self.state["press"]["item"].parent()
                 
             if actionType == "move":
-                
                 if itemType == EMPTY:
                     self.objectpullback("Empty",item,movedGraphObj,xx,yy)
 
@@ -377,7 +396,14 @@ class GraphicalView(QtGui.QGraphicsView):
                                     if moose.exists(grpCmpt.mobj.path+'/'+parentPool.name+'/'+movedGraphObj.name):
                                         self.objectpullback("Enzyme",grpCmpt,movedGraphObj,xx,yy)
                                     else:
-                                        self.moveObjSceneParent(grpCmpt,movedGraphObj,item.pos(),self.mapToScene(event.pos()))
+                                        reply = QtGui.QMessageBox.question(self, "Moving the Object",'Do want to move \'{movedGraphObj}\' \n from \'{parent}\' to \'{grpCmpt}\''.format(movedGraphObj=movedGraphObj.mobj.name,parent= movedGraphObj.parentItem().mobj.name,grpCmpt=grpCmpt.mobj.name),
+                                                   QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
+                                        if reply == QtGui.QMessageBox.No: 
+                                            movedGraphObj.moveBy(-xx,-yy)
+                                            self.layoutPt.updateArrow(movedGraphObj)
+
+                                        else:
+                                            self.moveObjSceneParent(grpCmpt,movedGraphObj,item.pos(),self.mapToScene(event.pos()))
                                 else:
                                     self.objectpullback("Enzymeparent",grpCmpt,movedGraphObj,xx,yy)
                         else:
@@ -385,9 +411,32 @@ class GraphicalView(QtGui.QGraphicsView):
                             if moose.exists(grpCmpt.mobj.path+'/'+movedGraphObj.mobj.name):
                                 self.objectpullback("All",grpCmpt,movedGraphObj,xx,yy)
                             else:
-                                self.moveObjSceneParent(grpCmpt,movedGraphObj,item.pos(),self.mapToScene(event.pos()))
+                                reply = QtGui.QMessageBox.question(self, "Moving the Object",'Do want to move \'{movedGraphObj}\' \n from \'{parent}\'  to \'{grpCmpt}\''.format(movedGraphObj=movedGraphObj.mobj.name,parent= movedGraphObj.parentItem().mobj.name,grpCmpt=grpCmpt.mobj.name),
+                                                   QtGui.QMessageBox.Yes | QtGui.QMessageBox.No)
+                                if reply == QtGui.QMessageBox.No: 
+                                    movedGraphObj.moveBy(-xx,-yy)
+                                    self.layoutPt.updateArrow(movedGraphObj)
+                                else:
+                                    self.moveObjSceneParent(grpCmpt,movedGraphObj,item.pos(),self.mapToScene(event.pos()))
                     else:
                         '''Same compt/grp to which it was belong to '''
+                        if isinstance(movedGraphObj,KineticsDisplayItem):
+                            itemPath = movedGraphObj.mobj.path
+                            if moose.exists(itemPath):
+                                iInfo = itemPath+'/info'
+                                anno = moose.Annotator(iInfo)
+                                eventpos = self.mapToScene(event.pos())
+                                itempos = item.pos()
+                                x = eventpos.x()+(15/2)#-itempos.x()
+                                y = eventpos.y()+(2/2)#-itempos.y()
+                                anno.x = x
+                                anno.y = y
+                                self.layoutPt.updateArrow(itemPath)
+                                QtGui.QApplication.setOverrideCursor(QtGui.QCursor(Qt.Qt.ArrowCursor))
+                                self.layoutPt.updateGrpSize(movedGraphObj.parentItem())
+                                self.layoutPt.positionChange(movedGraphObj.mobj) 
+                                self.updateScale(self.iconScale)
+        
                         if isinstance(grpCmpt,GRPItem):
                             self.layoutPt.updateGrpSize(movedGraphObj.parentItem())
                         elif isinstance(grpCmpt,ComptItem):
@@ -420,29 +469,18 @@ class GraphicalView(QtGui.QGraphicsView):
             elif actionType == "plot":
                 element = moose.element(item.parent().mobj.path)
                 if isinstance (element,moose.PoolBase):
-                    if moose.exists(self.modelRoot+'/data/graph_0'):
-                        self.graph = moose.element(self.modelRoot+'/data/graph_0')
-                    else:
-                        moose.Neutral(self.modelRoot+'/data')
-                        moose.Neutral(self.modelRoot+'/data/graph_0')
-                        self.graph = moose.element(self.modelRoot+'/data/graph_0')
-                    plotType = "Conc"
                     msgBox = QtGui.QMessageBox()
                     msgBox.setText('What to plot?')
-                    msgBox.addButton(QtGui.QPushButton('Number'), QtGui.QMessageBox.YesRole)
-                    msgBox.addButton(QtGui.QPushButton('Concentration'), QtGui.QMessageBox.NoRole)
-                    ret = msgBox.exec_()
-                    if ret == 0:
-                        plotType = "N"
-                    tablePath = moose.utils.create_table_path(moose.element(self.modelRoot), self.graph, element, plotType)
-                    table     = moose.utils.create_table(tablePath, element, plotType,"Table2")
-                    '''
-                    tablePath = utils.create_table_path(moose.element(self.modelRoot), self.graph, element, "Conc")
-                    table     = utils.create_table(tablePath, element, "Conc","Table2")
-                    '''
-                    self.layoutPt.plugin.view.getCentralWidget().plotWidgetContainer.plotAllData()
-                    reply = QtGui.QMessageBox.information(self, "plot Object","Plot is added to Graph1",
-                                                   QtGui.QMessageBox.Ok)
+                    self.pushButtonNumber = QtGui.QPushButton(('Number'))#, QtGui.QMessageBox.YesRole)
+                    self.pushButtonConc = QtGui.QPushButton('Concentration')#, QtGui.QMessageBox.NoRole
+                    self.pushButtonConc.setAutoDefault(False)
+                    self.pushButtonNumber.setAutoDefault(False)
+                    msgBox.addButton(self.pushButtonNumber,QtGui.QMessageBox.YesRole)
+                    msgBox.addButton(self.pushButtonConc,QtGui.QMessageBox.NoRole)
+                    msgBox.buttonClicked.connect(partial(self.onClicked, str(self.modelRoot),element))
+                    msgBox.exec_()
+                    self.removeConnector()
+            
             elif actionType == "clone":
                 if self.state["move"]["happened"]:
                     QtGui.QApplication.setOverrideCursor(QtGui.QCursor(Qt.Qt.ArrowCursor))
@@ -552,7 +590,33 @@ class GraphicalView(QtGui.QGraphicsView):
                 popupmenu.addAction("Move",   lambda: self.moveSelections())
                 popupmenu.exec_(self.mapToGlobal(event.pos()))        
         self.resetState()
-    
+
+    def onClicked(self,modelRoot,element, btn):
+        self.modelRoot = modelRoot
+        if moose.exists(self.modelRoot+'/data/graph_0'):
+            self.graph = moose.element(self.modelRoot+'/data/graph_0')
+        else:
+            moose.Neutral(self.modelRoot+'/data')
+            moose.Neutral(self.modelRoot+'/data/graph_0')
+            self.graph = moose.element(self.modelRoot+'/data/graph_0')
+
+        plotType = "Conc"
+        if btn.text() == "Number":
+            plotType = "N"
+        else:
+            plotType = "Conc"
+
+        tablePath = moose.utils.create_table_path(moose.element(self.modelRoot), self.graph, element, plotType)
+        table     = moose.utils.create_table(tablePath, element, plotType,"Table2")
+        '''
+        tablePath = utils.create_table_path(moose.element(self.modelRoot), self.graph, element, "Conc")
+        table     = utils.create_table(tablePath, element, "Conc","Table2")
+        '''
+        self.layoutPt.plugin.view.getCentralWidget().plotWidgetContainer.plotAllData()
+        reply = QtGui.QMessageBox.information(self, "plot Object","Plot is added to Graph1",
+                                      QtGui.QMessageBox.Ok)
+        self.removeConnector()
+
     def objectpullback(self,messgtype,item,movedGraphObj,xx,yy):
         if messgtype.lower() != "empty":
             desObj = item.mobj.className
@@ -601,43 +665,33 @@ class GraphicalView(QtGui.QGraphicsView):
                 if isinstance(moose.element(es), EnzBase):
                     if moose.element(moose.element(es).neighbors['enzDest'][0]) == movedGraphObj.mobj:
                         enzGrapObj = self.layoutPt.mooseId_GObj[moose.element(es)]
-                        testx = enzGrapObj.scenePos().x()
-                        testy = enzGrapObj.scenePos().y()
+                        enzXpos = enzGrapObj.scenePos().x()
+                        enzYpos = enzGrapObj.scenePos().y()
                         enzGrapObj.setParentItem(item)
-                        enzGrapObj.setGeometry(testx,testy,
+                        enzGrapObj.setGeometry(enzXpos,enzYpos,
                                       enzGrapObj.gobj.boundingRect().width(),
                                       enzGrapObj.gobj.boundingRect().height())
                         for ll in self.layoutPt.object2line[enzGrapObj]:
                             ll[0].setParentItem(item)
                         self.layoutPt.updateArrow(enzGrapObj)
-                        #enzGrapObj.setGeometry(testx,testy,
-                        #              enzGrapObj.gobj.boundingRect().width(),
-                        #              enzGrapObj.gobj.boundingRect().height())
         ''' Re-calculting the group size after the movement '''
-        if isinstance(prevPar,GRPItem):
-            if item != prevPar:
-                self.layoutPt.updateGrpSize(prevPar)
-                self.layoutPt.updateGrpSize(item)
         self.setnewPostion(movedGraphObj,itempos,eventpos)
         self.layoutPt.updateArrow(movedGraphObj)
-
+        self.layoutPt.positionChange(movedGraphObj.mobj)
+        if isinstance(prevPar,GRPItem):
+            if item != prevPar:
+                
+                self.layoutPt.updateGrpSize(prevPar)
+                self.layoutPt.updateGrpSize(item)
+        
     def setnewPostion(self,movedGraphObj,itempos,eventpos):
         if isinstance(movedGraphObj,KineticsDisplayItem):
             itemPath = movedGraphObj.mobj.path
             if moose.exists(itemPath):
                 iInfo = itemPath+'/info'
                 anno = moose.Annotator(iInfo)
-                # eventpos = self.mapToScene(event.pos())
-                # itempos = item.pos()
                 x = eventpos.x()+(15/2)-itempos.x()
                 y = eventpos.y()+(2/2)-itempos.y()
-                if moose.Annotator(self.layoutPt.plugin.modelRoot+'/info').modeltype == 'kkit':
-                    anno.x = x/self.layoutPt.defaultScenewidth
-                    anno.y = y/self.layoutPt.defaultSceneheight
-                else:
-                    anno.x = x
-                    anno.y = y
-                #item = movedGraphObj
                 if isinstance(movedGraphObj,ReacItem) or isinstance(movedGraphObj,EnzItem) or isinstance(movedGraphObj,MMEnzItem):
                     movedGraphObj.setGeometry(x,y,
                                  movedGraphObj.gobj.boundingRect().width(),
@@ -865,6 +919,7 @@ class GraphicalView(QtGui.QGraphicsView):
                 #if ( isinstance(v, PoolItem) or isinstance(v, ReacItem) or isinstance(v, EnzItem) or isinstance(v, CplxItem) ):
                 if isinstance(v,KineticsDisplayItem):
                     v.setFlag(QtGui.QGraphicsItem.ItemIgnoresTransformations, on)
+
     def keyPressEvent(self,event):
         key = event.key()
         self.removeConnector()
@@ -899,20 +954,6 @@ class GraphicalView(QtGui.QGraphicsView):
                 item.refresh(scale)
                 xpos = item.pos().x()
                 ypos = item.pos().y()
-                if isinstance(item,ReacItem) or isinstance(item,EnzItem) or isinstance(item,MMEnzItem):
-                    item.setGeometry(xpos,ypos,
-                                     item.gobj.boundingRect().width(),
-                                     item.gobj.boundingRect().height())
-                elif isinstance(item,CplxItem):
-                    item.setGeometry(item.gobj.boundingRect().width()/2,item.gobj.boundingRect().height(),
-                                     item.gobj.boundingRect().width(),
-                                     item.gobj.boundingRect().height())
-                elif isinstance(item,PoolItem) or isinstance(item, PoolItemCircle):
-                    item.setGeometry(xpos, ypos,item.gobj.boundingRect().width()
-                                     +PoolItem.fontMetrics.width('  '),
-                                     item.gobj.boundingRect().height())
-                    item.bg.setRect(0, 0, item.gobj.boundingRect().width()+PoolItem.fontMetrics.width('  '), item.gobj.boundingRect().height())
-
         self.layoutPt.drawLine_arrow(itemignoreZooming=False)
         self.layoutPt.comptChildrenBoundingRect()
         

@@ -9,6 +9,7 @@
 #define _STRINGUTIL_H
 
 #include <string>
+#include <sstream>
 #include <vector>
 
 namespace moose
