@@ -1,4 +1,5 @@
-[![Build Status - master](https://travis-ci.org/BhallaLab/moose.svg?branch=master)](https://travis-ci.org/BhallaLab/moose)   [![Documentation Status](https://readthedocs.org/projects/moose/badge/?version=latest)](https://readthedocs.org/projects/moose/?badge=latest)
+[![Build Status - master](https://travis-ci.org/BhallaLab/moose.svg?branch=master)](https://travis-ci.org/BhallaLab/moose)   [![Documentation Status](https://readthedocs.org/projects/moose/badge/?version=latest)](https://readthedocs.org/projects/moose/?badge=latest) 
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/BhallaLab/moose-binder/master)
 
 [__Click here for stable Linux Packages__](https://software.opensuse.org//download.html?project=home%3Amoose&package=moose) | 
 [__Click here for nightly Linux Packages__](https://software.opensuse.org//download.html?project=home%3Amoose&package=moose-nightly) | 
