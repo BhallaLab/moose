@@ -268,7 +268,7 @@ void Compartment::vRandInject( const Eref& e, double prob, double current)
 
 #ifdef DO_UNIT_TESTS
 
-#include "header.h"
+#include "../basecode/header.h"
 #include "../shell/Shell.h"
 //#include "../randnum/randnum.h"
 

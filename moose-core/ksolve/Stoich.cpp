@@ -260,8 +260,8 @@ Stoich::Stoich()
     ksolve_(), // Must be reassigned to build stoich system.
     dsolve_(), // Must be assigned if diffusion is planned.
     compartment_(), // Must be assigned if diffusion is planned.
-    kinterface_( 0 ),
-    dinterface_( 0 ),
+    kinterface_( nullptr ),
+    dinterface_( nullptr ),
     rates_( 0 ), 	// No RateTerms yet.
     // uniqueVols_( 1, 1.0 ),
     numVoxels_( 1 ),
@@ -395,8 +395,7 @@ void Stoich::setElist( const Eref& e, const vector< ObjId >& elist )
         // kinterface_->setNumPools( n );
         kinterface_->setStoich( e.id() );
         Shell* shell =  reinterpret_cast< Shell* >( Id().eref().data() );
-        shell->doAddMsg( "Single",
-                         compartment_, "voxelVolOut", ksolve_, "voxelVol" );
+        shell->doAddMsg( "Single", compartment_, "voxelVolOut", ksolve_, "voxelVol" );
     }
     if ( dinterface_ )
     {
@@ -421,20 +420,16 @@ string Stoich::getPath( const Eref& e ) const
 void Stoich::setKsolve( Id ksolve )
 {
     ksolve_ = Id();
-    kinterface_ = 0;
-    if ( ! (
-                ksolve.element()->cinfo()->isA( "Ksolve" )  ||
-                ksolve.element()->cinfo()->isA( "Gsolve" )
-            )
-       )
+    kinterface_ = nullptr;
+    if ( ! ( ksolve.element()->cinfo()->isA( "Ksolve" )  || ksolve.element()->cinfo()->isA( "Gsolve" )))
     {
         cout << "Error: Stoich::setKsolve: invalid class assigned,"
              " should be either Ksolve or Gsolve\n";
         return;
     }
+
     ksolve_ = ksolve;
-    kinterface_ = reinterpret_cast< ZombiePoolInterface* >(
-                      ksolve.eref().data() );
+    kinterface_ = reinterpret_cast< ZombiePoolInterface* >(ksolve.eref().data());
 
     if ( ksolve.element()->cinfo()->isA( "Gsolve" ) )
         setOneWay( true );
@@ -452,18 +447,14 @@ void Stoich::setDsolve( Id dsolve )
 {
     dsolve_ = Id();
     dinterface_ = 0;
-    if ( ! (
-                dsolve.element()->cinfo()->isA( "Dsolve" )
-            )
-       )
+    if (not (dsolve.element()->cinfo()->isA("Dsolve") ))
     {
         cout << "Error: Stoich::setDsolve: invalid class assigned,"
              " should be Dsolve\n";
         return;
     }
     dsolve_ = dsolve;
-    dinterface_ = reinterpret_cast< ZombiePoolInterface* >(
-                      dsolve.eref().data() );
+    dinterface_ = reinterpret_cast<ZombiePoolInterface*>(dsolve.eref().data());
 }
 
 Id Stoich::getDsolve() const
@@ -473,12 +464,9 @@ Id Stoich::getDsolve() const
 
 void Stoich::setCompartment( Id compartment )
 {
-    if ( ! (
-                compartment.element()->cinfo()->isA( "ChemCompt" )
-            )
-       )
+    if (! (compartment.element()->cinfo()->isA( "ChemCompt" )))
     {
-        cout << "Error: Stoich::setCompartment: invalid class assigned,"
+        cerr << "Error: Stoich::setCompartment: invalid class assigned,"
              " should be ChemCompt or derived class\n";
         return;
     }
@@ -493,8 +481,7 @@ void Stoich::setCompartment( Id compartment )
         double bigVol = vols.back();
         assert( bigVol > 0.0 );
         temp.push_back( vols[0] / bigVol );
-        for ( vector< double >::iterator
-                i = vols.begin(); i != vols.end(); ++i )
+        for ( auto i = vols.begin(); i != vols.end(); ++i )
         {
             if ( !doubleEq( temp.back(), *i / bigVol ) )
                 temp.push_back( *i / bigVol );
@@ -535,8 +522,8 @@ vector< unsigned int > Stoich::getPoolIdMap() const
     unsigned int minId = 1000000;
     unsigned int maxId = 0;
     unsigned int maxIndex = 0;
-    map< Id, unsigned int >::const_iterator i;
-    for ( i = poolLookup_.begin(); i != poolLookup_.end(); ++i )
+
+    for (auto i = poolLookup_.cbegin(); i != poolLookup_.end(); ++i )
     {
         unsigned int j = i->first.value();
         if ( j < minId ) minId = j;
@@ -544,7 +531,7 @@ vector< unsigned int > Stoich::getPoolIdMap() const
         if ( maxIndex < i->second ) maxIndex = i->second;
     }
     vector< unsigned int > ret( maxId - minId + 2, ~0U );
-    for ( i = poolLookup_.begin(); i != poolLookup_.end(); ++i )
+    for (auto i = poolLookup_.cbegin(); i != poolLookup_.end(); ++i )
     {
         unsigned int j = i->first.value() - minId;
         ret[j] = i->second;
@@ -1475,9 +1462,7 @@ unsigned int Stoich::convertIdToReacIndex( Id id ) const
 {
     map< Id, unsigned int >::const_iterator i = rateTermLookup_.find( id );
     if ( i != rateTermLookup_.end() )
-    {
         return i->second;
-    }
     return ~0U;
 }
 
@@ -1678,8 +1663,7 @@ void Stoich::installMMenz( Id enzId, const vector< Id >& enzMols,
         return;
     vector< Id > subCompt;
     vector< Id > dummy;
-    for ( vector< Id >::const_iterator
-            i = subs.begin(); i != subs.end(); ++i )
+    for( auto i = subs.cbegin(); i != subs.end(); ++i )
         subCompt.push_back( getCompt( *i ).id );
     subComptVec_.push_back( subCompt );
     prdComptVec_.push_back( dummy );
@@ -2117,15 +2101,9 @@ const vector< Id >& Stoich::offSolverPoolMap( Id compt ) const
 // s is the array of pools, S_[meshIndex][0]
 void Stoich::updateFuncs( double* s, double t ) const
 {
-    for ( vector< FuncTerm* >::const_iterator i = funcs_.begin();
-            i != funcs_.end(); ++i )
-    {
+    for ( auto i = funcs_.cbegin(); i != funcs_.end(); ++i )
         if ( *i )
-        {
             (*i)->evalPool( s, t );
-            // s holds arguments and also result location
-        }
-    }
 }
 
 /**

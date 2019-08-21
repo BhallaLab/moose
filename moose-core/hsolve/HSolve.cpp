@@ -304,7 +304,6 @@ void HSolve::setSeed( Id seed )
              << "' is not derived from type 'Compartment'." << endl;
         return;
     }
-
     seed_ = seed;
 }
 

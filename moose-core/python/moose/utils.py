@@ -521,7 +521,7 @@ def assignDefaultTicks(modelRoot='/model', dataRoot='/data', solver='hsolve'):
 
 def stepRun(simtime, steptime, verbose=True, logger=None):
     """Run the simulation in steps of `steptime` for `simtime`."""
-    clock = moose.Clock('/clock')
+    clock = moose.element('/clock')
     if verbose:
         msg = 'Starting simulation for %g' % (simtime)
         if logger is None:

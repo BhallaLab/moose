@@ -5,24 +5,10 @@
  * E-mail:          ray dot subhasis at gmail dot com
  * Created:         2007-11-02 11:46:40
  ********************************************************************/
-/**********************************************************************
- ** This program is part of 'MOOSE', the
- ** Messaging Object Oriented Simulation Environment,
- ** also known as GENESIS 3 base code.
- **           copyright (C) 2003-2013 Upinder S. Bhalla. and NCBS
- ** It is made available under the terms of the
- ** GNU Lesser General Public License version 2.1
- ** See the file COPYING.LIB for the full notice.
- **********************************************************************/
 
-#ifndef _NUMUTIL_CPP
-#define _NUMUTIL_CPP
-
-#ifdef  ENABLE_CPP11
-#include <ctgmath>
-#else      /* -----  not ENABLE_CPP11  ----- */
 #include <cmath>
-#endif     /* -----  not ENABLE_CPP11  ----- */
+#include "../randnum/RNG.h"
+#include "numutil.h"
 
 bool almostEqual(float x, float y, float epsilon)
 {
@@ -61,4 +47,27 @@ bool almostEqual(long double x, long double y, long double epsilon)
     }
 }
 
-#endif
+double approximateWithInteger_debug(const char* name, const double x, moose::RNG& rng)
+{
+    static size_t n = 0;
+    n += 1;
+    cerr << name << ' ' << ':' << x;
+    auto y = approximateWithInteger(x, rng);
+    cout << ' ' << y << ", ";
+    if( std::fmod(n, 4) == 0)
+        cerr << endl;
+    return y;
+}
+
+double approximateWithInteger(const double x, moose::RNG& rng)
+{
+    assert(x >= 0.0);
+    double xf = std::floor(x);
+    double base = x - xf;
+    if( base == 0.0)
+        return x;
+    if( rng.uniform() < base)
+        return xf+1.0;
+    return xf;
+}
+

@@ -10,7 +10,7 @@
 #ifndef _FUNC_TERM_H
 #define _FUNC_TERM_H
 
-#include "../external/muparser/include/muParser.h"
+#include "../builtins/MooseParser.h"
 
 class FuncTerm
 {
@@ -44,7 +44,7 @@ class FuncTerm
         double* args_;
         // Look up reactants in the S vec.
         vector< unsigned int > reactantIndex_;
-        mu::Parser parser_;
+        MooseParser parser_;
         string expr_;
         /**
          * Scale factor to account for pool volume if we are assigning conc
@@ -53,6 +53,7 @@ class FuncTerm
          */
         double volScale_;
         unsigned int target_; /// Index of the entity to be updated by Func
+
 };
 
 #endif // _FUNC_TERM_H

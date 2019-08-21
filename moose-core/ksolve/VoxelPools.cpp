@@ -113,8 +113,6 @@ void VoxelPools::advance( const ProcInfo* p )
 #elif USE_BOOST_ODE
 
     /*-----------------------------------------------------------------------------
-    NOTE: 04/21/2016 11:31:42 AM
-
     We need to call updateFuncs  here (unlike in GSL solver) because there
     is no way we can update const vector_type_& y in evalRatesUsingBoost
     function. In gsl implmentation one could do it, because const_cast can
@@ -144,19 +142,21 @@ void VoxelPools::advance( const ProcInfo* p )
     // https://www.boost.org/doc/libs/1_68_0/libs/numeric/odeint/doc/html/boost_numeric_odeint/odeint_in_detail/steppers.html#boost_numeric_odeint.odeint_in_detail.steppers.explicit_steppers
 
     // Describe system to be used in boost solver calls.
-    auto sys = [this](const vector_type_& dy, vector_type_& dydt, const double t) { 
-        VoxelPools::evalRates(this, dy, dydt); };
+    auto sys = [this](const vector_type_& dy, vector_type_& dydt, const double t)
+    {
+        VoxelPools::evalRates(this, dy, dydt);
+    };
 
     // This is usually the default method. It works well in practice. Tested
     // with steady-state solver. Closest to GSL rk5 .
     if( method_ == "rk5" || method_ == "gsl" || method_ == "boost" )
-        odeint::integrate_adaptive( 
-                make_dense_output( epsAbs_, epsRel_, odeint::runge_kutta_dopri5<vector_type_>() ) 
-                , sys , Svec() , p->currTime - p->dt , p->currTime , p->dt
+        odeint::integrate_adaptive(
+                make_dense_output( epsAbs_, epsRel_, odeint::runge_kutta_dopri5<vector_type_>() )
+                , sys, Svec(), p->currTime - p->dt, p->currTime, p->dt
                 );
     else if( method_ == "rk5a" || method_ == "adaptive" )
         odeint::integrate_adaptive( odeint::make_controlled<rk_dopri_stepper_type_>( epsAbs_, epsRel_ )
-                , sys , Svec() , p->currTime - p->dt , p->currTime, p->dt );
+                , sys, Svec(), p->currTime - p->dt, p->currTime, p->dt );
     else if( method_ == "rk2" )
         odeint::integrate_const( rk_midpoint_stepper_type_()
                 , sys, Svec(), p->currTime - p->dt, p->currTime, p->dt);
@@ -165,26 +165,26 @@ void VoxelPools::advance( const ProcInfo* p )
                 , sys, Svec(), p->currTime - p->dt, p->currTime, p->dt );
     else if ("rk54" == method_ )
         odeint::integrate_const( rk_karp_stepper_type_()
-                 , sys , Svec() , p->currTime - p->dt, p->currTime, p->dt);
+                , sys, Svec(), p->currTime - p->dt, p->currTime, p->dt);
     else if ("rkck" == method_ )
         odeint::integrate_adaptive( odeint::make_controlled<rk_karp_stepper_type_>( epsAbs_, epsRel_ )
                 , sys, Svec(), p->currTime - p->dt, p->currTime, p->dt);
     else if( method_ == "rk8" )
         odeint::integrate_const( rk_felhberg_stepper_type_()
-                 , sys, Svec(), p->currTime - p->dt, p->currTime, p->dt);
+                , sys, Svec(), p->currTime - p->dt, p->currTime, p->dt);
     else if( method_ == "rk8a" )
         odeint::integrate_adaptive( rk_felhberg_stepper_type_()
-                 , sys, Svec(), p->currTime - p->dt, p->currTime, p->dt);
+                , sys, Svec(), p->currTime - p->dt, p->currTime, p->dt);
     else
     {
         cerr << "Ksolve: Unknow method " << method_  << ", using default!" << endl;
         odeint::integrate_const(
-                make_dense_output( epsAbs_, epsRel_, odeint::runge_kutta_dopri5<vector_type_>() ) 
-                , sys , Svec() , p->currTime - p->dt , p->currTime , p->dt
+                make_dense_output( epsAbs_, epsRel_, odeint::runge_kutta_dopri5<vector_type_>() )
+                , sys, Svec(), p->currTime - p->dt, p->currTime, p->dt
                 );
     }
-
 #endif
+
     if ( !stoichPtr_->getAllowNegative() )   // clean out negatives
     {
         unsigned int nv = stoichPtr_->getNumVarPools();
@@ -205,12 +205,10 @@ void VoxelPools::setInitDt( double dt )
 }
 
 #ifdef USE_GSL
-// static func. This is the function that goes into the Gsl solver.
-int VoxelPools::gslFunc( double t, const double* y, double *dydt,
-                         void* params )
+// static func. This goes into the Gsl solver.
+int VoxelPools::gslFunc(double t, const double* y, double *dydt, void* params)
 {
     VoxelPools* vp = reinterpret_cast< VoxelPools* >( params );
-    // Stoich* s = reinterpret_cast< Stoich* >( params );
     double* q = const_cast< double* >( y ); // Assign the func portion.
     vp->stoichPtr_->updateFuncs( q, t );
     vp->updateRates( y, dydt );
@@ -235,7 +233,7 @@ void VoxelPools::evalRates( VoxelPools* vp, const vector_type_& y,  vector_type_
 ///////////////////////////////////////////////////////////////////////
 
 void VoxelPools::updateAllRateTerms( const vector< RateTerm* >& rates,
-                                     unsigned int numCoreRates )
+        unsigned int numCoreRates )
 {
     // Clear out old rates if any
     for ( unsigned int i = 0; i < rates_.size(); ++i )
@@ -249,8 +247,9 @@ void VoxelPools::updateAllRateTerms( const vector< RateTerm* >& rates,
     for ( unsigned int i = numCoreRates; i < rates.size(); ++i )
     {
         rates_[i] = rates[i]->copyWithVolScaling(  getVolume(),
-                    getXreacScaleSubstrates(i - numCoreRates),
-                    getXreacScaleProducts(i - numCoreRates ) );
+                getXreacScaleSubstrates(i-numCoreRates),
+                getXreacScaleProducts(i-numCoreRates) 
+                );
     }
 }
 
@@ -263,13 +262,14 @@ void VoxelPools::updateRateTerms( const vector< RateTerm* >& rates,
         return;
     delete( rates_[index] );
     if ( index >= numCoreRates )
+    {
         rates_[index] = rates[index]->copyWithVolScaling(
                             getVolume(),
                             getXreacScaleSubstrates(index - numCoreRates),
                             getXreacScaleProducts(index - numCoreRates ) );
+    }
     else
-        rates_[index] = rates[index]->copyWithVolScaling(
-                            getVolume(), 1.0, 1.0 );
+        rates_[index] = rates[index]->copyWithVolScaling(getVolume(), 1.0, 1.0);
 }
 
 void VoxelPools::updateRates( const double* s, double* yprime ) const
@@ -335,8 +335,7 @@ void VoxelPools::print() const
  */
 void VoxelPools::setVolumeAndDependencies( double vol )
 {
-    VoxelPoolsBase::setVolumeAndDependencies( vol );
-    updateAllRateTerms( stoichPtr_->getRateTerms(),
-                        stoichPtr_->getNumCoreRates() );
+    VoxelPoolsBase::setVolumeAndDependencies(vol);
+    updateAllRateTerms(stoichPtr_->getRateTerms(), stoichPtr_->getNumCoreRates());
 }
 

@@ -166,7 +166,7 @@ void makeVecUnique( vector< unsigned int >& v )
 
 
 #ifdef DO_UNIT_TESTS
-#include "header.h"
+#include "../basecode/header.h"
 
 void testKinSparseMatrix()
 {

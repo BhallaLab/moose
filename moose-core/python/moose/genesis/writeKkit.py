@@ -664,7 +664,7 @@ def getColorCheck(color,GENESIS_COLOR_SEQUENCE):
             index = color
             return index
     elif isinstance(color, tuple):
-        color =[int(x) for x in color[0:3]]
+        color = [int(x) for x in color[0:3]]
         index = nearestColorIndex(color, GENESIS_COLOR_SEQUENCE)
         return index
     elif isinstance(color, int):

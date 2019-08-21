@@ -1555,7 +1555,7 @@ PyObject * moose_move(PyObject * dummy, PyObject * args)
 PyDoc_STRVAR(moose_delete_documentation,
              "delete(obj)->None\n"
              "\n"
-             "Delete the underlying moose object. This does not delete any of the\n"
+             "Delete the underlying moose object(s). This does not delete any of the\n"
              "Python objects referring to this vec but does invalidate them. Any\n"
              "attempt to access them will raise a ValueError.\n"
              "\n"
@@ -1577,10 +1577,7 @@ PyObject * moose_delete(PyObject * dummy, PyObject * args)
     {
         return NULL;
     }
-    // if (!PyObject_IsInstance(obj, (PyObject*)&IdType)){
-    //     PyErr_SetString(PyExc_TypeError, "vec instance expected");
-    //     return NULL;
-    // }
+
     ObjId oid_;
     if (PyObject_IsInstance(obj, (PyObject*)&IdType))
     {
@@ -1598,13 +1595,14 @@ PyObject * moose_delete(PyObject * dummy, PyObject * args)
     }
     else
     {
-        PyErr_SetString(PyExc_ValueError, "cannot delete moose shell.");
-        return NULL;
+        PyErr_WarnEx(PyExc_RuntimeWarning, "Cannot delete moose shell.", 1);
+        Py_RETURN_NONE;;
     }
+
     if (oid_ == ObjId())
     {
-        PyErr_SetString(PyExc_ValueError, "cannot delete moose shell.");
-        return NULL;
+        PyErr_WarnEx(PyExc_RuntimeWarning, "Cannot delete moose shell.", 1);
+        Py_RETURN_NONE;
     }
     if ( oid_.bad() )
     {
@@ -3252,14 +3250,14 @@ PyMODINIT_FUNC MODINIT(_moose)
 
     clock_t defclasses_end = clock();
 
-    LOG( moose::info, "`Time to define moose classes:"
+    LOG( moose::debug, "`Time to define moose classes:"
             << (defclasses_end - defclasses_start) * 1.0 /CLOCKS_PER_SEC
        );
 
     //PyGILState_Release(gstate);
     clock_t modinit_end = clock();
 
-    LOG( moose::info, "`Time to initialize module:"
+    LOG( moose::debug, "`Time to initialize module:"
             << (modinit_end - modinit_start) * 1.0 /CLOCKS_PER_SEC
        );
 

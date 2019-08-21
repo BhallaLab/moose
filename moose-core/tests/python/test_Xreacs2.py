@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
-import sys
 import moose
+print( "[INFO ] Using moose from %s" % moose.__file__ )
 import numpy as np
 import moose.fixXreacs as fixXreacs
 

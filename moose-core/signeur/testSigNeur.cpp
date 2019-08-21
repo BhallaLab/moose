@@ -9,7 +9,7 @@
 **********************************************************************/
 #ifdef DO_UNIT_TESTS
 
-#include "header.h"
+#include "../basecode/header.h"
 #include "Adaptor.h"
 #include "../shell/Shell.h"
 #include "../shell/Wildcard.h"
