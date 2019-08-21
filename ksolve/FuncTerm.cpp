@@ -23,7 +23,6 @@
 #include <sstream>
 using namespace std;
 
-#include "../external/muparser/include/muParser.h"
 #include "FuncTerm.h"
 #include "../utility/numutil.h"
 

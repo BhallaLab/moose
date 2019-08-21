@@ -13,28 +13,31 @@
 
 class FuncOrder
 {
-    public:
-            FuncOrder()
-                : func_( 0 ), index_( 0 )
-            {;}
+public:
+    FuncOrder()
+        : func_( 0 ), index_( 0 )
+    {;}
 
-            const OpFunc* func() const {
-                    return func_;
-            }
-            unsigned int index() const {
-                    return index_;
-            }
+    const OpFunc* func() const
+    {
+        return func_;
+    }
+    unsigned int index() const
+    {
+        return index_;
+    }
 
-            void set( const OpFunc* func, unsigned int index ) {
-                func_ = func;
-                   index_ = index;
-            }
+    void set( const OpFunc* func, unsigned int index )
+    {
+        func_ = func;
+        index_ = index;
+    }
 
-            bool operator<( const FuncOrder& other ) const
-            {
-                return func_ < other.func_;
-            }
-    private:
-        const OpFunc* func_;
-        unsigned int index_;
+    bool operator<( const FuncOrder& other ) const
+    {
+        return func_ < other.func_;
+    }
+private:
+    const OpFunc* func_;
+    unsigned int index_;
 };

@@ -45,7 +45,6 @@ public:
     Id getDsolve() const;
     void setDsolve( Id dsolve ); /// Inherited from ZombiePoolInterface.
 
-
     unsigned int getNumLocalVoxels() const;
     unsigned int getNumAllVoxels() const;
     /**
@@ -79,30 +78,25 @@ public:
     void reinit( const Eref& e, ProcPtr p );
     void initProc( const Eref& e, ProcPtr p );
     void initReinit( const Eref& e, ProcPtr p );
+
     /**
      * Handles request to change volumes of voxels in this Ksolve, and
      * all cascading effects of this. At this point it won't handle
      * change in size of voxel array.
      */
     void updateVoxelVol( vector< double > vols );
-    //////////////////////////////////////////////////////////////////
-    // Utility for SrcFinfo
-    //////////////////////////////////////////////////////////////////
 
-    //////////////////////////////////////////////////////////////////
     // Solver interface functions
-    //////////////////////////////////////////////////////////////////
     unsigned int getPoolIndex( const Eref& e ) const;
     unsigned int getVoxelIndex( const Eref& e ) const;
 
-    //////////////////////////////////////////////////////////////////
     // ZombiePoolInterface inherited functions
-    //////////////////////////////////////////////////////////////////
-
     void setN( const Eref& e, double v );
     double getN( const Eref& e ) const;
+
     void setNinit( const Eref& e, double v );
     double getNinit( const Eref& e ) const;
+
     void setDiffConst( const Eref& e, double v );
     double getDiffConst( const Eref& e ) const;
 

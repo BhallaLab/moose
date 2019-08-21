@@ -15,7 +15,7 @@
 #include "SynHandlerBase.h"
 #include "RollingMatrix.h"
 #include "SeqSynHandler.h"
-#include "../external/muparser/include/muParser.h"
+#include "../builtins/MooseParser.h"
 
 const Cinfo* SeqSynHandler::initCinfo()
 {

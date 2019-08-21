@@ -21,7 +21,7 @@
 #include "../basecode/header.h"
 #include "../basecode/global.h"
 
-#include "SparseMatrix.h"
+#include "../basecode/SparseMatrix.h"
 #include "KinSparseMatrix.h"
 #include "RateTerm.h"
 #include "FuncTerm.h"

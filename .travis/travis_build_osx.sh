@@ -26,23 +26,26 @@ set -e
     # Make sure not to pick up python from /opt.
     PATH=/usr/local/bin:/usr/bin:$PATH
 
+    PYTHON3=$(which python3)
+
     # Get pylint
-    python -m pip install pylint --user
-    python -m pip install python-libsbml --user
-    python -m pip install pyneuroml --user
+    $PYTHON3 -m pip install pylint --user
+    $PYTHON3 -m pip install python-libsbml --user
+    $PYTHON3 -m pip install pyneuroml --user
 
     mkdir -p _GSL_BUILD && cd _GSL_BUILD \
         && cmake -DDEBUG=ON \
-        -DPYTHON_EXECUTABLE=`which python` ..
+        -DPYTHON_EXECUTABLE=$PYTHON3 \
+        ..
     make pylint -j3
-    make && ctest --output-on-failure -E ".*socket_streamer.*"
+    make && ctest --output-on-failure 
 
     cd .. # Now with boost.
     mkdir -p _BOOST_BUILD && cd _BOOST_BUILD \
         && cmake -DWITH_BOOST_ODE=ON -DDEBUG=ON \
-        -DPYTHON_EXECUTABLE=`which python` ..
+        -DPYTHON_EXECUTABLE=`which python3` ..
 
-    make && ctest --output-on-failure -E ".*socket_streamer.*"
+    make -j4 && ctest --output-on-failure 
     cd ..
     set +e
 

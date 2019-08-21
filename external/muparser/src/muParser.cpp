@@ -25,6 +25,7 @@
 */
 #include "../include/muParser.h"
 #include "../include/muParserTemplateMagic.h"
+#include "../../../basecode/global.h"
 
 //--- Standard includes ------------------------------------------------------------------------
 #include <cmath>
@@ -51,7 +52,7 @@ namespace mu
 {
 
     // Initialize the RNG with random time.
-    moose::RNG<double> rng;
+    moose::RNG rng;
 
   //---------------------------------------------------------------------------
   // Trigonometric function
@@ -112,10 +113,24 @@ namespace mu
   value_type Parser::Fmod(value_type v1, value_type v2) { return fmod(v1, v2); }
   value_type Parser::Quot(value_type v1, value_type v2) { return (int)(v1 / v2); }
 
-  // If no seed is given,
-  value_type Parser::Rand( value_type seed )
+  value_type Parser::Rand( value_type seed = -1 )
   {
       static bool isSeedSet_ = false;
+
+      if( ! isSeedSet_ )
+      {
+          mu::rng.setSeed( seed );
+          isSeedSet_ = true;
+      }
+      return rng.uniform( );                    /* Between 0 and 1 */
+  }
+
+  // If no seed is given,
+  value_type Parser::Rnd( )
+  {
+      static bool isSeedSet_ = false;
+      // check if global seed is set
+      size_t seed = moose::getGlobalSeed();
       if( ! isSeedSet_ )
       {
           mu::rng.setSeed( seed );
@@ -330,6 +345,7 @@ namespace mu
       DefineFun(_T("rint"), Rint);
       DefineFun(_T("abs"), Abs);
       DefineFun(_T("fmod"), Fmod);
+      DefineFun(_T("rnd"), Rnd);
       DefineFun(_T("rand"), Rand);
       DefineFun(_T("rand2"), Rand2);
       // Functions with variable number of arguments

@@ -16,10 +16,6 @@
 #include "../scheduling/Clock.h"
 #include "StreamerBase.h"
 
-// Write to numpy arrays.
-#include "../utility/cnpy.hpp"
-
-
 static SrcFinfo1< vector< double >* > *requestOut()
 {
     static SrcFinfo1< vector< double >* > requestOut(
@@ -63,7 +59,7 @@ const Cinfo* Table::initCinfo()
         "useSpikeMode"
         , "When set to true, look for spikes in a time-series."
         " Normally used for monitoring Vm for action potentials."
-		" Could be used for any thresholded event. Default is False."
+        " Could be used for any thresholded event. Default is False."
         , &Table::setUseSpikeMode
         , &Table::getUseSpikeMode
     );
@@ -211,8 +207,8 @@ const Cinfo* Table::initCinfo()
 static const Cinfo* tableCinfo = Table::initCinfo();
 
 Table::Table() :
-    threshold_( 0.0 ) ,
-    lastTime_( 0.0 ) ,
+    threshold_( 0.0 ),
+    lastTime_( 0.0 ),
     input_( 0.0 ),
     fired_(false),
     useSpikeMode_(false),
@@ -258,7 +254,7 @@ void Table::process( const Eref& e, ProcPtr p )
 
     if (useSpikeMode_)
     {
-        for ( vector< double >::const_iterator i = ret.begin(); i != ret.end(); ++i )
+        for ( auto i = ret.begin(); i != ret.end(); ++i )
             spike( *i );
     }
     else
@@ -270,14 +266,14 @@ void Table::process( const Eref& e, ProcPtr p )
      */
     if( useFileStreamer_ )
     {
-        if( fmod(lastTime_, 5.0) == 0.0 or getVecSize() >= 10000 )
+        if( fmod(lastTime_, 5.0) == 0.0 || getVecSize() >= 10000 )
         {
             mergeWithTime( data_ );
-            StreamerBase::writeToOutFile( outfile_, format_ , "a", data_, columns_ );
+            StreamerBase::writeToOutFile( outfile_, format_, "a", data_, columns_ );
             clearAllVecs();
         }
+        }
     }
-}
 
 void Table::clearAllVecs()
 {
@@ -297,8 +293,9 @@ void Table::reinit( const Eref& e, ProcPtr p )
     tablePath_ = e.id().path();
     unsigned int numTick = e.element()->getTick();
     Clock* clk = reinterpret_cast<Clock*>(Id(1).eref().data());
+
     dt_ = clk->getTickDt( numTick );
-	fired_ = false;
+    fired_ = false;
 
     /** Create the default filepath for this table.  */
     if( useFileStreamer_ )
@@ -312,8 +309,8 @@ void Table::reinit( const Eref& e, ProcPtr p )
         // with rootdit as path.
         if( ! outfileIsSet_ )
             setOutfile( rootdir_ +
-                    moose::moosePathToUserPath(tablePath_) + '.' + format_
-                    );
+                        moose::moosePathToUserPath(tablePath_) + '.' + format_
+                      );
     }
 
     input_ = 0.0;
@@ -324,7 +321,7 @@ void Table::reinit( const Eref& e, ProcPtr p )
 
     if (useSpikeMode_)
     {
-        for (vector<double>::const_iterator i = ret.begin(); i != ret.end(); ++i )
+        for ( auto i = ret.begin(); i != ret.end(); ++i )
             spike( *i );
     }
     else
@@ -369,8 +366,6 @@ void Table::spike( double v )
 
 //////////////////////////////////////////////////////////////
 // Field Definitions
-//////////////////////////////////////////////////////////////
-
 void Table::setThreshold( double v )
 {
     threshold_ = v;
@@ -384,12 +379,12 @@ double Table::getThreshold() const
 // Set the format of table to which its data should be written.
 void Table::setFormat( string format )
 {
-    if( format == "csv" or format == "npy" )
+    if( format == "csv" )
         format_ = format;
     else
         LOG( moose::warning
-                , "Unsupported format " << format
-                << " only npy and csv are supported"
+             , "Unsupported format " << format
+             << " only sv is supported"
            );
 }
 
