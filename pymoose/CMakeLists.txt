@@ -2,59 +2,44 @@ add_definitions(-DPYMOOSE)
 include_directories(../basecode ../msg)
 
 set(PYMOOSE_SRCS
-    moosemodule.cpp
-    vec.cpp
-    mfield.cpp
-    pymooseinit.cpp
-    melement.cpp
-    test_moosemodule.cpp
-    PyRun.cpp
-    )
+  moosemodule.cpp
+  vec.cpp
+  mfield.cpp
+  pymooseinit.cpp
+  melement.cpp
+  test_moosemodule.cpp
+  PyRun.cpp)
 
-# current binary directory using cmake.
+# Python development.
+execute_process(COMMAND ${PYTHON_EXECUTABLE}-config --includes
+  OUTPUT_VARIABLE PYTHON_INCLUDE_FLAGS
+  OUTPUT_STRIP_TRAILING_WHITESPACE)
+message(STATUS "Python include paths: ${PYTHON_INCLUDE_FLAGS}")
+
+
+# Numpy
+execute_process(COMMAND ${PYTHON_EXECUTABLE} -c "import numpy; print(numpy.get_include())"
+    OUTPUT_VARIABLE Python_NumPy_INCLUDE_DIRS
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
+message(STATUS "NumPy include path: ${Python_NumPy_INCLUDE_DIRS}")
+
 add_library( _moose MODULE ${PYMOOSE_SRCS} )
-set(PYMOOSE_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/python/moose")
-
-find_package(PythonInterp REQUIRED)
-execute_process( COMMAND
-    ${PYTHON_EXECUTABLE} -c
-        "import importlib.machinery
-print(importlib.machinery.EXTENSION_SUFFIXES[-1])"
-    OUTPUT_VARIABLE PYTHON_SO_EXTENSION
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-    )
-if(NOT PYTHON_SO_EXTENSION)
-    set(PYTHON_SO_EXTENSION ".so")
-endif()
-message( STATUS "Python so extension ${PYTHON_SO_EXTENSION}" )
-
-find_package(NumPy REQUIRED)
-include_directories(${NUMPY_INCLUDE_DIRS})
+set(PYMOOSE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/python/moose")
 add_definitions(-DUSE_NUMPY)
-
 add_definitions(-DNPY_NO_DEPRECATED_API=NPY_1_7_API_VERSION)
 
-execute_process( COMMAND ${PYTHON_EXECUTABLE}-config --includes
-    OUTPUT_VARIABLE PYTHON_INCLUDE_FLAGS
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-    )
-execute_process( COMMAND ${PYTHON_EXECUTABLE}-config --libs
-    OUTPUT_VARIABLE PYTHON_LIBRARIES
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-    )
-message( STATUS "Python include flags: ${PYTHON_INCLUDE_FLAGS}" )
-set_target_properties(_moose PROPERTIES
+target_include_directories(_moose 
+  PRIVATE ${PYTHON_INCLUDE_DIRS} ${Python_NumPy_INCLUDE_DIRS})
+
+set(PYTHON_SO_EXTENSION ".so")
+set_target_properties(_moose PROPERTIES 
     COMPILE_DEFINITIONS "PYMOOSE"
-    COMPILE_FLAGS "${PYTHON_INCLUDE_FLAGS}"
+    COMPILE_FLAGS ${PYTHON_INCLUDE_FLAGS}
     LIBRARY_OUTPUT_DIRECTORY ${PYMOOSE_OUTPUT_DIRECTORY}
     PREFIX ""
     SUFFIX ${PYTHON_SO_EXTENSION}
     )
 
-if(NOT(PYTHON_SO_EXTENSION STREQUAL ""))
-    set_target_properties(_moose PROPERTIES
-    SUFFIX ${PYTHON_SO_EXTENSION})
-endif()
 
 # see issue #80
 if(HDF5_LIBRARY_DIRS)
@@ -92,6 +77,4 @@ add_custom_command(TARGET _moose POST_BUILD
         " Run 'sudo make install' to install it. "
         " "
         "NOTE: Run 'pip uninstall moose' to uninstall moose."
-    VERBATIM
-    )
-
+    VERBATIM)

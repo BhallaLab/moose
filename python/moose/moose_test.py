@@ -86,6 +86,9 @@ class Command(object):
             self.process.terminate()
             thread.join()
 
+        if self.process.stderr is not None:
+            _logger.warn( '%s' % self.process.stderr.read() )
+
         return self.process.returncode
 
 def init_test_dir( ):
@@ -115,7 +118,7 @@ def run_test( index, testfile, timeout,  **kwargs):
     """
     global test_status_
     global total_
-    pyExec = os.environ.get( 'PYTHON_EXECUTABLE', '/usr/bin/python' )
+    pyExec = os.environ.get( 'PYTHON_EXECUTABLE', sys.executable )
     cmd = Command( [ pyExec, testfile ] )
 
     ti = time.time( )
