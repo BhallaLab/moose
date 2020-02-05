@@ -1,18 +1,6 @@
 set(CMAKE_LEGACY_CYGWIN_WIN32 0)
 cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
-
-
-project(pymoose)
-
-if(COMMAND cmake_policy)
-    cmake_policy(SET CMP0003 NEW)
-    cmake_policy(SET CMP0004 NEW)
-    if(POLICY CMP0050)
-        cmake_policy(SET CMP0050 OLD)
-    endif(POLICY CMP0050)
-endif(COMMAND cmake_policy)
-
-project(moose-core)
+project(MOOSE)
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules")
 include(CheckCXXCompiler.cmake)
@@ -35,7 +23,7 @@ endif()
 # If from command line, version info is not passed, use the git to generate a
 # version file. If GIT fails, use the previous known version.
 if(NOT VERSION_MOOSE)
-    set(VERSION_MOOSE "3.1.3-${GIT_HEAD}")
+    set(VERSION_MOOSE "3.1.5-${GIT_HEAD}")
 endif()
 
 add_definitions( -DMOOSE_VERSION="${VERSION_MOOSE}")
@@ -92,9 +80,10 @@ endif()
 option(DEBUG "Build with debug support" OFF)
 option(GPROF "Build for profiling using gprof" OFF)
 option(ENABLE_UNIT_TESTS "Enable unit tests (DEBUG should also be ON)" OFF)
+option(WITH_PYTHON "Build native python extension" ON)
 option(WITH_MPI  "Enable Openmpi support" OFF)
 option(WITH_BOOST "Use boost library instead of GSL" OFF)
-option(WITH_GSL  "Use gsl-library. Alternative is WITH_BOOST" ON)
+option(WITH_GSL  "Use gsl library. Alternative is WITH_BOOST" ON)
 option(PARALLELIZED_SOLVERS "Use parallel version of GSOLVE. (alpha)" OFF )
 option(PARALLELIZED_CLOCK "High level parallelization of moose::Clock (alpha)" OFF )
 
@@ -367,7 +356,7 @@ if(MACOSX)
         ${SYSTEM_SHARED_LIBS}
         ${CMAKE_DL_LIBS}
         )
-ELSE(MACOSX)
+else(MACOSX)
     target_link_libraries(libmoose
         "-Wl,--whole-archive"
         ${MOOSE_LIBRARIES}
@@ -385,8 +374,15 @@ endif( WITH_BOOST )
 
 
 ######################### BUILD PYMOOSE ########################################
-# This target is built by pymoose/CMakeLists.txt file.
-add_subdirectory( pymoose )
+# Root of all python module.
+if(WITH_PYTHON)
+    # find_package(Python3 COMPONENTS Interpreter Development)
+    set(Python_ADDITIONAL_VERSIONS 2.7)
+    find_package(PythonInterp 3.4)
+    set(PYTHON_EXECUTABLE ${Python3_EXECUTABLE})
+    set(PYTHON_INCLUDE_DIRS ${Python3_INCLUDE_DIRS})
+    add_subdirectory(pymoose)
+endif()
 
 # always override debian default installation directory. It will be installed in
 # site-packages instead of dist-packages.

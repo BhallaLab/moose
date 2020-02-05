@@ -44,6 +44,7 @@
 #include <cstring>
 #include <map>
 #include <ctime>
+#include <cstring>
 #include <csignal>
 #include <exception>
 
@@ -75,11 +76,11 @@ using namespace std;
 extern void testSync();
 extern void testAsync();
 
-extern void testSyncArray( 
-        unsigned int size,
-        unsigned int numThreads,
-        unsigned int method 
-        );
+extern void testSyncArray(
+    unsigned int size,
+    unsigned int numThreads,
+    unsigned int method
+);
 
 extern void testShell();
 extern void testScheduling();
@@ -103,16 +104,16 @@ extern void test_moosemodule();
 
 
 extern Id init(
-        int argc, char ** argv, bool& doUnitTests
-        , bool& doRegressionTests, unsigned int& benchmark 
-        );
+    int argc, char ** argv, bool& doUnitTests
+    , bool& doRegressionTests, unsigned int& benchmark
+);
 
 extern void initMsgManagers();
 extern void destroyMsgManagers();
 
 extern void speedTestMultiNodeIntFireNetwork(
-        unsigned int size, unsigned int runsteps 
-        );
+    unsigned int size, unsigned int runsteps
+);
 
 extern void mooseBenchmarks( unsigned int option );
 
@@ -2717,20 +2718,26 @@ int defineDestFinfos(const Cinfo * cinfo)
         // if (name.find("get") == 0 || name.find("set") == 0){
         //     continue;
         // }
-        PyGetSetDef destFieldGetSet;
+        PyGetSetDef destFieldGetSet = {.name = (char*) name.c_str()
+	  , .get=nullptr, .set=nullptr
+          , .doc= (char*) "Destination field"
+	  , .closure=nullptr};
         vec.push_back(destFieldGetSet);
 
-        vec[currIndex].name = (char*)calloc(name.size() + 1, sizeof(char));
-        strncpy(vec[currIndex].name,
-                const_cast<char*>(name.c_str()),
-                name.size());
+        // Dilawar:
+        // strncpy can not write to const char* especially with clang++.
+        // Ref: https://docs.python.org/3/c-api/structures.html#c.PyGetSetDef
+        //vec[currIndex].name = (char*)calloc(name.size() + 1, sizeof(char));
+        //strncpy(vec[currIndex].name,
+        //        const_cast<char*>(name.c_str()),
+        //        name.size());
+        // vec[currIndex].doc = (char*) "Destination field";
 
-        vec[currIndex].doc = (char*) "Destination field";
         vec[currIndex].get = (getter)moose_ObjId_get_destField_attr;
-        PyObject * args = PyTuple_New(1);
-        if (args == NULL)
+        PyObject *args = PyTuple_New(1);
+        if (!args || !vec[currIndex].name)
         {
-            cerr << "moosemodule.cpp: defineDestFinfos: Failed to allocate tuple" << endl;
+            cerr << "moosemodule.cpp: defineDestFinfos: allocation failed\n";
             return 0;
         }
         PyTuple_SetItem(args, 0, PyString_FromString(name.c_str()));
@@ -3230,15 +3237,15 @@ PyMODINIT_FUNC MODINIT(_moose)
 
     clock_t defclasses_end = clock();
 
-    LOG( moose::info, "`Time to define moose classes:" 
-            << (defclasses_end - defclasses_start) * 1.0 /CLOCKS_PER_SEC
+    LOG( moose::info, "`Time to define moose classes:"
+         << (defclasses_end - defclasses_start) * 1.0 /CLOCKS_PER_SEC
        );
 
     PyGILState_Release(gstate);
     clock_t modinit_end = clock();
 
-    LOG( moose::info, "`Time to initialize module:" 
-            << (modinit_end - modinit_start) * 1.0 /CLOCKS_PER_SEC 
+    LOG( moose::info, "`Time to initialize module:"
+         << (modinit_end - modinit_start) * 1.0 /CLOCKS_PER_SEC
        );
 
     if (doUnitTests)
