@@ -144,6 +144,22 @@ namespace moose {
         if( p.size() == 0 )
             return true;
 
+#ifdef  USE_BOOST_FILESYSTEM
+        try
+        {
+            boost::filesystem::path pdirs( p );
+            boost::filesystem::create_directories( pdirs );
+            LOG( moose::info, "Created directory " << p );
+            return true;
+        }
+        catch(const boost::filesystem::filesystem_error& e)
+        {
+            LOG( moose::warning, "create_directories(" << p << ") failed with "
+                    << e.code().message()
+               );
+            return false;
+        }
+#else      /* -----  not USE_BOOST_FILESYSTEM  ----- */
         string command( "mkdir -p ");
         command += p;
         int ret = system( command.c_str() );
@@ -163,6 +179,7 @@ namespace moose {
             LOG( moose::warning, p << " is no directory" );
             return false;
         }
+#endif     /* -----  not USE_BOOST_FILESYSTEM  ----- */
         return true;
     }
 

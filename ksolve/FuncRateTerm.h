@@ -21,20 +21,24 @@
 class FuncRate: public ExternReac
 {
     public:
-        FuncRate( double k, unsigned int targetPoolIndex )
-            : k_( k ), funcVolPower_( 0.0 )
-        {
-            func_.setTarget( targetPoolIndex );
-        }
+        FuncRate( double k, unsigned int targetPoolIndex ) :
+            k_( k )
+            , func_(shared_ptr<FuncTerm>(new FuncTerm()))
+            , funcVolPower_( 0.0 )
+    {
+        func_->setTarget( targetPoolIndex );
+    }
 
         double operator() ( const double* S ) const {
             double t = Field< double >::get( Id(1), "currentTime" );
-            return func_( S, t ); // get rate from func calculation.
+            auto v = (*func_)( S, t ); // get rate from func calculation.
+            assert(! std::isnan(v));
+            return v;
         }
 
         unsigned int getReactants( vector< unsigned int >& molIndex ) const{
             molIndex.resize( 1 );
-            molIndex[0] = func_.getTarget();
+            molIndex[0] = func_->getTarget();
 
             // This is the number of substrates to the reac. It is zero.
             return 0;
@@ -43,41 +47,39 @@ class FuncRate: public ExternReac
 
         void setReactants( const vector< unsigned int >& molIndex ) {
             assert( molIndex.size() > 0 );
-            func_.setTarget( molIndex[0] );
+            func_->setTarget( molIndex[0] );
         }
 
         const vector< unsigned int >& getFuncArgIndex()
         {
-            return func_.getReactantIndex();
+            return func_->getReactantIndex();
         }
 
         void setFuncArgIndex( const vector< unsigned int >& mol ) {
-            func_.setReactantIndex( mol );
+            func_->setReactantIndex( mol );
         }
 
         void setExpr( const string& s ) {
-            func_.setExpr( s );
+            func_->setExpr( s );
         }
         const string& getExpr() const {
-            return func_.getExpr();
+            return func_->getExpr();
         }
 
-        RateTerm* copyWithVolScaling(
-                double vol, double sub, double prd ) const
+        RateTerm* copyWithVolScaling(double vol, double sub, double prd ) const
         {
+            assert(! std::isnan(vol));
             double ratio = sub * pow( NA * vol, funcVolPower_ );
-            FuncRate* ret = new FuncRate( k_ / ratio, func_.getTarget() );
+            FuncRate* ret = new FuncRate( k_ / ratio, func_->getTarget() );
             ret->funcVolPower_ = funcVolPower_;
             ret->func_ = func_;
-            // return new FuncRate( k_ / ratio );
             return ret;
         }
 
     protected:
-        FuncTerm func_;
         double k_;
+        shared_ptr<FuncTerm> func_;
         double funcVolPower_;
-
 };
 
 
@@ -103,9 +105,10 @@ class FuncReac: public FuncRate
             v_( v )
         {;}
 
-        double operator() ( const double* S ) const {
+        double operator() ( const double* S ) const
+        {
             // double ret = k_ * func_( S, 0.0 ); // get rate from func calculation.
-            double ret = func_( S, 0.0 ); // get rate from func calculation.
+            double ret = (*func_)( S, 0.0 ); // get rate from func calculation.
             vector< unsigned int >::const_iterator i;
             for ( i = v_.begin(); i != v_.end(); i++) {
                 assert( !std::isnan( S[ *i ] ) );
@@ -114,12 +117,14 @@ class FuncReac: public FuncRate
             return ret;
         }
 
-        unsigned int getReactants( vector< unsigned int >& molIndex ) const{
+        unsigned int getReactants( vector< unsigned int >& molIndex ) const
+        {
             molIndex = v_;
             return numSubstrates_;
         }
 
-        void setReactants( const vector< unsigned int >& molIndex ) {
+        void setReactants( const vector< unsigned int >& molIndex ) 
+        {
             v_ = molIndex;
         }
 
@@ -143,7 +148,6 @@ class FuncReac: public FuncRate
             ret->func_ = func_;
             ret->funcVolPower_ = funcVolPower_;
             return ret;
-            // return new FuncReac( k_ / ratio, v_ );
         }
 
     private:

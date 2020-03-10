@@ -1,4 +1,4 @@
-from __future__ import absolute_import, print_function
+from __future__ import absolute_import, print_function, division
 # rmoogli.py: rdesigneur Moogli interface
 # This is a fallback version designed to work with moogul but using almost
 # the same interface as far as rdesigneur is concerned.

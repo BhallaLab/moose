@@ -46,6 +46,8 @@
  * - Reinit.
  */
 
+class FuncTerm;
+
 class Stoich
 {
 public:
@@ -152,6 +154,7 @@ public:
      *  16: Warning: No objects found on path
      */
     int getStatus() const;
+
     //////////////////////////////////////////////////////////////////
     // Model traversal and building functions
     //////////////////////////////////////////////////////////////////
@@ -480,6 +483,7 @@ public:
     //////////////////////////////////////////////////////////////////
     static const unsigned int PoolIsNotOnSolver;
     static const Cinfo* initCinfo();
+
 private:
     /**
      * True if the stoich matrix is set up to handle only one-way

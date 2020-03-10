@@ -10,6 +10,12 @@
 #ifndef _SETGET_H
 #define _SETGET_H
 
+#ifndef NDEBUG
+#include <typeinfo>
+using namespace std;
+#endif
+
+
 // Forward declaration needed for localGet()
 template< class T, class A > class GetOpFunc;
 
@@ -277,8 +283,7 @@ public:
         return SetGet1< A >::setVec( destId, temp, arg );
     }
 
-    static bool setRepeat( ObjId destId, const string& field,
-                           A arg )
+    static bool setRepeat( ObjId destId, const string& field, A arg )
     {
         string temp = "set" + field;
         temp[3] = std::toupper( temp[3] );
@@ -288,8 +293,7 @@ public:
     /**
      * Blocking call using string conversion
      */
-    static bool innerStrSet( const ObjId& dest, const string& field,
-                             const string& arg )
+    static bool innerStrSet( const ObjId& dest, const string& field, const string& arg )
     {
         A val;
         // Do NOT add 'set_' to the field name, as the 'set' func
@@ -299,17 +303,17 @@ public:
     }
 
     //////////////////////////////////////////////////////////////////
-
     // Returns a field value.
     static A get( const ObjId& dest, const string& field)
     {
         ObjId tgt( dest );
         FuncId fid;
+
         string fullFieldName = "get" + field;
         fullFieldName[3] = std::toupper( fullFieldName[3] );
+
         const OpFunc* func = SetGet::checkSet( fullFieldName, tgt, fid );
-        const GetOpFuncBase< A >* gof =
-            dynamic_cast< const GetOpFuncBase< A >* >( func );
+        const GetOpFuncBase< A >* gof = dynamic_cast< const GetOpFuncBase< A >* >( func );
         if ( gof )
         {
             if ( tgt.isDataHere() )

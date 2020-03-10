@@ -16,13 +16,22 @@ from datetime import datetime
 from collections import defaultdict
 import re
 
+import logging
+logger_ = logging.getLogger('moose.utils')
+
 from moose.moose_constants import *
 from moose.print_utils import *
+
+try:
+    from moose.network_utils import *
+except Exception as e:
+    logger_.warn("Netowrk utilities are not loaded due to %s" % e)
+
 # Print and Plot utilities.
 try:
     from moose.plot_utils import *
 except Exception as e:
-    info( "Plot utilities are not loaded due to '%s'" % e )
+    logger_.warn( "Plot utilities are not loaded due to '%s'" % e )
 
 def create_table_path(model, graph, element, field):
 
@@ -83,7 +92,7 @@ def readtable(table, filename, separator=None):
     for line in in_file:
         line_no = line_no + 1
         tokens = line.split(separator)
-        if len(tokens) is 0:
+        if not tokens:
             continue
         elif len(tokens) == 1:
             table[ii] = float(tokens[0])
@@ -521,13 +530,13 @@ def assignDefaultTicks(modelRoot='/model', dataRoot='/data', solver='hsolve'):
 
 def stepRun(simtime, steptime, verbose=True, logger=None):
     """Run the simulation in steps of `steptime` for `simtime`."""
+    global logger_
+    if logger is None:
+        logger = logger_
     clock = moose.element('/clock')
     if verbose:
         msg = 'Starting simulation for %g' % (simtime)
-        if logger is None:
-            print(msg)
-        else:
-            logger.info(msg)
+        logger_.info(msg)
     ts = datetime.now()
     while clock.currentTime < simtime - steptime:
         ts1 = datetime.now()
@@ -536,29 +545,20 @@ def stepRun(simtime, steptime, verbose=True, logger=None):
         td = te - ts1
         if verbose:
             msg = 'Simulated till %g. Left: %g. %g of simulation took: %g s' % (clock.currentTime, simtime - clock.currentTime, steptime, td.days * 86400 + td.seconds + 1e-6 * td.microseconds)
-            if logger is None:
-                print(msg)
-            else:
-                logger.info(msg)
+            logger_.info(msg)
 
     remaining = simtime - clock.currentTime
     if remaining > 0:
         if verbose:
             msg = 'Running the remaining %g.' % (remaining)
-            if logger is None:
-                print(msg)
-            else:
-                logger.info(msg)
+            logger_.info(msg)
         moose.start(remaining)
     te = datetime.now()
     td = te - ts
     dt = min([t for t in moose.element('/clock').dts if t > 0.0])
     if verbose:
         msg = 'Finished simulation of %g with minimum dt=%g in %g s' % (simtime, dt, td.days * 86400 + td.seconds + 1e-6 * td.microseconds)
-        if logger is None:
-            print(msg)
-        else:
-            logger.info(msg)
+        logger_.info(msg)
 
 
 

@@ -2,34 +2,34 @@ language: cpp
 sudo: required
 
 matrix:
-    include:
-    - os: linux
-      dist: xenial
-    - os: osx
-      osx_image: xcode10.2
+  include:
+  - os: linux
+    dist: bionic
+    services:
+        - xvfb
+  - os: osx
+    osx_image: 
+     - xcode11.3
 
 notifications:
-  email:
-    recipients:
-    - bhalla@ncbs.res.in
-    - dilawar.s.rajput@gmail.com
-    - hrani@ncbs.res.in
-    on_success: change
-    on_failure: always
-
-addons:
-    apt:
-      update: true
-
-before_script:
-- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then nvm get head || true; fi
-- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ./.travis/travis_prepare_osx.sh; fi
-- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo ./.travis/travis_prepare_linux.sh; fi
-
-script:
-- if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ./.travis/travis_build_osx.sh; fi
-- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./.travis/travis_build_linux.sh; fi
+    email:
+        recipients:
+            - bhalla@ncbs.res.in
+            - dilawar.s.rajput@gmail.com
+            - hrani@ncbs.res.in
+        on_success: change
+        on_failure: always
 
 addons:
   apt:
     update: true
+
+
+before_script:
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then nvm get head || true; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ./.ci/travis_prepare_osx.sh; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then sudo ./.ci/travis_prepare_linux.sh; fi
+
+script:
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then ./.ci/travis_build_osx.sh; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then ./.ci/travis_build_linux.sh; fi

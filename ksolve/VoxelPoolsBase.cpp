@@ -107,8 +107,7 @@ void VoxelPoolsBase::setVolumeAndDependencies( double vol )
     // a subsequent call via Ksolve or Stoich.
 }
 
-void VoxelPoolsBase::scaleVolsBufsRates(
-    double ratio, const Stoich* stoichPtr )
+void VoxelPoolsBase::scaleVolsBufsRates(double ratio, const Stoich* stoichPtr)
 {
     volume_ *= ratio; // Scale vol
     for ( vector< double >::iterator
@@ -132,8 +131,10 @@ void VoxelPoolsBase::scaleVolsBufsRates(
     unsigned int numCoreRates = stoichPtr->getNumCoreRates();
     const vector< RateTerm* >& rates = stoichPtr->getRateTerms();
     rates_.resize( rates.size() );
+
     for ( unsigned int i = 0; i < numCoreRates; ++i )
         rates_[i] = rates[i]->copyWithVolScaling( getVolume(), 1, 1 );
+
     for ( unsigned int i = numCoreRates; i < rates.size(); ++i )
     {
         rates_[i] = rates[i]->copyWithVolScaling(  getVolume(),

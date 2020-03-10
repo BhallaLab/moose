@@ -225,8 +225,7 @@ const Cinfo* PoolBase::initCinfo()
 static const Cinfo* poolCinfo = PoolBase::initCinfo();
 
 //////////////////////////////////////////////////////////////
-PoolBase::PoolBase()
-    : concInit_( 0.0 )
+PoolBase::PoolBase() : concInit_( 0.0 )
 {;}
 
 PoolBase::~PoolBase()
@@ -427,8 +426,7 @@ void PoolBase::vSetIsBuffered( const Eref& e, bool v )
 // There should also be a subsequent call to resched for the entire tree.
 //////////////////////////////////////////////////////////////
 // static func
-void PoolBase::zombify( Element* orig, const Cinfo* zClass,
-                        Id ksolve, Id dsolve )
+void PoolBase::zombify(Element* orig, const Cinfo* zClass, Id ksolve, Id dsolve)
 {
     if ( orig->cinfo() == zClass )
         return;
@@ -443,8 +441,7 @@ void PoolBase::zombify( Element* orig, const Cinfo* zClass,
     for ( unsigned int i = 0; i < num; ++i )
     {
         Eref er( orig, i + start );
-        const PoolBase* pb =
-            reinterpret_cast< const PoolBase* >( er.data() );
+        const PoolBase* pb = reinterpret_cast< const PoolBase* >( er.data() );
         species[ i ] = pb->getSpecies( er );
         concInit[ i ] = pb->getConcInit( er );
         diffConst[ i ] = pb->getDiffConst( er );

@@ -19,20 +19,20 @@
 // Entirely derived from ZombiePool. Only the zombification routines differ.
 const Cinfo* ZombieBufPool::initCinfo()
 {
-		//////////////////////////////////////////////////////////////
-		// Field Definitions: use virtual functions to deal with, the
-		// moose definitions are inherited.
-		//////////////////////////////////////////////////////////////
-	static Dinfo< ZombieBufPool > dinfo( true );
-	static Cinfo zombieBufPoolCinfo (
-		"ZombieBufPool",
-		ZombiePool::initCinfo(),
-		0,
-		0,
-		&dinfo
-	);
+    //////////////////////////////////////////////////////////////
+    // Field Definitions: use virtual functions to deal with, the
+    // moose definitions are inherited.
+    //////////////////////////////////////////////////////////////
+    static Dinfo< ZombieBufPool > dinfo( true );
+    static Cinfo zombieBufPoolCinfo (
+        "ZombieBufPool",
+        ZombiePool::initCinfo(),
+        0,
+        0,
+        &dinfo
+    );
 
-	return &zombieBufPoolCinfo;
+    return &zombieBufPoolCinfo;
 }
 
 //////////////////////////////////////////////////////////////
@@ -52,27 +52,27 @@ ZombieBufPool::~ZombieBufPool()
 
 void ZombieBufPool::vSetN( const Eref& e, double v )
 {
-	ZombiePool::vSetN( e, v );
-	ZombiePool::vSetNinit( e, v );
+    ZombiePool::vSetN( e, v );
+    ZombiePool::vSetNinit( e, v );
 }
 
 void ZombieBufPool::vSetNinit( const Eref& e, double v )
 {
-	vSetN( e, v );
+    vSetN( e, v );
 }
 
 void ZombieBufPool::vSetConc( const Eref& e, double conc )
 {
-	double n = NA * conc * lookupVolumeFromMesh( e );
-	vSetN( e, n );
+    double n = NA * conc * lookupVolumeFromMesh( e );
+    vSetN( e, n );
 }
 
 void ZombieBufPool::vSetConcInit( const Eref& e, double conc )
 {
-	vSetConc( e, conc );
+    vSetConc( e, conc );
 }
 
 bool ZombieBufPool::vGetIsBuffered( const Eref& e ) const
 {
-	return true;
+    return true;
 }

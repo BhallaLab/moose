@@ -90,8 +90,7 @@ class FieldElement: public Element
 		 *
 		 * Returns 0 if either index is out of range.
 		 */
-		char* data( unsigned int rawIndex,
-						unsigned int fieldIndex = 0 ) const;
+		char* data( unsigned int rawIndex, unsigned int fieldIndex = 0 ) const;
 
 		/**
 		 * virtual

@@ -6,24 +6,20 @@
 #include <Python.h>
 #include <structmember.h>
 
-#ifdef USE_NUMPY
+// Numpy is now default.
 #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
 #include <numpy/arrayobject.h>
-#endif
 
 #include <iostream>
 #include <typeinfo>
 #include <cstring>
 #include <map>
 #include <ctime>
+#include <cstring>
 #include <csignal>
 #include <chrono>
 #include <thread>
 #include <exception>
-
-#if USE_BOOST_ODE
-#include <boost/format.hpp>
-#endif
 
 #ifdef USE_MPI
 #include <mpi.h>
@@ -34,60 +30,20 @@
 #include "../basecode/global.h"
 #include "../basecode/Id.h"
 #include "../basecode/ObjId.h"
-#include "../utility/utility.h"
 #include "../shell/Shell.h"
 #include "../shell/Wildcard.h"
 #include "../basecode/global.h"
+
+#include "../utility/utility.h"
+#include "../utility/strutil.h"
 
 #include "moosemodule.h"
 
 using namespace std;
 
-#ifdef DO_UNIT_TESTS
 
-extern void testSync();
-extern void testAsync();
-
-extern void testSyncArray(
-        unsigned int size,
-        unsigned int numThreads,
-        unsigned int method
-        );
-
-extern void testShell();
-extern void testScheduling();
-extern void testSchedulingProcess();
-extern void testBuiltins();
-extern void testBuiltinsProcess();
-
-extern void testMpiScheduling();
-extern void testMpiBuiltins();
-extern void testMpiShell();
-extern void testMsg();
-extern void testMpiMsg();
-extern void testKinetics();
-
-#endif
-
-extern void mpiTests();
-extern void processTests( Shell* );
-extern void nonMpiTests(Shell *);
-extern void test_moosemodule();
-
-
-extern Id init(
-        int argc, char ** argv, bool& doUnitTests
-        , bool& doRegressionTests, unsigned int& benchmark
-        );
-
+extern Id init( int argc, char ** argv, bool& doUnitTests);
 extern void initMsgManagers();
-extern void destroyMsgManagers();
-
-extern void speedTestMultiNodeIntFireNetwork(
-        unsigned int size, unsigned int runsteps
-        );
-
-extern void mooseBenchmarks( unsigned int option );
 
 /*-----------------------------------------------------------------------------
  *  Random number generator for this module.
@@ -182,18 +138,11 @@ extern PyTypeObject moose_DestField;
 extern PyTypeObject moose_LookupField;
 extern PyTypeObject moose_ElementField;
 
-/////////////////////////////////////////////////////////////////
 // Module globals
-/////////////////////////////////////////////////////////////////
-int verbosity = 1;
-// static int isSingleThreaded = 0;
+int verbosity = 0;
 static int isInfinite = 0;
 static unsigned int numNodes = 1;
-// static unsigned int numCores = 1;
-// static unsigned int myNode = 0;
-// static unsigned int numProcessThreads = 0;
 static int doUnitTests = 0;
-static int doRegressionTests = 0;
 static int quitFlag = 0;
 
 /**
@@ -298,6 +247,7 @@ void * to_cpp(PyObject * object, char typecode)
     }
     case 's':
     {
+        assert(object);
         char* tmp = PyString_AsString(object);
         if (tmp == NULL)
         {
@@ -908,13 +858,7 @@ vector <string> setup_runtime_env()
     vector<string> args;
     args.push_back("moose");
     map<string, string>::const_iterator it;
-    // it = argmap.find("SINGLETHREADED");
-    // if (it != argmap.end()){
-    //     istringstream(it->second) >> isSingleThreaded;
-    //     if (isSingleThreaded){
-    //         args.push_back("-s");
-    //     }
-    // }
+
     it = argmap.find("INFINITE");
     if (it != argmap.end())
     {
@@ -924,26 +868,7 @@ vector <string> setup_runtime_env()
             args.push_back("-i");
         }
     }
-#if 0
-    it = argmap.find("NUMNODES");
-    if (it != argmap.end())
-    {
-        istringstream(it->second) >> numNodes;
-        args.push_back("-n");
-        args.push_back(it->second);
-    }
-    it = argmap.find("NUMCORES");
-    if (it != argmap.end())
-    {
-        istringstream(it->second) >> numCores;
-    }
-    // it = argmap.find("NUMPTHREADS");
-    // if (it != argmap.end()){
-    //     istringstream(it->second) >> numProcessThreads;
-    //     args.push_back("-t");
-    //     args.push_back(it->second);
-    // }
-#endif
+
     it = argmap.find("QUIT");
     if (it != argmap.end())
     {
@@ -963,11 +888,6 @@ vector <string> setup_runtime_env()
     {
         istringstream(it->second) >> doUnitTests;
     }
-    it = argmap.find("DOREGRESSIONTESTS");
-    if (it != argmap.end())
-    {
-        istringstream(it->second) >> doRegressionTests;
-    }
 
     if (verbosity > 0)
     {
@@ -979,7 +899,6 @@ vector <string> setup_runtime_env()
              // << "   NUMPTHREADS = " << numProcessThreads << endl
              << "   VERBOSITY = " << verbosity << endl
              << "   DOUNITTESTS = " << doUnitTests << endl
-             << "   DOREGRESSIONTESTS = " << doRegressionTests << endl
              << "========================================" << endl;
     }
     return args;
@@ -995,20 +914,12 @@ Id getShell(int argc, char ** argv)
 {
     static int inited = 0;
     if (inited)
-    {
         return Id(0);
-    }
-    bool dounit = doUnitTests != 0;
-    bool doregress = doRegressionTests != 0;
-    unsigned int doBenchmark = 0;
-    // Utilize the main::init function which has friend access to Id
-    Id shellId = init(argc, argv, dounit, doregress, doBenchmark );
+
+    bool dounit = false;
+    Id shellId = init(argc, argv, dounit); 
     inited = 1;
     Shell * shellPtr = reinterpret_cast<Shell*>(shellId.eref().data());
-    if (dounit)
-    {
-        nonMpiTests( shellPtr ); // These tests do not need the process loop.
-    }
     if ( shellPtr->myNode() == 0 )
     {
         if ( Shell::numNodes() > 1 )
@@ -1019,24 +930,9 @@ Id getShell(int argc, char ** argv)
             shellPtr->doUseClock( "/postmaster", "process", 9 );
             shellPtr->doSetClock( 9, 1.0 ); // Use a sensible default.
         }
-#ifdef DO_UNIT_TESTS
-        if ( dounit )
-        {
-            mpiTests();
-            processTests( shellPtr );
-        }
-        // if ( doRegressionTests ) regressionTests();
-#endif
-        // These are outside unit tests because they happen in optimized
-        // mode, using a command-line argument. As soon as they are done
-        // the system quits, in order to estimate timing.
-        if ( doBenchmark != 0 )
-        {
-            mooseBenchmarks( doBenchmark );
-        }
     }
     return shellId;
-} //! create_shell()
+} 
 
 /**
    Clean up after yourself.
@@ -1389,30 +1285,30 @@ PyObject * moose_getFieldNames(PyObject * dummy, PyObject * args)
 }
 
 PyDoc_STRVAR(moose_copy_documentation,
-        "copy(src, dest, name, n, toGlobal, copyExtMsg) -> bool\n"
-        "\n"
-        "Make copies of a moose object.\n"
-        "\n"
-        "Parameters\n"
-        "----------\n"
-        "src : vec, element or str\n"
-        "    source object.\n"
-        "dest : vec, element or str\n"
-        "    Destination object to copy into.\n"
-        "name : str\n"
-        "    Name of the new object. If omitted, name of the original will be used.\n"
-        "n : int\n"
-        "    Number of copies to make.\n"
-        "toGlobal : int\n"
-        "    Relevant for parallel environments only. If false, the copies will\n"
-        "    reside on local node, otherwise all nodes get the copies.\n"
-        "copyExtMsg : int\n"
-        "    If true, messages to/from external objects are also copied.\n"
-        "\n"
-        "Returns\n"
-        "-------\n"
-        "vec\n"
-        "    newly copied vec\n"
+             "copy(src, dest, name, n, toGlobal, copyExtMsg) -> bool\n"
+             "\n"
+             "Make copies of a moose object.\n"
+             "\n"
+             "Parameters\n"
+             "----------\n"
+             "src : vec, element or str\n"
+             "    source object.\n"
+             "dest : vec, element or str\n"
+             "    Destination object to copy into.\n"
+             "name : str\n"
+             "    Name of the new object. If omitted, name of the original will be used.\n"
+             "n : int\n"
+             "    Number of copies to make.\n"
+             "toGlobal : int\n"
+             "    Relevant for parallel environments only. If false, the copies will\n"
+             "    reside on local node, otherwise all nodes get the copies.\n"
+             "copyExtMsg : int\n"
+             "    If true, messages to/from external objects are also copied.\n"
+             "\n"
+             "Returns\n"
+             "-------\n"
+             "vec\n"
+             "    newly copied vec\n"
             );
 
 PyObject * moose_copy(PyObject * dummy, PyObject * args, PyObject * kwargs)
@@ -1961,52 +1857,52 @@ PyObject * moose_getCwe(PyObject * dummy, PyObject * args)
 }
 
 PyDoc_STRVAR(moose_connect_documentation,
-          "connect(src, srcfield, destobj, destfield[,msgtype]) -> bool\n"
-          "\n"
-          "Create a message between `src_field` on `src` object to `dest_field` on `dest` object.\n"
-          "This function is used mainly, to say, connect two entities, and to denote what kind of give-and-take relationship they share."
-          "It enables the 'destfield' (of the 'destobj') to acquire the data, from 'srcfield'(of the 'src')."
-          "\n"
-          "Parameters\n"
-          "----------\n"
-          "src : element/vec/string\n"
-          "    the source object (or its path) \n"
-          "    (the one that provides information)\n"
-          "srcfield : str\n"
-          "    source field on self.(type of the information)\n"
-          "destobj : element\n"
-          "    Destination object to connect to.\n"
-          "    (The one that need to get information)\n"
-          "destfield : str\n"
-          "    field to connect to on `destobj`.\n"
-          "msgtype : str\n"
-          "    type of the message. Can be \n"
-          "    `Single` - \n"
-          "    `OneToAll` - \n"
-          "    `AllToOne` - \n"
-          "    `OneToOne` - \n"
-          "    `Reduce` - \n"
-          "    `Sparse` - \n"
-          "    Default: `Single`.\n"
-          "\n"
-          "Returns\n"
-          "-------\n"
-          "msgmanager: melement\n"
-          "    message-manager for the newly created message.\n"
-          "\n"
-          "Examples\n"
-          "--------\n"
-          "Connect the output of a pulse generator to the input of a spike\n"
-          "generator::\n"
-          "\n"
-          "    >>> pulsegen = moose.PulseGen('pulsegen')\n"
-          "    >>> spikegen = moose.SpikeGen('spikegen')\n"
-          "    >>> pulsegen.connect('output', spikegen, 'Vm')\n"
-          "\n"
-          "See also\n"
-          "--------\n"
-          "moose.connect\n"
-          );
+             "connect(src, srcfield, destobj, destfield[,msgtype]) -> bool\n"
+             "\n"
+             "Create a message between `src_field` on `src` object to `dest_field` on `dest` object.\n"
+             "This function is used mainly, to say, connect two entities, and to denote what kind of give-and-take relationship they share."
+             "It enables the 'destfield' (of the 'destobj') to acquire the data, from 'srcfield'(of the 'src')."
+             "\n"
+             "Parameters\n"
+             "----------\n"
+             "src : element/vec/string\n"
+             "    the source object (or its path) \n"
+             "    (the one that provides information)\n"
+             "srcfield : str\n"
+             "    source field on self.(type of the information)\n"
+             "destobj : element\n"
+             "    Destination object to connect to.\n"
+             "    (The one that need to get information)\n"
+             "destfield : str\n"
+             "    field to connect to on `destobj`.\n"
+             "msgtype : str\n"
+             "    type of the message. Can be \n"
+             "    `Single` - \n"
+             "    `OneToAll` - \n"
+             "    `AllToOne` - \n"
+             "    `OneToOne` - \n"
+             "    `Reduce` - \n"
+             "    `Sparse` - \n"
+             "    Default: `Single`.\n"
+             "\n"
+             "Returns\n"
+             "-------\n"
+             "msgmanager: melement\n"
+             "    message-manager for the newly created message.\n"
+             "\n"
+             "Examples\n"
+             "--------\n"
+             "Connect the output of a pulse generator to the input of a spike\n"
+             "generator::\n"
+             "\n"
+             "    >>> pulsegen = moose.PulseGen('pulsegen')\n"
+             "    >>> spikegen = moose.SpikeGen('spikegen')\n"
+             "    >>> pulsegen.connect('output', spikegen, 'Vm')\n"
+             "\n"
+             "See also\n"
+             "--------\n"
+             "moose.connect\n"
+            );
 
 PyObject * moose_connect(PyObject * dummy, PyObject * args)
 {
@@ -2565,7 +2461,6 @@ int defineLookupFinfos(const Cinfo * cinfo)
     return 1;
 }
 
-
 int defineClass(PyObject * module_dict, const Cinfo * cinfo)
 {
     const string& className = cinfo->name();
@@ -2774,14 +2669,26 @@ int defineDestFinfos(const Cinfo * cinfo)
         // if (name.find("get") == 0 || name.find("set") == 0){
         //     continue;
         // }
-        PyGetSetDef destFieldGetSet;
+        PyGetSetDef destFieldGetSet = {.name = (char*) name.c_str()
+                                               , .get=nullptr, .set=nullptr
+                                       , .doc= (char*) "Destination field"
+                                       , .closure=nullptr
+                                      };
         vec.push_back(destFieldGetSet);
 
-        vec[currIndex].name = strdup(name.c_str());
-        vec[currIndex].doc = (char*) "Destination field";
+        // Dilawar:
+        // strncpy can not write to const char* especially with clang++.
+        // Ref: https://docs.python.org/3/c-api/structures.html#c.PyGetSetDef
+        //vec[currIndex].name = (char*)calloc(name.size() + 1, sizeof(char));
+        //strncpy(vec[currIndex].name,
+        //        const_cast<char*>(name.c_str()),
+        //        name.size());
+        // vec[currIndex].doc = (char*) "Destination field";
+
         vec[currIndex].get = (getter)moose_ObjId_get_destField_attr;
         PyObject *args = PyTuple_New(1);
-        if (!args || !vec[currIndex].name) {
+        if (!args || !vec[currIndex].name)
+        {
             cerr << "moosemodule.cpp: defineDestFinfos: allocation failed\n";
             return 0;
         }
@@ -2974,8 +2881,8 @@ PyObject * moose_element(PyObject* dummy, PyObject * args)
         if ( oid.bad() )
         {
             PyErr_SetString(PyExc_ValueError
-                    , (std::string("moose_element: '") + std::string(path) + std::string("' does not exist!")).c_str()
-                    );
+                            , (std::string("moose_element: '") + std::string(path) + std::string("' does not exist!")).c_str()
+                           );
             return NULL;
         }
         PyObject * new_obj = oid_to_element(oid);
@@ -3125,26 +3032,6 @@ PyMODINIT_FUNC MODINIT(_moose)
 {
     clock_t modinit_start = clock();
 
-    //PyGILState_STATE gstate;
-    //gstate = PyGILState_Ensure();
-
-    // First of all create the Shell.  We convert the environment
-    // variables into c-like argv array
-    vector<string> args = setup_runtime_env();
-    int argc = args.size();
-    char ** argv = (char**)calloc(args.size(), sizeof(char*));
-    for (int ii = 0; ii < argc; ++ii)
-    {
-        argv[ii] = (char*)(calloc(args[ii].length()+1, sizeof(char)));
-        strncpy(argv[ii], args[ii].c_str(), args[ii].length()+1);
-    }
-
-    // Should not call. No pthreads now. PyEval_InitThreads();
-    Id shellId = getShell(argc, argv);
-    for (int ii = 1; ii < argc; ++ii)
-    {
-        free(argv[ii]);
-    }
     // Now initialize the module
 #ifdef PY3K
     PyObject * moose_module = PyModule_Create(&MooseModuleDef);
@@ -3251,18 +3138,16 @@ PyMODINIT_FUNC MODINIT(_moose)
     clock_t defclasses_end = clock();
 
     LOG( moose::debug, "`Time to define moose classes:"
-            << (defclasses_end - defclasses_start) * 1.0 /CLOCKS_PER_SEC
+         << (defclasses_end - defclasses_start) * 1.0 /CLOCKS_PER_SEC
        );
 
     //PyGILState_Release(gstate);
     clock_t modinit_end = clock();
 
     LOG( moose::debug, "`Time to initialize module:"
-            << (modinit_end - modinit_start) * 1.0 /CLOCKS_PER_SEC
+         << (modinit_end - modinit_start) * 1.0 /CLOCKS_PER_SEC
        );
 
-    if (doUnitTests)
-        test_moosemodule();
 #ifdef PY3K
     return moose_module;
 #endif

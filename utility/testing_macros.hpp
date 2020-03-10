@@ -114,14 +114,14 @@ static ostringstream assertStream;
         moose::__dump__(assertStream.str(), moose::failed); \
     }
 
-#define ASSERT_TRUE( condition, msg) \
+#define ASSERT_TRUE(condition, msg) \
     if( !(condition) ) {\
         assertStream.str(""); \
         assertStream << msg << endl;  \
         throw std::runtime_error( assertStream.str() );\
     }
 
-#define ASSERT_FALSE( condition, msg) \
+#define ASSERT_FALSE(condition, msg) \
     if( (condition) ) {\
         assertStream.str(""); \
         assertStream.precision( 9 ); \
@@ -132,7 +132,7 @@ static ostringstream assertStream;
 #define ASSERT_EQ(a, b, token)  \
     if( ! doubleEq((a), (b)) ) { \
         assertStream.str(""); \
-        assertStream.precision( 9 ); \
+        assertStream.precision( 12 ); \
         LOCATION(assertStream) \
         assertStream << "Expected " << a << ", received " << b  << endl; \
         assertStream << token << endl; \
@@ -143,7 +143,8 @@ static ostringstream assertStream;
     if(! doubleEq(a, b) ) { \
         assertStream.str(""); \
         LOCATION(assertStream); \
-        assertStream << "Expected " << std::fixed << b << ", received " << a  << endl; \
+        assertStream.precision( 12 ); \
+        assertStream << "Expected " << a << ", received " << b  << endl; \
         assertStream << token; \
         moose::__dump__(assertStream.str(), moose::failed); \
         throw std::runtime_error( "float equality test failed" ); \

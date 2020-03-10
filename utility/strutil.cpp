@@ -177,4 +177,31 @@ string random_string( const unsigned len )
     return s;
 }
 
+void str_replace_all( string& str, const string& a, const string& b)
+{
+    if( a.size() == 0 )
+        return;
+
+    size_t index = 0;
+    while (true) 
+    {
+        /* Locate the substring to replace. */
+        index = str.find(a, index);
+
+        if (index == std::string::npos) 
+            break;
+
+        /* Make the replacement. */
+        str.erase( index, a.size() );
+        str.insert( index, b );
+    }
+}
+
+bool isPrefix(const string& a, const string& b)
+{
+    if(a.size() < b.size())
+        return false;
+    return (b.find(a, 0) == 0);
+}
+
 }
