@@ -49,9 +49,8 @@
  */
 
 #include "../basecode/header.h"
-#include "Clock.h"
-#include "../utility/numutil.h"
 #include "../utility/print_function.hpp"
+#include "Clock.h"
 
 #if PARALLELIZE_CLOCK_USING_CPP11_ASYNC
 #include <future>

@@ -4,7 +4,7 @@ Test MOOSE installation with moose-examples.
 
 """
 
-from __future__ import print_function
+from __future__ import print_function, division
 
 __author__           = "Dilawar Singh"
 __copyright__        = "Copyright 2016, Dilawar Singh"
@@ -102,8 +102,8 @@ def init_test_dir( ):
     os.chdir( test_dir_ )
 
 def suitable_for_testing( script ):
-    with open( script ) as f:
-        txt = f.read( )
+    with open(script, 'r', encoding='utf8') as f:
+        txt = f.read()
         if not re.search( r'main\(\s*\)', txt ):
             _logger.debug( 'Script %s does not contain main( )' % script )
             return False, 'main( ) not found'

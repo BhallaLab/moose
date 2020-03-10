@@ -122,25 +122,26 @@ const Cinfo* Dsolve::initCinfo()
 
     ///////////////////////////////////////////////////////
     // DestFinfo definitions
-    ///////////////////////////////////////////////////////
-
     static DestFinfo process( "process",
                               "Handles process call",
-                              new ProcOpFunc< Dsolve >( &Dsolve::process ) );
+            new ProcOpFunc< Dsolve >( &Dsolve::process ) 
+            );
+
     static DestFinfo reinit( "reinit",
                              "Handles reinit call",
-                             new ProcOpFunc< Dsolve >( &Dsolve::reinit ) );
+            new ProcOpFunc< Dsolve >( &Dsolve::reinit ) 
+            );
 
     static DestFinfo buildMeshJunctions( "buildMeshJunctions",
                                          "Builds junctions between mesh on current Dsolve, and another"
                                          " Dsolve. The meshes have to be compatible. ",
-                                         new EpFunc1< Dsolve, Id >(
-                                                 &Dsolve::buildMeshJunctions ) );
+            new EpFunc1< Dsolve, Id >(&Dsolve::buildMeshJunctions ) 
+            );
 
     static DestFinfo buildNeuroMeshJunctions( "buildNeuroMeshJunctions",
             "Builds junctions between NeuroMesh, SpineMesh and PsdMesh",
-            new EpFunc2< Dsolve, Id, Id >(
-                &Dsolve::buildNeuroMeshJunctions ) );
+            new EpFunc2< Dsolve, Id, Id >(&Dsolve::buildNeuroMeshJunctions ) 
+            );
 
     ///////////////////////////////////////////////////////
     // Shared definitions
@@ -149,10 +150,11 @@ const Cinfo* Dsolve::initCinfo()
     {
         &process, &reinit
     };
+
     static SharedFinfo proc( "proc",
-                             "Shared message for process and reinit",
-                             procShared, sizeof( procShared ) / sizeof( const Finfo* )
-                           );
+            "Shared message for process and reinit",
+            procShared, sizeof( procShared ) / sizeof( const Finfo* )
+            );
 
     static Finfo* dsolveFinfos[] =
     {
@@ -340,8 +342,8 @@ void Dsolve::calcJnDiff( const DiffJunction& jn, Dsolve* other, double dt)
         // different diffusion constants.
         double effectiveDiffConst =
             sqrt( myDv.getDiffConst() * otherDv.getDiffConst() );
-        for ( vector< VoxelJunction >::const_iterator
-                j = jn.vj.begin(); j != jn.vj.end(); ++j )
+
+        for (auto j = jn.vj.cbegin(); j != jn.vj.end(); ++j )
         {
             double myN = myDv.getN( j->first );
             double otherN = otherDv.getN( j->second );
@@ -517,11 +519,8 @@ void Dsolve::process( const Eref& e, ProcPtr p )
 void Dsolve::reinit( const Eref& e, ProcPtr p )
 {
     build( p->dt );
-    for ( vector< DiffPoolVec >::iterator
-            i = pools_.begin(); i != pools_.end(); ++i )
-    {
+    for (auto i = pools_.begin(); i != pools_.end(); ++i )
         i->reinit();
-    }
 }
 
 void Dsolve::updateJunctions( double dt )
@@ -1236,11 +1235,10 @@ void Dsolve::setBlock( const vector< double >& values )
     for ( unsigned int i = 0; i < numPools; ++i )
     {
         unsigned int j = i + startPool;
-        if ( j >= poolStartIndex_ && j < poolStartIndex_ + numLocalPools_ )
+        if (j >= poolStartIndex_ && j < poolStartIndex_ + numLocalPools_)
         {
-            vector< double >::const_iterator
-            q = values.begin() + 4 + i * numVoxels;
-            pools_[ j - poolStartIndex_ ].setNvec( startVoxel, numVoxels, q );
+            auto q = values.cbegin() + 4 + i * numVoxels;
+            pools_[j-poolStartIndex_].setNvec(startVoxel, numVoxels, q);
         }
     }
 }

@@ -129,7 +129,7 @@ const Cinfo* Annotator::initCinfo()
 static const Cinfo* annotatorCinfo = Annotator::initCinfo();
 
 Annotator::Annotator()
-	: x_( 0.0 ), y_( 0.0 ), z_( 0.0 ), width_( 0.0 ), height_( 0.0 ),
+	: x_( 0.0 ), y_( 0.0 ), z_( 0.0 ), height_(0.0), width_( 0.0 ),
 		notes_( "" ), color_( "white" ), textColor_( "black" ),
 		icon_( "sphere" ),solver_( "ee"),runtime_(100.0),dirpath_(""),modeltype_("")
 {

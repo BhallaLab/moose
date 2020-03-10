@@ -1,69 +1,37 @@
 # -*- coding: utf-8 -*-
 # test_function.py ---
-#
 # Filename: test_function.py
 # Description:
 # Author: subha
-# Maintainer:
+# Maintainer: Dilawar Singh <diawars@ncbs.res.in>
 # Created: Sat Mar 28 19:34:20 2015 (-0400)
 # Version:
-# Last-Updated:
-#           By:
-#     Update #: 0
-# URL:
-# Keywords:
-# Compatibility:
-#
-#
 
-# Commentary:
-#
-#
-#
-#
-
-# Change log:
-#
-#
-#
-#
-# This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License as
-# published by the Free Software Foundation; either version 3, or
-# (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-# General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with this program; see the file COPYING.  If not, write to
-# the Free Software Foundation, Inc., 51 Franklin Street, Fifth
-# Floor, Boston, MA 02110-1301, USA.
-#
-#
-
-# Code:
-"""Check variable ordering - bug #161"""
 from __future__ import print_function
-
 import numpy as np
 import moose
+print( "[INFO ] Using moose %s form %s" % (moose.version(), moose.__file__) )
+
+def create_func( funcname, expr ):
+    f = moose.Function( funcname )
+    f.expr = expr
+    t = moose.Table( funcname + 'tab' )
+    moose.connect( t, 'requestOut', f, 'getValue' )
+    moose.setClock( f.tick, 0.1)
+    moose.setClock( t.tick, 0.1)
+    return f, t
 
 def test_var_order():
     """The y values are one step behind the x values because of
     scheduling sequences"""
+    moose.delete( '/' )
     nsteps = 5
     simtime = nsteps
     dt = 1.0
     # fn0 = moose.Function('/fn0')
-    # fn0.x.num = 2
-    # fn0.expr = 'x0 + x1'
-    # fn0.mode = 1
     fn1 = moose.Function('/fn1')
     fn1.x.num = 2
-    fn1.expr = 'y1 + y0 + x1 + x0'
+    fn1.expr = 'y1+y0+x1+x0'
     fn1.mode = 1
     inputs = np.arange(0, nsteps+1, 1.0)
     x0 = moose.StimulusTable('/x0')
@@ -90,6 +58,8 @@ def test_var_order():
     y1.startTime = 0.0
     y1.stopTime = simtime
     y1.stepPosition = 0.0
+    #  print( fn1, type(fn1) )
+    #  print( moose.showmsg(fn1.x) )
     moose.connect(x0, 'output', fn1.x[0], 'input')
     moose.connect(x1, 'output', fn1.x[1], 'input')
     moose.connect(fn1, 'requestOut', y0, 'getOutputValue')
@@ -100,12 +70,54 @@ def test_var_order():
         moose.setClock(ii, dt)
     moose.reinit()
     moose.start(simtime)
-    for ii in range(len(z1.vector)):
-        print(ii, z1.vector[ii])
+    expected = [0, 1.1, 2.211, 3.322, 4.433, 5.544]
+    assert np.allclose(z1.vector, expected), "Excepted %s, got %s" % (expected, z1.vector )
+    print( 'Passed order vars' )
+
+def test_t( ):
+    f, t = create_func( 'funct', 't/2.0')
+    moose.reinit()
+    moose.start(1)
+    y = t.vector
+    d = np.diff( y[1:] ) 
+    assert np.mean(d) == d[0]
+    print( 'Passed t/2' )
+
+def test_trig( ):
+    f, t = create_func('func2', '(sin(t)^2+cos(t)^2)-1')
+    moose.reinit()
+    moose.start( 1 )
+    y = t.vector
+    print(y)
+    assert np.isclose(np.mean(y),  0.0), np.mean(y)
+    assert np.isclose(np.std(y), 0.0), np.std(y)
+    print( 'Passed sin^2 x + cos^x=1' )
+
+def test_rand( ):
+    moose.seed( 10 )
+    f, t = create_func( 'random', 'rnd()')
+    moose.reinit()
+    moose.start(1)
+    expected = [0.49458993, 0.44301495, 0.58332174, 0.70920801, 0.26360285,
+            0.68381843, 0.33607158, 0.19812181, 0.87761494, 0.54088093,
+            0.41366738]
+    assert np.isclose(t.vector, expected ).all(), t.vector
+    print( 'Passed test random' )
+
+def test_fmod( ):
+    f, t = create_func( 'fmod', 'fmod(t, 2)' )
+    moose.reinit()
+    moose.start( 20 )
+    y = t.vector
+    assert (np.fmod(y, 2) == y).all()
+    assert(np.isclose(np.max(y), 1.9)), np.max(y)
+    assert(np.isclose(np.min(y), 0.0)), np.min(y)
+    print('Passed fmod(t,2)')
+
 
 if __name__ == '__main__':
     test_var_order()
-
-
-#
-# test_function.py ends here
+    test_t()
+    test_trig()
+    test_rand()
+    test_fmod()

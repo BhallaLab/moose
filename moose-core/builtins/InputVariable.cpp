@@ -46,7 +46,7 @@
 // Code:
 
 #ifdef USE_HDF5
-#include "header.h"
+#include "../basecode/header.h"
 #include "hdf5.h"
 
 #include "NSDFWriter.h"

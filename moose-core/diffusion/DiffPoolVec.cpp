@@ -71,7 +71,7 @@ void DiffPoolVec::setNvec( const vector< double >& vec )
 }
 
 void DiffPoolVec::setNvec( unsigned int start, unsigned int num,
-                           vector< double >::const_iterator q )
+        vector< double >::const_iterator q )
 {
     assert( start + num <= n_.size() );
     vector< double >::iterator p = n_.begin() + start;
@@ -126,7 +126,7 @@ unsigned int DiffPoolVec::getId() const
 }
 
 void DiffPoolVec::setOps(const vector< Triplet< double > >& ops,
-                         const vector< double >& diagVal )
+        const vector< double >& diagVal )
 {
     if ( ops.size() > 0 )
     {
@@ -144,14 +144,14 @@ void DiffPoolVec::setOps(const vector< Triplet< double > >& ops,
 void DiffPoolVec::advance( double dt )
 {
     if ( ops_.size() == 0 ) return;
-    for ( vector< Triplet< double > >::const_iterator
-            i = ops_.begin(); i != ops_.end(); ++i )
+
+    for (auto i = ops_.cbegin(); i != ops_.end(); ++i )
         n_[i->c_] -= n_[i->b_] * i->a_;
 
     assert( n_.size() == diagVal_.size() );
-    vector< double >::iterator iy = n_.begin();
-    for ( vector< double >::const_iterator
-            i = diagVal_.begin(); i != diagVal_.end(); ++i )
+
+    auto iy = n_.begin();
+    for ( auto i = diagVal_.cbegin(); i != diagVal_.end(); ++i )
         *iy++ *= *i;
 }
 

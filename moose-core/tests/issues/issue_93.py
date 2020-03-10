@@ -2,7 +2,7 @@
 # Issue #93 on moose-core
 
 import numpy as np
-import pylab as pl
+import matplotlib.pyplot as plt
 import moose
 import os
 import sys
@@ -13,7 +13,7 @@ d = os.path.split( os.path.abspath( __file__ ) )[0]
 
 def loadAndRun(solver=True):
     simtime = 500e-3
-    model = moose.loadModel('../data/h10.CNG.swc', '/cell')
+    model = moose.loadModel(os.path.join(d, '../data/h10.CNG.swc'), '/cell')
     comp = moose.element('/cell/apical_e_177_0')
     soma = moose.element('/cell/soma')
     for i in range(10):
@@ -40,20 +40,18 @@ def loadAndRun(solver=True):
     return vec
 
 def main( ):
-    print( '[INFO] See the detailed issue in %s/hsolve' % d )
-    quit()
     eeVec = loadAndRun( False )
     hsolveVec = loadAndRun( True )
     clk = moose.Clock( '/clock' )
     print( '[DEBUG] Total entries %s' % len( eeVec ))
-    t = pl.linspace(0, clk.currentTime, len( eeVec ))
-    pl.plot(t, eeVec, label = 'ee' )
-    pl.plot( t, hsolveVec, label = 'hsolve' )
+    t = np.linspace(0, clk.currentTime, len( eeVec ))
+    plt.plot(t, eeVec, label = 'ee' )
+    plt.plot( t, hsolveVec, label = 'hsolve' )
     outfile = '%s.png' % sys.argv[0]
-    pl.legend( )
-    pl.savefig( outfile )
+    plt.legend( )
+    plt.savefig( outfile )
     print( '[INFO] Wrote results to %s' % outfile )
-    pl.show()
+    return 1
 
 if __name__ == '__main__':
     main()

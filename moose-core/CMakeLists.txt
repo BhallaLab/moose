@@ -4,7 +4,6 @@ project(pymoose)
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules")
 include(CheckCXXCompiler.cmake)
 include(CheckIncludeFileCXX)
-include(FindPkgConfig)
 
 # getgit revision number
 find_program( GIT_EXEC git )
@@ -78,6 +77,7 @@ option(WITH_BOOST_ODE       "Use boost library ode2 library instead of GSL" OFF)
 option(WITH_GSL             "Use gsl-library. Alternative is WITH_BOOST" ON)
 option(PARALLELIZED_CLOCK   "High level parallelization of moose::Clock (alpha)" OFF )
 option(USE_PRIVATE_RNG      "Stochastic Objects use their private RNG" ON)
+option(WITH_ASAN            "Use AddressSanitizer in DEBUG mode." OFF)
 
 
 ############################ BUILD CONFIGURATION #################################
@@ -87,7 +87,7 @@ add_definitions(-DUSE_GENESIS_PARSER)
 
 if(DEBUG OR "${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
     message(STATUS "Building for Debug/Unit testing")
-    add_definitions(-DDO_UNIT_TESTS)
+    add_definitions(-DDO_UNIT_TESTS -O)
     set(CMAKE_BUILD_TYPE Debug)
 elseif(ENABLE_UNIT_TESTS)
     MESSAGE(STATUS "Enabled Unit tests")
@@ -109,8 +109,14 @@ if(GPROF AND "${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
     set(CMAKE_EXE_LINKER_FLAGS_DEBUG "-pg")
 endif()
 
-find_package(Threads)
-
+if(WITH_ASAN AND "${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+    message(STATUS "Compiling with ASAN")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} \
+        -fno-omit-frame-pointer -fsanitize=leak -fsanitize=address")
+    set(CMAKE_LINKER_FLAGS_DEBUG "${CMAKE_LINKER_FLAGS_DEBUG} \
+        -fno-omit-frame-pointer -fsanitize=leak -fsanitize=address")
+    set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -fsanitize=address")
+endif()
 
 ################################### TARGETS ####################################
 
@@ -132,8 +138,6 @@ if(WITH_BOOST_ODE)
     set(WITH_GSL OFF)
 endif(WITH_BOOST_ODE)
 
-include_directories(msg basecode)
-
 set_target_properties(libmoose PROPERTIES COMPILE_DEFINITIONS  "MOOSE_LIB")
 set_target_properties(libmoose PROPERTIES PREFIX "")
 
@@ -143,11 +147,10 @@ set(STATIC_LIBRARIES "" )
 set(SYSTEM_SHARED_LIBS ${LibXML2_LIBRARIES})
 
 # BOOST ode library performs better than GSL and ideally should be made default.
-# Making boost default means that we get rid of gsl. Boost does not have a very
-# good matrix library; it has ublas which is not well maintained and emit a lot
+# Unfortunately Boost does not have a very good matrix library; it has ublas
+# which is not well maintained and emit a lot
 # of warning during compilation. Nonetheless, WITH_BOOST_ODE works fine and
-# produce results quicker than GSL. Both boost ode and ublas are in moose source
-# tree ./external/odeint-v2 and ./external/boost-numeric-bindings
+# produce results quicker than GSL. 
 if(WITH_GSL)
     find_package(GSL 1.16 REQUIRED)
     if(NOT GSL_FOUND)
@@ -172,13 +175,14 @@ if(WITH_GSL)
     # top level.
     include_directories( ${GSL_INCLUDE_DIRS} )
 elseif(WITH_BOOST_ODE)
-    find_package(Boost 1.44 REQUIRED)
-    find_package( LAPACK REQUIRED )
+    find_package(Boost 1.53 REQUIRED)
+    find_package(LAPACK REQUIRED)
 endif()
 
 # if boost ode is being used, don't use GSL.
 if(WITH_BOOST_ODE)
     add_definitions(-DUSE_BOOST_ODE -UUSE_GSL)
+    include_directories(${Boost_INCLUDE_DIRS})
 endif()
 
 # Openmpi
@@ -202,6 +206,7 @@ if(WITH_BOOST_ODE)
     list(APPEND SYSTEM_SHARED_LIBS ${Boost_LIBRARIES})
 endif(WITH_BOOST_ODE)
 
+find_package( Threads )
 list(APPEND SYSTEM_SHARED_LIBS ${CMAKE_THREAD_LIBS_INIT})
 
 # These libraries could be static of dynamic. We need to discrimate between
@@ -265,6 +270,7 @@ list(APPEND MOOSE_LIBRARIES
     msg
     benchmarks
     shell
+    randnum
     scheduling
     moose_mpi
     biophysics
@@ -441,12 +447,43 @@ set(PYMOOSE_TEST_DIRECTORY ${CMAKE_SOURCE_DIR}/tests/python)
 # Collect all python script in tests folder and run them.
 file(GLOB PY_TEST_SCRIPTS "${PYMOOSE_TEST_DIRECTORY}/test_*.py" )
 
+
 # Run python tests.
 foreach( _test_script ${PY_TEST_SCRIPTS} )
     get_filename_component( _test_name ${_test_script} NAME_WE)
     add_test( NAME ${_test_name}
         COMMAND ${PYTHON_EXECUTABLE} ${_test_script}
         WORKING_DIRECTORY ${PYMOOSE_TEST_DIRECTORY}
+        )
+     set_tests_properties( ${_test_name}
+         PROPERTIES ENVIRONMENT "PYTHONPATH=${CMAKE_CURRENT_BINARY_DIR}/python"
+        )
+endforeach( )
+
+# Alpha tests. These should not run by default.
+set(MOOSE_ALPHA_TEST_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/tests/alpha)
+file(GLOB PY_ALPHA_TEST_SCRIPTS "${PYMOOSE_ALPHA_TEST_DIRECTORY}/*.py" )
+foreach( _test_script ${PY_ALPHA_TEST_SCRIPTS} )
+    get_filename_component( _test_name ${_test_script} NAME_WE)
+    add_test( NAME ${_test_name}
+        COMMAND ${PYTHON_EXECUTABLE} ${_test_script}
+	CONFIGURATIONS Devel
+	WORKING_DIRECTORY ${PYMOOSE_ALPHA_TEST_DIRECTORY}
+        )
+     set_tests_properties( ${_test_name}
+         PROPERTIES ENVIRONMENT "PYTHONPATH=${CMAKE_CURRENT_BINARY_DIR}/python"
+        )
+endforeach( )
+
+# Regression and github issues. These should not run by default.
+set(PYMOOSE_ISSUES_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/tests/issues)
+file(GLOB PY_ISSUES_SCRIPTS "${PYMOOSE_ISSUES_DIRECTORY}/*.py" )
+foreach( _test_script ${PY_ISSUES_SCRIPTS} )
+    get_filename_component( _test_name ${_test_script} NAME_WE)
+    add_test( NAME ${_test_name}
+        COMMAND ${PYTHON_EXECUTABLE} ${_test_script}
+	CONFIGURATIONS Devel
+	WORKING_DIRECTORY ${PYMOOSE_ISSUES_DIRECTORY}
         )
      set_tests_properties( ${_test_name}
          PROPERTIES ENVIRONMENT "PYTHONPATH=${CMAKE_CURRENT_BINARY_DIR}/python"
@@ -476,4 +513,5 @@ foreach( _py_script ${PY_SCRIPTS} )
 endforeach( )
 
 ############################ CPACK ######################################
+# This is not maintained anymore since packaging is done using OpenBuildService 
 include(${CMAKE_CURRENT_SOURCE_DIR}/cmake_moose_cpack.cmake)

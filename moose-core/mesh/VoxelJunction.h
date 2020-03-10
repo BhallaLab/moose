@@ -17,31 +17,31 @@
  */
 class VoxelJunction
 {
-	public:
-		VoxelJunction( unsigned int f, unsigned int s, double d = 1.0 )
-				: first( f ), second( s ),
-			   firstVol( 0 ), secondVol( 0 ),
-			   diffScale( d )
-		{;}
-		VoxelJunction()
-				: first( ~0 ), second( ~0 ), firstVol( 0 ), secondVol( 0 ),
-				diffScale( 1.0 )
-		{;}
+public:
+    VoxelJunction( unsigned int f, unsigned int s, double d = 1.0 )
+        : first( f ), second( s ),
+          firstVol( 0 ), secondVol( 0 ),
+          diffScale( d )
+    {;}
+    VoxelJunction()
+        : first( ~0 ), second( ~0 ), firstVol( 0 ), secondVol( 0 ),
+          diffScale( 1.0 )
+    {;}
 
-		// Used for sorting.
-		bool operator<( const VoxelJunction& other ) const
-		{
-			if ( first < other.first ) return 1;
-			if ( first > other.first ) return 0;
-			if ( second < other.second ) return 1;
-			return 0;
-		}
+    // Used for sorting.
+    bool operator<( const VoxelJunction& other ) const
+    {
+        if ( first < other.first ) return 1;
+        if ( first > other.first ) return 0;
+        if ( second < other.second ) return 1;
+        return 0;
+    }
 
-		unsigned int first; /// MeshIndex for first compartment
-		unsigned int second; /// MeshIndex for second compartment
-		double firstVol;
-		double secondVol;
-		double diffScale; /// smaller of the cross-section areas / diffLen
+    unsigned int first; /// MeshIndex for first compartment
+    unsigned int second; /// MeshIndex for second compartment
+    double firstVol;
+    double secondVol;
+    double diffScale; /// smaller of the cross-section areas / diffLen
 };
 
 #endif	// _VOXEL_JUNCTION_H

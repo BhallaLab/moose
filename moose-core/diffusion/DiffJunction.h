@@ -32,19 +32,19 @@
  */
 class DiffJunction
 {
-	public:
-		unsigned int otherDsolve;
-		vector< unsigned int > myPools;
-		vector< unsigned int > otherPools;
+public:
+    unsigned int otherDsolve;
+    vector< unsigned int > myPools;
+    vector< unsigned int > otherPools;
 
-		vector< unsigned int > myXferSrc;
-		vector< unsigned int > otherXferDest;
-		
-		vector< unsigned int > myXferDest;
-		vector< unsigned int > otherXferSrc;
+    vector< unsigned int > myXferSrc;
+    vector< unsigned int > otherXferDest;
 
-		vector< unsigned int > myChannels;
-		vector< unsigned int > otherChannels;
+    vector< unsigned int > myXferDest;
+    vector< unsigned int > otherXferSrc;
 
-		vector< VoxelJunction > vj;
+    vector< unsigned int > myChannels;
+    vector< unsigned int > otherChannels;
+
+    vector< VoxelJunction > vj;
 };

@@ -144,7 +144,7 @@ private:
 
     void copyFields( moose::Compartment* c );
 
-    moose::RNG<double> rng;
+    moose::RNG rng;
 
 };
 

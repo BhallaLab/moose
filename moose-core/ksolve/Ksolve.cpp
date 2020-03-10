@@ -140,36 +140,33 @@ const Cinfo* Ksolve::initCinfo()
     );
 
 
-    ///////////////////////////////////////////////////////
     // DestFinfo definitions
-    ///////////////////////////////////////////////////////
-
     static DestFinfo process( "process",
-                              "Handles process call from Clock",
-                              new ProcOpFunc< Ksolve >( &Ksolve::process )
-                            );
+            "Handles process call from Clock",
+            new ProcOpFunc< Ksolve >( &Ksolve::process )
+            );
 
     static DestFinfo reinit( "reinit",
-                             "Handles reinit call from Clock",
-                             new ProcOpFunc< Ksolve >( &Ksolve::reinit )
-                           );
+            "Handles reinit call from Clock",
+            new ProcOpFunc< Ksolve >( &Ksolve::reinit )
+            );
 
     static DestFinfo initProc( "initProc",
-                               "Handles initProc call from Clock",
-                               new ProcOpFunc< Ksolve >( &Ksolve::initProc )
-                             );
+            "Handles initProc call from Clock",
+            new ProcOpFunc< Ksolve >( &Ksolve::initProc )
+            );
 
     static DestFinfo initReinit( "initReinit",
-                                 "Handles initReinit call from Clock",
-                                 new ProcOpFunc< Ksolve >( &Ksolve::initReinit )
-                               );
+            "Handles initReinit call from Clock",
+            new ProcOpFunc< Ksolve >( &Ksolve::initReinit )
+            );
 
     static DestFinfo voxelVol( "voxelVol",
-                               "Handles updates to all voxels. Comes from parent "
-                               "ChemCompt object.",
-                               new OpFunc1< Ksolve, vector< double > >(
-                                   &Ksolve::updateVoxelVol )
-                             );
+            "Handles updates to all voxels. Comes from parent "
+            "ChemCompt object.",
+            new OpFunc1< Ksolve, vector< double > >(
+                &Ksolve::updateVoxelVol )
+            );
 
     ///////////////////////////////////////////////////////
     // Shared definitions
@@ -180,11 +177,11 @@ const Cinfo* Ksolve::initCinfo()
     };
 
     static SharedFinfo proc( "proc",
-                             "Shared message for process and reinit. These are used for "
-                             "all regular Ksolve calculations including interfacing with "
-                             "the diffusion calculations by a Dsolve.",
-                             procShared, sizeof( procShared ) / sizeof( const Finfo* )
-                           );
+            "Shared message for process and reinit. These are used for "
+            "all regular Ksolve calculations including interfacing with "
+            "the diffusion calculations by a Dsolve.",
+            procShared, sizeof( procShared ) / sizeof( const Finfo* )
+            );
 
     static Finfo* initShared[] =
     {
@@ -192,10 +189,10 @@ const Cinfo* Ksolve::initCinfo()
     };
 
     static SharedFinfo init( "init",
-                             "Shared message for initProc and initReinit. This is used"
-                             " when the system has cross-compartment reactions. ",
-                             initShared, sizeof( initShared ) / sizeof( const Finfo* )
-                           );
+            "Shared message for initProc and initReinit. This is used"
+            " when the system has cross-compartment reactions. ",
+            initShared, sizeof( initShared ) / sizeof( const Finfo* )
+            );
 
     static Finfo* ksolveFinfos[] =
     {
@@ -242,7 +239,7 @@ Ksolve::Ksolve()
     pools_( 1 ),
     startVoxel_( 0 ),
     dsolve_(),
-    dsolvePtr_( 0 )
+    dsolvePtr_( nullptr )
 {
     ;
 }
@@ -419,20 +416,19 @@ void Ksolve::setDsolve( Id dsolve )
 {
     if ( dsolve == Id () )
     {
-        dsolvePtr_ = 0;
+        dsolvePtr_ = nullptr;
         dsolve_ = Id();
     }
     else if ( dsolve.element()->cinfo()->isA( "Dsolve" ) )
     {
         dsolve_ = dsolve;
-        dsolvePtr_ = reinterpret_cast< ZombiePoolInterface* >(
-                         dsolve.eref().data() );
+        dsolvePtr_ = reinterpret_cast<ZombiePoolInterface*>(dsolve.eref().data());
     }
     else
     {
-        cout << "Warning: Ksolve::setDsolve: Object '" << dsolve.path() <<
-             "' should be class Dsolve, is: " <<
-             dsolve.element()->cinfo()->name() << endl;
+        cout << "Warning: Ksolve::setDsolve: Object '" << dsolve.path() 
+            << "' should be class Dsolve, is: " 
+            << dsolve.element()->cinfo()->name() << endl;
     }
 }
 
@@ -508,8 +504,6 @@ double Ksolve::getEstimatedDt() const
 //////////////////////////////////////////////////////////////
 void Ksolve::process( const Eref& e, ProcPtr p )
 {
-
-
     if ( isBuilt_ == false )
         return;
 

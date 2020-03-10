@@ -22,6 +22,7 @@
 #include <limits>
 #include <iostream>
 #include <random>
+#include <cassert>
 
 #include "Definitions.h"
 #include "Distributions.h"
@@ -30,7 +31,6 @@ using namespace std;
 
 namespace moose
 {
-
 /*
  * =====================================================================================
  *        Class:  RNG
@@ -38,76 +38,28 @@ namespace moose
  * =====================================================================================
  */
 
-template < typename T >
 class RNG
 {
     public:
-        RNG ()                                  /* constructor      */
-        {
-            // Setup a random seed if possible.
-            setRandomSeed( );
-        }
+        RNG ();
+        ~RNG();
 
-        ~RNG ()                                 /* destructor       */
-        { ; }
-
-        void setRandomSeed( )
-        {
-            MOOSE_RANDOM_DEVICE rd_;
-            setSeed( rd_() );
-        }
+        void setRandomSeed( );
 
         /* ====================  ACCESSORS     ======================================= */
-        T getSeed( void )
-        {
-            return seed_;
-        }
+        double getSeed( void );
 
-        /* ====================  MUTATORS      ======================================= */
-        /**
-         * @brief If seed if 0 then set seed to a random number else set seed to
-         * the given number.
-         *
-         * @param seed
-         */
-        void setSeed( const unsigned long seed )
-        {
-            seed_ = seed;
-            if( seed == 0 )
-            {
-                MOOSE_RANDOM_DEVICE rd_;
-                seed_ = rd_();
-            }
-            rng_.seed( seed_ );
-        }
+        void setSeed( const unsigned long seed );
 
-        /**
-         * @brief Generate a uniformly distributed random number between a and b.
-         *
-         * @param a Lower limit (inclusive)
-         * @param b Upper limit (inclusive).
-         */
-        T uniform( const T a, const T b)
-        {
-            return ( b - a ) * dist_( rng_ ) + a;
-        }
+        double uniform( const double a, const double b);
 
-        /**
-         * @brief Return a uniformly distributed random number between 0 and 1
-         * (exclusive).
-         *
-         * @return randum number.
-         */
-        T uniform( void )
-        {
-            return dist_( rng_ );
-        }
+        double uniform( void );
 
 
     private:
         /* ====================  DATA MEMBERS  ======================================= */
-        T res_;
-        T seed_;
+        double res_;
+        size_t seed_;
 
         moose::MOOSE_RNG_DEFAULT_ENGINE rng_;
         moose::MOOSE_UNIFORM_DISTRIBUTION<double> dist_;

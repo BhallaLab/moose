@@ -64,15 +64,10 @@ def test( ):
     print( ' MOOSE is done' )
 
     # Now read the numpy and csv and check the results.
-    a = np.load( '_tables/compt/a/tabA.npy' )
+    a = np.loadtxt( '_tables/compt/a/tabA.csv', skiprows=1 )
     b = np.load( 'table2.npy' )
     c = np.loadtxt( 'tablec.csv', skiprows=1 )
-    print( a )
-    print( b )
-    print( c )
-    print(a['time'])
-    print(b['time'])
-    assert len(a['time']) == len(a['/compt/a/tabA'])
+    assert (len(a) == len(b) == len(c))
 
 def main( ):
     test( )

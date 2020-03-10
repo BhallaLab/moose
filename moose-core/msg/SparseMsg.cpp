@@ -83,7 +83,7 @@ const Cinfo* SparseMsg::initCinfo()
         &SparseMsg::getProbability
     );
 
-    static ValueFinfo< SparseMsg, unsigned long > seed(
+    static ValueFinfo< SparseMsg, int > seed(
         "seed",
         "Random number seed for generating probabilistic connectivity.",
         &SparseMsg::setSeed,
@@ -95,95 +95,91 @@ const Cinfo* SparseMsg::initCinfo()
 ////////////////////////////////////////////////////////////////////////
 
     static DestFinfo setRandomConnectivity( "setRandomConnectivity",
-                                            "Assigns connectivity with specified probability and seed",
-                                            new OpFunc2< SparseMsg, double, long >(
-                                                    &SparseMsg::setRandomConnectivity ) );
+            "Assigns connectivity with specified probability and seed",
+            new OpFunc2< SparseMsg, double, long >(
+                &SparseMsg::setRandomConnectivity ) );
 
     static DestFinfo setEntry( "setEntry",
-                               "Assigns single row,column value",
-                               new OpFunc3< SparseMsg, unsigned int, unsigned int, unsigned int >(
-                                   &SparseMsg::setEntry ) );
+            "Assigns single row,column value",
+            new OpFunc3< SparseMsg, unsigned int, unsigned int, unsigned int >(
+                &SparseMsg::setEntry ) );
 
     static DestFinfo unsetEntry( "unsetEntry",
-                                 "Clears single row,column entry",
-                                 new OpFunc2< SparseMsg, unsigned int, unsigned int >(
-                                     &SparseMsg::unsetEntry ) );
+            "Clears single row,column entry",
+            new OpFunc2< SparseMsg, unsigned int, unsigned int >(
+                &SparseMsg::unsetEntry ) );
 
     static DestFinfo clear( "clear",
-                            "Clears out the entire matrix",
-                            new OpFunc0< SparseMsg >(
-                                &SparseMsg::clear ) );
+            "Clears out the entire matrix",
+            new OpFunc0< SparseMsg >(
+                &SparseMsg::clear ) );
 
     static DestFinfo transpose( "transpose",
-                                "Transposes the sparse matrix",
-                                new OpFunc0< SparseMsg >(
-                                    &SparseMsg::transpose ) );
+            "Transposes the sparse matrix",
+            new OpFunc0< SparseMsg >(
+                &SparseMsg::transpose ) );
 
     static DestFinfo pairFill( "pairFill",
-                               "Fills entire matrix using pairs of (x,y) indices to indicate "
-                               "presence of a connection. If the target is a FieldElement it"
-                               "automagically assigns FieldIndices.",
-                               new OpFunc2< SparseMsg,
-                               vector< unsigned int >, vector< unsigned int> >(
-                                   &SparseMsg::pairFill ) );
+            "Fills entire matrix using pairs of (x,y) indices to indicate "
+            "presence of a connection. If the target is a FieldElement it"
+            "automagically assigns FieldIndices.",
+            new OpFunc2< SparseMsg,
+            vector< unsigned int >, vector< unsigned int> >(
+                &SparseMsg::pairFill ) );
 
     static DestFinfo tripletFill( "tripletFill",
-                                  "Fills entire matrix using triplets of (x,y,fieldIndex) to fully "
-                                  "specify every connection in the sparse matrix.",
-                                  new OpFunc3< SparseMsg,
-                                  vector< unsigned int >, vector< unsigned int>,
-                                  vector< unsigned int >	>(
-                                      &SparseMsg::tripletFill ) );
+            "Fills entire matrix using triplets of (x,y,fieldIndex) to fully "
+            "specify every connection in the sparse matrix.",
+            new OpFunc3< SparseMsg,
+            vector< unsigned int >, vector< unsigned int>,
+            vector< unsigned int >	>(
+                &SparseMsg::tripletFill ) );
 
     static DestFinfo tripletFill1( "tripletFill1",
-                                   "Single contiguous array to fill entire connection matrix using "
-                                   "triplets of (x,y, fieldindex) ordered as \n"
-                                   "(x0, x1,... xn-1, y0, y1,... yn-1, fi0, fi1,... fi_n-1)\n",
-                                   new OpFunc1< SparseMsg, vector< unsigned int > >(
-                                       &SparseMsg::tripletFill1 ) );
+            "Single contiguous array to fill entire connection matrix using "
+            "triplets of (x,y, fieldindex) ordered as \n"
+            "(x0, x1,... xn-1, y0, y1,... yn-1, fi0, fi1,... fi_n-1)\n",
+            new OpFunc1< SparseMsg, vector< unsigned int > >(
+                &SparseMsg::tripletFill1 ) );
 
-////////////////////////////////////////////////////////////////////////
-// Assemble it all.
-////////////////////////////////////////////////////////////////////////
 
+    // Assemble it all.
     static Finfo* sparseMsgFinfos[] =
     {
-        &numRows,			// readonly value
-        &numColumns,		// readonly value
-        &numEntries,		// readonly value
-        &connectionList,	// value
-        &matrixEntry,		// ReadOnlyValue
-        &columnIndex,		// ReadOnlyValue
-        &rowStart,		// ReadOnlyValue
-        &probability,		// value
-        &seed,				// value
-        &setRandomConnectivity,	// dest
-        &setEntry,			// dest
-        &unsetEntry,		//dest
-        &clear,				//dest
-        &transpose,			//dest
-        &pairFill,			//dest
-        &tripletFill,		//dest
-        &tripletFill1,		//dest
+        &numRows,               // readonly value
+        &numColumns,            // readonly value
+        &numEntries,            // readonly value
+        &connectionList,        // value
+        &matrixEntry,           // ReadOnlyValue
+        &columnIndex,           // ReadOnlyValue
+        &rowStart,              // ReadOnlyValue
+        &probability,           // value
+        &seed,                  // value
+        &setRandomConnectivity, // dest
+        &setEntry,              // dest
+        &unsetEntry,            // dest
+        &clear,                 // dest
+        &transpose,             // dest
+        &pairFill,              // dest
+        &tripletFill,           // dest
+        &tripletFill1,          // dest
     };
 
     static Dinfo< short > dinfo;
     static Cinfo sparseMsgCinfo (
-        "SparseMsg",					// name
-        Msg::initCinfo(),			// base class
-        sparseMsgFinfos,
-        sizeof( sparseMsgFinfos ) / sizeof( Finfo* ),	// num Fields
-        &dinfo
-    );
+            "SparseMsg",                                  // name
+            Msg::initCinfo(),                             // base class
+            sparseMsgFinfos,
+            sizeof( sparseMsgFinfos ) / sizeof( Finfo* ), // num Fields
+            &dinfo
+            );
 
     return &sparseMsgCinfo;
 }
 
 static const Cinfo* sparseMsgCinfo = SparseMsg::initCinfo();
 
-//////////////////////////////////////////////////////////////////
-//    Value Fields
-//////////////////////////////////////////////////////////////////
+// Value Fields
 void SparseMsg::setProbability ( double probability )
 {
     p_ = probability;
@@ -195,18 +191,15 @@ double SparseMsg::getProbability ( ) const
     return p_;
 }
 
-void SparseMsg::setSeed ( unsigned long seed )
+void SparseMsg::setSeed (int seed)
 {
-    if( seed > 0 )
-        seed_ = seed;
-		else
-			  seed_ = rd_();
-
-		rng_.seed( seed_ );
-    randomConnect( p_ );
+    seed_ = seed;
+    if( seed_ >= 0)
+        rng_.setSeed((size_t)seed_);
+    randomConnect(p_);
 }
 
-unsigned long SparseMsg::getSeed () const
+int SparseMsg::getSeed () const
 {
     return seed_;
 }
@@ -271,7 +264,7 @@ vector< unsigned int > SparseMsg::getEntryPairs() const
 void SparseMsg::setRandomConnectivity( double probability, long seed )
 {
     p_ = probability;
-    rng_.seed( seed );
+    rng_.setSeed( seed );
     randomConnect( probability );
 }
 
@@ -387,11 +380,11 @@ void SparseMsg::tripletFill1( vector< unsigned int > v )
 
 
 SparseMsg::SparseMsg( Element* e1, Element* e2, unsigned int msgIndex )
-    : Msg( ObjId( managerId_, (msgIndex != 0) ? msgIndex: msg_.size() ),
-           e1, e2 ),
+    : Msg(ObjId( managerId_, (msgIndex != 0) ? msgIndex: msg_.size() ), e1, e2),
       numThreads_( 1 ),
       nrows_( 0 ),
-      p_( 0.0 ), seed_( 0 )
+      p_( 0.0 ),
+      seed_(-1)
 {
     unsigned int nrows = 0;
     unsigned int ncolumns = 0;
@@ -411,9 +404,10 @@ SparseMsg::SparseMsg( Element* e1, Element* e2, unsigned int msgIndex )
 
     // cout << Shell::myNode() << ": SparseMsg constructor between " << e1->getName() << " and " << e2->getName() << endl;
 
-    // Init rng with random device.
-    if( seed_ == 0 )
-        rng_.seed( rd_() );
+    // Init rng with global seed if any.
+    seed_ = moose::getGlobalSeed();
+    if(seed_ >= 0)
+        setSeed(seed_);
 }
 
 SparseMsg::~SparseMsg()
@@ -485,7 +479,7 @@ unsigned int SparseMsg::randomConnect( double probability )
         unsigned int synNum = 0;
         for ( unsigned int j = 0; j < nRows; ++j )
         {
-            double r = dist_( rng_ ); // Want to ensure it is called each time round the loop.
+            double r = rng_.uniform(); // Want to ensure it is called each time round the loop.
             if ( r < probability )
             {
                 synIndex.push_back( synNum );

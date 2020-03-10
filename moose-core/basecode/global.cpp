@@ -49,7 +49,7 @@ namespace moose {
         { "HSolve", {0.0, 0} }
     };
 
-    moose::RNG<double> rng;
+    moose::RNG rng;
 
     /* Check if path is OK */
     int checkPath( const string& path  )
@@ -102,6 +102,11 @@ namespace moose {
     double mtrand( void )
     {
         return moose::rng.uniform( );
+    }
+
+    double mtrand( double a, double b )
+    {
+        return (b-a) * mtrand() + a; 
     }
 
     // MOOSE suffixes [0] to all elements to path. Remove [0] with null

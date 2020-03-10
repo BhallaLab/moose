@@ -32,6 +32,7 @@
 #include <iomanip>
 #include <ctime>
 #include <algorithm>
+#include <cstring>
 
 #define T_RESET       "\033[0m"
 #define T_BLACK       "\033[30m"      /* Black */
@@ -62,11 +63,16 @@ using namespace std;
 #ifndef NDEBUG
 #define MOOSE_DEBUG( a ) { \
     stringstream ss; ss << a; \
-    cout << "DEBUG: " << __FILENAME__ << ":" << __LINE__ << "| " << ss.str(); \
+    cout << "DEBUG: " << __FILENAME__ << ":" << __LINE__ << " " << ss.str() << std::endl; \
     }
 #else
 #define MOOSE_DEBUG( a ) {}
 #endif
+
+#define MOOSE_WARN( a ) { \
+    stringstream ss; ss << a; \
+    moose::showWarn( ss.str() ); \
+    }
 
 namespace moose {
 
@@ -147,7 +153,7 @@ namespace moose {
         return ss.str();
     }
 
-		// Not print it when built for release.
+    // Not print it when built for release.
     inline string debugPrint(string msg, string prefix = "DEBUG"
             , string color=T_RESET, unsigned debugLevel = 0
             )

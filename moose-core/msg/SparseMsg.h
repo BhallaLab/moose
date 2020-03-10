@@ -87,8 +87,8 @@ public:
     vector< unsigned int > getColIndex() const;
     vector< unsigned int > getRowStart() const;
 
-    unsigned long getSeed() const;
-    void setSeed( unsigned long value );
+    int getSeed() const;
+    void setSeed( int value );
 
     vector< unsigned int > getEntryPairs() const;
     void setEntryPairs( vector< unsigned int > entries );
@@ -149,10 +149,8 @@ private:
     static vector< SparseMsg* > msg_;
 
     // RNG.
-    unsigned long seed_;
-    moose::MOOSE_RANDOM_DEVICE rd_;
-    moose::MOOSE_RNG_DEFAULT_ENGINE rng_;
-    moose::MOOSE_UNIFORM_DISTRIBUTION<double> dist_;
+    int seed_;
+    moose::RNG rng_;
 };
 
 #endif // _SPARSE_MSG_H

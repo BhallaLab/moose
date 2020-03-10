@@ -10,7 +10,9 @@
 #include "../basecode/header.h"
 #include "../basecode/ElementValueFinfo.h"
 
+#include "../builtins/MooseParser.h"
 #include "../builtins/Variable.h"
+#include "../builtins/MooseParser.h"
 #include "../builtins/Function.h"
 #include "ZombieFunction.h"
 
