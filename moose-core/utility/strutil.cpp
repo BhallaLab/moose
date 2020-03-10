@@ -72,20 +72,16 @@ std::string fix(const std::string userPath, const string& delimiters)
     string trimmedPath = trim(userPath, delimiters);
 
     string fixedPath;
+    char prev = 0;
 
     // In this loop, we check if there are more than one '/' together. If yes,
     // then accept only first one and reject other.
     for(unsigned int i = 0; i < trimmedPath.size(); ++i)
     {
         const char c = trimmedPath[i];
-        if('/' == c)
-        {
-            if('/' != fixedPath[fixedPath.size()-1])
-                fixedPath.push_back(c);
-        }
-        else
+        if(c != '/' || c != prev)
             fixedPath.push_back(c);
-
+	prev = c;
     }
     return fixedPath;
 }

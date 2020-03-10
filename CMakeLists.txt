@@ -151,7 +151,7 @@ endif()
 ################################################################################
 # CTEST 
 #################################################################################
-if("${CMAKE_BUILD_TYPE}" EQUAL "DEBUG")
+if("${CMAKE_BUILD_TYPE}" STREQUAL "DEBUG")
     enable_testing( )
     add_test( NAME test_pymoose_sanity 
         COMMAND ${PYTHON_EXECUTABLE} -c "import moose"
