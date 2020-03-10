@@ -59,7 +59,7 @@ class RNG
     private:
         /* ====================  DATA MEMBERS  ======================================= */
         double res_;
-        size_t seed_;
+        double seed_;
 
         moose::MOOSE_RNG_DEFAULT_ENGINE rng_;
         moose::MOOSE_UNIFORM_DISTRIBUTION<double> dist_;

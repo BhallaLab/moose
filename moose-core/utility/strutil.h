@@ -55,6 +55,12 @@ namespace moose
     std::string random_string( const unsigned size );
 
 
+    // Replace occurance of a substring in a given string.
+    void str_replace_all( std::string& str, const std::string& a, const std::string& b);
+
+    // Is string a prefix of string b.
+    bool isPrefix(const std::string& a, const std::string& b);
+
     /* --------------------------------------------------------------------------*/
     /**
      * @Synopsis Converts a vector to string.

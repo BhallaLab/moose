@@ -9,8 +9,10 @@ __version__          = "1.0.0"
 __maintainer__       = "Harsha Rani"
 __email__            = "hrani@ncbs.res.in"
 __status__           = "Development"
-__updated__          = "Dec 08 2018"
-
+__updated__          = "Jan 08 2020"
+#Jan 8: added a line to add compartment info
+#       permeability from moose is in uM which to be converted to mM for genesis
+#2020
 # 2018
 # Dec 08: using restoreXreacs from fixXreacs 
 # Nov 22: searched for _xfer_ instead of xfer
@@ -274,7 +276,7 @@ def writeConcChan(modelpath,f,sceneitems):
                     color = getRandomColor()
                 if textcolor == ""  or textcolor == " ":
                     textcolor = getRandomColor()
-                f.write("simundump kchan /kinetics/" + trimPath(cChan)+ " " + str(int(1)) + " " + str(cChan.permeability)+  " " +
+                f.write("simundump kchan /kinetics/" + trimPath(cChan)+ " " + str(int(1)) + " " + str(cChan.permeability/1000.0 )+  " " +
                     str(int(0)) + " " +
                     str(int(0)) + " " +
                     str(int(0)) + " " +
@@ -446,12 +448,9 @@ def trimPath(mobj):
             splitpath = original.path[(original.path.find(mobj.name)):len(original.path)]
         else:
             pos = original.path.find(mobj.name)
-            #ss = re.compile(r'\b%s\b' %mobj.name)
-            #a = re.search(ss, original.path)
-            #pos = a.start()
             slash = original.path.find('/',pos+1)
             splitpath = original.path[slash+1:len(original.path)]
-        splitpath = re.sub("\[[0-9]+\]", "", splitpath)
+        splitpath = re.sub(r"\[[0-9]+\]", "", splitpath)
         s = splitpath.replace("_dash_",'-')
         s = splitpath.replace("_space_","_")
         return s
@@ -540,7 +539,7 @@ def storePlotMsgs( tgraphs,f):
                     bgPath = (poolEle.path+'/info')
                     bg = moose.Annotator(bgPath).color
                     bg = getColorCheck(bg,GENESIS_COLOR_SEQUENCE)
-                    tabPath = re.sub("\[[0-9]+\]", "", tabPath)
+                    tabPath = re.sub(r"\[[0-9]+\]", "", tabPath)
                     s = s+"addmsg /kinetics/" + trimPath( poolEle ) + " " + tabPath + \
                             " PLOT Co *" + poolName + " *" + str(bg) +"\n";
     f.write(s)
@@ -572,7 +571,7 @@ def writeplot( tgraphs,f ):
                     poolAnno = (poolEle.path+'/info')
                     fg = moose.Annotator(poolAnno).textColor
                     fg = getColorCheck(fg,GENESIS_COLOR_SEQUENCE)
-                    tabPath = re.sub("\[[0-9]+\]", "", tabPath)
+                    tabPath = re.sub(r"\[[0-9]+\]", "", tabPath)
                     if tabPath.find("conc1") >= 0 or tabPath.find("conc2") >= 0:
                         first = first + "simundump xplot " + tabPath + " 3 524288 \\\n" + "\"delete_plot.w <s> <d>; edit_plot.D <w>\" " + str(fg) + " 0 0 1\n"
                     if tabPath.find("conc3") >= 0 or tabPath.find("conc4") >= 0:
@@ -665,6 +664,7 @@ def getColorCheck(color,GENESIS_COLOR_SEQUENCE):
             return index
     elif isinstance(color, tuple):
         color = [int(x) for x in color[0:3]]
+        #color = map(int,color)
         index = nearestColorIndex(color, GENESIS_COLOR_SEQUENCE)
         return index
     elif isinstance(color, int):
@@ -802,12 +802,19 @@ def writeNotes(modelpath,f):
             moose.wildcardFind(modelpath+"/##[0][ISA=Function]") +\
             moose.wildcardFind(modelpath+"/##[0][ISA=StimulusTable]")
     for item in items:
-        if not re.search("xfer",item.name):
-            if moose.exists(item.path+'/info'):
-                info = item.path+'/info'
-                notes = moose.Annotator(info).getField('notes')
-                if (notes):
-                    f.write("call /kinetics/"+ trimPath(item)+"/notes LOAD \ \n\""+moose.Annotator(info).getField('notes')+"\"\n")
+        if not re.search(r"xfer",item.name):
+            if not moose.exists(item.path+'/info'):
+                continue
+            info = item.path+'/info'
+            notes = moose.Annotator(info).getField('notes')
+            if not notes:
+                continue
+            m = r'call /kinetics/{0}/notes LOAD \ \n"{1}"\n'.format(
+                    trimPath(item), moose.Annotator(info).getField('notes')
+                    )
+            f.write(m)
+            #  f.write("call /kinetics/"+trimPath(item)+"/notes LOAD \ \n\""+moose.Annotator(info).getField('notes')+"\"\n")
+
 
 def writeFooter1(f):
     f.write("\nenddump\n // End of dump\n")
@@ -816,7 +823,6 @@ def writeFooter2(f):
     f.write("complete_loading\n")
 
 if __name__ == "__main__":
-    import sys
     import os
     filename = sys.argv[1]
     filepath, filenameWithext = os.path.split(filename)

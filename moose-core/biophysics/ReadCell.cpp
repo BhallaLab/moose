@@ -10,7 +10,7 @@
 #include "../basecode/header.h"
 #include "../shell/Shell.h"
 #include "ReadCell.h"
-#include "../utility/utility.h"
+#include "../utility/strutil.h"
 #include "CompartmentBase.h"
 #include "Compartment.h"
 #include "SymCompartment.h"

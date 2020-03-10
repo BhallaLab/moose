@@ -585,7 +585,7 @@ class MorphML():
             compartment.refractoryPeriod = value # compartment is a moose.LIF instance (intfire)
         elif name == 'g_refrac':
             _logger.info("SORRY, current moose.LIF doesn't support g_refrac.")
-        elif mechanismname is 'synapse': # synapse being added to the compartment
+        elif mechanismname == 'synapse': # synapse being added to the compartment
             ## these are potential locations, we do not actually make synapses,
             ## unless the user has explicitly asked for it
             if self.createPotentialSynapses:
@@ -595,7 +595,7 @@ class MorphML():
             ## I assume below that compartment name has _segid at its end
             segid = compartment.name.split('_')[-1] # get segment id from compartment name
             self.segDict[segid][5].append(value)
-        elif mechanismname is 'spikegen': # spikegen being added to the compartment
+        elif mechanismname == 'spikegen': # spikegen being added to the compartment
             ## these are potential locations, we do not actually make the spikegens.
             ## spikegens for different synapses can have different thresholds,
             ## hence include synapse_type in its name

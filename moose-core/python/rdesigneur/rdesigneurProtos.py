@@ -240,7 +240,6 @@ def make_Ca( name ):
             yA[i] = 5.0 * math.exp( -50 * (x - EREST_ACT) )
         else:
             yA[i] = 5.0
-        #yB[i] = 6.0 - yA[i]
         yB[i] = 5.0
         x += dx
     ygate.tableA = yA

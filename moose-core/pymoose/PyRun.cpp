@@ -16,10 +16,10 @@ const int PyRun::RUNBOTH = 0;
 static SrcFinfo1< double >* outputOut()
 {
     static SrcFinfo1< double > outputOut( "output",
-                                          "Sends out the value of local variable called `output`. Thus, you can"
-                                          " have Python statements which compute some value and assign it to the"
-                                          " variable called `output` (which is defined at `reinit` call). This"
-                                          " will be sent out to any target connected to the `output` field.");
+            "Sends out the value of local variable called `output`. Thus, you can"
+            " have Python statements which compute some value and assign it to the"
+            " variable called `output` (which is defined at `reinit` call). This"
+            " will be sent out to any target connected to the `output` field.");
     return &outputOut;
 }
 
@@ -57,18 +57,6 @@ const Cinfo * PyRun::initCinfo()
         "Flag to indicate whether runString should be executed for both trigger and process, or one of them.",
         &PyRun::setMode,
         &PyRun::getMode);
-
-    // static ValueFinfo< PyRun, PyObject* > globals(
-    //     "globals",
-    //     "Global environment dict",
-    //     &PyRun::setGlobals,
-    //     &PyRun::getGlobals);
-
-    // static ValueFinfo< PyRun, PyObject* > locals(
-    //     "locals",
-    //     "Local environment dict",
-    //     &PyRun::setLocals,
-    //     &PyRun::getLocals);
 
     static DestFinfo trigger(
         "trigger",
@@ -116,8 +104,6 @@ const Cinfo * PyRun::initCinfo()
         &outputvar,
         &trigger,
         outputOut(),
-        // &locals,
-        // &globals,
         &run,
         &proc,
     };

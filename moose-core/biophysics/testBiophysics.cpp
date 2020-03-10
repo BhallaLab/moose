@@ -105,8 +105,8 @@ void testIntFireNetwork( unsigned int runsteps = 5 )
     // by multiple threads if the above Set call is not complete.
 
     vector< double > origVm( size, 0.0 );
-    
-    // NOTE: From 
+
+    // NOTE: From
     moose::mtseed( 5489UL );
     for ( unsigned int i = 0; i < size; ++i )
         origVm[i] = moose::mtrand() * Vmax;
@@ -214,7 +214,7 @@ void testIntFireNetwork( unsigned int runsteps = 5 )
 
 #if 0
         cout << endl;
-        cout << std::setprecision(12) <<  retVm100 << endl; 
+        cout << std::setprecision(12) <<  retVm100 << endl;
         cout << std::setprecision(12) <<  retVm101 << endl;
         cout << std::setprecision(12) <<  retVm102 << endl;
         cout << std::setprecision(11) <<  retVm99  << endl;
@@ -746,26 +746,26 @@ void testHHChannel()
 //Sample current obtained from channel in Chapter 20, Sakmann & Neher, Pg. 603.
 //The current is sampled at intervals of 10 usec.
 static double sampleCurrent[] = {0.0, // This is to handle the value sent by ChanBase on reinit
-                                 0.0000000e+00, 3.0005743e-26, 1.2004594e-25, 2.7015505e-25, 4.8036751e-25, 7.5071776e-25,
-                                 1.0812402e-24, 1.4719693e-24, 1.9229394e-24, 2.4341850e-24, 3.0057404e-24, 3.6376401e-24,
-                                 4.3299183e-24, 5.0826095e-24, 5.8957481e-24, 6.7693684e-24, 7.7035046e-24, 8.6981913e-24,
-                                 9.7534627e-24, 1.0869353e-23, 1.2045897e-23, 1.3283128e-23, 1.4581082e-23, 1.5939791e-23,
-                                 1.7359292e-23, 1.8839616e-23, 2.0380801e-23, 2.1982878e-23, 2.3645883e-23, 2.5369850e-23,
-                                 2.7154813e-23, 2.9000806e-23, 3.0907863e-23, 3.2876020e-23, 3.4905309e-23, 3.6995766e-23,
-                                 3.9147423e-23, 4.1360317e-23, 4.3634480e-23, 4.5969946e-23, 4.8366751e-23, 5.0824928e-23,
-                                 5.3344511e-23, 5.5925535e-23, 5.8568033e-23, 6.1272040e-23, 6.4037589e-23, 6.6864716e-23,
-                                 6.9753453e-23, 7.2703835e-23, 7.5715897e-23, 7.8789672e-23, 8.1925194e-23, 8.5122497e-23,
-                                 8.8381616e-23, 9.1702584e-23, 9.5085435e-23, 9.8530204e-23, 1.0203692e-22, 1.0560563e-22,
-                                 1.0923636e-22, 1.1292913e-22, 1.1668400e-22, 1.2050099e-22, 1.2438013e-22, 1.2832146e-22,
-                                 1.3232502e-22, 1.3639083e-22, 1.4051894e-22, 1.4470937e-22, 1.4896215e-22, 1.5327733e-22,
-                                 1.5765494e-22, 1.6209501e-22, 1.6659757e-22, 1.7116267e-22, 1.7579032e-22, 1.8048057e-22,
-                                 1.8523345e-22, 1.9004900e-22, 1.9492724e-22, 1.9986821e-22, 2.0487195e-22, 2.0993849e-22,
-                                 2.1506786e-22, 2.2026010e-22, 2.2551524e-22, 2.3083331e-22, 2.3621436e-22, 2.4165840e-22,
-                                 2.4716548e-22, 2.5273563e-22, 2.5836888e-22, 2.6406527e-22, 2.6982483e-22, 2.7564760e-22,
-                                 2.8153360e-22, 2.8748287e-22, 2.9349545e-22, 2.9957137e-22, 3.0571067e-22
-                                };
+    0.0000000e+00, 3.0005743e-26, 1.2004594e-25, 2.7015505e-25, 4.8036751e-25, 7.5071776e-25,
+    1.0812402e-24, 1.4719693e-24, 1.9229394e-24, 2.4341850e-24, 3.0057404e-24, 3.6376401e-24,
+    4.3299183e-24, 5.0826095e-24, 5.8957481e-24, 6.7693684e-24, 7.7035046e-24, 8.6981913e-24,
+    9.7534627e-24, 1.0869353e-23, 1.2045897e-23, 1.3283128e-23, 1.4581082e-23, 1.5939791e-23,
+    1.7359292e-23, 1.8839616e-23, 2.0380801e-23, 2.1982878e-23, 2.3645883e-23, 2.5369850e-23,
+    2.7154813e-23, 2.9000806e-23, 3.0907863e-23, 3.2876020e-23, 3.4905309e-23, 3.6995766e-23,
+    3.9147423e-23, 4.1360317e-23, 4.3634480e-23, 4.5969946e-23, 4.8366751e-23, 5.0824928e-23,
+    5.3344511e-23, 5.5925535e-23, 5.8568033e-23, 6.1272040e-23, 6.4037589e-23, 6.6864716e-23,
+    6.9753453e-23, 7.2703835e-23, 7.5715897e-23, 7.8789672e-23, 8.1925194e-23, 8.5122497e-23,
+    8.8381616e-23, 9.1702584e-23, 9.5085435e-23, 9.8530204e-23, 1.0203692e-22, 1.0560563e-22,
+    1.0923636e-22, 1.1292913e-22, 1.1668400e-22, 1.2050099e-22, 1.2438013e-22, 1.2832146e-22,
+    1.3232502e-22, 1.3639083e-22, 1.4051894e-22, 1.4470937e-22, 1.4896215e-22, 1.5327733e-22,
+    1.5765494e-22, 1.6209501e-22, 1.6659757e-22, 1.7116267e-22, 1.7579032e-22, 1.8048057e-22,
+    1.8523345e-22, 1.9004900e-22, 1.9492724e-22, 1.9986821e-22, 2.0487195e-22, 2.0993849e-22,
+    2.1506786e-22, 2.2026010e-22, 2.2551524e-22, 2.3083331e-22, 2.3621436e-22, 2.4165840e-22,
+    2.4716548e-22, 2.5273563e-22, 2.5836888e-22, 2.6406527e-22, 2.6982483e-22, 2.7564760e-22,
+    2.8153360e-22, 2.8748287e-22, 2.9349545e-22, 2.9957137e-22, 3.0571067e-22
+    };
 
-void testMarkovGslSolver()
+void testMarkovOdeSolver()
 {
     Shell* shell = reinterpret_cast< Shell* >( ObjId( Id(), 0 ).data() );
     unsigned size = 1;
@@ -774,7 +774,7 @@ void testMarkovGslSolver()
     Id comptId = shell->doCreate( "Compartment", nid, "compt", size );
     Id rateTabId = shell->doCreate( "MarkovRateTable", comptId, "rateTab", size );
     Id mChanId = shell->doCreate( "MarkovChannel", comptId, "mChan", size );
-    Id gslSolverId = shell->doCreate( "MarkovGslSolver", comptId, "gslSolver", size );
+    Id gslSolverId = shell->doCreate( "MarkovOdeSolver", comptId, "gslSolver", size );
 
     Id tabId = shell->doCreate( "Table", nid, "tab", size );
 
@@ -902,9 +902,10 @@ void testMarkovGslSolver()
     {
         if (!doubleEq( sampleCurrent[i] * 1e25, vec[i] * 1e25 ))
         {
-            cout << "testMarkovGslSolver: sample=" << sampleCurrent[i]*1e25 << " calculated=" << vec[i]*1e25 << endl;
+            cout << "testMarkovOdeSolver: sample=" << sampleCurrent[i]*1e25 << " calculated=" << vec[i]*1e25 << endl;
         }
         ASSERT_DOUBLE_EQ("", sampleCurrent[i] * 1e25, vec[i] * 1e25 );
+        // cout << sampleCurrent[i] << " " << vec[i] << endl;
     }
     //Currents involved here are incredibly small. Scaling them up is necessary
     //for the doubleEq function to do its job.
@@ -914,16 +915,16 @@ void testMarkovGslSolver()
 }
 
 ////////////////
-//The testMarkovGslSolver() function includes the MarkovChannel object, but
+//The testMarkovOdeSolver() function includes the MarkovChannel object, but
 //is a rather trivial case, in that the rates are all constant.
-//This test simultaneously tests the MarkovChannel, MarkovGslSolver,
+//This test simultaneously tests the MarkovChannel, MarkovOdeSolver,
 //MarkovSolverBase and MarkovSolver classes.
 //This test involves simulating the 4-state NMDA channel model specified
 //in the following paper :
 //"Voltage Dependence of NMDA-Activated Macroscopic Conductances Predicted
 //by Single-Channel Kinetics", Craig E. Jahr and Charles F. Stevens, The Journal
 //of Neuroscience, 1990, 10(9), pp. 3178-3182.
-//It is expected that the MarkovGslSolver and the MarkovSolver objects will
+//It is expected that the MarkovOdeSolver and the MarkovSolver objects will
 //give the same answer.
 //
 //Note that this is different from the NMDAChan test which involves synapses.
@@ -944,12 +945,12 @@ void testMarkovChannel()
     Id exptlRateTableId = shell->doCreate( "MarkovRateTable", exptlComptId,
                                            "exptlRateTable", size );
 
-    Id mChanGslId = shell->doCreate( "MarkovChannel", gslComptId,
-                                     "mChanGsl", size );
+    Id mChanOdeId = shell->doCreate( "MarkovChannel", gslComptId,
+                                     "mChanOde", size );
     Id mChanExptlId = shell->doCreate( "MarkovChannel", exptlComptId,
                                        "mChanExptl", size );
 
-    Id gslSolverId = shell->doCreate( "MarkovGslSolver", gslComptId,
+    Id gslSolverId = shell->doCreate( "MarkovOdeSolver", gslComptId,
                                       "gslSolver", size );
     Id exptlSolverId = shell->doCreate( "MarkovSolver", exptlComptId,
                                         "exptlSolver", size );
@@ -972,7 +973,7 @@ void testMarkovChannel()
     //via its ChanBase base class, sends back the conductance and current through
     //it.
     ObjId mid = shell->doAddMsg( "Single", ObjId( gslComptId ), "channel",
-                                 ObjId( mChanGslId ), "channel" );
+                                 ObjId( mChanOdeId ), "channel" );
     assert( !mid.bad() );
 
     mid = shell->doAddMsg( "Single", ObjId( exptlComptId ), "channel",
@@ -980,7 +981,7 @@ void testMarkovChannel()
     assert( !mid.bad() );
 
     ////////
-    //Connecting up the MarkovGslSolver.
+    //Connecting up the MarkovOdeSolver.
     ///////
 
     //Connecting Compartment and MarkovRateTable.
@@ -996,20 +997,20 @@ void testMarkovChannel()
                            ObjId( gslRateTableId ), "channel" );
     assert( !mid.bad() );
 
-    //Connecting the MarkovRateTable with the MarkovGslSolver object.
+    //Connecting the MarkovRateTable with the MarkovOdeSolver object.
     //As mentioned earlier, the MarkovRateTable object sends out information
-    //about Q to the MarkovGslSolver. The MarkovGslSolver then churns out
+    //about Q to the MarkovOdeSolver. The MarkovOdeSolver then churns out
     //the state of the system for the next time step.
     mid = shell->doAddMsg("Single", ObjId( gslRateTableId ), "instratesOut",
                           ObjId( gslSolverId ), "handleQ" );
 
-    //Connecting MarkovGslSolver with MarkovChannel.
-    //The MarkovGslSolver object, upon computing the state of the channel,
+    //Connecting MarkovOdeSolver with MarkovChannel.
+    //The MarkovOdeSolver object, upon computing the state of the channel,
     //sends this information to the MarkovChannel object. The MarkovChannel
     //object will compute the expected conductance of the channel and send
     //this information to the compartment.
     mid = shell->doAddMsg( "Single", ObjId( gslSolverId ), "stateOut",
-                           ObjId( mChanGslId ), "handleState" );
+                           ObjId( mChanOdeId ), "handleState" );
     assert( !mid.bad() );
 
     //////////
@@ -1035,7 +1036,7 @@ void testMarkovChannel()
 
     //Get the current values from the GSL solver based channel.
     mid = shell->doAddMsg( "Single", ObjId( gslTableId ), "requestOut",
-                           ObjId( mChanGslId ), "getIk" );
+                           ObjId( mChanOdeId ), "getIk" );
     assert( !mid.bad() );
 
     //Get the current values from the matrix exponential solver based channel.
@@ -1069,10 +1070,10 @@ void testMarkovChannel()
     /////////////////
 
     //Number of states and open states.
-    Field< unsigned int >::set( mChanGslId, "numStates", 4 );
+    Field< unsigned int >::set( mChanOdeId, "numStates", 4 );
     Field< unsigned int >::set( mChanExptlId, "numStates", 4 );
 
-    Field< unsigned int >::set( mChanGslId, "numOpenStates", 1 );
+    Field< unsigned int >::set( mChanOdeId, "numOpenStates", 1 );
     Field< unsigned int >::set( mChanExptlId, "numOpenStates", 1 );
 
     vector< string > stateLabels;
@@ -1085,7 +1086,7 @@ void testMarkovChannel()
     stateLabels.push_back( "B2" );	//State 3.
     stateLabels.push_back( "C" ); 	//State 4.
 
-    Field< vector< string > >::set( mChanGslId, "labels", stateLabels );
+    Field< vector< string > >::set( mChanOdeId, "labels", stateLabels );
     Field< vector< string > >::set( mChanExptlId, "labels", stateLabels );
 
     //Setting up conductance value for single open state.	Value chosen
@@ -1094,7 +1095,7 @@ void testMarkovChannel()
 
     gBar.push_back( 5.431553e-9 );
 
-    Field< vector< double > >::set( mChanGslId, "gbar", gBar );
+    Field< vector< double > >::set( mChanOdeId, "gbar", gBar );
     Field< vector< double > >::set( mChanExptlId, "gbar", gBar );
 
     //Initial state of the system. This is really an arbitrary choice.
@@ -1105,7 +1106,7 @@ void testMarkovChannel()
     initState.push_back( 0.80 );
     initState.push_back( 0.00 );
 
-    Field< vector< double > >::set( mChanGslId, "initialState", initState );
+    Field< vector< double > >::set( mChanOdeId, "initialState", initState );
     Field< vector< double > >::set( mChanExptlId, "initialState", initState );
 
     //This initializes the GSL solver object.
@@ -1254,7 +1255,7 @@ void testMarkovChannel()
                        "process", 2 );
     shell->doUseClock( "/n/gslCompt/gslSolver,/n/exptlCompt/exptlSolver",
                        "process", 3 );
-    shell->doUseClock( "/n/gslCompt/mChanGsl,/n/gslTable","process", 4 );
+    shell->doUseClock( "/n/gslCompt/mChanOde,/n/gslTable","process", 4 );
     shell->doUseClock( "/n/exptlCompt/mChanExptl,/n/exptlTable", "process", 5 );
 
     shell->doReinit();
@@ -1687,13 +1688,15 @@ void testBiophysicsProcess()
     testIntFireNetwork();
     testCompartmentProcess();
     // testMarkovGslSolver();
-    // testMarkovChannel();
+    testMarkovChannel();
 #if 0
     testHHChannel();
 #endif
 }
 
 #else // ifdef DO_UNIT_TESTS
+
+// Dummy functions to avoid link error.
 void testBiophysics()
 {
     ;

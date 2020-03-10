@@ -46,6 +46,9 @@ public:
     /// gets number of pools (species) handled by system.
     virtual unsigned int getNumPools() const = 0;
 
+    /// Specifies number of var pools and total pools including buffered .
+    virtual void setNumVarTotPools( unsigned int var, unsigned int tot )=0;
+
     /// Assign number of voxels (size of pools_ vector )
     virtual void setNumAllVoxels( unsigned int numVoxels ) = 0;
     /// Number of voxels here. pools_.size() == getNumLocalVoxels

@@ -89,8 +89,10 @@ void HSolve::setCm( Id id, double value )
 {
     unsigned int index = localIndex( id );
     assert( index < tree_.size() );
-    // Also update data structures used for calculations.
     tree_[ index ].Cm = value;
+    // Also update data structures used for calculations.
+	assert( tree_.size() == compartment_.size() );
+	compartment_[index].CmByDt = 2.0 * value / dt_;
 }
 
 double HSolve::getEm( Id id ) const
@@ -104,8 +106,10 @@ void HSolve::setEm( Id id, double value )
 {
     unsigned int index = localIndex( id );
     assert( index < tree_.size() );
-    // Also update data structures used for calculations.
     tree_[ index ].Em = value;
+    // Also update data structures used for calculations.
+	assert( tree_.size() == compartment_.size() );
+	compartment_[index].EmByRm = value / tree_[index].Rm;
 }
 
 double HSolve::getRm( Id id ) const
@@ -119,8 +123,10 @@ void HSolve::setRm( Id id, double value )
 {
     unsigned int index = localIndex( id );
     assert( index < tree_.size() );
-    // Also update data structures used for calculations.
     tree_[ index ].Rm = value;
+    // Also update data structures used for calculations.
+	assert( tree_.size() == compartment_.size() );
+	compartment_[index].EmByRm = tree_[index].Em / value;
 }
 
 double HSolve::getRa( Id id ) const

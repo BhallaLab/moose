@@ -1,50 +1,6 @@
 // melement.cpp ---
-//
-// Filename: melement.cpp
-// Description:
-// Author:
-// Maintainer:
+// Author: Subhasis Ray
 // Created: Mon Jul 22 16:50:41 2013 (+0530)
-// Version:
-// Last-Updated: Fri Sep 25 23:02:53 2015 (-0400)
-//           By: subha
-//     Update #: 76
-// URL:
-// Keywords:
-// Compatibility:
-//
-//
-
-// Commentary:
-//
-// Mon Jul 22 16:50:47 IST 2013 - Taking out ObjId stuff from
-// moosemodule.cpp
-//
-//
-
-// Change log:
-//
-//
-//
-//
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License as
-// published by the Free Software Foundation; either version 3, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-// General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program; see the file COPYING.  If not, write to
-// the Free Software Foundation, Inc., 51 Franklin Street, Fifth
-// Floor, Boston, MA 02110-1301, USA.
-//
-//
-
-// Code:
 
 #include <Python.h>
 #include <structmember.h>
@@ -66,9 +22,11 @@
 #include "../basecode/header.h"
 #include "../basecode/Id.h"
 #include "../basecode/ObjId.h"
-#include "../utility/utility.h"
-#include "../utility/print_function.hpp"
 #include "../shell/Shell.h"
+
+#include "../utility/utility.h"
+#include "../utility/strutil.h"
+#include "../utility/print_function.hpp"
 
 #include "moosemodule.h"
 

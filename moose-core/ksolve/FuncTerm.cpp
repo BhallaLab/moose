@@ -26,41 +26,37 @@ using namespace std;
 #include "FuncTerm.h"
 #include "../utility/numutil.h"
 
-FuncTerm::FuncTerm()
-    : reactantIndex_( 1, 0 ),
-        volScale_( 1.0 ),
-        target_( ~0U)
+FuncTerm::FuncTerm():
+    reactantIndex_(1, 0) , volScale_(1.0) , target_(~0U) , args_(nullptr)
 {
-    args_ = 0;
-    parser_.DefineConst(_T("pi"), (mu::value_type)M_PI);
-    parser_.DefineConst(_T("e"), (mu::value_type)M_E);
 }
 
 FuncTerm::~FuncTerm()
 {
-    if (args_) {
+    if(args_)
         delete[] args_;
-    }
 }
 
 void FuncTerm::setReactantIndex( const vector< unsigned int >& mol )
 {
     reactantIndex_ = mol;
-    if ( args_ ) {
+    if ( args_ )
+    {
         delete[] args_;
-        args_ = 0;
+        parser_.ClearAll();
     }
-    args_ = new double[ mol.size() + 1 ];
-    // args_.resize( mol.size() + 1, 0.0 );
-    for ( unsigned int i = 0; i < mol.size(); ++i ) {
-        stringstream ss;
+
+    args_ = new double[mol.size()+1];
+    for ( unsigned int i = 0; i < mol.size(); ++i )
+    {
         args_[i] = 0.0;
-        ss << "x" << i;
-        parser_.DefineVar( ss.str(), &args_[i] );
+        parser_.DefineVar( 'x'+to_string(i), &args_[i] );
     }
+
     // Define a 't' variable even if we don't always use it.
     args_[mol.size()] = 0.0;
     parser_.DefineVar( "t", &args_[mol.size()] );
+    setExpr(expr_);
 }
 
 const vector< unsigned int >& FuncTerm::getReactantIndex() const
@@ -69,25 +65,36 @@ const vector< unsigned int >& FuncTerm::getReactantIndex() const
 }
 
 
-void showError(mu::Parser::exception_type &e)
+void showError(moose::Parser::exception_type &e)
 {
-    cout << "Error occurred in parser.\n"
-         << "Message:  " << e.GetMsg() << "\n"
-         << "Formula:  " << e.GetExpr() << "\n"
-         << "Token:    " << e.GetToken() << "\n"
-         << "Position: " << e.GetPos() << "\n"
-         << "Error code:     " << e.GetCode() << endl;
+    cerr << "Error occurred in parser.\n"
+         << "Message:  " << e.GetMsg() << endl;
 }
 
+/* --------------------------------------------------------------------------*/
+/**
+ * @Synopsis  Set expression on FuncTerm. Before calling this function, user
+ * should make sure that symbol_table has been linked to pointers to the variables.
+ *
+ * @Param expr
+ */
+/* ----------------------------------------------------------------------------*/
 void FuncTerm::setExpr( const string& expr )
 {
-    try {
-        parser_.SetExpr( expr );
+    // Empty expression are not allowed.
+    if(expr.empty())
+        return;
+
+    try
+    {
+        if(! parser_.SetExpr(expr))
+            MOOSE_WARN("Failed to set expression: '" << expr << "'");
         expr_ = expr;
-    } catch(mu::Parser::exception_type &e) {
+    }
+    catch(moose::Parser::exception_type &e)
+    {
         showError(e);
-        //return;
-                throw(e);
+        return;
     }
 }
 
@@ -118,12 +125,13 @@ double FuncTerm::getVolScale() const
 
 const FuncTerm& FuncTerm::operator=( const FuncTerm& other )
 {
-    args_ = 0; // Don't delete it, the original one is still using it.
-    parser_ = other.parser_;
+    args_ = nullptr;  // other is still using it.
     expr_ = other.expr_;
     volScale_ = other.volScale_;
     target_ = other.target_;
-    setReactantIndex( other.reactantIndex_ );
+    reactantIndex_ = other.reactantIndex_;
+    parser_ = other.parser_;
+    setReactantIndex(reactantIndex_);
     return *this;
 }
 
@@ -133,40 +141,43 @@ const FuncTerm& FuncTerm::operator=( const FuncTerm& other )
  */
 double FuncTerm::operator() ( const double* S, double t ) const
 {
-    if ( !args_ )
+    if ( ! args_ )
         return 0.0;
-    unsigned int i;
+
+    unsigned int i = 0;
     for ( i = 0; i < reactantIndex_.size(); ++i )
         args_[i] = S[reactantIndex_[i]];
     args_[i] = t;
-        try
-        {
-            double result = parser_.Eval() * volScale_;
-            return result;
-        }
-        catch (mu::Parser::exception_type &e )
-        {
-            cerr << "Error: " << e.GetMsg() << endl;
-            throw e;
-        }
 
+    try
+    {
+        return parser_.Eval() * volScale_;
+    }
+    catch (moose::Parser::exception_type &e )
+    {
+        cerr << "Error: " << e.GetMsg() << endl;
+        throw e;
+    }
 }
 
 void FuncTerm::evalPool( double* S, double t ) const
 {
     if ( !args_ || target_ == ~0U )
         return;
+
     unsigned int i;
     for ( i = 0; i < reactantIndex_.size(); ++i )
         args_[i] = S[reactantIndex_[i]];
     args_[i] = t;
-        try
-        {
-            S[ target_] = parser_.Eval() * volScale_;
-        }
-        catch ( mu::Parser::exception_type & e )
-        {
-            showError( e );
-            //throw e;
-        }
+
+    try
+    {
+        S[ target_] = parser_.Eval() * volScale_;
+        //assert(! std::isnan(S[target_]));
+    }
+    catch ( moose::Parser::exception_type & e )
+    {
+        showError( e );
+        return;
+    }
 }

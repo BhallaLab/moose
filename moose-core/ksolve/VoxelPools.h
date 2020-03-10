@@ -12,11 +12,11 @@
 
 #include "OdeSystem.h"
 #include "VoxelPoolsBase.h"
+#include "external/libsoda/LSODA.h"
 
 #ifdef USE_BOOST_ODE
 #include "BoostSys.h"
 #endif
-
 
 class Stoich;
 class ProcInfo;
@@ -45,17 +45,22 @@ public:
 
     const Stoich* getStoich( );
 
+    const string getMethod( );
+
     /// Do the numerical integration. Advance the simulation.
     void advance( const ProcInfo* p );
 
     /// Set initial timestep to use by the solver.
     void setInitDt( double dt );
 
-#ifdef USE_GSL      /* -----  not USE_BOOST_ODE  ----- */
+#ifdef USE_GSL      /* -----  not USE_BOOST  ----- */
     static int gslFunc( double t, const double* y, double *dydt, void* params);
 #elif  USE_BOOST_ODE
     static void evalRates( VoxelPools* vp, const vector_type_& y, vector_type_& dydt );
 #endif     /* -----  not USE_BOOST_ODE  ----- */
+
+    // System of LSODA.
+    static void lsodaSys( double t, double* y, double* dydt, void* params);
 
     //////////////////////////////////////////////////////////////////
     // Rate manipulation and calculation functions
@@ -87,12 +92,16 @@ public:
      * This is a utility function for programs like SteadyState that
      * need to analyze velocity.
      */
-    void updateReacVelocities(
-        const double* s, vector< double >& v ) const;
+    void updateReacVelocities( const double* s, vector< double >& v ) const;
 
     /// Used for debugging.
     void print() const;
+
 private:
+
+    std::shared_ptr<LSODA> pLSODA;
+    LSODA_ODE_SYSTEM_TYPE lsodaSystem;
+    int lsodaState = 1;
 
 #ifdef USE_GSL
     gsl_odeiv2_driver* driver_;

@@ -70,7 +70,7 @@ using namespace std;
 #endif
 
 #define MOOSE_WARN( a ) { \
-    stringstream ss; ss << a; \
+    stringstream ss; ss << __func__ << ": " << a; \
     moose::showWarn( ss.str() ); \
     }
 
@@ -214,8 +214,8 @@ namespace moose {
         /*  Be safe than sorry */
         if(!reset)
             ss << T_RESET;
+
         cout << ss.str() << endl;
-        cout.flush( );
     }
 
     /*
@@ -305,6 +305,21 @@ namespace moose {
         logF << asctime(timeinfo) << ": " << msg;
 
         logF.close();
+    }
+
+    template<typename T>
+    void print_array( T* a, size_t n, const string prefix = "" )
+    {
+        stringstream ss;
+        ss << prefix;
+        for (size_t i = 0; i < n; i++)
+        {
+            ss << a[i] << ' ';
+            if( (i+1) % 20 == 0 )
+                ss << endl;
+        }
+        ss << endl;
+        cerr << ss.str();
     }
 
 }

@@ -11,6 +11,7 @@
 
 #include "../mesh/VoxelJunction.h"
 #include "../utility/print_function.hpp"
+#include "../utility/utility.h"
 
 #include "VoxelPoolsBase.h"
 #include "XferInfo.h"
@@ -43,10 +44,9 @@
 
 #define SIMPLE_ROUNDING 0
 
-// When set use std::async rather than std::thread
-// TODO: Profiling.
+// When set use std::async rather than std::thread. This is slightly faster
+// (roughly 3% with gcc7).
 #define USING_ASYNC 1
-
 #if USING_ASYNC
 #define THREAD_LAUNCH_POLICY std::launch::async
 #endif
@@ -149,25 +149,25 @@ const Cinfo* Gsolve::initCinfo()
 
     // DestFinfo definitions
     static DestFinfo process( "process",
-                              "Handles process call",
-                              new ProcOpFunc< Gsolve >( &Gsolve::process ) );
+            "Handles process call",
+            new ProcOpFunc< Gsolve >( &Gsolve::process ) );
     static DestFinfo reinit( "reinit",
-                             "Handles reinit call",
-                             new ProcOpFunc< Gsolve >( &Gsolve::reinit ) );
+            "Handles reinit call",
+            new ProcOpFunc< Gsolve >( &Gsolve::reinit ) );
 
     static DestFinfo voxelVol( "voxelVol",
-                               "Handles updates to all voxels. Comes from parent "
-                               "ChemCompt object.",
-                               new OpFunc1< Gsolve, vector< double > >(
-                                   &Gsolve::updateVoxelVol )
-                             );
+            "Handles updates to all voxels. Comes from parent "
+            "ChemCompt object.",
+            new OpFunc1< Gsolve, vector< double > >(
+                &Gsolve::updateVoxelVol )
+            );
 
     static DestFinfo initProc( "initProc",
-                               "Handles initProc call from Clock",
-                               new ProcOpFunc< Gsolve >( &Gsolve::initProc ) );
+            "Handles initProc call from Clock",
+            new ProcOpFunc< Gsolve >( &Gsolve::initProc ) );
     static DestFinfo initReinit( "initReinit",
-                                 "Handles initReinit call from Clock",
-                                 new ProcOpFunc< Gsolve >( &Gsolve::initReinit ) );
+            "Handles initReinit call from Clock",
+            new ProcOpFunc< Gsolve >( &Gsolve::initReinit ) );
 
     // Shared definitions
     static Finfo* procShared[] =
@@ -176,19 +176,19 @@ const Cinfo* Gsolve::initCinfo()
     };
 
     static SharedFinfo proc( "proc",
-                             "Shared message for process and reinit",
-                             procShared, sizeof( procShared ) / sizeof( const Finfo* )
-                           );
+            "Shared message for process and reinit",
+            procShared, sizeof( procShared ) / sizeof( const Finfo* )
+            );
 
     static Finfo* initShared[] =
     {
         &initProc, &initReinit
     };
     static SharedFinfo init( "init",
-                             "Shared message for initProc and initReinit. This is used"
-                             " when the system has cross-compartment reactions. ",
-                             initShared, sizeof( initShared ) / sizeof( const Finfo* )
-                           );
+            "Shared message for initProc and initReinit. This is used"
+            " when the system has cross-compartment reactions. ",
+            initShared, sizeof( initShared ) / sizeof( const Finfo* )
+            );
 
     ///////////////////////////////////////////////////////
 
@@ -237,6 +237,7 @@ Gsolve::Gsolve() :
 {
     // Initialize with global seed.
     rng_.setSeed(moose::getGlobalSeed());
+    numThreads_ = moose::getEnvInt("MOOSE_NUM_THREADS", 1);
 }
 
 Gsolve& Gsolve::operator=(const Gsolve& )
@@ -409,7 +410,7 @@ void Gsolve::process( const Eref& e, ProcPtr p )
         vector< double >::iterator i = dvalues.begin() + 4;
         for ( ; i != dvalues.end(); ++i )
         {
-#if SIMPLE_ROUNDING
+#if 0
             *i = std::round( *i );
 #else
             // *i = approximateWithInteger_debug(__FUNCTION__, *i, rng_);
@@ -429,7 +430,7 @@ void Gsolve::process( const Eref& e, ProcPtr p )
     {
         if( numThreads_ > 1 )
         {
-            cerr << "Warn: Not enough voxels or threads. Reverting to serial mode. " << endl;
+            cerr << "Warn: Not enough voxel. Reverting back to serial mode. " << endl;
             numThreads_ = 1;
         }
 
@@ -577,16 +578,18 @@ void Gsolve::reinit( const Eref& e, ProcPtr p )
     for ( auto i = pools_.begin(); i != pools_.end(); ++i )
         i->refreshAtot( &sys_ );
 
+
     // LoadBalancing. Recompute the optimal number of threads.
     size_t nvPools = pools_.size( );
     grainSize_ = (size_t) std::ceil((double)nvPools / (double)numThreads_);
     assert( grainSize_ * numThreads_ >= nvPools);
-    numThreads_ = nvPools / grainSize_;
+    numThreads_ = (size_t) std::ceil((double)nvPools / (double)grainSize_);
     MOOSE_DEBUG( "Grain size is " << grainSize_ << ". Num threads " << numThreads_);
 
-    if(1 < getNumThreads())
+    if(1 < numThreads_)
         cout << "Info: Setting up threaded gsolve with " << getNumThreads( )
              << " threads. " << endl;
+
 }
 
 //////////////////////////////////////////////////////////////
@@ -756,8 +759,7 @@ void Gsolve::fillPoolFuncDep()
 void Gsolve::fillIncrementFuncDep()
 {
     // create map of funcs that depend on specified molecule.
-    vector< vector< unsigned int > > funcMap(
-        stoichPtr_->getNumAllPools() );
+    vector< vector< unsigned int > > funcMap( stoichPtr_->getNumAllPools() );
     const vector< RateTerm* >& rates = stoichPtr_->getRateTerms();
     vector< FuncRate* > incrementRates;
     vector< unsigned int > incrementRateIndex;
@@ -1018,6 +1020,10 @@ void Gsolve::setNumPools( unsigned int numPoolSpecies )
     }
 }
 
+void Gsolve::setNumVarTotPools( unsigned int var, unsigned int tot ) {
+	setNumPools( tot );
+}
+
 unsigned int Gsolve::getNumPools() const
 {
     if ( pools_.size() > 0 )
@@ -1094,14 +1100,14 @@ void Gsolve::updateRateTerms( unsigned int index )
         for ( unsigned int i = 0 ; i < pools_.size(); ++i )
         {
             pools_[i].updateAllRateTerms( stoichPtr_->getRateTerms(),
-                                          stoichPtr_->getNumCoreRates() );
+                    stoichPtr_->getNumCoreRates() );
         }
     }
     else if ( index < stoichPtr_->getNumRates() )
     {
         for ( unsigned int i = 0 ; i < pools_.size(); ++i )
             pools_[i].updateRateTerms( stoichPtr_->getRateTerms(),
-                                       stoichPtr_->getNumCoreRates(), index );
+                    stoichPtr_->getNumCoreRates(), index );
     }
 }
 

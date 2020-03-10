@@ -42,106 +42,104 @@ const Cinfo* Dsolve::initCinfo()
     ///////////////////////////////////////////////////////
 
     static ValueFinfo< Dsolve, Id > stoich (
-        "stoich",
-        "Stoichiometry object for handling this reaction system.",
-        &Dsolve::setStoich,
-        &Dsolve::getStoich
-    );
+            "stoich",
+            "Stoichiometry object for handling this reaction system.",
+            &Dsolve::setStoich,
+            &Dsolve::getStoich
+            );
 
     static ElementValueFinfo< Dsolve, string > path (
-        "path",
-        "Path of reaction system. Must include all the pools that "
-        "are to be handled by the Dsolve, can also include other "
-        "random objects, which will be ignored.",
-        &Dsolve::setPath,
-        &Dsolve::getPath
-    );
+            "path",
+            "Path of reaction system. Must include all the pools that "
+            "are to be handled by the Dsolve, can also include other "
+            "random objects, which will be ignored.",
+            &Dsolve::setPath,
+            &Dsolve::getPath
+            );
 
     static ReadOnlyValueFinfo< Dsolve, unsigned int > numVoxels(
-        "numVoxels",
-        "Number of voxels in the core reac-diff system, on the "
-        "current diffusion solver. ",
-        &Dsolve::getNumVoxels
-    );
+            "numVoxels",
+            "Number of voxels in the core reac-diff system, on the "
+            "current diffusion solver. ",
+            &Dsolve::getNumVoxels
+            );
     static ReadOnlyValueFinfo< Dsolve, unsigned int > numAllVoxels(
-        "numAllVoxels",
-        "Number of voxels in the core reac-diff system, on the "
-        "current diffusion solver. ",
-        &Dsolve::getNumVoxels
-    );
-    static LookupValueFinfo<
-    Dsolve, unsigned int, vector< double > > nVec(
-        "nVec",
-        "vector of # of molecules along diffusion length, "
-        "looked up by pool index",
-        &Dsolve::setNvec,
-        &Dsolve::getNvec
-    );
+            "numAllVoxels",
+            "Number of voxels in the core reac-diff system, on the "
+            "current diffusion solver. ",
+            &Dsolve::getNumVoxels
+            );
+
+    static LookupValueFinfo< Dsolve, unsigned int, vector< double > > nVec(
+            "nVec",
+            "vector of # of molecules along diffusion length, "
+            "looked up by pool index",
+            &Dsolve::setNvec,
+            &Dsolve::getNvec
+            );
 
     static ValueFinfo< Dsolve, unsigned int > numPools(
-        "numPools",
-        "Number of molecular pools in the entire reac-diff system, "
-        "including variable, function and buffered.",
-        &Dsolve::setNumPools,
-        &Dsolve::getNumPools
-    );
+            "numPools",
+            "Number of molecular pools in the entire reac-diff system, "
+            "including variable, function and buffered.",
+            &Dsolve::setNumPools,
+            &Dsolve::getNumPools
+            );
 
     static ValueFinfo< Dsolve, Id > compartment (
-        "compartment",
-        "Reac-diff compartment in which this diffusion system is "
-        "embedded.",
-        &Dsolve::setCompartment,
-        &Dsolve::getCompartment
-    );
+            "compartment",
+            "Reac-diff compartment in which this diffusion system is "
+            "embedded.",
+            &Dsolve::setCompartment,
+            &Dsolve::getCompartment
+            );
 
     static LookupValueFinfo< Dsolve, unsigned int, double > diffVol1 (
-        "diffVol1",
-        "Volume used to set diffusion scaling: firstVol[ voxel# ] "
-        "Particularly relevant for diffusion between PSD and head.",
-        &Dsolve::setDiffVol1,
-        &Dsolve::getDiffVol1
-    );
+            "diffVol1",
+            "Volume used to set diffusion scaling: firstVol[ voxel# ] "
+            "Particularly relevant for diffusion between PSD and head.",
+            &Dsolve::setDiffVol1,
+            &Dsolve::getDiffVol1
+            );
 
     static LookupValueFinfo< Dsolve, unsigned int, double > diffVol2 (
-        "diffVol2",
-        "Volume used to set diffusion scaling: secondVol[ voxel# ] "
-        "Particularly relevant for diffusion between spine and dend.",
-        &Dsolve::setDiffVol2,
-        &Dsolve::getDiffVol2
-    );
+            "diffVol2",
+            "Volume used to set diffusion scaling: secondVol[ voxel# ] "
+            "Particularly relevant for diffusion between spine and dend.",
+            &Dsolve::setDiffVol2,
+            &Dsolve::getDiffVol2
+            );
 
     static LookupValueFinfo< Dsolve, unsigned int, double > diffScale (
-        "diffScale",
-        "Geometry term to set diffusion scaling: diffScale[ voxel# ] "
-        "Here the scaling term is given by cross-section area/length "
-        "Relevant for diffusion between spine head and dend, or PSD.",
-        &Dsolve::setDiffScale,
-        &Dsolve::getDiffScale
-    );
+            "diffScale",
+            "Geometry term to set diffusion scaling: diffScale[ voxel# ] "
+            "Here the scaling term is given by cross-section area/length "
+            "Relevant for diffusion between spine head and dend, or PSD.",
+            &Dsolve::setDiffScale,
+            &Dsolve::getDiffScale
+            );
 
-
-    ///////////////////////////////////////////////////////
     // DestFinfo definitions
     static DestFinfo process( "process",
-                              "Handles process call",
-            new ProcOpFunc< Dsolve >( &Dsolve::process ) 
+            "Handles process call",
+            new ProcOpFunc< Dsolve >( &Dsolve::process )
             );
 
     static DestFinfo reinit( "reinit",
-                             "Handles reinit call",
-            new ProcOpFunc< Dsolve >( &Dsolve::reinit ) 
+            "Handles reinit call",
+            new ProcOpFunc< Dsolve >( &Dsolve::reinit )
             );
 
     static DestFinfo buildMeshJunctions( "buildMeshJunctions",
-                                         "Builds junctions between mesh on current Dsolve, and another"
-                                         " Dsolve. The meshes have to be compatible. ",
-            new EpFunc1< Dsolve, Id >(&Dsolve::buildMeshJunctions ) 
+            "Builds junctions between mesh on current Dsolve, and another"
+            " Dsolve. The meshes have to be compatible. ",
+            new EpFunc1< Dsolve, Id >(&Dsolve::buildMeshJunctions )
             );
 
     static DestFinfo buildNeuroMeshJunctions( "buildNeuroMeshJunctions",
             "Builds junctions between NeuroMesh, SpineMesh and PsdMesh",
-            new EpFunc2< Dsolve, Id, Id >(&Dsolve::buildNeuroMeshJunctions ) 
-            );
+            new EpFunc2< Dsolve, Id, Id >(&Dsolve::buildNeuroMeshJunctions )
+                                            );
 
     ///////////////////////////////////////////////////////
     // Shared definitions
@@ -158,19 +156,19 @@ const Cinfo* Dsolve::initCinfo()
 
     static Finfo* dsolveFinfos[] =
     {
-        &stoich,			// ElementValue
-        &path,				// ElementValue
-        &compartment,		// Value
-        &numVoxels,			// ReadOnlyValue
-        &numAllVoxels,			// ReadOnlyValue
-        &nVec,				// LookupValue
-        &numPools,			// Value
-        &diffVol1,				// LookupValue
-        &diffVol2,				// LookupValue
-        &diffScale,				// LookupValue
-        &buildMeshJunctions, 	// DestFinfo
-        &buildNeuroMeshJunctions, 	// DestFinfo
-        &proc,				// SharedFinfo
+        &stoich,                    // ElementValue
+        &path,                      // ElementValue
+        &compartment,               // Value
+        &numVoxels,                 // ReadOnlyValue
+        &numAllVoxels,              // ReadOnlyValue
+        &nVec,                      // LookupValue
+        &numPools,                  // Value
+        &diffVol1,                  // LookupValue
+        &diffVol2,                  // LookupValue
+        &diffScale,                 // LookupValue
+        &buildMeshJunctions,        // DestFinfo
+        &buildNeuroMeshJunctions,   // DestFinfo
+        &proc,                      // SharedFinfo
     };
 
     static Dinfo< Dsolve > dinfo;
@@ -187,11 +185,8 @@ const Cinfo* Dsolve::initCinfo()
 
 static const Cinfo* dsolveCinfo = Dsolve::initCinfo();
 
-//////////////////////////////////////////////////////////////
 // Class definitions
-//////////////////////////////////////////////////////////////
-Dsolve::Dsolve()
-    :
+Dsolve::Dsolve() :
     dt_( -1.0 ),
     numTotPools_( 0 ),
     numLocalPools_( 0 ),
@@ -412,6 +407,8 @@ void Dsolve::calcJnChan( const DiffJunction& jn, Dsolve* other, double dt )
 
     for ( unsigned int i = 0; i < jn.myChannels.size(); ++i )
     {
+        if ( channels_[ jn.myChannels[i] ].isLocal )
+            continue;
         ConcChanInfo& myChan = channels_[ jn.myChannels[i] ];
         DiffPoolVec& myDv = pools_[ myChan.myPool ];
         DiffPoolVec& otherDv = other->pools_[ myChan.otherPool ];
@@ -424,12 +421,12 @@ void Dsolve::calcJnChan( const DiffJunction& jn, Dsolve* other, double dt )
             double lastN = myN;
             double otherN = otherDv.getN( j->second );
             double chanN = chanDv.getN( j->first );
-			// Stick in a conversion factor for the myN and otherN into
-			// concentrations. Note that SI is millimolar.
-            double perm = myChan.permeability * chanN * 1000.0 / NA;
+            // Stick in a conversion factor for the myN and otherN into
+            // concentrations. Note that SI is millimolar.
+            double perm = myChan.permeability * chanN / NA;
             myN = integ( myN, perm * myN/j->firstVol,
                          perm * otherN/j->secondVol, dt );
-            otherN += lastN - myN;	// Mass consv
+            otherN += lastN - myN;    // Mass consv
             if ( otherN < 0.0 )   // Avoid negatives
             {
                 myN += otherN;
@@ -446,6 +443,8 @@ void Dsolve::calcOtherJnChan( const DiffJunction& jn, Dsolve* other, double dt )
 {
     for ( unsigned int i = 0; i < jn.otherChannels.size(); ++i )
     {
+        if ( other->channels_[ jn.otherChannels[i] ].isLocal )
+            continue;
         ConcChanInfo& otherChan = other->channels_[ jn.otherChannels[i] ];
         // This is the DiffPoolVec for the pools on the other Dsolve,
         // the one with the channel.
@@ -463,12 +462,12 @@ void Dsolve::calcOtherJnChan( const DiffJunction& jn, Dsolve* other, double dt )
             double lastN = myN;
             double otherN = otherDv.getN( j->second );
             double chanN = chanDv.getN( j->second );
-			// Stick in a conversion factor for the myN and otherN into
-			// concentrations. Note that SI is millimolar.
-            double perm = otherChan.permeability * chanN * 1000.0 / NA;
+            // Stick in a conversion factor for the myN and otherN into
+            // concentrations. Note that SI is millimolar.
+            double perm = otherChan.permeability * chanN / NA;
             myN = integ( myN, perm * myN/j->firstVol,
                          perm * otherN/j->secondVol, dt );
-            otherN += lastN - myN;	// Mass consv
+            otherN += lastN - myN;    // Mass consv
             if ( otherN < 0.0 )   // Avoid negatives
             {
                 myN += otherN;
@@ -479,6 +478,49 @@ void Dsolve::calcOtherJnChan( const DiffJunction& jn, Dsolve* other, double dt )
         }
     }
 }
+
+void Dsolve::calcLocalChan( double dt )
+{
+    // There may be some chans which connect within the compartment.
+    // This is odd biologically, but happens for modelling convenience.
+    // The channels have a flag indicating if this is so. It is a simple
+    // calculation, but lacks numerical accuracy as it is outside the
+    // solver framework.
+
+    ChemCompt* cc = reinterpret_cast< ChemCompt* >( compartment_.eref().data() );
+    const vector< double >& vols = cc->vGetVoxelVolume();
+    for (auto ch = channels_.begin(); ch != channels_.end(); ++ch )
+    {
+        if ( ch->isLocal )
+        {
+            DiffPoolVec& myDv = pools_[ ch->myPool ];
+            DiffPoolVec& otherDv = pools_[ ch->otherPool ];
+            DiffPoolVec& chanDv = pools_[ ch->chanPool ];
+            assert( myDv.getNumVoxels() == numVoxels_ );
+            for (unsigned int i = 0; i < numVoxels_; ++i )
+            {
+                double myN = myDv.getN( i );
+                double lastN = myN;
+                double otherN = otherDv.getN( i );
+                double chanN = chanDv.getN( i );
+                double vol = vols[i];
+                // Stick in a conversion factor for the myN and otherN into
+                // concentrations. Note that SI is millimolar.
+                double perm = ch->permeability * chanN / NA;
+                myN = integ( myN, perm * myN/vol, perm * otherN/vol, dt );
+                otherN += lastN - myN;    // Mass consv
+                if ( otherN < 0.0 )   // Avoid negatives
+                {
+                    myN += otherN;
+                    otherN = 0.0;
+                }
+                myDv.setN( i, myN );
+                otherDv.setN( i, otherN );
+            }
+        }
+    }
+}
+
 
 /**
  * Computes flux through a junction between diffusion solvers.
@@ -525,6 +567,7 @@ void Dsolve::reinit( const Eref& e, ProcPtr p )
 
 void Dsolve::updateJunctions( double dt )
 {
+    calcLocalChan( dt );
     for (auto i = junctions_.begin(); i != junctions_.end(); ++i )
         calcJunction( *i, dt );
 }
@@ -532,7 +575,7 @@ void Dsolve::updateJunctions( double dt )
 
 void Dsolve::calcJunction_chunk( const size_t begin, const size_t end, double dt )
 {
-    for (size_t i = begin; i < min(end, junctions_.size()); i++) 
+    for (size_t i = begin; i < min(end, junctions_.size()); i++)
         calcJunction( junctions_[i], dt );
 
 }
@@ -566,8 +609,7 @@ void Dsolve::setStoich( Id id )
             // assert( poolIndex < pools_.size() );
             Id pid( i + poolMapStart_ );
             assert( pid.element()->cinfo()->isA( "PoolBase" ) );
-            PoolBase* pb =
-                reinterpret_cast< PoolBase* >( pid.eref().data());
+            PoolBase* pb = reinterpret_cast< PoolBase* >( pid.eref().data());
             double diffConst = pb->getDiffConst( pid.eref() );
             double motorConst = pb->getMotorConst( pid.eref() );
             pools_[ poolIndex ].setId( pid.value() );
@@ -575,9 +617,9 @@ void Dsolve::setStoich( Id id )
             pools_[ poolIndex ].setMotorConst( motorConst );
             /*
             cout << i << " poolIndex=" <<  poolIndex <<
-            		", id=" << pid.value() <<
-            		", name=" << pid.element()->getName() << endl;
-            		*/
+                    ", id=" << pid.value() <<
+                    ", name=" << pid.element()->getName() << endl;
+                    */
         }
     }
     string chanpath = path_ + "[ISA=ConcChan]";
@@ -614,7 +656,8 @@ void Dsolve::fillConcChans( const vector< ObjId >& chans )
         ret.clear();
         unsigned int outPoolValue = outPool.id.value();
         bool swapped = false;
-        if ( !( inPool.bad() or chanPool.bad() ) )
+        bool isLocal = false;
+        if ( !( inPool.bad() || chanPool.bad() ) )
         {
             unsigned int inPoolIndex = convertIdToPoolIndex( inPool.id );
             unsigned int chanPoolIndex = convertIdToPoolIndex(chanPool.id);
@@ -624,13 +667,24 @@ void Dsolve::fillConcChans( const vector< ObjId >& chans )
                 outPoolValue = inPool.id.value();
                 swapped = true;
             }
+            else
+            {
+                unsigned int outPoolIndex = convertIdToPoolIndex( outPool.id );
+                // edge case where both in and out are on same compartment.
+                // Not much sense in bio, but a common convenience hack.
+                if ( outPoolIndex != ~0U )
+                {
+                    outPoolValue = outPoolIndex;
+                    isLocal = true;
+                }
+
+            }
             if ( ( inPoolIndex != ~0U) && (chanPoolIndex != ~0U ) )
             {
                 ConcChanInfo cci(
                     inPoolIndex, outPoolValue, chanPoolIndex,
                     Field< double >::get( *i, "permeability" ),
-                    ////// Fix it below ////////
-                    swapped
+                    swapped, isLocal
                 );
                 channels_.push_back( cci );
             }
@@ -878,13 +932,13 @@ void printJunction( Id self, Id other, const DiffJunction& jn )
     cout << "Junction between " << self.path() << ", " << other.path() << endl;
     cout << "Pool indices: myPools, otherPools\n";
     for ( unsigned int i = 0; i < jn.myPools.size(); ++i )
-        cout << i << "	" << jn.myPools[i] << "	" << jn.otherPools[i] << endl;
-    cout << "Voxel junctions: first	second	firstVol	secondVol	diffScale\n";
+        cout << i << "    " << jn.myPools[i] << "    " << jn.otherPools[i] << endl;
+    cout << "Voxel junctions: first    second    firstVol    secondVol    diffScale\n";
     for ( unsigned int i = 0; i < jn.vj.size(); ++i )
     {
-        cout << i << "	" << jn.vj[i].first << "	" << jn.vj[i].second <<
-             "	" << jn.vj[i].firstVol << "	" << jn.vj[i].secondVol <<
-             "	" << jn.vj[i].diffScale <<	endl;
+        cout << i << "    " << jn.vj[i].first << "    " << jn.vj[i].second <<
+             "    " << jn.vj[i].firstVol << "    " << jn.vj[i].secondVol <<
+             "    " << jn.vj[i].diffScale <<    endl;
     }
 }
 
@@ -923,7 +977,7 @@ void Dsolve::mapDiffPoolsBetweenDsolves( DiffJunction& jn,
  * For example, if we had an enzyme in compartment 'src', whose product
  * should go to pool 'bar' in compartment 'dest',
  * the name of the enzyme product in compartment src would be
- * 		bar_xfer_dest
+ *         bar_xfer_dest
  */
 void Dsolve::mapXfersBetweenDsolves(
     vector< unsigned int >& srcPools, vector< unsigned int >& destPools,
@@ -972,26 +1026,36 @@ void Dsolve::mapChansBetweenDsolves( DiffJunction& jn, Id self, Id other)
     unsigned int outIndex;
     for ( unsigned int i = 0; i < ch.size(); ++i )
     {
-        unsigned int chanIndex = ch[i].chanPool;
-        outIndex = otherSolve->convertIdToPoolIndex( ch[i].otherPool );
-        if ( (outIndex != ~0U) && (chanIndex != ~0U ) )
+        if ( ch[i].isLocal )
         {
             jn.myChannels.push_back(i);
-            ch[i].otherPool = outIndex;	// replace the Id with the index.
-            ch[i].chanPool = chanIndex; //chanIndex may be on either Dsolve
+        }
+        else
+        {
+            outIndex = otherSolve->convertIdToPoolIndex( ch[i].otherPool );
+            if (outIndex != ~0U)
+            {
+                ch[i].otherPool = outIndex;    // replace Id with the index.
+                jn.myChannels.push_back(i);
+            }
         }
     }
     // Now set up the other Dsolve.
     vector< ConcChanInfo >& ch2 = otherSolve->channels_;
     for ( unsigned int i = 0; i < ch2.size(); ++i )
     {
-        unsigned int chanIndex = ch2[i].chanPool;
-        outIndex = selfSolve->convertIdToPoolIndex( ch2[i].otherPool );
-        if ( (outIndex != ~0U) && (chanIndex != ~0U) )
+        if ( ch2[i].isLocal )
         {
             jn.otherChannels.push_back(i);
-            ch2[i].otherPool = outIndex;  // replace the Id with the index
-            ch2[i].chanPool = chanIndex;  //chanIndex may be on either Dsolve
+        }
+        else
+        {
+            outIndex = selfSolve->convertIdToPoolIndex( ch2[i].otherPool );
+            if ( outIndex != ~0U )
+            {
+                ch2[i].otherPool = outIndex;  // replace Id with the index
+                jn.otherChannels.push_back(i);
+            }
         }
     }
 }
@@ -1063,15 +1127,19 @@ void Dsolve::setNumAllVoxels( unsigned int num )
 
 unsigned int Dsolve::convertIdToPoolIndex( const Id id ) const
 {
+    bool verbose = false;
     unsigned int i  = id.value() - poolMapStart_;
     if ( i < poolMap_.size() )
     {
         return poolMap_[i];
     }
-    cout << "Warning: Dsolve::convertIdToPoollndex: Id out of range, (" <<
-         poolMapStart_ << ", " << id << ", " << id.path() << ", " <<
-         poolMap_.size() + poolMapStart_ << "\n";
-    return 0;
+    if ( verbose )
+    {
+        cout << "Warning: Dsolve::convertIdToPoollndex: Id out of range, (" <<
+             poolMapStart_ << ", " << id << ", " << id.path() << ", " <<
+             poolMap_.size() + poolMapStart_ << "\n";
+    }
+    return ~0U;
 }
 
 unsigned int Dsolve::convertIdToPoolIndex( const Eref& e ) const
@@ -1083,7 +1151,7 @@ void Dsolve::setN( const Eref& e, double v )
 {
     unsigned int pid = convertIdToPoolIndex( e );
     // Ignore silently, as this may be a valid pid for the ksolve to use.
-    if ( pid >= pools_.size() )
+    if ( pid == ~0U || pid >= pools_.size() )
         return;
     unsigned int vox = e.dataIndex();
     if ( vox < numVoxels_ )
@@ -1098,7 +1166,7 @@ void Dsolve::setN( const Eref& e, double v )
 double Dsolve::getN( const Eref& e ) const
 {
     unsigned int pid = convertIdToPoolIndex( e );
-    if ( pid >= pools_.size() ) return 0.0; // ignore silently
+    if ( pid == ~0U || pid >= pools_.size() ) return 0.0; //ignore silently
     unsigned int vox = e.dataIndex();
     if ( vox <  numVoxels_ )
     {
@@ -1112,7 +1180,7 @@ double Dsolve::getN( const Eref& e ) const
 void Dsolve::setNinit( const Eref& e, double v )
 {
     unsigned int pid = convertIdToPoolIndex( e );
-    if ( pid >= pools_.size() )  // Ignore silently
+    if ( pid == ~0U || pid >= pools_.size() )  // Ignore silently
         return;
     unsigned int vox = e.dataIndex();
     if ( vox < numVoxels_ )
@@ -1127,7 +1195,7 @@ void Dsolve::setNinit( const Eref& e, double v )
 double Dsolve::getNinit( const Eref& e ) const
 {
     unsigned int pid = convertIdToPoolIndex( e );
-    if ( pid >= pools_.size() ) return 0.0; // ignore silently
+    if ( pid == ~0U || pid >= pools_.size() ) return 0.0; //ignore silently
     unsigned int vox = e.dataIndex();
     if ( vox < numVoxels_ )
     {
@@ -1141,36 +1209,52 @@ double Dsolve::getNinit( const Eref& e ) const
 void Dsolve::setDiffConst( const Eref& e, double v )
 {
     unsigned int pid = convertIdToPoolIndex( e );
-    if ( pid >= pools_.size() )   // Ignore silently, out of range.
+    if ( pid == ~0U || pid >= pools_.size() )   // Ignore silently, out of range.
         return;
-    pools_[ convertIdToPoolIndex( e ) ].setDiffConst( v );
+    pools_[ pid ].setDiffConst( v );
 }
 
 double Dsolve::getDiffConst( const Eref& e ) const
 {
     unsigned int pid = convertIdToPoolIndex( e );
-    if ( pid >= pools_.size() )   // Ignore silently, out of range.
+    if ( pid == ~0U || pid >= pools_.size() )   // Ignore silently, out of range.
         return 0.0;
-    return pools_[ convertIdToPoolIndex( e ) ].getDiffConst();
+    return pools_[ pid ].getDiffConst();
 }
 
 void Dsolve::setMotorConst( const Eref& e, double v )
 {
     unsigned int pid = convertIdToPoolIndex( e );
-    if ( pid >= pools_.size() )   // Ignore silently, out of range.
+    if ( pid == ~0U || pid >= pools_.size() )   // Ignore silently, out of range.
         return;
-    pools_[ convertIdToPoolIndex( e ) ].setMotorConst( v );
+    pools_[ pid ].setMotorConst( v );
 }
 
-void Dsolve::setNumPools( unsigned int numPoolSpecies )
+void Dsolve::setNumVarTotPools( unsigned int var, unsigned int tot )
 {
     // Decompose numPoolSpecies here, assigning some to each node.
-    numTotPools_ = numPoolSpecies;
-    numLocalPools_ = numPoolSpecies;
+    numTotPools_ = tot;
+    numLocalPools_ = var;
     poolStartIndex_ = 0;
 
-    pools_.resize( numLocalPools_ );
-    for ( unsigned int i = 0 ; i < numLocalPools_; ++i )
+    pools_.resize( numTotPools_ );
+    for ( unsigned int i = 0 ; i < numTotPools_; ++i )
+    {
+        pools_[i].setNumVoxels( numVoxels_ );
+        // pools_[i].setId( reversePoolMap_[i] );
+        // pools_[i].setParent( me );
+    }
+}
+
+void Dsolve::setNumPools( unsigned int numVarPoolSpecies )
+{
+    // Decompose numPoolSpecies here, assigning some to each node.
+    numTotPools_ = numVarPoolSpecies;
+    numLocalPools_ = numVarPoolSpecies;
+    poolStartIndex_ = 0;
+
+    pools_.resize( numTotPools_ );
+    for ( unsigned int i = 0 ; i < numTotPools_; ++i )
     {
         pools_[i].setNumVoxels( numVoxels_ );
         // pools_[i].setId( reversePoolMap_[i] );

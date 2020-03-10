@@ -12,19 +12,19 @@
 
 class ZombieBufPool: public ZombiePool
 {
-	public:
-		ZombieBufPool();
-		~ZombieBufPool();
+public:
+    ZombieBufPool();
+    ~ZombieBufPool();
 
-		/// The 'get' functions are simply inherited from ZombiePool
-		void vSetN( const Eref& e, double v );
-		void vSetNinit( const Eref& e, double v );
-		void vSetConc( const Eref& e, double v );
-		void vSetConcInit( const Eref& e, double v );
-		bool vGetIsBuffered( const Eref& e ) const;
+    /// The 'get' functions are simply inherited from ZombiePool
+    void vSetN( const Eref& e, double v );
+    void vSetNinit( const Eref& e, double v );
+    void vSetConc( const Eref& e, double v );
+    void vSetConcInit( const Eref& e, double v );
+    bool vGetIsBuffered( const Eref& e ) const;
 
-		static const Cinfo* initCinfo();
-	private:
+    static const Cinfo* initCinfo();
+private:
 };
 
 #endif	// _ZOMBIE_BUF_POOL_H

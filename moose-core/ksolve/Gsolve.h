@@ -46,6 +46,7 @@ public:
      */
     void setNumPools( unsigned int num ); /// Inherited.
     unsigned int getNumPools() const; /// Inherited.
+    void setNumVarTotPools( unsigned int var, unsigned int tot );//Inherited
     VoxelPoolsBase* pools( unsigned int i ); /// Inherited.
     double volume( unsigned int i ) const;
 
@@ -142,8 +143,6 @@ private:
 
     GssaSystem sys_;
 
-    moose::RNG rng_;
-
     /**
      * Each VoxelPools entry handles all the pools in a single voxel.
      * Each entry knows how to update itself in order to complete
@@ -169,6 +168,9 @@ private:
 
     /// Flag: True if atot should be updated every clock tick
     bool useClockedUpdate_;
+
+    // private rng.
+    moose::RNG rng_;
 };
 
 #endif	// _GSOLVE_H

@@ -19,27 +19,29 @@ using namespace std;
 const double RateTerm::EPSILON = 1.0e-6;
 
 StochNOrder::StochNOrder( double k, vector< unsigned int > v )
-	: NOrder( k, v )
+    : NOrder( k, v )
 {
-	// Here we sort the y vector so that if there are repeated
-	// substrates, they are put consecutively. This lets us use
-	// the algorithm below to deal with repeats.
-	sort( v_.begin(), v_.end() );
+    // Here we sort the y vector so that if there are repeated
+    // substrates, they are put consecutively. This lets us use
+    // the algorithm below to deal with repeats.
+    sort( v_.begin(), v_.end() );
 }
 
-double StochNOrder::operator() ( const double* S ) const {
-	double ret = k_;
-	vector< unsigned int >::const_iterator i;
-	unsigned int lasty = 0;
-	double y = 0.0;
-	for ( i = v_.begin(); i != v_.end(); i++) {
-		assert( !std::isnan( S[ *i ] ) );
-		if ( lasty == *i )
-			y -= 1.0;
-		else
-			y = S[ *i ];
-		ret *= y;
-		lasty = *i;
-	}
-	return ret;
+double StochNOrder::operator() ( const double* S ) const
+{
+    double ret = k_;
+    vector< unsigned int >::const_iterator i;
+    unsigned int lasty = 0;
+    double y = 0.0;
+    for ( i = v_.begin(); i != v_.end(); i++)
+    {
+        assert( !std::isnan( S[ *i ] ) );
+        if ( lasty == *i )
+            y -= 1.0;
+        else
+            y = S[ *i ];
+        ret *= y;
+        lasty = *i;
+    }
+    return ret;
 }

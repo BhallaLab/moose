@@ -214,7 +214,7 @@ namespace boost { namespace numeric { namespace bindings {
     template <typename A, typename Tau, typename C, typename Work>
     inline
     int ormqr (char side, char trans, const A& a, const Tau& tau, C& c, detail::workspace1<Work> workspace ) {
-       typedef typename A::value_type                              value_type ;
+       // typedef typename A::value_type                              value_type ;
 
        return detail::ormqr( side, trans, a, tau, c, workspace.w_ );
     }

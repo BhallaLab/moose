@@ -13,49 +13,50 @@
 // Temporary, just to get going.
 typedef vector< double > SparseVector;
 
-class RollingMatrix {
-	public:
-		// Specify empty matrix.
-		RollingMatrix();
-		~RollingMatrix();
-		RollingMatrix& operator=( const RollingMatrix& other );
+class RollingMatrix
+{
+public:
+    // Specify empty matrix.
+    RollingMatrix();
+    ~RollingMatrix();
+    RollingMatrix& operator=( const RollingMatrix& other );
 
-		// Specify size of matrix. Allocations may happen later.
-		void resize( unsigned int numRows, unsigned int numColumns );
+    // Specify size of matrix. Allocations may happen later.
+    void resize( size_t numRows, size_t numColumns );
 
-		// Return specified entry.
-		double get( unsigned int row, unsigned int column ) const;
+    // Return specified entry.
+    double get( size_t row, size_t column ) const;
 
-		// Sum contents of input into entry at specfied row, column.
-		// Row index is relative to current zero.
-		void sumIntoEntry( double input, unsigned int row, unsigned int column );
+    // Sum contents of input into entry at specfied row, column.
+    // Row index is relative to current zero.
+    void sumIntoEntry( double input, size_t row, size_t column );
 
-		// Sum contents of input into vector at specfied row.
-		// Row index is relative to current zero.
-		void sumIntoRow( const vector< double >& input, unsigned int row );
+    // Sum contents of input into vector at specfied row.
+    // Row index is relative to current zero.
+    void sumIntoRow( const vector< double >& input, size_t row );
 
-		// Return dot product of input with internal vector at specified
-		// row, starting at specified column.
-		double dotProduct( const vector< double >& input, unsigned int row,
-					   	unsigned int startColumn ) const;
+    // Return dot product of input with internal vector at specified
+    // row, starting at specified column.
+    double dotProduct( const vector< double >& input, size_t row,
+                       size_t startColumn ) const;
 
-		// Return correlation found by summing dotProduct across all columns
-		void correl( vector< double >& ret, const vector< double >& input,
-						unsigned int row ) const;
+    // Return correlation found by summing dotProduct across all columns
+    void correl( vector< double >& ret, const vector< double >& input,
+                 size_t row ) const;
 
-		// Zero out contents of row.
-		void zeroOutRow( unsigned int row );
+    // Zero out contents of row.
+    void zeroOutRow( size_t row );
 
-		// Roll the matrix by one row. What was row 0 becomes row 1, etc.
-		// Last row vanishes.
-		void rollToNextRow(); //
+    // Roll the matrix by one row. What was row 0 becomes row 1, etc.
+    // Last row vanishes.
+    void rollToNextRow(); //
 
-	private:
-		unsigned int nrows_;
-		unsigned int ncolumns_;
-		unsigned int currentStartRow_;
+private:
+    size_t nrows_;
+    size_t ncolumns_;
+    size_t currentStartRow_;
 
-		vector< SparseVector > rows_;
+    vector< SparseVector > rows_;
 };
 
 #endif // _ROLLING_MATRIX

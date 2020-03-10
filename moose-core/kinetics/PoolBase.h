@@ -153,6 +153,7 @@ public:
 
     //////////////////////////////////////////////////////////////////
     static const Cinfo* initCinfo();
+
 private:
     double concInit_; /// Initial concentration.
     // We don't store the conc here as this is computed on the fly

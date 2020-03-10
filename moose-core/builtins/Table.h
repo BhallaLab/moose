@@ -10,6 +10,10 @@
 #ifndef _TABLE_H
 #define _TABLE_H
 
+
+#if  USE_BOOST_FILESYSTEM
+#include <boost/filesystem.hpp>
+#endif     /* -----  USE_BOOST_FILESYSTEM  ----- */
 #include <fstream>
 
 /**

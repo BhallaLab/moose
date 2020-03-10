@@ -14,7 +14,7 @@
  * =====================================================================================
  */
 
-#include "BoostSys.h"
+#include "../utility/boost_ode.h"
 #include <iostream>
 #include "VoxelPools.h"
 

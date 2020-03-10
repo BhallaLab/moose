@@ -7,37 +7,39 @@
 ** See the file COPYING.LIB for the full notice.
 **********************************************************************/
 
-#ifndef _ZOMBIE_FUNCTION_H
-#define _ZOMBIE_FUNCTION_H
+#ifndef ZOMBIE_FUNCTION_H_
+#define ZOMBIE_FUNCTION_H_
 
 class ZombieFunction: public Function
 {
-	public:
-		ZombieFunction();
-		~ZombieFunction();
+public:
+    ZombieFunction();
+    ~ZombieFunction();
 
-		//////////////////////////////////////////////////////////////////
-		// Field assignment stuff
-		//////////////////////////////////////////////////////////////////
-		void innerSetExpr( const Eref& e, string val );
+    //////////////////////////////////////////////////////////////////
+    // Field assignment stuff
+    //////////////////////////////////////////////////////////////////
+    void setExpr( const Eref& e, string val );
 
-		//////////////////////////////////////////////////////////////////
-		// Dest funcs
-		//////////////////////////////////////////////////////////////////
-		void process(const Eref &e, ProcPtr p);
-		void reinit(const Eref &e, ProcPtr p);
+    //////////////////////////////////////////////////////////////////
+    // Dest funcs
+    //////////////////////////////////////////////////////////////////
+    void process(const Eref &e, ProcPtr p);
+    void reinit(const Eref &e, ProcPtr p);
 
-		//////////////////////////////////////////////////////////////////
-		// utility funcs
-		//////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////
+    // utility funcs
+    //////////////////////////////////////////////////////////////////
 
-		void setSolver( Id solver, Id orig );
+    void setSolver( Id solver, Id orig );
 
-		static void zombify( Element* orig, const Cinfo* zClass,
-					  Id ksolve, Id dsolve );
+    static void zombify( Element* orig, const Cinfo* zClass,
+                         Id ksolve, Id dsolve );
 
-		static const Cinfo* initCinfo();
-	private:
+    static const Cinfo* initCinfo();
+
+private:
+
 };
 
-#endif	// _ZOMBIE_FUNCTION_H
+#endif	// ZOMBIE_FUNCTION_H_

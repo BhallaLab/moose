@@ -136,6 +136,8 @@ public:
 
     void setNumPools( unsigned int num );
     unsigned int getNumPools() const;
+    void setNumVarTotPools( unsigned int var, unsigned int tot );
+
     unsigned int getNumLocalVoxels() const;
     VoxelPoolsBase* pools( unsigned int i );
     double volume( unsigned int i ) const;
@@ -185,6 +187,7 @@ public:
     void calcJnChan( const DiffJunction& jn, Dsolve* other, double dt );
     void calcOtherJnChan( const DiffJunction& jn, Dsolve* other,
                           double dt );
+	void calcLocalChan( double dt );
     void fillConcChans( const vector< ObjId >& chans );
 
     /**

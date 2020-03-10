@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-'''
+r'''
 *******************************************************************
  * File:            writeSBML.py
  * Description:
@@ -13,11 +13,17 @@
 **           copyright (C) 2003-2017 Upinder S. Bhalla. and NCBS
 Created : Friday May 27 12:19:00 2016(+0530)
 Version
-Last-Updated: Tue 29 Jan 15:15:10 2019(+0530)
+Last-Updated: Wed 8 Jan 14:15:10 2020(+0530)
           By: HarshaRani
 **********************************************************************/
 /****************************
+2020
+Jan 08: added function to write Concchannel in form of MMenz
+        Km in the kinetic law for MMenz is written to the power based on the number of substrate
 2019
+July 18: added a call for autolayout, this was required for cspace model while trying to write from cmd line
+         while writting file, the filepath is checked
+         now even for cplxpool's x and y co-ordinates,diff and motor constant are added
 Jan 29: getColor are taken from chemConnectUtil, group's width and height are written
 2018
 Dec 07: using fixXreac's restoreXreacs function to remove xfer
@@ -25,7 +31,7 @@ Dec 03: add diff and motor constants to pool
 Nov 30: group id is changed from name to moose_id and group.name is added along with annotation for group listing
 Nov 22: searched for _xfer_ instead of xfer
 Nov 12: xfer cross compartment molecules are not written to SBML instead written the original molecule also for connecting Reaction and Enzyme 
-Nov 06: All the Mesh Cyl,Cube,Neuro,Endo Mesh's can be written into SBML format with annotation field where Meshtype\
+Nov 06: All the Mesh Cyl,Cube,Neuro,Endo Mesh's can be written into SBML format with annotation field where Meshtype
         numDiffCompts,isMembraneBound and surround are written out.
         For EndoMesh check made to see surround is specified
 Oct 20: EndoMesh added to SBML
@@ -42,14 +48,14 @@ Aug 8 : removed "findCompartment" function to chemConnectUtil and imported the f
         convertSpecialChar for setId and convertSpecialCharshot for setName.
         specialChar like /,\,[,],space are not allowed as moose doesn't take
 Aug 3 : Added recalculatecoordinates,cleanup in groupName
-
 '''
+
 import sys
 import re
 import os
 import moose
 from moose.SBML.validation import validateModel
-from moose.chemUtil.chemConnectUtil import xyPosition,mooseIsInstance,findCompartment,getColor,setupItem
+from moose.chemUtil.chemConnectUtil import xyPosition,mooseIsInstance,findCompartment,getColor,setupItem,setupMeshObj
 from moose.chemUtil.graphUtils import *
 from moose.fixXreacs import restoreXreacs
 import numpy as np
@@ -60,6 +66,21 @@ try:
     foundLibSBML_ = True
 except Exception as e:
     pass
+
+def checkPath( dirName):
+    path = dirName
+    if (dirName == "~" or not dirName ):
+        if dirName:
+            dirName = os.path.expanduser(dirName)
+        else:
+            dirName = os.getcwd()
+    
+    if os.access(dirName, os.W_OK) is not True:
+        dirName = os.getcwd()
+        print(path +" not writable, writting to "+dirName+ " directory")
+        return dirName
+    else:
+        return dirName
 
 def mooseWriteSBML(modelpath, filename, sceneitems={}):
     global foundLibSBML_
@@ -74,10 +95,12 @@ def mooseWriteSBML(modelpath, filename, sceneitems={}):
 
     #sbmlDoc = SBMLDocument(3, 1)
     filepath, filenameExt = os.path.split(filename)
+    filepath = checkPath(filepath)
     if filenameExt.find('.') != -1:
         filename = filenameExt[:filenameExt.find('.')]
     else:
         filename = filenameExt
+    
     # validatemodel
     sbmlOk = False
     global spe_constTrue
@@ -144,6 +167,7 @@ def mooseWriteSBML(modelpath, filename, sceneitems={}):
     if modelAnno:
         cremodel_.setAnnotation(modelAnno)
     groupInfo = {}
+    reacGroup = {}
     compterrors =""
     compartexist, groupInfo,compterrors = writeCompt(modelpath, cremodel_)
     
@@ -151,8 +175,9 @@ def mooseWriteSBML(modelpath, filename, sceneitems={}):
         species = writeSpecies( modelpath,cremodel_,sbmlDoc,sceneitems,groupInfo)
         if species:
             writeFunc(modelpath, cremodel_)
-        reacGroup = {}
         
+        writeChannel(modelpath,cremodel_,sceneitems,groupInfo)
+
         writeReac(modelpath, cremodel_, sceneitems,groupInfo)
         
         writeEnz(modelpath, cremodel_, sceneitems,groupInfo)
@@ -188,13 +213,14 @@ def mooseWriteSBML(modelpath, filename, sceneitems={}):
                 
                 if moose.exists(key.path+'/info'):
                     ginfo = moose.element(key.path+'/info')
+                    textColor,color = getColor(ginfo)
                     if ginfo.height and ginfo.width:
                         grpAnno = grpAnno + "<moose:x>" + str(ginfo.x) + "</moose:x>\n"
                         grpAnno = grpAnno + "<moose:y>" + str(ginfo.y) + "</moose:y>\n"
                         grpAnno = grpAnno + "<moose:width>" + str(ginfo.width) + "</moose:width>\n"
                         grpAnno = grpAnno + "<moose:height>" + str(ginfo.height) + "</moose:height>\n"
                     if ginfo.color:
-                        grpAnno = grpAnno + "<moose:bgColor>" + ginfo.color + "</moose:bgColor>\n"
+                        grpAnno = grpAnno + "<moose:bgColor>" + color + "</moose:bgColor>\n"
                     if ginfo.notes:
                         grpAnno = grpAnno + "<moose:Notes>" + ginfo.notes + "</moose:Notes>\n"
                 grpAnno = grpAnno + "</moose:GroupAnnotation>"
@@ -207,11 +233,15 @@ def mooseWriteSBML(modelpath, filename, sceneitems={}):
         consistencyMessages = ""
         SBMLok = validateModel(sbmlDoc)
         if (SBMLok):
-            writeTofile = filepath + "/" + filename + '.xml'
+            if filepath != [r" ", r"\/", r"/"]:
+                writeTofile = filepath + "/" + filename + '.xml'
+            else:
+                writeTofile = filename+'.xml'
+            #writeTofile = filepath + "/" + filename + '.xml'
             writeSBMLToFile(sbmlDoc, writeTofile)
             return True, consistencyMessages, writeTofile
         
-        if (not SBMLok):
+        else:
             #cerr << "Errors encountered " << endl
             consistencyMessages = "Errors encountered"
             return -1, consistencyMessages
@@ -220,7 +250,102 @@ def mooseWriteSBML(modelpath, filename, sceneitems={}):
             return False, compterrors
         else:
             return False,"Atleast one compartment should exist to write SBML"
-    
+
+def writeChannel(modelpath, cremodel_, sceneitems,groupInfo):
+    for chan in moose.wildcardFind(modelpath + '/##[0][ISA=ConcChan]'):
+        chanannoexist = False
+        chanGpnCorCol = " "
+        cleanChanname = convertSpecialChar(chan.name)
+        compt = ""
+        notesE = ""
+        groupName = moose.element("/")
+
+        if moose.exists(chan.path + '/info'):
+            Anno = moose.Annotator(chan.path + '/info')
+            notesE = Anno.notes
+            element = moose.element(chan)
+            ele = getGroupinfo(element)
+            ele = findGroup_compt(element)
+            chanAnno = " "
+            if ele.className == "Neutral" or sceneitems or Anno.x or Anno.y:
+                    chanannoexist = True
+            if chanannoexist:
+                chanAnno = "<moose:ModelAnnotation>\n"
+                if ele.className == "Neutral":
+                    groupName = ele
+                if sceneitems:
+                    #Saved from GUI, then scene co-ordinates are passed
+                    chanGpnCorCol = chanGpnCorCol + "<moose:xCord>" + \
+                            str(sceneitems[chan]['x']) + "</moose:xCord>\n" + \
+                            "<moose:yCord>" + \
+                            str(sceneitems[chan]['y'])+ "</moose:yCord>\n"
+                else:
+                    #Saved from cmdline,genesis coordinates are kept as its
+                    # SBML, cspace, python, then auto-coordinates are done
+                    #and coordinates are updated in moose Annotation field
+                    chanGpnCorCol = chanGpnCorCol + "<moose:xCord>" + \
+                            str(Anno.x) + "</moose:xCord>\n" + \
+                            "<moose:yCord>" + \
+                            str(Anno.y)+ "</moose:yCord>\n"
+                chanGpnCorCol = chanGpnCorCol+"<moose:Permeability>"+str(chan.permeability)+"</moose:Permeability>\n"
+        chanSub = chan.neighbors["in"]
+        chanPrd = chan.neighbors["out"]
+        if (len(chanSub) != 0 and len(chanPrd) != 0):
+            chanCompt = findCompartment(chan)
+            if not isinstance(moose.element(chanCompt), moose.ChemCompt):
+                return -2
+            else:
+                compt = chanCompt.name + "_" + \
+                    str(chanCompt.getId().value) + "_" + \
+                    str(chanCompt.getDataIndex()) + "_"
+  
+            channel = cremodel_.createReaction()
+            if notesE != "":
+                cleanNotesE = convertNotesSpecialChar(notesE)
+                notesStringE = "<body xmlns=\"http://www.w3.org/1999/xhtml\">\n \t \t" + \
+                    cleanNotesE + "\n\t </body>"
+                channel.setNotes(notesStringE)
+
+            chansetId = str(idBeginWith(cleanChanname +
+                                         "_" +
+                                         str(chan.getId().value) +
+                                         "_" +
+                                         str(chan.getDataIndex()) +
+                                         "_"))
+            channel.setId(chansetId)
+            
+            if groupName != moose.element('/'):
+                if groupName not in groupInfo:
+                    groupInfo[groupName]=[chansetId]
+                else:
+                    groupInfo[groupName].append(chansetId)
+
+            channel.setName(str(idBeginWith(convertSpecialCharshot(chan.name))))
+            channel.setReversible(True)
+            channel.setFast(False)        
+            if chanannoexist:
+                canAnno = chanAnno + chanGpnCorCol
+                chanAnno = "<moose:ConcChannel>\n" + \
+                    chanGpnCorCol + "</moose:ConcChannel>"
+                channel.setAnnotation(chanAnno)
+            noofSub, sRateLawS = getSubprd(cremodel_, False, "sub", chanSub)
+            # Modifier
+            chanMod = chan.neighbors["setNumChan"]
+            noofMod, sRateLawM = getSubprd(cremodel_, False, "enz", chanMod)
+            
+            noofPrd, sRateLawP = getSubprd(cremodel_, False, "prd", chanPrd)
+            
+            kl = channel.createKineticLaw()
+            
+            fRate_law = compt + " * ( Permeability) * " + sRateLawM + " * (" + sRateLawS+ " - " + sRateLawP  +")"
+            kl.setFormula(fRate_law)
+            kl.setNotes(
+                "<body xmlns=\"http://www.w3.org/1999/xhtml\">\n\t\t" +
+                fRate_law +
+                "\n \t </body>")
+            
+            channelUnit = permeablUnit(cremodel_)
+            printParameters(kl, "Permeability", chan.permeability, channelUnit)    
 def writeEnz(modelpath, cremodel_, sceneitems,groupInfo):
     for enz in moose.wildcardFind(modelpath + '/##[0][ISA=EnzBase]'):
         enzannoexist = False
@@ -510,8 +635,14 @@ def writeEnz(modelpath, cremodel_, sceneitems,groupInfo):
                 enzPrd = enz.neighbors["prd"]
                 noofPrd, sRateLawP = getSubprd(cremodel_, False, "prd", enzPrd)
                 kl = enzyme.createKineticLaw()
-                fRate_law = compt + " * ( kcat * " + sRateLawS + " * " + sRateLawM + \
-                    " / ( Km" + " + " + sRateLawS + "))"
+                #rate_law = clean_name + "^" + str(count)
+                fRate_law = compt + " * ( kcat * " + sRateLawS + " * " + sRateLawM + "/(Km"
+                
+                if len(enzSub) > 1:
+                    fRate_law = fRate_law +"^" +str(len(enzSub))  
+                    print("enzyme ",enzyme.name, "number of substrate is greater than 1, kinetics Law Km is written to the power of substrate assumed that km value is factored")
+                fRate_law = fRate_law +" + " + sRateLawS + "))"
+
                 kl.setFormula(fRate_law)
                 kl.setNotes(
                     "<body xmlns=\"http://www.w3.org/1999/xhtml\">\n\t\t" +
@@ -528,6 +659,38 @@ def printParameters(kl, k, kvalue, unit):
     para.setId(str(idBeginWith(k)))
     para.setValue(kvalue)
     para.setUnits(unit)
+
+def permeablUnit(cremodel_):
+    unit_stream = "litre_per_mmole_per_second"
+    lud = cremodel_.getListOfUnitDefinitions()
+    flag = False
+    for i in range(0, len(lud)):
+        ud = lud.get(i)
+        if (ud.getId() == unit_stream):
+            flag = True
+            break
+    if (not flag):
+        unitdef = cremodel_.createUnitDefinition()
+        unitdef.setId(unit_stream)
+        
+        unit = unitdef.createUnit()
+        unit.setKind(UNIT_KIND_LITRE)
+        unit.setExponent(1)
+        unit.setMultiplier(1)
+        unit.setScale(0)
+
+        unit = unitdef.createUnit()
+        unit.setKind(UNIT_KIND_MOLE)
+        unit.setExponent(-1)
+        unit.setMultiplier(1)
+        unit.setScale(-3)
+        
+        unit = unitdef.createUnit()
+        unit.setKind(UNIT_KIND_SECOND)
+        unit.setExponent(-1)
+        unit.setMultiplier(1)
+        unit.setScale(0)
+    return unit_stream
 
 def KmUnit(cremodel_):
     unit_stream = "mmole_per_litre"
@@ -622,7 +785,7 @@ def getSubprd(cremodel_, mobjEnz, type, neighborslist):
             rate_law = processRateLaw(
                 reacPrdCou, cremodel_, noofPrd, "prd", mobjEnz)
             return len(reacPrd), rate_law
-    elif type == "enz":
+    elif type == "enz"  or type == "chan":
         enzModifier = neighborslist
         enzModCou = Counter(enzModifier)
         noofMod = len(enzModCou)
@@ -952,6 +1115,14 @@ def writeSpecies(modelpath, cremodel_, sbmlDoc, sceneitems,speGroup):
                 if spename.find(
                         "cplx") != -1 and isinstance(moose.element(spe.parent), moose.EnzBase):
                     enz = spe.parent
+                    if not moose.exists(spe.path+'/info'):
+                        cplxinfo = moose.Annotator(spe.path+'/info')
+                        enzpath = moose.element(spe.parent.path+'/info')
+                        
+                        cplxinfo.x = moose.element(moose.element(spe.parent.path+'/info').x)
+                        
+                        cplxinfo.y = int((moose.element(spe.parent.path+'/info').y))+10
+                 
                     if (moose.element(enz.parent), moose.PoolBase):
                         # print " found a cplx name ",spe.parent,
                         # moose.element(spe.parent).parent
@@ -994,6 +1165,7 @@ def writeSpecies(modelpath, cremodel_, sbmlDoc, sceneitems,speGroup):
                     s1.setConstant(False)
                 s1.setUnits("substance")
                 s1.setHasOnlySubstanceUnits(False)
+
                 if moose.exists(spe.path + '/info'):
                     Anno = moose.Annotator(spe.path + '/info')
                     if Anno.notes != "":
@@ -1034,8 +1206,16 @@ def writeSpecies(modelpath, cremodel_, sbmlDoc, sceneitems,speGroup):
                     if Anno.textColor:
                         speciAnno = speciAnno + "<moose:textColor>" + \
                             Anno.textColor + "</moose:textColor>\n"
+                    
                     speciAnno = speciAnno + "<moose:diffConstant>" + str(spe.diffConst) + "</moose:diffConstant>\n"
                     speciAnno = speciAnno + "<moose:motorConstant>" + str(spe.motorConst)+ "</moose:motorConstant>\n" 
+                    speciAnno = speciAnno + "</moose:ModelAnnotation>"
+                    s1.setAnnotation(speciAnno)
+                else:
+                    #E.g cplx doesn't have info field but findsim layout expecting diffConstant and motorConstant.
+                    speciAnno = "<moose:ModelAnnotation>\n"
+                    speciAnno = speciAnno + "<moose:diffConstant>" + str(0.0) + "</moose:diffConstant>\n"
+                    speciAnno = speciAnno + "<moose:motorConstant>" + str(0.0)+ "</moose:motorConstant>\n" 
                     speciAnno = speciAnno + "</moose:ModelAnnotation>"
                     s1.setAnnotation(speciAnno)
     return True
@@ -1205,13 +1385,19 @@ def recalculatecoordinates(modelpath, mObjlist,xcord,ycord):
     else:
         srcdesConnection = {}
         setupItem(modelpath,srcdesConnection)
+        meshEntry,xmin,xmax,ymin,ymax,positionInfoExist,sceneitems = setupMeshObj(modelpath)
+        if not positionInfoExist:
+
+            sceneitems = autoCoordinates(meshEntry,srcdesConnection)
+        sceneitems = autoCoordinates(meshEntry,srcdesConnection)
+
         #print srcdesConnection
         '''
         #meshEntry,xmin,xmax,ymin,ymax,positionInfoExist,sceneitems = setupMeshObj(modelpath)
         #if not positionInfoExist:
             #cmin,cmax,sceneitems = autoCoordinates(meshEntry,srcdesConnection)
             sceneitems = autoCoordinates(meshEntry,srcdesConnection)
-        '''
+	'''        
 def writeUnits(cremodel_):
     unitVol = cremodel_.createUnitDefinition()
     unitVol.setId("volume")

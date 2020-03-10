@@ -290,18 +290,15 @@ ObjId Shell::doAddMsg( const string& msgType,
     const Finfo* f1 = src.id.element()->cinfo()->findFinfo( srcField );
     if ( !f1 )
     {
-        cout << myNode_ << ": Shell::doAddMsg: Error: Failed to find field " << srcField <<
-             " on src: " << src.id.element()->getName() << endl;
+        cout << myNode_ << ": Shell::doAddMsg: Error: Failed to find field '" << srcField <<
+             "' on src: " << src.id.element()->getName() << endl;
         return ObjId(0, BADINDEX );
     }
     const Finfo* f2 = dest.id.element()->cinfo()->findFinfo( destField );
     if ( !f2 )
     {
-        cout << myNode_ << ": Shell::doAddMsg: Error: Failed to find field " << destField <<
-             " on dest: " << dest.id.element()->getName() << endl;
-        cout << "Available fields are : " << endl
-             << moose::mapToString<string, Finfo*>(dest.id.element()->cinfo()->finfoMap());
-
+        cout << myNode_ << ": Shell::doAddMsg: Error: Failed to find field '" << destField <<
+             "' on dest: " << dest.id.element()->getName() << endl;
         return ObjId( 0, BADINDEX );
     }
     if ( ! f1->checkTarget( f2 ) )
