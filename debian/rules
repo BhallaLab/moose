@@ -1,6 +1,6 @@
 #!/usr/bin/make -f
 
-export MAKEOPTS=-j5
+export MAKEOPTS=-j$(bash nproc)
 
 export DH_VERBOSE=1
 

@@ -2,16 +2,22 @@ cmake_minimum_required(VERSION 2.8)
 project(moose)
 set(CMAKE_BUILD_TYPE Release)
 
-# If from command line, version info is not passed, use the git to generate a
-# version file. If GIT fails, use the previous known version.
+set(Python_ADDITIONAL_VERSIONS 2.7)
+find_package(PythonInterp 3.5)
+if(NOT PYTHONINTERP_FOUND)
+  find_package(PythonInterp 2.7)
+endif()
+
+# NOTE: version should be changed in setup.py file.
+# If moose version is not given, use setup.py file to get the default version.
 if(NOT VERSION_MOOSE)
-    execute_process(COMMAND ${PYTHON_EXECUTABLE} moose-core/setup.py --version
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    execute_process(COMMAND ${PYTHON_EXECUTABLE} setup.py --version
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/moose-core
         OUTPUT_VARIABLE VERSION_MOOSE
         OUTPUT_STRIP_TRAILING_WHITESPACE)
 endif()
 
-add_definitions(-DMOOSE_VERSION="${VERSION_MOOSE}")
+add_definitions(-DVERSION_MOOSE="${VERSION_MOOSE}")
 message(STATUS "MOOSE Version ${VERSION_MOOSE}")
 
 
@@ -73,7 +79,6 @@ add_custom_command( OUTPUT ${OUTPUT_MOOSEBIN}
     COMMENT "Building pymoose in ${PYMOOSE_BUILD_DIR}"
     VERBATIM
     )
-
 add_custom_command( TARGET moose-core POST_BUILD 
     COMMAND ${CMAKE_COMMAND} -E chdir ${PYMOOSE_INSTALL_DIR} tar xvf
     ${PYMOOSE_BUILD_DIR}/pymoose-${VERSION_MOOSE}.CMAKE.tar.gz

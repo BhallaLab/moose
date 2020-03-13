@@ -49,11 +49,16 @@ if not os.path.exists(builddir_):
 
 numCores_ = multiprocessing.cpu_count()
 
+# If environment variable MOOSE_VERSION is set, use it else use the default
+# version.
+version_ = os.environ.get('MOOSE_VERSION', '3.2.1.dev%s' % stamp)
 
-version_ = '3.2.1.dev%s' % stamp
-
-# importlib is available only for python3. Since we build wheels, prefer .so
-# extension. This way a wheel built by any python3.x will work with any python3.
+# And, if VERSION file exists in the source directory, read its content to set
+# version.
+versionFile = os.path.join(sdir_, 'VERSION')
+if os.path.exists(versionFile):
+    with open(versionFile, 'r') as f:
+        version_ = f.read().strip()
 
 class CMakeExtension(Extension):
     def __init__(self, name, **kwargs):
