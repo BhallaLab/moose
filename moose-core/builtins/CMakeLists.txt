@@ -44,6 +44,7 @@ if(WITH_NSDF)
 
     else(HDF5_FOUND)
         message(STATUS "HDF5 is not found. Disabling NSDF support." )
+        add_definitions(-UUSE_HDF5 -UENABLE_NSDF)
     endif( HDF5_FOUND )
 endif(WITH_NSDF)
 
@@ -51,7 +52,6 @@ set(SRCS
     Arith.cpp
     Group.cpp
     Mstring.cpp
-    MooseParser.cpp
     Function.cpp
     Variable.cpp
     InputVariable.cpp
@@ -65,17 +65,20 @@ set(SRCS
     Stats.cpp
     Interpol2D.cpp
     SpikeStats.cpp
+    MooseParser.cpp
     SocketStreamer.cpp
     testBuiltins.cpp
     )
 
 if(WITH_NSDF AND HDF5_FOUND)
     list(APPEND SRCS
-        HDF5WriterBase.cpp
-        NSDFWriter.cpp
-        HDF5DataWriter.cpp
-        testNSDF.cpp
-        )
+    HDF5WriterBase.cpp
+    NSDFWriter.cpp
+    HDF5DataWriter.cpp
+    SpikeStats.cpp
+    testBuiltins.cpp
+    testNSDF.cpp
+    )
 endif()
 
 add_library(moose_builtins ${SRCS} )

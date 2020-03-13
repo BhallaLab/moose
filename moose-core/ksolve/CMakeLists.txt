@@ -4,18 +4,24 @@ include( ${CMAKE_CURRENT_SOURCE_DIR}/../CheckCXXCompiler.cmake)
 
 if(WITH_BOOST)
     find_package(Boost 1.53 REQUIRED COMPONENTS thread)
-    add_definitions( -DUSE_BOOST_ASYNC )
+    add_definitions(-DUSE_BOOST )
     set(WITH_BOOST_ODE ON)
     include_directories( ${Boost_INCLUDE_DIRS} )
     # This is still not part of official bindings.
     include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../external/boost-numeric-bindings)
 endif()
 
-IF(WITH_BOOST_ODE)
+# if boost ode is being used, don't use GSL.
+if(WITH_BOOST_ODE)
+    # This is still not part of official bindings.
+    set(WITH_GSL OFF)
+    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../external/boost-numeric-bindings)
+    add_definitions(-DUSE_BOOST_ODE -UUSE_GSL)
     include_directories(${Boost_INCLUDE_DIRS})
     include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../external/boost-numeric-bindings)
 elseif(WITH_GSL)
     include_directories( ${GSL_INCLUDE_DIRS} )
+    add_definitions(-DUSE_GSL -UUSE_BOOST_ODE -UUSE_BOOST)
 endif(WITH_BOOST_ODE)
 
 set(KSOLVE_SRCS

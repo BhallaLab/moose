@@ -6,8 +6,11 @@
 ** GNU Lesser General Public License version 2.1
 ** See the file COPYING.LIB for the full notice.
 **********************************************************************/
+
 #include "../basecode/header.h"
 #include "../basecode/global.h"
+#include "../utility/utility.h"
+
 #ifdef USE_GSL
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_matrix.h>
@@ -21,7 +24,6 @@
 #include "ZombiePoolInterface.h"
 
 #include "RateTerm.h"
-#include "FuncTerm.h"
 #include "../basecode/SparseMatrix.h"
 #include "KinSparseMatrix.h"
 #include "Stoich.h"
@@ -34,12 +36,6 @@
 
 #include <chrono>
 #include <algorithm>
-
-#ifdef USE_BOOST_ASYNC
-#define BOOST_THREAD_PROVIDES_FUTURE
-#include <boost/thread.hpp>
-#include <boost/thread/future.hpp>
-#endif
 
 #include <future>
 #include <functional>
@@ -63,7 +59,8 @@ const Cinfo* Ksolve::initCinfo()
         "rk4: The Runge-Kutta 4th order fixed dt method"
         "rk2: The Runge-Kutta 2,3 embedded fixed dt method"
         "rkck: The Runge-Kutta Cash-Karp (4,5) method"
-        "rk8: The Runge-Kutta Prince-Dormand (8,9) method" ,
+        "rk8: The Runge-Kutta Prince-Dormand (8,9) method"
+        "lsoda: LSODA method",
         &Ksolve::setMethod,
         &Ksolve::getMethod
     );
@@ -114,7 +111,7 @@ const Cinfo* Ksolve::initCinfo()
 
     static ValueFinfo< Ksolve, unsigned int > numThreads (
         "numThreads",
-        "Number of threads to use (applicable in deterministic case)",
+        "Number of threads to use",
         &Ksolve::setNumThreads,
         &Ksolve::getNumThreads
     );
@@ -198,18 +195,18 @@ const Cinfo* Ksolve::initCinfo()
     {
         &method,                         // Value
         &epsAbs,                         // Value
-        &epsRel ,                         // Value
-        &numThreads,                            // Value
-        &compartment,                           // Value
+        &epsRel ,                        // Value
+        &numThreads,                     // Value
+        &compartment,                    // Value
         &numLocalVoxels,                 // ReadOnlyValue
-        &nVec,                                 // LookupValue
-        &numAllVoxels,                         // ReadOnlyValue
-        &numPools,                         // Value
-        &estimatedDt,                         // ReadOnlyValue
+        &nVec,                           // LookupValue
+        &numAllVoxels,                   // ReadOnlyValue
+        &numPools,                       // Value
+        &estimatedDt,                    // ReadOnlyValue
         &stoich,                         // ReadOnlyValue
-        &voxelVol,                         // DestFinfo
-        &proc,                                 // SharedFinfo
-        &init,                                 // SharedFinfo
+        &voxelVol,                       // DestFinfo
+        &proc,                           // SharedFinfo
+        &init,                           // SharedFinfo
     };
 
     static Dinfo< Ksolve > dinfo;
@@ -241,7 +238,8 @@ Ksolve::Ksolve()
     dsolve_(),
     dsolvePtr_( nullptr )
 {
-    ;
+    numThreads_ = moose::getEnvInt("MOOSE_NUM_THREADS", 1);
+
 }
 
 Ksolve::~Ksolve()
@@ -260,20 +258,33 @@ string Ksolve::getMethod() const
 
 void Ksolve::setMethod( string method )
 {
+    std::transform(method.begin(), method.end(), method.begin(), ::tolower);
+    // If user is trying to set ksolve method after ksolve has been initialized,
+    // show a warning.
+    if( isBuilt_ )
+    {
+        moose::showWarn(
+            "You are trying to set Ksolve::method after moose::Stoich has been "
+            " initialized. This will be ignored. Please do before ksolve is assigned to "
+            " moose::Stoich."
+            );
+        return;
+    }
+
 #if USE_GSL
     if ( method == "rk5" || method == "gsl" )
     {
         method_ = "rk5";
     }
     else if ( method == "rk4"  || method == "rk2" ||
-              method == "rk8" || method == "rkck" )
+              method == "rk8" || method == "rkck" || method == "lsoda" )
     {
         method_ = method;
     }
     else
     {
         cout << "Warning: Ksolve::setMethod: '" << method <<
-             "' not known, using rk5\n";
+             "' is not known, using default rk5\n";
         method_ = "rk5";
     }
 #elif USE_BOOST_ODE
@@ -507,7 +518,7 @@ void Ksolve::process( const Eref& e, ProcPtr p )
     if ( isBuilt_ == false )
         return;
 
-    t0_ = high_resolution_clock::now();
+    //t0_ = high_resolution_clock::now();
 
     // First, handle incoming diffusion values, update S with those.
     if ( dsolvePtr_ )
@@ -524,45 +535,38 @@ void Ksolve::process( const Eref& e, ProcPtr p )
         setBlock( dvalues );
     }
 
-    size_t nvPools = pools_.size( );
-
-    // Third, do the numerical integration for all reactions.
-    size_t grainSize = max( (size_t)1, min( nvPools, nvPools / numThreads_));
-    size_t nWorkers = std::max(1, (int)(nvPools/grainSize) );
-
-    // Just to be sure. Its not very costly computation.
-    while( nWorkers * grainSize < nvPools )
-        grainSize += 1;
-
-    if( 1 == nWorkers || 1 == nvPools )
+    if( 1 == numThreads_ || 1 == pools_.size() )
     {
         if( numThreads_ > 1 )
         {
-            cerr << "Warn: Not enough voxels or threads. Reverting to serial mode. " << endl;
+            cerr << "Warn: Not enough voxels for multithreading. " 
+                << "Reverting to serial mode. " << endl;
             numThreads_ = 1;
         }
 
-        for ( unsigned int i = 0; i < nvPools; i++ )
+        for ( unsigned int i = 0; i < pools_.size(); i++ )
             pools_[i].advance( p );
     }
     else
     {
-        /*-----------------------------------------------------------------------------
-         *  Somewhat complicated computation to compute the number of threads. 1
-         *  thread per (at least) voxel pool is ideal situation.
-         *-----------------------------------------------------------------------------*/
-        vector<std::thread> vecThreads;
-        // cout << nWorkers << " grain size " << grainSize << endl;
+        std::vector<std::future<size_t>> vecFutures;
 
-        // lambdas are faster than std::bind
-        for (size_t i = 0; i < nWorkers; i++)
+        // lambdas is faster than std::bind
+        for (auto interval : intervals_)
         {
-            std::thread t( &Ksolve::advance_chunk, this, i*grainSize, (i+1)*grainSize, p );
-            vecThreads.push_back( std::move(t) );
+            vecFutures.push_back( 
+                    std::async( std::launch::async
+                        , &Ksolve::advance_chunk
+                        , this
+                        , interval.first
+                        , interval.second, p 
+                        )
+                    );
         }
-
-        for (auto &v : vecThreads )
-            v.join();
+        size_t tot = 0;
+        for (auto &v : vecFutures )
+            tot += v.get();
+        assert(tot == pools_.size());
     }
 
     // Assemble and send the integrated values off for the Dsolve.
@@ -580,8 +584,9 @@ void Ksolve::process( const Eref& e, ProcPtr p )
         // for diffusion, channels, and xreacs
         dsolvePtr_->updateJunctions( p->dt ); 
     }
-    t1_ = high_resolution_clock::now();
-    moose::addSolverProf( "Ksolve", duration_cast<duration<double>> (t1_ - t0_ ).count(), 1 );
+
+    //t1_ = high_resolution_clock::now();
+    //moose::addSolverProf( "Ksolve", duration_cast<duration<double>> (t1_ - t0_ ).count(), 1 );
 }
 
 void Ksolve::advance_pool( const size_t i, ProcPtr p )
@@ -589,10 +594,15 @@ void Ksolve::advance_pool( const size_t i, ProcPtr p )
     pools_[i].advance(p);
 }
 
-void Ksolve::advance_chunk( const size_t begin, const size_t end, ProcPtr p )
+size_t Ksolve::advance_chunk( const size_t begin, const size_t end, ProcPtr p )
 {
-    for (size_t i = begin; i < std::min(end, pools_.size() ); i++)
+    size_t tot = 0;
+    for (size_t i = begin; i < std::min(end, pools_.size()); i++)
+    {
         pools_[i].advance( p );
+        tot += 1;
+    }
+    return tot;
 }
 
 
@@ -612,9 +622,16 @@ void Ksolve::reinit( const Eref& e, ProcPtr p )
         return;
     }
 
-    if( 1 < getNumThreads( ) )
-        cout << "Info: Setting up ksolve with " << numThreads_ << " threads" << endl;
+    if(numThreads_ > pools_.size())
+        numThreads_ = pools_.size();
 
+    if(numThreads_ > 1)
+        cout << "Info: Multi-threaded Ksolve (" << numThreads_ << " threads)."
+            << endl;
+
+    // Recompute the partition of interval.
+    intervals_.clear();
+    moose::splitIntervalInNParts(pools_.size(), numThreads_, intervals_);
 }
 
 //////////////////////////////////////////////////////////////
@@ -639,10 +656,8 @@ void Ksolve::updateRateTerms( unsigned int index )
 {
     if ( index == ~0U )
     {
-        // unsigned int numCrossRates = stoichPtr_->getNumRates() - stoichPtr_->getNumCoreRates();
         for ( unsigned int i = 0 ; i < pools_.size(); ++i )
         {
-            // pools_[i].resetXreacScale( numCrossRates );
             pools_[i].updateAllRateTerms( stoichPtr_->getRateTerms(),
                                           stoichPtr_->getNumCoreRates() );
         }
@@ -726,6 +741,15 @@ void Ksolve::setNumPools( unsigned int numPoolSpecies )
     }
 }
 
+void Ksolve::setNumVarTotPools( unsigned int var, unsigned int tot )
+{
+    unsigned int numVoxels = pools_.size();
+    for ( unsigned int i = 0 ; i < numVoxels; ++i )
+    {
+        pools_[i].resizeArrays( tot );
+    }
+}
+
 unsigned int Ksolve::getNumPools() const
 {
     if ( pools_.size() > 0 )
@@ -793,7 +817,6 @@ void Ksolve::setBlock( const vector< double >& values )
     }
 }
 
-//////////////////////////////////////////////////////////////////////////
 void Ksolve::updateVoxelVol( vector< double > vols )
 {
     // For now we assume identical numbers of voxels. Also assume
@@ -809,14 +832,8 @@ void Ksolve::updateVoxelVol( vector< double > vols )
     }
 }
 
-//////////////////////////////////////////////////////////////////////////
 // cross-compartment reaction stuff.
-//////////////////////////////////////////////////////////////////////////
-
-/////////////////////////////////////////////////////////////////////
 // Functions for setup of cross-compartment transfer.
-/////////////////////////////////////////////////////////////////////
-
 void Ksolve::print() const
 {
     cout << "path = " << stoichPtr_->getKsolve().path() <<

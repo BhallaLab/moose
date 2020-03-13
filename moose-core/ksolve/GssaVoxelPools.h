@@ -10,6 +10,8 @@
 #ifndef _GSSA_VOXEL_POOLS_BASE_H
 #define _GSSA_VOXEL_POOLS_BASE_H
 
+#include "../randnum/RNG.h"
+
 class Stoich;
 
 class GssaVoxelPools: public VoxelPoolsBase
@@ -49,13 +51,13 @@ public:
     void reinit( const GssaSystem* g );
 
     void updateAllRateTerms( const vector< RateTerm* >& rates,
-                             unsigned int numCoreRates	);
+            unsigned int numCoreRates	);
     void updateRateTerms( const vector< RateTerm* >& rates,
-                          unsigned int numCoreRates, unsigned int index );
+            unsigned int numCoreRates, unsigned int index );
 
     double getReacVelocity( unsigned int r, const double* s ) const;
     void updateReacVelocities( const GssaSystem* g,
-                               const double* s, vector< double >& v ) const;
+            const double* s, vector< double >& v ) const;
 
     /**
      * Assign the volume, and handle the cascading effects by scaling
@@ -68,7 +70,7 @@ public:
      * Sums the changes in the values onto the specified pools.
      */
     void xferIn( XferInfo& xf,
-                 unsigned int voxelIndex, const GssaSystem* g );
+            unsigned int voxelIndex, const GssaSystem* g );
 
     void setStoich( const Stoich* stoichPtr );
 

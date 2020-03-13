@@ -46,7 +46,7 @@ GssaVoxelPools::GssaVoxelPools(): VoxelPoolsBase(), t_( 0.0 ), atot_( 0.0 )
 
 GssaVoxelPools::~GssaVoxelPools()
 {
-    for ( unsigned int i = 0; i < rates_.size(); ++i )
+    for ( size_t i = 0; i < rates_.size(); ++i )
         delete( rates_[i] );
 }
 
@@ -237,11 +237,11 @@ void GssaVoxelPools::reinit( const GssaSystem* g )
         if( std::abs(error) >= 1.0 )
         {
             MOOSE_WARN( "Extra " << error
-                    << " molecules in system after converting fractional to integer."
-                    );
+                        << " molecules in system after converting fractional to integer."
+                      );
         }
     }
-    else     // Just round to the nearest int.
+    else  // Just round to the nearest int.
     {
         for ( unsigned int i = 0; i < numVarPools; ++i )
             n[i] = std::round(n[i]);
@@ -266,10 +266,12 @@ void GssaVoxelPools::updateAllRateTerms( const vector< RateTerm* >& rates,
 {
     for ( unsigned int i = 0; i < rates_.size(); ++i )
         delete( rates_[i] );
+
     rates_.resize( rates.size() );
 
     for ( unsigned int i = 0; i < numCoreRates; ++i )
         rates_[i] = rates[i]->copyWithVolScaling( getVolume(), 1, 1 );
+
     for ( unsigned int i = numCoreRates; i < rates.size(); ++i )
         rates_[i] = rates[i]->copyWithVolScaling( getVolume(),
                     getXreacScaleSubstrates(i - numCoreRates),
@@ -288,10 +290,10 @@ void GssaVoxelPools::updateRateTerms( const vector< RateTerm* >& rates,
         rates_[index] = rates[index]->copyWithVolScaling(
                             getVolume(),
                             getXreacScaleSubstrates(index - numCoreRates),
-                            getXreacScaleProducts(index - numCoreRates ) );
+                            getXreacScaleProducts(index - numCoreRates)
+                        );
     else
-        rates_[index] = rates[index]->copyWithVolScaling(
-                            getVolume(), 1.0, 1.0 );
+        rates_[index] = rates[index]->copyWithVolScaling(getVolume(), 1.0, 1.0);
 }
 /**
  * updateReacVelocities computes the velocity *v* of each reaction.

@@ -16,12 +16,12 @@
 // compartment. Pools use a special msg, but this works for reacs too.
 ObjId getCompt( Id id )
 {
-	ObjId pa = Neutral::parent( id.eref() ).id;
-	if ( pa == ObjId() )
-		return pa;
-	else if ( pa.element()->cinfo()->isA( "ChemCompt" ) )
-		return pa;
-	return getCompt( pa );
+    ObjId pa = Neutral::parent( id.eref() ).id;
+    if ( pa == ObjId() )
+        return pa;
+    else if ( pa.element()->cinfo()->isA( "ChemCompt" ) )
+        return pa;
+    return getCompt( pa );
 }
 
 
@@ -29,11 +29,11 @@ ObjId getCompt( Id id )
 /// match between pool indices and mesh indices: that is what they are for.
 double lookupVolumeFromMesh( const Eref& e )
 {
-	ObjId compt = getCompt( e.id() );
-	if ( compt == ObjId() )
-		return 1.0;
-	return LookupField< unsigned int, double >::
-			get( compt, "oneVoxelVolume", e.dataIndex() );
+    ObjId compt = getCompt( e.id() );
+    if ( compt == ObjId() )
+        return 1.0;
+    return LookupField< unsigned int, double >::
+           get( compt, "oneVoxelVolume", e.dataIndex() );
 }
 
 /**
@@ -50,35 +50,40 @@ double lookupVolumeFromMesh( const Eref& e )
  */
 
 unsigned int getReactantVols( const Eref& reac, const SrcFinfo* pools,
-	vector< double >& vols )
+                              vector< double >& vols )
 {
-	static const unsigned int meshIndex = 0;
+    static const unsigned int meshIndex = 0;
 
-	const vector< MsgFuncBinding >* mfb =
-		reac.element()->getMsgAndFunc( pools->getBindIndex() );
-	unsigned int smallIndex = 0;
+    const vector< MsgFuncBinding >* mfb =
+        reac.element()->getMsgAndFunc( pools->getBindIndex() );
+    unsigned int smallIndex = 0;
 
-	vols.resize( 0 );
-	if ( mfb ) {
-		for ( unsigned int i = 0; i < mfb->size(); ++i ) {
-			double v = 1;
-			Element* pool = Msg::getMsg( (*mfb)[i].mid )->e2();
-			if ( pool == reac.element() )
-				pool = Msg::getMsg( (*mfb)[i].mid )->e1();
-			assert( pool != reac.element() );
-			Eref pooler( pool, meshIndex );
-			if ( pool->cinfo()->isA( "PoolBase" ) ) {
-				v = lookupVolumeFromMesh( pooler );
-			} else {
-				cout << "Error: getReactantVols: pool is of unknown type\n";
-				assert( 0 );
-			}
-			vols.push_back( v );
-			if ( v < vols[0] )
-				smallIndex = i;
-		}
-	}
-	return smallIndex;
+    vols.resize( 0 );
+    if ( mfb )
+    {
+        for ( unsigned int i = 0; i < mfb->size(); ++i )
+        {
+            double v = 1;
+            Element* pool = Msg::getMsg( (*mfb)[i].mid )->e2();
+            if ( pool == reac.element() )
+                pool = Msg::getMsg( (*mfb)[i].mid )->e1();
+            assert( pool != reac.element() );
+            Eref pooler( pool, meshIndex );
+            if ( pool->cinfo()->isA( "PoolBase" ) )
+            {
+                v = lookupVolumeFromMesh( pooler );
+            }
+            else
+            {
+                cout << "Error: getReactantVols: pool is of unknown type\n";
+                assert( 0 );
+            }
+            vols.push_back( v );
+            if ( v < vols[0] )
+                smallIndex = i;
+        }
+    }
+    return smallIndex;
 }
 
 /**
@@ -106,43 +111,49 @@ unsigned int getReactantVols( const Eref& reac, const SrcFinfo* pools,
  */
 
 double convertConcToNumRateUsingMesh( const Eref& e, const SrcFinfo* pools,
-	bool doPartialConversion )
+                                      bool doPartialConversion )
 {
-	vector< double > vols;
-	// unsigned int smallest = getReactantVols( e, pools, vols );
-	double conv = 1.0;
-	getReactantVols( e, pools, vols );
-	if ( vols.size() == 0 ) { // Should this be an assertion?
-		// cout << "Warning: convertConcToNumRateUsingMesh: zero reactants on " << e.id().path() << endl;
-		return 1.0;
-	}
-	for ( unsigned int i = 0; i < vols.size(); ++i ) {
-		conv *= vols[i] * NA;
-	}
-	if ( !doPartialConversion ) {
-		if ( pools->name() == "subOut" ) {
-			conv /= vols[0] * NA;
-		} else {
-			const Finfo* f = e.element()->cinfo()->findFinfo( "subOut" );
-			assert( f );
-			const SrcFinfo* toSub = dynamic_cast< const SrcFinfo* >( f );
-			assert( toSub );
-			vector< double > subVols;
-			getReactantVols( e, toSub, subVols );
-			if ( subVols.size() == 0 ) // no substrates!
-				return 1.0;
-			conv /= subVols[0] * NA;
-		}
-		/*
-		Id compt = getCompt( e.id() );
-		if ( compt != Id() ) {
-			Id mesh( compt.value() + 1 );
-			double meshVol = Field< double >::get( mesh, "volume" );
-			conv /= meshVol * NA;
-		}
-		*/
-	}
-	return conv;
+    vector< double > vols;
+    // unsigned int smallest = getReactantVols( e, pools, vols );
+    double conv = 1.0;
+    getReactantVols( e, pools, vols );
+    if ( vols.size() == 0 )   // Should this be an assertion?
+    {
+        // cout << "Warning: convertConcToNumRateUsingMesh: zero reactants on " << e.id().path() << endl;
+        return 1.0;
+    }
+    for ( unsigned int i = 0; i < vols.size(); ++i )
+    {
+        conv *= vols[i] * NA;
+    }
+    if ( !doPartialConversion )
+    {
+        if ( pools->name() == "subOut" )
+        {
+            conv /= vols[0] * NA;
+        }
+        else
+        {
+            const Finfo* f = e.element()->cinfo()->findFinfo( "subOut" );
+            assert( f );
+            const SrcFinfo* toSub = dynamic_cast< const SrcFinfo* >( f );
+            assert( toSub );
+            vector< double > subVols;
+            getReactantVols( e, toSub, subVols );
+            if ( subVols.size() == 0 ) // no substrates!
+                return 1.0;
+            conv /= subVols[0] * NA;
+        }
+        /*
+        Id compt = getCompt( e.id() );
+        if ( compt != Id() ) {
+        	Id mesh( compt.value() + 1 );
+        	double meshVol = Field< double >::get( mesh, "volume" );
+        	conv /= meshVol * NA;
+        }
+        */
+    }
+    return conv;
 }
 
 
@@ -152,24 +163,27 @@ double convertConcToNumRateUsingMesh( const Eref& e, const SrcFinfo* pools,
  * reactants.
  */
 double convertConcToNumRateUsingVol( const Eref& e, const SrcFinfo* pools,
-	double volume, double scale, bool doPartialConversion )
+                                     double volume, double scale, bool doPartialConversion )
 {
-	const vector< MsgFuncBinding >* mfb =
-		e.element()->getMsgAndFunc( pools->getBindIndex() );
-	double conversion = 1.0;
-	if ( mfb && mfb->size() > 0 ) {
-		if ( doPartialConversion || mfb->size() > 1 ) {
-			conversion = scale * NA * volume;
-			double power = doPartialConversion + mfb->size() - 1;
-			if ( power > 1.0 ) {
-				conversion = pow( conversion, power );
-			}
-		}
-		if ( conversion <= 0 )
-			conversion = 1.0;
-	}
+    const vector< MsgFuncBinding >* mfb =
+        e.element()->getMsgAndFunc( pools->getBindIndex() );
+    double conversion = 1.0;
+    if ( mfb && mfb->size() > 0 )
+    {
+        if ( doPartialConversion || mfb->size() > 1 )
+        {
+            conversion = scale * NA * volume;
+            double power = doPartialConversion + mfb->size() - 1;
+            if ( power > 1.0 )
+            {
+                conversion = pow( conversion, power );
+            }
+        }
+        if ( conversion <= 0 )
+            conversion = 1.0;
+    }
 
-	return conversion;
+    return conversion;
 }
 
 /**
@@ -179,17 +193,17 @@ double convertConcToNumRateUsingVol( const Eref& e, const SrcFinfo* pools,
  * We already know the reactants and their affiliations.
  */
 double convertConcToNumRateInTwoCompts( double v1, unsigned int n1,
-	double v2, unsigned int n2, double scale )
+                                        double v2, unsigned int n2, double scale )
 {
-	double conversion = 1.0;
+    double conversion = 1.0;
 
-	for ( unsigned int i = 1; i < n1; ++i )
-		conversion *= scale * NA * v1;
-	for ( unsigned int i = 0; i < n2; ++i )
-		conversion *= scale * NA * v2;
+    for ( unsigned int i = 1; i < n1; ++i )
+        conversion *= scale * NA * v1;
+    for ( unsigned int i = 0; i < n2; ++i )
+        conversion *= scale * NA * v2;
 
-	if ( conversion <= 0 )
-			conversion = 1.0;
+    if ( conversion <= 0 )
+        conversion = 1.0;
 
-	return conversion;
+    return conversion;
 }

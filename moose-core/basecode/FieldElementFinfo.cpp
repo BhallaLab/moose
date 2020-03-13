@@ -11,22 +11,23 @@
 #include "../shell/Shell.h"
 #include "../msg/OneToOneDataIndexMsg.h"
 
-void FieldElementFinfoBase::postCreationFunc(
-				Id parent, Element* parentElm ) const
+void FieldElementFinfoBase::postCreationFunc( Id parent, Element* parentElm ) const 
 {
-	static const Finfo* pf = Neutral::initCinfo()->findFinfo( "parentMsg" );
-	static const Finfo* f1 = Neutral::initCinfo()->findFinfo( "childOut" );
+    static const Finfo* pf = Neutral::initCinfo()->findFinfo( "parentMsg" );
+    static const Finfo* f1 = Neutral::initCinfo()->findFinfo( "childOut" );
 
-	if ( deferCreate_ )
-		return;
-	Id kid = Id::nextId();
-	Element* e = new FieldElement( parent, kid, fieldCinfo_, name(), this );
-	Msg* m = new OneToOneDataIndexMsg( parent.eref(), Eref( e, 0 ), 0 );
-	assert( m );
-	if ( !f1->addMsg( pf, m->mid(), parent.element() ) ) {
-		cout << "FieldElementFinfoBase::postCreationFunc: Error: \n" <<
-				" unable to add parent->child msg from " <<
-		parent.element()->getName() << " to " << name() << "\n";
-		return;
-	}
+    if ( deferCreate_ )
+        return;
+    Id kid = Id::nextId();
+    Element* e = new FieldElement( parent, kid, fieldCinfo_, name(), this );
+    Msg* m = new OneToOneDataIndexMsg( parent.eref(), Eref( e, 0 ), 0 );
+    assert( m );
+
+    if ( !f1->addMsg( pf, m->mid(), parent.element() ) )
+    {
+        cout << "FieldElementFinfoBase::postCreationFunc: Error: \n" <<
+             " unable to add parent->child msg from " <<
+             parent.element()->getName() << " to " << name() << "\n";
+        return;
+    }
 }

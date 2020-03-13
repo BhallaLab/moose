@@ -113,9 +113,9 @@ def setCompartmentSolver(modelRoot, solver):
 
         for compt in compts:
             if solver != 'ee':
-                if (solver == 'gsl'):
+                if solver.lower() in [ 'gsl', 'runge kutta', 'lsoda' ]:
                     ksolve = moose.Ksolve(compt.path + '/ksolve')
-                if (solver == 'gssa') :
+                elif solver.lower() in ['gssa', 'gillespie']:
                     ksolve = moose.Gsolve(compt.path + '/gsolve')
 
                 if (len(compts) > 1):

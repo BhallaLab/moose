@@ -11,7 +11,6 @@
 #include <time.h>
 #include <math.h>
 #include <queue>
-#include <unistd.h> // for getopt
 #include "../scheduling/Clock.h"
 #include "../msg/DiagonalMsg.h"
 #include "../basecode/SparseMatrix.h"
@@ -43,36 +42,12 @@ extern void testMpiBuiltins();
 extern void testMpiShell();
 extern void testMsg();
 extern void testMpiMsg();
-// extern void testKinetics();
-// extern void testKineticSolvers();
-// extern void	testKineticSolversProcess();
 extern void testBiophysics();
 extern void testBiophysicsProcess();
-// extern void testHSolve();
-// extern void testKineticsProcess();
-// extern void testGeom();
-// extern void testMesh();
-// extern void testSimManager();
-// extern void testSigNeur();
-// extern void testSigNeurProcess();
-
 extern unsigned int initMsgManagers();
 extern void destroyMsgManagers();
-// void regressionTests();
-#endif
-extern void speedTestMultiNodeIntFireNetwork(
-    unsigned int size, unsigned int runsteps );
-
-#ifdef USE_SMOLDYN
-extern void testSmoldyn();
-#endif
-// bool benchmarkTests( int argc, char** argv );
-
-extern void mooseBenchmarks( unsigned int option );
-
-//////////////////////////////////////////////////////////////////
-// System-dependent function here
-//////////////////////////////////////////////////////////////////
+#endif // DO_UNIT_TESTS
+extern void speedTestMultiNodeIntFireNetwork(unsigned int size, unsigned int runsteps );
 
 unsigned int getNumCores()
 {
@@ -133,77 +108,20 @@ void checkChildren( Id parent, const string& info )
     }
 }
 
-Id init( int argc, char** argv, bool& doUnitTests, bool& doRegressionTests,
-         unsigned int& benchmark )
+Id init( int argc, char** argv, bool& doUnitTests)
 {
     unsigned int numCores = getNumCores();
     int numNodes = 1;
     int myNode = 0;
     bool isInfinite = 0;
     int opt;
-    benchmark = 0; // Default, means don't do any benchmarks.
     Cinfo::rebuildOpIndex();
-#ifdef USE_MPI
-    /*
-    // OpenMPI does not use argc or argv.
-    // unsigned int temp_argc = 1;
-    int provided;
-    MPI_Init_thread( &argc, &argv, MPI_THREAD_SERIALIZED, &provided );
-    */
-    MPI_Init( &argc, &argv );
 
+#ifdef USE_MPI
+    MPI_Init( &argc, &argv );
     MPI_Comm_size( MPI_COMM_WORLD, &numNodes );
     MPI_Comm_rank( MPI_COMM_WORLD, &myNode );
-    /*
-    if ( provided < MPI_THREAD_SERIALIZED && myNode == 0 ) {
-    	cout << "Warning: This MPI implementation does not like multithreading: " << provided << "\n";
-    }
-    */
-    // myNode = MPI::COMM_WORLD.Get_rank();
 #endif
-    /**
-     * Here we allow the user to override the automatic identification
-     * of processor configuration
-     */
-    while ( ( opt = getopt( argc, argv, "hiqurn:b:B:" ) ) != -1 )
-    {
-        switch ( opt )
-        {
-        case 'i' : // infinite loop, used for multinode debugging, to give gdb something to attach to.
-            isInfinite = 1;
-            break;
-        case 'n': // Multiple nodes
-            numNodes = (unsigned int)atoi( optarg );
-            break;
-        case 'b': // Benchmark:
-            benchmark = atoi( optarg );
-            break;
-        case 'B': // Benchmark plus dump data: handle later.
-            break;
-        case 'u': // Do unit tests, pass back.
-            doUnitTests = 1;
-            break;
-        case 'r': // Do regression tests: pass back
-            doRegressionTests = 1;
-            break;
-        case 'q': // quit immediately after completion.
-            quitFlag = 1;
-            break;
-        case 'h': // help
-        default:
-            cout << "Usage: moose -help -infiniteLoop -unit_tests -regression_tests -quit -n numNodes -benchmark [ksolve intFire hhNet msg_<msgType>_<size>]\n";
-
-            exit( 1 );
-        }
-    }
-    if ( myNode == 0 )
-    {
-
-#if 0
-        cout << "on node " << myNode << ", numNodes = "
-             << numNodes << ", numCores = " << numCores << endl;
-#endif
-    }
 
     Id shellId;
     Element* shelle =
@@ -230,8 +148,6 @@ Id init( int argc, char** argv, bool& doUnitTests, bool& doRegressionTests,
     assert( clockId == Id( 1 ) );
     assert( classMasterId == Id( 2 ) );
     assert( postMasterId == Id( 3 ) );
-
-
 
     // s->connectMasterMsg();
 

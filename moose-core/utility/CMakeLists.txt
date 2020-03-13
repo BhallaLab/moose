@@ -17,5 +17,5 @@ add_library(utility
     Vec.cpp
     cnpy.cpp
     fileutils.cpp
-    #matrix_util.cpp
+    utility.cpp
     )

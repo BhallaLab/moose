@@ -1,7 +1,0 @@
-TO RUN
-
-    python rc19.py type solver
-
-type: active or passive
-solve: hsolve or ee
-

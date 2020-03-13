@@ -17,7 +17,7 @@ import pickle
 import matplotlib
 import os
 import random
-
+import re
 
 direct = os.path.dirname(__file__)
 colormap_file = open(os.path.join(direct, "rainbow2.pkl"), "r")  
@@ -69,7 +69,7 @@ def colorCheck(fc_bgcolor):
     if isinstance(fc_bgcolor,str):
         if fc_bgcolor.startswith("#"):
             fc_bgcolor = fc_bgcolor
-        elif fc_bgcolor.isdigit():
+        elif (fc_bgcolor.isdigit()):
             """ color is int  a map from int to r,g,b triplets from pickled color map file """
             tc = (int(fc_bgcolor))*2
             if tc < len(colorMap):
@@ -89,7 +89,7 @@ def colorCheck(fc_bgcolor):
             hexlist ="#"
             for n in fc_bgcolor:
                 if c < 3:
-                    hexlist = hexlist+str("%02x" % int(n))
+                    #hexlist = hexlist+str("%02x" % int(n))
                     c = c+1;
             fc_bgcolor = hexlist
         return(fc_bgcolor)

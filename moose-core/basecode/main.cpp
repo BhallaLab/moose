@@ -35,7 +35,6 @@ int testIndex = 0;
     f; \
     cout << std::right << "  [DONE]" << endl; \
 
-extern void testSync();
 extern void testAsync();
 extern void testSyncArray( unsigned int size, unsigned int method );
 extern void testShell();
@@ -67,16 +66,14 @@ extern void testSigNeurProcess();
 extern unsigned int initMsgManagers();
 extern void destroyMsgManagers();
 // void regressionTests();
-#endif
-extern void speedTestMultiNodeIntFireNetwork(
-    unsigned int size, unsigned int runsteps );
+#endif   // DO_UNIT_TESTS
+
+extern void speedTestMultiNodeIntFireNetwork(unsigned int size, unsigned int runsteps);
 
 #ifdef USE_SMOLDYN
 extern void testSmoldyn();
 #endif
 // bool benchmarkTests( int argc, char** argv );
-
-extern void mooseBenchmarks( unsigned int option );
 
 //////////////////////////////////////////////////////////////////
 // System-dependent function here
@@ -133,39 +130,26 @@ void checkChildren( Id parent, const string& info )
 }
 
 
-Id init( int argc, char** argv, bool& doUnitTests, bool& doRegressionTests,
-         unsigned int& benchmark )
+Id init(int argc, char** argv, bool& doUnitTests)
 {
     unsigned int numCores = getNumCores();
     int numNodes = 1;
     int myNode = 0;
     bool isInfinite = 0;
     int opt;
-    benchmark = 0; // Default, means don't do any benchmarks.
     Cinfo::rebuildOpIndex();
-#ifdef USE_MPI
-    /*
-    // OpenMPI does not use argc or argv.
-    // unsigned int temp_argc = 1;
-    int provided;
-    MPI_Init_thread( &argc, &argv, MPI_THREAD_SERIALIZED, &provided );
-    */
-    MPI_Init( &argc, &argv );
 
+#ifdef USE_MPI
+    MPI_Init( &argc, &argv );
     MPI_Comm_size( MPI_COMM_WORLD, &numNodes );
     MPI_Comm_rank( MPI_COMM_WORLD, &myNode );
-    /*
-       if ( provided < MPI_THREAD_SERIALIZED && myNode == 0 ) {
-       cout << "Warning: This MPI implementation does not like multithreading: " << provided << "\n";
-       }
-       */
-    // myNode = MPI::COMM_WORLD.Get_rank();
 #endif
+
     /**
      * Here we allow the user to override the automatic identification
      * of processor configuration
      */
-    while ( ( opt = getopt( argc, argv, "hiqurn:b:B:" ) ) != -1 )
+    while ( ( opt = getopt( argc, argv, "hiqun:b:B:" ) ) != -1 )
     {
         switch ( opt )
         {
@@ -174,40 +158,18 @@ Id init( int argc, char** argv, bool& doUnitTests, bool& doRegressionTests,
             break;
         case 'n': // Multiple nodes
             numNodes = (unsigned int)atoi( optarg );
-            break;
-        case 'b': // Benchmark:
-        {
-            string s(optarg);
-            if ( s == "ee" )
-                benchmark = 1;
-            else if ( s == "gsl" )
-                benchmark = 2;
-            else if ( s == "gssa" )
-                benchmark = 3;
-            else if ( s[0] == 'i' )
-                benchmark = 4;
-            else if ( s[0] == 'h' )
-                benchmark = 5;
-            else if ( s[0] == 'm' )
-                benchmark = 6;
-            else
-                cout << "Unknown benchmark, " << optarg << ", skipping\n";
-        }
         break;
         case 'B': // Benchmark plus dump data: handle later.
             break;
         case 'u': // Do unit tests, pass back.
-            doUnitTests = 1;
-            break;
-        case 'r': // Do regression tests: pass back
-            doRegressionTests = 1;
+            doUnitTests = true;
             break;
         case 'q': // quit immediately after completion.
             quitFlag = 1;
             break;
         case 'h': // help
         default:
-            cout << "Usage: moose -help -infiniteLoop -unit_tests -regression_tests -quit -n numNodes -benchmark [ee gsl gssa intFire hhNet msg_<msgType>_<size>]\n";
+            cout << "Usage: moose -help -infiniteLoop -unit_tests -quit -n numNodes\n";
 
             exit( 1 );
         }
@@ -246,10 +208,6 @@ Id init( int argc, char** argv, bool& doUnitTests, bool& doRegressionTests,
     assert( classMasterId == Id( 2 ) );
     assert( postMasterId == Id( 3 ) );
 
-
-
-    // s->connectMasterMsg();
-
     Shell::adopt( shellId, clockId, numMsg++ );
     Shell::adopt( shellId, classMasterId, numMsg++ );
     Shell::adopt( shellId, postMasterId, numMsg++ );
@@ -257,16 +215,6 @@ Id init( int argc, char** argv, bool& doUnitTests, bool& doRegressionTests,
     assert( numMsg == 10 ); // Must be the same on all nodes.
 
     Cinfo::makeCinfoElements( classMasterId );
-
-
-    // This will be initialized within the Process loop, and better there
-    // as it flags attempts to call the Reduce operations before ProcessLoop
-    // Qinfo::clearReduceQ( numCores ); // Initialize the ReduceQ entry.
-
-
-    // SetGet::setShell();
-    // Msg* m = new OneToOneMsg( shelle, shelle );
-    // assert ( m != 0 );
 
     while ( isInfinite ) // busy loop for debugging under gdb and MPI.
         ;
@@ -304,9 +252,6 @@ void nonMpiTests( Shell* s )
         MOOSE_TEST("testMesh", testMesh());
         MOOSE_TEST("testSynapse", testSynapse());
         MOOSE_TEST( "testSigneur", testSigNeur());
-#ifdef USE_SMOLDYN
-        //MOOSE_TEST(testSmoldyn());
-#endif
         s->setHardware( numCores, numNodes, 0 );
     }
 #endif
@@ -321,10 +266,7 @@ void processTests( Shell* s )
 #ifdef DO_UNIT_TESTS
     MOOSE_TEST( "testSchedulingProcess", testSchedulingProcess());
     MOOSE_TEST( "testBuiltinsProcess", testBuiltinsProcess());
-    // MOOSE_TEST( "testKineticsProcess", testKineticsProcess());
     MOOSE_TEST( "testBiophysicsProcess", testBiophysicsProcess());
-    // MOOSE_TEST( "testKineticSolversProcess", testKineticSolversProcess());
-    // MOOSE_TEST( "testSimManager", testSimManager());
     MOOSE_TEST( "testSigNeurProcess", testSigNeurProcess());
 #endif
 }
@@ -350,7 +292,7 @@ int main( int argc, char** argv )
     unsigned int benchmark = 0;
     // This reorders the OpFunc to Fid mapping to ensure it is node and
     // compiler independent.
-    Id shellId = init( argc, argv, doUnitTests, doRegressionTests, benchmark );
+    Id shellId = init(argc, argv, doUnitTests);
     // Note that the main loop remains the parser loop, though it may
     // spawn a lot of other stuff.
     Element* shelle = shellId.element();
@@ -374,23 +316,11 @@ int main( int argc, char** argv )
             mpiTests();
             processTests( s );
         }
-        // if ( doRegressionTests ) regressionTests();
 #endif
-        // These are outside unit tests because they happen in optimized
-        // mode, using a command-line argument. As soon as they are done
-        // the system quits, in order to estimate timing.
-        if ( benchmark != 0 )
-        {
-            mooseBenchmarks( benchmark );
-            s->doQuit();
-        }
-        else
-        {
-            // Here we set off a little event loop to poll user input.
-            // It deals with the doQuit call too.
-            if(! quitFlag)
-                Shell::launchParser();
-        }
+        // Here we set off a little event loop to poll user input.
+        // It deals with the doQuit call too.
+        if(! quitFlag)
+            Shell::launchParser();
     }
     else
     {

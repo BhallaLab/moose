@@ -1,6 +1,6 @@
 // Description:
 // Author: Subhasis Ray
-// Maintainer:
+// Maintainer: Dilawar Singh <dilawars@ncbs.res.in>
 // Created: Fri May 30 19:56:06 2014 (+0530)
 
 #include "../basecode/header.h"
@@ -14,20 +14,22 @@ const Cinfo * Variable::initCinfo()
         "value",
         "Variable value",
         &Variable::setValue,
-        &Variable::getValue);
+        &Variable::getValue
+        );
 
     static DestFinfo input(
         "input",
         "Handles incoming variable value.",
-        new EpFunc1< Variable, double >( &Variable::epSetValue ));
+        new EpFunc1< Variable, double >( &Variable::setValue )
+        );
 
     static Finfo * variableFinfos[] =
     {
         &value,
         &input
     };
-    static string doc[] =
-    {
+
+    static string doc[] = {
         "Name", "Variable",
         "Author", "Subhasis Ray",
         "Description", "Variable for storing double values. This is used in Function class."
@@ -36,17 +38,16 @@ const Cinfo * Variable::initCinfo()
     static Dinfo< Variable > dinfo;
 
     static Cinfo variableCinfo("Variable",
-                               Neutral::initCinfo(),
-                               variableFinfos,
-                               sizeof(variableFinfos) / sizeof(Finfo*),
-                               &dinfo,
-                               doc,
-                               sizeof(doc) / sizeof(string),
-                               true // is FieldElement, not to be created directly
-                              );
+            Neutral::initCinfo(),
+            variableFinfos,
+            sizeof(variableFinfos) / sizeof(Finfo*),
+            &dinfo,
+            doc,
+            sizeof(doc) / sizeof(string),
+            true // is FieldElement, not to be created directly
+            );
 
     return & variableCinfo;
 }
 
 static const Cinfo * variableCinfo = Variable::initCinfo();
-

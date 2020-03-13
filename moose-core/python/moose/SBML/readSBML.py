@@ -13,10 +13,12 @@
 **           copyright (C) 2003-2017 Upinder S. Bhalla. and NCBS
 Created : Thu May 13 10:19:00 2016(+0530)
 Version
-Last-Updated: Sat Jan 19 10:30:00 2019(+0530)
+Last-Updated: Mon Jun 16 10:30:00 2019(+0530)
           By:HarshaRani
 **********************************************************************/
 2019:
+Jun 06: - both compartment name and Id is mapped to the values in comptSbmlidMooseIdMap
+May 23: - checking for integer in Assignment expr
 Jan 19: - validator flag is set 'on' from True
          - groupname if missing in the sbml file then groupid is taken, 
          if both are missing then its not a valide sbml file
@@ -76,6 +78,7 @@ import collections
 import moose
 from moose.chemUtil.chemConnectUtil import *
 from moose.SBML.validation import validateModel
+import moose.print_utils as pu
 import re
 import os
 
@@ -91,17 +94,15 @@ def mooseReadSBML(filepath, loadpath, solver="ee",validate="on"):
     """
     global foundLibSBML_
     if not foundLibSBML_:
-        print('No python-libsbml found.'
-            '\nThis module can be installed by following command in terminal:'
-            '\n\t easy_install python-libsbml'
-            '\n\t apt-get install python-libsbml'
+        print('[WARN] No python-libsbml found.'
+            '\nThis module can be installed by using `pip` in terminal:'
+            '\n\t $ pip install python-libsbml --user'
             )
         return moose.element('/')
 
     if not os.path.isfile(filepath):
-        print('%s is not found ' % filepath)
+        pu.warn('%s is not found ' % filepath)
         return moose.element('/')
-
 
     with open(filepath, "r") as filep:
         loadpath  = loadpath[loadpath.find('/')+1:]
@@ -118,11 +119,11 @@ def mooseReadSBML(filepath, loadpath, solver="ee",validate="on"):
         if tobecontinue:
             level = document.getLevel()
             version = document.getVersion()
-            print(("\n" + "File: " + filepath + " (Level " +
-                   str(level) + ", version " + str(version) + ")"))
+            pu.info("File: " + filepath + " (Level " +
+                   str(level) + ", version " + str(version) + ")")
             model = document.getModel()
-            if (model is None):
-                print("No model present.")
+            if model is None:
+                pu.error("No model present.")
                 return moose.element('/')
             else:
                 
@@ -149,7 +150,8 @@ def mooseReadSBML(filepath, loadpath, solver="ee",validate="on"):
                     groupInfo  = {}
                     funcDef = {}
                     modelAnnotaInfo = {}
-                    comptSbmlidMooseIdMap = {}
+                    #comptSbmlidMooseIdMap = {}
+                    comptSbmlidMooseIdMap = dict()
                     globparameterIdValue = {}
 
                     mapParameter(model, globparameterIdValue)
@@ -180,45 +182,45 @@ def mooseReadSBML(filepath, loadpath, solver="ee",validate="on"):
                         # as while reading in GUI the model will show up untill
                         # built which is not correct print "Deleted rest of the
                         # model"
-                        print((" model: " + str(model)))
-                        print(("functionDefinitions: " +
-                            str(model.getNumFunctionDefinitions())))
-                        print(("    unitDefinitions: " +
-                            str(model.getNumUnitDefinitions())))
-                        print(("   compartmentTypes: " +
-                               str(model.getNumCompartmentTypes())))
-                        print(("        specieTypes: " +
-                               str(model.getNumSpeciesTypes())))
-                        print(("       compartments: " +
-                               str(model.getNumCompartments())))
-                        print(("            species: " +
-                               str(model.getNumSpecies())))
-                        print(("         parameters: " +
-                               str(model.getNumParameters())))
-                        print((" initialAssignments: " +
-                               str(model.getNumInitialAssignments())))
-                        print(("              rules: " +
-                               str(model.getNumRules())))
-                        print(("        constraints: " +
-                               str(model.getNumConstraints())))
-                        print(("          reactions: " +
-                               str(model.getNumReactions())))
-                        print(("             events: " +
-                               str(model.getNumEvents())))
+                        print(" model: " + str(model))
+                        print("functionDefinitions: " +
+                            str(model.getNumFunctionDefinitions()))
+                        print("    unitDefinitions: " +
+                            str(model.getNumUnitDefinitions()))
+                        print("   compartmentTypes: " +
+                               str(model.getNumCompartmentTypes()))
+                        print("        specieTypes: " +
+                               str(model.getNumSpeciesTypes()))
+                        print("       compartments: " +
+                               str(model.getNumCompartments()))
+                        print("            species: " +
+                               str(model.getNumSpecies()))
+                        print("         parameters: " +
+                               str(model.getNumParameters()))
+                        print(" initialAssignments: " +
+                               str(model.getNumInitialAssignments()))
+                        print("              rules: " +
+                               str(model.getNumRules()))
+                        print("        constraints: " +
+                               str(model.getNumConstraints()))
+                        print("          reactions: " +
+                               str(model.getNumReactions()))
+                        print("             events: " +
+                               str(model.getNumEvents()))
                         print("\n")
                         moose.delete(basePath)
                         loadpath = moose.Shell('/')
-            #return basePath, ""
+
             loaderror = msgCmpt+str(msgRule)+msgReac+noRE
             if loaderror != "":
                 loaderror = loaderror
             return moose.element(loadpath), loaderror
         else:
-            print("Validation failed while reading the model."+"\n"+errorFlag)
+            print("Validation failed while reading the model.\n"+errorFlag)
             if errorFlag != "":
-                return moose.element('/'),errorFlag
+                return moose.element('/'), errorFlag
             else:
-                return moose.element('/'), "This document is not valid SBML"
+                return moose.element('/'), "This document is not a valid SBML"
 
 def checkFuncDef(model):
     funcDef = {}
@@ -277,7 +279,7 @@ def checkGroup(basePath,model,comptSbmlidMooseIdMap):
                     moosegrpinfo = moose.Annotator(moosegrp.path+'/info')
                     moosegrpinfo.color = groupAnnoInfo["bgColor"]
                 else:
-                    print ("Compartment not found")
+                    print ("Group's compartment not found in xml file")
             if p.getKind() == 2:
                 if p.getId() not in groupInfo:
                     memlists = []
@@ -932,23 +934,17 @@ def unitsforRates(model):
 def getMembers(node, ruleMemlist):
     msg = ""
     found = True
+
     if node == None:
         pass
+
     elif node.getType() == libsbml.AST_POWER:
         pass
     
     elif node.getType() == libsbml.AST_FUNCTION:
-        #print " function"
-        #funcName = node.getName()
-        #funcValue = []
-        #functionfound = False
         for i in range(0,node.getNumChildren()):
-            #functionfound = True
-            #print " $$ ",node.getChild(i).getName()
-            #funcValue.append(node.getChild(i).getName())
             getMembers(node.getChild(i),ruleMemlist)
-        #funcKL[node.getName()] = funcValue
-
+    
     elif node.getType() == libsbml.AST_PLUS:
         #print " plus ", node.getNumChildren()
         if node.getNumChildren() == 0:
@@ -992,7 +988,6 @@ def getMembers(node, ruleMemlist):
         for i in range(1, node.getNumChildren()):
             # Multiplication
             getMembers(node.getChild(i), ruleMemlist)
-
     elif node.getType() == libsbml.AST_LAMBDA:
         #In lambda get Bvar values and getRighChild which will be kineticLaw
         if node.getNumChildren() == 0:
@@ -1009,9 +1004,15 @@ def getMembers(node, ruleMemlist):
         for i in range (0,node.getNumBvars()):
             ruleMemlist.append(node.getChild(i).getName())
         #funcD[funcName] = {"bvar" : bvar, "MathML":node.getRightChild()}
+    elif node.getType() == libsbml.AST_INTEGER:
+        #value is constant
+        #ruleMemlist.append(node.getValue())
+        pass
+
     elif node.getType() == libsbml.AST_FUNCTION_POWER:
         msg = msg + "\n moose is yet to handle \""+node.getName() + "\" operator"
         found = False
+    
     elif node.getType() == libsbml.AST_FUNCTION_PIECEWISE:
         #print " piecewise ", libsbml.formulaToL3String(node)
         msg = msg + "\n moose is yet to handle \""+node.getName() + "\" operator"
@@ -1027,7 +1028,6 @@ def getMembers(node, ruleMemlist):
             getMembers(rchild, ruleMemlist)
         '''
     else:
-        #print(" this case need to be handled", node.getName())
         msg = msg + "\n moose is yet to handle \""+node.getName() + "\" operator"
         found = False
     # if len(ruleMemlist) > 2:
@@ -1104,7 +1104,7 @@ def createRules(model, specInfoMap, globparameterIdValue):
                                     funcId.numVars = numVars + 1
 
                                 elif not(i in globparameterIdValue):
-                                    msg = msg + "check the variable name in mathML, this object neither pool or a constant \"" + i+"\" in assignmentRule " +rule.getVariable()
+                                    msg = msg + "check the variable name in mathML, this object neither pool or a constant \"" + str(i)+"\" in assignmentRule " +rule.getVariable()
 
                                 exp = rule.getFormula()
                                 exprOK = True
@@ -1112,7 +1112,6 @@ def createRules(model, specInfoMap, globparameterIdValue):
                             for mem in ruleMemlist:
                                 if (mem in specInfoMap):
                                     #exp1 = exp.replace(mem, str(speFunXterm[mem]))
-                                    #print " mem ",mem, "$ ", speFunXterm[mem], "$$ ",exp
                                     exp1 = re.sub(r'\b%s\b'% (mem), speFunXterm[mem], exp)
                                     exp = exp1
                                 elif(mem in globparameterIdValue):
@@ -1437,10 +1436,10 @@ def createCompartment(basePath, model, comptSbmlidMooseIdMap):
                 mooseCmptId = moose.CubeMesh(basePath.path+'/'+name)
             
             mooseCmptId.volume = (msize * unitfactor)
-    
-            comptSbmlidMooseIdMap[sbmlCmptId] = {
-                "MooseId": mooseCmptId, "spatialDim": dimension, "size": msize}
-        
+            #both compartment name and Id is mapped to the values
+            comptSbmlidMooseIdMap.update(dict.fromkeys([sbmlCmptId,name], {"MooseId": mooseCmptId, "spatialDim": dimension, "size": msize}))
+            #comptSbmlidMooseIdMap[sbmlCmptId] = {
+            #    "MooseId": mooseCmptId, "spatialDim": dimension, "size": msize}
         for key,value in endo_surr.items():
             if value in comptSbmlidMooseIdMap:
                 endomesh = comptSbmlidMooseIdMap[key]["MooseId"]

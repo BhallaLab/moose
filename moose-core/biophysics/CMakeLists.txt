@@ -2,7 +2,11 @@ cmake_minimum_required(VERSION 2.8)
 include(${CMAKE_CURRENT_SOURCE_DIR}/../CheckCXXCompiler.cmake)
 
 if(WITH_GSL)
+    find_package(GSL 1.16)
     include_directories(${GSL_INCLUDE_DIRS})
+elseif(WITH_BOOST_ODE)
+    find_package(Boost)
+    include_directories(${Boost_INCLUDE_DIRS})
 endif(WITH_GSL)
 
 set(BIOPHYSICS_SRCS
@@ -32,7 +36,6 @@ set(BIOPHYSICS_SRCS
     ReadSwc.cpp
     SynChan.cpp
     NMDAChan.cpp
-    testBiophysics.cpp
     IzhikevichNrn.cpp
     DifShellBase.cpp
     DifShell.cpp
@@ -48,10 +51,9 @@ set(BIOPHYSICS_SRCS
     MarkovSolver.cpp
     VClamp.cpp
     Spine.cpp
+    MarkovOdeSolver.cpp
+    testBiophysics.cpp
     )
 
-if(WITH_GSL)
-    list(APPEND BIOPHYSICS_SRCS MarkovGslSolver.cpp)
-endif(WITH_GSL)
+add_library(biophysics ${BIOPHYSICS_SRCS})
 
-add_library( biophysics ${BIOPHYSICS_SRCS} )

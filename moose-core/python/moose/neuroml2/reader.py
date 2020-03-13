@@ -23,10 +23,8 @@ import numpy as np
 import moose
 import logging
 
-logging.basicConfig( format=moose.LOGGING_FORMAT )
-logger_ = logging.getLogger(__name__)
+logger_ = logging.getLogger('moose.nml2')
 
-import moose
 import neuroml         as nml
 import pyneuroml.pynml as pynml
 from moose.neuroml2.units import SI
@@ -276,7 +274,7 @@ class NML2Reader(object):
         ep = '%s/%s' % (self.lib.path, cell.id)
         nrn = moose.element(ep) if moose.exists(ep) else moose.Neuron(ep)
         self.proto_cells[cell.id] = nrn
-        self.nml_to_moose[cell] = nrn
+        self.nml_to_moose[cell.id] = nrn
         self.moose_to_nml[nrn] = cell
         self.createMorphology(cell, nrn, symmetric=symmetric)
         self.importBiophysics(cell, nrn)
@@ -323,7 +321,7 @@ class NML2Reader(object):
             except AttributeError:
                 parent = None
             self.moose_to_nml[comp] = segment
-            self.nml_to_moose[segment] = comp            
+            self.nml_to_moose[segment.id] = comp            
             p0 = segment.proximal            
             if p0 is None:
                 if parent:
@@ -358,7 +356,7 @@ class NML2Reader(object):
         if not 'all' in sg_to_segments:
             sg_to_segments['all'] = [ s for s in segments ]
             
-        self._cell_to_sg[nmlcell] = sg_to_segments
+        self._cell_to_sg[nmlcell.id] = sg_to_segments
         return id_to_comp, id_to_segment, sg_to_segments
 
     def importBiophysics(self, nmlcell, moosecell):
@@ -380,19 +378,19 @@ class NML2Reader(object):
         self.importInitMembPotential(nmlcell, moosecell, mp)
 
     def importCapacitances(self, nmlcell, moosecell, specificCapacitances):
-        sg_to_segments = self._cell_to_sg[nmlcell]
+        sg_to_segments = self._cell_to_sg[nmlcell.id]
         for specific_cm in specificCapacitances:
             cm = SI(specific_cm.value)
             for seg in sg_to_segments[specific_cm.segment_groups]:
-                comp = self.nml_to_moose[seg]
+                comp = self.nml_to_moose[seg.id]
                 comp.Cm = sarea(comp) * cm
                 
     def importInitMembPotential(self, nmlcell, moosecell, membraneProperties):
-        sg_to_segments = self._cell_to_sg[nmlcell]
+        sg_to_segments = self._cell_to_sg[nmlcell.id]
         for imp in membraneProperties.init_memb_potentials:
             initv = SI(imp.value)
             for seg in sg_to_segments[imp.segment_groups]:
-                comp = self.nml_to_moose[seg]
+                comp = self.nml_to_moose[seg.id]
                 comp.initVm = initv 
 
     def importIntracellularProperties(self, nmlcell, moosecell, properties):
@@ -400,7 +398,7 @@ class NML2Reader(object):
         self.importSpecies(nmlcell, properties)
 
     def importSpecies(self, nmlcell, properties):
-        sg_to_segments = self._cell_to_sg[nmlcell]
+        sg_to_segments = self._cell_to_sg[nmlcell.id]
         for species in properties.species:
             # Developer note: Not sure if species.concentration_model should be
             # a nml element of just plain string. I was getting plain text from
@@ -411,7 +409,7 @@ class NML2Reader(object):
                 continue
             segments = getSegments(nmlcell, species, sg_to_segments)
             for seg in segments:
-                comp = self.nml_to_moose[seg]    
+                comp = self.nml_to_moose[seg.id]    
                 self.copySpecies(species, comp)
 
     def copySpecies(self, species, compartment):
@@ -439,11 +437,11 @@ class NML2Reader(object):
         return pool
 
     def importAxialResistance(self, nmlcell, intracellularProperties):
-        sg_to_segments = self._cell_to_sg[nmlcell]
+        sg_to_segments = self._cell_to_sg[nmlcell.id]
         for r in intracellularProperties.resistivities:
             segments = getSegments(nmlcell, r, sg_to_segments)
             for seg in segments:
-                comp = self.nml_to_moose[seg]
+                comp = self.nml_to_moose[seg.id]
                 setRa(comp, SI(r.value))     
                 
     def isPassiveChan(self,chan):
@@ -503,7 +501,7 @@ class NML2Reader(object):
 
 
     def importChannelsToCell(self, nmlcell, moosecell, membrane_properties):
-        sg_to_segments = self._cell_to_sg[nmlcell]
+        sg_to_segments = self._cell_to_sg[nmlcell.id]
         for chdens in membrane_properties.channel_densities + membrane_properties.channel_density_v_shifts:
             segments = getSegments(nmlcell, chdens, sg_to_segments)
             condDensity = SI(chdens.cond_density)
@@ -522,11 +520,11 @@ class NML2Reader(object):
             if self.isPassiveChan(ionChannel):
                 for seg in segments:
                     #  comp = self.nml_to_moose[seg]
-                    setRm(self.nml_to_moose[seg], condDensity)
-                    setEk(self.nml_to_moose[seg], erev)
+                    setRm(self.nml_to_moose[seg.id], condDensity)
+                    setEk(self.nml_to_moose[seg.id], erev)
             else:
                 for seg in segments:
-                    self.copyChannel(chdens, self.nml_to_moose[seg], condDensity, erev)
+                    self.copyChannel(chdens, self.nml_to_moose[seg.id], condDensity, erev)
             '''moose.le(self.nml_to_moose[seg])
             moose.showfield(self.nml_to_moose[seg], field="*", showtype=True)'''
 
@@ -684,7 +682,7 @@ class NML2Reader(object):
                 mchan = self.createHHChannel(chan)
                 
             self.id_to_ionChannel[chan.id] = chan
-            self.nml_to_moose[chan] = mchan
+            self.nml_to_moose[chan.id] = mchan
             self.proto_chans[chan.id] = mchan
             logger_.info(self.filename + ': Created ion channel %s for %s %s'%( 
                     mchan.path, chan.type, chan.id))

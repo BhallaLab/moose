@@ -98,7 +98,8 @@ void InputVariable::setOwner( NSDFWriter * owner)
 
 void InputVariable::epSetValue( const Eref& eref, double value)
 {
-    if (owner_){
+    if (owner_)
+    {
         owner_->setInput(eref.fieldIndex(), value);
     }
 }

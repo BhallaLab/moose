@@ -17,7 +17,12 @@
 #include <sstream>
 #include <valarray>
 
-#include "../randnum/RNG.h"                        /* Use inbuilt rng */
+
+#ifdef  USE_BOOST_FILESYSTEM
+#include <boost/filesystem.hpp>
+#endif
+
+#include "randnum/RNG.h"                        /* Use inbuilt rng */
 #include "../utility/print_function.hpp"
 
 using namespace std;

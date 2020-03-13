@@ -2,22 +2,24 @@ cmake_minimum_required(VERSION 2.8)
 project(moose)
 set(CMAKE_BUILD_TYPE Release)
 
-# If from command line, version info is not passed, use the git to generate a
-# version file. If GIT fails, use the previous known version.
-find_program(GIT_EXEC "git")
-message( STATUS "Looking for git ${GIT_EXEC}" )
-if(VERSION_MOOSE)
-    message( STATUS "MOOSE version is set to ${VERSION_MOOSE} at build time" )
-elseif(GIT_EXEC)
-    message( STATUS "Getting version by reading git tags" )
-    execute_process( 
-        COMMAND ${GIT_EXEC} describe --tags --long
-        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+set(Python_ADDITIONAL_VERSIONS 2.7)
+find_package(PythonInterp 3.5)
+if(NOT PYTHONINTERP_FOUND)
+  find_package(PythonInterp 2.7)
+endif()
+
+# NOTE: version should be changed in setup.py file.
+# If moose version is not given, use setup.py file to get the default version.
+if(NOT VERSION_MOOSE)
+    execute_process(COMMAND ${PYTHON_EXECUTABLE} setup.py --version
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/moose-core
         OUTPUT_VARIABLE VERSION_MOOSE
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-    )
-endif( )
-message( STATUS "Building version ${VERSION_MOOSE}" )
+        OUTPUT_STRIP_TRAILING_WHITESPACE)
+endif()
+
+add_definitions(-DVERSION_MOOSE="${VERSION_MOOSE}")
+message(STATUS "MOOSE Version ${VERSION_MOOSE}")
+
 
 # Prefix
 message( STATUS "CMAKE_INSTALL_PREFIX= ${CMAKE_INSTALL_PREFIX}" )
@@ -79,7 +81,7 @@ add_custom_command( OUTPUT ${OUTPUT_MOOSEBIN}
     )
 add_custom_command( TARGET moose-core POST_BUILD 
     COMMAND ${CMAKE_COMMAND} -E chdir ${PYMOOSE_INSTALL_DIR} tar xvf
-    ${PYMOOSE_BUILD_DIR}/bdist/pymoose-${VERSION_MOOSE}.CMAKE.tar.gz
+    ${PYMOOSE_BUILD_DIR}/pymoose-${VERSION_MOOSE}.CMAKE.tar.gz
     COMMENT "Unarchiving pymoose bdist"
     VERBATIM
     )

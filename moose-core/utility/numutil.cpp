@@ -6,9 +6,9 @@
  * Created:         2007-11-02 11:46:40
  ********************************************************************/
 
+#include "numutil.h"
 #include <cmath>
 #include "../randnum/RNG.h"
-#include "numutil.h"
 
 bool almostEqual(float x, float y, float epsilon)
 {
@@ -61,6 +61,9 @@ double approximateWithInteger_debug(const char* name, const double x, moose::RNG
 
 double approximateWithInteger(const double x, moose::RNG& rng)
 {
+#if 0
+    return std::round(x);
+#else
     assert(x >= 0.0);
     double xf = std::floor(x);
     double base = x - xf;
@@ -69,5 +72,11 @@ double approximateWithInteger(const double x, moose::RNG& rng)
     if( rng.uniform() < base)
         return xf+1.0;
     return xf;
+#endif
+}
+
+double approximateWithInteger(const double x)
+{
+    return approximateWithInteger(x, moose::rng);
 }
 

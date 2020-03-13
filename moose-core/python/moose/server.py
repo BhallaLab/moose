@@ -317,7 +317,7 @@ def find_files_to_run( files ):
         with open(f, 'r' ) as fh:
             txt = fh.read()
             if re.search(r'def\s+main\(', txt):
-                if re.search('^\s+main\(\S+?\)', txt):
+                if re.search(r'^\s+main\(\S+?\)', txt):
                     toRun.append(f)
     return toRun
 

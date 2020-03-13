@@ -9,6 +9,7 @@
 
 #include "../basecode/header.h"
 #include "../basecode/ElementValueFinfo.h"
+#include "../utility/print_function.hpp"
 #include "lookupVolumeFromMesh.h"
 #include "PoolBase.h"
 #include "Pool.h"
@@ -164,6 +165,7 @@ void Pool::vHandleMolWt( const Eref& e, double v )
 
 void Pool::vSetN( const Eref& e, double v )
 {
+    assert(! std::isnan(v));
     n_ = v;
 }
 
@@ -174,6 +176,7 @@ double Pool::vGetN( const Eref& e ) const
 
 void Pool::vSetNinit( const Eref& e, double v )
 {
+    assert(! std::isnan(v));
     nInit_ = v;
 }
 
@@ -201,7 +204,10 @@ void Pool::vSetConcInit( const Eref& e, double c )
 
 void Pool::vSetDiffConst( const Eref& e, double v )
 {
-    diffConst_ = v;
+    if(! std::isnan(v))
+        diffConst_ = v;
+    else
+        moose::showWarn("Trying to assign non-numeric value:"  + to_string(v) + ".  Ignored!");
 }
 
 double Pool::vGetDiffConst( const Eref& e ) const

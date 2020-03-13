@@ -140,9 +140,7 @@ namespace boost { namespace numeric { namespace bindings {
          >::value));
 #endif
 
-#ifndef NDEBUG
          typedef typename MatrA::value_type  value_type ;
-#endif
 
          int const n = traits::matrix_size1 (a);
          assert (n == traits::matrix_size2 (a));
@@ -187,9 +185,7 @@ namespace boost { namespace numeric { namespace bindings {
          >::value));
 #endif
 
-#ifndef NDEBUG
          typedef typename MatrA::value_type                            value_type ;
-#endif
 
          int const n = traits::matrix_size1 (a);
          assert (n == traits::matrix_size2 (a));
@@ -269,9 +265,7 @@ namespace boost { namespace numeric { namespace bindings {
           inline
           int operator() (char jobvs, MatrA& a, EigVal& w, SchVec& vs, optimal_workspace ) const {
              typedef typename MatrA::value_type                            value_type ;
-#ifndef NDEBUG
              typedef typename traits::type_traits< value_type >::real_type real_type ;
-#endif
 
              int n = traits::matrix_size1( a );
 
@@ -284,10 +278,7 @@ namespace boost { namespace numeric { namespace bindings {
           inline
           int operator() (char jobvs, MatrA& a, EigVal& w, SchVec& vs, minimal_workspace ) const {
              typedef typename MatrA::value_type                            value_type ;
-
-#ifndef NDEBUG
              typedef typename traits::type_traits< value_type >::real_type real_type ;
-#endif
 
              int n = traits::matrix_size1( a );
 

@@ -13,16 +13,7 @@
 #include <cfloat>
 #include <limits>
 #include "../randnum/RNG.h"
-
-#include "../randnum/RNG.h"
-
-#ifndef M_PI
-#define M_PI 3.14159265358979323846
-#endif
-
-#ifndef M_E
-#define M_E  2.7182818284590452353
-#endif
+#include "../basecode/global.h"
 
 
 /**
@@ -70,8 +61,8 @@ bool isClose( T a, T b, T tolerance )
 bool almostEqual(float x, float y, float epsilon = FLT_EPSILON);
 bool almostEqual(double x, double y, double epsilon = DBL_EPSILON);
 bool almostEqual(long double x, long double y, long double epsilon = LDBL_EPSILON);
-
 double approximateWithInteger(const double x, moose::RNG& rng);
+double approximateWithInteger(const double x);
 double approximateWithInteger_debug(const char* name, const double x, moose::RNG& rng);
 
 #endif
