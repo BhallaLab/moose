@@ -10,5 +10,5 @@ if [ -n "$TRAVIS" ]; then
     echo "We are on travis"
     sudo dpkg -i ../*.deb
     sudo apt-get install -f 
-    python -c 'import moose; print(moose.__file__); print(moose.__version__)'
+    python -c 'import moose; print(moose.about())' || python3 -c 'import moose; print(moose.about())'
 fi
