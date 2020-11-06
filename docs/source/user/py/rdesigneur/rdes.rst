@@ -5,9 +5,12 @@ Author: Upi Bhalla
 
 Date: Aug 26 2016,
 
-Last-Updated: Nov 08 2018
-
+Last-Updated: Oct 28 2020
 By: Upi Bhalla
+
+Git commit  : 65720c1d2e0    (moose-core)
+
+Git commit  : 0ea9dd3c43575e (moose-examples)
 
 .. --------------
 
@@ -1004,34 +1007,15 @@ reaction-diffusion system making its way inward from the two ends. After
 the simulation ends the plots for all compartments for the whole run
 come up.
 
-.. figure:: ../../../../images/rdes5_reacdiff.png
-   :alt: Display for oscillatory reaction-diffusion simulation
-
-   Display for oscillatory reaction-diffusion simulation
-
-For those who would rather use the much simpler matplotlib 3-D display option,
-this is what the same simulation looks like:
-
 .. figure:: ../../../../images/ex7.0_spatial_chem_osc.png
    :alt: Display for oscillatory reac-diff simulation using matplotlib
 
    Display for oscillatory reac-diff simulation using matplotlib
 
 
-.. _`moogli primer`:
-
-Primer on using the 3-D MOOGLI display
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-There are two variants of the MOOGLI display. The first, named Moogli,
-uses OpenGL and OpenSceneGraph. It is fast to display, slow to load, and
-difficult to compile. It produces much better looking 3-D graphics.
-The second is a fallback interface using mplot3d, which is a library of 
+The interface using mplot3d, which is a library of 
 Matplotlib and so should be generally available. It is slower to display,
-faster to load, but needs no special compilation. It uses stick graphics
-and though it conveys much the same information, isn't as nice to look at
-as the original Moogli. Its controls are more or less the same but less 
-smooth than the original Moogli.
+faster to load, but needs no special compilation.
 
 Here is a short primer on the 3-D display controls.
 
@@ -1118,7 +1102,9 @@ Calcium-induced calcium release
 
 .. _`models of calcium-induced calcium release`:
 
-*ex7.2_CICR.py*
+*ex7.2_CICR.py *
+
+.. Warning ::	With latest moose-core commit `65720c1d2e0eb8` the result from this example is quite differnt as compared to what shown below, this is due to changes in moose-core. We are working towards this. (See the status here: https://github.com/BhallaLab/moose-examples/issues/73)
 
 This is a somewhat more complex reaction-diffusion system, involving calcium
 release from intracellular stores that propagates in a wave of activity along
@@ -1503,13 +1489,13 @@ so it spikes more, so more calcium enters.
         chanDistrib = [
             ['Na', 'soma', 'Gbar', '300' ],
             ['K_DR', 'soma', 'Gbar', '250' ],
-            ['K_A', 'soma', 'Gbar', '200' ],
+            ['K_A', 'soma', 'Gbar', '250' ],
             ['Ca_conc', 'soma', 'tau', '0.0333' ],
             ['Ca', 'soma', 'Gbar', '40' ]
         ],
         adaptorList = [
             [ 'dend/chan', 'conc', 'K_A', 'modulation', 0.0, 70 ],
-            [ 'Ca_conc', 'Ca', 'dend/Ca', 'conc', 0.00008, 2 ]
+            [ 'Ca_conc', 'Ca', 'dend/Ca', 'conc', 0.00008, 0.8 ]
         ],
         # Give a + pulse from 5 to 7s, and a - pulse from 20 to 21.
         stimList = [['soma', '1', '.', 'inject', '((t>5 && t<7) - (t>20 && t<21)) * 1.0e-12' ]],
@@ -1550,11 +1536,11 @@ rather than to directly assign the conductance *'Gbar'*. This is because
 the electrical segment. This makes it difficult to keep track of. *Modulation*
 is a simple multiplier term onto *Gbar*, and is therefore easier to work with.
 
-       ``[ 'Ca_conc', 'Ca', 'dend/Ca', 'conc', 0.00008, 2 ]``:
+       ``[ 'Ca_conc', 'Ca', 'dend/Ca', 'conc', 0.00008, 0.8 ]``:
 
 Use the concentration of *Ca* as computed in the electrical model, to assign
 the concentration of molecule *Ca* on the dendrite compartment. There is a
-basal level of 80 nanomolar, and every unit of electrical *Ca* maps to 2 
+basal level of 80 nanomolar, and every unit of electrical *Ca* maps to 0.8 
 millimolar of chemical *Ca*.
 
 The arguments in the adaptorList are:
@@ -1650,6 +1636,8 @@ Multiscale model of CICR in dendrite triggered by synaptic input
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 *ex8.1_synTrigCICR.py*
+
+.. Warning ::	With latest moose-core commit `65720c1d2e0eb8` the result from this example is quite differnt as compared to what shown below, this is due to changes in moose-core. We are working towards this. (See the status here: https://github.com/BhallaLab/moose-examples/issues/74)
 
 In this model synaptic input arrives at a dendritic spine, leading to calcium
 influx through the NMDA receptor. An adaptor converts this influx to the 
@@ -1763,6 +1751,8 @@ Multiscale model spanning PSD, spine head and dendrite
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 *ex8.2_multiscale_glurR_phosph_3compt.py*
+
+.. Warning ::	With latest moose-core commit `65720c1d2e0eb8` the result from this example is quite differnt as compared to what shown below, this is due to changes in moose-core. We are working towards this. (See the status here: https://github.com/BhallaLab/moose-examples/issues/74)
 
 This is another multiscale model on similar lines to 8.0. It is structurally
 and computationally more complicated, because the action is distributed between
@@ -1909,6 +1899,8 @@ Multiscale model in which spine geometry changes due to signaling
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 *ex8.3_spine_vol_change.py*
+
+.. Warning ::	With latest moose-core commit `65720c1d2e0eb8` getting runtime error with valueFinfo error. We are working towards this. (See the status here: https://github.com/BhallaLab/moose-examples/issues/75)
 
 This model is very similar to 8.2. The main design difference is that 
 *adaptor*, instead of just modulating the gluR conductance, scales the 
