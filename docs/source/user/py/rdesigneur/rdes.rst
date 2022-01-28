@@ -1,13 +1,18 @@
 **Rdesigneur: Building multiscale models**
 ==========================================
 
-Author: Upi Bhalla
+.. Author: Upi Bhalla
 
-Date: Aug 26 2016,
+.. Date: Aug 26 2016,
 
-Last-Updated: Nov 08 2018
+.. Last-Updated: Jan 26 2022
 
-By: Upi Bhalla
+.. By: Upi Bhalla
+
+.. Git commit  :    (moose-core)
+
+.. Git Commit      :  cf74bf526 (moose-examples)
+.. Git Commit Date :  28/01/2022
 
 .. --------------
 
@@ -85,33 +90,34 @@ This should produce the output:
 
 ::
 
-    [ /model[0]/elec[0]/soma[0] ]
-    diameter         = 0.0005
-    fieldIndex       = 0
-    Ra               = 7639437.26841
-    y0               = 0.0
-    Rm               = 424413.177334
-    index            = 0
-    numData          = 1
-    inject           = 0.0
-    initVm           = -0.065
-    Em               = -0.0544
-    y                = 0.0
-    numField         = 1
-    path             = /model[0]/elec[0]/soma[0]
-    dt               = 0.0
-    tick             = -2
-    z0               = 0.0
-    name             = soma
-    Cm               = 7.85398163398e-09
-    x0               = 0.0
-    Vm               = -0.06
-    className        = ZombieCompartment
-    idValue          = 465
-    length           = 0.0005
-    Im               = 1.3194689277e-08
-    x                = 0.0005
-    z                = 0.0
+    [/model[0]/elec[0]/soma]
+    Cm              =7.853981633975e-09
+    Em              =-0.0544
+    Im              =1.3194689277024895e-08
+    Ra              =7639437.268410473
+    Rm              =424413.1773342278
+    Vm              =-0.06
+    className       =ZombieCompartment
+    diameter        =0.0005
+    dt              =0.0
+    fieldIndex      =0
+    idValue         =449
+    index           =0
+    initVm          =-0.065
+    inject          =0.0
+    length          =0.0005
+    name            =soma
+    numData         =1
+    numField        =1
+    path            =/model[0]/elec[0]/soma[0]
+    tick            =-2
+    x               =0.0005
+    x0              =0.0
+    y               =0.0
+    y0              =0.0
+    z               =0.0
+    z0              =0.0
+
 
 Simulate and display current pulse to soma
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -839,7 +845,7 @@ As designed, we get periodically firing synaptic input.
 Reaction system in a single compartment
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-*ex6_chem_osc.py*
+*ex6.0_chem_osc.py*
 
 Here we use the compartment as a place in which to embed a chemical
 model. The chemical oscillator model is predefined in the rdesigneur
@@ -909,6 +915,114 @@ decaying oscillations.
    :alt: Plot for single-compartment reaction simulation
 
    Plot for single-compartment reaction simulation
+
+Chemical oscillator in two compartments
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*ex6.1_osc_different_vols.py*
+
+This tutorial shows how to set up reaction systems that span compartments.
+Here we illustrate a relaxation oscillator that emerges from molecular 
+transport between compartments. This is based on an analysis of stable
+and oscillatory states that emerge from trafficking, Bhalla, Biophys J 2011.
+In this case it does so by embedding one compartment (B) inside another (A).
+The outer compartment *A* is set up as a *dend* type compartment, and the inner
+one *B* is set up as an *endo* compartment.
+
+The form of the reaction is: 
+
+::
+
+    A/M ----> B/M  // Molecule M is transported from A to B
+    B/M_p ----> A/M_p  // Molecule M_p is transported from B to A
+    A/M <--S--> A/M_p   // A simple bistable switch reaction in compartment A
+    B/M <--S--> B/M_p   // A simple bistable switch reaction in compartment B
+
+The idea of a relaxation oscillator is that it has two nominally stable states,
+but they are coupled by a slow drift process that eventually tips the system
+into the opposite state. The tip-over is fast, and the drift is slow, giving
+a characteristic waveform with sharp transitions and relatively flat peaks.
+
+.. figure:: ../../../../images/ex6.1_M_in_compt_B.png
+   :alt: Characteristic relaxation oscillator profile for M/B.
+
+   Characteristic relaxation oscillator profile for M/B.
+
+In this case, we start out at a medium level of M in compartment B. The drift
+process causes more of M to accumulate, till it finally tips over and M is
+converted rapidly to M_p (still in compartment B).
+
+.. figure:: ../../../../images/ex6.1_M_p_in_compt_B.png
+   :alt: B/M_p waveform: sharp turnon.
+
+   B/M_p waveform: sharp turnon.
+
+Now that all the molecule M is in state M_p in compartment B, it is transported
+to compartment A as A/M_p. This accounts for the decline in B/M_p and the 
+rise in A/M_p:
+
+.. figure:: ../../../../images/ex6.1_M_p_in_compt_A.png
+   :alt: A/M_p waveform.
+
+   A/M_p waveform 
+
+Finally, within compartment A, we have conversion of M_p to M, which in turn
+is transported to compartment B to complete the cycle.
+
+.. figure:: ../../../../images/ex6.1_M_in_compt_A.png
+   :alt: A/M waveform.
+
+   A/M waveform 
+
+
+Here is the script:
+
+::
+
+    import moose
+    import pylab
+    import rdesigneur as rd
+    rdes = rd.rdesigneur(
+    turnOffElec = True,
+    diffusionLength = 1e-3, # Default diffusion length is 2 microns
+    chemProto = [['./chem/OSC_different_vols.g', 'osc']],
+    chemDistrib = [
+        # for dend: [chemComptName, elecComptName, dend, geom, diffusionLen]
+        ['A', 'soma', 'dend', '1', 1e-3 ],
+        # for endo: [chemComptName, elecComptName, endo, geom, 
+        #    surroundMeshName, radiusRatioToSurroundVoxels ]
+        ['B', 'soma', 'endo', '1', 'A', 0.794 ],
+    ],
+    plotList = [
+        ['soma', '1', 'A/M_p', 'conc', 'Compt A [M_p]'],
+        ['soma', '1', 'B/M_p', 'conc', 'Compt B [M_p]'],
+        ['soma', '1', 'A/M', 'conc', 'Compt A [M]'],
+        ['soma', '1', 'B/M', 'conc', 'Compt B [M]'],
+    ]
+    )
+    rdes.buildModel()
+    moose.reinit()
+    moose.start( 4000 )
+    rdes.display()
+
+        
+A special note about defining compartments: In the case of SBML models,
+compartments and their names are done explicitly. In the legacy Genesis/Kkit
+models (as used here), there is a special hack so that MOOSE reads in a 
+reaction Group as a Compartment when there is the annotation "Compartment"
+on the Group. Either way, we end up with two starting compartments 
+**A** and **B**. 
+
+The *chemDistrib* entries specify how to assign the 
+compartments A and B as *dend* and *endo* compartments respectively.
+Other options for compartments are listed in the Rdesigneur command reference.
+
+As for the previous example, the turnOffElec flag is True, so that
+Rdesigneur only sets up chemical and not electrical calculations. 
+
+The *plotList* here is much the same as in the previous example, here it has
+four entries.
+
 
 Reaction-diffusion system
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1009,13 +1123,13 @@ come up.
 
    Display for oscillatory reaction-diffusion simulation
 
-For those who would rather use the much simpler matplotlib 3-D display option,
+For those who would rather use the much simpler VPython 3D display option,
 this is what the same simulation looks like:
 
 .. figure:: ../../../../images/ex7.0_spatial_chem_osc.png
-   :alt: Display for oscillatory reac-diff simulation using matplotlib
+   :alt: Display for oscillatory reac-diff simulation using VPython
 
-   Display for oscillatory reac-diff simulation using matplotlib
+   Display for oscillatory reac-diff simulation using VPython
 
 
 .. _`moogli primer`:
@@ -1023,35 +1137,55 @@ this is what the same simulation looks like:
 Primer on using the 3-D MOOGLI display
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-There are two variants of the MOOGLI display. The first, named Moogli,
-uses OpenGL and OpenSceneGraph. It is fast to display, slow to load, and
-difficult to compile. It produces much better looking 3-D graphics.
-The second is a fallback interface using mplot3d, which is a library of 
-Matplotlib and so should be generally available. It is slower to display,
-faster to load, but needs no special compilation. It uses stick graphics
-and though it conveys much the same information, isn't as nice to look at
-as the original Moogli. Its controls are more or less the same but less 
-smooth than the original Moogli.
+MOOGLI is the MOOSE Graphical Interface. It uses Vpython to drive a WebGL
+display in your browser. It is reasonably fast and good looking, and 
+supersedes the two earlier displays used by rdesigneur in versions prior 
+to Jan 2022.
 
 Here is a short primer on the 3-D display controls.
 
--  *Roll, pitch, and yaw*: Use the letters *r*, *p*, and *y*. To rotate
-   backwards, use capitals.
--  *Zoom out and in*: Use the *,* and *.* keys, or their upper-case
-   equivalents, *<* and *>*. Easier to remember if you think in terms of
-   the upper-case.
--  *Left/right/up/down*: Arrow keys.
--  *Quit*: control-q or control-w.
--  You can also use the mouse or trackpad to control most of the above.
--  By default rdesigneur gives Moogli a small rotation each frame. It is
-   the *rotation* argument in the line:
+- Mouse right button causes rotation around center.
+- Mouse scroll wheel causes zooming in or out.
+- Shift-mouseleft button causes the image to be dragged around 
+  left/right and up/down.
+- *Roll, pitch, and yaw*: Use the letters *r*, *p*, and *y*. To rotate
+  backwards, use capitals.
+- *Zoom out and in*: Use the *,* and *.* keys, or their upper-case
+  equivalents, *<* and *>*. Easier to remember if you think in terms of
+  the upper-case.
+- *Left/right/up/down*: Arrow keys.
+- *Display and center All*: **a** key.
+- *Diameter scaling*: Capital **D** makes the diameter larger, small **d**
+  makes it smaller. Useful to visualize thin-diameter dendrites. Note that
+  it does not reposition spines, they will get engulfed if you make the
+  diameter too big.
+- *Quit*: control-q or control-w.
+- You can also use the mouse or trackpad to control most of the above.
+- Rdesigneur can also give Moogli a small rotation each frame. It is
+  the *rotation* argument in the line:
 
    ``displayMoogli( frametime, runtime, rotation )``
 
 These controls operate over and above this rotation, but the rotation
-continues. If you set the rotation to zero you can, with a suitable
-flick of the mouse, get the image to rotate in any direction you choose
-as long as the window is updating.
+continues while the simulation is running. 
+
+Moogli displays a few additional items:
+
+- The name of the variable in the top left and above the colorbar.
+- The current simulation time, above the colorbar.
+- A slider with the wait time for each frame, when in replay mode.
+- A button to activate replay mode. This becomes enabled after the simulation
+  completes. When pushed, this causes the Moogli display to cycle through the
+  entire simulation, at a frame rate determined by the slider. This is very
+  handy to play back a simulation at a faster (or slower) rate than the 
+  original calculation.
+- A colorbar on the left.
+- At the bottom left there is a small axis with a scale value just above it. 
+  The three axes are x: red; y: green and z: blue. The length of each axis 
+  is indicated just above. The nominal position of this axis is the centre of
+  rotation of the image. Due to peculiarities in how Vpython passes events,
+  the scale axes are updated only during replay, or when the user clicks or 
+  does a keyboard control event in the display.
 
 Diffusion of a single molecule
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1183,7 +1317,7 @@ of position in successive image frames.
     Time-series plot of dendritic calcium. Different colors represent
     different voxels in the dendrite.
 
-.. figure:: ../../../../images/ex7.2_CICR_wave_lastFrame.png
+.. figure:: ../../../../images/ex7.2_CICR_wave.png
 
     Place holder for time-evolving movie of dendritic calcium as a function of
     position along the dendrite.
@@ -1689,12 +1823,13 @@ is limited by a domain of the dendrite in which the level of IP3 is elevated.
         stimList = [
             ['head0', '0.5', 'glu', 'periodicsyn', '1 + 40*(t>5 && t<6)'],
             ['head0', '0.5', 'NMDA', 'periodicsyn', '1 + 40*(t>5 && t<6)'],
-            ['dend#',  'g>10e-6 && g<=31e-6', 'dend/IP3', 'conc', '0.0006' ],
+            ['dend#',  'g>10e-6 && g<=31e-6', 'dend/IP3', 'conc', '0.0008' ],
             ],
         plotList = [
             ['head#', '1', 'spine/Ca', 'conc', 'Spine Ca conc'],
             ['dend#', '1', 'dend/Ca', 'conc', 'Dend Ca conc'],
             ['dend#', '1', 'dend/Ca', 'conc', 'Dend Ca conc', 'wave'],
+            ['dend#', '1', 'dend/IP3', 'conc', 'Dend IP3 conc', 'wave'],
             ['dend#', '1', 'dend_endo/CaER', 'conc', 'ER Ca conc', 'wave'],
             ['soma', '1', '.', 'Vm', 'Memb potl'],
         ],
@@ -1711,7 +1846,7 @@ compartments.
 
 ::
 
-    ['dend#',  'g>10e-6 && g<=31e-6', 'dend/IP3', 'conc', '0.0006' ]
+    ['dend#',  'g>10e-6 && g<=31e-6', 'dend/IP3', 'conc', '0.0008' ]
 
 This means to look at all dendrite compartments (first argument), and select 
 those which are between a geometrical distance *g* of 10 to 31 microns 
@@ -1737,6 +1872,9 @@ rdesigneur goes like this:
           *dend, dend_endo, spine-head, spine-endo, psd, psd-endo*.
           The psd-endo doesn't make a lot of biological sense, though.
 
+Note also that future versions of Rdesigneur will clean up this implicit 
+naming of compartments.
+
 When we run this model, we trigger a propagating Ca wave from about voxel 
 number 16 of 40. It spreads in both directions, and comes to a halt at voxels
 10 and 30, which mark the limits of the IP3 elevation zone.
@@ -1744,14 +1882,18 @@ number 16 of 40. It spreads in both directions, and comes to a halt at voxels
 .. figure:: ../../../../images/ex8.1_dend_Ca.png
    :alt: Calcium wave propagation along the dendrite
 
-   Calcium wave propagation along the dendrite
+   Calcium wave propagation along the dendrite, snapshot at 7.8 sec.
 
 Note two subtle effects on the ER Ca concentration: first, there is a 
-periodic small influx of calcium at voxel 16 due to synaptic input. Second, 
+periodic small influx of calcium at voxel 16 due to synaptic input. 
+This is best seen by zooming into the Dend Ca Conc time-series plot, and
+is very visible on the Spine Ca concentration-vs time plot. 
+Second, 
 there is a slow restoration of the ER Ca level toward baseline due to 
 diffusion in the dendrite and the action of pumps to within the ER, and 
 out of the cell. Note also that the gradient within the ER is actually quite
-small, being about a 12% deviation from the resting calcium.
+small, being about a 12% deviation from the resting calcium. These are visible
+in the ER Ca conc wave plot.
 
 .. figure:: ../../../../images/ex8.1_ER_Ca.png
    :alt: Calcium depletion and buildup in the ER due to CICR wave.
@@ -1910,6 +2052,8 @@ Multiscale model in which spine geometry changes due to signaling
 
 *ex8.3_spine_vol_change.py*
 
+.. warning :: Running this model with older  version of moose-core commit number `65720c1d2e0eb8` on 5 Oct 2020 is deprecated.
+
 This model is very similar to 8.2. The main design difference is that 
 *adaptor*, instead of just modulating the gluR conductance, scales the 
 entire spine cross-section area, with all sorts of electrical and chemical
@@ -2056,6 +2200,143 @@ Suggestions:
         - Even more interesting, use it to design an oscillator. You could look
           at Bhalla, BiophysJ 2011 for some ideas.
 
+
+Synaptic triggered CICR with 3-Di display
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*ex8.4_3d_synTrigCICR.py*
+
+This is identical to example 8.1 above, but now we add a 3-D display both to
+better visualize what is happening, and to show off the capabilities of the
+MOOGLI display.
+As before, synaptic input arrives at a dendritic spine, leading to calcium
+influx through the NMDA receptor. An adaptor converts this influx to the 
+concentration of a chemical species, and this then diffuses into the dendrite
+and sets off the CICR.
+
+::
+
+    import moose
+    import pylab
+    import rdesigneur as rd
+    rdes = rd.rdesigneur(
+        turnOffElec = False,
+        chemDt = 0.002,
+        chemPlotDt = 0.02,
+        diffusionLength = 1e-6,
+        numWaveFrames = 50,
+        useGssa = False,
+        addSomaChemCompt = False,
+        addEndoChemCompt = True,
+        # cellProto syntax: ['ballAndStick', 'name', somaDia, somaLength, dendDia, dendLength, numDendSeg]
+        cellProto = [['ballAndStick', 'soma', 10e-6, 10e-6, 2e-6, 40e-6, 4]],
+        spineProto = [['makeActiveSpine()', 'spine']],
+        chemProto = [['./chem/CICRspineDend.g', 'chem']],
+        spineDistrib = [['spine', '#dend#', '2e-6', '-0.1e-6']],
+        chemDistrib = [['chem', 'dend#,spine#,head#', 'install', '1' ]],
+        adaptorList = [
+            [ 'Ca_conc', 'Ca', 'spine/Ca', 'conc', 0.00008, 8 ]
+        ],
+        stimList = [
+            ['head5', '0.5', 'glu', 'periodicsyn', '1 + 40*(t>2 && t<3)'],
+            ['head5', '0.5', 'NMDA', 'periodicsyn', '1 + 40*(t>2 && t<3)'],
+            ['dend#',  'g>10e-6 && g<=31e-6', 'dend/IP3', 'conc', '0.0008' ],
+            ],
+        plotList = [
+            ['head#', '1', 'spine/Ca', 'conc', 'Spine Ca conc'],
+            ['dend#', '1', 'dend/Ca', 'conc', 'Dend Ca conc'],
+            ['dend#', '1', 'dend_endo/CaER', 'conc', 'ER Ca conc' ],
+            ['soma', '1', '.', 'Vm', 'Soma potl'],
+        ],
+        moogList = [
+            ['#', '1', '.', 'Vm', 'Memb. potl.', -65, -60],
+            #['head#', '1', 'spine/Ca', 'conc', 'Spine Ca conc', 0, 30],
+            #['dend#', '1', 'dend/Ca', 'conc', 'Dend Ca conc'],
+            ['dend#', '1', 'dend_endo/CaER', 'conc', 'ER Ca conc', 320, 480],
+        ],
+    )
+    moose.seed( 1234 )
+    rdes.buildModel()
+    moose.reinit()
+    rdes.displayMoogli( 0.05, 6, rotation = 0, mergeDisplays = True, colormap = 'jet', center = [30e-6, 0, 0] )
+    #rdes.displayMoogli( 0.05, 5, rotation = 0.01, mergeDisplays = False )
+
+
+The model logic has been discussed above, so here I'll just focus on the 
+use of the 3-D display. Several options are given in comments to show how
+alternative display options work.
+First, using the script exactly as above, one can run it to get a nice
+view of the cell with the ER (represented as spheres) embedded within it. The
+displays are merged so that the voltage and ER show up in the same volume.
+
+.. figure:: ../../../../images/ex8.4_embedded.png
+   :alt: ER embedded in compartmental model of neuron
+
+   ER embedded in compartmental model of neuron
+
+In order to better visualize the Ca in the ER, we can shrink the displayed
+diameter of compartments in the electrical model. This leaves the ER more
+visible:
+
+.. figure:: ../../../../images/ex8.4_shrunk.png
+   :alt: Electrical model shrunk to better see the ER.
+
+   Electrical model shrunk to better see the ER.
+
+If instead we were more interested in the calcium levels in the spines and
+dendrites, we could change the moogList. Here we comment out the voltage 
+and ER and uncomment the calcium:
+
+::
+
+        moogList = [
+            #['#', '1', '.', 'Vm', 'Memb. potl.', -65, -60],
+            ['head#', '1', 'spine/Ca', 'conc', 'Spine Ca conc', 0, 30],
+            ['dend#', '1', 'dend/Ca', 'conc', 'Dend Ca conc'],
+            #['dend#', '1', 'dend_endo/CaER', 'conc', 'ER Ca conc', 320, 480],
+        ],
+
+Here the chem models representing spine heads float around the dendrite, and
+the soma is not being displayed. First, we see Ca influx into the selected 
+spine head number 5:
+
+.. figure:: ../../../../images/ex8.4_spine_active.png
+   :alt: Ca influx into stimulated spine
+
+   Ca influx into stimulated spine
+
+A little later, the CICR wave starts propagating down the dendrite:
+
+.. figure:: ../../../../images/ex8.4_Ca_propagation.png
+   :alt: Calcium wave due to CICR along dendrite
+
+   Calcium wave due to CICR along dendrite
+
+Finally, we might want to display the membrane potential in one view and the
+dendritic calcium in another. We would use this for moogList:
+
+::
+
+        moogList = [
+            ['#', '1', '.', 'Vm', 'Memb. potl.', -65, -60],
+            #['head#', '1', 'spine/Ca', 'conc', 'Spine Ca conc', 0, 30],
+            ['dend#', '1', 'dend/Ca', 'conc', 'Dend Ca conc'],
+            #['dend#', '1', 'dend_endo/CaER', 'conc', 'ER Ca conc', 320, 480],
+        ],
+
+and this for the display:
+
+::
+
+    #rdes.displayMoogli( 0.05, 6, rotation = 0, mergeDisplays = True, colormap = 'jet', center = [30e-6, 0, 0] )
+    rdes.displayMoogli( 0.05, 5, rotation = 0.01, mergeDisplays = False )
+
+This is what we get:
+
+.. figure:: ../../../../images/ex8.4_separate_displays.png
+   :alt: Separate displays of membrane potential (left) and Dendritic Ca (right)
+
+   Separate displays of membrane potential (left) and Dendritic Ca (right)
 
 
 Morphology: Load .swc morphology file and view it
@@ -2470,6 +2751,704 @@ Suggestions:
         - Play with expressions for spine size and angular placement.
         - See what happens if the segment size gets smaller than the
           spine spacing.
+
+Place spines on a ball-and-stick model, see Ca influx and diffusion following synaptic input
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*ex10.1_spine_Ca_influx_to_dend.py*
+
+This is a minimal multiscale model, meant to illustrate how to set up the mapping from 
+synaptic stimulus onto spines to Ca influx via NMDA receptors, leading to buildup of Ca in
+spines and the parent dendrite. 
+
+.. figure:: ../../../../images/ex10.1_morphology.png
+   :alt: Morphology of spiny ball-and-stick model
+
+   Morphology of spiny ball-and-stick model
+       
+
+Note specially how the mapping works between the dendrite (a single compartment), the spines (10
+of them) and the chemical reaction-diffusion system, which has 40 voxels.
+
+The synapses are spaced equally, as signified by the negative sign on the final argument of 
+spineDistrib.
+
+The electrical model is the standard ball-and-stick model built into rdesigneur. There are
+no active channels.
+The chemical model just consists of a pool of calcium (Ca) in the spine, and another pool in the 
+dendrite.
+
+The stimulus is a sequence of bursts of input onto synapse 3, 4, 6 and 8. 
+There are two waveplots, representing the calcium at the spines and then in the dendrites.
+
+::
+
+    import moose
+    import pylab
+    import rdesigneur as rd
+    rdes = rd.rdesigneur(
+        turnOffElec = False,
+        chemDt = 0.002,
+        chemPlotDt = 0.02,
+        diffusionLength = 1e-6,
+        numWaveFrames = 50,
+        useGssa = False,
+        addSomaChemCompt = False,
+        addEndoChemCompt = False,
+        # cellProto syntax: ['ballAndStick', 'name', somaDia, somaLength, dendDia, dendLength, numDendSeg]
+        cellProto = [['ballAndStick', 'soma', 10e-6, 10e-6, 2e-6, 40e-6, 1]],
+        spineProto = [['makeActiveSpine()', 'spine']],
+        chemProto = [['./CaOnly.g', 'chem']],
+        spineDistrib = [['spine', '#dend#', '4.0e-6', '-0.1e-6']],
+        chemDistrib = [['chem', 'dend#,spine#,head#', 'install', '1' ]],
+        adaptorList = [
+            [ 'Ca_conc', 'Ca', 'spine/Ca', 'conc', 0.00008, 8 ]
+        ],
+        stimList = [
+            ['head3', '0.5', 'glu', 'periodicsyn', '0 + 40*(t>2 && t<3)'],
+            ['head3', '0.5', 'NMDA', 'periodicsyn', '0 + 40*(t>2 && t<3)'],
+            ['head4', '0.5', 'glu', 'periodicsyn', '0 + 40*(t>4 && t<5)'],
+            ['head4', '0.5', 'NMDA', 'periodicsyn', '0 + 40*(t>4 && t<5)'],
+            ['head6', '0.5', 'glu', 'periodicsyn', '0 + 40*(t>8 && t<9)'],
+            ['head6', '0.5', 'NMDA', 'periodicsyn', '0 + 40*(t>8 && t<9)'],
+            ['head8', '0.5', 'glu', 'periodicsyn', '0 + 40*(t>10 && t<11)'],
+            ['head8', '0.5', 'NMDA', 'periodicsyn', '0 + 40*(t>10 && t<11)'],
+            ],
+        plotList = [
+            ['head#', '1', 'spine/Ca', 'conc', 'Spine Ca conc'],
+            ['dend#', '1', 'dend/Ca', 'conc', 'Dend Ca conc'],
+            ['head#', '1', 'spine/Ca', 'conc', 'Spine Ca conc', 'wave'],
+            ['dend#', '1', 'dend/Ca', 'conc', 'Dend Ca conc', 'wave'],
+            ['soma', '1', '.', 'Vm', 'Memb potl'],
+        ],
+    )
+    moose.seed( 1234 )
+    rdes.buildModel()
+    moose.reinit()
+    moose.start( 16 )
+    rdes.display()
+    
+Place spines on a Y-branched neuron model, see Ca influx and diffusion following synaptic input
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*ex10.2_spine_Ca_influx_to_branched_neuron.py*
+
+.. warning :: Running this model with older  version of moose-core commit number `65720c1d2e0eb8` on 5 Oct 2020 is deprecated.
+
+This is conceptually identical to the previous minimal multiscale model. The 
+key point of this example is to show how the spine and chemical voxel 
+numbering maps to branching neurons. This example also introduces the 
+rdesigneur built-in prototype for a Y-branched neuron. This uses
+the **branchedCell** identifier.
+
+As in the previous model, here we illustrate how to set up the mapping from 
+synaptic stimulus onto spines to Ca influx via NMDA receptors, leading to 
+buildup of Ca in spines and the parent dendrite. There are no channels and 
+no reactions, just Calcium pools.
+
+Note specially how the mapping works between the branched dendrite 
+(3 compartments), the spines (30 of them) and the chemical reaction-diffusion 
+system, which has 120 voxels, 40 in each segment of the branch.
+
+The synapses are spaced equally, as signified by the negative sign on the 
+final argument of spineDistrib.
+
+The stimulus is a sequence of bursts of input, two each on the apical 
+dendrite and each of the branches.
+
+There are two waveplots, representing the calcium at the spines and then 
+in the dendrites. Note that the Y-structure of the model is mapped piecemeal
+onto sections of the waveplot.
+
+.. figure:: ../../../../images/ex10.2_spine_Ca.png
+   :alt: Spine calcium
+
+   Calcium levels in each of the spine heads.
+
+
+.. figure:: ../../../../images/ex10.2_dend_Ca.png
+   :alt: Dendrite calcium
+
+   Calcium levels in each of the dendritic voxels.
+
+After the waveplots various regular lineplots are shown, in which timeseries
+for each of the compartments are plotted.
+
+You can optionally display the geometry of the model, by un-commenting the 
+line that defines the moogList.
+
+.. figure:: ../../../../images/ex10.2_morphology.png
+   :alt: Morphology of spiny Y-branch model of neuron.
+
+   Morphology of spiny Y-branch model of neuron.
+
+
+::
+
+	import moose
+	import pylab
+	import rdesigneur as rd
+	
+	moogList = []
+	### Remove comment from line below if you want to display the 3-d cell view.
+	#moogList = [['#', '1', '.', 'Vm', 'Membrane potential', -0.065, -0.055]]
+	
+	rdes = rd.rdesigneur(
+	    turnOffElec = False,
+	    chemDt = 0.002,
+	    chemPlotDt = 0.02,
+	    diffusionLength = 1e-6,
+	    numWaveFrames = 50,
+	    useGssa = False,
+	    addSomaChemCompt = False,
+	    addEndoChemCompt = False,
+	    # cellProto syntax: ['branchedCell', 'name', somaDia, somaLength, dendDia, dendLength, numDendSeg, branchDia, branchLength, numBranchSeg]
+	    cellProto = [['branchedCell', 'soma', 10e-6, 10e-6, 1e-6, 40e-6, 1, 0.5e-6, 40e-6, 1]],
+	    spineProto = [['makeActiveSpine()', 'spine']],
+	    chemProto = [['./CaOnly.g', 'chem']],
+	    spineDistrib = [['spine', '#dend#,#branch#', '4.0e-6', '-0.1e-6']],
+	    chemDistrib = [['chem', 'dend#,branch#,spine#,head#', 'install', '1' ]],
+	    adaptorList = [
+	        [ 'Ca_conc', 'Ca', 'spine/Ca', 'conc', 0.00008, 8 ]
+	    ],
+	    stimList = [
+	        ['head3', '0.5', 'glu', 'periodicsyn', '0 + 40*(t>2 && t<3)'],
+	        ['head3', '0.5', 'NMDA', 'periodicsyn', '0 + 40*(t>2 && t<3)'],
+	        ['head4', '0.5', 'glu', 'periodicsyn', '0 + 40*(t>4 && t<5)'],
+	        ['head4', '0.5', 'NMDA', 'periodicsyn', '0 + 40*(t>4 && t<5)'],
+	        ['head13', '0.5', 'glu', 'periodicsyn', '0 + 40*(t>8 && t<9)'],
+	        ['head13', '0.5', 'NMDA', 'periodicsyn', '0 + 40*(t>8 && t<9)'],
+	        ['head14', '0.5', 'glu', 'periodicsyn', '0 + 40*(t>10 && t<11)'],
+	        ['head14', '0.5', 'NMDA', 'periodicsyn', '0 + 40*(t>10 && t<11)'],
+	        ['head23', '0.5', 'glu', 'periodicsyn', '0 + 40*(t>14 && t<15)'],
+	        ['head23', '0.5', 'NMDA', 'periodicsyn', '0 + 40*(t>14 && t<15)'],
+	        ['head24', '0.5', 'glu', 'periodicsyn', '0 + 40*(t>16 && t<17)'],
+	        ['head24', '0.5', 'NMDA', 'periodicsyn', '0 + 40*(t>16 && t<17)'],
+	        ],
+	    plotList = [
+	        ['head#', '1', 'spine/Ca', 'conc', 'Spine Ca conc'],
+	        ['dend#,branch#', '1', 'dend/Ca', 'conc', 'Dend Ca conc'],
+	        ['head#', '1', 'spine/Ca', 'conc', 'Spine Ca conc', 'wave'],
+	        ['dend#,branch#', '1', 'dend/Ca', 'conc', 'Dend Ca conc', 'wave'],
+	        ['soma,#dend#,branch#', '1', '.', 'Vm', 'Memb potl'],
+	        ['soma', '1', '.', 'Vm', 'Memb potl'],
+	    ],
+	    moogList = moogList,
+	)
+	moose.seed( 1234 )
+	rdes.buildModel()
+	moose.reinit()
+	if len(moogList) == 0:
+	    moose.start( 20 )
+	    rdes.display()
+	else:
+	    rdes.displayMoogli( 0.1, 20, 0.0 )
+	
+
+
+Presynaptic reactions coupled to synaptic release and postsynaptic potentials
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*ex11.0_presyn_dynamics.py*
+
+.. warning :: Running this model with older version of moose-core commit number `65720c1d2e0eb8` on 5 Oct 2020 is deprecated.
+
+Here we model presynaptic dynamics from boutons to dendritic spine heads,
+leading to EPSPs at the soma of the postsynaptic neuron.
+In each bouton we build a small reaction system for
+calcium influx and depletion of readily-releasable pools of vesicles. 
+We apply a burst of stimuli that cause Ca buildup and vesicle depletion as
+release occurs. The
+released vesicles contain neurotransmitter which couples to postsynapic 
+receptors on their corresponding spines, and we end up with somatic 
+depolarization. The key feature here is to show how we build an array of 
+presynaptic boutons that map one-to-one with postsynaptic spines and receptors.
+
+All this happens independently in three synapses on the model neuron.
+
+Here is a 3-D picture of the model. The presynaptic boutons are represented
+as cones abutting the synaptic spine heads. Note the minuscule separation 
+between bouton and spine head.
+
+.. figure:: ../../../../images/ex11.0_presyn_spine.png
+   :alt: 3-D picture of simulation with activity in presynaptic boutons.
+
+   3-D picture of simulation with activity in presynaptic boutons.
+
+Here we see the time-course of input to the boutons.
+
+.. figure:: ../../../../images/ex11.0_input.png
+   :alt: Input to boutons. 
+
+   Input to boutons.
+
+This results in calcium influx, which is stochastic.
+
+.. figure:: ../../../../images/ex11.0_Ca.png
+   :alt: Calcium levels in the boutons
+
+   Calcium levels in the boutons
+
+The calcium triggers exocytosis of the synaptic vesicles, hence depletion of
+the readily releasable pool (RR_pool).
+
+.. figure:: ../../../../images/ex11.0_RR_pool.png
+   :alt: Dynamics of readily releasable pool of presynaptic vesicles
+
+   Dynamics of readily releasable pool of presynaptic vesicles
+
+The released vesicles are recycled rapidly. It is assumed that the glutamate
+is just a scale-factor of the number of released vesicles.
+
+.. figure:: ../../../../images/ex11.0_release.png
+   :alt: Number of released vesicles
+
+   Number of released vesicles
+
+Finally, the neurotransmitter content of the released vesicles is coupled to
+the postsynaptic receptors on the spines. This leads to EPSPs (excitatory
+post-synaptic potentials) on the cell body.
+
+.. figure:: ../../../../images/ex11.0_Vm.png
+   :alt: Membrane potential at soma.
+
+   Membrane potential at soma.
+
+The model script is below:
+
+::
+
+        import moose
+        import rdesigneur as rd
+        
+        freq = 20.0 # Hz
+        settleTime = 0.2    # seconds
+        numPulses = 8
+        stimEnd = settleTime + numPulses/(freq+1)
+        stimAmpl = 2.0e-2
+        runtime = 0.8
+        
+        ## This string sets up a burst of input activity
+        gluStimStr = "{}*(t>{} && t<{}) * exp( 50 * (sin(t*2*3.14159265 * {}) -1) )".for
+        mat(stimAmpl, settleTime, stimEnd, freq )
+        
+        rdes = rd.rdesigneur(
+        elecDt = 50e-6,
+        chemDt = 0.002,
+        chemPlotDt = 0.002,
+        turnOffElec = False,
+        useGssa = True,    
+        
+        # cellProto syntax: ['ballAndStick', 'name', somaDia, somaLength, dendDia, d
+        endLength, numDendSeg]
+        # 10x10 micron soma, 2x60 micron dendrite, 1 segment dendrite.
+        cellProto = [['ballAndStick', 'soma',  10e-6, 10e-6, 2e-6, 60e-6, 1]],
+        chemProto = [['./echem.g', 'chem']],
+        spineProto = [['makeActiveSpine()', 'spine']],
+        spineDistrib = [
+                ['spine', 'dend#', '20e-6', '-1e-6']  # Put 3 spines, 20 um apart
+        ],
+        chemDistrib = [ # Put presynaptic bouton compartments next to each spine
+                ['kinetics', 'head#', 'presyn_spine', '1', 1.0, 0 ],
+        ],
+        adaptorList = [ # map released neurotransmitter to cognate receptor
+                # Y. Wang et al JACS 2019, 141,44 estimate 8K glu per vesicle.
+                ['kinetics/glu/glu', 'n', 'glu', 'activation', 0.0, 8.0e3 ],
+        ],
+        stimList = [ # deliver the stimuli
+                ['head#', '1', 'kinetics/glu/Ca_ext', 'conc', gluStimStr ],
+        ],
+        plotList = [ # Lots of plots.
+                ['#', '1', 'kinetics/glu/Ca', 'conc', 'Ca in presyn bouton'],
+                ['#', '1', 'kinetics/glu/RR_pool', 'n', 'RR_pool in presyn bouton'],
+                ['#', '1', 'kinetics/glu/Ca_ext', 'conc', 'Input to bouton'],
+                ['#', '1', 'kinetics/glu/glu', 'n', '# of glu vesicles released'],
+                ['soma', '1', '.', 'Vm', 'Membrane potential'],
+        ]
+        )
+        
+        moose.seed( 1234 ) # Random number seed. Response details change with this.
+        moose.element( '/library/spine/head/glu' ).Gbar *= 0.1 # Tweak conductance
+        rdes.buildModel() # Assemble the model from prototypes.
+        moose.reinit()
+        moose.start( runtime )
+        rdes.display()
+
+
+The important steps in this set up are 
+1. to create and distribute the spines along the dendrite, as seen in    earlier example 
+2. to define the chemDistrib, which says that the chem    model in *kinetics* should be put on every compartment whose name    starts with 'head'. These are the spine heads, of course. 
+3. to assign a bouton radius scaled by 1.0 from the spine head radius,    with a standard deviation of 0. These terms are the last two arguments    on the chemDistrib.
+4. To assign an adaptor from the glutamate released from the bouton, to the    activation of the postsynaptic *glu* receptor on the spine head. This    adaptor converts the number of vesicles to the number of glutamate molecules,   with a scaling factor of 8.0e3.
+
+
+
+Presynaptic boutons coupling directly to receptors on the dendrite
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*ex11.1_presyn_dend.py*
+
+.. warning :: Running this model with older version of moose-core commit number `65720c1d2e0eb8` on 5 Oct 2020 is deprecated.
+
+Here we model presynaptic dynamics from boutons synapsing onto receptors 
+directly placed on the dendrite. It is a very similar model to the one above,
+with the difference that we're not synapsing onto spines. This would be
+relevant for many kinds of inhibitory input.
+
+Here is a 3-D picture of the model. The presynaptic boutons are represented
+as cones adjacent to the dendrite. 
+
+.. figure:: ../../../../images/ex11.1_boutons_dendrite.png
+   :alt: 3-D picture of simulation of boutons synapsing directly onto dendrite.
+
+   3-D picture of simulation of boutons synapsing directly onto dendrite.
+
+
+As before, each bouton has a reaction system from Calcium -> vesicle release ->
+activation of postsynaptic receptor -> EPSP. The same burst of stimuli is 
+applied to set it all off.
+
+
+.. figure:: ../../../../images/ex11.1_input.png
+   :alt: Input to boutons. 
+
+   Input to boutons.
+
+Again, the resultant calcium response in the boutons is stochastic.
+
+.. figure:: ../../../../images/ex11.1_Ca.png
+   :alt: Calcium levels in the boutons
+
+   Calcium levels in the boutons
+
+The calcium triggers exocytosis of the synaptic vesicles, hence depletion of
+the readily releasable pool (RR_pool).
+
+.. figure:: ../../../../images/ex11.1_RR_pool.png
+   :alt: Dynamics of readily releasable pool of presynaptic vesicles
+
+   Dynamics of readily releasable pool of presynaptic vesicles
+
+The released vesicles are recycled rapidly. It is assumed that the glutamate
+is just a scale-factor of the number of released vesicles.
+
+.. figure:: ../../../../images/ex11.1_release.png
+   :alt: Number of released vesicles
+
+   Number of released vesicles
+
+Finally, the neurotransmitter content of the released vesicles is coupled to
+the postsynaptic receptors on the spines. This leads to EPSPs (excitatory
+post-synaptic potentials) on the cell body.
+
+.. figure:: ../../../../images/ex11.1_Vm.png
+   :alt: Membrane potential at soma.
+
+   Membrane potential at soma.
+
+
+The model script is below.
+
+::
+	
+	import moose
+	import rdesigneur as rd
+	
+	freq = 20.0 # Hz
+	settleTime = 0.2    # seconds
+	numPulses = 8
+	stimEnd = settleTime + numPulses/(freq+1)
+	stimAmpl = 2.0e-2
+	runtime = 0.8
+	
+	## This string sets up a burst of input activity
+	gluStimStr = "0.08e-3 + {}*(t>{} && t<{}) * exp( 50 * (sin(t*2*3.14159265 * {}) -1) )".format(stimAmpl, settleTime, stimEnd, freq )
+	
+	rdes = rd.rdesigneur(
+	    elecDt = 50e-6,
+	    chemDt = 0.001,
+	    chemPlotDt = 0.001,
+	    turnOffElec = False,
+	    useGssa = True,
+	
+	    # cellProto syntax: ['ballAndStick', 'name', somaDia, somaLength, dendDia, dendLength, numDendSeg]
+	    # 10x10 micron soma, 2x60 micron dendrite, 1 segment dendrite.
+	    cellProto = [['ballAndStick', 'soma',  10e-6, 10e-6, 2e-6, 60e-6, 1]],
+	    chanProto = [['make_glu()', 'glu']],
+	    chanDistrib = [['glu', 'dend#', 'Gbar', '0.1']],
+	    chemProto = [['./echem.g', 'chem']],
+	    chemDistrib = [ # Put presynaptic bouton compartments next to the dend
+	        # Args: chem_model, elec_compts, mesh_type, spatial_distrib, r, sdev, spacing
+	        ['kinetics', 'dend#', 'presyn_dend', '1', 0.26e-6, 0, 20e-6 ],
+	    ],
+	    adaptorList = [ # map released neurotransmitter to cognate receptor
+	        # Want et al JACS 2019, 141,44 estimate 8K glu per vesicle.
+	        ['kinetics/glu/glu', 'n', 'glu', 'activation', 0.0, 8.0e3 ],
+	    ],
+	    stimList = [ # deliver the stimuli
+	        ['dend#', '1', 'kinetics/glu/Ca_ext', 'conc', gluStimStr ],
+	    ],
+	    plotList = [ # Lots of plots.
+	        ['#', '1', 'kinetics/glu/Ca', 'conc', 'Ca in presyn bouton'],
+	        ['#', '1', 'kinetics/glu/RR_pool', 'n', 'RR_pool in presyn bouton'],
+	        ['#', '1', 'kinetics/glu/Ca_ext', 'conc', 'Input to bouton'],
+	        ['#', '1', 'kinetics/glu/glu', 'n', '# of glu vesicles released'],
+	        ['soma', '1', '.', 'Vm', 'Membrane potential'],
+	    ]
+	)
+	
+	moose.seed( 1234 ) # Random number seed. Response details change with this.
+	rdes.buildModel() # Assemble the model from prototypes.
+	moose.reinit()
+	moose.start( runtime )
+	rdes.display()
+	
+
+Specially note that the chemDistrib line has two changes. First, the radius of
+the bouton is now defined in absolute SI length units rather than as a 
+scale factor relative to the size of the postsynaptic spine head. Second, there
+is a new last argument, the spacing between the boutons. We need this because, 
+unlike the case with dendritic spines, we can put several boutons on each 
+postsynaptic compartment, each independently activating the postsynaptic 
+receptor.
+
+
+Multiscale model of subcellular sequence detection
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*ex12.0_sequence_detection.py*
+
+.. warning :: This model will not run with moose-core older than commit number `65720c1d2e0eb8`
+
+This model is based on Bhalla, eLife 2017, in which segments of dendrite
+recognize sequential synaptic input. This occurs due to chemical 
+reaction-diffusion systems which build up when synaptic input goes along
+a stretch of dendrite in order, at a particular speed.
+
+In this model, the seqential input comes at five places on the dendrite,
+each illustrating a different aspect of sequence detection.
+
+1. On the proximal (nearer) lower branch of the dendrite, we have successful 
+   sequence detection through response buildup. This is a positive control.
+2. On the distal (far-away) lower branch of the dendrite, we again have 
+   successful sequence detection through response buildup.
+3. On the primary dendrite, we have failure of sequence detection because the 
+   dendrite has too large a diameter. Its volume so exceeds that of the 
+   stimulated spines that they are unable to trigger a large response
+4. On the proximal upper branch of the dendrite, we have the same sequence
+   but with double the input spacing. Detection fails because the diffusive
+   coupling between inputs is now too weak.
+5. On the distal upper branch of the dendrite, we deliver a scrambled sequence
+   with the original spacing. Detection fails because the input is not in order.
+
+The model also tries to be reasonably realistic about its electrical 
+properties. However, to get this demo to work reasonably fast the cell size 
+has been scaled down by about 100 fold, so the cell is hyperexcitable. 
+The cell has a large number of voltage-gated channels, and background synaptic
+input to AMPA, NMDA and GABA receptors. The GABA input is theta modulated.
+For reference, the current model has 16 compartments and 65 spines.
+The original model had over 2000 compartments and over 5000 spines.
+
+This is a big script because it sets up complex electrical and chemical
+physiology, as well as complex stimulus patterns. It is just one step down
+from the production model.
+
+The simulation time is 20 seconds, taking a wallclock time of about 150 
+seconds on a AMD Ryzen 7 5800. The output is best replayed on the 3D viewer 
+by setting the frame dt to zero. One can then easily see the sequential 
+input displayed as Ca levels in the spines, and the selective dendritic
+responses, displayed as MAPK_P levels in the dendrites.
+
+
+.. figure:: ../../../../images/ex12.0_seq.png
+   :alt: Response to sequential input.
+
+   Response to sequential input.
+
+Sequential input is being delivered to each of 5 zones on the dendritic tree.
+The 'lower' branch is further away in the image, and has two zones of 
+sequential input, numbered 1 and 2 from the list above.
+The 'upper' branch is closer to the viewer and has zones 4 and 5.
+The primary dendrite has zone 3.
+
+Below we have the model. Note several things about it:
+
+- The large dict for parameter definition.
+- The manner in which the chemDistrib is specified.
+- The rather complex stimulus strings, used to specify the sequences.
+- Lots of ion channels distributed in various ways on the cell.
+
+The model definition itself is long but it is just an elaboration of formats we
+have seen in simpler examples. There is just more of it.
+
+::
+
+	from __future__ import print_function
+	import moose
+	import numpy as np
+	import os
+	import rdesigneur as rd
+	import time
+	
+	baseFname = 'Fig6_data'
+	
+	params = {
+	    'diffusionLength':1.0e-6,  # Diffusion characteristic length, used as voxel length too.
+	    'dendDiameter': 1e-6,  # Diameter of section of dendrite in model
+	    'dendLength': 100e-6,   # Length of section of dendrite in model
+	    'spineSizeScale': 1.0,  # Length scaling for spines. Vol wil be x^3.
+	    'diffConstCa':100.0e-12,      # Diffusion constant of Ca
+	    'diffConstMAPK': 5e-12, # Diffusion constant for MAPK
+	    'diffConstPP': 2e-12, # Diff constant for MAPK-activated phosphatase
+	    'CaActivateRafKf': 6e6,	# 1/sec.mM: rate for activation of Raf by Ca
+	    'blankVoxelsAtEnd':10,  # of voxels to leave blank at end of cylinder
+	    'preStimTime':1.0,      # Time to run before turning on stimulus.
+	    'stimBurstTime':2.0,    # Time for a stimulus burst
+	    'postStimTime':10.0,    # Time to run after stimulus. ~3x decay time
+	    'runtime':20.0,         # Simulation run time
+	    'checkPoint':1.0,       # How often to do a checkpoint.
+	    'chemPlotDt':0.05,      # Plotting timestep for chemical signaling.
+	    'elecPlotDt':0.1e-3,    # Plotting timestep for electrical signaling.
+	    'spineSpacing':4.0e-6,  # Spacing between spines.
+	    'stimSpacing':4,        # Stimulus spacing, in terms of # of spines.
+	    'meanSpikeRate':0.1,    # Basal mean rate for all synapses.
+	    'activeSpikeRate':20.0,  # Active input rate on specified synapses.
+	    'baseGabaSpikeRate':1.0,    # 1 Hz.
+	    'thetaGabaSpikeRate':0.5, # This is the peak, not the average theta.
+	    'thetaFreq':8.0, 		# 
+	    'amparSynapseWeight': 30.0,    #
+	    'nmdarSynapseWeight': 30.0,   #
+	    'gabarSynapseWeight': 30.0,    #
+	    'LCaDensity': 0.0,     # Channel density for LCa channels.
+	    'adaptorScale':60.0e3, # Adaptor scale factor from conc to Na density in Seimens/m^2.
+	    'CaPsdScale': 0.08,    # Adaptor scale from psd elec Ca to chem conc.
+	    'Em': -60.0e-3,     #   Resting potential of neuron
+	    'refractoryPeriod':0.010,  # 10 ms refractory time.
+	    'cellModel': 'VHC-neuron.CNG.swc',  # Cell morphology file
+	    'chemModel': 'NN_mapk16.g',  # Chemical model file.
+	    'fnumber': 0,  # Output file index
+	    'seed': 1234,   # Seeds random numbers
+	    'seqDx': 4.0e-6,    # Sequence spatial interval
+	    'seqDt': 3.0,       # Sequence time interval
+	}
+	
+	# Here we define a string for each of the 5 stimulus timings in sequence:
+	seq = [0, 1, 2, 3, 4]   # ordered
+	stimStrList = ["{0} + (t>{1}) * (t<{2}) * {3}".format( 0, params['preStimTime'] + params['seqDt']*seq[idx], params['preStimTime'] + params['stimBurstTime']+ params['seqDt']*seq[idx], params['activeSpikeRate'] ) for idx in range(5) ]
+	
+	gabaRateExpression = "{} + 2*{} * cos(3.14159*t*{})^2".format( params['baseGabaSpikeRate'], params['thetaGabaSpikeRate'], params['thetaFreq'] )
+	
+	
+	plotlist = [
+	            ['soma', '1', '.', 'Vm', 'Soma Vm'],
+	            ['head12', '1', 'Ca_conc', 'Ca', 'head2 eCa'],
+	            ['dend36', '1', 'dend/DEND/P_MAPK', 'conc', 'dend36_P_MAPK'],
+	        ]
+	
+	def main():
+	    global rdes
+	    global params
+	
+	    diffusionLength = params['diffusionLength']
+	    dendLength = params['dendLength']
+	    diffusionLength = params['diffusionLength']
+	    library = moose.Neutral( '/library' )
+	
+	    chanpath = os.path.dirname( os.path.realpath(__file__)) + '/proto21.'
+	    moose.seed( params['seed'] )
+	    rdes = rd.rdesigneur(
+	        useGssa = False,
+	        turnOffElec = False,
+	        chemPlotDt = params['chemPlotDt'],
+	        diffusionLength = diffusionLength,
+	        spineProto = [['makeExcSpine()', 'spine']],
+	        chanProto = [
+	            [ chanpath + 'make_K_AHP()', 'K_AHP' ],
+	            [ chanpath + 'make_K_A()', 'K_A' ],
+	            [ chanpath + 'make_K_C()', 'K_C' ],
+	            [ chanpath + 'make_K_DR()', 'K_DR' ],
+	            [ chanpath + 'make_Na()', 'Na' ],
+	            [ chanpath + 'make_Ca_conc()', 'Ca_conc' ],
+	            [ chanpath + 'make_Ca()', 'Ca' ],
+	            [ chanpath + 'make_NMDA()', 'NMDA' ],
+	            [ chanpath + 'make_glu()', 'glu' ],
+	            [ chanpath + 'make_GABA()', 'GABA' ],
+	        ],
+	        chemProto = [[params['chemModel'], 'chem']],
+	        # branchedCell, name, somaDia, somaLen, dendDia, dendLen, dendNumSeg, branchDia, branchLen, branchNumSeg
+	        cellProto = [['branchedCell', 'soma', 10e-6, 20e-6, 1.2e-6, 60e-6, 5, 0.6e-6, 100e-6, 5]],
+	        chanDistrib = [
+	            ["Ca_conc", "#", "tau", "0.0133" ],
+	            ["Ca", "#dend#,#basal#,#apical#,#branch#", "Gbar", str( params["LCaDensity"] ) ],
+	            ["Ca", "#soma#", "Gbar", "40" ],
+	            ["Na", "#dend#,#basal#", "Gbar", "60" ],
+	            ["Na", "#soma#", "Gbar", "600" ],
+	            ["Na", "#apical#,#branch#", "Gbar", "40+40*exp(-p/200e-6)" ],
+	            ["K_DR", "#dend#,#basal#", "Gbar", "(p < 400e-6)*200" ],
+	            ["K_DR", "#soma#", "Gbar", "250" ],
+	            ["K_DR", "#apical#,#branch#", "Gbar", "60+40*(p < 125e-6)" ],
+	            ["K_AHP", "#", "Gbar", "8" ],
+	            ["K_C", "#basal#,#dend#,#apical#,#branch#", "Gbar", "50+150*exp(-p/200e-6)" ],
+	            ["K_C", "#soma#", "Gbar", "100" ],
+	            ["K_A", "#soma#", "Gbar", "50" ],
+	            ["K_A", "#dend#,#apical#,#branch#", "Gbar", "50*(1 + 2.0e-6/(dia + 0.1e-6))" ],
+	            ["GABA", "#apical#,#branch#,#dend#,#basal#", "Gbar", "10 + 30*(p < 125e-6)" ],
+	        ],
+	        spineDistrib = [['spine','#dend#,#apical#,#branch#', str(params['spineSpacing']),'-1e-7', str( params['spineSizeScale'] ), '0.0', '0', '0' ]],
+	        chemDistrib = [
+	            ['DEND', '#', 'dend', '1', diffusionLength ],
+	            ['SPINE', '#', 'spine', '1', 'DEND' ],
+	            ['PSD', '#', 'psd', '1', 'DEND' ]
+	        ],
+	        # Ideally should be synced. There should be a way to do this.
+	        stimList = [
+	                [ 'head#', str( params['amparSynapseWeight'] ), 'glu', 'randsyn', str( params['meanSpikeRate'] ) ],
+	                [ 'head#', str( params['nmdarSynapseWeight'] ), 'NMDA', 'randsyn', str( params['meanSpikeRate'] )],
+	                [ '#', str( params['gabarSynapseWeight'] ), 'GABA', 'randsyn', gabaRateExpression ],
+	                [ 'head7,head18,head32,head44,head53', '30', 'glu', 'periodicsyn', stimStrList[0]],
+	                [ 'head8,head20,head30,head45,head54', '30', 'glu', 'periodicsyn', stimStrList[1]],
+	                [ 'head9,head22,head33,head46,head55', '30', 'glu', 'periodicsyn', stimStrList[2]],
+	                [ 'head10,head24,head29,head47,head56', '30', 'glu', 'periodicsyn', stimStrList[3]],
+	                [ 'head11,head26,head31,head48,head57', '30', 'glu', 'periodicsyn', stimStrList[4]],
+	                [ 'head7,head18,head32,head44,head53', '30', 'NMDA', 'periodicsyn', stimStrList[0]],
+	                [ 'head8,head20,head30,head45,head54', '30', 'NMDA', 'periodicsyn', stimStrList[1]],
+	                [ 'head9,head22,head33,head46,head55', '30', 'NMDA', 'periodicsyn', stimStrList[2]],
+	                [ 'head10,head24,head29,head47,head56', '30', 'NMDA', 'periodicsyn', stimStrList[3]],
+	                [ 'head11,head26,head31,head48,head57', '30', 'NMDA', 'periodicsyn', stimStrList[4]],
+	            ],
+	        adaptorList = [
+	            [ 'Ca_conc', 'Ca', 'PSD/Ca_input', 'concInit', 2e-6, params['CaPsdScale'] ],
+	            ['Ca_conc','Ca','DEND/Ca_input','concInit',2.0e-6, 0.0001],
+	            [ 'DEND/channel_p', 'conc', 'Na', 'modulation', 1.0, params['adaptorScale']],
+	        ],
+	        plotList = [
+	            ['soma', '1', '.', 'Vm', 'Soma Vm'],
+	            ['#', '1', 'SPINE/Ca', 'conc', 'Chem Ca conc'],
+	            ['#', '1', 'DEND/P_MAPK', 'conc', 'P_MAPK conc'],
+	        ],
+	        moogList = [
+	            #['#', '1', '.', 'Vm', 'Memb potential'],
+	            ['#', '1', 'DEND/P_MAPK', 'conc', '[P_MAPK] (uM)',0, 0.15],
+	            ['#', '1', 'SPINE/Ca', 'conc', '[Ca] (uM)', 0, 0.5, True, 2],
+	        ]
+	    )
+	
+	    ############## Set resting potential ##########################
+	    for i in moose.wildcardFind( "/library/##[][ISA=CompartmentBase]" ):
+	        i.Em = params[ 'Em' ]
+	        i.initVm = params[ 'Em' ]
+	    ############## Set sensitivity to Ca ##########################
+	    moose.element( '/library/chem/kinetics/DEND/Ca_activate_Raf' ).Kf = params['CaActivateRafKf']
+	
+	    #################### Build the model ##########################
+	    rdes.buildModel()
+	    moose.reinit()
+	    moose.seed( 1 )
+	    rdes.displayMoogli( 0.01, params['runtime'], 0.0, colormap = 'plasma', mergeDisplays = True, bg = 'default' )
+	
+	if __name__ == '__main__':
+	    main()
+
 
 
 Rdesigneur command reference
@@ -2927,6 +3906,13 @@ making channel prototypes:
 
                 chemProto = [['moose:Pool', 'a']]
 
+From Jan 2022 onward, the SBML and .g models can and should specify 
+compartment names used by rdesigneur to build and place reaction systems.
+In both cases these are done by placing an annotation with the string
+"Compartment" in the group in which the desired reactions/pools are situated.
+The name of the group is used to name the new compartment.
+This explicit placement supersedes the previous approach which worked out a 
+limited set of predefined compartment names based on volumes.
 
 passiveDistrib
 ~~~~~~~~~~~~~~
@@ -3136,6 +4122,79 @@ Type: List of lists
 Default: [] (empty list). Does nothing.
 
 Use: This is for inserting a chemical system into the neuron
+
+**Post-2022 version: Recommended:**
+
+Each entry is a list. The first four arguments are the same,
+subsequent arguments depend on the type of chemical compartment being set up.
+
+::
+        
+    [proto, elecpath, compartment_type, geometry_expr, ...]
+
+The first four entries here are all strings and are of the form:
+    - proto: Specifies the compartment name of the prototype chemical system to install
+    - elecpath: Wildcard path of electrical compartments in which to embed the chemical system.
+    - compartment_type: One of the six available compartment types: *dend, spine, psd, presyn_spine, presyn_dend* and *endo*
+    - expr: Expression evaluated to decide whether to install the chemical
+      system. This is the `usual function`_ of geometrical properties of the
+      cell. It is usually '1', to tell the system to install throughout the
+      *elecpath*.
+
+There are 6 compartment_types with arguments as follows:
+
+::
+
+        1. Dend: [proto, elecpath, 'dend', geometry_expr, diffusion_len]
+        2. Spine: [proto, elecpath, 'spine', geometry_expr, dendMeshName]
+        3. PSD: [proto, elecpath, 'psd', geometry_expr, dendMeshName]
+        4. presyn_spine: [proto, elecpath, 'presyn_spine', geometry_expr, radius, radiusSdev ]
+        5. presyn_dend: [proto, elecpath, 'presyn_dend', geometry_expr, radius, radiusSdev, spacing ]
+        6. endo: [proto, elecpath, 'endo', geometry_expr, surroundMeshName, radiusRatioToSurroundVoxels ]
+
+
+Here are the details:
+
+1. dend: This is a NeuroMesh, which is a chemical compartment built to fit
+   along the dendritic tree of the neuron, but not the spines. The 
+   *diffusion_len* argument specifies the maximum voxel-length to use, which
+   normally is set to match the characteristic length scale of diffusion.
+2. spine: This is a SpineMesh, which is a chemical compartment representing
+   spine heads along a neuron. It has special diffusion contacts with the
+   parent NeuroMesh, and thus its last argument is *dendMeshName* to specify
+   which NeuroMesh compartment it is linked to.
+3. psd: This is a PsdMesh, which is a chemical compartment representing
+   the postsynaptic density. It is currently just a very shallow (100 nm) disk
+   at the top of a spine head. It diffusively exchanges with the associated
+   spine head, located in the SpineMesh. Again, its last argument is 
+   *dendMeshName* to specify which NeuroMesh compartment it is linked to.
+4. presyn_spine: This is a PresynMesh, defined to connect to the electrical 
+   spines defined in its second argument. Its fifth argument is *radius* which
+   defines the ratio of its radius to that of its target spine head. Defaults
+   to one. The presyn_spine is a hemisphere with its flat face 20 nanometres 
+   from the spine head. The sixth argument (currently unused) is the standard 
+   deviation of the distribution used to add some stochasticity into 
+   the *radius* scale factor.
+5. presyn_dend: This is a PresynMesh, defined to connect directly to dendritic
+   segments, typically for non-spiny cells or for synapses that do not 
+   terminate on spines.
+   It too is a hemisphere with its flat face 20 nanometres from the spine head. 
+   Its fifth argument is *radius*. Unlike the presyn_spine, this argumente
+   defines the absolute value of its radius. 
+   The sixth argument (currently unused) is the standard deviation
+   of the distribution used to add some stochasticity into the *radius* 
+   scale factor.
+6. endo: This is the EndoMesh, represending endosomal and other internal
+   cellular compartments. A typical use is for intracellular Ca stores in
+   CICR models. It consists of a series of spheres, one in each
+   surrounding voxel. The spheres do not permit diffusion in the current
+   version, but can have exchange reactions and ligand-gated channels
+   with the surround voxel.
+   Its fifth argument is the name of the surrounding mesh. The sixth argument
+   defines the ratio of its radius to that of each surrounding voxel.
+ 
+
+**Pre-2022 version: Deprecated, will work for a little while longer:**
 Each entry is a list of strings, of the form:
 
 ::
@@ -3373,7 +4432,7 @@ Each entry is a list as follows:
 
 ::
         
-    [path, geom_expr, relpath, field, title, [ymin, ymax]]
+    [path, geom_expr, relpath, field, title, [ymin, ymax, show, diaScale]
 
 The entries here are:
     - path: string. The usual MOOSE wildcard path to identify electrical 
@@ -3392,6 +4451,13 @@ The entries here are:
     - ymax: Double. Maximum value for y axis. Default = 0. 
       If ymin==ymax then the plot autoscales.
     - show: Bool. Flag to decide if it should be displayed. Default=True.
+    - diaScale: Double. Scale of displayed diameter to actual diameter. 
+      Useful when you want to clearly see what is happening on a thin
+      dendrite: A diaScale of 2 will make them 2x fatter. When applied to
+      electrical compartments, both the dendrites and spines are scaled.
+      Note that this does not move the spines though it makes them fatter too.
+      When applied to chemical compartments only the specified compartment is
+      scaled. Default = 1.0.
 
 Rdesigneur also supports keyword-based argument lists for the moogList, having
 the same entries as above. Here are two moogList entries with identical 
@@ -3408,9 +4474,9 @@ To run and display moogli, one replaces the *moose.start()* and the
 
 ::
 
-    rdes.displayMoogli(dt, runtime, rotation, fullscreen, block, azim, elev)
+    rdes.displayMoogli(dt, runtime, rotation, fullscreen, block, azim, elev, mergeDisplays, colormap, center, bg )
 
-in which the first two arguments are required and the rest are optional and
+Here the first two arguments are required and the rest are optional and
 can be assigned by keywords.
 
 The arguments are as follows:
@@ -3423,5 +4489,18 @@ The arguments are as follows:
       Defaults to False.
     - azim: double. Azimuth setting. Defaults to 0.0
     - elev: double. Elevation setting. Defaults to 0.0
+    - mergeDisplays: bool. Flag to tell moogli to overlay all entries in the
+      moogList. Useful when you want to display different compartments in the
+      same view, such as *endo* compartments sitting inside a *dend*.
+      Default: False.
+    - colormap: Name of a matplotlib colormap. Typical options include
+      plasma, and viridis, which are perceptually uniform sequential maps.
+      'rainbow' is a spectrum, and a reasonable heatmap is 'jet'. 
+      Default: jet.
+    - center: A 3-element list as a vector defining the middle of the 3-D 
+      display volume. Default: empty. The system calculates the center of mass.
+    - bg: background color. Current options are black, white, cyan and grey.
+      Default: 'default' which gives a light grey.
+
 
 The `moogli primer`_ explains how to use the 3-D display.
